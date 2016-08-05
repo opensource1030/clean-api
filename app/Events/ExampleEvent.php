@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Events;
+namespace WA\Events;
 
 class ExampleEvent extends Event
 {

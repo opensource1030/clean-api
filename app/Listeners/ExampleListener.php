@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Listeners;
+namespace WA\Listeners;
 
-use App\Events\ExampleEvent;
+use WA\Events\ExampleEvent;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
