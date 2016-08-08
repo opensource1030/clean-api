@@ -69,6 +69,7 @@ class Employee extends BaseDataStore implements IlluminateCanResetPasswordContra
         'confirmed',
         'username',
         'identification',
+        'uuid',
         'confirmation_code',
         'notify',
         'notes',

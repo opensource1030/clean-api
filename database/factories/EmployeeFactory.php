@@ -8,12 +8,13 @@
 */
 $factory->define(WA\DataStore\Employee\Employee::class, function (Faker\Generator $faker) {
 
+
     return [
         'identification' => uniqid('WA-'),
         'uuid' => $faker->uuid,
         'email' => $email = $faker->safeEmail,
         'supervisorEmail' => $faker->safeEmail,
-        'password' => 'admin',
+        'password' => bcrypt('user'),
         'confirmation_code' => md5(uniqid(mt_rand(), true)),
         'confirmed' => 1,
         'firstName' => $faker->firstName,
@@ -31,7 +32,6 @@ $factory->define(WA\DataStore\Employee\Employee::class, function (Faker\Generato
         'companyId' => function () {
             return factory(WA\DataStore\Company\Company::class)->create()->id;
         },
-
 
     ];
 });

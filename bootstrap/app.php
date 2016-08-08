@@ -59,13 +59,20 @@ $app->singleton(
 |
 */
 
-// $app->middleware([
-//    WA\Http\Middleware\ExampleMiddleware::class
-// ]);
+$app->middleware([
+    \LucaDegasperi\OAuth2Server\Middleware\OAuthExceptionHandlerMiddleware::class
+]);
 
-// $app->routeMiddleware([
-//     'auth' => WA\Http\Middleware\Authenticate::class,
-// ]);
+$app->routeMiddleware([
+    'auth' => WA\Http\Middleware\Authenticate::class,
+    'role' => 'Zizaco\Entrust\Middleware\EntrustRole',
+    'permission' => 'Zizaco\Entrust\Middleware\EntrustPermission',
+    'ability' => 'Zizaco\Entrust\Middleware\EntrustAbility',
+    'oauth' => \LucaDegasperi\OAuth2Server\Middleware\OAuthMiddleware::class,
+    'oauth-client' => \LucaDegasperi\OAuth2Server\Middleware\OAuthClientOwnerMiddleware::class,
+    'oauth-user' => \LucaDegasperi\OAuth2Server\Middleware\OAuthUserOwnerMiddleware::class,
+    'check-authorization-params' => \LucaDegasperi\OAuth2Server\Middleware\CheckAuthCodeRequestMiddleware::class,
+]);
 
 /*
 |--------------------------------------------------------------------------
@@ -79,15 +86,28 @@ $app->singleton(
 */
 
 // $app->register(WA\Providers\AppServiceProvider::class);
-// $app->register(WA\Providers\AuthServiceProvider::class);
+//$app->register(WA\Providers\AuthServiceProvider::class);
 // $app->register(WA\Providers\EventServiceProvider::class);
-
 $app->register(Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class);
 $app->register(\Culpa\CulpaServiceProvider::class);
-//$app->register(Dingo\Api\Provider\LaravelServiceProvider::class);
-//$app->register(LucaDegasperi\OAuth2Server\OAuth2ServerServiceProvider::class);
-//$app->register(LucaDegasperi\OAuth2Server\Storage\FluentStorageServiceProvider::class);
-//$app->register(Sofa\Eloquence\ServiceProvider::class);
+$app->register(LucaDegasperi\OAuth2Server\OAuth2ServerServiceProvider::class);
+$app->register(LucaDegasperi\OAuth2Server\Storage\FluentStorageServiceProvider::class);
+$app->register(\WA\Providers\RepositoriesServiceProviders::class);
+$app->register(\WA\Providers\AppServiceProvider::class);
+$app->register(\Illuminate\Auth\Passwords\PasswordResetServiceProvider::class);
+$app->register(\Illuminate\Mail\MailServiceProvider::class);
+$app->register(\WA\Providers\FormServiceProvider::class);
+
+/*
+|--------------------------------------------------------------------------
+| Register Configurations
+|--------------------------------------------------------------------------
+|
+*/
+$app->configure('services');
+$app->configure('mail');
+$app->configure('saml2_settings');
+
 
 /*
 |--------------------------------------------------------------------------
@@ -112,6 +132,8 @@ $app->group(['namespace' => 'WA\Http\Controllers'], function ($app) {
 |
 */
 class_alias('Illuminate\Support\Facades\Response', 'Response');
-
+class_alias('Illuminate\Support\Facades\Config', 'Config');
+class_alias(\LucaDegasperi\OAuth2Server\Facades\Authorizer::class, 'Authorizer');
+class_alias(\Webpatser\Uuid\Uuid::class, 'Uuid');
 
 return $app;
