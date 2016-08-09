@@ -22,7 +22,7 @@ class EloquentAllocation extends AbstractRepository implements AllocationInterfa
     {
        $start =  date('Y-m-d 00:00:00', strtotime('first day of this month'));
 
-        $charges = $this->model->where('Employee Email', $email)->where('Bill Month', $start)->get();
+        $charges = $this->model->where('User Email', $email)->where('Bill Month', $start)->get();
         return $charges;
     }
 

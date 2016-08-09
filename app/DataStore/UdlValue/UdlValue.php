@@ -12,7 +12,7 @@ use WA\DataStore\BaseDataStore;
  * @property int $udlId
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\Employee\Employee[] $e mployees
+ * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\User\User[] $e mployees
  * @property-read \WA\DataStore\Udl\Udl $udl
  *
  * @method static \Illuminate\Database\Query\Builder|\WA\DataStore\UdlValue\UdlValue whereId($value)
@@ -30,9 +30,9 @@ class UdlValue extends BaseDataStore
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function employees()
+    public function users()
     {
-        return $this->belongsToMany('WA\DataStore\Employee\Employee', 'employee_udls', 'udlValueId', 'employeeId');
+        return $this->belongsToMany('WA\DataStore\User\User', 'employee_udls', 'udlValueId', 'employeeId');
     }
 
     /**

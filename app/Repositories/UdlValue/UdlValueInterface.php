@@ -54,12 +54,12 @@ interface UdlValueInterface
     public function byUdlId($udlId);
 
     /**
-     * Get the Employee Count on the UDL Value.
+     * Get the User Count on the UDL Value.
      *
      * @param $name
      * @param $companyId
      *
      * @return int employee count
      */
-    public function getEmployeeCount($name, $companyId = null);
+    public function getUserCount($name, $companyId = null);
 }

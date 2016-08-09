@@ -4,7 +4,7 @@
 namespace WA\DataStore;
 
 use WA\DataStore\Traits\BelongsToCarrier;
-use WA\DataStore\Traits\BelongsToEmployee;
+use WA\DataStore\Traits\BelongsToUser;
 
 /**
  * An Eloquent Model: 'WA\DataStore\UserCarrier'.
@@ -36,6 +36,6 @@ class UserCarrier extends BaseDataStore
         'userName',
     ];
 
-    use BelongsToEmployee,
+    use BelongsToUser,
         BelongsToCarrier;
 }

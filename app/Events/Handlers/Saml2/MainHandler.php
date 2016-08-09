@@ -21,13 +21,13 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Aacotroneo\Saml2\Events\Saml2LoginEvent;
 
-use WA\DataStore\Employee\Employee;
+use WA\DataStore\User\User;
 
 use Cache;
 use Session;
 
 use Carbon\Carbon;
-use WA\Services\Form\Employee\EmployeeForm;
+use WA\Services\Form\User\UserForm;
 /**
  * Class MainHandler.
  */
@@ -35,7 +35,7 @@ class MainHandler extends BaseHandler
 {
     protected $dumpExceptions;
     protected $processLog;
-    protected $employeeForm;
+    protected $userForm;
 
     private $USER_EMAIL = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name';
     private $USER_LASTNAME = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname';
@@ -46,11 +46,11 @@ class MainHandler extends BaseHandler
      * @param DumpExceptionRepositoryInterface $dumpExceptions
      */
     public function __construct(
-        EmployeeForm $employeeForm,
+        UserForm $userForm,
         ProcessLogRepositoryInterface $processLog,
         DumpExceptionRepositoryInterface $dumpExceptions
         ) {
-        $this->employeeForm = $employeeForm;
+        $this->userForm = $userForm;
         $this->processLog = $processLog;
         $this->dumpExceptions = $dumpExceptions;
     }
@@ -89,7 +89,7 @@ class MainHandler extends BaseHandler
         $email = $this->getEmailFromUserData($userData, $idCompany);
 
         if (isset($email)) {
-            $laravelUser = Employee::where('email',$email) -> first();
+            $laravelUser = User::where('email',$email) -> first();
             if (!isset($laravelUser)) {
                 $user = $this->parseRequestedInfoFromIdp($userData, $idCompany);
                 //Log::info("USER WA/Events/Handlers/Saml2/MainHandler: ".print_r($user, true));
@@ -135,7 +135,7 @@ class MainHandler extends BaseHandler
                     'alternateFirstName' => NULL,
                     'lastName' => $userData['attributes'][$this->USER_LASTNAME][0],
                     'supervisorEmail' => $userData['attributes'][$this->USER_EMAIL][0],
-                    'companyEmployeeIdentifier' => '',
+                    'companyUserIdentifier' => '',
                     'isSupervisor' => 0,
                     'isValidator' => 0,
                     'isActive' => 0,
@@ -176,7 +176,7 @@ class MainHandler extends BaseHandler
         $data['alternateFirstName'] = $user['alternateFirstName'];
         $data['lastName'] = $userInfo['lastName'] = $user['lastName'];
         $data['supervisorEmail'] = $user['supervisorEmail']; //OK
-        $data['companyEmployeeIdentifier'] = $userInfo['companyEmployeeIdentifier'] = '';
+        $data['companyUserIdentifier'] = $userInfo['companyUserIdentifier'] = '';
         $data['isSupervisor'] = $user['isSupervisor']; //OK
         $data['isValidator'] = $user['isValidator']; //OK 
         //$data['isActive'] = $user['isActive']; // ADDED
@@ -194,7 +194,7 @@ class MainHandler extends BaseHandler
         //$data['updated_at'] = $user['updated_at']; // ADDED
         $data['defaultLocationId'] = $user['defaultLocationId']; //OK      
         $data['defaultLang'] = $user['defaultLang']; //OK
-        $data['departmentId'] = $this->employeeForm->getDepartmentPathId([], null, $userInfo);; //OK
+        $data['departmentId'] = $this->userForm->getDepartmentPathId([], null, $userInfo);; //OK
         //$data['identification'] = $user['identification']; // ADDED
         $data['notify'] = $user['notify']; //OK
         //$data['apiToken'] = $user['apiToken']; // ADDED
@@ -204,24 +204,24 @@ class MainHandler extends BaseHandler
         $data['password_confirmation'] = $user['password'];
         $data['isCensusCompany'] = 1;
         $data['udls'] = ['first', 'last'];
-        $data['evDepartmentId'] = $this->employeeForm->getDepartmentPathId([], null, $userInfo, true);
+        $data['evDepartmentId'] = $this->userForm->getDepartmentPathId([], null, $userInfo, true);
         $data['user_roles'] = '';
 
         //var_dump($data);
         //die;
 
         // @TODO: TODOSAML2: This Function gives me an error. Waiting for news.
-        if (!$this->employeeForm->create($data)) {            
-            $data['errors'] = $this->employeeForm->errors();
+        if (!$this->userForm->create($data)) {
+            $data['errors'] = $this->userForm->errors();
             return Redirect::back()
             ->withInput()
-            ->withErrors($this->employeeForm->errors());
+            ->withErrors($this->userForm->errors());
         }
 
-        $data['employee'] = $this->employeeForm->getEmployeeByEmail($data['email']);
-        $employeeId = $data['employee']['id'];
+        $data['employee'] = $this->userForm->getUserByEmail($data['email']);
+        $userId = $data['employee']['id'];
 
-        return redirect("employees/$employeeId")->with($data);
+        return redirect("users/$userId")->with($data);
     }
 
     private function getEmailFromUserData($userData, $idCompany){
@@ -252,7 +252,7 @@ class MainHandler extends BaseHandler
                     'alternateFirstName' => NULL,
                     'lastName' => 'facebook',
                     'supervisorEmail' => 'email@sharkninja.com',
-                    'companyEmployeeIdentifier' => '',
+                    'companyUserIdentifier' => '',
                     'isSupervisor' => 0,
                     'isValidator' => 0,
                     'isActive' => 0,

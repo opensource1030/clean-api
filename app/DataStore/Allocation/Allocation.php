@@ -12,7 +12,7 @@ use WA\DataStore\BaseDataStore;
  *
  * @package WA\DataStore
  * @property-read \WA\DataStore\Company\Company $companies
- * @property-read \WA\DataStore\Employee\Employee $employees
+ * @property-read \WA\DataStore\User\User $users
  * @mixin \Eloquent
  */
 class Allocation extends BaseDataStore
@@ -27,9 +27,9 @@ class Allocation extends BaseDataStore
         return $this->belongsTo('WA\DataStore\Company\Company', 'companyId');
     }
 
-    public function employees()
+    public function users()
     {
-        return $this->belongsTo('WA\DataStore\Employee\Employee', 'employeeId');
+        return $this->belongsTo('WA\DataStore\User\User', 'employeeId');
     }
 
     /**

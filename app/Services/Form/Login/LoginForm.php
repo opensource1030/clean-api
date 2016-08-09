@@ -70,7 +70,7 @@ class LoginForm extends AbstractForm
 
         try {
             if (!($loggedIn = $this->auth->login($input, $remember))) {
-                $msg = trans('employees.alerts.wrong_credentials');
+                $msg = trans('users.alerts.wrong_credentials');
                 $this->notify('error', $msg);
 
                 return false;
@@ -177,7 +177,7 @@ class LoginForm extends AbstractForm
         $isLegacy = (bool)$request->input('legacy');
         $legacy_destination = $request->input('legacy_dest');
         // Get the email address with the token
-        $token_info =  \WA\DataStore\Employee\PasswordResets::where('token', $token)->first();
+        $token_info =  \WA\DataStore\User\PasswordResets::where('token', $token)->first();
 
         $email = !empty($token_info) ? $token_info->email : '';
         if(!$email)

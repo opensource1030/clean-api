@@ -5,7 +5,7 @@ namespace WA\DataStore\Asset;
 use League\Fractal\Resource\Collection as ResourceCollection;
 use League\Fractal\TransformerAbstract;
 use WA\DataStore\Device\DeviceTransformer;
-use WA\DataStore\Employee\EmployeeTransformer;
+use WA\DataStore\User\UserTransformer;
 
 /**
  * Class AssetTransformer.
@@ -13,7 +13,7 @@ use WA\DataStore\Employee\EmployeeTransformer;
 class AssetTransformer extends TransformerAbstract
 {
     protected $availableIncludes = [
-        'employees',
+        'users',
         'devices',
         'carriers',
         'companies',
@@ -38,9 +38,9 @@ class AssetTransformer extends TransformerAbstract
      *
      * @return ResourceCollection
      */
-    public function includeEmployees(Asset $asset)
+    public function includeUsers(Asset $asset)
     {
-        return new ResourceCollection($asset->employees, new EmployeeTransformer(),'employees');
+        return new ResourceCollection($asset->users, new UserTransformer(),'users');
     }
 
     /**

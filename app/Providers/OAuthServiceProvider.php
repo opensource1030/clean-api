@@ -19,9 +19,9 @@ class OAuthServiceProvider extends ServiceProvider
             $provider = new OAuth2($app['oauth2-server.authorizer']->getChecker());
 
             $provider->setUserResolver(function ($id) {
-                $employee = $this->app->make('WA\Repositories\Employee\EmployeeInterface');
+                $user = $this->app->make('WA\Repositories\User\UserInterface');
 
-                return $employee->byId('$id');
+                return $user->byId('$id');
             });
 
             $provider->setClientResolver(function ($id) {

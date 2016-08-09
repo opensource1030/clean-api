@@ -14,8 +14,8 @@ use WA\DataStore\Company\Company;
 use WA\DataStore\Device\Device;
 use WA\DataStore\DeviceType;
 use WA\DataStore\EmailNotifications;
-use WA\DataStore\Employee\Employee;
-use WA\DataStore\EmployeeNotifications;
+use WA\DataStore\User\User;
+use WA\DataStore\UserNotifications;
 use WA\DataStore\JobStatus;
 use WA\DataStore\Location\Location;
 use WA\DataStore\NotificationCategory;
@@ -24,7 +24,7 @@ use WA\DataStore\SyncJob;
 use WA\DataStore\Udl\Udl;
 use WA\DataStore\UdlValue\UdlValue;
 use WA\DataStore\UdlValuePath\UdlValuePath;
-use WA\DataStore\UdlValuePathEmployees\UdlValuePathEmployees;
+use WA\DataStore\UdlValuePathUsers\UdlValuePathUsers;
 use WA\DataStore\Role\Role;
 use WA\Repositories\Asset\EloquentAsset;
 use WA\Repositories\Attribute\EloquentAttribute;
@@ -35,8 +35,8 @@ use WA\Repositories\Company\EloquentCompany;
 use WA\Repositories\Device\EloquentDevice;
 use WA\Repositories\DeviceType\EloquentDeviceType;
 use WA\Repositories\EmailNotifications\EloquentEmailNotifications;
-use WA\Repositories\Employee\EloquentEmployee;
-use WA\Repositories\EmployeeNotifications\EloquentEmployeeNotifications;
+use WA\Repositories\User\EloquentUser;
+use WA\Repositories\UserNotifications\EloquentUserNotifications;
 use WA\Repositories\JobStatus\EloquentJobStatus;
 use WA\Repositories\Location\EloquentLocation;
 use WA\Repositories\NotificationCategory\EloquentNotificationCategory;
@@ -45,8 +45,8 @@ use WA\Repositories\SyncJob\EloquentSyncJob;
 use WA\Repositories\Udl\EloquentUdl;
 use WA\Repositories\UdlValue\EloquentUdlValue;
 use WA\Repositories\UdlValuePath\EloquentUdlValuePath;
-use WA\Repositories\UdlValuePathEmployees\EloquentUdlValuePathEmployees;
-use WA\Repositories\Employee\EmployeeCacheDecorator;
+use WA\Repositories\UdlValuePathUsers\EloquentUdlValuePathUsers;
+use WA\Repositories\User\UserCacheDecorator;
 use WA\Services\Cache\Cache;
 use WA\Repositories\Role\EloquentRole;
 use WA\Repositories\Permission\EloquentPermission;
@@ -144,12 +144,12 @@ trait ServiceRegistration
     /**
      * @param
      */
-    public function registerUdlValuePathEmployees()
+    public function registerUdlValuePathUsers()
     {
         app()->bind(
-            'WA\Repositories\UdlValuePathEmployees\UdlValuePathEmployeesInterface',
+            'WA\Repositories\UdlValuePathUsers\UdlValuePathUsersInterface',
             function () {
-                return new EloquentUdlValuePathEmployees(new UdlValuePathEmployees());
+                return new EloquentUdlValuePathUsers(new UdlValuePathUsers());
             }
         );
     }
@@ -188,7 +188,7 @@ trait ServiceRegistration
             function () {
                 return new EloquentCompany(
                     new Company(),
-                    app()->make('WA\Repositories\Employee\EmployeeInterface'),
+                    app()->make('WA\Repositories\User\UserInterface'),
                     app()->make('WA\Repositories\Census\CensusInterface'),
                     app()->make('WA\Repositories\Udl\UdlInterface'),
                     app()->make('WA\Repositories\Carrier\CarrierInterface'),
@@ -202,23 +202,23 @@ trait ServiceRegistration
     /**
      * @param
      */
-    protected function registerEmployee()
+    protected function registerUser()
     {
         app()->bind(
-            'WA\Repositories\Employee\EmployeeInterface',
+            'WA\Repositories\User\UserInterface',
             function () {
-                $employee = new EloquentEmployee(
-                    new Employee(),
+                $user = new EloquentUser(
+                    new User(),
                     app()->make('WA\Repositories\Census\CensusInterface'),
                     app()->make('WA\Repositories\UdlValue\UdlValueInterface'),
                     app()->make('WA\Repositories\Udl\UdlInterface'),
                     app()->make('WA\Services\Form\HelpDesk\EasyVista')
                 );
-                //return $employee
+                //return $user
                 //
-                return new EmployeeCacheDecorator(
-                    $employee,
-                    new Cache(app()['cache'], 'employees', 10)
+                return new UserCacheDecorator(
+                    $user,
+                    new Cache(app()['cache'], 'users', 10)
                 );
             }
         );
@@ -234,7 +234,7 @@ trait ServiceRegistration
             function () {
                 return new EloquentAsset(new Asset(),
                     app()->make('WA\Repositories\JobStatus\JobStatusInterface'),
-                    app()->make('WA\Repositories\Employee\EmployeeInterface'),
+                    app()->make('WA\Repositories\User\UserInterface'),
                     app()->make('WA\Services\Converter\Currency'),
                     app()->make('WA\Repositories\Carrier\CarrierInterface'));
             }
@@ -326,11 +326,11 @@ trait ServiceRegistration
     /**
      * @param
      */
-    public function registerEmployeeNotification()
+    public function registerUserNotification()
     {
-        app()->bind('WA\Repositories\EmployeeNotifications\EmployeeNotificationsInterface',
+        app()->bind('WA\Repositories\UserNotifications\UserNotificationsInterface',
             function () {
-                return new EloquentEmployeeNotifications(new EmployeeNotifications());
+                return new EloquentUserNotifications(new UserNotifications());
             });
     }
 

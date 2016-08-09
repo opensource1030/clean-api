@@ -10,11 +10,11 @@ interface DeviceInterface extends RepositoryInterface
     /**
      * Get the device information by their employee.
      *
-     * @param $employeeId
+     * @param $userId
      *
      * @return \WA\DataStore\Device\Device object of device information by the employee
      */
-    public function byEmployee($employeeId);
+    public function byUser($userId);
 
     /**
      * Get device by their identification.

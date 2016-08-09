@@ -16,7 +16,7 @@ class AssetTest extends TestCase
     {
         $this->assertBelongsToMany('devices', $this->className);
 
-        $this->assertbelongsToMany('employees', $this->className);
+        $this->assertbelongsToMany('users', $this->className);
     }
 
     public function testHasManyRelationships()

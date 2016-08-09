@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use WA\Http\Controllers\Auth\AuthorizedController;
 use WA\Jobs\CompanyCensus;
 use WA\Repositories\Company\CompanyInterface;
-use WA\Repositories\Employee\EmployeeInterface;
+use WA\Repositories\User\UserInterface;
 use WA\Services\Form\Company\CensusForm;
 
 /**
@@ -36,9 +36,9 @@ class CensusController extends AuthorizedController
     protected $company;
 
     /**
-     * @var \WA\Repositories\Employee\EmployeeInterface
+     * @var \WA\Repositories\User\UserInterface
      */
-    protected $employee;
+    protected $user;
 
     /**
      * notification bucket.
@@ -50,17 +50,17 @@ class CensusController extends AuthorizedController
     /**
      * @param CensusForm        $censusForm
      * @param CompanyInterface  $company
-     * @param EmployeeInterface $employee
+     * @param UserInterface $user
      */
     public function __construct(
         CensusForm $censusForm,
         CompanyInterface $company,
-        EmployeeInterface $employee
+        UserInterface $user
     ) {
         parent::__construct();
         $this->censusForm = $censusForm;
         $this->company = $company;
-        $this->employee = $employee;
+        $this->employee = $user;
 
         $this->data['notifyContainer'] = $this->notifyContainer;
     }
@@ -167,7 +167,7 @@ class CensusController extends AuthorizedController
             throw new \InvalidArgumentException("No Company Selected. Please select a company and try again");
         }
 
-        $unsynced = $this->company->getEmployeesCount($this->currentCompany->id, false);
+        $unsynced = $this->company->getUsersCount($this->currentCompany->id, false);
 
         $data = array_merge($this->data, [
             'companies' => $this->company->byPage(false)->toArray(),
@@ -215,10 +215,10 @@ class CensusController extends AuthorizedController
         return $response->download($file);
     }
 
-    public  function getUnSyncedEmployees($companyId, Response $response)
+    public  function getUnSyncedUsers($companyId, Response $response)
     {
         $helper = app()->make('WA\Http\Controllers\Admin\HelperController');
-        $file = $helper->exportAndGetUnsyncedEmployeesFile($companyId);
+        $file = $helper->exportAndGetUnsyncedUsersFile($companyId);
 
         return $response->download($file);
     }

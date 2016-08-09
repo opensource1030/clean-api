@@ -4,7 +4,7 @@
 namespace WA\Repositories;
 
 use WA\DataStore\Asset\Asset;
-use WA\DataStore\Employee\Employee;
+use WA\DataStore\User\User;
 
 /**
  * Class AssetRepository.
@@ -50,7 +50,7 @@ class AssetRepository extends BaseRepository implements AssetRepositoryInterface
         $email = $prefix.'@wirelessanalytics.com';
 
         try {
-            $user = new Employee();
+            $user = new User();
             $user->email = $email;
             $user->password = explode($email, '@')[0];
             $asset->users()->save($user);

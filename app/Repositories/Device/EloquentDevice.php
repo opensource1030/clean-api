@@ -36,22 +36,22 @@ class EloquentDevice extends AbstractRepository implements DeviceInterface
     /**
      * Get the device information by their employee.
      *
-     * @param $employeeId (using CompanyID for now)
+     * @param $userId (using CompanyID for now)
      *
      * @return Object object of device information by the employee
      */
-    public function byEmployee($employeeId)
+    public function byUser($userId)
     {
-        $employeeDevices =
-            $this->model->with('employees', function ($q) use ($employeeId) {
-                $q->where('employeeId', $employeeId);
+        $userDevices =
+            $this->model->with('users', function ($q) use ($userId) {
+                $q->where('employeeId', $userId);
             })->get();
 
-        if (!$employeeDevices) {
+        if (!$userDevices) {
             return;
         }
 
-        return $employeeDevices;
+        return $userDevices;
     }
 
     /**

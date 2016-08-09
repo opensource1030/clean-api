@@ -10,7 +10,7 @@ use WA\DataStore\Page\PageTransformer;
  *
  * @package WA\DataStore\Page
  * @property-read \WA\DataStore\Company\Company $companies
- * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\Employee\Employee[] $employees
+ * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\User\User[] $users
  * @mixin \Eloquent
  */
 class Page extends BaseDataStore
@@ -28,9 +28,9 @@ class Page extends BaseDataStore
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function employees()
+    public function users()
     {
-        return $this->belongsToMany('WA\DataStore\Employee\Employee', 'employees_pages', 'pageId', 'employeeId');
+        return $this->belongsToMany('WA\DataStore\User\User', 'employees_pages', 'pageId', 'employeeId');
     }
 
 

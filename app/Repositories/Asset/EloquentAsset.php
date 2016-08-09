@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Log;
 use WA\Repositories\AbstractRepository;
 use WA\Repositories\Carrier\CarrierInterface;
-use WA\Repositories\Employee\EmployeeInterface;
+use WA\Repositories\User\UserInterface;
 use WA\Repositories\JobStatus\JobStatusInterface;
 use WA\Repositories\Traits\AttributableMethods;
 use WA\Services\Converter\Currency;
@@ -26,9 +26,9 @@ class EloquentAsset extends AbstractRepository implements AssetInterface
 
 
     /**
-     * @var \WA\Repositories\Employee\EmployeeInterface
+     * @var \WA\Repositories\User\UserInterface
      */
-    protected $employee;
+    protected $user;
 
     /**
      * @var \WA\Repositories\Device\DeviceInterface
@@ -48,13 +48,13 @@ class EloquentAsset extends AbstractRepository implements AssetInterface
     public function __construct(
         Model $model,
         JobStatusInterface $jobStatus,
-        EmployeeInterface $employee,
+        UserInterface $user,
         Currency $currency,
         CarrierInterface $carrier
     ) {
         $this->model = $model;
         $this->jobStatus = $jobStatus;
-        $this->employee = $employee;
+        $this->employee = $user;
         $this->currency = $currency;
         $this->carrier = $carrier;
         $this->redis = app()['redis']->connection();
@@ -79,24 +79,24 @@ class EloquentAsset extends AbstractRepository implements AssetInterface
     }
 
     /**
-     * Get the Employee attached to this asset.
+     * Get the User attached to this asset.
      *
-     * @param $employee (currently grabbing by the companyId or company Identifier)
+     * @param $user (currently grabbing by the companyId or company Identifier)
      * @param $page
      * @param $limit
      * @param $all
      *
      * @return \WA\DataStore\Asset\Asset | null
      */
-    public function byEmployee($employee, $page = 1, $limit = 10, $all = true)
+    public function byUser($user, $page = 1, $limit = 10, $all = true)
     {
-        $foundEmployee = $this->employee->byCompanyId($employee);
+        $foundUser = $this->employee->byCompanyId($user);
 
-        if (!$foundEmployee) {
+        if (!$foundUser) {
             return;
         }
 
-        return $foundEmployee->assets;
+        return $foundUser->assets;
     }
 
     /**
@@ -170,7 +170,7 @@ class EloquentAsset extends AbstractRepository implements AssetInterface
     public function update(array $data)
     {
         $asset = $this->model->findOrFail($data['id']);
-        $employee = $this->employee->byId($data['employeeId']);
+        $user = $this->employee->byId($data['employeeId']);
 
         $statusId = $this->jobStatus->idByName('complete');
 
@@ -179,7 +179,7 @@ class EloquentAsset extends AbstractRepository implements AssetInterface
 //        $asset->type = $this->setAsValue('type', $data, $asset);
         $asset->statusId = $statusId;
 
-        $employee->assets()->sync([$asset->id]);
+        $user->assets()->sync([$asset->id]);
 
         $this->attachAttributes($data['attributes'], $asset);
 
@@ -195,20 +195,20 @@ class EloquentAsset extends AbstractRepository implements AssetInterface
     /**
      * Remove assigned employee from the asset relationship.
      *
-     * @param $employeeId
+     * @param $userId
      * @param $assetId
      *
      * @return bool
      */
-    public function detachByEmployee($employeeId, $assetId)
+    public function detachByUser($userId, $assetId)
     {
-        $employee = $this->employee->byId($employeeId);
+        $user = $this->employee->byId($userId);
 
-        if (!$employee) {
+        if (!$user) {
             return false;
         }
 
-        return $employee->assets()->detach($assetId);
+        return $user->assets()->detach($assetId);
     }
 
     /**
@@ -316,7 +316,7 @@ class EloquentAsset extends AbstractRepository implements AssetInterface
         if(!empty($oldEmp))
         {
             $oldEmpId = $oldEmp['id'];
-            $this->detachByEmployee($oldEmpId, $assetId);
+            $this->detachByUser($oldEmpId, $assetId);
 
         }
 

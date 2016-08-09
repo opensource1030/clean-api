@@ -169,10 +169,10 @@ class HelpDeskCacheDecorator extends HelpDeskDecorator
             return $this->cache->get($key);
         }
 
-        $employee = $this->helpDesk->employeeByName($name);
-        $this->cache->put($key, $employee);
+        $user = $this->helpDesk->employeeByName($name);
+        $this->cache->put($key, $user);
 
-        return $employee;
+        return $user;
 
     }
 
@@ -236,10 +236,10 @@ class HelpDeskCacheDecorator extends HelpDeskDecorator
             return $this->cache->get($key);
         }
 
-        $employee = $this->helpDesk->employeeByIdentification($identification);
-        $this->cache->put($key, $employee);
+        $user = $this->helpDesk->employeeByIdentification($identification);
+        $this->cache->put($key, $user);
 
-        return $employee;
+        return $user;
     }
 
     /**
@@ -272,9 +272,9 @@ class HelpDeskCacheDecorator extends HelpDeskDecorator
      * @param $id
      * @return int $id
      */
-    public function getEmployeeExternalId($id)
+    public function getUserExternalId($id)
     {
-        return $this->helpDesk->getEmployeeExternalId($id);
+        return $this->helpDesk->getUserExternalId($id);
     }
 
     /**

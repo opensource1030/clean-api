@@ -11,8 +11,8 @@ use WA\Services\Form\Dashboard\DashboardForm;
 use WA\Services\Form\Dashboard\DashboardFormValidator;
 use WA\Services\Form\Device\DeviceForm;
 use WA\Services\Form\Device\DeviceFormValidator;
-use WA\Services\Form\Employee\EmployeeForm;
-use WA\Services\Form\HelpDesk\EmployeeSyncForm;
+use WA\Services\Form\User\UserForm;
+use WA\Services\Form\HelpDesk\UserSyncForm;
 use WA\Services\Form\HelpDesk\SyncForm;
 use WA\Services\Form\Login\LoginForm;
 use WA\Services\Form\Login\LoginFormValidator;
@@ -28,12 +28,12 @@ class FormServiceProvider extends ServiceProvider
     public function register()
     {
         $this->registerLogin();
-        $this->registerEmployee();
+        $this->registerUser();
         $this->registerDashboardForm();
         $this->registerAssetForm();
         $this->registerDeviceForm();
         $this->registerSyncForm();
-        $this->registerEmployeeSyncForm();
+        $this->registerUserSyncForm();
         $this->registerCensusForm();
     }
 
@@ -58,14 +58,14 @@ class FormServiceProvider extends ServiceProvider
     /**
      * @param
      */
-    protected function registerEmployee()
+    protected function registerUser()
     {
         app()->bind(
-            'WA\Services\Form\Employee\EmployeeForm',
+            'WA\Services\Form\User\UserForm',
             function () {
-                return new EmployeeForm(
-                    app()->make('WA\Repositories\Employee\EmployeeInterface'),
-//                    new EmployeeFormValidator($app['validator']),
+                return new UserForm(
+                    app()->make('WA\Repositories\User\UserInterface'),
+//                    new UserFormValidator($app['validator']),
 //                    app()->make('WA\Services\Soap\HelpDeskEasyVista'),
 //                    app()->make('WA\Repositories\HelpDesk\HelpDeskInterface'),
 //                    app()->make('WA\Repositories\Udl\UdlInterface'),
@@ -134,10 +134,10 @@ class FormServiceProvider extends ServiceProvider
     /**
      * @param
      */
-    protected function registerEmployeeSyncForm()
+    protected function registerUserSyncForm()
     {
-        app()->bind('WA\Service\Form\HelpDesk\EmployeeSyncForm', function () {
-            return new EmployeeSyncForm(app()->make('WA\DataLoader\HelpDesk\Loader\EmployeeLoader'),
+        app()->bind('WA\Service\Form\HelpDesk\UserSyncForm', function () {
+            return new UserSyncForm(app()->make('WA\DataLoader\HelpDesk\Loader\UserLoader'),
                 app()->make('Illuminate\Queue\QueueManager'),
                 app()->make('WA\Repositories\SyncJob\SyncJobInterface'));
         });

@@ -4,7 +4,7 @@ namespace WA\Http\Controllers\Api;
 use Auth;
 use WA\DataStore\Allocation\AllocationTransformer;
 use WA\Repositories\Allocation\AllocationInterface;
-use WA\Repositories\Employee\EmployeeInterface;
+use WA\Repositories\User\UserInterface;
 use WA\Services\ApiHandler\SQL\ApiHandler as SQLApiHandler;
 
 /**
@@ -20,20 +20,20 @@ class AllocationsController extends ApiController
     protected $allocations;
 
     /**
-     * @var EmployeeInterface
+     * @var UserInterface
      */
-    protected $employee;
+    protected $user;
 
     /**
      * AllocationsController constructor.
      *
      * @param AllocationInterface $allocations
-     * @param EmployeeInterface   $employee
+     * @param UserInterface   $user
      */
-    public function __construct(AllocationInterface $allocations, EmployeeInterface $employee)
+    public function __construct(AllocationInterface $allocations, UserInterface $user)
     {
         $this->allocations = $allocations;
-        $this->employee = $employee;
+        $this->employee = $user;
     }
 
     /**

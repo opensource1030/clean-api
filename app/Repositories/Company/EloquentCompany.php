@@ -9,7 +9,7 @@ use WA\Repositories\Carrier\CarrierDetailInterface;
 use WA\Repositories\Carrier\CarrierInterface;
 use WA\Repositories\Census\CensusInterface;
 use WA\Repositories\Device\DeviceInterface;
-use WA\Repositories\Employee\EmployeeInterface;
+use WA\Repositories\User\UserInterface;
 use WA\Repositories\Udl\UdlInterface;
 use WA\Services\Form\Company\CompanyForm;
 
@@ -22,9 +22,9 @@ class EloquentCompany extends AbstractRepository implements CompanyInterface
     protected $model;
 
     /**
-     * @var \WA\Repositories\Employee\EmployeeInterface
+     * @var \WA\Repositories\User\UserInterface
      */
-    protected $employee;
+    protected $user;
 
 
     /**
@@ -58,7 +58,7 @@ class EloquentCompany extends AbstractRepository implements CompanyInterface
 
     /**
      * @param Model                  $model
-     * @param EmployeeInterface      $employee
+     * @param UserInterface      $user
      * @param CensusInterface        $census
      * @param UdlInterface           $udl
      * @param CarrierInterface       $carrier
@@ -67,7 +67,7 @@ class EloquentCompany extends AbstractRepository implements CompanyInterface
      */
     public function __construct(
         Model $model,
-        EmployeeInterface $employee,
+        UserInterface $user,
         CensusInterface $census,
         UdlInterface $udl,
         CarrierInterface $carrier,
@@ -75,7 +75,7 @@ class EloquentCompany extends AbstractRepository implements CompanyInterface
         CarrierDetailInterface $carrierDetail
     ) {
         $this->model = $model;
-        $this->employee = $employee;
+        $this->employee = $user;
         $this->census = $census;
         $this->udl = $udl;
         $this->device = $device;
@@ -155,25 +155,25 @@ class EloquentCompany extends AbstractRepository implements CompanyInterface
      * Creates new employee for a company.
      *
      * @param int   $id of the company
-     * @param array $employee
+     * @param array $user
      *
      * @return bool true successful | false
      */
-    public function addEmployee($id, array $employee)
+    public function addUser($id, array $user)
     {
-        return $this->employee->create($employee, $employee['udlValues']);
+        return $this->employee->create($user, $user['udlValues']);
     }
 
     /**
      * Update an employee for a company.
      *
-     * @param array $employee
+     * @param array $user
      *
      * @return bool true successful | false
      */
-    public function updateEmployee(array $employee)
+    public function updateUser(array $user)
     {
-        return $this->employee->update($employee);
+        return $this->employee->update($user);
     }
 
 
@@ -201,13 +201,13 @@ class EloquentCompany extends AbstractRepository implements CompanyInterface
      *
      * @return bool
      */
-    public function syncEmployeeSupervisor($censusId, $companyId)
+    public function syncUserSupervisor($censusId, $companyId)
     {
-        $updatedEmployees = $this->employee->byCensus($censusId, $companyId);
+        $updatedUsers = $this->employee->byCensus($censusId, $companyId);
 
-        foreach ($updatedEmployees as $employee) {
+        foreach ($updatedUsers as $user) {
 
-            $synced = $this->employee->syncSupervisor($employee->email, $employee->supervisorEmail);
+            $synced = $this->employee->syncSupervisor($user->email, $user->supervisorEmail);
 
             if (!$synced) {
                 continue;
@@ -361,7 +361,7 @@ class EloquentCompany extends AbstractRepository implements CompanyInterface
     public function getUdlValuePathId($id, array $udls, $externalId = false, $creatorId, array $userInfo)
     {
         $udlValuePath = app()->make('WA\Repositories\UdlValuePath\UdlValuePathInterface');
-        $udlValuePathEmployees = app()->make('WA\Repositories\UdlValuePathEmployees\UdlValuePathEmployeesInterface');
+        $udlValuePathUsers = app()->make('WA\Repositories\UdlValuePathUsers\UdlValuePathUsersInterface');
         $udl_path_rule = $this->model->where('id', $id)->pluck('udlPathRule');
         $udl_path_stack = $this->splitUdlPathRule($udl_path_rule);
         $company_name = $udl_path_stack[0]; // first in the stack is always the company
@@ -371,7 +371,7 @@ class EloquentCompany extends AbstractRepository implements CompanyInterface
         $userFirstName = (!empty($userInfo['firstName'])) ? $userInfo['firstName'] : null;
         $userEmail = (!empty($userInfo['email'])) ? $userInfo['email'] :
             strtolower($userFirstName) . "." . strtolower($userLastName) . '@' . strtolower($company_name) . '.com';
-        $companyEmployeeId = (!empty($userInfo['companyEmployeeIdentifier'])) ? $userInfo['companyEmployeeIdentifier'] : null;
+        $companyUserId = (!empty($userInfo['companyUserIdentifier'])) ? $userInfo['companyUserIdentifier'] : null;
 
 
         //Default to company name if lookup string returns empty
@@ -404,13 +404,13 @@ class EloquentCompany extends AbstractRepository implements CompanyInterface
 
             if (empty($udl_path['id']) || (!$externalId && empty($udl_path['externalId']))) {
                 //Store creator and user info for udl path
-                $udlValuePathEmployees->create([
+                $udlValuePathUsers->create([
                     'udlValuePathId' => $udl_path['id'],
                     'creatorId' => $creatorId,
                     'userEmail' => $userEmail,
                     'userFirstName' => $userFirstName,
                     'userLastName' => $userLastName,
-                    'userEmployeeId' => $companyEmployeeId,
+                    'userUserId' => $companyUserId,
                 ]);
             }
 
@@ -535,11 +535,11 @@ class EloquentCompany extends AbstractRepository implements CompanyInterface
         return $this->census->byCompany($companyId, false, 5, false);
     }
 
-    protected function syncEmployees(Model $company, array $employees)
+    protected function syncUsers(Model $company, array $users)
     {
         try {
-            foreach ($employees as $employee) {
-                $company->save($employee);
+            foreach ($users as $user) {
+                $company->save($user);
             }
         } catch (\Exception $e) {
             Log::error('Error attach employee to company: ' . $e->getMessage());
@@ -558,12 +558,12 @@ class EloquentCompany extends AbstractRepository implements CompanyInterface
      *
      * @return int count of employee
      */
-    public function getEmployeesCount($id, $sync = true)
+    public function getUsersCount($id, $sync = true)
     {
         $company = $this->byId($id);
 
         if (!$sync) {
-            $c = $company->employees()
+            $c = $company->users()
                 ->whereNotNull('syncId')
                 ->where('externalId', null)->count();
 
@@ -909,7 +909,7 @@ class EloquentCompany extends AbstractRepository implements CompanyInterface
      *
      * @return int
      */
-    public function getIdByEmployeeEmail($email)
+    public function getIdByUserEmail($email)
     {
         $all_company_domains = $this->getDomains();
         $domain = explode('@', $email)[1];

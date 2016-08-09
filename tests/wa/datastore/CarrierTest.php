@@ -16,7 +16,7 @@ class CarrierTest extends TestCase
 
         $this->assertHasMany('lineSummaries', $this->className);
 
-        $this->assertHasMany('employees', $this->className);
+        $this->assertHasMany('users', $this->className);
 
         $this->assertHasMany('dumps', $this->className);
 

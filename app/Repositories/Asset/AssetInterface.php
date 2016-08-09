@@ -20,16 +20,16 @@ interface AssetInterface extends RepositoryInterface, CountableInterface
     public function byIdentification($identifier);
 
     /**
-     * Get the Employee attached to this asset.
+     * Get the User attached to this asset.
      *
-     * @param $employee
+     * @param $user
      * @param $page
      * @param $limit
      * @param $all
      *
      * @return Object object of the asset information
      */
-    public function byEmployee($employee, $page = 1, $limit = 10, $all = true);
+    public function byUser($user, $page = 1, $limit = 10, $all = true);
 
     /**
      * Get the Device attached to this asset.
@@ -55,12 +55,12 @@ interface AssetInterface extends RepositoryInterface, CountableInterface
     /**
      * Remove assigned employee from the asset relationship.
      *
-     * @param $employeeId
+     * @param $userId
      * @param $assetId
      *
      * @return bool
      */
-    public function detachByEmployee($employeeId, $assetId);
+    public function detachByUser($userId, $assetId);
 
     /**
      * Get all the unique active identification on the assets.

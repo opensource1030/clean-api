@@ -20,9 +20,9 @@ class Role extends EntrustRole
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function employees()
+    public function users()
     {
-        return $this->belongsToMany('WA\DataStore\Employee\Employee', 'role_user', 'role_id', 'user_id');
+        return $this->belongsToMany('WA\DataStore\User\User', 'role_user', 'role_id', 'user_id');
     }
 
     /**

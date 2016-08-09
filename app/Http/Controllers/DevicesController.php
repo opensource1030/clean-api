@@ -55,7 +55,7 @@ class DevicesController extends ApiController
     }
 
     /**
-     * Show a single employees
+     * Show a single users
      *
      * Get a payload of a single devices by it's ID
      *

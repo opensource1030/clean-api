@@ -10,7 +10,7 @@ use Alert;
 /**
  * Class Company.
  *
- * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\Employee\Employee[] $employees
+ * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\User\User[] $users
  * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\Device\Device[] $devices
  * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\Company\Company[] $carriers
  * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\Udl\Udl[] $udls
@@ -18,8 +18,8 @@ use Alert;
  * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\Rule\Rule[] $rules
  * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\Allocation\Allocation[] $allocations
  * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\Page\Page[] $pages
- * @property-read \WA\DataStore\Employee\Employee $employeesCount
- * @property-read mixed $employees_count
+ * @property-read \WA\DataStore\User\User $usersCount
+ * @property-read mixed $users_count
  * @mixin \Eloquent
  */
 class Company extends BaseDataStore
@@ -47,9 +47,9 @@ class Company extends BaseDataStore
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function employees()
+    public function users()
     {
-        return $this->hasMany('WA\DataStore\Employee\Employee', 'companyId');
+        return $this->hasMany('WA\DataStore\User\User', 'companyId');
     }
 
     /**
@@ -238,14 +238,14 @@ class Company extends BaseDataStore
 
     public function employeesCount()
     {
-        $q = $this->hasOne('WA\DataStore\Employee\Employee', 'companyId')
+        $q = $this->hasOne('WA\DataStore\User\User', 'companyId')
             ->selectRaw('companyId, count(*) as total')
             ->groupBy('companyId');
 
         return $q;
     }
 
-    public function getEmployeesCountAttribute()
+    public function getUsersCountAttribute()
     {
         if (!array_key_exists('employeesCount', $this->relations)) {
             $this->load('employeesCount');

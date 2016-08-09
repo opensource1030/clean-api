@@ -119,7 +119,7 @@ class HelperController extends AuthorizedController
 
         $this->importFile($file_path, $table_name, $columns);
 
-        $employees = DB::table($table_name)
+        $users = DB::table($table_name)
             ->where('CLEAN_ID', '')
             ->where('E_MAIL', '<>', '-')
             ->where('E_MAIL', '<>', '')
@@ -127,11 +127,11 @@ class HelperController extends AuthorizedController
             ->get(['E_MAIL', 'COMPANY_ID']);
 
         $this->setLimits();
-        foreach ($employees as $employee) {
-            $clean_id = $this->generateIds($employee->COMPANY_ID);
+        foreach ($users as $user) {
+            $clean_id = $this->generateIds($user->COMPANY_ID);
 
             DB::table($table_name)
-                ->where('E_MAIL', $employee->E_MAIL)
+                ->where('E_MAIL', $user->E_MAIL)
                 ->update(['CLEAN_ID' => $clean_id]);
         }
 
@@ -312,7 +312,7 @@ class HelperController extends AuthorizedController
         return true;
     }
 
-    public function exportAndGetUnsyncedEmployeesFile($companyId, $path = null)
+    public function exportAndGetUnsyncedUsersFile($companyId, $path = null)
     {
         $path = $path ?: storage_path('tmp/' . date('Ymdh') . '_' . $companyId . '_employees.csv');
 
@@ -321,7 +321,7 @@ class HelperController extends AuthorizedController
         $uname = getenv('DB_USERNAME');
         $db_host = getenv('DB_HOST');
 
-        $query = "mysql -h$db_host  -u $uname  -p$pwd -e 'SELECT CONCAT_WS(\",\",`identification`,`email`,`firstName`,`lastName`) `Identification, Email, FirstName, LastName` FROM employees WHERE syncID is NOT NULL AND externalId IS NULL AND companyId = $companyId' $db_name > $path";
+        $query = "mysql -h$db_host  -u $uname  -p$pwd -e 'SELECT CONCAT_WS(\",\",`identification`,`email`,`firstName`,`lastName`) `Identification, Email, FirstName, LastName` FROM users WHERE syncID is NOT NULL AND externalId IS NULL AND companyId = $companyId' $db_name > $path";
 
         // any other way, especially via PDO might fail silently.
         exec($query);

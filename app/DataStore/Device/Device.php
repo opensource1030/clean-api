@@ -25,7 +25,7 @@ use WA\DataStore\Traits\BelongsToJobStatus;
  * @method static \Illuminate\Database\Query\Builder|\WA\DataStore\Device\Device whereCreatedAt($value)
  * @method static \Illuminate\Database\Query\Builder|\WA\DataStore\Device\Device whereUpdatedAt($value)
  * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\Attribute[] $attributes
- * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\Employee\Employee[] $employees
+ * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\User\User[] $users
  * @property-read \WA\DataStore\Carrier\Carrier $carrier
  * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\Company\Company[] $companies
  * @property-read \WA\DataStore\SyncJob $sync
@@ -61,9 +61,9 @@ class Device extends MutableDataStore
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function employees()
+    public function users()
     {
-        return $this->belongsToMany('WA\DataStore\Employee\Employee', 'employee_devices', 'deviceId', 'employeeId');
+        return $this->belongsToMany('WA\DataStore\User\User', 'employee_devices', 'deviceId', 'employeeId');
     }
 
     /**

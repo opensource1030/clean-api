@@ -239,7 +239,7 @@ class CensusForm extends AbstractForm
         $summaries['currentCensus'] = $census->byId($censusId);
 
         // Get a summaries of any errors that might be in the files
-        $summaries['preProcess'] = ['employeesCount' => $this->company->getEmployeesCount($companyId)];
+        $summaries['preProcess'] = ['employeesCount' => $this->company->getUsersCount($companyId)];
 
 
         return $summaries;

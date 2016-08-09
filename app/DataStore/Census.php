@@ -10,7 +10,7 @@ use WA\DataStore\Traits\BelongsToJobStatus;
  * Class Census.
  *
  * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\Upload[] $uploads
- * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\Employee\Employee[] $employees
+ * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\User\User[] $users
  * @property-read \WA\DataStore\Company\Company $company
  * @property-read \WA\DataStore\JobStatus $status
  * @property-read \WA\DataStore\JobStatus $jobstatus
@@ -39,9 +39,9 @@ class Census extends BaseDataStore
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function employees()
+    public function users()
     {
-        return $this->hasMany('WA\DataStore\Employee\Employee', 'syncId');
+        return $this->hasMany('WA\DataStore\User\User', 'syncId');
     }
 
     /**

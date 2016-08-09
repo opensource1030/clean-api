@@ -8,7 +8,7 @@ use Log;
 use WA\Exceptions\Repositories\HelpDesk\EasyVistaFailedConnectionException;
 use WA\Repositories\Asset\AssetInterface;
 use WA\Repositories\Device\DeviceInterface;
-use WA\Repositories\Employee\EmployeeInterface;
+use WA\Repositories\User\UserInterface;
 use WA\Repositories\SyncJob\SyncJobInterface;
 
 /**
@@ -87,21 +87,21 @@ class EasyVista implements HelpDeskInterface
      * @param AssetInterface $asset
      * @param DeviceInterface $device
      * @param SyncJobinterface $sync
-     * @param EmployeeInterface $employee
+     * @param UserInterface $user
      */
     public function __construct(
         Model $model,
         AssetInterface $asset,
         DeviceInterface $device,
         SyncJobInterface $sync,
-        EmployeeInterface $employee
+        UserInterface $user
     ) {
         $this->model = $model;
         $this->asset = $asset;
         $this->device = $device;
         $this->sync = $sync;
         $this->lastSyncTime = $sync->getLastSyncTime('help-desk');
-        $this->employee = $employee;
+        $this->employee = $user;
 
 //        $this->cached['cxn'] = DB::connection('easyvista');
     }
@@ -339,7 +339,7 @@ class EasyVista implements HelpDeskInterface
      * @param $id
      * @return int $id
      */
-    public function getEmployeeExternalId($id)
+    public function getUserExternalId($id)
     {
         try {
             $cxn = $this->cached['cxn'] ?: DB::connection('easyvista');
@@ -463,9 +463,9 @@ Q;
     }
 
     /**
-     * Get all employees linked to assets
+     * Get all users linked to assets
      */
-//    public function getLinkedAssetEmployees($pending = true)
+//    public function getLinkedAssetUsers($pending = true)
 //    {
 //
 //        // only sync when there are newer links

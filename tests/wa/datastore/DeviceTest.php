@@ -22,7 +22,7 @@ class DeviceTest extends TestCase {
 
     public function testBelongsToManyRelationships()
     {
-        $this->assertBelongsToMany('employees', $this->className);
+        $this->assertBelongsToMany('users', $this->className);
 
         $this->assertBelongsToMany('assets', $this->className);
     }

@@ -14,8 +14,8 @@ class Department extends BaseDataStore
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function employees()
+    public function users()
     {
-        return $this->hasMany('WA\DataStore\Employee\Employee', 'departmentId');
+        return $this->hasMany('WA\DataStore\User\User', 'departmentId');
     }
 }

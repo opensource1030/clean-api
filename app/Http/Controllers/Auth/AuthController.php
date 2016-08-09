@@ -95,9 +95,9 @@ class AuthController extends BaseController
                 ->with('error', $this->loginForm->errors());
         }
 
-        $employee = $auth->user();
+        $user = $auth->user();
 
-        if (empty($employee)) {
+        if (empty($user)) {
             return false;
         }
 
@@ -105,10 +105,10 @@ class AuthController extends BaseController
         $defaultCurrency = $auth->user()->location->currencyIso;
 
         $api_token = md5(uniqid(rand(), true));
-        $employee->apiToken = $api_token;
-        $employee->save();
+        $user->apiToken = $api_token;
+        $user->save();
 
-        if (!empty($company = $employee->company)) {
+        if (!empty($company = $user->company)) {
 
             $dashboard = app()->make('WA\Services\Form\Dashboard\DashboardForm');
            // $dashboard->updateCompanySession(['companyId' => $company->id]);
@@ -117,7 +117,7 @@ class AuthController extends BaseController
         Session::set('defaultLang', $defaultLang);
         Session::set('nativeCurrency', $defaultCurrency);
         //Set users gravatar image as profile pic, if else generate random one.
-        $email = $employee->email;
+        $email = $user->email;
         $hash = md5(strtolower(trim($email)));
         $profileImg = "http://www.gravatar.com/avatar/" . $hash;
         Session::set('profileImg', $profileImg);
@@ -125,7 +125,7 @@ class AuthController extends BaseController
 
         if ($request->ajax()) {
 
-            return Response::json(['token' => $employee->apiToken, 'employee' => $employee->toArrry()]);
+            return Response::json(['token' => $user->apiToken, 'employee' => $user->toArrry()]);
         }
 
 
@@ -213,7 +213,7 @@ class AuthController extends BaseController
             return view('auth.redirect_legacy')->with('loginUrl', $redirect_path);
 
         } else {
-            $error_msg = trans('employees.alerts.wrong_password_reset');
+            $error_msg = trans('users.alerts.wrong_password_reset');
 
             return $redirect->to($this->resetPassword(), array('token' => $request->input('token')))
                 ->withInput()

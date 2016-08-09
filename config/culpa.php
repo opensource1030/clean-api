@@ -23,7 +23,7 @@ return array(
           * Class name of the user object to relate to
          * @var string
          */
-        'classname' => 'WA\DataStore\Employee\Employee',
+        'classname' => 'WA\DataStore\User\User',
     ),
     'default_fields' => [
         'created' => 'created_by_id',

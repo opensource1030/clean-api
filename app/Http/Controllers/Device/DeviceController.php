@@ -66,7 +66,7 @@ class DeviceController extends AuthorizedController
     {
 
         $device = $this->device->byId($id);
-        $device->load('deviceType', 'assets', 'employees', 'companies');
+        $device->load('deviceType', 'assets', 'users', 'companies');
         $carrierDevice = $device->deviceType->carrierDevice;
 
         return View::make('devices.show')
@@ -87,7 +87,7 @@ class DeviceController extends AuthorizedController
     public function edit($id)
     {
         $device = $this->device->byId($id);
-        $device->load('deviceType', 'assets', 'employees', 'companies');
+        $device->load('deviceType', 'assets', 'users', 'companies');
         $carrierDevice = $device->deviceType->carrierDevice;
 
 

@@ -3,7 +3,7 @@
 namespace WA\Services\Notification;
 
 use Log;
-use WA\Repositories\EmployeeNotifications\EmployeeNotificationsInterface;
+use WA\Repositories\UserNotifications\UserNotificationsInterface;
 
 /**
  * Class Notifier
@@ -11,9 +11,9 @@ use WA\Repositories\EmployeeNotifications\EmployeeNotificationsInterface;
  */
 class Notifier
 {
-    public function __construct(EmployeeNotificationsInterface $employeeNotifications)
+    public function __construct(UserNotificationsInterface $userNotifications)
     {
-        $this->employeeNotifications = $employeeNotifications;
+        $this->employeeNotifications = $userNotifications;
     }
 
     /**

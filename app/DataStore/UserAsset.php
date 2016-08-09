@@ -5,7 +5,7 @@ namespace WA\DataStore;
 
 use WA\DataStore\Traits\BelongsToAsset;
 use WA\DataStore\Traits\BelongsToDevice;
-use WA\DataStore\Traits\BelongsToEmployee;
+use WA\DataStore\Traits\BelongsToUser;
 
 /**
  * An Eloquent Model: 'WA\DataStore\UserAsset'.
@@ -31,5 +31,5 @@ class UserAsset extends BaseDataStore
 
     use BelongsToDevice,
         BelongsToAsset,
-        BelongsToEmployee;
+        BelongsToUser;
 }

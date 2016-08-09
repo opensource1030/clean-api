@@ -26,7 +26,7 @@ class RepositoriesServiceProviders extends ServiceProvider
         $this->registerAsset();
         $this->registerDevice();
         $this->registerDeviceType();
-        $this->registerEmployee();
+        $this->registerUser();
         $this->registerCompany();
         $this->registerCensus();
         $this->registerJobStatus();
@@ -38,9 +38,9 @@ class RepositoriesServiceProviders extends ServiceProvider
         $this->registerCarrierDetail();
         $this->registerLocation();
         $this->registerUdlValuePath();
-        $this->registerUdlValuePathEmployees();
+        $this->registerUdlValuePathUsers();
         $this->registerNotificationCategory();
-        $this->registerEmployeeNotification();
+        $this->registerUserNotification();
         $this->registerEmailNotifications();
         $this->registerRole();
         $this->registerPermission();

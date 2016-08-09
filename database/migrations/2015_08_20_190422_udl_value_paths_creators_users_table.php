@@ -19,7 +19,7 @@ class UdlValuePathsCreatorsUsersTable extends Migration
             $table->string('userEmail');
             $table->string('userFirstName');
             $table->string('userLastName');
-            $table->string('userEmployeeId');
+            $table->string('userUserId');
             $table->timestamps();
         });
     }

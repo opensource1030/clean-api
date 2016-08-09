@@ -144,17 +144,17 @@ class EloquentCensus extends AbstractRepository implements CensusInterface
     }
 
     /**
-     * Get the Employee Count by the Census ID
+     * Get the User Count by the Census ID
      *
      * @param int $id
      *
      * @return int count
      */
-    public function getEmployeeCountById($id)
+    public function getUserCountById($id)
     {
         $census = $this->byId($id);
 
-        $count = $census->employees()->select(
+        $count = $census->users()->select(
             \DB::raw('count(*) as count'))
             ->where('syncId', $id)
             ->pluck('count');

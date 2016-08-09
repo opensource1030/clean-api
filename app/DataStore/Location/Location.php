@@ -7,7 +7,7 @@ use WA\DataStore\BaseDataStore;
 /**
  * Class Location.
  *
- * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\Employee\Employee[] $employees
+ * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\User\User[] $users
  * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\Carrier\Carrier[] $carriers
  * @mixin \Eloquent
  */
@@ -20,9 +20,9 @@ class Location extends BaseDataStore
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function employees()
+    public function users()
     {
-        return $this->hasMany('WA\DataStore\Employee\Employee', 'locationId');
+        return $this->hasMany('WA\DataStore\User\User', 'locationId');
     }
 
     /**

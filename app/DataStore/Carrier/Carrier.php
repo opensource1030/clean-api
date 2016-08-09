@@ -20,7 +20,7 @@ use WA\DataStore\BaseDataStore;
  * @method static \Illuminate\Database\Query\Builder|\WA\DataStore\Carrier\Carrier whereName($value)
  * @method static \Illuminate\Database\Query\Builder|\WA\DataStore\Carrier\Carrier whereActive($value)
  * @method static \Illuminate\Database\Query\Builder|\WA\DataStore\Carrier\Carrier whereRawDataFilesCount($value)
- * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\Employee\Employee[] $employees
+ * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\User\User[] $users
  * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\Carrier\Carrier[] $companies
  * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\Asset\Asset[] $assets
  * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\Device\Device[] $devices
@@ -34,9 +34,9 @@ class Carrier extends BaseDataStore
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function employees()
+    public function users()
     {
-        return $this->hasMany('WA\DataStore\Employee\Employee', 'employeeId');
+        return $this->hasMany('WA\DataStore\User\User', 'employeeId');
     }
 
     /**

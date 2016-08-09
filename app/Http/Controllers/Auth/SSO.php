@@ -23,7 +23,7 @@ use Illuminate\Routing\Redirector as Redirect;
 
 // Call the Interface to get the info of DB.
 use WA\Repositories\Company\CompanyInterface;
-use WA\Repositories\Employee\EmployeeInterface;
+use WA\Repositories\User\UserInterface;
 
 // LOGIN use! (Error)
 use WA\Http\Controllers\Auth\AuthController;
@@ -45,14 +45,14 @@ class SSO extends BaseController
     
     // Call the Interface to get the info of DB.
     protected $company;
-    protected $employee;
+    protected $user;
     protected $loginForm;    
 
-    public function __construct(CompanyInterface $company, EmployeeInterface $employee, LoginForm $loginForm)
+    public function __construct(CompanyInterface $company, UserInterface $user, LoginForm $loginForm)
     {
         $this->loginForm = $loginForm;
         $this->company = $company;
-        $this->employee = $employee;
+        $this->employee = $user;
     }
 
     public function loginRequest($email) 
@@ -72,17 +72,17 @@ class SSO extends BaseController
         if(!$validator->fails()){
             
             // THIS EMAIL HAS COMPANY RELATED?
-            $companyId = $this->company->getIdByEmployeeEmail($email);
+            $companyId = $this->company->getIdByUserEmail($email);
             
             Log::info("COMPANY ID: ".print_r($companyId, true));
             // SSO COMPANY == NULL -> LOOK DATABASE USER.        
             if($companyId == null){
 
                 // LOOK DATABASE USER
-                $employee = $this->employee->byEmail($email);
-                //Log::info("EMPLOYEE: ".print_r($employee, true));
+                $user = $this->employee->byEmail($email);
+                //Log::info("EMPLOYEE: ".print_r($user, true));
                 // EMPLOYEE == NULL
-                if($employee == null){
+                if($user == null){
                     //SAVE OPTION EXISTS ( NO => REGISTER )
                     Log::info("LOGIN OK - REGISTER!");
                     $this->loginForm->notify('info', trans('Your user does not exist, please Register a new one.'));

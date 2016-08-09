@@ -123,7 +123,7 @@ interface HelpDeskInterface
    * @param $id
    * @return int $id
    */
-  public function getEmployeeExternalId($id);
+  public function getUserExternalId($id);
 
   /**
    * Get the count of department paths that are not currently synced with CLEAN from Easy Vista.

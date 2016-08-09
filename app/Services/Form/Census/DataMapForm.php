@@ -6,7 +6,7 @@ use Log;
 use WA\Repositories\Company\CompanyInterface;
 use WA\Repositories\DataMap\DataMapInterface;
 use WA\Repositories\DataMapTypeRepository;
-use WA\Repositories\Employee\EmployeeInterface;
+use WA\Repositories\User\UserInterface;
 use WA\Services\Form\AbstractForm;
 
 class DataMapForm extends AbstractForm
@@ -22,9 +22,9 @@ class DataMapForm extends AbstractForm
     protected $company;
 
     /**
-     * @var \WA\Repositories\Employee\EmployeeInterface
+     * @var \WA\Repositories\User\UserInterface
      */
-    protected $employee;
+    protected $user;
 
     /**
      * @var \WA\Repositories\DataMap\DataMapInterface
@@ -32,16 +32,16 @@ class DataMapForm extends AbstractForm
     protected $dataMap;
 
     /**
-     * @param EmployeeInterface $employee
+     * @param UserInterface $user
      * @param CompanyInterface  $company
      * @param DataMapInterface  $dataMap
      */
-    public function __construct(EmployeeInterface $employee, CompanyInterface $company, DataMapInterface $dataMap)
+    public function __construct(UserInterface $user, CompanyInterface $company, DataMapInterface $dataMap)
     {
         $this->parser = app()->make('WA\Parsers\ExcelCSVParser');
 
         $this->company = $company;
-        $this->employee = $employee;
+        $this->employee = $user;
         $this->dataMap = $dataMap;
     }
 
@@ -63,7 +63,7 @@ class DataMapForm extends AbstractForm
      *
      * @return array
      */
-    public function getEmployeeFields()
+    public function getUserFields()
     {
         return $this->employee->getMappableFields();
     }

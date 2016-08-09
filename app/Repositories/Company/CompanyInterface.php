@@ -25,11 +25,11 @@ interface CompanyInterface extends RepositoryInterface
      * Creates new employee for a company.
      *
      * @param int   $id of the company
-     * @param array $employee
+     * @param array $user
      *
      * @return bool true successful | false
      */
-    public function addEmployee($id, array $employee);
+    public function addUser($id, array $user);
 
     /**
      * Get the total amount of employee
@@ -39,17 +39,17 @@ interface CompanyInterface extends RepositoryInterface
      *
      * @return int count of employee
      */
-    public function getEmployeesCount($id, $sync = true);
+    public function getUsersCount($id, $sync = true);
 
 
     /**
      * Update an employee for a company.
      *
-     * @param array $employee
+     * @param array $user
      *
      * @return bool true successful | false
      */
-    public function updateEmployee(array $employee);
+    public function updateUser(array $user);
 
     /**
      * Syncs up employee on every census load for a company.
@@ -58,7 +58,7 @@ interface CompanyInterface extends RepositoryInterface
      * @param $companyId
      *
      */
-    public function syncEmployeeSupervisor($censusId, $companyId);
+    public function syncUserSupervisor($censusId, $companyId);
 
 
 
@@ -278,7 +278,7 @@ interface CompanyInterface extends RepositoryInterface
      *
      * @return int
      */
-    public function getIdByEmployeeEmail($email);
+    public function getIdByUserEmail($email);
 
     /**
      * Get company domains by the ID

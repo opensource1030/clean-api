@@ -53,13 +53,13 @@ interface CensusInterface extends RepositoryInterface
     public function byCompany($companyId, $last = false, $limit = 5, $complete = true);
 
     /**
-     * Get the Employee Count by the Census ID
+     * Get the User Count by the Census ID
      *
      * @param int $id
      *
      * @return int count
      */
-    public function getEmployeeCountById($id);
+    public function getUserCountById($id);
 
     /**
      * @param int $id

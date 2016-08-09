@@ -70,7 +70,7 @@ $factory->define(\WA\DataStore\Allocation\Allocation::class, function (\Faker\Ge
         'fees' => $faker->biasedNumberBetween(5, 15),
 
         'employeeId' => function () {
-            return factory(\WA\DataStore\Employee\Employee::class)->create()->id;
+            return factory(\WA\DataStore\User\User::class)->create()->id;
         },
 
         'companyId' => function () {

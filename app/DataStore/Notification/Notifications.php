@@ -9,7 +9,7 @@ use WA\DataStore\MutableDataStore;
 /**
  * WA\DataStore\Notification\Notifications
  *
- * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\Employee\Employee[] $employees
+ * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\User\User[] $users
  * @mixin \Eloquent
  */
 class Notifications extends MutableDataStore
@@ -31,9 +31,9 @@ class Notifications extends MutableDataStore
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function employees()
+    public function users()
     {
-        return $this->belongsToMany('WA\DataStore\Employee\Employee', 'employee_assets', 'assetId', 'employeeId');
+        return $this->belongsToMany('WA\DataStore\User\User', 'employee_assets', 'assetId', 'employeeId');
     }
 
 }

@@ -134,7 +134,7 @@ class AssetForm extends AbstractForm
      */
     public function detachAsset(array  $data)
     {
-        if (!$this->asset->detachByEmployee($data['currAssignEmployeeId'], $data['id'])) {
+        if (!$this->asset->detachByUser($data['currAssignUserId'], $data['id'])) {
             $this->notify('error', 'Could not un-assign that employee, please try again later');
 
             return false;

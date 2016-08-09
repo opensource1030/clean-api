@@ -5,8 +5,8 @@ namespace WA\Services\Notification;
 use WA\Repositories\EmailNotifications\EmailNotificationsInterface;
 use Illuminate\Mail\Mailer as Mailer;
 use WA\Repositories\NotificationCategory\NotificationCategoryInterface;
-use WA\Repositories\Employee\EmployeeInterface;
-use WA\Repositories\EmployeeNotifications\EmployeeNotificationsInterface;
+use WA\Repositories\User\UserInterface;
+use WA\Repositories\UserNotifications\UserNotificationsInterface;
 use Log;
 
 
@@ -21,14 +21,14 @@ class EmailNotification implements NotificationInterface
         Mailer $mailer,
         EmailNotificationsInterface $emailNotifications,
         NotificationCategoryInterface $notificationCategory,
-        EmployeeInterface $employeeInterface,
-        EmployeeNotificationsInterface $employeeNotifications
+        UserInterface $userInterface,
+        UserNotificationsInterface $userNotifications
     ) {
         $this->mailer = $mailer;
         $this->emailNotifications = $emailNotifications;
         $this->notificationCategory = $notificationCategory;
-        $this->employeeInterface = $employeeInterface;
-        $this->employeeNotifications = $employeeNotifications;
+        $this->employeeInterface = $userInterface;
+        $this->employeeNotifications = $userNotifications;
     }
 
     /**
