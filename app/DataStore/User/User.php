@@ -109,6 +109,8 @@ class User extends BaseDataStore implements IlluminateCanResetPasswordContract, 
 
     protected $dates = ['deleted_at'];
 
+    protected $morphClass = 'user';
+
     /**
      * Get the transformer instance.
      *
@@ -216,7 +218,7 @@ class User extends BaseDataStore implements IlluminateCanResetPasswordContract, 
      */
    public function pages()
    {
-       return $this->morphMany('WA\DataStore\User\User', 'owner');
+       return $this->morphMany('WA\DataStore\Page\Page', 'owner');
    }
 
 
