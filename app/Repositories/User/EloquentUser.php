@@ -426,7 +426,7 @@ class EloquentUser extends AbstractRepository implements UserInterface
 
         return
             $this->model->where('email', $userEmail)
-                ->first();;
+                ->first();
     }
 
     /**

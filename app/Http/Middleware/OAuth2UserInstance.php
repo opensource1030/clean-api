@@ -4,53 +4,56 @@ namespace WA\Http\Middleware;
 
 use Closure;
 use Illuminate\Contracts\Routing\ResponseFactory as Response;
+use LucaDegasperi\OAuth2Server\Authorizer;
 use WA\Repositories\User\UserInterface;
 
-class AuthToken
+class OAuth2UserInstance
 {
     /**
      * @var UserInterface
      */
     protected $user;
 
-    /**
-     * @var Response
-     */
-    protected $response;
 
     /**
-     * @param UserInterface $user
-     * @param Response          $response
+     * @var Authorizer
      */
-    public function __construct(UserInterface $user, Response $response)
+    protected $authorizer;
+
+
+    /**
+     * AuthToken constructor.
+     * @param UserInterface $user
+     * @param Authorizer $authorizer
+     */
+    public function __construct(UserInterface $user, Authorizer $authorizer)
     {
         $this->employee = $user;
-        $this->response = $response;
+        $this->authorizer = $authorizer;
     }
 
     /**
      * Handle an incoming request.
      *
      * @param \Illuminate\Http\Request $request
-     * @param \Closure                 $next
+     * @param \Closure $next
      *
      * @return mixed
      */
     public function handle($request, Closure $next)
     {
-        $token_payload = $request->header('X-Auth-Token');
-        $user = $this->employee->byToken($token_payload);
-
-        if (!$token_payload || !$user) {
-            $error = [
-                'code' => 'UNAUTHORIZED ACCESS',
-                'http_code' => 401,
-                'message' => 'You must provide a valid authentication token, see /api/token from your browser',
-            ];
-
-            return $this->response->json($error, 401);
+        if ($request->headers->has('Authorization')) {
+            $this->authorizer->setRequest($request);
+            if ($this->authorizer->validateAccessToken(false)) {
+                $request->setUserResolver(function () {
+                    return $this->user->byId($this->authorizer->getResourceOwnerId());
+                });
+                return $next($request);
+            } else {
+                abort(401, 'Invalid Access Credentials');
+            }
         }
-
-        return $next($request);
+        abort(401, 'Authentication Missing');
+        $next($request);
     }
 }

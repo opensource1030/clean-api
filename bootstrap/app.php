@@ -48,6 +48,8 @@ $app->singleton(
     WA\Console\Kernel::class
 );
 
+
+
 /*
 |--------------------------------------------------------------------------
 | Register Middleware
@@ -68,6 +70,7 @@ $app->routeMiddleware([
     'role' => 'Zizaco\Entrust\Middleware\EntrustRole',
     'permission' => 'Zizaco\Entrust\Middleware\EntrustPermission',
     'ability' => 'Zizaco\Entrust\Middleware\EntrustAbility',
+    'oauth-user-instance' => \WA\Http\Middleware\OAuth2UserInstance::class,
     'oauth' => \LucaDegasperi\OAuth2Server\Middleware\OAuthMiddleware::class,
     'oauth-client' => \LucaDegasperi\OAuth2Server\Middleware\OAuthClientOwnerMiddleware::class,
     'oauth-user' => \LucaDegasperi\OAuth2Server\Middleware\OAuthUserOwnerMiddleware::class,
@@ -90,6 +93,7 @@ $app->routeMiddleware([
 // $app->register(WA\Providers\EventServiceProvider::class);
 $app->register(Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class);
 $app->register(\Culpa\CulpaServiceProvider::class);
+$app->register(\Dingo\Api\Provider\LumenServiceProvider::class);
 $app->register(LucaDegasperi\OAuth2Server\OAuth2ServerServiceProvider::class);
 $app->register(LucaDegasperi\OAuth2Server\Storage\FluentStorageServiceProvider::class);
 $app->register(\WA\Providers\RepositoriesServiceProviders::class);
@@ -97,6 +101,10 @@ $app->register(\WA\Providers\AppServiceProvider::class);
 $app->register(\Illuminate\Auth\Passwords\PasswordResetServiceProvider::class);
 $app->register(\Illuminate\Mail\MailServiceProvider::class);
 $app->register(\WA\Providers\FormServiceProvider::class);
+$app->register(\WA\Providers\EventServiceProvider::class);
+$app->register('Dingo\Api\Provider\LumenServiceProvider');
+$app->register(\WA\Providers\FractalServiceProvider::class);
+$app->register(\WA\Providers\OAuthServiceProvider::class);
 
 /*
 |--------------------------------------------------------------------------
@@ -104,11 +112,15 @@ $app->register(\WA\Providers\FormServiceProvider::class);
 |--------------------------------------------------------------------------
 |
 */
+$app->configure('app');
+$app->configure('api');
 $app->configure('services');
 $app->configure('mail');
+
+// @TODOSAML2: saml2_settings must be loaded before its serviceProvider
 $app->configure('saml2_settings');
 
-
+$app->register(\WA\Providers\Saml2ServiceProvider::class);
 /*
 |--------------------------------------------------------------------------
 | Load The Application Routes
@@ -135,5 +147,7 @@ class_alias('Illuminate\Support\Facades\Response', 'Response');
 class_alias('Illuminate\Support\Facades\Config', 'Config');
 class_alias(\LucaDegasperi\OAuth2Server\Facades\Authorizer::class, 'Authorizer');
 class_alias(\Webpatser\Uuid\Uuid::class, 'Uuid');
+class_alias(\Aacotroneo\Saml2\Facades\Saml2Auth::class, 'Saml2');
+class_alias('Illuminate\Support\Facades\Request', 'Request');
 
 return $app;

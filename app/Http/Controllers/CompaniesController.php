@@ -1,212 +1,100 @@
 <?php
 
-namespace WA\Http\Controllers;
+namespace WA\Http\Controllers\Api;
 
-use App;
-use Illuminate\Support\Facades\Input;
-use Illuminate\Support\Facades\Redirect;
-use View;
-use WA\Services\Form\Company\CompanyForm;
-use Illuminate\Session\SessionManager as Session;
-use WA\Repositories\PoolGroupRepositoryInterface;
-use WA\Repositories\CarrierRepositoryInterface;
+use Dingo\Api\Http\Response;
+use WA\DataStore\Company\CompanyTransformer;
+use WA\Repositories\Carrier\CarrierInterface;
+use WA\Repositories\Company\CompanyInterface;
+use WA\Repositories\Udl\UdlInterface;
+use Cartalyst\DataGrid\Laravel\Facades\DataGrid;
 
 /**
  * Class CompaniesController.
  */
-class CompaniesController extends BaseController
+class CompaniesController extends ApiController
 {
-    protected $companyForm;
+    /**
+     * @var CompanyInterface
+     */
+    protected $company;
 
     /**
-     * @param CompanyForm $companyForm
-     * @param Session $session
-     * @param PoolGroupRepositoryInterface $poolGroups
-     * @param  CarrierRepositoryInterface $carriers
+     * @var CarrierInterface
      */
-    public function __construct(
-        CompanyForm $companyForm,
-        Session $session,
-        PoolGroupRepositoryInterface $poolGroups,
-        CarrierRepositoryInterface $carriers)
+    protected $carrier;
+
+    /**
+     * @var UdlInterface
+     */
+    protected $udl;
+
+
+    /**
+     * @param CompanyInterface $company
+     * @param CarrierInterface $carrier
+     * @param UdlInterface     $udl
+     */
+    public function __construct(CompanyInterface $company, CarrierInterface $carrier, UdlInterface $udl)
     {
-        $this->companyForm = $companyForm;
-        $this->session = $session;
-        $this->poolGroups = $poolGroups;
-        $this->carriers = $carriers;
+
+        $this->company = $company;
+        $this->carrier = $carrier;
+        $this->udl = $udl;
+
     }
 
+    /**
+     * @return Response
+     */
     public function index()
     {
-       // App::abort(404, 'Unknown URL');
-        return View::make('companies.all');
+        $companies  = $this->company->byPage();
+
+        return $this->response()->paginator($companies, new CompanyTransformer(),['key' => 'companies']);
+
     }
 
     /**
-     * Show the summary of a specific company.
-     *
      * @param $id
+     *
+     * @return Response
      */
     public function show($id)
     {
-        $company = $this->companyForm->getCompanyById($id)->toArray();
-        $udls = $this->companyForm->getCompanyUdls($id);
+        $company = $this->company->byId($id);
 
-        $data = array_merge($this->data, $company, ['udls' => $udls]);
 
-        return View::make('companies.show', $data);
+        return $this->response()->item($company, new CompanyTransformer(),['key' => 'companies']);
+
     }
 
-
     /**
-     * Show details of a udl.
+     * Handles the datatables, this needs to be in a specific format to make it compatible
+     * with the DataTale
+     * ! overrides the default (dingo/api)
+     * Returns all companies
      *
-     * @param int    $id
-     * @param string $udlName
+     * @return DataGrid
      */
-    public function showUdl($id, $udlName)
+    public function datatable()
     {
-        $udls = $this->companyForm->getUdlByName($id, $udlName);
-        $data = array_merge($this->data, $udls);
+        $companies = $this->company->getAll(false);
 
-        return View::make('companies.udl', $data);
-    }
-
-
-    /**
-     * Create a New Company
-     */
-    public function create()
-    {
-        $currentCompany = $this->session->get('clean.company');
-        $poolGroups = $this->poolGroups->getAll();
-        $carriers =  $this->carriers->getActive();
-
-        $data = array_merge(
-            $this->data,
-            [
-                'currentCompany' => $currentCompany,
-                'poolGroups' => $poolGroups,
-                'carriers' => $carriers,
-            ]);
-
-        return View::make('companies.new', $data);
-    }
-
-
-    /**
-     * Save Company
-     * @return mixed
-     */
-    public function store()
-    {
-        $data['name'] = trim(Input::get('name'));
-        $data['label']= !empty(Input::get('label')) ? trim(Input::get('label')) : trim(Input::get('name'));
-        $data['shortName'] = !empty(Input::get('shortName')) ? Input::get('shortName') : "";
-        $data['rawDataDirectoryPath'] =  !empty(Input::get('rawDataDirectoryPath')) ? Input::get('rawDataDirectoryPath') : "";
-        $data['active'] =  (int)((bool)Input::get('active'));
-        $data['isCensus'] = (int)((bool)Input::get('isCensus'));
-        $data['carrierId'] =  !empty(Input::get('carrierId')) ? Input::get('carrierId') : 0;
-        $data['carrierBAN'] =  !empty(Input::get('carrierBAN')) ? Input::get('carrierBAN') : null;
-        $data['carrierPAN'] =  !empty(Input::get('carrierPAN')) ? Input::get('carrierPAN') : null;
-        $data['poolGroupId'] =  !empty(Input::get('poolGroupId')) ? Input::get('poolGroupId') : 0;
-        $data['poolBAN'] =  !empty(Input::get('poolBAN')) ? Input::get('poolBAN') : null;
-        $data['baseCost'] =  !empty(Input::get('baseCost')) ? Input::get('baseCost') : -1;
-
-
-
-        if(!$this->companyForm->create($data)) {
-            $this->data['error'] = $this->companyForm->errors();
-            return Redirect::back()->withInput()
-                ->withInput(Input::except('carrierId', 'carrierBAN', 'carrierPAN', 'poolGroupId', 'poolBAN', 'baseCost' ))
-                ->withErrors($this->companyForm->errors());
-        }
-
-        $this->data['company'] = $this->companyForm->getCompanyByName($data['name']);
-        $companyId = $this->data['company']['id'];
-
-        return redirect("companies/$companyId")->with($this->data);
-    }
-
-    /**
-     * Delete Company
-     * @param CompanyId     @id
-     */
-    public function deleteCompany($id){
-
-        if(!$this->companyForm->delete($id)){
-            return Redirect::back();
-        }
-    }
-
-    /**
-     * @param $id
-     *
-     * @return mixed
-     *
-     * @throws \Exception
-     */
-    public function edit($id)
-    {
-        $company = $this->companyForm->getCompanyById($id);
-
-        $pools = $this->companyForm->getCompanyPools($id);
-        $poolGroups = $this->poolGroups->getAll();
-        $carriers =  $this->carriers->getActive();
-        $company_carriers = $this->companyForm->getCompanyCarriers($id);
-
-
-        $data =
-            [
-                'company' => $company,
-                'poolGroups' => $poolGroups,
-                'carriers' => $carriers,
-                'pools' => $pools,
-                'company_carriers' => $company_carriers,
-            ];
-
-
-
-        return View::make('companies.edit')->with($data);
-
-    }
-
-    /**
-     * @param $id
-     *
-     * @return mixed
-     */
-    public function update($id)
-    {
-        $data =[
-            'id' => $id,
-            'name' =>  trim(Input::get('name')),
-            'label' =>  trim(Input::get('label')),
-            'shortName' =>  trim(Input::get('shortName')),
-            'active'=> (int)((bool)Input::get('active')),
-            'isCensus'=> (int)((bool)Input::get('isCensus')),
-            'poolGroupId' =>  Input::get('poolGroupId'),
-            'baseCost' =>  Input::get('baseCost'),
-            'poolBAN' => Input::get('poolBAN'),
-            'carrierId' => Input::get('carrierId'),
-            'carrierBAN' =>  Input::get('carrierBAN'),
-            'carrierPAN' =>  Input::get('carrierPAN')
+        $columns = [
+            'id',
+            'name',
+            'label',
+            'shortName',
+            'active',
         ];
 
-        $updatedCompany = $this->companyForm->update($data);
+        $options = [
+            'throttle' => $this->defaultQueryParams['_perPage'],
+        ];
 
-        if (!$updatedCompany) {
-            $this->data['errors'] = $this->companyForm->errors();
-           // $this->data['company'] = $this->companyForm->show($data['id']);
-
-            return $this->edit($data['id']);
-        }
-
-        $this->data['company'] = $updatedCompany;
-
-        return Redirect::route('companies.edit', ['id' => $data['id']]);
-
+        $response = DataGrid::make($companies, $columns, $options);
+        return $response;
     }
-
 
 }
