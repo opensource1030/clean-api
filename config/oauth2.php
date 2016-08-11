@@ -37,7 +37,7 @@ return [
         'sso' => [
             'class' => 'WA\Auth\SSOGrant',
             'access_token_ttl' => 604800,
-            'callback' => 'WA\Http\Controllers\Api\AuthController@SSOGrantVerify'
+            'callback' => 'WA\Http\Controllers\Auth\AuthController@SSOGrantVerify'
         ]
     ],
 

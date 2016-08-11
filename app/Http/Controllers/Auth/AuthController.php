@@ -50,4 +50,15 @@ class AuthController
 
         return false;
     }
+
+    public function SSOGrantVerify($uuid)
+    {
+        $laravelUser = Cache::get('saml2user_'.$uuid);
+
+        if (!isset($laravelUser)) {
+            return false;
+        } else {
+            return $laravelUser['attributes']['id'];
+        }
+    }
 }

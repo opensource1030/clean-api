@@ -83,7 +83,7 @@ class SSO extends BaseController
                 
                 // EMPLOYEE == NULL
                 if($user == null){
-                    // Register User Option
+                    //echo 'REGISTER USER OPTION';
                     //URL : http://clean.local/doSSO/dev@algo.com
 
                     response()
@@ -92,7 +92,7 @@ class SSO extends BaseController
 
                 // EMPLOYEE != NULL
                 } else {
-                    // Enter Password Option
+                    //echo 'ENTER PASSWORD OPTION';
                     // URL : http://clean.local/doSSO/dariana.donnelly@example.com
 
                     response()
@@ -102,11 +102,9 @@ class SSO extends BaseController
 
             // SSO COMPANY == NUMBER -> CONTINUE DOSSO
             } else {
-                // Single Sign On Option
+                //echo 'SINGLE SIGN ON OPTION';
                 // Microsoft : http://clean.local/doSSO/dev@wirelessanalytics.com
                 // Facebook : http://clean.local/doSSO/dev@sharkninja.com
-
-                // @TODOSAML2: Call to undefined method Redis::connection() ERROR.
 
                 Cache::put('saml2_idcompany_'.$email, $companyId, 15);
                 //var_dump('saml2_idcompany: '.Cache::get('saml2_idcompany_'.$email));
@@ -115,7 +113,7 @@ class SSO extends BaseController
             }
         // IF VALIDATOR FAILS => Error Response!
         } else {
-            // Invalid Email Option
+            //echo 'INVALID EMAIL OPTION';
             // URL : http://clean.local/doSSO/dev
 
             response()

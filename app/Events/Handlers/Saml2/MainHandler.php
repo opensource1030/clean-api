@@ -62,7 +62,6 @@ class MainHandler extends BaseHandler
         $uuid = $path_parts[count($path_parts)-1];         
 
         // Get Saml2 User from $Event.
-        $this->soyUnTramposo($uuid);
         $user = $event->getSaml2User();
 
         // Get the User Data Info from the Saml2 User.
@@ -75,8 +74,6 @@ class MainHandler extends BaseHandler
         // Id Company from Request.
         $idCompany = app('request')->get('idCompany');
 
-        //Log::info("USERDATA: ".print_r($userData, true));
-
         // Get IDP user Email from User Data Info
         $email = $this->getEmailFromUserData($userData, $idCompany);
 
@@ -84,7 +81,7 @@ class MainHandler extends BaseHandler
             $laravelUser = User::where('email',$email) -> first();
             if (!isset($laravelUser)) {
                 $user = $this->parseRequestedInfoFromIdp($userData, $idCompany);
-                //Log::info("USER WA/Events/Handlers/Saml2/MainHandler: ".print_r($user, true));
+                // @TODOSAML2: Call to undefined method Redis::connection() ERROR.
                 $this->createUserSSO($user);
             }
             Cache::put('saml2user_'.$uuid, $laravelUser, 15);
@@ -101,9 +98,6 @@ class MainHandler extends BaseHandler
     }
 
     private function parseRequestedInfoFromIdp($userData, $idCompany){
-
-        // Generate Random Password
-        //$helper = app()->make('WA\Http\Controllers\Admin\HelperController');
 
         // The today's date.
         $carbon = Carbon::today();
@@ -217,18 +211,6 @@ class MainHandler extends BaseHandler
         return redirect("users/$userId")->with($data);
     }
 
-    private function getEmailFromUserData($userData, $idCompany){
-
-        // FACEBOOK VERSION
-        if($idCompany == 21){
-            return "dev@sharkninja.com";
-            //return $userData['attributes']['facebook_user'][0];
-        }
-
-        // DEFAULT VERSION (MICROSOFT)
-        return $userData['attributes'][USER_EMAIL][0];
-    }
-
     private function createUserFacebookTest($userData){
 
         // The today's date.
@@ -272,11 +254,15 @@ class MainHandler extends BaseHandler
                     );
     }
 
-    private function soyUnTramposo($uuid){
-        $laravelUser = User::where('email','dariana.donnelly@example.com') -> first();
-        echo $laravelUser;
-        echo 'uuid: '.$uuid;
-        Cache::put('saml2user_'.$uuid, $laravelUser, 15);
-        //echo Cache::get('saml2user_'.$uuid);
+    private function getEmailFromUserData($userData, $idCompany){
+
+        // FACEBOOK VERSION
+        if($idCompany == 21){
+            return "dariana.donnelly@example.com";
+            //return $userData['attributes']['facebook_user'][0];
+        }
+
+        // DEFAULT VERSION (MICROSOFT)
+        return $userData['attributes'][USER_EMAIL][0];
     }
 }
