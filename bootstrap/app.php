@@ -48,6 +48,8 @@ $app->singleton(
     WA\Console\Kernel::class
 );
 
+
+
 /*
 |--------------------------------------------------------------------------
 | Register Middleware
@@ -99,6 +101,8 @@ $app->register(\WA\Providers\AppServiceProvider::class);
 $app->register(\Illuminate\Auth\Passwords\PasswordResetServiceProvider::class);
 $app->register(\Illuminate\Mail\MailServiceProvider::class);
 $app->register(\WA\Providers\FormServiceProvider::class);
+$app->register(\WA\Providers\EventServiceProvider::class);
+$app->register('Dingo\Api\Provider\LumenServiceProvider');
 $app->register(\WA\Providers\FractalServiceProvider::class);
 $app->register(\WA\Providers\OAuthServiceProvider::class);
 
@@ -112,9 +116,11 @@ $app->configure('app');
 $app->configure('api');
 $app->configure('services');
 $app->configure('mail');
+
+// @TODOSAML2: saml2_settings must be loaded before its serviceProvider
 $app->configure('saml2_settings');
 
-
+$app->register(\WA\Providers\Saml2ServiceProvider::class);
 /*
 |--------------------------------------------------------------------------
 | Load The Application Routes
@@ -141,5 +147,7 @@ class_alias('Illuminate\Support\Facades\Response', 'Response');
 class_alias('Illuminate\Support\Facades\Config', 'Config');
 class_alias(\LucaDegasperi\OAuth2Server\Facades\Authorizer::class, 'Authorizer');
 class_alias(\Webpatser\Uuid\Uuid::class, 'Uuid');
+class_alias(\Aacotroneo\Saml2\Facades\Saml2Auth::class, 'Saml2');
+class_alias('Illuminate\Support\Facades\Request', 'Request');
 
 return $app;

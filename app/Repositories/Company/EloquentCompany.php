@@ -894,9 +894,7 @@ class EloquentCompany extends AbstractRepository implements CompanyInterface
         if (!empty($companyId)) {
             $model->where($companies_table . '.id', $companyId);
         }
-
         $sql = $model->get($fields);
-
         return $sql;
     }
 
