@@ -32,9 +32,9 @@ class PageTransformer extends TransformerAbstract
 
             'active' => $page->active,
 
-            'role_id' => $page->roleId,
+            'owner_type' => $page->owner_type,
 
-            'company_id' => $page->companyId,
+            'owner_id' => $page->owner_id,
         ];
     }
 }

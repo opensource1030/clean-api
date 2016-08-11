@@ -102,12 +102,15 @@ class Company extends BaseDataStore
         return $this->hasMany('WA\DataStore\Allocation\Allocation', 'companyId');
     }
 
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+   /**
+     * Get all pages that belong to a company
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
      */
     public function pages()
     {
-        return $this->hasMany('WA\DataStore\Page\Page', 'companyId');
+        $pages = $this->morphMany('WA\DataStore\Page\Page', 'owner');
+        return $pages;
     }
 
     /**

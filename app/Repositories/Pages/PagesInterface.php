@@ -35,4 +35,22 @@ interface PagesInterface extends RepositoryInterface
      */
     public function getAllPages();
 
+    /**
+     * Create a new page
+     *
+     * @param array $data
+     * @return bool|static
+     */
+    public function create(array $data);
+
+    /**
+     * Delete a Page.
+     *
+     * @param int  $id
+     * @param bool $soft true soft deletes
+     *
+     * @return bool
+     */
+    public function delete($id, $soft = true);
+
 }

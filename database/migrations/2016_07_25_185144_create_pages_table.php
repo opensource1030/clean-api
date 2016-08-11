@@ -24,8 +24,8 @@ class CreatePagesTable extends Migration
             $table->string('section');
             $table->text('content');
             $table->boolean('active')->default(0);
-            $table->integer('roleId');
-            $table->integer('companyId');
+            $table->integer('owner_id');
+            $table->integer('owner_type');
             $table->nullableTimestamps();
 
 

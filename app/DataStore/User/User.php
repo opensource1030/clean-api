@@ -209,13 +209,15 @@ class User extends BaseDataStore implements IlluminateCanResetPasswordContract, 
         return $this->hasMany('WA\DataStore\Allocation\Allocation', 'employeeId');
     }
 
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     /**
+     * Get all the employee's pages
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
      */
-    public function pages()
-    {
-        return $this->belongsToMany('WA\DataStore\Page\Page', 'employees_pages', 'employeeId', 'pageId');
-    }
+   public function pages()
+   {
+       return $this->morphMany('WA\DataStore\User\User', 'owner');
+   }
 
 
     /**
