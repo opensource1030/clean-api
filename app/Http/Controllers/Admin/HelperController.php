@@ -220,8 +220,8 @@ class HelperController extends AuthorizedController
      */
     public function generateIds($companyId = null)
     {
-        $company_id = $companyId ?: Input::get('companyId');
-        $row_count = (int)Input::get('rowCount') ?: 1;
+        $company_id = $companyId ?: app('request')->get('companyId');
+        $row_count = app('request')->get('rowCount') ?: 1;
 
         if (!is_numeric($row_count)) {
             throw new \Exception('You Must put in a number');

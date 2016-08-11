@@ -33,6 +33,12 @@ return [
             'access_token_ttl' => 604800,
             'callback' => 'WA\Http\Controllers\Api\AuthTokenController@verify'
         ]
+        , 
+        'sso' => [
+            'class' => 'WA\Auth\SSOGrant',
+            'access_token_ttl' => 604800,
+            'callback' => 'WA\Http\Controllers\Api\AuthTokenController@verifySSO'
+        ]
     ],
 
     /*

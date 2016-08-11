@@ -46,5 +46,6 @@ class RepositoriesServiceProviders extends ServiceProvider
         $this->registerPermission();
         $this->registerAllocation();
         $this->registerPages();
+        $this->registerHelpDesk();
     }
 }

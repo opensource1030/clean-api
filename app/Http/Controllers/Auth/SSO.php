@@ -30,8 +30,9 @@ use WA\Http\Controllers\Auth\AuthController;
 use WA\Services\Form\Login\LoginForm;
 use Illuminate\Http\Request as Request;
 
-use Session;
 use Validator;
+
+use Event;
 
 /**
  * Class SSO.
@@ -48,20 +49,21 @@ class SSO extends BaseController
     protected $user;
     protected $loginForm;    
 
-    public function __construct(CompanyInterface $company, UserInterface $user, LoginForm $loginForm)
+    // Lumen Request needed by Session.
+    protected $request;
+
+    public function __construct(CompanyInterface $company, UserInterface $user, LoginForm $loginForm, Request $request)
     {
         $this->loginForm = $loginForm;
         $this->company = $company;
-        $this->employee = $user;
+        $this->user = $user;
+        $this->request = $request;
     }
 
     public function loginRequest($email) 
     {
         // Save email in Session to show it to the user.
         $email = trim($email);
-        Session::set('email', $email);
-
-        Log::info("LOGIN REQUEST: ".print_r($email, true));
 
         $emailArray['email'] = $email;
         $validator = Validator::make($emailArray, [ 
@@ -70,60 +72,71 @@ class SSO extends BaseController
 
         // IF VALIDATOR OK => EMAIL OK!
         if(!$validator->fails()){
-            
             // THIS EMAIL HAS COMPANY RELATED?
             $companyId = $this->company->getIdByUserEmail($email);
-            
-            Log::info("COMPANY ID: ".print_r($companyId, true));
+
             // SSO COMPANY == NULL -> LOOK DATABASE USER.        
-            if($companyId == null){
+            if($companyId == 0){
 
                 // LOOK DATABASE USER
-                $user = $this->employee->byEmail($email);
-                //Log::info("EMPLOYEE: ".print_r($user, true));
+                $user = $this->user->byEmail($email);
+                
                 // EMPLOYEE == NULL
                 if($user == null){
-                    //SAVE OPTION EXISTS ( NO => REGISTER )
-                    Log::info("LOGIN OK - REGISTER!");
-                    $this->loginForm->notify('info', trans('Your user does not exist, please Register a new one.'));
-                    Session::set('employee_exists', 'no');
+                    // Register User Option
+                    //URL : http://clean.local/doSSO/dev@algo.com
+
+                    response()
+                        ->json(['error' => 'Required Register', 'message' => 'Please, register a new user.'])
+                        ->setCallback($this->request->input($email));
 
                 // EMPLOYEE != NULL
                 } else {
-                    //SAVE OPTION EXISTS ( YES => LOGIN )
-                    Log::info("LOGIN OK - PASSWORD!");
-                    $this->loginForm->notify('info', trans('Please, enter your password.'));
-                    Session::set('employee_exists', 'yes');
-                }
+                    // Enter Password Option
+                    // URL : http://clean.local/doSSO/dariana.donnelly@example.com
 
-                // REDIRECT TO LOGIN.                
-                return redirect('/login');
+                    response()
+                        ->json(['error' => 'Required Password', 'message' => 'Please, enter your password.'])
+                        ->setCallback($this->request->input($email));
+                }
 
             // SSO COMPANY == NUMBER -> CONTINUE DOSSO
             } else {
-                Log::info("LOGIN OK - DOSSO!");
-                Session::set('saml2_idcompany', $companyId);
+                // Single Sign On Option
+                // Microsoft : http://clean.local/doSSO/dev@wirelessanalytics.com
+                // Facebook : http://clean.local/doSSO/dev@sharkninja.com
+
+                // @TODOSAML2: Call to undefined method Redis::connection() ERROR.
+
+                Cache::put('saml2_idcompany_'.$email, $companyId, 15);
+                //var_dump('saml2_idcompany: '.Cache::get('saml2_idcompany_'.$email));
                 $uuid = Uuid::generate();
                 Saml2::login("/doSSO/login/".$uuid);
             }
-        // IF VALIDATOR FAILS => Redirect to login with error!
+        // IF VALIDATOR FAILS => Error Response!
         } else {
-            Log::info("LOGIN FAILS - NO VALID!");
-            $this->loginForm->notify('error', trans('Please, input a valid email'));
-            return redirect('/login');
+            // Invalid Email Option
+            // URL : http://clean.local/doSSO/dev
+
+            response()
+                ->json(['error' => 'Required Email', 'message' => 'Please, enter a valid Email Address.'])
+                ->setCallback($this->request->input($email));
         }        
     }
 
     public function loginUser($uuid) 
-    {                
+    {
         $laravelUser = Cache::get('saml2user_'.$uuid);
         if (!isset($laravelUser)) {
-            //Log::info("NO LARAVEL USER!");
-            $this->loginForm->notify('error', trans('The user cached is not available now, please try again later'));
-            return redirect(config('saml2_settings.errorRoute'));  
+            echo (' ERROR: The user login is not available now, please try again later');
+            response()
+                ->json(['error' => 'Required User', 'message' => 'Please, user is not available now, try again later.'])
+                ->setCallback($this->request->input($email));
+        } else {
+            echo ('SUCCESS UUID = '.$uuid);
+            echo ('<br>');
+            echo ('Laravel User: ');
+            var_dump($laravelUser);
         }
-        //Log::info("LARAVEL USER!");
-        Auth::login($laravelUser);
-        return redirect(config('saml2_settings.loginRoute'));  
     }
 }

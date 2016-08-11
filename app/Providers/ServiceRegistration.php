@@ -52,6 +52,10 @@ use WA\Repositories\Role\EloquentRole;
 use WA\Repositories\Permission\EloquentPermission;
 use WA\Repositories\Allocation\EloquentAllocation;
 
+use WA\Repositories\HelpDesk\EasyVista;
+use WA\Repositories\HelpDesk\HelpDeskCacheDecorator;
+use WA\DataStore\EasyVistaHelpDesk;
+
 
 /**
  * Class ServiceRegistration.
@@ -372,6 +376,32 @@ trait ServiceRegistration
             function () {
                 return new EloquentPages(new Page());
             });
+    }
+
+    /**
+     * @param Application $app
+     */
+    public function registerHelpDesk()
+    {
+
+        app()->bind(
+            'WA\Repositories\HelpDesk\HelpDeskInterface',
+            function () {
+                $helpdesk = new EasyVista(
+                    new EasyVistaHelpDesk,
+                    app()->make('WA\Repositories\Asset\AssetInterface'),
+                    app()->make('WA\Repositories\Device\DeviceInterface'),
+                    app()->make('WA\Repositories\SyncJob\SyncJobInterface'),
+                    app()->make('WA\Repositories\Employee\EmployeeInterface')
+
+                );
+
+                return new HelpDeskCacheDecorator($helpdesk,
+                    new Cache(app()->make('cache'), 'helpdesk', 10));
+            }
+
+        );
+
     }
 
 }

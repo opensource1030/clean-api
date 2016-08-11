@@ -13,8 +13,6 @@ use Illuminate\Http\Request;
 use WA\Http\Controllers\BaseController;
 use WA\Services\Form\User\CompanyUserForm;
 
-use Session;
-
 /**
  * Class CompanyUserController
  *
@@ -52,7 +50,6 @@ class CompanyUserController extends BaseController
              *   Session employee_exists is used to control the login flow.
              *   This will make the New registration form to be shown.
              */
-            Session::set('employee_exists', 'no');
             return redirect()->back()
                 ->with(['company_new' => true])
                 ->withInput();

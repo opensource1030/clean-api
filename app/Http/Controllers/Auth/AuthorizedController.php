@@ -30,8 +30,10 @@ class AuthorizedController extends BaseController
      */
     public function __construct()
     {
+        /*
         $this->currentCompany = Session::get('clean.company');
         $this->user = Auth::user();
+        */
     }
 
 }

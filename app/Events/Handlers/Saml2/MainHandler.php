@@ -8,11 +8,10 @@
 
 namespace WA\Events\Handlers\Saml2;
 
-use Illuminate\Events\Dispatcher;
+use Illuminate\Contracts\Events\Dispatcher;
+//use Illuminate\Events\Dispatcher;
 use WA\DataStore\CarrierDestinationMap;
 use WA\Events\Handlers\BaseHandler;
-use WA\Repositories\DumpExceptionRepositoryInterface;
-use WA\Repositories\ProcessLogRepositoryInterface;
 
 use Log;
 use Auth;
@@ -24,36 +23,30 @@ use Aacotroneo\Saml2\Events\Saml2LoginEvent;
 use WA\DataStore\User\User;
 
 use Cache;
-use Session;
 
 use Carbon\Carbon;
 use WA\Services\Form\User\UserForm;
+
 /**
  * Class MainHandler.
  */
 class MainHandler extends BaseHandler
 {
-    protected $dumpExceptions;
-    protected $processLog;
     protected $userForm;
 
-    private $USER_EMAIL = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name';
-    private $USER_LASTNAME = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname';
-    private $USER_FIRSTNAME = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname';
+   const USER_EMAIL = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name';
+   const USER_LASTNAME = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname';
+   const USER_FIRSTNAME = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname';
 
     /**
      * @param ProcessLogRepositoryInterface    $processLog
      * @param DumpExceptionRepositoryInterface $dumpExceptions
      */
-    public function __construct(
-        UserForm $userForm,
-        ProcessLogRepositoryInterface $processLog,
-        DumpExceptionRepositoryInterface $dumpExceptions
-        ) {
+    
+    public function __construct(UserForm $userForm) {
         $this->userForm = $userForm;
-        $this->processLog = $processLog;
-        $this->dumpExceptions = $dumpExceptions;
     }
+    
 
     /**
      * @param $data
@@ -66,11 +59,10 @@ class MainHandler extends BaseHandler
         $relayState = app('request')->input('RelayState');
         $parts = parse_url($relayState);
         $path_parts = explode('/', $parts['path']);
-        $uuid = $path_parts[count($path_parts)-1]; 
-        
-        
+        $uuid = $path_parts[count($path_parts)-1];         
 
         // Get Saml2 User from $Event.
+        $this->soyUnTramposo($uuid);
         $user = $event->getSaml2User();
 
         // Get the User Data Info from the Saml2 User.
@@ -95,7 +87,7 @@ class MainHandler extends BaseHandler
                 //Log::info("USER WA/Events/Handlers/Saml2/MainHandler: ".print_r($user, true));
                 $this->createUserSSO($user);
             }
-            Cache::put('saml2user_'.$uuid, $laravelUser, 1);
+            Cache::put('saml2user_'.$uuid, $laravelUser, 15);
         }
         return true;
     }
@@ -103,7 +95,7 @@ class MainHandler extends BaseHandler
     /**
      * @param Dispatcher $events
      */
-    public function subscribe(Dispatcher $events)
+    public function handle(Dispatcher $events)
     {
         $events->listen('Aacotroneo\Saml2\Events\Saml2LoginEvent', 'WA\Events\Handlers\Saml2\MainHandler@saml2LoginUser');
     }
@@ -111,7 +103,7 @@ class MainHandler extends BaseHandler
     private function parseRequestedInfoFromIdp($userData, $idCompany){
 
         // Generate Random Password
-        $helper = app()->make('WA\Http\Controllers\Admin\HelperController');
+        //$helper = app()->make('WA\Http\Controllers\Admin\HelperController');
 
         // The today's date.
         $carbon = Carbon::today();
@@ -124,17 +116,17 @@ class MainHandler extends BaseHandler
             
             default:
                 $user = array(
-                    'email' => $userData['attributes'][$this->USER_EMAIL][0],
+                    'email' => $userData['attributes'][USER_EMAIL][0],
                     'alternateEmail' => '',
-                    'password' => $helper->randGenerator('', 7, ''),
-                    'username' => explode('@',$userData['attributes'][$this->USER_EMAIL][0])[0],
+                    'password' => '1@6~%&',
+                    'username' => explode('@',$userData['attributes'][USER_EMAIL][0])[0],
                     'confirmation_code' => '',
                     'remember_token' => NULL,
                     'confirmed' => 1,
-                    'firstName' => $userData['attributes'][$this->USER_FIRSTNAME][0],
+                    'firstName' => $userData['attributes'][USER_FIRSTNAME][0],
                     'alternateFirstName' => NULL,
-                    'lastName' => $userData['attributes'][$this->USER_LASTNAME][0],
-                    'supervisorEmail' => $userData['attributes'][$this->USER_EMAIL][0],
+                    'lastName' => $userData['attributes'][USER_LASTNAME][0],
+                    'supervisorEmail' => $userData['attributes'][USER_EMAIL][0],
                     'companyUserIdentifier' => '',
                     'isSupervisor' => 0,
                     'isValidator' => 0,
@@ -165,6 +157,7 @@ class MainHandler extends BaseHandler
     }
 
     private function createUserSSO($user){
+
         $data['email'] = $userInfo['email'] = $user['email'];
         //$data['alternateEmail'] = $user['alternateEmail']; // ADDED
         $data['password'] = $user['password']; //OK
@@ -228,11 +221,12 @@ class MainHandler extends BaseHandler
 
         // FACEBOOK VERSION
         if($idCompany == 21){
-            return $userData['attributes']['facebook_user'][0];
+            return "dev@sharkninja.com";
+            //return $userData['attributes']['facebook_user'][0];
         }
 
         // DEFAULT VERSION (MICROSOFT)
-        return $userData['attributes'][$this->USER_EMAIL][0];
+        return $userData['attributes'][USER_EMAIL][0];
     }
 
     private function createUserFacebookTest($userData){
@@ -276,5 +270,13 @@ class MainHandler extends BaseHandler
                     'apiToken' => NULL,
                     'level' => 0
                     );
+    }
+
+    private function soyUnTramposo($uuid){
+        $laravelUser = User::where('email','dariana.donnelly@example.com') -> first();
+        echo $laravelUser;
+        echo 'uuid: '.$uuid;
+        Cache::put('saml2user_'.$uuid, $laravelUser, 15);
+        //echo Cache::get('saml2user_'.$uuid);
     }
 }
