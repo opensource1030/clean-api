@@ -11,8 +11,24 @@
 |
 */
 
-$app->get('/', function () use ($app) {
-    return $app->version();
+//$app->get('/', function () use ($app) {
+//    return $app->version();
+//});
+
+$api = app('Dingo\Api\Routing\Router');
+
+
+$api->version('v1', function ($api) {
+
+    $apiAuth = 'WA\Http\Controllers\Auth\AuthController';
+    $api->post('oauth/access_token', ['as' => 'api.token', 'uses' => $apiAuth . '@accessToken']);
+
+
+    $api->group(['middleware' => 'api.auth'], function ($api) {
+
+
+    });
+
 });
 
 $app->get('doSSO/login/{uuid}', [ 'as' => 'dosso', function($uuid) use ($app) {

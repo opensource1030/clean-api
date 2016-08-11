@@ -70,6 +70,7 @@ $app->routeMiddleware([
     'role' => 'Zizaco\Entrust\Middleware\EntrustRole',
     'permission' => 'Zizaco\Entrust\Middleware\EntrustPermission',
     'ability' => 'Zizaco\Entrust\Middleware\EntrustAbility',
+    'oauth-user-instance' => \WA\Http\Middleware\OAuth2UserInstance::class,
     'oauth' => \LucaDegasperi\OAuth2Server\Middleware\OAuthMiddleware::class,
     'oauth-client' => \LucaDegasperi\OAuth2Server\Middleware\OAuthClientOwnerMiddleware::class,
     'oauth-user' => \LucaDegasperi\OAuth2Server\Middleware\OAuthUserOwnerMiddleware::class,
@@ -92,6 +93,7 @@ $app->routeMiddleware([
 // $app->register(WA\Providers\EventServiceProvider::class);
 $app->register(Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class);
 $app->register(\Culpa\CulpaServiceProvider::class);
+$app->register(\Dingo\Api\Provider\LumenServiceProvider::class);
 $app->register(LucaDegasperi\OAuth2Server\OAuth2ServerServiceProvider::class);
 $app->register(LucaDegasperi\OAuth2Server\Storage\FluentStorageServiceProvider::class);
 $app->register(\WA\Providers\RepositoriesServiceProviders::class);
@@ -101,6 +103,7 @@ $app->register(\Illuminate\Mail\MailServiceProvider::class);
 $app->register(\WA\Providers\FormServiceProvider::class);
 $app->register(\WA\Providers\EventServiceProvider::class);
 $app->register('Dingo\Api\Provider\LumenServiceProvider');
+$app->register(\WA\Providers\FractalServiceProvider::class);
 $app->register(\WA\Providers\OAuthServiceProvider::class);
 
 /*
@@ -109,6 +112,8 @@ $app->register(\WA\Providers\OAuthServiceProvider::class);
 |--------------------------------------------------------------------------
 |
 */
+$app->configure('app');
+$app->configure('api');
 $app->configure('services');
 $app->configure('mail');
 

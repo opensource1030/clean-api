@@ -30,14 +30,14 @@ return [
     'grant_types' => [
         'password' => [
             'class' => 'League\OAuth2\Server\Grant\PasswordGrant',
-            'access_token_ttl' => 604800,
-            'callback' => 'WA\Http\Controllers\Api\AuthTokenController@verify'
+            'access_token_ttl' => 3600,
+            'callback' => 'WA\Http\Controllers\Auth\AuthController@passwordGrantVerify'
         ]
         , 
         'sso' => [
             'class' => 'WA\Auth\SSOGrant',
             'access_token_ttl' => 604800,
-            'callback' => 'WA\Http\Controllers\Api\AuthTokenController@verifySSO'
+            'callback' => 'WA\Http\Controllers\Api\AuthController@SSOGrantVerify'
         ]
     ],
 
