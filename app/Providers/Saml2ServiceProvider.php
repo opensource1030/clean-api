@@ -85,8 +85,9 @@ class Saml2ServiceProvider extends Saml2SP
             $route = $app->getRoutes();
 
             if(stripos($pathInfo, 'doSSO') > 0){
-                $email = str_replace("/doSSO/", "", $pathInfo);
-	       		$idCompany = Cache::get('saml2_idcompany_'.$email);
+                $parts = explode('/', $pathInfo);
+                $email = $parts[count($parts)-1];
+                $idCompany = Cache::get('saml2_idcompany_'.$email);
 	       	} else {
 	       		$idCompany = app('request')->get('idCompany'); 
 	       	}

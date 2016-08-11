@@ -20,16 +20,16 @@ $api = app('Dingo\Api\Routing\Router');
 $api->version('v1', function ($api) {
 
     $ssoAuth = 'WA\Http\Controllers\Auth\SSO';
-    $app->get('doSSO/{email}', ['as' => 'dosso_login', function($email) use ($app, $ssoAuth) {
-        $controller = $app->make($ssoAuth);
+    $api->get('doSSO/{email}', ['as' => 'dosso_login', function($email) use ($ssoAuth) {
+        $controller = app()->make($ssoAuth);
         return $controller->loginRequest($email);
     }]);
 
-    $app->get('doSSO/login/{uuid}', [ 'as' => 'dosso', function($uuid) use ($app, $ssoAuth) {
-        $controller = $app->make($ssoAuth);   
+    $api->get('doSSO/login/{uuid}', [ 'as' => 'dosso', function($uuid) use ($ssoAuth) {
+        $controller = app()->make($ssoAuth);   
         return $controller->loginUser($uuid);
     }]);
-
+    
     $apiAuth = 'WA\Http\Controllers\Auth\AuthController';
     $api->post('oauth/access_token', ['as' => 'api.token', 'uses' => $apiAuth . '@accessToken']);
 
@@ -38,4 +38,3 @@ $api->version('v1', function ($api) {
 
     });
 });
-
