@@ -20,13 +20,19 @@ class CompaniesTest extends TestCase
 
         $company = factory(\WA\DataStore\Company\Company::class)->create();
 
-        $this->get('/api/companies')
-            ->seeJson([
-                'type' => 'companies',
-                'name' => $company->name,
-                'label' => $company->label,
+        $this->get('/api/companies/')
+            ->seeJsonStructure([
+                'data' => [
+                    0 => [ 'type','id',
+                            'attributes' => [
+                                'name', 'label'
+                             ],
+                            'links'
+                    ]
 
-            ]);
+                ]
+
+         ]);
 
     }
 

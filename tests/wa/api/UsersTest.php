@@ -15,17 +15,20 @@ class UsersTest extends TestCase
      */
     public function testGetUsers()
     {
-        $user = factory(\WA\DataStore\User\User::class)->create();
+        $user = factory(\WA\DataStore\User\User::class)->create();        
 
         $this->get('/api/users')
-            ->seeJson([
-                'type' => 'users',
-                'identification' => $user->identification,
-                'email' => $user->email,
-                'username' => $user->username,
-                'supervisor_email' => $user->supervisor_email,
-                'first_name' => $user->first_name,
-                'last_name' => $user->last_name,
+            ->seeJsonStructure([
+                'data' => [
+                    0 => [ 'type','id',
+                        'attributes' => [
+                            'identification', 'email', 'username', 'supervisor_email', 'first_name', 'last_name'
+                        ],
+                        'links'
+                    ]
+
+                ]
+
             ]);
 
     }
@@ -41,6 +44,8 @@ class UsersTest extends TestCase
                 'identification' => $user->identification,
                 'email' => $user->email,
                 'username' => $user->username,
+                'first_name' => $user->firstName,
+                'last_name' => $user->lastName,
             ]);
     }
 
