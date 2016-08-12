@@ -36,28 +36,29 @@ class Saml2ServiceProvider extends Saml2SP
                 ], 
                 function ($app)
                 {
-                    $app->get('logout', ['as' => 'saml_logout', function () use ($app) {
-                        $controller = $app->make('Aacotroneo\Saml2\Http\Controllers\Saml2Controller');
+                    $routeSaml2Controller = 'WA\Http\Controllers\Auth\Saml2Controller';
+                    $app->get('logout', ['as' => 'saml_logout', function () use ($routeSaml2Controller, $app) {
+                        $controller = $app->make($routeSaml2Controller);
                         return $controller->logout();
                     }]);
 
-                    $app->get('login', ['as' => 'saml_login', function () use ($app) {
-                        $controller = $app->make('Aacotroneo\Saml2\Http\Controllers\Saml2Controller');
+                    $app->get('login', ['as' => 'saml_login', function () use ($routeSaml2Controller, $app) {
+                        $controller = $app->make($routeSaml2Controller);
                         return $controller->login();
                     }]);
 
-                    $app->get('metadata', ['as' => 'saml_metadata', function () use ($app) {
-                        $controller = $app->make('Aacotroneo\Saml2\Http\Controllers\Saml2Controller');
+                    $app->get('metadata', ['as' => 'saml_metadata', function () use ($routeSaml2Controller, $app) {
+                        $controller = $app->make($routeSaml2Controller);
                         return $controller->metadata();
                     }]);
 
-                    $app->post('acs', ['as' => 'saml_acs', function () use ($app) {
-                        $controller = $app->make('WA\Http\Controllers\Auth\Saml2Controller');
+                    $app->post('acs', ['as' => 'saml_acs', function () use ($routeSaml2Controller, $app) {
+                        $controller = $app->make($routeSaml2Controller);
                         return $controller->acs();
                     }]);
 
-                    $app->get('sls', ['as' => 'saml_sls', function () use ($app) {
-                        $controller = $app->make('Aacotroneo\Saml2\Http\Controllers\Saml2Controller');
+                    $app->get('sls', ['as' => 'saml_sls', function () use ($routeSaml2Controller, $app) {
+                        $controller = $app->make($routeSaml2Controller);
                         return $controller->sls();
                     }]);
                 }
@@ -77,7 +78,7 @@ class Saml2ServiceProvider extends Saml2SP
      */
     public function register()
     {
-    	$this->app->singleton('Aacotroneo\Saml2\Saml2Auth', function ($app) {
+    	$this->app->singleton('WA\Auth\Saml2\Saml2Auth', function ($app) {
     		$config = config('saml2_settings');
 
             $method = Request::getMethod();
@@ -137,7 +138,7 @@ class Saml2ServiceProvider extends Saml2SP
     		      $saml2Settings['attributes']['x509cert'];
 
     		$auth = new OneLogin_Saml2_Auth($config);
-    		return new \Aacotroneo\Saml2\Saml2Auth($auth);
+    		return new \WA\Auth\Saml2\Saml2Auth($auth);
     	});
     }
 }

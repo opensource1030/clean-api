@@ -9,11 +9,9 @@
 namespace WA\Events\Handlers\Saml2;
 
 use Illuminate\Contracts\Events\Dispatcher;
-//use Illuminate\Events\Dispatcher;
 use WA\DataStore\CarrierDestinationMap;
 use WA\Events\Handlers\BaseHandler;
 
-use Log;
 use Auth;
 use WA\Events\PodcastWasPurchased;
 use Illuminate\Queue\InteractsWithQueue;
@@ -56,20 +54,10 @@ class MainHandler extends BaseHandler
     public function saml2LoginUser($event)
     {
         // Get the UUID from url.
-        $relayState = app('request')->input('RelayState');
-        $parts = parse_url($relayState);
-        $path_parts = explode('/', $parts['path']);
-        $uuid = $path_parts[count($path_parts)-1];         
-
-        // Get Saml2 User from $Event.
-        $user = $event->getSaml2User();
-
+        $uuid = getUuidFromRequestRelayState();
+        
         // Get the User Data Info from the Saml2 User.
-        $userData = [
-        'id' => $user->getUserId(),
-        'attributes' => $user->getAttributes(),
-        'assertion' => $user->getRawSamlAssertion()
-        ];
+        $userData = getUserDataFromSaml2User($event);
 
         // Id Company from Request.
         $idCompany = app('request')->get('idCompany');
@@ -103,12 +91,12 @@ class MainHandler extends BaseHandler
         $carbon = Carbon::today();
 
         switch ($idCompany) {
-            case 21:
+            case 21: // facebook
                 return $this->createUserFacebookTest($userData);
                 //return null;                
                 break;
             
-            default:
+            default: // microsoft
                 $user = array(
                     'email' => $userData['attributes'][USER_EMAIL][0],
                     'alternateEmail' => '',
@@ -194,9 +182,6 @@ class MainHandler extends BaseHandler
         $data['evDepartmentId'] = $this->userForm->getDepartmentPathId([], null, $userInfo, true);
         $data['user_roles'] = '';
 
-        //var_dump($data);
-        //die;
-
         // @TODO: TODOSAML2: This Function gives me an error. Waiting for news.
         if (!$this->userForm->create($data)) {
             $data['errors'] = $this->userForm->errors();
@@ -252,6 +237,25 @@ class MainHandler extends BaseHandler
                     'apiToken' => NULL,
                     'level' => 0
                     );
+    }
+
+    private function getUuidFromRequestRelayState(){
+        $relayState = app('request')->input('RelayState');
+        $parts = parse_url($relayState);
+        $path_parts = explode('/', $parts['path']);
+        return $path_parts[count($path_parts)-1];
+    }
+
+    private function getUserDataFromSaml2User($event){
+        // Get Saml2 User from $Event.
+        $user = $event->getSaml2User();
+
+        // Get the User Data Info from the Saml2 User.
+        return [
+        'id' => $user->getUserId(),
+        'attributes' => $user->getAttributes(),
+        'assertion' => $user->getRawSamlAssertion()
+        ];
     }
 
     private function getEmailFromUserData($userData, $idCompany){
