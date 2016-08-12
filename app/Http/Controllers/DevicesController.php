@@ -1,6 +1,6 @@
 <?php
 
-namespace WA\Http\Controllers\Api;
+namespace WA\Http\Controllers;
 
 use Cartalyst\DataGrid\Laravel\Facades\DataGrid;
 use Dingo\Api\Routing\Helpers;
@@ -26,12 +26,10 @@ class DevicesController extends ApiController
 
     /**
      * @param DeviceInterface $device
-     * @param Session         $session
      */
-    public function __construct(DeviceInterface $device, Session $session = null)
+    public function __construct(DeviceInterface $device)
     {
         $this->device = $this->device = $device;
-        $this->session = $session ?: app()['session'];
 
     }
 

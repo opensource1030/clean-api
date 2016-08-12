@@ -28,7 +28,7 @@ class OAuth2UserInstance
      */
     public function __construct(UserInterface $user, Authorizer $authorizer)
     {
-        $this->employee = $user;
+        $this->user = $user;
         $this->authorizer = $authorizer;
     }
 

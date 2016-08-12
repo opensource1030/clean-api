@@ -29,13 +29,14 @@ class CreateAssetsTable extends Migration
             function (Blueprint $table) {
                 $table->increments('id');
                 $table->string('identification');
-                $table->boolean('isActive')->default(1);
+                $table->boolean('active')->default(1);
                 $table->integer('externalId')->unique()->nullable();
 
                 $this->includeForeign($table, $this->foreignColumns);
 
                 $table->softDeletes();
-                $table->nullableTimestamps();
+
+                $table->timestamps();
             });
 
     }

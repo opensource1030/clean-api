@@ -239,7 +239,6 @@ trait ServiceRegistration
                 return new EloquentAsset(new Asset(),
                     app()->make('WA\Repositories\JobStatus\JobStatusInterface'),
                     app()->make('WA\Repositories\User\UserInterface'),
-                    app()->make('WA\Services\Converter\Currency'),
                     app()->make('WA\Repositories\Carrier\CarrierInterface'));
             }
         );

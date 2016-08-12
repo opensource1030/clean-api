@@ -1,6 +1,6 @@
 <?php
 
-namespace WA\Http\Controllers\Api;
+namespace WA\Http\Controllers;
 
 use Dingo\Api\Http\Response;
 use WA\DataStore\Company\CompanyTransformer;

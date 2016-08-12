@@ -101,7 +101,7 @@ class EasyVista implements HelpDeskInterface
         $this->device = $device;
         $this->sync = $sync;
         $this->lastSyncTime = $sync->getLastSyncTime('help-desk');
-        $this->employee = $user;
+        $this->user = $user;
 
 //        $this->cached['cxn'] = DB::connection('easyvista');
     }

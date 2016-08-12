@@ -1,6 +1,6 @@
 <?php
 
-namespace WA\Http\Controllers\Api;
+namespace WA\Http\Controllers;
 
 use App;
 use Cartalyst\DataGrid\Laravel\Facades\DataGrid;
@@ -26,14 +26,11 @@ class UsersController extends ApiController
 
     /**
      * @param UserInterface $user
-     * @param Session           $session
      */
     public function __construct(
-        UserInterface $user,
-        Session $session = null
+        UserInterface $user
     ) {
-        $this->employee = $user;
-        $this->session = $session ?: app()['session'];
+        $this->user = $user;
     }
 
     /**
@@ -50,7 +47,7 @@ class UsersController extends ApiController
      */
     public function index()
     {
-        $users = $this->employee->byPage();
+        $users = $this->user->byPage();
 
         return $this->response()->withPaginator($users, new UserTransformer(), ['key' => 'users']);
     }
@@ -65,7 +62,7 @@ class UsersController extends ApiController
      */
     public function show($id)
     {
-        $user = $this->employee->byId($id);
+        $user = $this->user->byId($id);
 
         return $this->response()->item($user, new UserTransformer(), ['key' => 'users']);
 
@@ -88,9 +85,9 @@ class UsersController extends ApiController
         $this->setLimits();
 
         if (!empty($currentCompanyId)) {
-            $users = $this->employee->byCompanyId($currentCompanyId);
+            $users = $this->user->byCompanyId($currentCompanyId);
         } else {
-            $users = $this->employee->byPage(false);
+            $users = $this->user->byPage(false);
         }
 
         $columns = [

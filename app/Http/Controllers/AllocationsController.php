@@ -1,5 +1,5 @@
 <?php
-namespace WA\Http\Controllers\Api;
+namespace WA\Http\Controllers;
 
 use Auth;
 use WA\DataStore\Allocation\AllocationTransformer;
@@ -33,7 +33,7 @@ class AllocationsController extends ApiController
     public function __construct(AllocationInterface $allocations, UserInterface $user)
     {
         $this->allocations = $allocations;
-        $this->employee = $user;
+        $this->user = $user;
     }
 
     /**

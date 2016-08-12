@@ -1,6 +1,6 @@
 <?php
 
-namespace WA\Http\Controllers\Api;
+namespace WA\Http\Controllers;
 
 use Auth;
 use Dingo\Api\Routing\Helpers;

@@ -3,7 +3,8 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateCarriersTable extends Migration {
+class CreateCarriersTable extends Migration
+{
 
     /**
      * Run the migrations.
@@ -21,8 +22,6 @@ class CreateCarriersTable extends Migration {
                 $table->boolean('active')->default(0);
                 $table->integer('locationId')->unsigned();
                 $table->string('shortName');
-
-                $table->integer('rawDataFilesCount', false, true);
             }
         );
     }

@@ -59,7 +59,7 @@ class CompanyUserForm extends AbstractForm
 
     ) {
         $this->validator = $validator;
-        $this->employee = $user;
+        $this->user = $user;
         $this->company = $company;
     }
 
@@ -79,7 +79,7 @@ class CompanyUserForm extends AbstractForm
         $email = isset($input['email']) ? $input['email'] : null;
         if(!empty($email))
         {
-            $user = $this->employee->byEmail($email);
+            $user = $this->user->byEmail($email);
             if(!empty($user))
             {
                 $this->notify('error', 'There is an existing employee with the given email. Please try another email address.');
@@ -88,7 +88,7 @@ class CompanyUserForm extends AbstractForm
         }
 
 
-        $user = $this->employee->create($input, []);
+        $user = $this->user->create($input, []);
 
         if (!$user) {
             $this->notify('error', 'Something strange happened, could not created User. try again later');
@@ -174,7 +174,7 @@ class CompanyUserForm extends AbstractForm
      */
     public function getUserByEmail($email)
     {
-        $user = $this->employee->byEmail($email);
+        $user = $this->user->byEmail($email);
 
         return $user;
     }

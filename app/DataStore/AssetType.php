@@ -23,6 +23,10 @@ class AssetType extends BaseDataStore
 {
     protected $tableName = 'asset_types';
 
+    protected $fillable = ['name', 'description'];
+
+    public $timestamps = false;
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */

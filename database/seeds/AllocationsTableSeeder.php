@@ -1,12 +1,15 @@
 <?php
 
-use Illuminate\Database\Seeder;
 
-class AllocationsTableSeeder extends Seeder
+class AllocationsTableSeeder extends BaseTableSeeder
 {
+    protected $table = 'allocations';
+
 
     public function run()
     {
+        $this->deleteTable();
+
         factory(\WA\DataStore\Allocation\Allocation::class, 100)->create();
     }
 

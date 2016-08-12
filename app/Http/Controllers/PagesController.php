@@ -1,5 +1,5 @@
 <?php
-namespace WA\Http\Controllers\Api;
+namespace WA\Http\Controllers;
 
 use App;
 use WA\DataStore\Page\PageTransformer;

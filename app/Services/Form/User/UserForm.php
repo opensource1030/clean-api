@@ -102,7 +102,7 @@ class UserForm extends AbstractForm
 
     ) {
 //        $this->validator = $validator;
-        $this->employee = $user;
+        $this->user = $user;
 //        $this->helpDeskApi = $helpDeskApi;
 //        $this->helpDesk = $helpDesk;
 //        $this->udl = $udl;
@@ -168,8 +168,8 @@ class UserForm extends AbstractForm
 //            }
 //        }
 
-        if (($user = $this->employee->byUsernameOrEmail($input['email']))
-            || ($user = $this->employee->byUsernameOrEmail($input['username']))
+        if (($user = $this->user->byUsernameOrEmail($input['email']))
+            || ($user = $this->user->byUsernameOrEmail($input['username']))
         ) {
             $this->notify('info', 'This User already exists, please see the details below');
 
@@ -184,7 +184,7 @@ class UserForm extends AbstractForm
             return false;
         }
 
-        $user = $this->employee->create($input, $input['udls']);
+        $user = $this->user->create($input, $input['udls']);
 
         if (!$user) {
             $this->notify('error', 'Something strange happened, could not created User. try again later');
@@ -226,7 +226,7 @@ class UserForm extends AbstractForm
      */
     public function getUserByEmail($email)
     {
-        $user = $this->employee->byEmail($email);
+        $user = $this->user->byEmail($email);
 
         return $user;
     }
@@ -270,7 +270,7 @@ class UserForm extends AbstractForm
             }
         }
 
-        $user = $this->employee->update($input, $input['udls']);
+        $user = $this->user->update($input, $input['udls']);
 
         if (!$user) {
             $this->notify('error', 'Something strange happened, could not create User. try again later');
@@ -350,7 +350,7 @@ XML;
      */
     public function edit($id)
     {
-        return $this->employee->byId($id);
+        return $this->user->byId($id);
     }
 
     /**
@@ -380,7 +380,7 @@ XML;
 //
 //        return $sups = $this->helpDesk->getSupervisors($companyId);
 //
-////        return $sups = $this->employee->getAllSupervisors($companyId);
+////        return $sups = $this->user->getAllSupervisors($companyId);
 //    }
 
     /**
@@ -393,7 +393,7 @@ XML;
 //        $companyId = $companyId ?: $this->currentCompany->id;
 //
 //        return $this->helpDesk->getValidators($companyId);
-////        return $this->employee->getAllValidators($companyId);
+////        return $this->user->getAllValidators($companyId);
 //    }
 
     /**
@@ -403,7 +403,7 @@ XML;
      */
     public function show($id)
     {
-        return $this->employee->byId($id);
+        return $this->user->byId($id);
     }
 
     /**
@@ -478,7 +478,7 @@ XML;
     public function getUserUdls($id)
     {
         if (!empty($id)) {
-            $udls = $this->employee->getUdls($id);
+            $udls = $this->user->getUdls($id);
 
             return $udls;
         }
@@ -522,24 +522,24 @@ XML;
      */
     public function delete($id)
     {
-        $user = $this->employee->byId($id);
+        $user = $this->user->byId($id);
 
         $this->setLimits();
-        if (!$this->employee->delete($id)) {
+        if (!$this->user->delete($id)) {
             $this->notify('error', 'Could not delete this employee, please try again later');
 
             return false;
         }
         $this->notify('success', "$user->identification Deleted");
 
-        return $this->employee->delete($id);
+        return $this->user->delete($id);
     }
 
 
     public function getUserPermissions($id)
     {
         $permissions = [];
-        $roles = $this->employee->getRoles($id);
+        $roles = $this->user->getRoles($id);
         if(!empty ($roles))
         {
             foreach($roles as $role)
@@ -569,7 +569,7 @@ XML;
      */
     public function getUserRoles($id)
     {
-        return $this->employee->getRoles($id);
+        return $this->user->getRoles($id);
     }
 
     /**
@@ -592,7 +592,7 @@ XML;
      */
     public function getCurrentCharges($id)
     {
-        $user = $this->employee->byId($id);
+        $user = $this->user->byId($id);
         $email = $user->email;
         if(!empty($email)) {
             return $this->allocations->getCurrentCharges($email);

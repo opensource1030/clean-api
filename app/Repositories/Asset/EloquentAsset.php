@@ -20,10 +20,6 @@ class EloquentAsset extends AbstractRepository implements AssetInterface
      */
     protected $model;
 
-    protected $currency;
-
-    protected $redis;
-
 
     /**
      * @var \WA\Repositories\User\UserInterface
@@ -49,15 +45,12 @@ class EloquentAsset extends AbstractRepository implements AssetInterface
         Model $model,
         JobStatusInterface $jobStatus,
         UserInterface $user,
-        Currency $currency,
         CarrierInterface $carrier
     ) {
         $this->model = $model;
         $this->jobStatus = $jobStatus;
-        $this->employee = $user;
-        $this->currency = $currency;
+        $this->user = $user;
         $this->carrier = $carrier;
-        $this->redis = app()['redis']->connection();
 
     }
 
@@ -90,7 +83,7 @@ class EloquentAsset extends AbstractRepository implements AssetInterface
      */
     public function byUser($user, $page = 1, $limit = 10, $all = true)
     {
-        $foundUser = $this->employee->byCompanyId($user);
+        $foundUser = $this->user->byCompanyId($user);
 
         if (!$foundUser) {
             return;
@@ -170,7 +163,7 @@ class EloquentAsset extends AbstractRepository implements AssetInterface
     public function update(array $data)
     {
         $asset = $this->model->findOrFail($data['id']);
-        $user = $this->employee->byId($data['employeeId']);
+        $user = $this->user->byId($data['employeeId']);
 
         $statusId = $this->jobStatus->idByName('complete');
 
@@ -202,7 +195,7 @@ class EloquentAsset extends AbstractRepository implements AssetInterface
      */
     public function detachByUser($userId, $assetId)
     {
-        $user = $this->employee->byId($userId);
+        $user = $this->user->byId($userId);
 
         if (!$user) {
             return false;
@@ -312,7 +305,7 @@ class EloquentAsset extends AbstractRepository implements AssetInterface
         }
         $assetId = $asset['id'];
 
-        $oldEmp = $this->employee->byIdentification($old_value);
+        $oldEmp = $this->user->byIdentification($old_value);
         if(!empty($oldEmp))
         {
             $oldEmpId = $oldEmp['id'];
@@ -320,7 +313,7 @@ class EloquentAsset extends AbstractRepository implements AssetInterface
 
         }
 
-        $newEmp = $this->employee->byIdentification($new_value);
+        $newEmp = $this->user->byIdentification($new_value);
         if(!empty($newEmp))
         {
             $newEmp->assets()->sync([$asset->id]);

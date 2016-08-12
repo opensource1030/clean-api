@@ -41,7 +41,7 @@ class DataMapForm extends AbstractForm
         $this->parser = app()->make('WA\Parsers\ExcelCSVParser');
 
         $this->company = $company;
-        $this->employee = $user;
+        $this->user = $user;
         $this->dataMap = $dataMap;
     }
 
@@ -65,7 +65,7 @@ class DataMapForm extends AbstractForm
      */
     public function getUserFields()
     {
-        return $this->employee->getMappableFields();
+        return $this->user->getMappableFields();
     }
 
     /**

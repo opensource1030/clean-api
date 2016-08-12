@@ -2,7 +2,7 @@
 
 class OAuthTableSeeder extends BaseTableSeeder
 {
-    protected $tableName = "oauth_clients";
+    protected $table = "oauth_clients";
     /**
      * Run the database seeds.
      *
@@ -10,6 +10,9 @@ class OAuthTableSeeder extends BaseTableSeeder
      */
     public function run()
     {
+        $this->deleteTable();
+
+
         $data = [
             'id' => 'g73hhd8j3bhcuhdbbs88e4wd',
             'secret' => '786wndkd8iu4nn49ixjndfodsde33',

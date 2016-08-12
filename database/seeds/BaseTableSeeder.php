@@ -6,14 +6,14 @@ class BaseTableSeeder extends Seeder
 
     protected $data;
 
-    protected $tableName;
+    protected $table;
 
     // Toggle this to seed random data or not
     protected $seedRandom = false;
 
     public function deleteTable()
     {
-        return DB::table($this->tableName)->delete();
+        return DB::table($this->table)->delete();
     }
 
     public function run()
@@ -44,7 +44,7 @@ class BaseTableSeeder extends Seeder
             $loadData = $this->data;
         }
 
-        return DB::table($this->tableName)->insert($loadData);
+        return DB::table($this->table)->insert($loadData);
     }
 
     public function teardownDb()
@@ -57,6 +57,6 @@ class BaseTableSeeder extends Seeder
 
     public function truncateTable()
     {
-        return DB::table($this->tableName)->truncate();
+        return DB::table($this->table)->truncate();
     }
 }

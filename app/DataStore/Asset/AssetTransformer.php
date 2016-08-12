@@ -29,7 +29,7 @@ class AssetTransformer extends TransformerAbstract
         return [
             'id' => (int)$asset->id,
             'identification' => $asset->identification,
-            'status' => 'active'
+            'active' => $asset->active,
         ];
     }
 
@@ -40,7 +40,7 @@ class AssetTransformer extends TransformerAbstract
      */
     public function includeUsers(Asset $asset)
     {
-        return new ResourceCollection($asset->users, new UserTransformer(),'users');
+        return new ResourceCollection($asset->users, new UserTransformer(), 'users');
     }
 
     /**
@@ -50,7 +50,7 @@ class AssetTransformer extends TransformerAbstract
      */
     public function includeDevices(Asset $asset)
     {
-        return new ResourceCollection($asset->devices, new DeviceTransformer(),'devices');
+        return new ResourceCollection($asset->devices, new DeviceTransformer(), 'devices');
     }
 
 }

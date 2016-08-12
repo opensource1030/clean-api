@@ -75,7 +75,7 @@ class EloquentCompany extends AbstractRepository implements CompanyInterface
         CarrierDetailInterface $carrierDetail
     ) {
         $this->model = $model;
-        $this->employee = $user;
+        $this->user = $user;
         $this->census = $census;
         $this->udl = $udl;
         $this->device = $device;
@@ -161,7 +161,7 @@ class EloquentCompany extends AbstractRepository implements CompanyInterface
      */
     public function addUser($id, array $user)
     {
-        return $this->employee->create($user, $user['udlValues']);
+        return $this->user->create($user, $user['udlValues']);
     }
 
     /**
@@ -173,7 +173,7 @@ class EloquentCompany extends AbstractRepository implements CompanyInterface
      */
     public function updateUser(array $user)
     {
-        return $this->employee->update($user);
+        return $this->user->update($user);
     }
 
 
@@ -203,11 +203,11 @@ class EloquentCompany extends AbstractRepository implements CompanyInterface
      */
     public function syncUserSupervisor($censusId, $companyId)
     {
-        $updatedUsers = $this->employee->byCensus($censusId, $companyId);
+        $updatedUsers = $this->user->byCensus($censusId, $companyId);
 
         foreach ($updatedUsers as $user) {
 
-            $synced = $this->employee->syncSupervisor($user->email, $user->supervisorEmail);
+            $synced = $this->user->syncSupervisor($user->email, $user->supervisorEmail);
 
             if (!$synced) {
                 continue;

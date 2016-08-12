@@ -1,6 +1,6 @@
 <?php
 
-namespace WA\Http\Controllers\Api;
+namespace WA\Http\Controllers;
 
 use WA\DataStore\Asset\AssetTransformer;
 use WA\Repositories\Asset\AssetInterface;
