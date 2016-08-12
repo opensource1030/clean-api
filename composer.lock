@@ -988,12 +988,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/database.git",
-                "reference": "067b78bb7ec755161ebc4f6ddd31a89473eff2a2"
+                "reference": "2d2b59a0eca0413c27d36200148896e7ec8dcf12"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/database/zipball/067b78bb7ec755161ebc4f6ddd31a89473eff2a2",
-                "reference": "067b78bb7ec755161ebc4f6ddd31a89473eff2a2",
+                "url": "https://api.github.com/repos/illuminate/database/zipball/2d2b59a0eca0413c27d36200148896e7ec8dcf12",
+                "reference": "2d2b59a0eca0413c27d36200148896e7ec8dcf12",
                 "shasum": ""
             },
             "require": {
@@ -1040,7 +1040,7 @@
                 "orm",
                 "sql"
             ],
-            "time": "2016-08-07 18:08:03"
+            "time": "2016-08-10 12:23:59"
         },
         {
             "name": "illuminate/encryption",
@@ -1234,12 +1234,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/http.git",
-                "reference": "ad7696973b223671e47d8757c64d496a4ef36d08"
+                "reference": "019d947e218f8dce421010a22d899d6f4b4ced45"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/http/zipball/ad7696973b223671e47d8757c64d496a4ef36d08",
-                "reference": "ad7696973b223671e47d8757c64d496a4ef36d08",
+                "url": "https://api.github.com/repos/illuminate/http/zipball/019d947e218f8dce421010a22d899d6f4b4ced45",
+                "reference": "019d947e218f8dce421010a22d899d6f4b4ced45",
                 "shasum": ""
             },
             "require": {
@@ -1272,7 +1272,7 @@
             ],
             "description": "The Illuminate Http package.",
             "homepage": "http://laravel.com",
-            "time": "2016-08-06 14:08:02"
+            "time": "2016-08-10 17:33:08"
         },
         {
             "name": "illuminate/mail",
@@ -2042,16 +2042,16 @@
         },
         {
             "name": "lucadegasperi/oauth2-server-laravel",
-            "version": "dev-master",
+            "version": "5.1.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/lucadegasperi/oauth2-server-laravel.git",
-                "reference": "bad107b2a3f5b92aa9123c5a4afb318b3811b103"
+                "reference": "c2ff4eab6d40d88768d626fb82c9ea8a9e417672"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/lucadegasperi/oauth2-server-laravel/zipball/bad107b2a3f5b92aa9123c5a4afb318b3811b103",
-                "reference": "bad107b2a3f5b92aa9123c5a4afb318b3811b103",
+                "url": "https://api.github.com/repos/lucadegasperi/oauth2-server-laravel/zipball/c2ff4eab6d40d88768d626fb82c9ea8a9e417672",
+                "reference": "c2ff4eab6d40d88768d626fb82c9ea8a9e417672",
                 "shasum": ""
             },
             "require": {
@@ -2105,7 +2105,7 @@
                 "oauth2",
                 "server"
             ],
-            "time": "2016-06-06 19:18:37"
+            "time": "2016-01-29 13:11:59"
         },
         {
             "name": "monolog/monolog",
@@ -3705,12 +3705,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/webmozart/assert.git",
-                "reference": "1dc8bdd49e54b9b936858dd422096f349e367a85"
+                "reference": "61e225b1e1084b7a0e5a51ad8eafd4c0bf16307a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webmozart/assert/zipball/1dc8bdd49e54b9b936858dd422096f349e367a85",
-                "reference": "1dc8bdd49e54b9b936858dd422096f349e367a85",
+                "url": "https://api.github.com/repos/webmozart/assert/zipball/61e225b1e1084b7a0e5a51ad8eafd4c0bf16307a",
+                "reference": "61e225b1e1084b7a0e5a51ad8eafd4c0bf16307a",
                 "shasum": ""
             },
             "require": {
@@ -3747,7 +3747,7 @@
                 "check",
                 "validate"
             ],
-            "time": "2016-08-09 15:02:38"
+            "time": "2016-08-11 10:52:21"
         },
         {
             "name": "webpatser/laravel-uuid",
@@ -4156,12 +4156,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/config.git",
-                "reference": "a6912045794d65ae637d9e1208081c40ba4f1e01"
+                "reference": "b55e0313d3aee015d9e7273191c86d7708e8ae4c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/config/zipball/a6912045794d65ae637d9e1208081c40ba4f1e01",
-                "reference": "a6912045794d65ae637d9e1208081c40ba4f1e01",
+                "url": "https://api.github.com/repos/symfony/config/zipball/b55e0313d3aee015d9e7273191c86d7708e8ae4c",
+                "reference": "b55e0313d3aee015d9e7273191c86d7708e8ae4c",
                 "shasum": ""
             },
             "require": {
@@ -4201,7 +4201,7 @@
             ],
             "description": "Symfony Config Component",
             "homepage": "https://symfony.com",
-            "time": "2016-08-09 14:23:16"
+            "time": "2016-08-10 07:06:11"
         },
         {
             "name": "symfony/filesystem",

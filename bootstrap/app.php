@@ -49,7 +49,6 @@ $app->singleton(
 );
 
 
-
 /*
 |--------------------------------------------------------------------------
 | Register Middleware
@@ -79,6 +78,19 @@ $app->routeMiddleware([
 
 /*
 |--------------------------------------------------------------------------
+| Register Configurations
+|--------------------------------------------------------------------------
+|
+*/
+$app->configure('app');
+$app->configure('api');
+$app->configure('services');
+$app->configure('mail');
+$app->configure('saml2_settings');
+
+
+/*
+|--------------------------------------------------------------------------
 | Register Service Providers
 |--------------------------------------------------------------------------
 |
@@ -102,25 +114,18 @@ $app->register(\Illuminate\Auth\Passwords\PasswordResetServiceProvider::class);
 $app->register(\Illuminate\Mail\MailServiceProvider::class);
 $app->register(\WA\Providers\FormServiceProvider::class);
 $app->register(\WA\Providers\EventServiceProvider::class);
-$app->register('Dingo\Api\Provider\LumenServiceProvider');
-$app->register(\WA\Providers\FractalServiceProvider::class);
+$app->register(Dingo\Api\Provider\LumenServiceProvider::class);
 $app->register(\WA\Providers\OAuthServiceProvider::class);
-
-/*
-|--------------------------------------------------------------------------
-| Register Configurations
-|--------------------------------------------------------------------------
-|
-*/
-$app->configure('app');
-$app->configure('api');
-$app->configure('services');
-$app->configure('mail');
-
-// @TODOSAML2: saml2_settings must be loaded before its serviceProvider
-$app->configure('saml2_settings');
-
 $app->register(\WA\Providers\Saml2ServiceProvider::class);
+
+app('Dingo\Api\Transformer\Factory')->setAdapter(function ($app) {
+    $base_url = env('API_DOMAIN', 'api.wirelessanalytics.com');
+    $serializer = new \League\Fractal\Serializer\JsonApiSerializer($base_url);
+    $fractal = new League\Fractal\Manager;
+    $fractal->setSerializer($serializer);
+    return new Dingo\Api\Transformer\Adapter\Fractal($fractal, 'include', ',');
+});
+
 /*
 |--------------------------------------------------------------------------
 | Load The Application Routes
