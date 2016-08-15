@@ -15,12 +15,11 @@ $api = app('Dingo\Api\Routing\Router');
 
 $api->version('v1', function ($api) {
 
-    $api->get('/', function(){
+    $api->get('/', function () {
         return response()->json([
             'app_name' => 'clean',
-            'app_version' => 'v4.0.0',
-            'api_version' => 'v1.0.0'
-            ]);
+            'app_version' => app()->version(),
+        ]);
     });
 
     $ssoAuth = 'WA\Http\Controllers\Auth\SSO';
@@ -76,10 +75,10 @@ $api->version('v1', function ($api) {
 
         //=Pages
         $pagesController = 'WA\Http\Controllers\PagesController';
-        $api->get('pages', ['as' => 'api.pages.index', 'uses' => $pagesController. '@index']);
-        $api->get('pages/{id}', ['as' => 'api.pages.show', 'uses'=> $pagesController. '@show']);
-        $api->post('pages', ['uses' => $pagesController. '@create']);
-        $api->put('pages/{id}', ['uses' => $pagesController. '@store']);
+        $api->get('pages', ['as' => 'api.pages.index', 'uses' => $pagesController . '@index']);
+        $api->get('pages/{id}', ['as' => 'api.pages.show', 'uses' => $pagesController . '@show']);
+        $api->post('pages', ['uses' => $pagesController . '@create']);
+        $api->put('pages/{id}', ['uses' => $pagesController . '@store']);
         $api->delete('pages/{id}', ['uses' => $pagesController . '@deletePage']);
 
 
