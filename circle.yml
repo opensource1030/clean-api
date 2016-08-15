@@ -1,0 +1,46 @@
+## Customize the test machine
+machine:
+  php:
+    version: 7.0.4
+
+  timezone:
+    America/New_York # Set the timezone
+
+  environment:
+      CIRCLE_ENV: test
+      COVERALLS_REPO_TOKEN: VNYfNeroWPX3OJkEuV7GNn2Zc8YxORv5h
+
+## Customize dependencies
+dependencies:
+  pre:
+    - sed -i 's/^;//' ~/.phpenv/versions/$(phpenv global)/etc/conf.d/xdebug.ini
+
+  override:
+    - composer install --prefer-source --no-interaction
+
+test:
+  override:
+    - cp .env.test .env
+#    - php vendor/bin/coveralls --root_dir=app
+
+deployment:
+  development:
+    branch: develop
+    commands:
+      - bundle exec cap develop deploy
+
+
+  staging:
+    branch: [/^release\/.*/, /^hotfix\/.*/ ]
+    commands:
+      - bundle exec cap staging deploy
+
+general:
+  branches:
+    ignore:
+      - gh-pages # list of branches to ignore
+
+notify:
+  webhooks:
+    # A list of hook hashes, containing the url field
+    - url: https://lit-sea-4960.herokuapp.com/build/

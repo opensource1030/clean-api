@@ -15,6 +15,14 @@ $api = app('Dingo\Api\Routing\Router');
 
 $api->version('v1', function ($api) {
 
+    $api->get('/', function(){
+        return response()->json([
+            'app_name' => 'clean',
+            'app_version' => 'v4.0.0',
+            'api_version' => 'v1.0.0'
+            ]);
+    });
+
     $ssoAuth = 'WA\Http\Controllers\Auth\SSO';
     $api->get('doSSO/{email}', [
         'as' => 'dosso_login',

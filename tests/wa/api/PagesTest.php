@@ -17,12 +17,32 @@ class PagesTest extends TestCase
      *
      *
      */
-    public function testGetPages()
+
+   public function testGetPages()
+   {
+       $page = factory(\WA\DataStore\Page\Page::class)->create();
+
+       $this->get('/api/pages')
+           ->seeJsonStructure([
+               'data' => [
+                   0 => [ 'type','id',
+                       'attributes' => [
+                           'title', 'section', 'content', 'active', 'owner_type', 'owner_id'
+                       ],
+                       'links'
+                   ]
+
+               ]
+
+           ]);
+   }
+
+    public function testGetPageById()
     {
 
         $page = factory(\WA\DataStore\Page\Page::class)->create();
 
-        $this->get('/api/pages')
+        $this->get('/api/pages/'. $page->id)
             ->seeJson([
                 'type' => 'pages',
                 'title'=> $page->title,
