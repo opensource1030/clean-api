@@ -82,7 +82,6 @@ $app->routeMiddleware([
 |--------------------------------------------------------------------------
 |
 */
-$app->configure('app');
 $app->configure('api');
 $app->configure('services');
 $app->configure('mail');
