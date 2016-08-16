@@ -42,8 +42,13 @@ $api->version('v1', function ($api) {
     $apiAuth = 'WA\Http\Controllers\Auth\AuthController';
     $api->post('oauth/access_token', ['as' => 'api.token', 'uses' => $apiAuth . '@accessToken']);
 
+    $middleware = [ ];
+    if ( !app()->runningUnitTests() ) {
+        $middleware[] = 'api.auth';
+    }
 
-    $api->group(['middleware' => 'api.auth'], function ($api) {
+
+    $api->group(['middleware' => $middleware ], function ($api) {
 
         // =Companies
         $companiesController = 'WA\Http\Controllers\CompaniesController';
