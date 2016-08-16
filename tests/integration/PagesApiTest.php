@@ -4,10 +4,8 @@ use Laravel\Lumen\Testing\DatabaseTransactions;
 
 class PagesApiTest extends TestCase
 {
-    use DatabaseTransactions;      
-
-
-     protected $baseUrl = 'http://clean.api';
+    use DatabaseTransactions;     
+     
 
     /**
      * A basic functional test for pages
@@ -18,13 +16,8 @@ class PagesApiTest extends TestCase
  public function testGetPages()
    {
        $page = factory(\WA\DataStore\Page\Page::class)->create();
-
-        $user = factory(\WA\DataStore\User\User::class)->create();
-
        
-           
-
-       $this->actingAs($user)->get('/pages')
+       $this->get('/pages')
            ->seeJsonStructure([
                'data' => [
                    0 => [ 'type','id',
