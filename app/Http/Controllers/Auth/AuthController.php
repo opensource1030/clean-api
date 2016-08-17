@@ -5,6 +5,8 @@ namespace WA\Http\Controllers\Auth;
 use LucaDegasperi\OAuth2Server\Authorizer;
 use WA\Repositories\User\UserInterface;
 
+use Cache;
+
 /**
  * Class AuthController.
  */

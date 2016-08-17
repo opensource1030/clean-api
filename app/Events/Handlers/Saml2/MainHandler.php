@@ -92,7 +92,7 @@ class MainHandler extends BaseHandler
 
         switch ($idCompany) {
             case 21: // facebook
-                return $this->createUserFacebookTest($userData);
+                return $this->createUserFacebookTest();
                 //return null;                
                 break;
             
@@ -134,7 +134,7 @@ class MainHandler extends BaseHandler
                     'level' => 0
                     );
                 return $user;
-            break;
+                break;
         }
     }
 
@@ -196,7 +196,7 @@ class MainHandler extends BaseHandler
         return redirect("users/$userId")->with($data);
     }
 
-    private function createUserFacebookTest($userData){
+    private function createUserFacebookTest(){
 
         // The today's date.
         $carbon = Carbon::today();

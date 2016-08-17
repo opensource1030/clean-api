@@ -45,7 +45,7 @@ class SSO extends BaseController
      */
     public function loginRequest($email) 
     {
-        // Save email in Session to show it to the user.
+        // email.
         $email = trim($email);
 
         $emailArray['email'] = $email;

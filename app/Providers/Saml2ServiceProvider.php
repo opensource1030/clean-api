@@ -116,7 +116,6 @@ class Saml2ServiceProvider extends Saml2SP
 
     		$config['sp']['singleLogoutService']['url'] = 
                 URL::route('saml_sls').'?idCompany='.$idCompany;
-            //Log::info("SLS : ".print_r($config['sp']['singleLogoutService'], true));                
 
             // Saml2_Settings Information.
     		$config['idp']['entityId'] = 
