@@ -4,8 +4,7 @@ namespace WA\Http\Controllers;
 use App;
 use WA\DataStore\Page\PageTransformer;
 use WA\Repositories\Pages\PagesInterface;
-use Input;
-
+use Illuminate\Http\Request;
 
 /**
  * Pages resource.
@@ -66,9 +65,9 @@ class PagesController extends ApiController
      * @param $id
      * @return \Dingo\Api\Http\Response
      */
-    public function store($id)   {
+    public function store($id, Request $request)   {
 
-        $data = Input::all();
+        $data = $request->all();       
         $data['id'] = $id;
         $page = $this->pages->update($data);
         return $this->response()->item($page, new PageTransformer(), ['key' => 'pages']);
@@ -81,9 +80,9 @@ class PagesController extends ApiController
      *
      * @return \Dingo\Api\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
-        $data = Input::all();
+        $data = $request->all();
         $page = $this->pages->create($data);
         return $this->response()->item($page, new PageTransformer(), ['key' => 'pages']);
     }

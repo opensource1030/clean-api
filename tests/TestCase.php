@@ -2,6 +2,7 @@
 
 class TestCase extends Laravel\Lumen\Testing\TestCase
 {
+    protected $baseUrl = 'http://clean.api';
 
     /**
      * Creates the application.
