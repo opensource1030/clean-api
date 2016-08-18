@@ -17,8 +17,9 @@ $api->version('v1', function ($api) {
 
     $api->get('/', function () {
         return response()->json([
-            'app_name' => 'clean',
-            'app_version' => app()->version(),
+            'app_name' => env('API_NAME','clean'),
+            'api_version' => env('API_VERSION', 'v1'),
+            'api_domain' => env('API_DOMAIN','clean.api')
         ]);
     });
 
