@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * Saml2Auth - Extends Saml2A and modifies login function.
+ *  
+ * @author   Agustí Dosaiguas
+ */
+
 namespace WA\Auth\Saml2;
 
 use Aacotroneo\Saml2\Saml2Auth as Saml2A;
