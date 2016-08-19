@@ -17,6 +17,7 @@ dependencies:
 
   override:
     - composer install --prefer-source --no-interaction
+    - bundle install
 
 test:
   override:

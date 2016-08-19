@@ -61,7 +61,8 @@ $app->singleton(
 */
 
 $app->middleware([
-    \LucaDegasperi\OAuth2Server\Middleware\OAuthExceptionHandlerMiddleware::class
+    \LucaDegasperi\OAuth2Server\Middleware\OAuthExceptionHandlerMiddleware::class,
+      \WA\Http\Middleware\CorsMiddleware::class
 ]);
 
 $app->routeMiddleware([

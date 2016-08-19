@@ -28,6 +28,8 @@ class Company extends BaseDataStore
 
     protected $fillable = ['name', 'label', 'active', 'isCensus', 'shortName'];
 
+    protected $morphClass = 'company';
+
     //@FIXME: should be referenced by it's own ID
     /**
      * @param $companyId
