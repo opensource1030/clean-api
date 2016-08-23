@@ -2,10 +2,12 @@
 
 use Laravel\Lumen\Testing\DatabaseTransactions;
 
+
 class AllocationsApiTest extends TestCase
 {
 
     use DatabaseTransactions;
+
 
     /**
      * A basic functional test for allocations endpoints

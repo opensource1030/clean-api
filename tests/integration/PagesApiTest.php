@@ -35,8 +35,7 @@ class PagesApiTest extends TestCase
  public function testGetPageById()
     {
 
-
-        $page = factory(\WA\DataStore\Page\Page::class)->create();     
+        $page = factory(\WA\DataStore\Page\Page::class)->create();
              
 
         $this->get('/pages/'. $page->id)
