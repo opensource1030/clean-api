@@ -148,11 +148,28 @@ $app->group(['namespace' => 'WA\Http\Controllers'], function ($app) {
 |--------------------------------------------------------------------------
 |
 */
-class_alias('Illuminate\Support\Facades\Response', 'Response');
-class_alias('Illuminate\Support\Facades\Config', 'Config');
-class_alias(\LucaDegasperi\OAuth2Server\Facades\Authorizer::class, 'Authorizer');
-class_alias(\Webpatser\Uuid\Uuid::class, 'Uuid');
-class_alias(\WA\Auth\Saml2\Saml2AuthFacade::class, 'Saml2');
-class_alias('Illuminate\Support\Facades\Request', 'Request');
+if (!class_exists('Response')) {
+    class_alias('Illuminate\Support\Facades\Response', 'Response');
+}
+
+if (!class_exists('Config')) {
+    class_alias('Illuminate\Support\Facades\Config', 'Config');
+}
+
+if (!class_exists('Authorizer')) {
+    class_alias(\LucaDegasperi\OAuth2Server\Facades\Authorizer::class, 'Authorizer');
+}
+
+if (!class_exists('Uuid')) {
+    class_alias(\Webpatser\Uuid\Uuid::class, 'Uuid');
+}
+
+if (!class_exists('Saml2')) {
+    class_alias(\WA\Auth\Saml2\Saml2AuthFacade::class, 'Saml2');
+}
+
+if (!class_exists('Request')) {
+    class_alias('Illuminate\Support\Facades\Request', 'Request');
+}
 
 return $app;
