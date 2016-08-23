@@ -46,7 +46,7 @@ class AuthController
     {
         $user = $this->user->byEmail($username);
 
-        if (app()['hash']->check($password, $user->getAuthPassword())) {
+        if ($user && app()['hash']->check($password, $user->getAuthPassword())) {
             return $user->getKey();
         }
 

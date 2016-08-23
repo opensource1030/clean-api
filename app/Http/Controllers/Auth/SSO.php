@@ -135,7 +135,6 @@ class SSO extends BaseController
             //echo ('SUCCESS UUID = '.$uuid);
             //echo ('<br>');
             //echo ('Laravel User: ');
-            //var_dump($laravelUser);
             return response()
                 ->json(['success' => 'User Successfully Logged', 'uuid' => $uuid])
                 ->setStatusCode(200);
