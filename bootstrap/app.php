@@ -117,6 +117,7 @@ $app->register(\WA\Providers\EventServiceProvider::class);
 $app->register(Dingo\Api\Provider\LumenServiceProvider::class);
 $app->register(\WA\Providers\OAuthServiceProvider::class);
 $app->register(\WA\Providers\Saml2ServiceProvider::class);
+$app->register(\WA\Providers\CatchAllOptionsRequestsProvider::class);
 
 app('Dingo\Api\Transformer\Factory')->setAdapter(function ($app) {
     $base_url = env('API_DOMAIN', 'api.wirelessanalytics.com');
@@ -148,6 +149,7 @@ $app->group(['namespace' => 'WA\Http\Controllers'], function ($app) {
 |--------------------------------------------------------------------------
 |
 */
+
 if (!class_exists('Response')) {
     class_alias('Illuminate\Support\Facades\Response', 'Response');
 }
@@ -171,5 +173,7 @@ if (!class_exists('Saml2')) {
 if (!class_exists('Request')) {
     class_alias('Illuminate\Support\Facades\Request', 'Request');
 }
+
+
 
 return $app;

@@ -10,7 +10,7 @@ class CreateAllocationsTable extends Migration
     protected $tableName = 'allocations';
 
     protected $foreignColumns = [
-        'employeeId',
+        'userId',
         'companyId'
     ];
 

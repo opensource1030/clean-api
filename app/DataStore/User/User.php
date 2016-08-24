@@ -150,7 +150,7 @@ class User extends BaseDataStore implements IlluminateCanResetPasswordContract, 
      */
     public function assets()
     {
-        return $this->belongsToMany('WA\DataStore\Asset\Asset', 'employee_assets', 'employeeId', 'assetId');
+        return $this->belongsToMany('WA\DataStore\Asset\Asset', 'user_assets', 'userId', 'assetId');
     }
 
     /**
@@ -174,7 +174,7 @@ class User extends BaseDataStore implements IlluminateCanResetPasswordContract, 
      */
     public function devices()
     {
-        return $this->belongsToMany('WA\DataStore\Device\Device', 'employee_devices', 'employeeId', 'deviceId');
+        return $this->belongsToMany('WA\DataStore\Device\Device', 'user_devices', 'userId', 'deviceId');
     }
 
 
@@ -208,7 +208,7 @@ class User extends BaseDataStore implements IlluminateCanResetPasswordContract, 
      */
     public function allocations()
     {
-        return $this->hasMany('WA\DataStore\Allocation\Allocation', 'employeeId');
+        return $this->hasMany('WA\DataStore\Allocation\Allocation', 'userId');
     }
 
      /**

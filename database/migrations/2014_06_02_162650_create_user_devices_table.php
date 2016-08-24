@@ -8,10 +8,10 @@ class CreateUserDevicesTable extends Migration {
 
     use TablesRelationsAndIndexes;
 
-    protected $tableName = 'employee_devices';
+    protected $tableName = 'user_devices';
 
     protected $foreignColumns = [
-        'employeeId',
+        'userId',
         'deviceId',
     ];
 
