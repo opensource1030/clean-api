@@ -12,7 +12,7 @@ class CreateUserAssetsTable extends Migration
     protected $tableName = 'user_assets';
 
     protected $foreignColumns = [
-        'employeeId',
+        'userId',
         'assetId',
     ];
 

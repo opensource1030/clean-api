@@ -73,7 +73,7 @@ class Asset extends MutableDataStore
      */
     public function users()
     {
-        return $this->belongsToMany('WA\DataStore\User\User', 'employee_assets', 'assetId', 'employeeId');
+        return $this->belongsToMany('WA\DataStore\User\User', 'user_assets', 'assetId', 'userId');
     }
 
     /**

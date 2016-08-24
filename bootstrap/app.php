@@ -149,6 +149,7 @@ $app->group(['namespace' => 'WA\Http\Controllers'], function ($app) {
 |--------------------------------------------------------------------------
 |
 */
+
 if (!class_exists('Response')) {
     class_alias('Illuminate\Support\Facades\Response', 'Response');
 }
@@ -172,5 +173,7 @@ if (!class_exists('Saml2')) {
 if (!class_exists('Request')) {
     class_alias('Illuminate\Support\Facades\Request', 'Request');
 }
+
+
 
 return $app;
