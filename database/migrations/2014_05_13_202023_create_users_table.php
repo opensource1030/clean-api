@@ -88,14 +88,14 @@ class CreateUsersTable extends Migration
         Schema::table(
             'user_assets', 
             function($table) {
-                $table->foreign('employeeId')->references('id')->on('users');
+                $table->foreign('userId')->references('id')->on('users');
             }
         );
 
         Schema::table(
             'device_users', 
             function($table) {
-                $table->foreign('employeeId')->references('id')->on('users');
+                $table->foreign('userId')->references('id')->on('users');
             }
         );
     }
@@ -110,13 +110,13 @@ class CreateUsersTable extends Migration
         Schema::table(
             'user_assets', 
             function ( $table) {
-                //$table->dropForeign('employeeId');
+                //$table->dropForeign('userId');
         });
 
         Schema::table(
             'device_users', 
             function ( $table) {
-                //$table->dropForeign('employeeId');
+                //$table->dropForeign('userId');
         });
 
         /*
@@ -134,13 +134,13 @@ class CreateUsersTable extends Migration
         Schema::table(
             'employee_devices', 
             function ( $table) {
-                //$table->dropForeign('employeeId');
+                //$table->dropForeign('userId');
         });
 
         Schema::table(
             'allocations', 
             function ( $table) {
-                //$table->dropForeign('employeeId');
+                //$table->dropForeign('userId');
         });
         */
 

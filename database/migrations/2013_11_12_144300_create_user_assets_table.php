@@ -25,7 +25,7 @@ class CreateUserAssetsTable extends Migration
             $this->tableName,
             function ( $table) {
                 $table->increments('id');
-                $table->integer('employeeId')->unsigned();
+                $table->integer('userId')->unsigned();
                 $table->integer('assetId')->unsigned();
 
                 $table->nullableTimestamps();
@@ -57,7 +57,7 @@ class CreateUserAssetsTable extends Migration
         Schema::table(
             $this->tableName, 
             function ( $table) {
-                //$table->dropForeign('employeeId');
+                //$table->dropForeign('userId');
         });
         */
         

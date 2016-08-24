@@ -26,7 +26,7 @@ class CreateUserDevicesTable extends Migration {
             $this->tableName,
             function ( $table) {
                 $table->increments('id');
-                $table->integer('employeeId')->unsigned();
+                $table->integer('userId')->unsigned();
                 $table->integer('deviceId')->unsigned();
     
                 $table->nullableTimestamps();
@@ -36,7 +36,7 @@ class CreateUserDevicesTable extends Migration {
         Schema::table(
             $this->tableName, 
             function($table) {
-                $table->foreign('employeeId')->references('id')->on('users');
+                $table->foreign('userId')->references('id')->on('users');
                 $table->foreign('deviceId')->references('id')->on('devices');
             }
         );
@@ -53,7 +53,7 @@ class CreateUserDevicesTable extends Migration {
         Schema::table(
             $this->tableName, 
             function ( $table) {
-                //$table->dropForeign('employeeId');
+                //$table->dropForeign('userId');
                 //$table->dropForeign('deviceId');
         });
         $this->forceDropTable($this->tableName);

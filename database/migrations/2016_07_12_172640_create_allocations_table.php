@@ -25,7 +25,7 @@ class CreateAllocationsTable extends Migration
             $this->tableName, 
             function( $table){
                 $table->increments('id');
-                $table->integer('employeeId')->unsigned();
+                $table->integer('userId')->unsigned();
                 $table->integer('companyId')->unsigned();
 
                 $table->date('billMonth');
@@ -89,7 +89,7 @@ class CreateAllocationsTable extends Migration
         Schema::table(
             $this->tableName, 
             function($table) {
-                $table->foreign('employeeId')->references('id')->on('users');
+                $table->foreign('userId')->references('id')->on('users');
                 $table->foreign('companyId')->references('id')->on('companies');
             }
         );
@@ -105,7 +105,7 @@ class CreateAllocationsTable extends Migration
         Schema::table(
             $this->tableName, 
             function ( $table) {
-                //$table->dropForeign('employeeId');
+                //$table->dropForeign('userId');
                 //$table->dropForeign('companyId');
         });
 

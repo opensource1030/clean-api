@@ -18,7 +18,7 @@ class CreateUserUdlsTable extends Migration
             function ( $table) {
                 $table->increments('id');
 
-                $table->integer('employeeId', false, true);
+                $table->integer('userId', false, true);
                 $table->integer('udlValueId', false, true);
             }
         );

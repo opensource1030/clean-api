@@ -19,7 +19,7 @@ class CreateAssetUserTable extends Migration
 		{
 			$table->increments('id');
             $table->integer('assetId', false, true)->index();
-            $table->integer('employeeId', false, true)->index();
+            $table->integer('userId', false, true)->index();
 			$table->nullableTimestamps();
 		});
 	}

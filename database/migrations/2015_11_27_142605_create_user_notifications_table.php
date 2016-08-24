@@ -22,7 +22,7 @@ class CreateUserNotificationsTable extends Migration
             {
                 $table->increments('id');
                 $table->integer('categoryId')->unsigned();
-                $table->integer('employeeId')->unsigned();
+                $table->integer('userId')->unsigned();
                 $table->string('type');
                 $table->nullableTimestamps();
             });

@@ -10,7 +10,7 @@ class CreateDeviceUserTable extends Migration
     protected $tableName = 'device_users';
 
     protected $foreignColumns = [
-        'employeeId',
+        'userId',
         'deviceId',
     ];
 
@@ -25,7 +25,7 @@ class CreateDeviceUserTable extends Migration
             $this->tableName,
             function ( $table) {
                 $table->increments('id');
-                $table->integer('employeeId')->unsigned();
+                $table->integer('userId')->unsigned();
                 $table->integer('deviceId')->unsigned();
 
         });
@@ -54,7 +54,7 @@ class CreateDeviceUserTable extends Migration
         Schema::table(
             $this->tableName, 
             function ( $table) {
-                //$table->dropForeign('employeeId');
+                //$table->dropForeign('userId');
         });
         */
 

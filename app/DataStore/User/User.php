@@ -142,7 +142,7 @@ class User extends BaseDataStore implements IlluminateCanResetPasswordContract, 
      */
     public function udlValues()
     {
-        return $this->belongsToMany('WA\DataStore\UdlValue\UdlValue', 'employee_udls', 'employeeId', 'udlValueId');
+        return $this->belongsToMany('WA\DataStore\UdlValue\UdlValue', 'employee_udls', 'userId', 'udlValueId');
     }
 
     /**

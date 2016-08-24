@@ -36,7 +36,7 @@ class Carrier extends BaseDataStore
      */
     public function users()
     {
-        return $this->hasMany('WA\DataStore\User\User', 'employeeId');
+        return $this->hasMany('WA\DataStore\User\User', 'userId');
     }
 
     /**
