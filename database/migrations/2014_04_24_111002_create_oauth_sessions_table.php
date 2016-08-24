@@ -10,7 +10,7 @@
  */
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
+
 use Illuminate\Support\Facades\Schema;
 
 /**
@@ -27,7 +27,7 @@ class CreateOauthSessionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('oauth_sessions', function (Blueprint $table) {
+        Schema::create('oauth_sessions', function ( $table) {
             $table->increments('id');
             $table->string('client_id', 40);
             $table->enum('owner_type', ['client', 'user'])->default('user');
@@ -51,7 +51,7 @@ class CreateOauthSessionsTable extends Migration
      */
     public function down()
     {
-        Schema::table('oauth_sessions', function (Blueprint $table) {
+        Schema::table('oauth_sessions', function ( $table) {
             $table->dropForeign('oauth_sessions_client_id_foreign');
         });
         Schema::drop('oauth_sessions');

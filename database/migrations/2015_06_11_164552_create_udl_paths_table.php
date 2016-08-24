@@ -1,6 +1,6 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
+
 use Illuminate\Database\Migrations\Migration;
 
 class CreateUdlPathsTable extends Migration {
@@ -12,7 +12,7 @@ class CreateUdlPathsTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('udl_value_paths', function(Blueprint $table)
+		Schema::create('udl_value_paths', function( $table)
 		{
 			$table->increments('id');
             $table->string('udlPath');

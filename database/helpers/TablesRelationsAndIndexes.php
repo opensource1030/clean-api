@@ -1,4 +1,6 @@
-<?php namespace WA\Database\Command;
+<?php 
+
+namespace WA\Database\Command;
 
 use DB;
 use Illuminate\Database\Schema\Blueprint;

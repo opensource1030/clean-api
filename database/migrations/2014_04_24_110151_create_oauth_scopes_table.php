@@ -10,7 +10,7 @@
  */
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
+
 use Illuminate\Support\Facades\Schema;
 
 /**
@@ -27,7 +27,7 @@ class CreateOauthScopesTable extends Migration
      */
     public function up()
     {
-        Schema::create('oauth_scopes', function (Blueprint $table) {
+        Schema::create('oauth_scopes', function ( $table) {
             $table->string('id', 40)->primary();
             $table->string('description');
 

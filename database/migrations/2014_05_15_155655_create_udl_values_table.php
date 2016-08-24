@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
+
 
 class CreateUdlValuesTable extends Migration
 {
@@ -16,7 +16,7 @@ class CreateUdlValuesTable extends Migration
     {
         Schema::create(
             'udl_values',
-            function (Blueprint $table) {
+            function ( $table) {
                 $table->increments('id');
                 $table->string('name');
                 $table->integer('udlId', false, true)->nullable();

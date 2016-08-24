@@ -1,6 +1,6 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
+
 use Illuminate\Database\Migrations\Migration;
 
 class UdlValuePathsCreatorsUsersTable extends Migration
@@ -12,7 +12,7 @@ class UdlValuePathsCreatorsUsersTable extends Migration
      */
     public function up()
     {
-        Schema::create('udl_value_paths_creators_users', function (Blueprint $table) {
+        Schema::create('udl_value_paths_creators_users', function ( $table) {
             $table->increments('id');
             $table->integer('udlValuePathId');
             $table->integer('creatorId');

@@ -1,13 +1,10 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use WA\Database\Command\TablesRelationsAndIndexes;
-
 
 class CreateDeviceUserTable extends Migration
 {
-
     use TablesRelationsAndIndexes;
 
     protected $tableName = 'device_users';
@@ -26,12 +23,19 @@ class CreateDeviceUserTable extends Migration
     {
         Schema::create(
             $this->tableName,
-            function (Blueprint $table) {
+            function ( $table) {
+                $table->increments('id');
+                $table->integer('employeeId')->unsigned();
+                $table->integer('deviceId')->unsigned();
 
-            $table->increments('id');
-
-                $this->includeForeign($table, $this->foreignColumns);
         });
+
+        Schema::table(
+            $this->tableName, 
+            function($table) {
+                $table->foreign('deviceId')->references('id')->on('devices');
+            }
+        );
     }
 
     /**
@@ -41,7 +45,19 @@ class CreateDeviceUserTable extends Migration
      */
     public function down()
     {
-        $this->dropForeignKeys($this->tableName, $this->foreignColumns);
+        Schema::table(
+            $this->tableName, 
+            function ( $table) {
+                //$table->dropForeign('deviceId');
+        });
+        /*
+        Schema::table(
+            $this->tableName, 
+            function ( $table) {
+                //$table->dropForeign('employeeId');
+        });
+        */
+
         $this->forceDropTable($this->tableName);
     }
 

@@ -1,9 +1,7 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use WA\Database\Command\TablesRelationsAndIndexes;
-
 
 class CreateUserAssetsTable extends Migration
 {
@@ -25,11 +23,19 @@ class CreateUserAssetsTable extends Migration
     {
         Schema::create(
             $this->tableName,
-            function (Blueprint $table) {
+            function ( $table) {
                 $table->increments('id');
+                $table->integer('employeeId')->unsigned();
+                $table->integer('assetId')->unsigned();
 
-                $this->includeForeign($table, $this->foreignColumns);
                 $table->nullableTimestamps();
+            }
+        );
+
+        Schema::table(
+            $this->tableName, 
+            function($table) {
+                $table->foreign('assetId')->references('id')->on('assets');
             }
         );
     }
@@ -41,7 +47,20 @@ class CreateUserAssetsTable extends Migration
      */
     public function down()
     {
-        $this->dropForeignKeys($this->tableName, $this->foreignColumns);
+        Schema::table(
+            $this->tableName, 
+            function ( $table) {
+                //$table->dropForeign('assetId');
+        });
+
+        /*
+        Schema::table(
+            $this->tableName, 
+            function ( $table) {
+                //$table->dropForeign('employeeId');
+        });
+        */
+        
         $this->forceDropTable($this->tableName);
     }
 

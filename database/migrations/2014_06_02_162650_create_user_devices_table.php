@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
+
 use WA\Database\Command\TablesRelationsAndIndexes;
 
 class CreateUserDevicesTable extends Migration {
@@ -24,10 +24,20 @@ class CreateUserDevicesTable extends Migration {
     {
         Schema::create(
             $this->tableName,
-            function (Blueprint $table) {
+            function ( $table) {
                 $table->increments('id');
-                $this->includeForeign($table, $this->foreignColumns);
+                $table->integer('employeeId')->unsigned();
+                $table->integer('deviceId')->unsigned();
+    
                 $table->nullableTimestamps();
+            }
+        );
+
+        Schema::table(
+            $this->tableName, 
+            function($table) {
+                $table->foreign('employeeId')->references('id')->on('users');
+                $table->foreign('deviceId')->references('id')->on('devices');
             }
         );
     }
@@ -40,7 +50,12 @@ class CreateUserDevicesTable extends Migration {
      */
     public function down()
     {
-        $this->dropForeignKeys($this->tableName, $this->foreignColumns);
+        Schema::table(
+            $this->tableName, 
+            function ( $table) {
+                //$table->dropForeign('employeeId');
+                //$table->dropForeign('deviceId');
+        });
         $this->forceDropTable($this->tableName);
     }
 
