@@ -9,7 +9,7 @@ use WA\DataStore\Allocation\AllocationTransformer;
 use WA\DataStore\Asset\AssetTransformer;
 use WA\DataStore\Company\CompanyTransformer;
 use WA\DataStore\Device\DeviceTransformer;
-use WA\DataStore\Page\PageTransformer;
+use WA\DataStore\Content\COntentTransformer;
 use WA\DataStore\Role\Role;
 use WA\DataStore\Role\RoleTransformer;
 
@@ -24,7 +24,7 @@ class UserTransformer extends TransformerAbstract
         'company',
         'roles',
         'allocations',
-        'pages'
+        'contents'
     ];
 
     /**
@@ -99,11 +99,11 @@ class UserTransformer extends TransformerAbstract
     /**
      * @param User $user
      *
-     * @return ResourceCollection Pages
+     * @return ResourceCollection Contents
      */
-    public function includePages(User $user)
+    public function includeContents(User $user)
     {
-        return new ResourceCollection($user->pages, new PageTransformer(), 'pages');
+        return new ResourceCollection($user->contents, new ContentTransformer(), 'contents');
     }
 
 

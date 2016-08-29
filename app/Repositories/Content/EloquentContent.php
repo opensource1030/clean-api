@@ -1,50 +1,47 @@
 <?php
 
-namespace WA\Repositories\Pages;
+namespace WA\Repositories\Content;
 
 use WA\Repositories\AbstractRepository;
 
 /**
- * Class EloquentPages
+ * Class EloquentContent
  *
- * @package WA\Repositories\Pages
+ * @package WA\Repositories\Content
  */
-class EloquentPages extends AbstractRepository implements PagesInterface
+class EloquentContent extends AbstractRepository implements ContentInterface
 {
 
-
     /**
-     * Update pages
+     * Update content
      *
      * @param array $data
      * @return bool
      */
     public function update(array $data)
     {
-        $page = $this->model->find($data['id']);
+        $content = $this->model->find($data['id']);
 
-        if(!$page)
+        if(!$content)
         {
             return false;
         }
 
-        $page->title =  isset($data['title']) ? $data['title'] : null ;
-        $page->section = isset($data['section']) ? $data['section'] : null;
-        $page->active = isset($data['active']) ? $data['active'] : 0;
-        $page->content = isset($data['content']) ? $data['content'] : null;
-        $page->owner_type = isset($data['owner_type']) ? $data['owner_type'] : null;
-        $page->owner_id = isset($data['owner_id']) ? $data['owner_id'] : 0 ;
+        $content->active = isset($data['active']) ? $data['active'] : 0;
+        $content->content = isset($data['content']) ? $data['content'] : null;
+        $content->owner_type = isset($data['owner_type']) ? $data['owner_type'] : null;
+        $content->owner_id = isset($data['owner_id']) ? $data['owner_id'] : 0 ;
 
-        if(!$page->save()) {
+        if(!$content->save()) {
             return false;
         }
 
-        return $page;
+        return $content;
 
     }
 
     /**
-     * Get the company Id tied to the page
+     * Get the company Id tied to the content
      *
      * @param $id
      * @return mixed
@@ -55,18 +52,18 @@ class EloquentPages extends AbstractRepository implements PagesInterface
     }
 
     /**
-     * Get an array of all the available pages.
+     * Get an array of all the available content.
      *
-     * @return Array of pages
+     * @return Array of contents
      */
-    public function getAllPages()
+    public function getAllContents()
     {
-        $pages =  $this->model->all();
-        return $pages;
+        $contents =  $this->model->all();
+        return $contents;
     }
 
     /**
-     * Create a new page
+     * Create new content
      *
      * @param array $data
      * @return bool|static
@@ -74,26 +71,24 @@ class EloquentPages extends AbstractRepository implements PagesInterface
     public function create(array $data)
     {
 
-        $pageData = [
-        "title" =>  isset($data['title']) ? $data['title'] : null ,
-        "section" => isset($data['section']) ? $data['section'] : null,
+        $contentData = [
         "active" => !empty($data['active']) ? 1 : 0,
         "content" => isset($data['content']) ? $data['content'] : null,
         "owner_type" => isset($data['owner_type']) ? $data['owner_type'] : null,
         "owner_id" => isset($data['owner_id']) ? $data['owner_id'] : 0,
         ];
 
-        $page = $this->model->create($pageData);
+        $content = $this->model->create($contentData);
 
-        if(!$page) {
+        if(!$content) {
             return false;
         }
 
-        return $page;
+        return $content;
     }
 
     /**
-     * Delete a Page.
+     * Delete Content.
      *
      * @param int  $id
      * @param bool $soft true soft deletes

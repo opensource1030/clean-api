@@ -6,7 +6,7 @@ use League\Fractal\Resource\Collection as ResourceCollection;
 use League\Fractal\TransformerAbstract;
 use WA\DataStore\Account\AccountTransformer;
 use WA\DataStore\Allocation\AllocationTransformer;
-use WA\DataStore\Page\PageTransformer;
+use WA\DataStore\Content\ContentTransformer;
 
 /**
  * Class CompanyTransformer.
@@ -16,7 +16,7 @@ class CompanyTransformer extends TransformerAbstract
     protected $availableIncludes = [
         'accounts',
         'allocations',
-        'pages'
+        'contents'
     ];
 
     /**
@@ -47,10 +47,10 @@ class CompanyTransformer extends TransformerAbstract
     /**
      * @param Company $company
      *
-     * @return ResourceCollection Pages
+     * @return ResourceCollection Contents
      */
-    public function includePages(Company $company)
+    public function includeContents(Company $company)
     {
-        return new ResourceCollection($company->pages, new PageTransformer(), 'pages');
+        return new ResourceCollection($company->contents, new ContentTransformer(), 'contents');
     }
 }
