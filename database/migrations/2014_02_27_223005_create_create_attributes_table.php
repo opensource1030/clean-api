@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use WA\Database\Command\TablesRelationsAndIndexes;
 
 class CreateCreateAttributesTable extends Migration {
@@ -17,11 +16,11 @@ class CreateCreateAttributesTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('attributes', function(Blueprint $table){
-
-            $table->increments('id');
-
-            $table->string('name');
+		Schema::create(
+			$this->tableName, 
+			function( $table){
+	            $table->increments('id');
+	            $table->string('name');
                 $table->string('meta')->nullable();
         });
 	}
@@ -35,5 +34,4 @@ class CreateCreateAttributesTable extends Migration {
 	{
         $this->forceDropTable($this->tableName);
 	}
-
 }

@@ -1,6 +1,6 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
+
 use Illuminate\Database\Migrations\Migration;
 
 class CreatePagesTable extends Migration
@@ -17,7 +17,7 @@ class CreatePagesTable extends Migration
      */
     public function up()
     {
-        Schema::create($this->tableName, function(Blueprint $table){
+        Schema::create($this->tableName, function( $table){
 
             $table->increments('id');
             $table->string('title');

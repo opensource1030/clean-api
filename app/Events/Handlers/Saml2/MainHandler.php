@@ -54,10 +54,10 @@ class MainHandler extends BaseHandler
     public function saml2LoginUser($event)
     {
         // Get the UUID from url.
-        $uuid = getUuidFromRequestRelayState();
+        $uuid = $this->getUuidFromRequestRelayState();
         
         // Get the User Data Info from the Saml2 User.
-        $userData = getUserDataFromSaml2User($event);
+        $userData = $this->getUserDataFromSaml2User($event);
 
         // Id Company from Request.
         $idCompany = app('request')->get('idCompany');
@@ -92,7 +92,7 @@ class MainHandler extends BaseHandler
 
         switch ($idCompany) {
             case 21: // facebook
-                return $this->createUserFacebookTest($userData);
+                return $this->createUserFacebookTest();
                 //return null;                
                 break;
             
@@ -134,7 +134,7 @@ class MainHandler extends BaseHandler
                     'level' => 0
                     );
                 return $user;
-            break;
+                break;
         }
     }
 
@@ -196,7 +196,7 @@ class MainHandler extends BaseHandler
         return redirect("users/$userId")->with($data);
     }
 
-    private function createUserFacebookTest($userData){
+    private function createUserFacebookTest(){
 
         // The today's date.
         $carbon = Carbon::today();
@@ -241,8 +241,7 @@ class MainHandler extends BaseHandler
 
     private function getUuidFromRequestRelayState(){
         $relayState = app('request')->input('RelayState');
-        $parts = parse_url($relayState);
-        $path_parts = explode('/', $parts['path']);
+        $path_parts = explode('/', $relayState);
         return $path_parts[count($path_parts)-1];
     }
 

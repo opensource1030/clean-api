@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
+
 use WA\Database\Command\TablesRelationsAndIndexes;
 
 class CreateCompaniesTable extends Migration
@@ -19,7 +19,7 @@ class CreateCompaniesTable extends Migration
     {
         Schema::create(
             $this->tableName,
-            function (Blueprint $table) {
+            function ( $table) {
                 $table->increments('id');
 
                 $table->string('name');
@@ -32,8 +32,14 @@ class CreateCompaniesTable extends Migration
                 $table->nullableTimestamps();
             }
         );
-    }
 
+        Schema::table(
+            'users', 
+            function( $table) {
+                $table->foreign('companyId')->references('id')->on('companies');
+            }
+        );
+    }
 
     /**
      * Reverse the migrations.
@@ -42,7 +48,44 @@ class CreateCompaniesTable extends Migration
      */
     public function down()
     {
+        Schema::table(
+            'users', 
+            function ( $table) {
+                //$table->dropForeign('companyId');
+        });
+        
+        /*
+        Schema::table(
+            'companies_devices', 
+            function ($table) {
+                //$table->dropForeign('companyId');
+        });
+
+        Schema::table(
+            'companies_carriers', 
+            function ($table) {
+                //$table->dropForeign('companyId');
+        });
+
+        Schema::table(
+            'company_domains', 
+            function ( $table) {
+            //$table->dropForeign('companyId');
+        });
+
+        Schema::table(
+            'allocations', 
+            function ( $table) {
+            //$table->dropForeign('companyId');
+        });
+
+        Schema::table(
+            'company_saml2', 
+            function ( $table) {
+            //$table->dropForeign('companyId');
+        });
+        */
+
         $this->forceDropTable($this->tableName);
     }
-
 }

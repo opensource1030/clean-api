@@ -45,7 +45,7 @@ class SSO extends BaseController
      */
     public function loginRequest($email) 
     {
-        // Save email in Session to show it to the user.
+        // email.
         $email = trim($email);
 
         $emailArray['email'] = $email;
@@ -56,10 +56,10 @@ class SSO extends BaseController
         // IF VALIDATOR OK => EMAIL OK!
         if(!$validator->fails()){
             // THIS EMAIL HAS COMPANY RELATED?
-            $companyId = $this->company->getIdByUserEmail($email);
+            $idCompany = $this->company->getIdByUserEmail($email);
 
             // SSO COMPANY == NULL -> LOOK DATABASE USER.        
-            if($companyId == 0){
+            if($idCompany == 0){
 
                 // LOOK DATABASE USER
                 $user = $this->user->byEmail($email);
@@ -94,18 +94,17 @@ class SSO extends BaseController
                     'url' => 'required|url'
                 ]);
 
-                if(!$validator){
+                if($validator->fails()){
                     return response()
                         ->json(['error' => 'URL Not Found', 'message' => 'Url to redirect not found.'])
                         ->setStatusCode(409);
                 } else {
-                    Cache::put('saml2_idcompany_'.$email, $companyId, 15);
+                    Cache::put('saml2_idcompany_'.$email, $idCompany, 15);
                     $uuid = Uuid::generate();
                     
-                    $redirectUrl = Saml2::login($urlArray['url'].$uuid);
+                    $redirectUrl = Saml2::login($urlArray['url'].'/'.$uuid);
                     $arrRU = array('redirectUrl' => $redirectUrl);
                     $arrD = array('data' => $arrRU);
-                   
                     return response()->json($arrD);
                 }
             }
@@ -133,10 +132,12 @@ class SSO extends BaseController
                 ->json(['error' => 'Required User', 'message' => 'Please, user is not available now, try again later.'])
                 ->setStatusCode(409);
         } else {
-            echo ('SUCCESS UUID = '.$uuid);
-            echo ('<br>');
-            echo ('Laravel User: ');
-            var_dump($laravelUser);
+            //echo ('SUCCESS UUID = '.$uuid);
+            //echo ('<br>');
+            //echo ('Laravel User: ');
+            return response()
+                ->json(['success' => 'User Successfully Logged', 'uuid' => $uuid])
+                ->setStatusCode(200);
         }
     }
 }

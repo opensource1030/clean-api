@@ -1,8 +1,10 @@
 <?php
 
+
+
 class TestCase extends Laravel\Lumen\Testing\TestCase
 {
-    protected $baseUrl = 'http://clean.api';
+   protected $baseUrl  ;
 
     /**
      * Creates the application.
@@ -11,6 +13,10 @@ class TestCase extends Laravel\Lumen\Testing\TestCase
      */
     public function createApplication()
     {
-        return require __DIR__ . '/../bootstrap/app.php';
+        $app =  require __DIR__ . '/../bootstrap/app.php';
+        $this->baseUrl = 'http://'.getenv('API_DOMAIN');
+        return $app;
     }
+
+
 }

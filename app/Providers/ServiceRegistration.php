@@ -52,6 +52,9 @@ use WA\Repositories\Role\EloquentRole;
 use WA\Repositories\Permission\EloquentPermission;
 use WA\Repositories\Allocation\EloquentAllocation;
 
+use WA\DataStore\Service\Service;
+use WA\Repositories\Service\EloquentService;
+
 use WA\Repositories\HelpDesk\EasyVista;
 use WA\Repositories\HelpDesk\HelpDeskCacheDecorator;
 use WA\DataStore\EasyVistaHelpDesk;
@@ -401,6 +404,15 @@ trait ServiceRegistration
 
         );
 
+    }
+
+    public function registerService()
+    {
+        app()->bind('WA\Repositories\Service\ServiceInterface',
+            function () {
+                return new EloquentService(new Service());
+            }
+        );
     }
 
 }

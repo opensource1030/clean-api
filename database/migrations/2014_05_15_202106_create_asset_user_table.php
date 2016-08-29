@@ -1,11 +1,11 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
+
 
 class CreateAssetUserTable extends Migration
 {
-
+	protected $tableName = 'employee_assets';
 	/**
 	 * Run the migrations.
 	 *
@@ -14,16 +14,15 @@ class CreateAssetUserTable extends Migration
 	public function up()
 	{
         Schema::create(
-            'employee_assets',
-            function (Blueprint $table)
+            $this->tableName,
+            function ( $table)
 		{
 			$table->increments('id');
             $table->integer('assetId', false, true)->index();
-            $table->integer('employeeId', false, true)->index();
+            $table->integer('userId', false, true)->index();
 			$table->nullableTimestamps();
 		});
 	}
-
 
 	/**
 	 * Reverse the migrations.
@@ -32,7 +31,7 @@ class CreateAssetUserTable extends Migration
 	 */
 	public function down()
 	{
-        Schema::drop('employee_assets');
+        Schema::drop($this->tableName);
 	}
 
 }

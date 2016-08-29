@@ -10,7 +10,7 @@
  */
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
+
 use Illuminate\Support\Facades\Schema;
 
 /**
@@ -27,7 +27,7 @@ class CreateOauthAccessTokensTable extends Migration
      */
     public function up()
     {
-        Schema::create('oauth_access_tokens', function (Blueprint $table) {
+        Schema::create('oauth_access_tokens', function ( $table) {
             $table->string('id', 40)->primary();
             $table->integer('session_id')->unsigned();
             $table->integer('expire_time');
@@ -50,7 +50,7 @@ class CreateOauthAccessTokensTable extends Migration
      */
     public function down()
     {
-        Schema::table('oauth_access_tokens', function (Blueprint $table) {
+        Schema::table('oauth_access_tokens', function ( $table) {
             $table->dropForeign('oauth_access_tokens_session_id_foreign');
         });
         Schema::drop('oauth_access_tokens');

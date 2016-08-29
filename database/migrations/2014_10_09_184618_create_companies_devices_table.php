@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 use WA\Database\Command\TablesRelationsAndIndexes;
 
@@ -23,11 +22,21 @@ class CreateCompaniesDevicesTable extends Migration {
     public function up()
     {
 
-        Schema::create($this->tableName, function (Blueprint $table) {
-            $table->increments('id');
-
-            $this->includeForeign($table, $this->foreignColumns);
+        Schema::create(
+            $this->tableName, 
+            function ($table) {
+                $table->increments('id');
+                $table->integer('companyId')->unsigned();
+                $table->integer('deviceId')->unsigned();
         });
+
+        Schema::table(
+            $this->tableName, 
+            function($table) {
+                $table->foreign('companyId')->references('id')->on('companies');
+                $table->foreign('deviceId')->references('id')->on('devices');
+            }
+        );
     }
 
     /**
@@ -37,8 +46,13 @@ class CreateCompaniesDevicesTable extends Migration {
      */
     public function down()
     {
-        $this->dropForeignKeys($this->tableName, $this->foreignColumns);
+        Schema::table(
+            $this->tableName, 
+            function ( $table) {
+                //$table->dropForeign('companyId');
+                //$table->dropForeign('deviceId');
+        });
+
         $this->forceDropTable($this->tableName);
     }
-
 }

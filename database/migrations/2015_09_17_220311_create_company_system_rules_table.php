@@ -1,6 +1,6 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
+
 use Illuminate\Database\Migrations\Migration;
 
 class CreateCompanySystemRulesTable extends Migration
@@ -12,7 +12,7 @@ class CreateCompanySystemRulesTable extends Migration
      */
     public function up()
     {
-        Schema::create('company_rules', function (Blueprint $table) {
+        Schema::create('company_rules', function ( $table) {
 
             $table->integer('companyId')->unsigned();
             $table->integer('ruleId')->unsigned();

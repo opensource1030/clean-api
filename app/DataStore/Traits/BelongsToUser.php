@@ -12,6 +12,6 @@ trait BelongsToUser
      */
     public function user()
     {
-        return $this->belongsTo('WA\DataStore\User\User', 'employeeId');
+        return $this->belongsTo('WA\DataStore\User\User', 'userId');
     }
 }

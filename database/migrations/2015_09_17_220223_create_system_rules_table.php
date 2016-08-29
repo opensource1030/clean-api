@@ -1,6 +1,6 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
+
 use Illuminate\Database\Migrations\Migration;
 
 class CreateSystemRulesTable extends Migration
@@ -12,7 +12,7 @@ class CreateSystemRulesTable extends Migration
      */
     public function up()
     {
-        Schema::create('system_rules', function (Blueprint $table) {
+        Schema::create('system_rules', function ( $table) {
 
             $table->increments('id');
             $table->string('name');

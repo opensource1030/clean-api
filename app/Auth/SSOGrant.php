@@ -125,14 +125,11 @@ class SSOGrant extends AbstractGrant
         
         // Get the UUID from url.
         $uuid = app('request')->input('uuid');
-
-        echo 'UUIDSSOGRANT: '.$uuid.'<br>';
-
+   
         // Check if user's username and password are correct
         // IF FAILS CHECK storage/framwork/cache permissions.
         $userId = call_user_func($this->getVerifyCredentialsCallback(), $uuid);
 
-        echo 'userId: '.$userId.'<br>';
         if ($userId === false) {
             $this->server->getEventEmitter()->emit(new Event\UserAuthenticationFailedEvent($this->server->getRequest()));
             throw new Exception\InvalidCredentialsException();

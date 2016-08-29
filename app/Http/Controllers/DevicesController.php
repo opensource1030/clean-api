@@ -17,20 +17,19 @@ use WA\Repositories\Device\DeviceInterface;
  */
 class DevicesController extends ApiController
 {
-
     /**
      * @var DeviceInterface
      */
     protected $device;
 
-
     /**
+     * Package Controller constructor
+     *
      * @param DeviceInterface $device
      */
     public function __construct(DeviceInterface $device)
     {
-        $this->device = $this->device = $device;
-
+        $this->device = $device;
     }
 
     /**
@@ -93,5 +92,40 @@ class DevicesController extends ApiController
         return $response;
     }
 
+    /**
+     * Update contents of a device
+     *
+     * @param $id
+     * @return \Dingo\Api\Http\Response
+     */
+    public function store($id, Request $request)   
+    {
+        $data = $request->all();       
+        $data['id'] = $id;
+        $device = $this->device->update($data);
+        return $this->response()->item($device, new DeviceTransformer(), ['key' => 'device']);
+    }
 
+    /**
+     * Create a new device
+     *
+     * @return \Dingo\Api\Http\Response
+     */
+    public function create(Request $request)
+    {
+        $data = $request->all();
+        $device = $this->device->create($data);
+        return $this->response()->item($device, new DeviceTransformer(), ['key' => 'device']);
+    }
+
+    /**
+     * Delete a device
+     *
+     * @param $id
+     */
+    public function delete($id)
+    {
+        $this->device->deleteById($id);
+        $this->index();
+    }
 }
