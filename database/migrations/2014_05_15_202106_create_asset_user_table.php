@@ -5,7 +5,7 @@ use Illuminate\Database\Migrations\Migration;
 
 class CreateAssetUserTable extends Migration
 {
-
+	protected $tableName = 'employee_assets';
 	/**
 	 * Run the migrations.
 	 *
@@ -14,7 +14,7 @@ class CreateAssetUserTable extends Migration
 	public function up()
 	{
         Schema::create(
-            'employee_assets',
+            $this->tableName,
             function ( $table)
 		{
 			$table->increments('id');
@@ -24,7 +24,6 @@ class CreateAssetUserTable extends Migration
 		});
 	}
 
-
 	/**
 	 * Reverse the migrations.
 	 *
@@ -32,7 +31,7 @@ class CreateAssetUserTable extends Migration
 	 */
 	public function down()
 	{
-        Schema::drop('employee_assets');
+        Schema::drop($this->tableName);
 	}
 
 }
