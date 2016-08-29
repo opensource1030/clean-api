@@ -9,7 +9,7 @@ use WA\DataStore\Allocation\AllocationTransformer;
 use WA\DataStore\Asset\AssetTransformer;
 use WA\DataStore\Company\CompanyTransformer;
 use WA\DataStore\Device\DeviceTransformer;
-use WA\DataStore\Content\COntentTransformer;
+use WA\DataStore\Content\ContentTransformer;
 use WA\DataStore\Role\Role;
 use WA\DataStore\Role\RoleTransformer;
 
