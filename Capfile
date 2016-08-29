@@ -3,7 +3,8 @@ require 'capistrano/setup'
 
 # Include default deployment tasks
 require 'capistrano/deploy'
-require 'slackistrano'
+require 'slackistrano/capistrano'
+require_relative 'config/lib/custom_messaging'
 
 # 3rd Party Task --
 require 'capistrano/file-permissions'
