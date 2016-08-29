@@ -20,7 +20,6 @@ class CompanySaml2TableSeeder extends BaseTableSeeder
         $this->deleteTable();
 
         $dataFacebook = [
-        'id' => null,
         'entityId' => 'http://simplesamlphp.dev/simplesaml/saml2/idp/metadata.php',
         'singleSignOnServiceUrl' => 'http://simplesamlphp.dev/simplesaml/saml2/idp/SSOService.php',
         'singleSignOnServiceBinding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
@@ -31,7 +30,6 @@ class CompanySaml2TableSeeder extends BaseTableSeeder
         ];
 
         $dataMicrosoft = [
-            'id' => null,
             'entityId' => 'https://sts.windows.net/d6f6af8c-1dd5-4480-afe3-53aaa025a273/',
             'singleSignOnServiceUrl' => 'https://login.microsoftonline.com/d6f6af8c-1dd5-4480-afe3-53aaa025a273/saml2',
             'singleSignOnServiceBinding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
