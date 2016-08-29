@@ -28,6 +28,9 @@ class CreateDevicesTable extends Migration
             function ($table) {
                 $table->increments('id');
                 $table->string('identification')->unique();
+                $table->string('image');
+                $table->string('name');
+                $table->string('properties');
                 $table->integer('externalId')->unique()->nullable();
                 $table->integer('deviceTypeId')->unsigned();
                 $table->integer('statusId')->unsigned()->nullable();
