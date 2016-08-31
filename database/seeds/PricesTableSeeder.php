@@ -27,8 +27,7 @@ class PricesTableSeeder extends BaseTableSeeder
                 'price2'              => 399,
                 'priceOwn'              => 399,
                 'deviceId'              => 1,
-                'styleId'              => 1,
-                'capacityId'              => 1,
+                'modificationId'              => 1,
                 'carrierId'              => 1,
                 'providerId'              => 4
             ],
@@ -38,8 +37,7 @@ class PricesTableSeeder extends BaseTableSeeder
                 'price2'              => 399,
                 'priceOwn'              => 399,
                 'deviceId'              => 1,
-                'styleId'              => 1,
-                'capacityId'              => 1,
+                'modificationId'              => 1,
                 'carrierId'              => 2,
                 'providerId'              => 4
             ],
@@ -49,8 +47,7 @@ class PricesTableSeeder extends BaseTableSeeder
                 'price2'              => 399,
                 'priceOwn'              => 399,
                 'deviceId'              => 1,
-                'styleId'              => 1,
-                'capacityId'              => 2,
+                'modificationId'              => 1,
                 'carrierId'              => 1,
                 'providerId'              => 4
             ],
@@ -60,8 +57,7 @@ class PricesTableSeeder extends BaseTableSeeder
                 'price2'              => 399,
                 'priceOwn'              => 399,
                 'deviceId'              => 1,
-                'styleId'              => 1,
-                'capacityId'              => 2,
+                'modificationId'              => 1,
                 'carrierId'              => 2,
                 'providerId'              => 4
             ],
@@ -71,8 +67,7 @@ class PricesTableSeeder extends BaseTableSeeder
                 'price2'              => 399,
                 'priceOwn'              => 399,
                 'deviceId'              => 1,
-                'styleId'              => 2,
-                'capacityId'              => 1,
+                'modificationId'              => 2,
                 'carrierId'              => 1,
                 'providerId'              => 4
             ],
@@ -82,8 +77,7 @@ class PricesTableSeeder extends BaseTableSeeder
                 'price2'              => 399,
                 'priceOwn'              => 399,
                 'deviceId'              => 1,
-                'styleId'              => 2,
-                'capacityId'              => 1,
+                'modificationId'              => 2,
                 'carrierId'              => 2,
                 'providerId'              => 4
             ],
@@ -93,8 +87,7 @@ class PricesTableSeeder extends BaseTableSeeder
                 'price2'              => 399,
                 'priceOwn'              => 399,
                 'deviceId'              => 1,
-                'styleId'              => 2,
-                'capacityId'              => 2,
+                'modificationId'              => 2,
                 'carrierId'              => 1,
                 'providerId'              => 4
             ],
@@ -104,8 +97,7 @@ class PricesTableSeeder extends BaseTableSeeder
                 'price2'              => 399,
                 'priceOwn'              => 399,
                 'deviceId'              => 1,
-                'styleId'              => 2,
-                'capacityId'              => 2,
+                'modificationId'              => 2,
                 'carrierId'              => 2,
                 'providerId'              => 4
             ]

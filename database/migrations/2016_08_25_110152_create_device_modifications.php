@@ -3,11 +3,11 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateDeviceStyles extends Migration
+class CreateDeviceModifications extends Migration
 {
     use \WA\Database\Command\TablesRelationsAndIndexes;
 
-    protected $tableName = 'device_styles';
+    protected $tableName = 'device_modifications';
     
     /**
      * Run the migrations.
@@ -21,7 +21,7 @@ class CreateDeviceStyles extends Migration
             function ($table) {
                 $table->increments('id');
                 $table->integer('deviceId')->unsigned();
-                $table->integer('styleId')->unsigned();
+                $table->integer('modificationId')->unsigned();
             }
         );
 
@@ -29,7 +29,7 @@ class CreateDeviceStyles extends Migration
             $this->tableName, 
             function($table) {
                 $table->foreign('deviceId')->references('id')->on('devices');
-                $table->foreign('styleId')->references('id')->on('styles');
+                $table->foreign('modificationId')->references('id')->on('modifications');
             }
         );
     }

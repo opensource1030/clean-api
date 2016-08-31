@@ -143,5 +143,21 @@ $api->version('v1', function ($api) {
         $api->put('services/{id}', ['uses' => $serviceController . '@store']);
         $api->delete('services/{id}', ['uses' => $serviceController . '@delete']);
 
+        //=Modification
+        $modificationController = 'WA\Http\Controllers\ModificationController';
+        $api->get('modifications', ['as' => 'api.modification.index', 'uses' => $modificationController . '@index']);
+        $api->get('modifications/{id}', ['as' => 'api.modification.show', 'uses' => $modificationController . '@show']);
+        $api->post('modifications', ['uses' => $modificationController . '@create']);
+        $api->put('modifications/{id}', ['uses' => $modificationController . '@store']);
+        $api->delete('modifications/{id}', ['uses' => $modificationController . '@delete']);
+
+        //=Carrier
+        $carrierController = 'WA\Http\Controllers\CarrierController';
+        $api->get('carriers', ['as' => 'api.carrier.index', 'uses' => $carrierController . '@index']);
+        $api->get('carriers/{id}', ['as' => 'api.carrier.show', 'uses' => $carrierController . '@show']);
+        $api->post('carriers', ['uses' => $carrierController . '@create']);
+        $api->put('carriers/{id}', ['uses' => $carrierController . '@store']);
+        $api->delete('carriers/{id}', ['uses' => $carrierController . '@delete']);
+
     });
 });

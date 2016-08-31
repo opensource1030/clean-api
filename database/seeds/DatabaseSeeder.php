@@ -21,18 +21,18 @@ class DatabaseSeeder extends Seeder
         $this->call(PagesTableSeeder::class);
         $this->call(CompanySaml2TableSeeder::class);
         $this->call(CarriersTableSeeder::class);        
-        $this->call(StylesTableSeeder::class);
-        $this->call(CapacitiesTableSeeder::class);
+        $this->call(ModificationsTableSeeder::class);
         $this->call(ProvidersTableSeeder::class);
         $this->call(PricesTableSeeder::class);
         $this->call(DeviceCarriersTableSeeder::class);          
-        $this->call(DeviceStylesTableSeeder::class);
-        $this->call(DeviceCapacitiesTableSeeder::class);
+        $this->call(DeviceModificationsTableSeeder::class);
         $this->call(DeviceProvidersTableSeeder::class);
         $this->call(ServicesTableSeeder::class);
         $this->call(CompanyDomainsTableSeeder::class);
-
-        
+        $this->call(AppsTableSeeder::class);
+        $this->call(OrdersTableSeeder::class);
+        $this->call(PackagesTableSeeder::class);
+        $this->call(RequestsTableSeeder::class);        
 
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }

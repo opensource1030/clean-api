@@ -25,8 +25,7 @@ class CreateDevicePricesTable extends Migration
                 $table->integer('price2');
                 $table->integer('priceOwn');
                 $table->integer('deviceId')->unsigned();
-                $table->integer('styleId')->unsigned();
-                $table->integer('capacityId')->unsigned();
+                $table->integer('modificationId')->unsigned();
                 $table->integer('carrierId')->unsigned();
                 $table->integer('providerId')->unsigned();
             }
@@ -36,8 +35,7 @@ class CreateDevicePricesTable extends Migration
             $this->tableName, 
             function($table) {
                 $table->foreign('deviceId')->references('id')->on('devices');
-                $table->foreign('styleId')->references('id')->on('styles');
-                $table->foreign('capacityId')->references('id')->on('capacities');
+                $table->foreign('modificationId')->references('id')->on('modifications');
                 $table->foreign('carrierId')->references('id')->on('carriers');
                 $table->foreign('providerId')->references('id')->on('providers');
             }

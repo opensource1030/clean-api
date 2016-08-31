@@ -19,8 +19,7 @@ class RepositoriesServiceProviders extends ServiceProvider
      * Register all Providers.
      */
     public function register()
-    {
-        
+    {        
         $this->registerAll();
 
         $this->registerAsset();
@@ -48,5 +47,10 @@ class RepositoriesServiceProviders extends ServiceProvider
         $this->registerPages();
         $this->registerHelpDesk();
         $this->registerService();
+        $this->registerApp();
+        $this->registerOrder();
+        $this->registerPackage();
+        $this->registerRequest();
+        $this->registerModification();
     }
 }

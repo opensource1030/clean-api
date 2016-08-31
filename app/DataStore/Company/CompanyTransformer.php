@@ -30,6 +30,11 @@ class CompanyTransformer extends TransformerAbstract
             'id' => (int)$company->id,
             'name' => $company->name,
             'label' => $company->label,
+            'active' => $company->active,
+            'udlpath' => $company->udlpath,
+            'isCensus' => $company->isCensus,
+            'udlPathRule' => $company->udlPathRule,
+            'assetPath' => $company->assetPath,
         ];
     }
 

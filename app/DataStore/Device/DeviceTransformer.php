@@ -28,8 +28,17 @@ class DeviceTransformer extends TransformerAbstract
         return [
             'id' => (int)$device->id,
             'identification' => $device->identification,
+            'image' => $device->image,
+            'name' => $device->name,
+            'properties' => $device->properties,
+            'externalId' => $device->externalId,
+            'deviceTypeId' => $device->deviceTypeId,
+            'statusId' => $device->statusId,
+            'carrierId' => $device->carrierId,
+            'syncId' => $device->syncId,
+            'created_at' => $device->created_at,
+            'updated_at' => $device->updated_at
         ];
-
     }
 
     /**
