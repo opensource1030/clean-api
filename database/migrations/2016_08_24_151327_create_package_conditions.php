@@ -19,28 +19,30 @@ class CreatePackageConditions extends Migration
             $this->tableName,
             function ( $table) {
                 $table->increments('id');
-                $table->integer('profileNameCondition');
-                $table->integer('profileNameValue');
-                $table->integer('profileEmailCondition');
-                $table->integer('profileEmailValue');
-                $table->integer('profilePositionCondition');
-                $table->integer('profilePositionValue');
-                $table->integer('profileLevelCondition');
-                $table->integer('profileLevelValue');
-                $table->integer('profileDivisionCondition');
-                $table->integer('profileDivisionValue');
-                $table->integer('profileCostCenterCondition');
-                $table->integer('profileCostCenterValue');
-                $table->integer('profileBudgetCondition');
-                $table->integer('profileBudgetValue');
-                $table->integer('locationItemsCountryACondition');
-                $table->integer('locationItemsCountryAValue');
-                $table->integer('locationItemsCountryBCondition');
-                $table->integer('locationItemsCountryBValue');
-                $table->integer('locationItemsCityCondition');
-                $table->integer('locationItemsCityValue');
-                $table->integer('locationItemsAdressCondition');
-                $table->integer('locationItemsAdressValue');
+                $table->string('profileNameCondition');
+                $table->string('profileNameValue');
+                $table->string('profileEmailCondition');
+                $table->string('profileEmailValue');
+                $table->string('profilePositionCondition');
+                $table->string('profilePositionValue');
+                $table->string('profileLevelCondition');
+                $table->string('profileLevelValue');
+                $table->string('profileDivisionCondition');
+                $table->string('profileDivisionValue');
+                $table->string('profileCostCenterCondition');
+                $table->string('profileCostCenterValue');
+                $table->string('profileBudgetCondition');
+                $table->string('profileBudgetValue');
+                $table->string('locationItemsCountryACondition');
+                $table->string('locationItemsCountryAValue');
+                $table->string('locationItemsCountryBCondition');
+                $table->string('locationItemsCountryBValue');
+                $table->string('locationItemsCityCondition');
+                $table->string('locationItemsCityValue');
+                $table->string('locationItemsAdressCondition');
+                $table->string('locationItemsAdressValue');
+
+                $table->nullableTimestamps();
             }
         );
 
