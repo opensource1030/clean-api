@@ -36,8 +36,8 @@ class AppController extends ApiController
      */
     public function index()
     {
-        $app = $this->app->getAllApp();
-        return $this->response()->collection($app, new AppTransformer(),['key' => 'app']);
+        $app = $this->app->byPage();
+        return $this->response()->withPaginator($app, new AppTransformer(),['key' => 'apps']);
 
     }
 
@@ -51,7 +51,7 @@ class AppController extends ApiController
     public function show($id)
     {
         $app = $this->app->byId($id);
-        return $this->response()->item($app, new AppTransformer(), ['key' => 'app']);
+        return $this->response()->item($app, new AppTransformer(), ['key' => 'apps']);
     }
 
     /**
@@ -65,7 +65,7 @@ class AppController extends ApiController
         $data = $request->all();       
         $data['id'] = $id;
         $app = $this->app->update($data);
-        return $this->response()->item($app, new AppTransformer(), ['key' => 'app']);
+        return $this->response()->item($app, new AppTransformer(), ['key' => 'apps']);
     }
 
     /**
@@ -77,7 +77,7 @@ class AppController extends ApiController
     {
         $data = $request->all();
         $app = $this->app->create($data);
-        return $this->response()->item($app, new AppTransformer(), ['key' => 'app']);
+        return $this->response()->item($app, new AppTransformer(), ['key' => 'apps']);
     }
 
     /**
