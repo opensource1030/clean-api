@@ -31,6 +31,13 @@ class Carrier extends BaseDataStore
 {
     protected $table = 'carriers';
 
+    protected $fillable = [
+            'name',
+            'presentation',
+            'active',
+            'locationId',
+            'shortName'];
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
