@@ -52,8 +52,23 @@ use WA\Repositories\Role\EloquentRole;
 use WA\Repositories\Permission\EloquentPermission;
 use WA\Repositories\Allocation\EloquentAllocation;
 
-use WA\DataStore\Service\Service;
 use WA\Repositories\Service\EloquentService;
+use WA\DataStore\Service\Service;
+
+use WA\Repositories\App\EloquentApp;
+use WA\DataStore\App\App;
+
+use WA\Repositories\Order\EloquentOrder;
+use WA\DataStore\Order\Order;
+
+use WA\Repositories\Package\EloquentPackage;
+use WA\DataStore\Package\Package;
+
+use WA\Repositories\Request\EloquentRequest;
+use WA\DataStore\Request\Request;
+
+use WA\Repositories\Modification\EloquentModification;
+use WA\DataStore\Modification\Modification;
 
 use WA\Repositories\HelpDesk\EasyVista;
 use WA\Repositories\HelpDesk\HelpDeskCacheDecorator;
@@ -411,6 +426,51 @@ trait ServiceRegistration
         app()->bind('WA\Repositories\Service\ServiceInterface',
             function () {
                 return new EloquentService(new Service());
+            }
+        );
+    }
+
+    public function registerApp()
+    {
+        app()->bind('WA\Repositories\App\AppInterface',
+            function () {
+                return new EloquentApp(new App());
+            }
+        );
+    }
+
+    public function registerOrder()
+    {
+        app()->bind('WA\Repositories\Order\OrderInterface',
+            function () {
+                return new EloquentOrder(new Order());
+            }
+        );
+    }
+
+    public function registerPackage()
+    {
+        app()->bind('WA\Repositories\Package\PackageInterface',
+            function () {
+                return new EloquentPackage(new Package());
+            }
+        );
+    }
+
+    public function registerRequest()
+    {
+        app()->bind('WA\Repositories\Request\RequestInterface',
+            function () {
+                return new EloquentRequest(new Request());
+            }
+        );
+    }
+
+    public function registerModification()
+    {
+        app()->bind('WA\Repositories\Modification\ModificationInterface',
+            function () {
+                return new EloquentModification(new Modification());
             }
         );
     }

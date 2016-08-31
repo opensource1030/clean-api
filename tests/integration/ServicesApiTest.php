@@ -2,7 +2,7 @@
 
 use Laravel\Lumen\Testing\DatabaseTransactions;
 
-class ServiceApiTest extends TestCase
+class ServicesApiTest extends TestCase
 {
     use DatabaseTransactions;     
      
@@ -59,7 +59,7 @@ class ServiceApiTest extends TestCase
             ]);
     }
 
-    public function testCreateServices()
+    public function testCreateService()
     {
         $this->post('/services',
             [
@@ -89,7 +89,7 @@ class ServiceApiTest extends TestCase
             ]);
     }
 
-    public function testUpdateServices()
+    public function testUpdateService()
     {
         $service = factory(\WA\DataStore\Service\Service::class)->create();
 
