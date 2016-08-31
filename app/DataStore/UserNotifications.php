@@ -19,7 +19,7 @@ class UserNotifications extends BaseDataStore
      */
     public function users()
     {
-        return $this->belongsTo('WA\DataStore\User\User', 'employeeId');
+        return $this->belongsTo('WA\DataStore\User\User', 'userId');
     }
 
 }

@@ -63,7 +63,7 @@ class Device extends MutableDataStore
      */
     public function users()
     {
-        return $this->belongsToMany('WA\DataStore\User\User', 'employee_devices', 'deviceId', 'employeeId');
+        return $this->belongsToMany('WA\DataStore\User\User', 'user_devices', 'deviceId', 'userId');
     }
 
     /**

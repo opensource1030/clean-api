@@ -10,7 +10,7 @@
  */
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
+
 use Illuminate\Support\Facades\Schema;
 
 /**
@@ -27,7 +27,7 @@ class CreateOauthClientEndpointsTable extends Migration
      */
     public function up()
     {
-        Schema::create('oauth_client_endpoints', function (Blueprint $table) {
+        Schema::create('oauth_client_endpoints', function ( $table) {
             $table->increments('id');
             $table->string('client_id', 40);
             $table->string('redirect_uri');
@@ -50,7 +50,7 @@ class CreateOauthClientEndpointsTable extends Migration
      */
     public function down()
     {
-        Schema::table('oauth_client_endpoints', function (Blueprint $table) {
+        Schema::table('oauth_client_endpoints', function ( $table) {
             $table->dropForeign('oauth_client_endpoints_client_id_foreign');
         });
 

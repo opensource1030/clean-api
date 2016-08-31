@@ -883,8 +883,8 @@ class EloquentCompany extends AbstractRepository implements CompanyInterface
         $fields = [
             $this->domainsTable . '.domain',
             $companies_table . '.id',
-            $companies_table . '.name',
-            $companies_table . '.externalId'
+            $companies_table . '.name'//,
+            //$companies_table . '.externalId'
         ];
 
         $model = \DB::table($companies_table)

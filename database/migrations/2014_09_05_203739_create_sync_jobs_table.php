@@ -1,6 +1,6 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
+
 use Illuminate\Database\Migrations\Migration;
 
 class CreateSyncJobsTable extends Migration
@@ -22,12 +22,33 @@ class CreateSyncJobsTable extends Migration
      */
     public function up()
     {
-        Schema::create('sync_jobs', function (Blueprint $table) {
+        Schema::create('sync_jobs', function ( $table) {
                 $table->increments('id');
                 $table->string('name');
                 $table->integer('statusId');
                 $table->text('notes')->nullable();
                 $table->timestamps();
+            }
+        );
+
+        Schema::table(
+            'devices', 
+            function( $table) {
+                $table->foreign('syncId')->references('id')->on('sync_jobs');
+            }
+        );
+
+        Schema::table(
+            'assets', 
+            function( $table) {
+                $table->foreign('syncId')->references('id')->on('sync_jobs');
+            }
+        );
+
+        Schema::table(
+            'users', 
+            function( $table) {
+                $table->foreign('syncId')->references('id')->on('sync_jobs');
             }
         );
     }
@@ -39,7 +60,24 @@ class CreateSyncJobsTable extends Migration
      */
     public function down()
     {
-        Schema::drop('sync_jobs');
+        Schema::table(
+            'devices', 
+            function ( $table) {
+                //$table->dropForeign('syncId');
+        });
+        
+        Schema::table(
+            'assets', 
+            function ( $table) {
+                //$table->dropForeign('syncId');
+        });
+        
+        Schema::table(
+            'users', 
+            function ( $table) {
+                //$table->dropForeign('syncId');
+        });
+        
+        $this->forceDropTable($this->tableName);
     }
-
 }

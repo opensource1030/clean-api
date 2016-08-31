@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use WA\Database\Command\TablesRelationsAndIndexes;
 
 class CreateCarrierDevicesTable extends Migration
@@ -25,8 +24,7 @@ class CreateCarrierDevicesTable extends Migration
     {
         Schema::create(
             $this->tableName,
-            function (Blueprint $table) {
-
+            function ( $table) {
                 $table->increments('id');
                 $table->string('make')->nullable();
                 $table->string('model')->nullable();
@@ -37,10 +35,20 @@ class CreateCarrierDevicesTable extends Migration
                 $table->string('description')->nullable();
                 $table->boolean('isLive')->default(0);
                 $table->integer('externalId')->default(0);
-
-                $this->includeForeign($table, $this->foreignColumns);
+                $table->integer('statusId')->unsigned()->nullable();
+                $table->integer('carrierId')->unsigned()->nullable();
+                $table->integer('deviceTypeId')->unsigned()->nullable();
 
             });
+
+        Schema::table(
+            $this->tableName, 
+            function($table) {
+                // ¿¿ $table->foreign('statusId')->references('id')->on('companies'); ??
+                $table->foreign('carrierId')->references('id')->on('carriers');
+                $table->foreign('deviceTypeId')->references('id')->on('device_types');
+            }
+        );
     }
 
     /**
@@ -50,7 +58,21 @@ class CreateCarrierDevicesTable extends Migration
      */
     public function down()
     {
-        $this->dropForeignKeys($this->tableName, $this->foreignColumns);
+        Schema::table(
+            $this->tableName, 
+            function ( $table) {
+                //$table->dropForeign('carrierId');
+                //$table->dropForeign('deviceTypeId');
+        });
+
+        /*
+        Schema::table(
+            $this->tableName, 
+            function ( $table) {
+                // //$table->dropForeign('statusId');
+        });
+        */
+
         $this->forceDropTable($this->tableName);
     }
 

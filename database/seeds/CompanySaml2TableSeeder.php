@@ -9,6 +9,7 @@
 class CompanySaml2TableSeeder extends BaseTableSeeder
 {
     protected $table = "company_saml2";
+
     /**
      * Run the database seeds.
      *
@@ -19,18 +20,16 @@ class CompanySaml2TableSeeder extends BaseTableSeeder
         $this->deleteTable();
 
         $dataFacebook = [
-            'id' => null,
-            'entityId' => 'http://simplesamlphp.dev/simplesaml/saml2/idp/metadata.php',
-            'singleSignOnServiceUrl' => 'http://simplesamlphp.dev/simplesaml/saml2/idp/SSOService.php',
-            'singleSignOnServiceBinding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
-            'singleLogoutServiceUrl' => 'http://simplesamlphp.dev/simplesaml/saml2/idp/SingleLogoutService.php',
-            'singleLogoutServiceBinding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
-            'x509cert' => 'MIIDXTCCAkWgAwIBAgIJAMtuJVQu8b68MA0GCSqGSIb3DQEBCwUAMEUxCzAJBgNVBAYTAkFVMRMwEQYDVQQIDApTb21lLVN0YXRlMSEwHwYDVQQKDBhJbnRlcm5ldCBXaWRnaXRzIFB0eSBMdGQwHhcNMTYwNzA1MDkwODM1WhcNMjYwNzA1MDkwODM1WjBFMQswCQYDVQQGEwJBVTETMBEGA1UECAwKU29tZS1TdGF0ZTEhMB8GA1UECgwYSW50ZXJuZXQgV2lkZ2l0cyBQdHkgTHRkMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsPLmLoR69FYGOobPcQ8tmcBLwh1iPkL4QSZ8IisReUUENf9JfHRB8ie8+NQdsMJM9oqZ1OXTtHSgHfOk0bnC2r8qtx0SYbFVoZXw9YQofO6bxZBYWqWfJd8ADXo0fj47ywCVAwMhOBkSJy8NVK5rwXoo7DVOLeRS4Qu0mvsz8IK0wujUmoe+LNs7YEIbnsyDeSM6eqHgVuU9JQGhO20SMas+EdzU/E+o0PLaZlIo4CNpiC8DhbAIV+mLNxoVb7QHteNPDJEBRndURfaKiH8SKH2zuMN0Ay0AZUQzbYl/DZgm0WDyFfwqFhwBBg8sDMB4sV/vYSCbV2qd4CcFjyGtUQIDAQABo1AwTjAdBgNVHQ4EFgQUh6QbF4rPbOU+qVxjSRubWIk2jEswHwYDVR0jBBgwFoAUh6QbF4rPbOU+qVxjSRubWIk2jEswDAYDVR0TBAUwAwEB/zANBgkqhkiG9w0BAQsFAAOCAQEAIhX1+HSWLulEBKImMMels+GKNSIH7/RqOVvP9lE1DTaKJtjx9ZxbrqSIvSA1j6aiCOqMr0ok63Eg3kSSaPDxlaD9xVVIEGTTwZ01pvev5pbGzhpW2M0s6nNi0AGz8aCZGotugxLX7p4qPuuhnr5vnYu/MqhIEQrXhQsTizzQKfu6W4aojlRZNuiJEKJDALavu2l1Iby4eLUubFuBWAsPHpbIB+5QtYjjUVlGTnXKCrUubBj3GVIhdKtzPG10uyHNgT2wBcdj7T9tdPHT0XzkIjndHvhOJKqXDBcqYphXnrWlfqpLYUD3xwlHIbSohYSaiNRbcjaPwk6OWs/O/SBTPw==',
-            'companyId' => 21
+        'entityId' => 'http://simplesamlphp.dev/simplesaml/saml2/idp/metadata.php',
+        'singleSignOnServiceUrl' => 'http://simplesamlphp.dev/simplesaml/saml2/idp/SSOService.php',
+        'singleSignOnServiceBinding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
+        'singleLogoutServiceUrl' => 'http://simplesamlphp.dev/simplesaml/saml2/idp/SingleLogoutService.php',
+        'singleLogoutServiceBinding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
+        'x509cert' => 'MIIDXTCCAkWgAwIBAgIJAMtuJVQu8b68MA0GCSqGSIb3DQEBCwUAMEUxCzAJBgNVBAYTAkFVMRMwEQYDVQQIDApTb21lLVN0YXRlMSEwHwYDVQQKDBhJbnRlcm5ldCBXaWRnaXRzIFB0eSBMdGQwHhcNMTYwNzA1MDkwODM1WhcNMjYwNzA1MDkwODM1WjBFMQswCQYDVQQGEwJBVTETMBEGA1UECAwKU29tZS1TdGF0ZTEhMB8GA1UECgwYSW50ZXJuZXQgV2lkZ2l0cyBQdHkgTHRkMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsPLmLoR69FYGOobPcQ8tmcBLwh1iPkL4QSZ8IisReUUENf9JfHRB8ie8+NQdsMJM9oqZ1OXTtHSgHfOk0bnC2r8qtx0SYbFVoZXw9YQofO6bxZBYWqWfJd8ADXo0fj47ywCVAwMhOBkSJy8NVK5rwXoo7DVOLeRS4Qu0mvsz8IK0wujUmoe+LNs7YEIbnsyDeSM6eqHgVuU9JQGhO20SMas+EdzU/E+o0PLaZlIo4CNpiC8DhbAIV+mLNxoVb7QHteNPDJEBRndURfaKiH8SKH2zuMN0Ay0AZUQzbYl/DZgm0WDyFfwqFhwBBg8sDMB4sV/vYSCbV2qd4CcFjyGtUQIDAQABo1AwTjAdBgNVHQ4EFgQUh6QbF4rPbOU+qVxjSRubWIk2jEswHwYDVR0jBBgwFoAUh6QbF4rPbOU+qVxjSRubWIk2jEswDAYDVR0TBAUwAwEB/zANBgkqhkiG9w0BAQsFAAOCAQEAIhX1+HSWLulEBKImMMels+GKNSIH7/RqOVvP9lE1DTaKJtjx9ZxbrqSIvSA1j6aiCOqMr0ok63Eg3kSSaPDxlaD9xVVIEGTTwZ01pvev5pbGzhpW2M0s6nNi0AGz8aCZGotugxLX7p4qPuuhnr5vnYu/MqhIEQrXhQsTizzQKfu6W4aojlRZNuiJEKJDALavu2l1Iby4eLUubFuBWAsPHpbIB+5QtYjjUVlGTnXKCrUubBj3GVIhdKtzPG10uyHNgT2wBcdj7T9tdPHT0XzkIjndHvhOJKqXDBcqYphXnrWlfqpLYUD3xwlHIbSohYSaiNRbcjaPwk6OWs/O/SBTPw==',
+        'companyId' => 21
         ];
 
         $dataMicrosoft = [
-            'id' => null,
             'entityId' => 'https://sts.windows.net/d6f6af8c-1dd5-4480-afe3-53aaa025a273/',
             'singleSignOnServiceUrl' => 'https://login.microsoftonline.com/d6f6af8c-1dd5-4480-afe3-53aaa025a273/saml2',
             'singleSignOnServiceBinding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',

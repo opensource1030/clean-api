@@ -1,12 +1,10 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use WA\Database\Command\TablesRelationsAndIndexes;
 
 class CreateAssetTypesTable extends Migration
 {
-
     use TablesRelationsAndIndexes;
 
     protected $tableName = 'asset_types';
@@ -20,8 +18,8 @@ class CreateAssetTypesTable extends Migration
     {
         Schema::create(
             $this->tableName,
-            function (Blueprint $table) {
-            $table->increments('id');
+            function ( $table) {
+                $table->increments('id');
                 $table->string('name');
                 $table->string('description');
         });
@@ -36,5 +34,4 @@ class CreateAssetTypesTable extends Migration
     {
         $this->forceDropTable($this->tableName);
     }
-
 }

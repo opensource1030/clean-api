@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
+
 use WA\Database\Command\TablesRelationsAndIndexes;
 
 class CreateNotificationCategoryNotificationGroupTable extends Migration
@@ -23,11 +23,19 @@ class CreateNotificationCategoryNotificationGroupTable extends Migration
      */
     public function up()
     {
-        Schema::create($this->tableName, function (Blueprint $table) {
+        Schema::create($this->tableName, function ( $table) {
             $table->increments('id');
-
-            $this->includeForeign($table, $this->foreignColumns);
+            $table->integer('category_id')->unsigned()->nullable();
+            $table->integer('group_id')->unsigned()->nullable();
         });
+
+        Schema::table(
+            $this->tableName, 
+            function($table) {
+                // ¿¿ $table->foreign('category_id')->references('id')->on('companies'); ??
+                // ¿¿ $table->foreign('group_id')->references('id')->on('companies'); ??
+            }
+        );
     }
 
     /**
@@ -37,7 +45,12 @@ class CreateNotificationCategoryNotificationGroupTable extends Migration
      */
     public function down()
     {
-        $this->dropForeignKeys($this->tableName, $this->foreignColumns);
+        Schema::table(
+            $this->tableName, 
+            function ($table) {
+            ////$table->dropForeign('category_id');
+            ////$table->dropForeign('group_id');
+        });
         $this->forceDropTable($this->tableName);
     }
 }
