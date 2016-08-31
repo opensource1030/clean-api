@@ -26,8 +26,12 @@ class EloquentRequest extends AbstractRepository implements RequestInterface
             return false;
         }
 
-        $request->name =  isset($data['name']) ? $data['name'] : null ;
-        $request->description = isset($data['description']) ? $data['description'] : null;
+        if(isset($data['name'])){
+            $request->name = $data['name'];
+        }
+        if(isset($data['description'])){
+            $request->description = $data['description'];
+        }
 
         if(!$request->save()) {
             return false;
@@ -56,7 +60,6 @@ class EloquentRequest extends AbstractRepository implements RequestInterface
      */
     public function create(array $data)
     {
-
         $requestData = [
             "name" =>  isset($data['name']) ? $data['name'] : null ,
             "description" => isset($data['description']) ? $data['description'] : null,

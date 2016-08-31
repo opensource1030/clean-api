@@ -4,7 +4,6 @@ namespace WA\Http\Controllers;
 use Request;
 use WA\DataStore\Request\RequestTransformer;
 use WA\Repositories\Request\RequestInterface;
-use Illuminate\Http\Request;
 
 /**
  * Request resource.
@@ -36,8 +35,8 @@ class RequestController extends ApiController
      */
     public function index()
     {
-        $request = $this->request->getAllRequest();
-        return $this->response()->collection($request, new RequestTransformer(),['key' => 'request']);
+        $request = $this->request->byPage();
+        return $this->response()->withPaginator($request, new RequestTransformer(),['key' => 'request']);
 
     }
 
