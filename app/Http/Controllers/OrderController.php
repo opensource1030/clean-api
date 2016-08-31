@@ -36,8 +36,8 @@ class OrderController extends ApiController
      */
     public function index()
     {
-        $order = $this->order->getAllOrder();
-        return $this->response()->collection($order, new OrderTransformer(),['key' => 'order']);
+        $order = $this->order->byPage();
+        return $this->response()->withPaginator($order, new OrderTransformer(),['key' => 'orders']);
 
     }
 
@@ -51,7 +51,7 @@ class OrderController extends ApiController
     public function show($id)
     {
         $order = $this->order->byId($id);
-        return $this->response()->item($order, new OrderTransformer(), ['key' => 'order']);
+        return $this->response()->item($order, new OrderTransformer(), ['key' => 'orders']);
     }
 
     /**
@@ -65,7 +65,7 @@ class OrderController extends ApiController
         $data = $request->all();       
         $data['id'] = $id;
         $order = $this->order->update($data);
-        return $this->response()->item($order, new OrderTransformer(), ['key' => 'order']);
+        return $this->response()->item($order, new OrderTransformer(), ['key' => 'orders']);
     }
 
     /**
@@ -77,7 +77,7 @@ class OrderController extends ApiController
     {
         $data = $request->all();
         $order = $this->order->create($data);
-        return $this->response()->item($order, new OrderTransformer(), ['key' => 'order']);
+        return $this->response()->item($order, new OrderTransformer(), ['key' => 'orders']);
     }
 
     /**

@@ -26,17 +26,21 @@ class EloquentOrder extends AbstractRepository implements OrderInterface
             return false;
         }
 
-        $order->status =  isset($data['status']) ? $data['status'] : null ;
-        $order->created_at = isset($data['created_at']) ? $data['created_at'] : null;
-        $order->idEmployee = isset($data['idEmployee']) ? $data['idEmployee'] : null;
-        $order->idPackage = isset($data['idPackage']) ? $data['idPackage'] : 0;
+        if(isset($data['status'])){
+            $order->status = $data['status'];    
+        }
+        if(isset($data['userId'])){
+            $order->userId = $data['userId'];    
+        }
+        if(isset($data['packageId'])){
+            $order->packageId = $data['packageId'];    
+        }
 
         if(!$order->save()) {
             return false;
         }
 
         return $order;
-
     }
 
     /**
@@ -58,12 +62,10 @@ class EloquentOrder extends AbstractRepository implements OrderInterface
      */
     public function create(array $data)
     {
-
         $orderData = [
             "status" =>  isset($data['status']) ? $data['status'] : null ,
-            "created_at" => isset($data['created_at']) ? $data['created_at'] : null,
-            "idEmployee" => isset($data['idEmployee']) ? $data['idEmployee'] : null,
-            "idPackage" => isset($data['idPackage']) ? $data['idPackage'] : 0,
+            "userId" => isset($data['userId']) ? $data['userId'] : 0,
+            "packageId" => isset($data['packageId']) ? $data['packageId'] : 0,
         ];
 
         $order = $this->model->create($orderData);

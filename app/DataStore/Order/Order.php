@@ -12,9 +12,13 @@ use WA\DataStore\Order\OrderTransformer;
  */
 class Order extends BaseDataStore
 {
-    protected  $table = 'order';
+    protected  $table = 'orders';
 
-    protected $fillable = array('status', 'created_at', 'idEmployee', 'idPackage');
+    protected $fillable = [
+            'status',
+            'userId',
+            'packageId',
+            'updated_at'];
 
 
     /**

@@ -23,14 +23,11 @@ class OrderTransformer extends TransformerAbstract
         return [
 
             'id' => (int)$order->id,
-
             'status' => $order->status,
-
+            'userId' => (int)$order->userId,
+            'packageId' => (int)$order->packageId,
             'created_at' => $order->created_at,
-
-            'idEmployee' => $order->idEmployee,
-
-            'idPackage' => (int)$order->idPackage,
+            'updated_at' => $order->updated_at,
         ];
     }
 }
