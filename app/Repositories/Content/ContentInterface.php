@@ -1,18 +1,18 @@
 <?php
 
-namespace WA\Repositories\Pages;
+namespace WA\Repositories\Content;
 
 use WA\Repositories\RepositoryInterface;
 
 /**
- * Interface PagesInterface
+ * Interface ContentInterface
  *
- * @package WA\Repositories\Pages
+ * @package WA\Repositories\Content
  */
-interface PagesInterface extends RepositoryInterface
+interface ContentInterface extends RepositoryInterface
 {
     /**
-     * Update a page.
+     * Update content.
      *
      * @param array $data
      *
@@ -21,7 +21,7 @@ interface PagesInterface extends RepositoryInterface
     public function update(array $data);
 
     /**
-     * Get the company Id tied to the page
+     * Get the company Id tied to content
      *
      * @param $id
      * @return mixed
@@ -29,14 +29,14 @@ interface PagesInterface extends RepositoryInterface
     public function getCompanyId($id);
 
     /**
-     * Get an array of all the available pages.
+     * Get an array of all the available content.
      *
-     * @return Array of pages
+     * @return Array of contents
      */
-    public function getAllPages();
+    public function getAllContents();
 
     /**
-     * Create a new page
+     * Create new content
      *
      * @param array $data
      * @return bool|static
@@ -44,7 +44,7 @@ interface PagesInterface extends RepositoryInterface
     public function create(array $data);
 
     /**
-     * Delete a Page.
+     * Delete Content.
      *
      * @param int  $id
      * @param bool $soft true soft deletes

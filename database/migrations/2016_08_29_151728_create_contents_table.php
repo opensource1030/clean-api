@@ -1,14 +1,13 @@
 <?php
 
-
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreatePagesTable extends Migration
+class CreateContentsTable extends Migration
 {
-
     use \WA\Database\Command\TablesRelationsAndIndexes;
 
-    protected $tableName = 'pages';
+    protected $tableName = 'contents';
 
     /**
      * Run the migrations.
@@ -18,17 +17,12 @@ class CreatePagesTable extends Migration
     public function up()
     {
         Schema::create($this->tableName, function( $table){
-
             $table->increments('id');
-            $table->string('title');
-            $table->string('section');
             $table->text('content');
             $table->boolean('active')->default(0);
             $table->integer('owner_id');
             $table->string('owner_type');
             $table->nullableTimestamps();
-
-
         });
     }
 

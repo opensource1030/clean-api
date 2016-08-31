@@ -1,20 +1,20 @@
 <?php
 
-namespace WA\DataStore\Page;
+namespace WA\DataStore\Content;
 
 use WA\DataStore\BaseDataStore;
-use WA\DataStore\Page\PageTransformer;
+use WA\DataStore\Content\ContentTransformer;
 
 /**
- * Class Page
+ * Class Content
  *
- * @package WA\DataStore\Page
+ * @package WA\DataStore\Content
  */
-class Page extends BaseDataStore
+class Content extends BaseDataStore
 {
-    protected  $table = 'pages';
+    protected  $table = 'contents';
 
-    protected $fillable = array('title', 'section', 'content', 'active', 'owner_type', 'owner_id');
+    protected $fillable = array('content', 'active', 'owner_type', 'owner_id');
 
 
     /**
@@ -34,7 +34,7 @@ class Page extends BaseDataStore
      */
     public function getTransformer()
     {
-        return new PageTransformer();
+        return new ContentTransformer();
     }
 
 }

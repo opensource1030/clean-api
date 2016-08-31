@@ -95,13 +95,14 @@ $api->version('v1', function ($api) {
         $api->get('allocations', ['as' => 'api.allocations.index', 'uses' => $allocationsController . '@index']);
         $api->get('allocations/{id}', ['as' => 'api.allocations.show', 'uses' => $allocationsController . '@show']);
 
-        //=Pages
-        $pagesController = 'WA\Http\Controllers\PagesController';
-        $api->get('pages', ['as' => 'api.pages.index', 'uses' => $pagesController . '@index']);
-        $api->get('pages/{id}', ['as' => 'api.pages.show', 'uses' => $pagesController . '@show']);
-        $api->post('pages', ['uses' => $pagesController . '@create']);
-        $api->put('pages/{id}', ['uses' => $pagesController . '@store']);
-        $api->delete('pages/{id}', ['uses' => $pagesController . '@deletePage']);
+
+        //=Contents
+        $contentsController = 'WA\Http\Controllers\ContentsController';
+        $api->get('contents', ['as' => 'api.contents.index', 'uses' => $contentsController . '@index']);
+        $api->get('contents/{id}', ['as' => 'api.contents.show', 'uses' => $contentsController. '@show']);
+        $api->post('contents', ['uses'=> $contentsController . '@create']);
+        $api->put('contents/{id}', ['uses' => $contentsController . '@store']);
+        $api->delete('contents/{id}', ['uses' => $contentsController. '@deleteContent']);
 
         //=App
         $appController = 'WA\Http\Controllers\AppController';

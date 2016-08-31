@@ -25,7 +25,7 @@ use Zizaco\Entrust\Traits\EntrustUserTrait as EntrustUserTrait;
  * @property-read \WA\DataStore\Location\Location $location
  * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\Role\Role[] $roles
  * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\Allocation\Allocation[] $allocations
- * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\Page\Page[] $pages
+ * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\Content\Content[] $contents
  * @mixin \Eloquent
  */
 class User extends BaseDataStore implements IlluminateCanResetPasswordContract, IllumincateAuthenticatableContract
@@ -212,13 +212,13 @@ class User extends BaseDataStore implements IlluminateCanResetPasswordContract, 
     }
 
      /**
-     * Get all the employee's pages
+     * Get all the employee related static contents
      *
      * @return \Illuminate\Database\Eloquent\Relations\MorphMany
      */
-   public function pages()
+   public function contents()
    {
-       return $this->morphMany('WA\DataStore\Page\Page', 'owner');
+       return $this->morphMany('WA\DataStore\Content\Content', 'owner');
    }
 
 

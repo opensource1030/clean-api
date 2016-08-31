@@ -19,7 +19,7 @@ use WA\DataStore\UserNotifications;
 use WA\DataStore\JobStatus;
 use WA\DataStore\Location\Location;
 use WA\DataStore\NotificationCategory;
-use WA\DataStore\Page\Page;
+use WA\DataStore\Content\Content;
 use WA\DataStore\SyncJob;
 use WA\DataStore\Udl\Udl;
 use WA\DataStore\UdlValue\UdlValue;
@@ -40,7 +40,7 @@ use WA\Repositories\UserNotifications\EloquentUserNotifications;
 use WA\Repositories\JobStatus\EloquentJobStatus;
 use WA\Repositories\Location\EloquentLocation;
 use WA\Repositories\NotificationCategory\EloquentNotificationCategory;
-use WA\Repositories\Pages\EloquentPages;
+use WA\Repositories\Content\EloquentContent;
 use WA\Repositories\SyncJob\EloquentSyncJob;
 use WA\Repositories\Udl\EloquentUdl;
 use WA\Repositories\UdlValue\EloquentUdlValue;
@@ -387,11 +387,11 @@ trait ServiceRegistration
             });
     }
 
-    public function registerPages()
+    public function registerContent()
     {
-        app()->bind('WA\Repositories\Pages\PagesInterface',
+        app()->bind('WA\Repositories\Content\ContentInterface',
             function () {
-                return new EloquentPages(new Page());
+                return new EloquentContent(new Content());
             });
     }
 
