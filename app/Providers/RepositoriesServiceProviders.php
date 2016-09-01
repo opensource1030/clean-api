@@ -24,6 +24,10 @@ class RepositoriesServiceProviders extends ServiceProvider
 
         $this->registerAsset();
         $this->registerDevice();
+        $this->registerDeviceModification();
+        $this->registerDeviceCarrier();
+        $this->registerDeviceCompany();
+        $this->registerDevicePrice();
         $this->registerDeviceType();
         $this->registerUser();
         $this->registerCompany();

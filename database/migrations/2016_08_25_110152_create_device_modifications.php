@@ -22,6 +22,8 @@ class CreateDeviceModifications extends Migration
                 $table->increments('id');
                 $table->integer('deviceId')->unsigned();
                 $table->integer('modificationId')->unsigned();
+
+                $table->nullableTimestamps();
             }
         );
 

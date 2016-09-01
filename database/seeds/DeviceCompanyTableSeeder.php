@@ -8,7 +8,7 @@
 
 class DeviceProvidersTableSeeder extends BaseTableSeeder
 {
-    protected $table = "device_providers";
+    protected $table = "device_companies";
 
     /**
      * Run the database seeds.
@@ -23,7 +23,7 @@ class DeviceProvidersTableSeeder extends BaseTableSeeder
 
             [
                 'deviceId'     => 1,
-                'providerId'      => 1
+                'companyId'      => 1
             ]
         ];
 

@@ -3,11 +3,11 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateDeviceProviders extends Migration
+class CreateDeviceCompanies extends Migration
 {
     use \WA\Database\Command\TablesRelationsAndIndexes;
 
-    protected $tableName = 'device_providers';
+    protected $tableName = 'device_companies';
     
     /**
      * Run the migrations.
@@ -21,7 +21,9 @@ class CreateDeviceProviders extends Migration
             function ($table) {
                 $table->increments('id');
                 $table->integer('deviceId')->unsigned();
-                $table->integer('providerId')->unsigned();
+                $table->integer('companyId')->unsigned();
+
+                $table->nullableTimestamps();
             }
         );
 
@@ -29,7 +31,7 @@ class CreateDeviceProviders extends Migration
             $this->tableName, 
             function($table) {
                 $table->foreign('deviceId')->references('id')->on('devices');
-                $table->foreign('providerId')->references('id')->on('providers');
+                $table->foreign('companyId')->references('id')->on('companies');
             }
         );
     }

@@ -22,6 +22,8 @@ class CreateDeviceCarriers extends Migration
                 $table->increments('id');
                 $table->integer('deviceId')->unsigned();
                 $table->integer('carrierId')->unsigned();
+
+                $table->nullableTimestamps();
             }
         );
 

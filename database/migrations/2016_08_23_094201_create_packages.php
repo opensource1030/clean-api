@@ -34,8 +34,8 @@ class CreatePackages extends Migration
         Schema::table(
             $this->tableName, 
             function($table) {
-                $table->foreign('devicesId')->references('id')->on('devices');
-                $table->foreign('appsId')->references('id')->on('apps');
+                $table->foreign('devicesId')->references('id')->on('devices')->onDelete('cascade');
+                $table->foreign('appsId')->references('id')->on('apps')->onDelete('cascade');
             }
         );
 

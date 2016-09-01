@@ -99,6 +99,70 @@ trait ServiceRegistration
     /**
      * @param
      */
+    public function registerDeviceModification()
+    {
+
+        app()->singleton(
+            'WA\Repositories\Device\DeviceModificationInterface',
+            function () {
+                return new EloquentDeviceModification(new DeviceModification(),
+                    app()->make('WA\Repositories\JobStatus\JobStatusInterface')
+                );
+            }
+        );
+    }
+
+    /**
+     * @param
+     */
+    public function registerDeviceCarrier()
+    {
+
+        app()->singleton(
+            'WA\Repositories\Device\DeviceCarrierInterface',
+            function () {
+                return new EloquentDeviceCarrier(new DeviceCarrier(),
+                    app()->make('WA\Repositories\JobStatus\JobStatusInterface')
+                );
+            }
+        );
+    }
+
+    /**
+     * @param
+     */
+    public function registerDeviceCompany()
+    {
+
+        app()->singleton(
+            'WA\Repositories\Device\DeviceCompanyInterface',
+            function () {
+                return new EloquentDeviceCompany(new DeviceCompany(),
+                    app()->make('WA\Repositories\JobStatus\JobStatusInterface')
+                );
+            }
+        );
+    }
+
+    /**
+     * @param
+     */
+    public function registerDevicePrice()
+    {
+
+        app()->singleton(
+            'WA\Repositories\Device\DevicePriceInterface',
+            function () {
+                return new EloquentDevicePrice(new DevicePrice(),
+                    app()->make('WA\Repositories\JobStatus\JobStatusInterface')
+                );
+            }
+        );
+    }
+
+    /**
+     * @param
+     */
     public function registerCensus()
     {
         app()->bind(

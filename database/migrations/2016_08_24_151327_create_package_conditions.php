@@ -49,7 +49,7 @@ class CreatePackageConditions extends Migration
         Schema::table(
             'packages', 
             function($table) {
-                $table->foreign('conditionsId')->references('id')->on('package_conditions');
+                $table->foreign('conditionsId')->references('id')->on('package_conditions')->onDelete('cascade');
             }
         );
     }
