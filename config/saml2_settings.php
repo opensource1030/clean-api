@@ -36,7 +36,7 @@ return $settings = array(
     /**
      * Where to redirect after login if no other option was provided
      */
-    'errorRoute' => '/login',
+    'errorRoute' => '/ssoError',
 
 
 
