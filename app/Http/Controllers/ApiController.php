@@ -2,19 +2,9 @@
 
 namespace WA\Http\Controllers;
 
-use Auth;
 use Dingo\Api\Routing\Helpers;
-use Illuminate\Contracts\Routing\ResponseFactory as Response;
 use Input;
-use League\Fractal\Manager as FractalManager;
-use League\Fractal\Pagination\IlluminatePaginatorAdapter;
-use League\Fractal\Resource\Collection as FractalCollection;
-use League\Fractal\Resource\Item as FractalItem;
-use League\Fractal\Serializer\ArraySerializer;
-use League\Fractal\TransformerAbstract;
-use WA\Http\Controllers\BaseController;
-use WA\Services\ApiHandler\SQL\ApiHandler as ApiHandler;
-use LucaDegasperi\OAuth2Server\Authorizer;
+use WA\Http\Requests\Parameters\Sorting;
 
 
 /**
@@ -24,22 +14,37 @@ abstract class ApiController extends BaseController
 {
     use Helpers;
 
-    /**
-     * Additional meta information.
-     *
-     * @var array
-     */
-    protected $meta = [];
+    protected $filters = null;
+    protected $sort = null;
 
-    
-    /**
-     * @param array $meta
-     *
-     * @return array
-     */
-    protected function setMetaData(array $meta)
-    {
-        $this->meta = array_merge($this->meta, $meta);
+    public function getSortAndFilters() {
+        $this->getFilters();
+        $this->getSort();
     }
 
+    public function getFilters()
+    {
+        $this->filters = (array)\Request::get('filter', null);
+        return $this->filters;
+    }
+
+    public function getSort()
+    {
+        if (\Request::get('sort')) {
+            $sort = \Request::get('sort');
+            $sorting = new Sorting();
+            if (!empty($sort) && is_string($sort)) {
+                $members = \explode(',', $sort);
+                if (!empty($members)) {
+                    foreach ($members as $field) {
+                        $key = ltrim($field, '-');
+                        $sorting->addField($key, ('-' === $field[0]) ? 'desc' : 'asc');
+                    }
+                }
+            }
+            $this->sort = $sorting;
+            return $this->sort;
+        }
+        return null;
+    }
 }

@@ -13,27 +13,116 @@ abstract class AbstractRepository implements RepositoryInterface
      */
     protected $model;
 
+    /**
+     * @var
+     */
+    protected $query;
+
+    protected $sortCriteria = null;
+
+    protected $filterCriteria = null;
+
+    /**
+     * AbstractRepository constructor.
+     *
+     * @param Model $model
+     */
     public function __construct(Model $model)
     {
         $this->model = $model;
     }
 
     /**
-     * Get paginated census.
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function getQuery()
+    {
+        if ($this->query === null) {
+            $model = $this->model;
+            $this->query = $model::query();
+        }
+        return $this->query;
+    }
+
+    /**
+     * @param $sortCriteria
+     * @return $this
+     */
+    public function setSort($sortCriteria)
+    {
+        if ($sortCriteria !== null) {
+            $this->sortCriteria = $sortCriteria;
+        }
+        return $this;
+    }
+
+    /**
+     * @param $filterCriteria
+     * @return $this
+     */
+    public function setFilters($filterCriteria)
+    {
+        if ($filterCriteria !== null) {
+            $this->filterCriteria = $filterCriteria;
+        }
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    protected function filter()
+    {
+        $this->getQuery();
+
+        if (!$this->filterCriteria === null) {
+            return $this;
+        }
+
+        foreach ($this->filterCriteria as $filterKey => $filterVal) {
+            if (!is_array($filterVal)) {
+                $this->query->where($filterKey, '=', $filterVal);
+            } else {
+                // not yet implemented
+            }
+        }
+        return $this;
+    }
+
+    protected function sort()
+    {
+        $this->getQuery();
+
+        if ($this->sortCriteria === null) {
+            return $this;
+        }
+
+        foreach ($this->sortCriteria->sorting() as $sort => $direction) {
+            $this->query->orderBy($sort, $direction);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get paginated resource
      *
-     * @param int  $perPage
-     * @param bool $api      false|true
+     * @param int $perPage
+     * @param bool $api false|true
      * @param bool $paginate
      *
      * @return Object as Collection of object information, | Paginator Collection if pagination is true (default)
      */
     public function byPage($paginate = true, $perPage = 25, $api = false)
     {
+        // Use sorting and filters, if set
+        $this->sort()->filter();
+
         if (!$paginate) {
-            return $this->model->get();
+            return $this->query->get();
         }
 
-        return $this->model->paginate($perPage);
+        return $this->query->paginate($perPage);
     }
 
     /**
@@ -94,7 +183,7 @@ abstract class AbstractRepository implements RepositoryInterface
     /**
      * Delete from the repo by the ID.
      *
-     * @param int  $id
+     * @param int $id
      * @param bool $force completely remove for the DB instead of marking it as "deleted"
      */
     public function deleteById($id, $force = false)
