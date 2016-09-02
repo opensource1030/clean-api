@@ -32,9 +32,9 @@ class MainHandler extends BaseHandler
 {
     protected $userForm;
 
-   const USER_EMAIL = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name';
-   const USER_LASTNAME = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname';
-   const USER_FIRSTNAME = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname';
+    protected $userEmail = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name';
+    protected $userLastName = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname';
+    protected $userFirstName = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname';
 
     /**
      * @param ProcessLogRepositoryInterface    $processLog
@@ -98,17 +98,17 @@ class MainHandler extends BaseHandler
             
             default: // microsoft
                 $user = array(
-                    'email' => $userData['attributes'][USER_EMAIL][0],
+                    'email' => $userData['attributes'][$this->userEmail][0],
                     'alternateEmail' => '',
                     'password' => '1@6~%&',
-                    'username' => explode('@',$userData['attributes'][USER_EMAIL][0])[0],
+                    'username' => explode('@',$userData['attributes'][$this->userEmail][0])[0],
                     'confirmation_code' => '',
                     'remember_token' => NULL,
                     'confirmed' => 1,
-                    'firstName' => $userData['attributes'][USER_FIRSTNAME][0],
+                    'firstName' => $userData['attributes'][$this->userFirstName][0],
                     'alternateFirstName' => NULL,
-                    'lastName' => $userData['attributes'][USER_LASTNAME][0],
-                    'supervisorEmail' => $userData['attributes'][USER_EMAIL][0],
+                    'lastName' => $userData['attributes'][$this->userLastName][0],
+                    'supervisorEmail' => $userData['attributes'][$this->userEmail][0],
                     'companyUserIdentifier' => '',
                     'isSupervisor' => 0,
                     'isValidator' => 0,
@@ -266,6 +266,6 @@ class MainHandler extends BaseHandler
         }
 
         // DEFAULT VERSION (MICROSOFT)
-        return $userData['attributes'][USER_EMAIL][0];
+        return $userData['attributes'][$this->userEmail][0];
     }
 }
