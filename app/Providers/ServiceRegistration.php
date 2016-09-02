@@ -85,7 +85,6 @@ trait ServiceRegistration
      */
     public function registerDevice()
     {
-
         app()->singleton(
             'WA\Repositories\Device\DeviceInterface',
             function () {
@@ -101,7 +100,6 @@ trait ServiceRegistration
      */
     public function registerDeviceModification()
     {
-
         app()->singleton(
             'WA\Repositories\Device\DeviceModificationInterface',
             function () {
@@ -117,7 +115,6 @@ trait ServiceRegistration
      */
     public function registerDeviceCarrier()
     {
-
         app()->singleton(
             'WA\Repositories\Device\DeviceCarrierInterface',
             function () {
@@ -133,7 +130,6 @@ trait ServiceRegistration
      */
     public function registerDeviceCompany()
     {
-
         app()->singleton(
             'WA\Repositories\Device\DeviceCompanyInterface',
             function () {
@@ -149,7 +145,6 @@ trait ServiceRegistration
      */
     public function registerDevicePrice()
     {
-
         app()->singleton(
             'WA\Repositories\Device\DevicePriceInterface',
             function () {

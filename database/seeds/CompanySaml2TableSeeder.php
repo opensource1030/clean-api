@@ -29,7 +29,7 @@ class CompanySaml2TableSeeder extends BaseTableSeeder
         'companyId' => 21
         ];
 
-        $dataMicrosoftMALO = [
+        $dataMicrosoft = [
             'entityId' => 'https://sts.windows.net/d6f6af8c-1dd5-4480-afe3-53aaa025a273/',
             'singleSignOnServiceUrl' => 'https://login.microsoftonline.com/d6f6af8c-1dd5-4480-afe3-53aaa025a273/saml2',
             'singleSignOnServiceBinding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
@@ -39,7 +39,7 @@ class CompanySaml2TableSeeder extends BaseTableSeeder
             'companyId' => 9
         ];
 
-        $dataMicrosoft = [
+        $dataMicrosoftMALO = [
             'entityId' => 'https://sts.windows.net/d6f6af8c-1dd5-4480-afe3-53aaa025a273/',
             'singleSignOnServiceUrl' => 'https://login.microsoftonline.com/d6f6af8c-1dd5-4480-afe3-53aaa025a273/saml2',
             'singleSignOnServiceBinding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',

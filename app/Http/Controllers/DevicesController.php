@@ -8,6 +8,7 @@ use Illuminate\Session\SessionManager as Session;
 use WA\DataStore\Device\DeviceTransformer;
 use WA\Helpers\Traits\SetLimits;
 use WA\Http\Controllers\Api\Traits\BasicCrud;
+use Illuminate\Http\Request;
 
 use WA\Repositories\Device\DeviceInterface;
 
@@ -115,7 +116,24 @@ class DevicesController extends ApiController
     public function create(Request $request)
     {
         $data = $request->all();
-        $device = $this->device->create($data);
+        $dataDevice = [
+            'image' => $data['image'],
+            'name' => $data['name'],
+            'properties' => $data['properties']
+            ];
+        var_dump($dataDevice);
+        $device = $this->device->create($dataDevice);
+        var_dump($device->id);
+        die;
+
+
+        $modification = app()->make('WA\Repositories\Device\DeviceModificationInterface');
+        //$dataModification = ['deviceId' => $device->id, 'modificationId']
+        //$modification->create();
+
+        $carrier = app()->make('WA\Repositories\Device\DeviceCarrierInterface');
+        $company = app()->make('WA\Repositories\Device\DeviceCompanyInterface');
+        $price = app()->make('WA\Repositories\Device\DevicePriceInterface');
         return $this->response()->item($device, new DeviceTransformer(), ['key' => 'devices']);
     }
 

@@ -1,12 +1,12 @@
 <?php
 
 /**
- * DeviceProvidersTableSeeder - Insert info into database.
+ * DeviceCompaniesTableSeeder - Insert info into database.
  *  
  * @author   Agustí Dosaiguas
  */
 
-class DeviceProvidersTableSeeder extends BaseTableSeeder
+class DeviceCompaniesTableSeeder extends BaseTableSeeder
 {
     protected $table = "device_companies";
 

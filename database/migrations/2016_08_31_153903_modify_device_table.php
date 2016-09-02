@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use WA\Database\Command\TablesRelationsAndIndexes;
 
 class ModifyDeviceTable extends Migration
 {
@@ -16,12 +16,13 @@ class ModifyDeviceTable extends Migration
      */
     public function up()
     {
-        Schema::table($this->tableName, function(Blueprint $table){
-            $table->dropColumn('identification');
-            $table->dropColumn('externalId');
-            $table->dropColumn('statusId');
-            $table->dropColumn('carrierId');
-            $table->dropColumn('syncId');
+        Schema::table($this->tableName, function($table){
+            //$table->dropForeign('externalId');
+            //$table->dropColumn('externalId');
+            //$table->dropForeign('statusId');
+            //$table->dropColumn('statusId');
+            //$table->dropForeign('syncId');
+            //$table->dropColumn('syncId');
         });
     }
 
@@ -32,12 +33,12 @@ class ModifyDeviceTable extends Migration
      */
     public function down()
     {
-        Schema::table($this->tableName, function(Blueprint $table){
-            $table->string('identification')->unique()->nullable();
-            $table->integer('externalId')->unsigned();
-            $table->integer('statusId')->unsigned()->nullable();
-            $table->integer('carrierId')->unsigned()->nullable();
-            $table->integer('syncId')->unsigned()->nullable();
+        Schema::table($this->tableName, function($table){
+            //$table->integer('externalId')->unsigned();
+            //$table->integer('statusId')->unsigned()->nullable();
+            //$table->foreign('statusId')->references('id')->on('services')->onDelete('job_statuses');
+            //$table->integer('syncId')->unsigned()->nullable();
+            //$table->foreign('syncId')->references('id')->on('services')->onDelete('sync_jobs');
         });
     }
 }
