@@ -42,14 +42,13 @@ class DevicesController extends ApiController
      */
     public function index()
     {
-        $this->getSortAndFilters();
-
-        $this->device->setSort($this->sort)->setFilters($this->filters);
-
+        $criteria = $this->getRequestCriteria();
+        $this->device->setCriteria($criteria);
         $devices = $this->device->byPage();
-
-        return $this->response()->withPaginator($devices, new DeviceTransformer(),
-            ['key' => 'devices'])->addMeta('sort', $this->sort->get())->addMeta('filter', $this->filters);
+        $response = $this->response()->withPaginator($devices, new DeviceTransformer(),
+            ['key' => 'devices']);
+        $response = $this->applyMeta($response);
+        return $response;
 
     }
 

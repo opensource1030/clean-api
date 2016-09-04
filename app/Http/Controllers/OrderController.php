@@ -36,8 +36,11 @@ class OrderController extends ApiController
      */
     public function index()
     {
+
         $order = $this->order->getAllOrder();
-        return $this->response()->collection($order, new OrderTransformer(),['key' => 'order']);
+        $response = $this->response()->collection($order, new OrderTransformer(),['key' => 'order']);
+        $response = $this->applyMeta($response);
+        return $response;
 
     }
 
