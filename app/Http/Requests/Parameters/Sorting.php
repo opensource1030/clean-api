@@ -13,6 +13,26 @@ class Sorting
     protected $sort = [];
 
     /**
+     * Sorting constructor, accepts an input array
+     *
+     * @param string $sort
+     */
+    public function __construct($sort = null)
+    {
+        if (!empty($sort) && is_string($sort)) {
+            $members = \explode(',', $sort);
+            if (!empty($members)) {
+                foreach ($members as $field) {
+                    $key = ltrim($field, '-');
+                    $this->addField($key, ('-' === $field[0]) ? 'desc' : 'asc');
+                }
+            }
+        }
+    }
+
+    /**
+     * Return a string representation of the sort criteria, suitable for meta data
+     *
      * @return string
      */
     public function get()

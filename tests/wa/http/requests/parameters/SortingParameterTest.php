@@ -5,7 +5,7 @@ namespace WA\Testing\Http\Requests\Parameters;
 use TestCase;
 use WA\Http\Requests\Parameters\Sorting;
 
-class SortingTest extends TestCase
+class SortingParameterTest extends TestCase
 {
     /**
      * @var Sorting
@@ -17,6 +17,12 @@ class SortingTest extends TestCase
         $this->sorting = new Sorting();
         $this->sorting->addField('name', 'asc');
         $this->sorting->addField('id', 'desc');
+    }
+
+    public function testInputViaConstructor()
+    {
+        $sort = new Sorting('name,-id');
+        $this->assertEquals(['name' => 'asc', 'id' => 'desc'], $sort->sorting());
     }
 
     public function testGetSorting()
