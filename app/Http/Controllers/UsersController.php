@@ -47,13 +47,9 @@ class UsersController extends ApiController
      */
     public function index()
     {
-        $criteria = $this->getRequestCriteria();
-        $this->user->setCriteria($criteria);
         $users = $this->user->byPage();
 
-        $response = $this->response()->withPaginator($users, new UserTransformer(), ['key' => 'users']);
-        $response = $this->applyMeta($response);
-        return $response;
+        return $this->response()->withPaginator($users, new UserTransformer(), ['key' => 'users']);
     }
 
 
