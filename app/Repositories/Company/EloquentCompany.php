@@ -83,27 +83,6 @@ class EloquentCompany extends AbstractRepository implements CompanyInterface
         $this->carrierDetail = $carrierDetail;
     }
 
-    /**
-     * Get paginated census.
-     *
-     * @param bool $paginate
-     * @param int  $perPage
-     * @param bool $active
-     *
-     * @return Object as Collection of object information, will return paginated if pagination is true
-     */
-    public function byPage($paginate = true, $perPage = 25, $active = true)
-    {
-        $model = $this->model->where('active', (int)$active);
-        $model = $model->orderBy('name', 'ASC');
-
-        if (!$paginate) {
-            //
-            return $model->get();
-        }
-
-        return $model->paginate($perPage);
-    }
 
     /**
      * Get All Companies.

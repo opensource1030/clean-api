@@ -3,23 +3,30 @@
 namespace WA\Repositories;
 
 use Illuminate\Database\Eloquent\Model;
-use Log;
-use Paginator;
+use WA\DataStore\BaseDataStore;
+use WA\Http\Requests\Parameters\Filters;
+use WA\Http\Requests\Parameters\Sorting;
 
 abstract class AbstractRepository implements RepositoryInterface
 {
     /**
-     * @var \Illuminate\Database\Eloquent\Model
+     * @var \Illuminate\Database\Eloquent\Model|BaseDataStore
      */
     protected $model;
 
     /**
-     * @var
+     * @var \Illuminate\Database\Eloquent\Builder
      */
     protected $query;
 
+    /**
+     * @var Sorting
+     */
     protected $sortCriteria = null;
 
+    /**
+     * @var Filters
+     */
     protected $filterCriteria = null;
 
     /**
@@ -33,9 +40,11 @@ abstract class AbstractRepository implements RepositoryInterface
     }
 
     /**
+     * Get a query-builder instance for this model
+     *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function getQuery()
+    protected function getQuery()
     {
         if ($this->query === null) {
             $model = $this->model;
@@ -45,10 +54,31 @@ abstract class AbstractRepository implements RepositoryInterface
     }
 
     /**
-     * @param $sortCriteria
+     * Convenience method to set all criteria at once
+     *
+     * @param array $criteria
+     * @return bool
+     */
+    public function setCriteria($criteria = [])
+    {
+        if (isset($criteria['sort'])) {
+            $this->setSort($criteria['sort']);
+        }
+
+        if (isset($criteria['filters'])) {
+            $this->setFilters($criteria['filters']);
+        }
+
+        return true;
+    }
+
+    /**
+     * Set sort criteria
+     *
+     * @param Sorting $sortCriteria
      * @return $this
      */
-    public function setSort($sortCriteria)
+    public function setSort(Sorting $sortCriteria)
     {
         if ($sortCriteria !== null) {
             $this->sortCriteria = $sortCriteria;
@@ -57,10 +87,12 @@ abstract class AbstractRepository implements RepositoryInterface
     }
 
     /**
-     * @param $filterCriteria
+     * Set filter criteria
+     *
+     * @param Filters $filterCriteria
      * @return $this
      */
-    public function setFilters($filterCriteria)
+    public function setFilters(Filters $filterCriteria)
     {
         if ($filterCriteria !== null) {
             $this->filterCriteria = $filterCriteria;
@@ -69,26 +101,58 @@ abstract class AbstractRepository implements RepositoryInterface
     }
 
     /**
+     * Convenience method to apply sorting and filtering criteria
+     *
+     * @return $this
+     */
+    protected function applyCriteria()
+    {
+        return $this->sort()->filter();
+    }
+
+    /**
+     * Apply filter criteria to the current query
+     *
      * @return $this
      */
     protected function filter()
     {
         $this->getQuery();
 
-        if (!$this->filterCriteria === null) {
+        if ($this->filterCriteria === null) {
             return $this;
         }
 
-        foreach ($this->filterCriteria as $filterKey => $filterVal) {
-            if (!is_array($filterVal)) {
-                $this->query->where($filterKey, '=', $filterVal);
+        foreach ($this->filterCriteria->filtering() as $filterKey => $filterVal) {
+            if (in_array($filterKey, $this->model->getTableColumns())) {
+                $op = strtolower(key($filterVal));
+                $val = current($filterVal);
+
+                switch ($op) {
+                    case "eq":
+                        // Handle delimitted lists
+                        $vals = explode(",", $val);
+                        $this->query->whereIn($filterKey, $vals);
+                        break;
+                    case "like":
+                        $this->query->where($filterKey, 'LIKE', $val);
+                        break;
+                    default:
+                        // @TODO: Throw an exception if sort operator is invalid?
+                        break;
+                }
             } else {
-                // not yet implemented
+                // @TODO: Throw an exception if sort column is invalid?
             }
         }
         return $this;
     }
 
+    /**
+     * Apply sort criteria to the current query
+     *
+     * @return $this
+     */
     protected function sort()
     {
         $this->getQuery();
@@ -97,8 +161,12 @@ abstract class AbstractRepository implements RepositoryInterface
             return $this;
         }
 
-        foreach ($this->sortCriteria->sorting() as $sort => $direction) {
-            $this->query->orderBy($sort, $direction);
+        foreach ($this->sortCriteria->sorting() as $sortColumn => $direction) {
+            if (in_array($sortColumn, $this->model->getTableColumns())) {
+                $this->query->orderBy($sortColumn, $direction);
+            } else {
+                // @TODO: Throw an exception if sort criteria is invalid?
+            }
         }
 
         return $this;
@@ -115,8 +183,8 @@ abstract class AbstractRepository implements RepositoryInterface
      */
     public function byPage($paginate = true, $perPage = 25, $api = false)
     {
-        // Use sorting and filters, if set
-        $this->sort()->filter();
+        // Apply filtering and sorting criteria, if set
+        $this->applyCriteria();
 
         if (!$paginate) {
             return $this->query->get();
@@ -185,6 +253,7 @@ abstract class AbstractRepository implements RepositoryInterface
      *
      * @param int $id
      * @param bool $force completely remove for the DB instead of marking it as "deleted"
+     * @return int
      */
     public function deleteById($id, $force = false)
     {
@@ -193,6 +262,6 @@ abstract class AbstractRepository implements RepositoryInterface
             $instance->forceDelete();
         }
 
-        $this->model->destroy($id);
+        return $this->model->destroy($id);
     }
 }
