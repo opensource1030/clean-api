@@ -129,6 +129,23 @@ abstract class AbstractRepository implements RepositoryInterface
                 $val = current($filterVal);
 
                 switch ($op) {
+                    case "gt":
+                        $this->query->where($filterKey, '>', $val);
+                        break;
+                    case "lt":
+                        $this->query->where($filterKey, '<', $val);
+                        break;
+                    case "ge":
+                        $this->query->where($filterKey, '>=', $val);
+                        break;
+                    case "le":
+                        $this->query->where($filterKey, '>=', $val);
+                        break;
+                    case "ne":
+                        // Handle delimitted lists
+                        $vals = explode(",", $val);
+                        $this->query->whereNotIn($filterKey, $vals);
+                        break;
                     case "eq":
                         // Handle delimitted lists
                         $vals = explode(",", $val);
