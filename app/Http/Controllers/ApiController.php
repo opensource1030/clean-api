@@ -4,6 +4,7 @@ namespace WA\Http\Controllers;
 
 use Dingo\Api\Http\Response;
 use Dingo\Api\Routing\Helpers;
+use WA\Http\Requests\Parameters\Fields;
 use WA\Http\Requests\Parameters\Filters;
 use WA\Http\Requests\Parameters\Sorting;
 
@@ -30,27 +31,60 @@ abstract class ApiController extends BaseController
     /**
      * @var array
      */
-    protected $criteria = [];
+    protected $criteria = [
+        'sort'    => [],
+        'filters' => [],
+        'fields'  => []
+    ];
 
     /**
-     * Get sorting and filtering criteria from the request
-     *
-     * @return array
+     * @return mixed
      */
     public function getRequestCriteria()
     {
-        $this->filters = new Filters((array)\Request::get('filter', null));
-        $this->sort = new Sorting(\Request::get('sort', null));
-        
-        $this->criteria['filters'] = $this->filters;
-        $this->criteria['sort'] = $this->sort;
+        $filters = $this->getFilters();
+        $sort = $this->getSort();
+        $fields = $this->getFields();
+
+        $this->criteria['filters'] = $filters;
+        $this->criteria['sort'] = $sort;
+        $this->criteria['fields'] = $fields;
         return $this->criteria;
+    }
+
+    /**
+     * @return Sorting
+     */
+    public function getSort()
+    {
+        $sort = new Sorting(\Request::get('sort', null));
+        return $sort;
+    }
+
+    /**
+     * @return Filters
+     */
+    public function getFilters()
+    {
+        $filters = new Filters((array)\Request::get('filter', null));
+        return $filters;
+    }
+
+
+    /**
+     * @return Fields
+     */
+    public function getFields()
+    {
+        $fields = new Fields(\Request::get('fields', null));
+        return $fields;
     }
 
     public function applyMeta(Response $response)
     {
-        $response->addMeta('sort', $this->sort->get());
-        $response->addMeta('filter', $this->filters->get());
+        $response->addMeta('sort', $this->criteria['sort']->get());
+        $response->addMeta('filter', $this->criteria['filters']->get());
+        $response->addMeta('fields', $this->criteria['fields']->get());
         return $response;
     }
 }

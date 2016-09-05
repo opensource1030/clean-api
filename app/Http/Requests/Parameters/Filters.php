@@ -14,7 +14,6 @@ class Filters
      */
     protected $filters = [];
 
-    protected $rawFilter = [];
 
     /**
      * Filters constructor.
@@ -23,10 +22,9 @@ class Filters
      */
     public function __construct($filters = [])
     {
-        $this->rawFilter = $filters;
 
         if (empty($filters)) {
-            return;
+            return $this;
         }
 
         foreach ($filters as $field => $criteria) {

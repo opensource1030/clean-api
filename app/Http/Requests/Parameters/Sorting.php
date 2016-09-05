@@ -13,13 +13,17 @@ class Sorting
     protected $sort = [];
 
     /**
-     * Sorting constructor, accepts an input array
+     * Sorting constructor, accepts an input string
      *
      * @param string $sort
      */
     public function __construct($sort = null)
     {
-        if (!empty($sort) && is_string($sort)) {
+        if (empty($sort)) {
+            return $this;
+        }
+
+        if (is_string($sort)) {
             $members = \explode(',', $sort);
             if (!empty($members)) {
                 foreach ($members as $field) {

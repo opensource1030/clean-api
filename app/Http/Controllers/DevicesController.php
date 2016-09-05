@@ -6,6 +6,7 @@ use Cartalyst\DataGrid\Laravel\Facades\DataGrid;
 use WA\DataStore\Device\DeviceTransformer;
 use WA\Repositories\Device\DeviceInterface;
 
+
 /**
  * Devices resource.
  *
@@ -42,14 +43,13 @@ class DevicesController extends ApiController
      */
     public function index()
     {
-        $criteria = $this->getRequestCriteria();
-        $this->device->setCriteria($criteria);
+        $this->criteria = $this->getRequestCriteria();
+        $this->device->setCriteria($this->criteria);
         $devices = $this->device->byPage();
         $response = $this->response()->withPaginator($devices, new DeviceTransformer(),
             ['key' => 'devices']);
         $response = $this->applyMeta($response);
         return $response;
-
     }
 
     /**
