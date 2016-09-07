@@ -1,7 +1,7 @@
 <?php
 
 /**
- * CapacitiesTableSeeder - Insert info into database.
+ * capacitiesTableSeeder - Insert info into database.
  *  
  * @author   Agustí Dosaiguas
  */
@@ -22,27 +22,27 @@ class ModificationsTableSeeder extends BaseTableSeeder
         $data = [
 
             [
-                'type'     => 'Capacity',
+                'type'     => 'capacity',
                 'value'      => '16Gb'
             ],
             [
-                'type'     => 'Style',
+                'type'     => 'style',
                 'value'      => 'White'
             ],
             [
-                'type'     => 'Capacity',
+                'type'     => 'capacity',
                 'value'      => '8Gb'
             ],
             [
-                'type'     => 'Capacity',
+                'type'     => 'capacity',
                 'value'      => '128Gb'
             ],
             [
-                'type'     => 'Style',
+                'type'     => 'style',
                 'value'      => 'Gold'
             ],
             [
-                'type'     => 'Style',
+                'type'     => 'style',
                 'value'      => 'Space Grey'
             ]
         ];

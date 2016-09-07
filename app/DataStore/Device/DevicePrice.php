@@ -50,7 +50,7 @@ class DevicePrice extends MutableDataStore
         'capacityId',
         'styleId',
         'carrierId',
-        'providerId'
+        'companyId'
     ];
 
     /**

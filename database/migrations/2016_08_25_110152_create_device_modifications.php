@@ -30,8 +30,8 @@ class CreateDeviceModifications extends Migration
         Schema::table(
             $this->tableName, 
             function($table) {
-                $table->foreign('deviceId')->references('id')->on('devices');
-                $table->foreign('modificationId')->references('id')->on('modifications');
+                $table->foreign('deviceId')->references('id')->on('devices')->onDelete('cascade');
+                $table->foreign('modificationId')->references('id')->on('modifications')->onDelete('cascade');
             }
         );
     }

@@ -67,7 +67,7 @@ class Carrier extends BaseDataStore
      */
     public function devices()
     {
-        return $this->hasMany('WA\DataStore\Device\Device', 'carrieId');
+        return $this->belongsToMany('WA\DataStore\Device\Device', 'device_carriers', 'deviceId', 'carrierId');
     }
 
 

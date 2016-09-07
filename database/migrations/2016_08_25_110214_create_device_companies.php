@@ -30,8 +30,8 @@ class CreateDeviceCompanies extends Migration
         Schema::table(
             $this->tableName, 
             function($table) {
-                $table->foreign('deviceId')->references('id')->on('devices');
-                $table->foreign('companyId')->references('id')->on('companies');
+                $table->foreign('deviceId')->references('id')->on('devices')->onDelete('cascade');
+                $table->foreign('companyId')->references('id')->on('companies')->onDelete('cascade');
             }
         );
     }

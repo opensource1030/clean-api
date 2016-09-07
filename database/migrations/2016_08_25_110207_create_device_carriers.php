@@ -30,8 +30,8 @@ class CreateDeviceCarriers extends Migration
         Schema::table(
             $this->tableName, 
             function($table) {
-                $table->foreign('deviceId')->references('id')->on('devices');
-                $table->foreign('carrierId')->references('id')->on('carriers');
+                $table->foreign('deviceId')->references('id')->on('devices')->onDelete('cascade');
+                $table->foreign('carrierId')->references('id')->on('carriers')->onDelete('cascade');
             }
         );
     }

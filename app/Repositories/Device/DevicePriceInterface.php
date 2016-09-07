@@ -13,4 +13,13 @@ interface DevicePriceInterface extends RepositoryInterface
      * @return mixed
      */
     public function getTransformer();
+
+    /**
+     * Update a repository.
+     *
+     * @param array $data to be updated
+     *
+     * @return Object object of updated repo
+     */
+    public function update(array $data);
 }

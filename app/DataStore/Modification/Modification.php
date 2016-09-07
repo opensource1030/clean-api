@@ -40,4 +40,12 @@ class Modification extends BaseDataStore
         return new OrderTransformer();
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function devices()
+    {
+        return $this->belongsToMany('WA\DataStore\Device\Device', 'device_modifications', 'deviceId', 'modificationId');
+    }
+
 }

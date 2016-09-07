@@ -33,8 +33,8 @@ class CreateAssetDeviceTable extends Migration
         Schema::table(
             $this->tableName, 
             function($table) {
-                $table->foreign('assetId')->references('id')->on('assets');
-                $table->foreign('deviceId')->references('id')->on('devices');
+                $table->foreign('assetId')->references('id')->on('assets')->onDelete('cascade');
+                $table->foreign('deviceId')->references('id')->on('devices')->onDelete('cascade');
             }
         );
     }

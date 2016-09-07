@@ -37,11 +37,11 @@ class CreateDevicePricesTable extends Migration
         Schema::table(
             $this->tableName, 
             function($table) {
-                $table->foreign('deviceId')->references('id')->on('devices');
-                $table->foreign('capacityId')->references('id')->on('modifications');
-                $table->foreign('styleId')->references('id')->on('modifications');
-                $table->foreign('carrierId')->references('id')->on('carriers');
-                $table->foreign('companyId')->references('id')->on('companies');
+                $table->foreign('deviceId')->references('id')->on('devices')->onDelete('cascade');
+                $table->foreign('capacityId')->references('id')->on('modifications')->onDelete('cascade');
+                $table->foreign('styleId')->references('id')->on('modifications')->onDelete('cascade');
+                $table->foreign('carrierId')->references('id')->on('carriers')->onDelete('cascade');
+                $table->foreign('companyId')->references('id')->on('companies')->onDelete('cascade');
             }
         );
     }

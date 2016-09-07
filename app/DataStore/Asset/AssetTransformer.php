@@ -30,6 +30,11 @@ class AssetTransformer extends TransformerAbstract
             'id' => (int)$asset->id,
             'identification' => $asset->identification,
             'active' => $asset->active,
+            'statusId' => $asset->statusId,
+            'typeId' => $asset->typeId,
+            'externalId' => $asset->externalId,
+            'carrierId' => $asset->carrierId,
+            'syncId' => $asset->syncId
         ];
     }
 

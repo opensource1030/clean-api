@@ -40,4 +40,16 @@ class EloquentDevicePrice extends AbstractRepository implements DevicePriceInter
     {
         return $this->model->getTransformer();
     }
+
+    /**
+     * Update a repository.
+     *
+     * @param array $data to be updated
+     *
+     * @return Object object of updated repo
+     */
+    public function update(array $data)
+    {
+        return $this->model->update($data);
+    }
 }

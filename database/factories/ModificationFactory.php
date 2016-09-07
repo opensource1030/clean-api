@@ -3,10 +3,10 @@
 
 $factory->define(WA\DataStore\Modification\Modification::class, function ($faker) {
 
-    $carriers = ["Capacity", "Style"];
+    $modifications = ["Capacity", "Style"];
 
     return [
-        'type'=> $carriers[array_rand($carriers)],
+        'type'=> $modifications[array_rand($modifications)],
         'value'=> $faker->sentence,
         'updated_at' => $faker->dateTime,
         'created_at' => $faker->dateTime

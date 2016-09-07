@@ -3,15 +3,14 @@
 namespace WA\Providers;
 
 use Illuminate\Contracts\Foundation\Application;
+
 use WA\DataStore\Allocation\Allocation;
 use WA\DataStore\Asset\Asset;
 use WA\DataStore\Attribute;
-
 use WA\DataStore\Carrier\Carrier;
 use WA\DataStore\Carrier\CarrierDetail;
 use WA\DataStore\Census;
 use WA\DataStore\Company\Company;
-use WA\DataStore\Device\Device;
 use WA\DataStore\DeviceType;
 use WA\DataStore\EmailNotifications;
 use WA\DataStore\User\User;
@@ -26,13 +25,13 @@ use WA\DataStore\UdlValue\UdlValue;
 use WA\DataStore\UdlValuePath\UdlValuePath;
 use WA\DataStore\UdlValuePathUsers\UdlValuePathUsers;
 use WA\DataStore\Role\Role;
+
 use WA\Repositories\Asset\EloquentAsset;
 use WA\Repositories\Attribute\EloquentAttribute;
 use WA\Repositories\Carrier\EloquentCarrier;
 use WA\Repositories\Carrier\EloquentCarrierDetail;
 use WA\Repositories\Census\EloquentCensus;
 use WA\Repositories\Company\EloquentCompany;
-use WA\Repositories\Device\EloquentDevice;
 use WA\Repositories\DeviceType\EloquentDeviceType;
 use WA\Repositories\EmailNotifications\EloquentEmailNotifications;
 use WA\Repositories\User\EloquentUser;
@@ -47,10 +46,22 @@ use WA\Repositories\UdlValue\EloquentUdlValue;
 use WA\Repositories\UdlValuePath\EloquentUdlValuePath;
 use WA\Repositories\UdlValuePathUsers\EloquentUdlValuePathUsers;
 use WA\Repositories\User\UserCacheDecorator;
-use WA\Services\Cache\Cache;
 use WA\Repositories\Role\EloquentRole;
 use WA\Repositories\Permission\EloquentPermission;
 use WA\Repositories\Allocation\EloquentAllocation;
+
+use WA\Repositories\Device\EloquentDevice;
+use WA\DataStore\Device\Device;
+use WA\Repositories\Device\EloquentDeviceModification;
+use WA\DataStore\Device\DeviceModification;
+use WA\Repositories\Device\EloquentDeviceCompany;
+use WA\DataStore\Device\DeviceCompany;
+use WA\Repositories\Device\EloquentDeviceCarrier;
+use WA\DataStore\Device\DeviceCarrier;
+use WA\Repositories\Device\EloquentDevicePrice;
+use WA\DataStore\Device\DevicePrice;
+
+
 
 use WA\Repositories\Service\EloquentService;
 use WA\DataStore\Service\Service;
@@ -73,6 +84,9 @@ use WA\DataStore\Modification\Modification;
 use WA\Repositories\HelpDesk\EasyVista;
 use WA\Repositories\HelpDesk\HelpDeskCacheDecorator;
 use WA\DataStore\EasyVistaHelpDesk;
+
+use WA\Services\Cache\Cache;
+
 
 
 /**
