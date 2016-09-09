@@ -4,6 +4,7 @@ namespace WA\Repositories;
 
 use Illuminate\Database\Eloquent\Model;
 use WA\DataStore\BaseDataStore;
+use WA\Exceptions\BadCriteriaException;
 use WA\Http\Requests\Parameters\Filters;
 use WA\Http\Requests\Parameters\Sorting;
 
@@ -28,6 +29,7 @@ abstract class AbstractRepository implements RepositoryInterface
      * @var Filters
      */
     protected $filterCriteria = null;
+
 
     /**
      * AbstractRepository constructor.
@@ -100,6 +102,7 @@ abstract class AbstractRepository implements RepositoryInterface
         return $this;
     }
 
+
     /**
      * Convenience method to apply sorting and filtering criteria
      *
@@ -114,6 +117,7 @@ abstract class AbstractRepository implements RepositoryInterface
      * Apply filter criteria to the current query
      *
      * @return $this
+     * @throws BadCriteriaException
      */
     protected function filter()
     {
@@ -155,11 +159,11 @@ abstract class AbstractRepository implements RepositoryInterface
                         $this->query->where($filterKey, 'LIKE', $val);
                         break;
                     default:
-                        // @TODO: Throw an exception if sort operator is invalid?
+                        throw new BadCriteriaException("Invalid filter operator");
                         break;
                 }
             } else {
-                // @TODO: Throw an exception if sort column is invalid?
+                throw new BadCriteriaException("Invalid filter criteria");
             }
         }
         return $this;
@@ -169,6 +173,7 @@ abstract class AbstractRepository implements RepositoryInterface
      * Apply sort criteria to the current query
      *
      * @return $this
+     * @throws BadCriteriaException
      */
     protected function sort()
     {
@@ -182,12 +187,13 @@ abstract class AbstractRepository implements RepositoryInterface
             if (in_array($sortColumn, $this->model->getTableColumns())) {
                 $this->query->orderBy($sortColumn, $direction);
             } else {
-                // @TODO: Throw an exception if sort criteria is invalid?
+                throw new BadCriteriaException("Invalid sort criteria");
             }
         }
 
         return $this;
     }
+
 
     /**
      * Get paginated resource
