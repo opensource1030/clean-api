@@ -16,9 +16,11 @@ class Fields
 
     public function __construct($fields = [])
     {
-        if (empty($fields)) {
+        if (empty($fields) || !is_array($fields)) {
             return $this;
         }
+
+        $fields = array_filter($fields);
 
         foreach ($fields as $type => &$members) {
             $members = \explode(',', $members);
