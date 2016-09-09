@@ -157,6 +157,7 @@ abstract class AbstractRepository implements RepositoryInterface
                         $this->query->whereIn($filterKey, $vals);
                         break;
                     case "like":
+                        $val = str_replace("*", "%", $val);
                         $this->query->where($filterKey, 'LIKE', $val);
                         break;
                     default:
