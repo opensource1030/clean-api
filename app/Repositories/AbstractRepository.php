@@ -3,6 +3,7 @@
 namespace WA\Repositories;
 
 use Illuminate\Database\Eloquent\Model;
+use Log;
 use WA\DataStore\BaseDataStore;
 use WA\Exceptions\BadCriteriaException;
 use WA\Http\Requests\Parameters\Filters;
@@ -146,12 +147,12 @@ abstract class AbstractRepository implements RepositoryInterface
                         $this->query->where($filterKey, '>=', $val);
                         break;
                     case "ne":
-                        // Handle delimitted lists
+                        // Handle delimited lists
                         $vals = explode(",", $val);
                         $this->query->whereNotIn($filterKey, $vals);
                         break;
                     case "eq":
-                        // Handle delimitted lists
+                        // Handle delimited lists
                         $vals = explode(",", $val);
                         $this->query->whereIn($filterKey, $vals);
                         break;
@@ -202,7 +203,7 @@ abstract class AbstractRepository implements RepositoryInterface
      * @param bool $api false|true
      * @param bool $paginate
      *
-     * @return Object as Collection of object information, | Paginator Collection if pagination is true (default)
+     * @return mixed Object as Collection of object information, | Paginator Collection if pagination is true (default)
      */
     public function byPage($paginate = true, $perPage = 25, $api = false)
     {
@@ -250,7 +251,7 @@ abstract class AbstractRepository implements RepositoryInterface
      *
      * @param array $data to be created
      *
-     * @return Object object of created model
+     * @return mixed Object object of created model
      */
     public function create(array $data)
     {
