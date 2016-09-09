@@ -6,7 +6,7 @@ use Dingo\Api\Transformer\FractalTransformer as DingoFractalTransformer;
 use Illuminate\Pagination\Paginator as IlluminatePaginator;
 use League\Fractal\Resource\Collection as ResourceCollection;
 use League\Fractal\TransformerAbstract;
-use WA\DataStore\Asset\AssetTransformer;
+use WA\DataStore\Carrier\CarrierTransformer;
 
 
 /**

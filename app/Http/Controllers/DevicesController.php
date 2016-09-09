@@ -34,8 +34,8 @@ class DevicesController extends ApiController
      *
      * @param DeviceInterface $device
      */
-    public function __construct(DeviceInterface $device)
-    {
+    public function __construct(DeviceInterface $device) {
+        
         $this->device = $device;
     }
 
@@ -51,8 +51,8 @@ class DevicesController extends ApiController
      *      @Parameter("access_token", required=true, description="Access token for authentication")
      * })
      */
-    public function index()
-    {
+    public function index() {
+
         $devices = $this->device->byPage();
 
         return $this->response()->withPaginator($devices, new DeviceTransformer(),['key' => 'devices']);
@@ -65,8 +65,8 @@ class DevicesController extends ApiController
      *
      * @Get("/{id}")
      */
-    public function show($id)
-    {
+    public function show($id) {
+
         $device = Device::find($id);
         if($device == null){
             $error['errors']['get'] = 'the Device selected doesn\'t exists';   
@@ -77,8 +77,7 @@ class DevicesController extends ApiController
     }
 
 
-    public function datatable()
-    {
+    public function datatable() {
 
         $this->setLimits();
 
@@ -109,8 +108,8 @@ class DevicesController extends ApiController
      * @param $id
      * @return \Dingo\Api\Http\Response
      */
-    public function store($id, Request $request)   
-    {
+    public function store($id, Request $request) {
+
         $success = true;
         $dataAssetsExists = false;
         $dataModificationsExists = false;
@@ -131,11 +130,6 @@ class DevicesController extends ApiController
 
         DB::beginTransaction();
 
-        $validator = Validator::make(array('image' => $dataAttributes['image']), ['image' => 'url']);
-        if($validator->fails()){
-            $error['errors']['image'] = 'The image file has not a valid format';
-        }
-
         /*
          * Now we can create the Device.
          */       
@@ -152,7 +146,7 @@ class DevicesController extends ApiController
             DB::rollBack();
             $success = false;
             $error['errors']['devices'] = 'The Device can not be created';
-            $error['errors']['devicesMessage'] = $this->getErrorAndParse($e);
+            //$error['errors']['devicesMessage'] = $this->getErrorAndParse($e);
             return response()->json($error)->setStatusCode(409);
         }
 
@@ -167,25 +161,25 @@ class DevicesController extends ApiController
 
             if(isset($dataRelationships['assets'])){ 
                 if(isset($dataRelationships['assets']['data'])){
-                    $dataAssets = $this->parseJsonToArray($dataRelationships['assets']['data']);
+                    $dataAssets = $this->parseJsonToArray($dataRelationships['assets']['data'], 'assets');
                     $dataAssetsExists = true;
                 }
             }
             if(isset($dataRelationships['modifications'])){ 
                 if(isset($dataRelationships['modifications']['data'])){
-                    $dataModifications = $this->parseJsonToArray($dataRelationships['modifications']['data']);
+                    $dataModifications = $this->parseJsonToArray($dataRelationships['modifications']['data'], 'modifications');
                     $dataModificationsExists = true;
                 }
             }
             if(isset($dataRelationships['carriers'])){ 
                 if(isset($dataRelationships['carriers']['data'])){
-                    $dataCarriers = $this->parseJsonToArray($dataRelationships['carriers']['data']);
+                    $dataCarriers = $this->parseJsonToArray($dataRelationships['carriers']['data'], 'carriers');
                     $dataCarriersExists = true;
                 }
             }
             if(isset($dataRelationships['companies'])){ 
                 if(isset($dataRelationships['companies']['data'])){
-                    $dataCompanies = $this->parseJsonToArray($dataRelationships['companies']['data']);
+                    $dataCompanies = $this->parseJsonToArray($dataRelationships['companies']['data'], 'companies');
                     $dataCompaniesExists = true;
                 }
             }
@@ -204,7 +198,7 @@ class DevicesController extends ApiController
                 DB::rollBack();
                 $success = false;
                 $error['errors']['assets'] = 'the Device Assets can not be created';
-                $error['errors']['assetsMessage'] = $this->getErrorAndParse($e);
+                //$error['errors']['assetsMessage'] = $this->getErrorAndParse($e);
             }
         }
 
@@ -215,7 +209,7 @@ class DevicesController extends ApiController
                 DB::rollBack();
                 $success = false;
                 $error['errors']['modifications'] = 'the Device Modifications can not be created';
-                $error['errors']['modificationsMessage'] = $this->getErrorAndParse($e);
+                //$error['errors']['modificationsMessage'] = $this->getErrorAndParse($e);
             }
         }
 
@@ -226,7 +220,7 @@ class DevicesController extends ApiController
                 DB::rollBack();
                 $success = false;
                 $error['errors']['carriers'] = 'the Device Carriers can not be created';
-                $error['errors']['carriersMessage'] = $this->getErrorAndParse($e);
+                //$error['errors']['carriersMessage'] = $this->getErrorAndParse($e);
             }
         }
 
@@ -237,7 +231,7 @@ class DevicesController extends ApiController
                 DB::rollBack();
                 $success = false;
                 $error['errors']['companies'] = 'the Device Companies can not be created';
-                $error['errors']['companiesMessage'] = $this->getErrorAndParse($e);
+                //$error['errors']['companiesMessage'] = $this->getErrorAndParse($e);
             }
         }
 
@@ -256,14 +250,14 @@ class DevicesController extends ApiController
                         DB::rollBack();
                         $success = false;
                         $error['errors']['prices'] = 'the Device Prices can not be created';
-                        $error['errors']['pricesMessage'] = 'Any price rows are not correct and no references provided sync.';
+                        //$error['errors']['pricesMessage'] = 'Any price rows are not correct and no references provided sync.';
                     }                    
                 }    
             } catch (\Exception $e) {
                 DB::rollBack();
                 $success = false;
                 $error['errors']['prices'] = 'the Device Prices can not be created';
-                $error['errors']['pricesMessage'] = $this->getErrorAndParse($e);
+                //$error['errors']['pricesMessage'] = $this->getErrorAndParse($e);
             }
         }
 
@@ -281,14 +275,11 @@ class DevicesController extends ApiController
      *
      * @return \Dingo\Api\Http\Response
      */
-    public function create(Request $request)
-    {   
+    public function create(Request $request) {   
+
         $success = true;
-        $dataAssetsExists = false;
-        $dataModificationsExists = false;
-        $dataCarriersExists = false;
-        $dataCompaniesExists = false;
-        $dataPricesExists = false;
+        $dataImagesExists = $dataAssetsExists = $dataModificationsExists = $dataCarriersExists = $dataCompaniesExists = $dataPricesExists = false;
+        $dataImages = $dataAssets = $dataModifications = $dataCarriers = $dataCompanies = array();
         /*
          * Checks if Json has data, data-type & data-attributes.
          */
@@ -303,11 +294,6 @@ class DevicesController extends ApiController
 
         DB::beginTransaction();
 
-        $validator = Validator::make(array('image' => $dataAttributes['image']), ['image' => 'url']);
-        if($validator->fails()){
-            $error['errors']['image'] = 'The image file has not a valid format';
-        }
-
         /*
          * Now we can create the Device.
          */       
@@ -317,7 +303,7 @@ class DevicesController extends ApiController
             DB::rollBack();
             $success = false;
             $error['errors']['devices'] = 'The Device can not be created';
-            $error['errors']['devicesMessage'] = $this->getErrorAndParse($e);
+            //$error['errors']['devicesMessage'] = $this->getErrorAndParse($e);
             return response()->json($error)->setStatusCode(409);
         }
 
@@ -328,29 +314,35 @@ class DevicesController extends ApiController
             DB::commit();
             return $this->response()->item($device, new DeviceTransformer(), ['key' => 'devices']);
         } else {
-            $dataRelationships = $data['relationships'];    
+            $dataRelationships = $data['relationships'];
 
+            if(isset($dataRelationships['images'])){ 
+                if(isset($dataRelationships['images']['data'])){
+                    $dataImages = $this->parseJsonToArray($dataRelationships['images']['data'], 'images');
+                    $dataImagesExists = true;
+                }
+            }
             if(isset($dataRelationships['assets'])){ 
                 if(isset($dataRelationships['assets']['data'])){
-                    $dataAssets = $this->parseJsonToArray($dataRelationships['assets']['data']);
+                    $dataAssets = $this->parseJsonToArray($dataRelationships['assets']['data'], 'assets');
                     $dataAssetsExists = true;
                 }
             }
             if(isset($dataRelationships['modifications'])){ 
                 if(isset($dataRelationships['modifications']['data'])){
-                    $dataModifications = $this->parseJsonToArray($dataRelationships['modifications']['data']);
+                    $dataModifications = $this->parseJsonToArray($dataRelationships['modifications']['data'], 'modifications');
                     $dataModificationsExists = true;
                 }
             }
             if(isset($dataRelationships['carriers'])){ 
                 if(isset($dataRelationships['carriers']['data'])){
-                    $dataCarriers = $this->parseJsonToArray($dataRelationships['carriers']['data']);
+                    $dataCarriers = $this->parseJsonToArray($dataRelationships['carriers']['data'], 'carriers');
                     $dataCarriersExists = true;
                 }
             }
             if(isset($dataRelationships['companies'])){ 
                 if(isset($dataRelationships['companies']['data'])){
-                    $dataCompanies = $this->parseJsonToArray($dataRelationships['companies']['data']);
+                    $dataCompanies = $this->parseJsonToArray($dataRelationships['companies']['data'], 'companies');
                     $dataCompaniesExists = true;
                 }
             }
@@ -360,7 +352,18 @@ class DevicesController extends ApiController
                     $dataPricesExists = true;
                 }
             }
-        }  
+        }
+
+        if($dataImagesExists){
+            try {
+                $device->images()->sync($dataImages);    
+            } catch (\Exception $e){
+                DB::rollBack();
+                $success = false;
+                $error['errors']['images'] = 'the Device Images can not be created';
+                //$error['errors']['imagesMessage'] = $this->getErrorAndParse($e);
+            }
+        }
         
         if($dataAssetsExists){
             try {
@@ -369,7 +372,7 @@ class DevicesController extends ApiController
                 DB::rollBack();
                 $success = false;
                 $error['errors']['assets'] = 'the Device Assets can not be created';
-                $error['errors']['assetsMessage'] = $this->getErrorAndParse($e);
+                //$error['errors']['assetsMessage'] = $this->getErrorAndParse($e);
             }
         }
 
@@ -406,7 +409,7 @@ class DevicesController extends ApiController
             }
         }
 
-        if($dataPricesExists){
+        if($dataPricesExists && $dataAssetsExists && $dataModificationsExists && $dataCarriersExists && $dataCompaniesExists){
             try {
                 $priceInterface = app()->make('WA\Repositories\Device\DevicePriceInterface');
 
@@ -465,13 +468,17 @@ class DevicesController extends ApiController
         }
     }
 
-    private function parseJsonToArray($data){
+    private function parseJsonToArray($data, $value){
         $array = array();
         
         foreach ($data as $info) {
-            if(isset($info['id'])){
-                array_push($array, $info['id']);    
-            }            
+            if(isset($info['type'])){
+                if($info['type'] == $value){
+                    if(isset($info['id'])){
+                           array_push($array, $info['id']);    
+                    }        
+                }
+            }                        
         }        
         return $array;
     }
@@ -503,33 +510,31 @@ class DevicesController extends ApiController
         return true;
     }
 
-    private function deleteRepeat($dataPrice){
+    private function deleteRepeat($data){
 
-        $keys = ['capacityId', 'styleId', 'carrierId', 'companyId'];
-        $i = 1;
-        $dataPriceAux = array();
+        $dataAux = array();
 
-        for ( $j = 0 ; $j < count($dataPrice) ; $j++){
+        for ( $j = 0 ; $j < count($data) ; $j++){
 
-            if($dataPriceAux == null){
-                array_push($dataPriceAux, $dataPrice[$j]);
+            if($dataAux == null){
+                array_push($dataAux, $data[$j]);
             } else {
                 $save = true;
 
-                for ( $k = 0 ; $k < count($dataPriceAux) ; $k++){
+                for ( $k = 0 ; $k < count($dataAux) ; $k++){
                     
                     $esIgual = true;
                     
-                    if($dataPriceAux[$k]['capacityId'] <> $dataPrice[$j]['capacityId']){
+                    if($dataAux[$k]['capacityId'] <> $data[$j]['capacityId']){
                         $esIgual = $esIgual && false;
                     }
-                    if($dataPriceAux[$k]['styleId'] <> $dataPrice[$j]['styleId']){
+                    if($dataAux[$k]['styleId'] <> $data[$j]['styleId']){
                         $esIgual = $esIgual && false;
                     }
-                    if($dataPriceAux[$k]['carrierId'] <> $dataPrice[$j]['carrierId']){
+                    if($dataAux[$k]['carrierId'] <> $data[$j]['carrierId']){
                         $esIgual = $esIgual && false;
                     }
-                    if($dataPriceAux[$k]['companyId'] <> $dataPrice[$j]['companyId']){
+                    if($dataAux[$k]['companyId'] <> $data[$j]['companyId']){
                         $esIgual = $esIgual && false;
                     }
 
@@ -542,11 +547,11 @@ class DevicesController extends ApiController
                 }
 
                 if($save) {
-                    array_push($dataPriceAux, $dataPrice[$j]);
+                    array_push($dataAux, $data[$j]);
                 }
             }
         }
-        return $dataPriceAux;
+        return $dataAux;
     }
 
     private function checkIfPriceRowIsCorrect($price, $assets, $modifications, $carriers, $companies){
@@ -568,7 +573,7 @@ class DevicesController extends ApiController
                 $typeMod = $dataResponse['type'];
 
                 if($priceCapacityId == $idMod){
-                    if($typeMod <> 'Capacity'){
+                    if($typeMod <> 'capacity'){
                         return false;
                     }
                 }
@@ -591,7 +596,7 @@ class DevicesController extends ApiController
 
                 if($priceStyleId == $idMod){
 
-                    if($typeMod <> 'Style'){
+                    if($typeMod <> 'style'){
                         return false;
                     }
                 }

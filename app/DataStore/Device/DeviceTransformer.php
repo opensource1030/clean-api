@@ -11,6 +11,7 @@ use WA\DataStore\Asset\AssetTransformer;
 use WA\DataStore\Carrier\CarrierTransformer;
 use WA\DataStore\Company\CompanyTransformer;
 use WA\DataStore\Modification\ModificationTransformer;
+use WA\DataStore\Image\ImageTransformer;
 
 
 
@@ -20,7 +21,7 @@ use WA\DataStore\Modification\ModificationTransformer;
 class DeviceTransformer extends TransformerAbstract
 {
     protected $availableIncludes = [
-        'assets', 'carriers', 'companies', 'modifications'
+        'assets', 'carriers', 'companies', 'modifications', 'images'
     ];
 
     /**
@@ -33,7 +34,6 @@ class DeviceTransformer extends TransformerAbstract
         return [
             'id' => (int)$device->id,
             'identification' => $device->identification,
-            'image' => $device->image,
             'name' => $device->name,
             'properties' => $device->properties,
             'externalId' => $device->externalId,
@@ -83,5 +83,15 @@ class DeviceTransformer extends TransformerAbstract
     public function includeModifications(Device $device)
     {
         return new ResourceCollection($device->modifications, new ModificationTransformer(),'modifications');
+    }
+
+    /**
+     * @param Device $device
+     *
+     * @return ResourceCollection
+     */
+    public function includeImages(Device $device)
+    {
+        return new ResourceCollection($device->images, new ImageTransformer(),'images');
     }
 }

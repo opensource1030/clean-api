@@ -42,7 +42,6 @@ class Device extends MutableDataStore
     public $timestamps = true;
 
     protected $fillable = [
-        'image',
         'name',
         'properties',
         'deviceTypeId',
@@ -90,6 +89,14 @@ class Device extends MutableDataStore
     public function companies()
     {
         return $this->belongsToMany('WA\DataStore\Company\Company', 'device_companies', 'deviceId', 'companyId');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function images()
+    {
+        return $this->belongsToMany('WA\DataStore\Image\Image', 'device_images', 'deviceId', 'imageId');
     }
 
     /**

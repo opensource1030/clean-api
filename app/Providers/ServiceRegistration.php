@@ -52,16 +52,24 @@ use WA\Repositories\Allocation\EloquentAllocation;
 
 use WA\Repositories\Device\EloquentDevice;
 use WA\DataStore\Device\Device;
+
+use WA\Repositories\Image\EloquentImage;
+use WA\DataStore\Image\Image;
+
 use WA\Repositories\Device\EloquentDeviceModification;
 use WA\DataStore\Device\DeviceModification;
+
+use WA\Repositories\Device\EloquentDeviceImage;
+use WA\DataStore\Device\DeviceImage;
+
 use WA\Repositories\Device\EloquentDeviceCompany;
 use WA\DataStore\Device\DeviceCompany;
+
 use WA\Repositories\Device\EloquentDeviceCarrier;
 use WA\DataStore\Device\DeviceCarrier;
+
 use WA\Repositories\Device\EloquentDevicePrice;
 use WA\DataStore\Device\DevicePrice;
-
-
 
 use WA\Repositories\Service\EloquentService;
 use WA\DataStore\Service\Service;
@@ -112,12 +120,42 @@ trait ServiceRegistration
     /**
      * @param
      */
+    public function registerImage()
+    {
+        app()->singleton(
+            'WA\Repositories\Image\ImageInterface',
+            function () {
+                return new EloquentImage(new Image(),
+                    app()->make('WA\Repositories\JobStatus\JobStatusInterface')
+                );
+            }
+        );
+    }
+
+    /**
+     * @param
+     */
     public function registerDeviceModification()
     {
         app()->singleton(
             'WA\Repositories\Device\DeviceModificationInterface',
             function () {
                 return new EloquentDeviceModification(new DeviceModification(),
+                    app()->make('WA\Repositories\JobStatus\JobStatusInterface')
+                );
+            }
+        );
+    }
+
+    /**
+     * @param
+     */
+    public function registerDeviceImage()
+    {
+        app()->singleton(
+            'WA\Repositories\Device\DeviceImageInterface',
+            function () {
+                return new EloquentDeviceImage(new DeviceImage(),
                     app()->make('WA\Repositories\JobStatus\JobStatusInterface')
                 );
             }

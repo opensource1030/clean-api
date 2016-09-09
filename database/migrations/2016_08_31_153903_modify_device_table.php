@@ -19,6 +19,7 @@ class ModifyDeviceTable extends Migration
         Schema::table($this->tableName, function($table){
             $table->dropForeign('devices_carrierid_foreign');
             $table->dropColumn('carrierId');
+            $table->dropColumn('image');
         });
     }
 
@@ -32,6 +33,7 @@ class ModifyDeviceTable extends Migration
         Schema::table($this->tableName, function($table){
             $table->integer('carrierId')->unsigned()->nullable();
             $table->foreign('carrierId')->references('id')->on('carriers');
+            $table->string('image');
         });
     }
 }

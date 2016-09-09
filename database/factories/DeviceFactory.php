@@ -23,12 +23,10 @@ $factory->define(\WA\DataStore\DeviceType::class, function () {
 
 $factory->define(\WA\DataStore\Device\Device::class, function (\Faker\Generator $faker) {
 
-    $images = ['link/to/image1.png','link/to/image2.png','link/to/image3.png','link/to/image1.jpg','link/to/image2.jpg'];
     $names = ['iPhone 5','iPhone 5S','iPhone 6','iPhone 6S','Samsung G6','Samsung G7','Huawei g620s'];
 
     return [
         'identification' => $faker->isbn13,
-        'image'=> $images[array_rand($images)],
         'name'=> $names[array_rand($names)],
         'properties'=> 'properties',
         'deviceTypeId' => function () {

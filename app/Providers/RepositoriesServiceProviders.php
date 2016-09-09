@@ -22,21 +22,26 @@ class RepositoriesServiceProviders extends ServiceProvider
     {        
         $this->registerAll();
 
+        $this->registerApp();
         $this->registerAsset();
         $this->registerDevice();
-        $this->registerDeviceModification();
+        $this->registerCarrier();
+        $this->registerCarrierDetail();
         $this->registerDeviceCarrier();
-        $this->registerDeviceCompany();
-        $this->registerDevicePrice();
-        $this->registerDeviceType();
-        $this->registerUser();
         $this->registerCompany();
+        $this->registerDeviceCompany();
+        $this->registerImage();
+        $this->registerDeviceImage();        
+        $this->registerModification();
+        $this->registerDeviceModification();
+        $this->registerDevicePrice();
+        $this->registerDeviceType();        
         $this->registerCensus();
+        $this->registerUser();
         $this->registerJobStatus();
         $this->registerUdl();
         $this->registerUdlValue();
         $this->registerAttribute();
-        $this->registerCarrier();
         $this->registerSyncJob();
         $this->registerCarrierDetail();
         $this->registerLocation();
@@ -51,10 +56,8 @@ class RepositoriesServiceProviders extends ServiceProvider
         $this->registerContent();
         $this->registerHelpDesk();
         $this->registerService();
-        $this->registerApp();
         $this->registerOrder();
         $this->registerPackage();
         $this->registerRequest();
-        $this->registerModification();
     }
 }

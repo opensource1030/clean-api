@@ -160,5 +160,18 @@ $api->version('v1', function ($api) {
         $api->put('carriers/{id}', ['uses' => $carrierController . '@store']);
         $api->delete('carriers/{id}', ['uses' => $carrierController . '@delete']);
 
+        //=Price
+        $priceController = 'WA\Http\Controllers\PriceController';
+        $api->get('prices', ['as' => 'api.price.index', 'uses' => $priceController . '@index']);
+        $api->get('prices/{id}', ['as' => 'api.price.show', 'uses' => $priceController . '@show']);
+        $api->post('prices', ['uses' => $priceController . '@create']);
+        $api->put('prices/{id}', ['uses' => $priceController . '@store']);
+        $api->delete('prices/{id}', ['uses' => $priceController . '@delete']);
+
+        //=Image
+        $imageController = 'WA\Http\Controllers\ImageController';
+        $api->get('images', ['as' => 'api.image.index', 'uses' => $imageController . '@index']);
+        $api->get('images/show/{filename}', ['as' => 'api.image.show', 'uses' => $imageController . '@show']);
+        $api->post('images/create', ['uses' => $imageController . '@create']);
     });
 });
