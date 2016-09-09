@@ -26,10 +26,10 @@ class ApiFiltersTest extends TestCase
             ->seeJson(['filter' => ['[id]=2,4']]);
     }
 
-    // Make sure we ignore invalid criteria.  Replace with error check if we decide that's better.
+    // Per JSONAPI, invalid criteria MUST return a 400
     public function testWorkProperlyWithIncorrectSortCriteria()
     {
         $response = $this->call('GET', '/devices?filter[blahblah]=9001');
-        $this->assertEquals(200, $response->status());
+        $this->assertEquals(400, $response->status());
     }
 }

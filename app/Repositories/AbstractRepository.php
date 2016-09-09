@@ -3,7 +3,9 @@
 namespace WA\Repositories;
 
 use Illuminate\Database\Eloquent\Model;
+use Log;
 use WA\DataStore\BaseDataStore;
+use WA\Exceptions\BadCriteriaException;
 use WA\Http\Requests\Parameters\Filters;
 use WA\Http\Requests\Parameters\Sorting;
 
@@ -28,6 +30,7 @@ abstract class AbstractRepository implements RepositoryInterface
      * @var Filters
      */
     protected $filterCriteria = null;
+
 
     /**
      * AbstractRepository constructor.
@@ -100,6 +103,7 @@ abstract class AbstractRepository implements RepositoryInterface
         return $this;
     }
 
+
     /**
      * Convenience method to apply sorting and filtering criteria
      *
@@ -114,6 +118,7 @@ abstract class AbstractRepository implements RepositoryInterface
      * Apply filter criteria to the current query
      *
      * @return $this
+     * @throws BadCriteriaException
      */
     protected function filter()
     {
@@ -142,24 +147,25 @@ abstract class AbstractRepository implements RepositoryInterface
                         $this->query->where($filterKey, '>=', $val);
                         break;
                     case "ne":
-                        // Handle delimitted lists
+                        // Handle delimited lists
                         $vals = explode(",", $val);
                         $this->query->whereNotIn($filterKey, $vals);
                         break;
                     case "eq":
-                        // Handle delimitted lists
+                        // Handle delimited lists
                         $vals = explode(",", $val);
                         $this->query->whereIn($filterKey, $vals);
                         break;
                     case "like":
+                        $val = str_replace("*", "%", $val);
                         $this->query->where($filterKey, 'LIKE', $val);
                         break;
                     default:
-                        // @TODO: Throw an exception if sort operator is invalid?
+                        throw new BadCriteriaException("Invalid filter operator");
                         break;
                 }
             } else {
-                // @TODO: Throw an exception if sort column is invalid?
+                throw new BadCriteriaException("Invalid filter criteria");
             }
         }
         return $this;
@@ -169,6 +175,7 @@ abstract class AbstractRepository implements RepositoryInterface
      * Apply sort criteria to the current query
      *
      * @return $this
+     * @throws BadCriteriaException
      */
     protected function sort()
     {
@@ -182,12 +189,13 @@ abstract class AbstractRepository implements RepositoryInterface
             if (in_array($sortColumn, $this->model->getTableColumns())) {
                 $this->query->orderBy($sortColumn, $direction);
             } else {
-                // @TODO: Throw an exception if sort criteria is invalid?
+                throw new BadCriteriaException("Invalid sort criteria");
             }
         }
 
         return $this;
     }
+
 
     /**
      * Get paginated resource
@@ -196,7 +204,7 @@ abstract class AbstractRepository implements RepositoryInterface
      * @param bool $api false|true
      * @param bool $paginate
      *
-     * @return Object as Collection of object information, | Paginator Collection if pagination is true (default)
+     * @return mixed Object as Collection of object information, | Paginator Collection if pagination is true (default)
      */
     public function byPage($paginate = true, $perPage = 25, $api = false)
     {
@@ -244,7 +252,7 @@ abstract class AbstractRepository implements RepositoryInterface
      *
      * @param array $data to be created
      *
-     * @return Object object of created model
+     * @return mixed Object object of created model
      */
     public function create(array $data)
     {
