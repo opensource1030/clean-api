@@ -6,58 +6,55 @@ use Illuminate\Contracts\Foundation\Application;
 use WA\DataStore\Allocation\Allocation;
 use WA\DataStore\Asset\Asset;
 use WA\DataStore\Attribute;
-
 use WA\DataStore\Carrier\Carrier;
 use WA\DataStore\Carrier\CarrierDetail;
 use WA\DataStore\Census;
 use WA\DataStore\Company\Company;
+use WA\DataStore\Content\Content;
 use WA\DataStore\Device\Device;
 use WA\DataStore\DeviceType;
+use WA\DataStore\EasyVistaHelpDesk;
 use WA\DataStore\EmailNotifications;
-use WA\DataStore\User\User;
-use WA\DataStore\UserNotifications;
 use WA\DataStore\JobStatus;
 use WA\DataStore\Location\Location;
 use WA\DataStore\NotificationCategory;
-use WA\DataStore\Content\Content;
+use WA\DataStore\Role\Role;
+use WA\DataStore\Service\Service;
 use WA\DataStore\SyncJob;
 use WA\DataStore\Udl\Udl;
 use WA\DataStore\UdlValue\UdlValue;
 use WA\DataStore\UdlValuePath\UdlValuePath;
 use WA\DataStore\UdlValuePathUsers\UdlValuePathUsers;
-use WA\DataStore\Role\Role;
+use WA\DataStore\User\User;
+use WA\DataStore\UserNotifications;
+use WA\Repositories\Allocation\EloquentAllocation;
 use WA\Repositories\Asset\EloquentAsset;
 use WA\Repositories\Attribute\EloquentAttribute;
 use WA\Repositories\Carrier\EloquentCarrier;
 use WA\Repositories\Carrier\EloquentCarrierDetail;
 use WA\Repositories\Census\EloquentCensus;
 use WA\Repositories\Company\EloquentCompany;
+use WA\Repositories\Content\EloquentContent;
 use WA\Repositories\Device\EloquentDevice;
 use WA\Repositories\DeviceType\EloquentDeviceType;
 use WA\Repositories\EmailNotifications\EloquentEmailNotifications;
-use WA\Repositories\User\EloquentUser;
-use WA\Repositories\UserNotifications\EloquentUserNotifications;
+use WA\Repositories\HelpDesk\EasyVista;
+use WA\Repositories\HelpDesk\HelpDeskCacheDecorator;
 use WA\Repositories\JobStatus\EloquentJobStatus;
 use WA\Repositories\Location\EloquentLocation;
 use WA\Repositories\NotificationCategory\EloquentNotificationCategory;
-use WA\Repositories\Content\EloquentContent;
+use WA\Repositories\Permission\EloquentPermission;
+use WA\Repositories\Role\EloquentRole;
+use WA\Repositories\Service\EloquentService;
 use WA\Repositories\SyncJob\EloquentSyncJob;
 use WA\Repositories\Udl\EloquentUdl;
 use WA\Repositories\UdlValue\EloquentUdlValue;
 use WA\Repositories\UdlValuePath\EloquentUdlValuePath;
 use WA\Repositories\UdlValuePathUsers\EloquentUdlValuePathUsers;
+use WA\Repositories\User\EloquentUser;
 use WA\Repositories\User\UserCacheDecorator;
+use WA\Repositories\UserNotifications\EloquentUserNotifications;
 use WA\Services\Cache\Cache;
-use WA\Repositories\Role\EloquentRole;
-use WA\Repositories\Permission\EloquentPermission;
-use WA\Repositories\Allocation\EloquentAllocation;
-
-use WA\DataStore\Service\Service;
-use WA\Repositories\Service\EloquentService;
-
-use WA\Repositories\HelpDesk\EasyVista;
-use WA\Repositories\HelpDesk\HelpDeskCacheDecorator;
-use WA\DataStore\EasyVistaHelpDesk;
 
 
 /**
@@ -159,30 +156,6 @@ trait ServiceRegistration
                 return new EloquentUdlValuePathUsers(new UdlValuePathUsers());
             }
         );
-    }
-
-    /**
-     *register all non - manual resolutions.
-     *
-     * @param
-     */
-    protected function registerAll()
-    {
-
-
-        app()->bind('WA\Repositories\AssetRepositoryInterface', 'WA\Repositories\AssetRepository');
-        app()->bind('WA\Repositories\UserCarrierRepositoryInterface', 'WA\Repositories\UserCarrierRepository');
-        app()->bind('WA\Repositories\DumpExceptionRepositoryInterface', 'WA\Repositories\DumpExceptionRepository');
-        app()->bind('WA\Repositories\JobStatusRepositoryInterface', 'WA\Repositories\JobStatusRepository');
-        app()->bind('WA\Repositories\CurrentChargeRepositoryInterface', 'WA\Repositories\CurrentChargeRepository');
-        app()->bind('WA\Repositories\ServiceBundleRepositoryInterface', 'WA\Repositories\ServiceBundleRepository');
-        app()->bind(
-            'WA\Repositories\CallDetailSummaryRepositoryInterface',
-            'WA\Repositories\CallDetailSummaryRepository'
-        );
-        app()->bind('WA\Repositories\DeviceTypeRepositoryInterface', 'WA\Repositories\DeviceTypeRepository');
-        app()->bind('WA\Repositories\CarrierDeviceRepositoryInterface', 'WA\Repositories\CarrierDeviceRepository');
-        app()->bind('WA\Repositories\ConsolidatedCdrRepositoryInterface', 'WA\Repositories\ConsolidatedCdrRepository');
     }
 
     /**

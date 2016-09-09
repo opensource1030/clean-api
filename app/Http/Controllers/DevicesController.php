@@ -3,12 +3,9 @@
 namespace WA\Http\Controllers;
 
 use Cartalyst\DataGrid\Laravel\Facades\DataGrid;
-use Dingo\Api\Routing\Helpers;
-use Illuminate\Session\SessionManager as Session;
 use WA\DataStore\Device\DeviceTransformer;
-use WA\Helpers\Traits\SetLimits;
-use WA\Http\Controllers\Api\Traits\BasicCrud;
 use WA\Repositories\Device\DeviceInterface;
+
 
 /**
  * Devices resource.
@@ -46,9 +43,13 @@ class DevicesController extends ApiController
      */
     public function index()
     {
+        $this->criteria = $this->getRequestCriteria();
+        $this->device->setCriteria($this->criteria);
         $devices = $this->device->byPage();
-
-        return $this->response()->withPaginator($devices, new DeviceTransformer(),['key' => 'devices']);
+        $response = $this->response()->withPaginator($devices, new DeviceTransformer(),
+            ['key' => 'devices']);
+        $response = $this->applyMeta($response);
+        return $response;
     }
 
     /**
@@ -62,7 +63,7 @@ class DevicesController extends ApiController
     {
         $device = $this->device->byId($id);
 
-        return $this->response()->item($device, new DeviceTransformer(),['key' => 'devices']);
+        return $this->response()->item($device, new DeviceTransformer(), ['key' => 'devices']);
     }
 
 
@@ -73,16 +74,16 @@ class DevicesController extends ApiController
 
         $devices = $this->model->getDataTable();
         $columns = [
-            'devices.id' => 'id',
+            'devices.id'             => 'id',
             'devices.identification' => 'identification',
-            'device_types.make' => 'make',
-            'device_types.model' => 'model',
-            'device_types.class' => 'class',
+            'device_types.make'      => 'make',
+            'device_types.model'     => 'model',
+            'device_types.class'     => 'class',
         ];
 
         $options = [
             'throttle' => $this->defaultQueryParams['_perPage'],
-            'method' => $this->defaultQueryParams['_method'],
+            'method'   => $this->defaultQueryParams['_method'],
         ];
 
         $this->setLimits();
@@ -98,9 +99,9 @@ class DevicesController extends ApiController
      * @param $id
      * @return \Dingo\Api\Http\Response
      */
-    public function store($id, Request $request)   
+    public function store($id, Request $request)
     {
-        $data = $request->all();       
+        $data = $request->all();
         $data['id'] = $id;
         $device = $this->device->update($data);
         return $this->response()->item($device, new DeviceTransformer(), ['key' => 'device']);

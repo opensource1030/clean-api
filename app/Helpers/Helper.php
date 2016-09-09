@@ -41,6 +41,9 @@ class Helper
         if (\Kint::enabled()) {
             \Kint::dump($data);
             die;
+        } else {
+            var_dump($data);
+            die;
         }
     }
 
@@ -127,18 +130,6 @@ class Helper
         return $numbers_only;
     }
 
-    /**
-     * Verifies that a user is part of group
-     * ** works only for logged in Users.
-     *
-     * @param $groupName
-     *
-     * @return bool
-     */
-    public static function isUserPartOfGroup($groupName)
-    {
-        //        return (\Sentinel::getUser()) ? \Sentinel::getUser()->inGroup(\Sentinel::findGroupByName($groupName)) : false;
-    }
 
     /**
      * Take a number in a variety of formats and return a proper E164 number.
@@ -181,78 +172,6 @@ class Helper
         return $NumberStack['numberCorrected'];
     }
 
-    /**
-     * Helper method for building the file drop-down boxes during data loading.
-     *
-     * @param $filename
-     * @param $dataType
-     *
-     * @return null|string
-     */
-    public static function loadingFileGuess($filename, $dataType)
-    {
-        $match = 'selected';
-        $possibleMatches = [
-            'cre' => [
-                'CCC-CRE-SUB',
-            ],
-            'chg' => [
-                'CCC-CHG-SUB',
-            ],
-            'acre' => [
-                'CCC-CRE-ACT',
-            ],
-            'achg' => [
-                'CCC-CHG-ACT',
-            ],
-            'cdr' => [
-                'ALL_CALLS',
-                'Wireless Usage Detail',
-                'att_cdr',
-                'vzw_cdr',
-                'verizon_cdr',
-                'rawdataoutput_CDR',
-                'rawdataoutputcdr',
-                'cdr',
-                '_DTL',
-                '_CDR',
-            ],
-            'ivd' => [
-                'Acct & Wireless Charges Detail Summary Usage',
-                'att_ivd',
-                'vzw_ivd',
-                'verizon_ivd',
-                'rawdataoutput.csv',
-                'ivd',
-                'Invoice',
-            ],
-            'wls' => [
-                'verizon_als',
-                'Account & Wireless Summary',
-                '_MOB',
-            ],
-            'als' => [
-                'verizon_wls',
-                'AccountSummary',
-                '_ACC',
-            ],
-            'inv' => [
-                'BCR-SD',
-                'devicecus',
-                'DeviceReport',
-                'ExpandedWirelessUserInventoryReport',
-                'Hardware',
-            ],
-        ];
-
-        if (!isset($possibleMatches[$dataType])) {
-            return;
-        } elseif (is_numeric(self::strPosArray($filename, $possibleMatches[$dataType]))) {
-            return $match;
-        } else {
-            return;
-        }
-    }
 
     /**
      * Look for the first string position in an array of strings.

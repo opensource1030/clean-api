@@ -26,9 +26,13 @@ class AssetsController extends ApiController
 
     public function index()
     {
+        $criteria = $this->getRequestCriteria();
+        $this->asset->setCriteria($criteria);
         $assets = $this->asset->byPage();
 
-        return $this->response()->withPaginator($assets, new AssetTransformer(),['key' => 'assets']);
+        $response = $this->response()->withPaginator($assets, new AssetTransformer(), ['key' => 'assets']);
+        $response = $this->applyMeta($response);
+        return $response;
     }
 
     /**
@@ -40,7 +44,7 @@ class AssetsController extends ApiController
     {
         $asset = $this->asset->byId($id);
 
-        return $this->response()->item($asset, new AssetTransformer(),['key' => 'assets']);
+        return $this->response()->item($asset, new AssetTransformer(), ['key' => 'assets']);
 
     }
 
