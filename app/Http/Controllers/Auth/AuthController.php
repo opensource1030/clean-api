@@ -33,14 +33,13 @@ class AuthController
      * @return \Illuminate\Http\JsonResponse
      */
     public function accessToken(Authorizer $authorizer)
-    {
-        var_dump("ACCESSTOKEN");
-        var_dump($authorizer);        
+    {      
         try {
             return response()->json($authorizer->issueAccessToken());
 
         } catch (\Exception $e){
             var_dump("ACCESSTOKEN Exception");
+            var_dump($e);
             $error['errors']['errorType'] = $e->errorType;
             $error['errors']['message'] = $this->getErrorAndParse($e);
             return response()->json($error)->setStatusCode(401);
