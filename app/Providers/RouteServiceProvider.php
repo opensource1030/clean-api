@@ -36,13 +36,7 @@ class RouteServiceProvider extends ServiceProvider
     public function map(Router $router)
     {
         $router->group(['namespace' => $this->namespace], function ($router) {
-            require app_path('/Http/Routes/pages.php');
-            require app_path('/Http/Routes/api.php');
-            require app_path('/Http/Routes/datatables.php');
-           // require app_path('/Http/Routes/errors.php');
-            require app_path('/Http/Routes/admin.php');
-            require app_path('/Http/Routes/dev.php');
-            require app_path('/Http/Routes/saml2.php');
+
         });
     }
 }

@@ -30,16 +30,17 @@ namespace :ops do
         end
     end
 
-    # desc 'create documentations'
-    # task :make_api_docs do
-    #     on roles(:app), in: :sequence, wait: 1 do
-    #         execute "sudo rm -rf ~/webapps/api_doc/* && aglio --theme-full-width -i #{release_path}/apiary.apib --theme-variables streak -o ~/webapps/api_doc/index.html"
-    #     end
-    # end
+    desc 'create documentations'
+    task :make_api_docs, :stoplight_arg do | m, args |
+        on roles(:app), in: :sequence, wait: 1 do
+            version = args[:stoplight_arg]
+            execute "wget -O /home/deploy/webapps/api_doc/dist/versions/oas.json https://api.stoplight.io/v1/versions/#{version}/export/oas.json"
+        end
+    end 
 
-
+    
         desc 'Copy ENV specific files to servers.'
-        task :put_env do
+        task :put_env  do
           on roles(:app), in: :sequence, wait: 1 do
             %x[envsubst < .env.#{fetch :rails_env} > .env ]
             upload! ".env", "#{deploy_to}/shared/.env"

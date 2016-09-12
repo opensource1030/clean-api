@@ -58,7 +58,9 @@ $api->version('v1', function ($api) {
 
     $middleware = [ ];
     if ( !app()->runningUnitTests() ) {
-        $middleware[] = 'api.auth';
+        if (env('API_AUTH_MIDDLEWARE')!==null) {
+            $middleware[] = env('API_AUTH_MIDDLEWARE', 'api.auth');
+        }
     }
 
 

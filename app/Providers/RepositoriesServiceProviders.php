@@ -20,7 +20,6 @@ class RepositoriesServiceProviders extends ServiceProvider
      */
     public function register()
     {        
-        $this->registerAll();
 
         $this->registerApp();
         $this->registerAsset();

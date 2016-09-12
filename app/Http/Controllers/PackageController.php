@@ -41,10 +41,14 @@ class PackageController extends ApiController
      */
     public function index()
     {
+        $criteria = $this->getRequestCriteria();
+        $this->package->setCriteria($criteria);
+
         $package = $this->package->byPage();
         
-        return $this->response()->withPaginator($package, new PackageTransformer(),['key' => 'packages']);
-
+        $response = $this->response()->withPaginator($package, new PackageTransformer(),['key' => 'package']);
+        $response = $this->applyMeta($response);
+        return $response;
     }
 
     /**

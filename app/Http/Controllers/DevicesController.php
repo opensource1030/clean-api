@@ -52,11 +52,14 @@ class DevicesController extends ApiController
      *      @Parameter("access_token", required=true, description="Access token for authentication")
      * })
      */
+
     public function index() {
 
         $devices = $this->device->byPage();
-
-        return $this->response()->withPaginator($devices, new DeviceTransformer(),['key' => 'devices']);
+        $response = $this->response()->withPaginator($devices, new DeviceTransformer(),
+            ['key' => 'devices']);
+        //$response = $this->applyMeta($response);
+        return $response;
     }
 
     /**
@@ -84,16 +87,16 @@ class DevicesController extends ApiController
 
         $devices = $this->model->getDataTable();
         $columns = [
-            'devices.id' => 'id',
+            'devices.id'             => 'id',
             'devices.identification' => 'identification',
-            'device_types.make' => 'make',
-            'device_types.model' => 'model',
-            'device_types.class' => 'class',
+            'device_types.make'      => 'make',
+            'device_types.model'     => 'model',
+            'device_types.class'     => 'class',
         ];
 
         $options = [
             'throttle' => $this->defaultQueryParams['_perPage'],
-            'method' => $this->defaultQueryParams['_method'],
+            'method'   => $this->defaultQueryParams['_method'],
         ];
 
         $this->setLimits();
@@ -109,6 +112,7 @@ class DevicesController extends ApiController
      * @param $id
      * @return \Dingo\Api\Http\Response
      */
+
     public function store($id, Request $request) {
 
         $success = true;
@@ -437,8 +441,6 @@ class DevicesController extends ApiController
 
                 foreach ($dataPrices as $price) {
                     $check = $this->checkIfPriceRowIsCorrect($price, $dataModifications, $dataCarriers, $dataCompanies);
-                    var_dump($check);
-                    die;
                     if($check['bool']){
                         $price['deviceId'] = $device->id;
                         $priceInterface->create($price);    

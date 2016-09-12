@@ -4,11 +4,12 @@ namespace WA\Repositories;
 
 interface RepositoryInterface
 {
+
     /**
      * Get paginated census.
      *
      * @param bool $paginate
-     * @param int  $perPage
+     * @param int $perPage
      *
      * @return Object Collection of object information, will return paginated if pagination is true
      */
@@ -35,7 +36,7 @@ interface RepositoryInterface
     /**
      * Delete from the repo by the ID.
      *
-     * @param int  $id
+     * @param int $id
      * @param bool $force completely remove for the DB instead of marking it as "deleted"
      *
      * @return bool of the effect of the creation

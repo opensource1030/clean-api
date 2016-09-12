@@ -2,12 +2,12 @@
 
 namespace WA\Http\Controllers;
 
+use Cartalyst\DataGrid\Laravel\Facades\DataGrid;
 use Dingo\Api\Http\Response;
 use WA\DataStore\Company\CompanyTransformer;
 use WA\Repositories\Carrier\CarrierInterface;
 use WA\Repositories\Company\CompanyInterface;
 use WA\Repositories\Udl\UdlInterface;
-use Cartalyst\DataGrid\Laravel\Facades\DataGrid;
 
 /**
  * Class CompaniesController.
@@ -33,15 +33,13 @@ class CompaniesController extends ApiController
     /**
      * @param CompanyInterface $company
      * @param CarrierInterface $carrier
-     * @param UdlInterface     $udl
+     * @param UdlInterface $udl
      */
     public function __construct(CompanyInterface $company, CarrierInterface $carrier, UdlInterface $udl)
     {
-
         $this->company = $company;
         $this->carrier = $carrier;
         $this->udl = $udl;
-
     }
 
     /**
@@ -49,10 +47,12 @@ class CompaniesController extends ApiController
      */
     public function index()
     {
-        $companies  = $this->company->byPage();
-
-        return $this->response()->paginator($companies, new CompanyTransformer(),['key' => 'companies']);
-
+        $criteria = $this->getRequestCriteria();
+        $this->company->setCriteria($criteria);
+        $companies = $this->company->byPage();
+        $response = $this->response()->paginator($companies, new CompanyTransformer(), ['key' => 'companies']);
+        $response = $this->applyMeta($response);
+        return $response;
     }
 
     /**
@@ -64,8 +64,7 @@ class CompaniesController extends ApiController
     {
         $company = $this->company->byId($id);
 
-
-        return $this->response()->item($company, new CompanyTransformer(),['key' => 'companies']);
+        return $this->response()->item($company, new CompanyTransformer(), ['key' => 'companies']);
 
     }
 
@@ -96,5 +95,4 @@ class CompaniesController extends ApiController
         $response = DataGrid::make($companies, $columns, $options);
         return $response;
     }
-
 }

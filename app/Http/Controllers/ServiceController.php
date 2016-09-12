@@ -47,9 +47,13 @@ class ServiceController extends ApiController
      */
     public function index()
     {
+        $criteria = $this->getRequestCriteria();
+        $this->service->setCriteria($criteria);
         $service = $this->service->byPage();
       
-        return $this->response()->withPaginator($service, new ServiceTransformer(),['key' => 'services']);
+        $response = $this->response()->withPaginator($service, new ServiceTransformer(),['key' => 'services']);
+        $response = $this->applyMeta($response);
+        return $response;
         
     }
 

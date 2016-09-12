@@ -1,11 +1,9 @@
 <?php
 namespace WA\Http\Controllers;
 
-use Auth;
 use WA\DataStore\Allocation\AllocationTransformer;
 use WA\Repositories\Allocation\AllocationInterface;
 use WA\Repositories\User\UserInterface;
-use WA\Services\ApiHandler\SQL\ApiHandler as SQLApiHandler;
 
 /**
  * Allocations resource.
@@ -28,7 +26,7 @@ class AllocationsController extends ApiController
      * AllocationsController constructor.
      *
      * @param AllocationInterface $allocations
-     * @param UserInterface   $user
+     * @param UserInterface $user
      */
     public function __construct(AllocationInterface $allocations, UserInterface $user)
     {
@@ -50,9 +48,13 @@ class AllocationsController extends ApiController
      */
     public function index()
     {
+        $criteria = $this->getRequestCriteria();
+        $this->allocations->setCriteria($criteria);
         $allocations = $this->allocations->byPage();
-
-        return $this->response()->withPaginator($allocations, new AllocationTransformer(),['key' => 'allocations']);
+        $response = $this->response()->withPaginator($allocations, new AllocationTransformer(),
+            ['key' => 'allocations']);
+        $response = $this->applyMeta($response);
+        return $response;
     }
 
     /**
@@ -66,7 +68,7 @@ class AllocationsController extends ApiController
     {
         $allocation = $this->allocations->byId($id);
 
-        return $this->response()->item($allocation, new AllocationTransformer(),['key' => 'allocations']);
+        return $this->response()->item($allocation, new AllocationTransformer(), ['key' => 'allocations']);
     }
 
 }

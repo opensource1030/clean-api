@@ -36,9 +36,10 @@ class OrderController extends ApiController
      */
     public function index()
     {
-        $order = $this->order->byPage();
-        return $this->response()->withPaginator($order, new OrderTransformer(),['key' => 'orders']);
-
+        $order = $this->order->getAllOrder();
+        $response = $this->response()->collection($order, new OrderTransformer(),['key' => 'order']);
+        $response = $this->applyMeta($response);
+        return $response;
     }
 
     /**

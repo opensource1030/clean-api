@@ -1,7 +1,7 @@
 <?php
 namespace WA\Http\Controllers;
 
-use Request;
+use Illuminate\Http\Request;
 use WA\DataStore\Request\RequestTransformer;
 use WA\Repositories\Request\RequestInterface;
 
@@ -35,9 +35,14 @@ class RequestController extends ApiController
      */
     public function index()
     {
-        $request = $this->request->byPage();
-        return $this->response()->withPaginator($request, new RequestTransformer(),['key' => 'request']);
+        $criteria = $this->getRequestCriteria();
+        $this->request->setCriteria($criteria);
 
+        $request = $this->request->byPage();
+
+        $response = $this->response()->collection($request, new RequestTransformer(), ['key' => 'request']);
+        $response = $this->applyMeta($response);
+        return $response;
     }
 
     /**
@@ -59,9 +64,9 @@ class RequestController extends ApiController
      * @param $id
      * @return \Dingo\Api\Http\Response
      */
-    public function store($id, Request $request)   
+    public function store($id, Request $request)
     {
-        $data = $request->all();       
+        $data = $request->all();
         $data['id'] = $id;
         $request = $this->request->update($data);
         return $this->response()->item($request, new RequestTransformer(), ['key' => 'request']);
