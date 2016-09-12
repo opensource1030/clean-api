@@ -8,12 +8,6 @@ class DevicesApiTest extends TestCase
     use DatabaseTransactions;
 
 
-    /**
-     * A basic functional test for devices
-     *
-     *
-     */
-
     public function testGetDevices() {
         $res = $this->json('GET', 'devices');
 
@@ -24,18 +18,42 @@ class DevicesApiTest extends TestCase
                     'id',
                     'attributes' => [
                         'identification',
-                        'image',
                         'name',
                         'properties',
                         'externalId',
                         'deviceTypeId',
                         'statusId',
                         'syncId',
-                        'created_at',
-                        'updated_at'
+                        'created_at' => [
+                            'date',
+                            'timezone_type',
+                            'timezone'
+                        ],
+                        'updated_at' => [
+                            'date',
+                            'timezone_type',
+                            'timezone'
+                        ]
                     ],
-                    'links'
+                    'links' => [
+                        'self'
+                    ]
                 ]
+            ],
+            'meta' => [
+                'pagination' => [
+                    'total',
+                    'count',
+                    'per_page',
+                    'current_page',
+                    'total_pages'
+                ]
+            ],
+            'links' => [
+                'self',
+                'first',
+                'next',
+                'last'
             ]
         ]);
     }
@@ -48,14 +66,42 @@ class DevicesApiTest extends TestCase
             ->seeJson([
                 'type' => 'devices',
                 'identification'=> $device->identification,
-                'image'=> $device->image,
                 'name'=> $device->name,
                 'properties'=> $device->properties,
                 'externalId'=> $device->externalId,
                 'deviceTypeId'=> $device->deviceTypeId,
                 'statusId'=> $device->statusId,
                 'syncId'=> $device->syncId
-            ]);        
+            ]);
+
+        $res->seeJsonStructure([
+            'data' => [
+                'type',
+                'id',
+                'attributes' => [
+                    'identification',
+                    'name',
+                    'properties',
+                    'externalId',
+                    'deviceTypeId',
+                    'statusId',
+                    'syncId',
+                    'created_at' => [
+                        'date',
+                        'timezone_type',
+                        'timezone'
+                    ],
+                    'updated_at' => [
+                        'date',
+                        'timezone_type',
+                        'timezone'
+                    ]
+                ],
+                'links' => [
+                    'self'
+                ]
+            ]
+        ]);
     }
 
     public function testGetDeviceByIdIfNoExists() {
@@ -70,13 +116,20 @@ class DevicesApiTest extends TestCase
                 'data' => [
                     'type' => 'devices',
                     'attributes' => [
-                        'identification' => rand(9000000000000,9999999999999),
-                        'image' => 'http://static1.uk.businessinsider.com/image/56a24731c08a80431d8b90d5-960/iphone-7-concept-curved-display.jpg',
                         'name' => 'whenIneedMotivation...',
                         'properties' => 'MyOneSolutionIsMyQueen',
-                        'deviceTypeId'  => 5
+                        'deviceTypeId'  => 1,
+                        'statusId' => 1,
+                        'externalId' => 1,
+                        'identification' => rand(9000000000000,9999999999999)
                     ],
                     'relationships' => [
+                        'images' => [
+                            'data' => [
+                                [ 'type' => 'images', 'id' => '1' ],
+                                [ 'type' => 'images', 'id' => '2' ]
+                            ]
+                        ],
                         'assets' => [
                             'data' => [
                                 [ 'type' => 'assets', 'id' => '1' ],
@@ -120,10 +173,11 @@ class DevicesApiTest extends TestCase
             )->seeJson(
             [
                 'type' => 'devices',
-                'image' => 'http://static1.uk.businessinsider.com/image/56a24731c08a80431d8b90d5-960/iphone-7-concept-curved-display.jpg',
                 'name' => 'whenIneedMotivation...',
                 'properties' => 'MyOneSolutionIsMyQueen',
-                'deviceTypeId'  => 5
+                'deviceTypeId'  => 1,
+                'statusId' => 1,
+                'externalId' => 1
             ]);
     }
 
@@ -150,7 +204,6 @@ class DevicesApiTest extends TestCase
                 "data" => [
                     "NoValid"=> "devices",
                     "attributes"=> [
-                        "image"=> "http://static1.uk.businessinsider.com/image/56a24731c08a80431d8b90d5-960/iphone-7-concept-curved-display.jpg",
                         "name"=> "whenIneedMotivation...",
                         "properties"=> "MyOneSolutionIsMyQueen",
                         "deviceTypeId" => 5
@@ -174,7 +227,6 @@ class DevicesApiTest extends TestCase
                 "data" => [
                     "type"=> "devices",
                     "NoValid"=> [
-                        "image"=> "http://static1.uk.businessinsider.com/image/56a24731c08a80431d8b90d5-960/iphone-7-concept-curved-display.jpg",
                         "name"=> "whenIneedMotivation...",
                         "properties"=> "MyOneSolutionIsMyQueen",
                         "deviceTypeId" => 5
@@ -190,30 +242,6 @@ class DevicesApiTest extends TestCase
         );
     }
 
-    public function testCreateDeviceReturnNoValidImage() {       
-        // 'image' no valid.
-        $device = $this->post('/devices',
-            [
-                "data" => [
-                    "type"=> "devices",
-                    "attributes"=> [
-                        "image"=> "ImageNoValid",
-                        "name"=> "whenIneedMotivation...",
-                        "properties"=> "MyOneSolutionIsMyQueen",
-                        "deviceTypeId" => 5
-                    ]
-                ]
-            ]
-            )->seeJson(
-            [
-                "errors" => [
-                    "devices" => "The Device can not be created",
-                    "image" => "The image file has not a valid format"
-                ]
-            ]
-        );
-    }
-
     public function testCreateDeviceReturnNoValidDeviceTypeId() {
         // deviceTyoeId integrity foreign key error.
         $device = $this->post('/devices',
@@ -221,7 +249,6 @@ class DevicesApiTest extends TestCase
                 "data" => [
                     "type"=> "devices",
                     "attributes"=> [
-                        "image"=> "http://static1.uk.businessinsider.com/image/56a24731c08a80431d8b90d5-960/iphone-7-concept-curved-display.jpg",
                         "name"=> "whenIneedMotivation...",
                         "properties"=> "MyOneSolutionIsMyQueen",
                         "deviceTypeId" => 1000
@@ -237,6 +264,7 @@ class DevicesApiTest extends TestCase
         );
     }
 
+/*
     public function testCreateDeviceReturnRelationshipNoExists() {
         $device = $this->post('/devices',
         [
@@ -244,7 +272,6 @@ class DevicesApiTest extends TestCase
                 'type' => 'devices',
                 'attributes' => [
                     'identification' => rand(9000000000000,9999999999999),
-                    'image' => 'http://static1.uk.businessinsider.com/image/56a24731c08a80431d8b90d5-960/iphone-7-concept-curved-display.jpg',
                     'name' => 'whenIneedMotivation...',
                     'properties' => 'MyOneSolutionIsMyQueen',
                     'deviceTypeId'  => 5
@@ -262,7 +289,6 @@ class DevicesApiTest extends TestCase
         )->seeJson(
         [
             'type' => 'devices',
-            'image' => 'http://static1.uk.businessinsider.com/image/56a24731c08a80431d8b90d5-960/iphone-7-concept-curved-display.jpg',
             'name' => 'whenIneedMotivation...',
             'properties' => 'MyOneSolutionIsMyQueen',
             'deviceTypeId'  => 5
@@ -277,7 +303,6 @@ class DevicesApiTest extends TestCase
                 'type' => 'devices',
                 'attributes' => [
                     'identification' => rand(9000000000000,9999999999999),
-                    'image' => 'http://static1.uk.businessinsider.com/image/56a24731c08a80431d8b90d5-960/iphone-7-concept-curved-display.jpg',
                     'name' => 'whenIneedMotivation...',
                     'properties' => 'MyOneSolutionIsMyQueen',
                     'deviceTypeId'  => 5
@@ -295,7 +320,6 @@ class DevicesApiTest extends TestCase
         )->seeJson(
         [
             'type' => 'devices',
-            'image' => 'http://static1.uk.businessinsider.com/image/56a24731c08a80431d8b90d5-960/iphone-7-concept-curved-display.jpg',
             'name' => 'whenIneedMotivation...',
             'properties' => 'MyOneSolutionIsMyQueen',
             'deviceTypeId'  => 5
@@ -310,7 +334,6 @@ class DevicesApiTest extends TestCase
                 'type' => 'devices',
                 'attributes' => [
                     'identification' => rand(9000000000000,9999999999999),
-                    'image' => 'http://static1.uk.businessinsider.com/image/56a24731c08a80431d8b90d5-960/iphone-7-concept-curved-display.jpg',
                     'name' => 'whenIneedMotivation...',
                     'properties' => 'MyOneSolutionIsMyQueen',
                     'deviceTypeId'  => 5
@@ -328,7 +351,6 @@ class DevicesApiTest extends TestCase
         )->seeJson(
         [
             'type' => 'devices',
-            'image' => 'http://static1.uk.businessinsider.com/image/56a24731c08a80431d8b90d5-960/iphone-7-concept-curved-display.jpg',
             'name' => 'whenIneedMotivation...',
             'properties' => 'MyOneSolutionIsMyQueen',
             'deviceTypeId'  => 5
@@ -343,7 +365,6 @@ class DevicesApiTest extends TestCase
                 'type' => 'devices',
                 'attributes' => [
                     'identification' => rand(9000000000000,9999999999999),
-                    'image' => 'http://static1.uk.businessinsider.com/image/56a24731c08a80431d8b90d5-960/iphone-7-concept-curved-display.jpg',
                     'name' => 'whenIneedMotivation...',
                     'properties' => 'MyOneSolutionIsMyQueen',
                     'deviceTypeId'  => 5
@@ -361,14 +382,13 @@ class DevicesApiTest extends TestCase
         )->seeJson(
         [
             'type' => 'devices',
-            'image' => 'http://static1.uk.businessinsider.com/image/56a24731c08a80431d8b90d5-960/iphone-7-concept-curved-display.jpg',
             'name' => 'whenIneedMotivation...',
             'properties' => 'MyOneSolutionIsMyQueen',
             'deviceTypeId'  => 5
         ]);
     }
-
-    public function testCreateDeviceReturnPriceModificationsForeignKeyError() {
+*/
+    public function testCreateDeviceReturnPriceModificationCapacityForeignKeyError() {
 
         $device = $this->post('/devices',
         [
@@ -376,7 +396,6 @@ class DevicesApiTest extends TestCase
                 'type' => 'devices',
                 'attributes' => [
                     'identification' => rand(9000000000000,9999999999999),
-                    'image' => 'http://static1.uk.businessinsider.com/image/56a24731c08a80431d8b90d5-960/iphone-7-concept-curved-display.jpg',
                     'name' => 'whenIneedMotivation...',
                     'properties' => 'MyOneSolutionIsMyQueen',
                     'deviceTypeId'  => 5
@@ -384,21 +403,21 @@ class DevicesApiTest extends TestCase
                 "relationships" => [
                     "modifications" => [
                         "data" => [
-                            [ "type" => "modifications", "id" => "4" ],
-                            [ "type" => "modifications", "id" => "2" ],
-                            [ "type" => "modifications", "id" => "3" ]
+                            [ "type" => "modifications", "id" => 0 ],
+                            [ "type" => "modifications", "id" => 2 ],
+                            [ "type" => "modifications", "id" => 3 ]
                         ]
                     ],
                     "carriers" => [
                         "data" => [
-                            [ "type" => "carriers", "id" => "1" ],
-                            [ "type" => "carriers", "id" => "2" ]
+                            [ "type" => "carriers", "id" => 1 ],
+                            [ "type" => "carriers", "id" => 2 ]
                         ]
                     ],
                     "companies" => [
                         "data" => [
-                            [ "type" => "companies", "id" => "1" ],
-                            [ "type" => "companies", "id" => "2" ]
+                            [ "type" => "companies", "id" => 1 ],
+                            [ "type" => "companies", "id" => 2 ]
                         ]
                     ],
                     "prices" => [
@@ -418,11 +437,66 @@ class DevicesApiTest extends TestCase
         ]
         )->seeJson(
         [
-            'type' => 'devices',
-            'image' => 'http://static1.uk.businessinsider.com/image/56a24731c08a80431d8b90d5-960/iphone-7-concept-curved-display.jpg',
-            'name' => 'whenIneedMotivation...',
-            'properties' => 'MyOneSolutionIsMyQueen',
-            'deviceTypeId'  => 5
+            'errors' => [
+                'modifications' => 'the Device Modifications can not be created',
+                'prices' => 'the Device Prices can not be created because other relationships can\'t be created'
+            ]
+        ]);
+    }
+
+    public function testCreateDeviceReturnPriceModificationStyleForeignKeyError() {
+
+        $device = $this->post('/devices',
+        [
+            'data' => [
+                'type' => 'devices',
+                'attributes' => [
+                    'identification' => rand(9000000000000,9999999999999),
+                    'name' => 'whenIneedMotivation...',
+                    'properties' => 'MyOneSolutionIsMyQueen',
+                    'deviceTypeId'  => 5
+                ],
+                "relationships" => [
+                    "modifications" => [
+                        "data" => [
+                            [ "type" => "modifications", "id" => 1 ],
+                            [ "type" => "modifications", "id" => 0 ],
+                            [ "type" => "modifications", "id" => 3 ]
+                        ]
+                    ],
+                    "carriers" => [
+                        "data" => [
+                            [ "type" => "carriers", "id" => 1 ],
+                            [ "type" => "carriers", "id" => 2 ]
+                        ]
+                    ],
+                    "companies" => [
+                        "data" => [
+                            [ "type" => "companies", "id" => 1 ],
+                            [ "type" => "companies", "id" => 2 ]
+                        ]
+                    ],
+                    "prices" => [
+                        "data" => [
+                            [ "type" => "prices", "capacityId" => 1, "styleId" => 2, "carrierId" => 1, "companyId" => 1, "priceRetail" => 100, "price1" => 100, "price2" => 100, "priceOwn" => 100 ],
+                            [ "type" => "prices", "capacityId" => 1, "styleId" => 2, "carrierId" => 1, "companyId" => 2, "priceRetail" => 200, "price1" => 200, "price2" => 200, "priceOwn" => 200 ],
+                            [ "type" => "prices", "capacityId" => 1, "styleId" => 2, "carrierId" => 2, "companyId" => 1, "priceRetail" => 300, "price1" => 300, "price2" => 300, "priceOwn" => 300 ],
+                            [ "type" => "prices", "capacityId" => 1, "styleId" => 2, "carrierId" => 2, "companyId" => 2, "priceRetail" => 400, "price1" => 400, "price2" => 400, "priceOwn" => 400 ],
+                            [ "type" => "prices", "capacityId" => 3, "styleId" => 2, "carrierId" => 1, "companyId" => 1, "priceRetail" => 500, "price1" => 500, "price2" => 500, "priceOwn" => 500 ],
+                            [ "type" => "prices", "capacityId" => 3, "styleId" => 2, "carrierId" => 1, "companyId" => 2, "priceRetail" => 600, "price1" => 600, "price2" => 600, "priceOwn" => 600 ],
+                            [ "type" => "prices", "capacityId" => 3, "styleId" => 2, "carrierId" => 2, "companyId" => 1, "priceRetail" => 700, "price1" => 700, "price2" => 700, "priceOwn" => 700 ],
+                            [ "type" => "prices", "capacityId" => 3, "styleId" => 2, "carrierId" => 2, "companyId" => 2, "priceRetail" => 800, "price1" => 800, "price2" => 800, "priceOwn" => 800 ]
+                        ]
+                    ]
+                ]
+            ]
+        ]
+        )->seeJson(
+        [
+            'errors' => [
+                'modifications' => 'the Device Modifications can not be created',
+                'prices' => 'the Device Prices can not be created because other relationships can\'t be created'
+            ]
         ]);
     }
 
@@ -434,7 +508,6 @@ class DevicesApiTest extends TestCase
                 'type' => 'devices',
                 'attributes' => [
                     'identification' => rand(9000000000000,9999999999999),
-                    'image' => 'http://static1.uk.businessinsider.com/image/56a24731c08a80431d8b90d5-960/iphone-7-concept-curved-display.jpg',
                     'name' => 'whenIneedMotivation...',
                     'properties' => 'MyOneSolutionIsMyQueen',
                     'deviceTypeId'  => 5
@@ -442,21 +515,21 @@ class DevicesApiTest extends TestCase
                 "relationships" => [
                     "modifications" => [
                         "data" => [
-                            [ "type" => "modifications", "id" => "1" ],
-                            [ "type" => "modifications", "id" => "2" ],
-                            [ "type" => "modifications", "id" => "3" ]
+                            [ "type" => "modifications", "id" => 1 ],
+                            [ "type" => "modifications", "id" => 2 ],
+                            [ "type" => "modifications", "id" => 3 ]
                         ]
                     ],
                     "carriers" => [
                         "data" => [
-                            [ "type" => "carriers", "id" => "4" ],
-                            [ "type" => "carriers", "id" => "2" ]
+                            [ "type" => "carriers", "id" => 0 ],
+                            [ "type" => "carriers", "id" => 2 ]
                         ]
                     ],
                     "companies" => [
                         "data" => [
-                            [ "type" => "companies", "id" => "1" ],
-                            [ "type" => "companies", "id" => "2" ]
+                            [ "type" => "companies", "id" => 1 ],
+                            [ "type" => "companies", "id" => 2 ]
                         ]
                     ],
                     "prices" => [
@@ -476,11 +549,10 @@ class DevicesApiTest extends TestCase
         ]
         )->seeJson(
         [
-            'type' => 'devices',
-            'image' => 'http://static1.uk.businessinsider.com/image/56a24731c08a80431d8b90d5-960/iphone-7-concept-curved-display.jpg',
-            'name' => 'whenIneedMotivation...',
-            'properties' => 'MyOneSolutionIsMyQueen',
-            'deviceTypeId'  => 5
+            'errors' => [
+                'carriers' => 'the Device Carriers can not be created',
+                'prices' => 'the Device Prices can not be created because other relationships can\'t be created'
+            ]
         ]);
     }
 
@@ -492,7 +564,6 @@ class DevicesApiTest extends TestCase
                 'type' => 'devices',
                 'attributes' => [
                     'identification' => rand(9000000000000,9999999999999),
-                    'image' => 'http://static1.uk.businessinsider.com/image/56a24731c08a80431d8b90d5-960/iphone-7-concept-curved-display.jpg',
                     'name' => 'whenIneedMotivation...',
                     'properties' => 'MyOneSolutionIsMyQueen',
                     'deviceTypeId'  => 5
@@ -500,21 +571,21 @@ class DevicesApiTest extends TestCase
                 "relationships" => [
                     "modifications" => [
                         "data" => [
-                            [ "type" => "modifications", "id" => "1" ],
-                            [ "type" => "modifications", "id" => "2" ],
-                            [ "type" => "modifications", "id" => "3" ]
+                            [ "type" => "modifications", "id" => 1 ],
+                            [ "type" => "modifications", "id" => 2 ],
+                            [ "type" => "modifications", "id" => 3 ]
                         ]
                     ],
                     "carriers" => [
                         "data" => [
-                            [ "type" => "carriers", "id" => "1" ],
-                            [ "type" => "carriers", "id" => "2" ]
+                            [ "type" => "carriers", "id" => 1 ],
+                            [ "type" => "carriers", "id" => 2 ]
                         ]
                     ],
                     "companies" => [
                         "data" => [
-                            [ "type" => "companies", "id" => "4" ],
-                            [ "type" => "companies", "id" => "2" ]
+                            [ "type" => "companies", "id" => 0 ],
+                            [ "type" => "companies", "id" => 2 ]
                         ]
                     ],
                     "prices" => [
@@ -534,11 +605,65 @@ class DevicesApiTest extends TestCase
         ]
         )->seeJson(
         [
-            'type' => 'devices',
-            'image' => 'http://static1.uk.businessinsider.com/image/56a24731c08a80431d8b90d5-960/iphone-7-concept-curved-display.jpg',
-            'name' => 'whenIneedMotivation...',
-            'properties' => 'MyOneSolutionIsMyQueen',
-            'deviceTypeId'  => 5
+            'errors' => [
+                'companies' => 'the Device Companies can not be created',
+                'prices' => 'the Device Prices can not be created because other relationships can\'t be created'
+            ]
+        ]);
+    }
+
+    public function testCreateDeviceReturnPriceCheckIfPriceRowIsCorrect() {
+
+        $device = $this->post('/devices',
+        [
+            'data' => [
+                'type' => 'devices',
+                'attributes' => [
+                    'identification' => rand(9000000000000,9999999999999),
+                    'name' => 'whenIneedMotivation...',
+                    'properties' => 'MyOneSolutionIsMyQueen',
+                    'deviceTypeId'  => 5
+                ],
+                "relationships" => [
+                    "modifications" => [
+                        "data" => [
+                            [ "type" => "modifications", "id" => 1 ],
+                            [ "type" => "modifications", "id" => 2 ],
+                            [ "type" => "modifications", "id" => 3 ]
+                        ]
+                    ],
+                    "carriers" => [
+                        "data" => [
+                            [ "type" => "carriers", "id" => 1 ],
+                            [ "type" => "carriers", "id" => 2 ]
+                        ]
+                    ],
+                    "companies" => [
+                        "data" => [
+                            [ "type" => "companies", "id" => 1 ],
+                            [ "type" => "companies", "id" => 2 ]
+                        ]
+                    ],
+                    "prices" => [
+                        "data" => [
+                            [ "type" => "prices", "capacityId" => 1000, "styleId" => 2, "carrierId" => 1, "companyId" => 1, "priceRetail" => 100, "price1" => 100, "price2" => 100, "priceOwn" => 100 ],
+                            [ "type" => "prices", "capacityId" => 1, "styleId" => 2, "carrierId" => 1, "companyId" => 2, "priceRetail" => 200, "price1" => 200, "price2" => 200, "priceOwn" => 200 ],
+                            [ "type" => "prices", "capacityId" => 1, "styleId" => 2, "carrierId" => 2, "companyId" => 1, "priceRetail" => 300, "price1" => 300, "price2" => 300, "priceOwn" => 300 ],
+                            [ "type" => "prices", "capacityId" => 1, "styleId" => 2, "carrierId" => 2, "companyId" => 2, "priceRetail" => 400, "price1" => 400, "price2" => 400, "priceOwn" => 400 ],
+                            [ "type" => "prices", "capacityId" => 3, "styleId" => 2, "carrierId" => 1, "companyId" => 1, "priceRetail" => 500, "price1" => 500, "price2" => 500, "priceOwn" => 500 ],
+                            [ "type" => "prices", "capacityId" => 3, "styleId" => 2, "carrierId" => 1, "companyId" => 2, "priceRetail" => 600, "price1" => 600, "price2" => 600, "priceOwn" => 600 ],
+                            [ "type" => "prices", "capacityId" => 3, "styleId" => 2, "carrierId" => 2, "companyId" => 1, "priceRetail" => 700, "price1" => 700, "price2" => 700, "priceOwn" => 700 ],
+                            [ "type" => "prices", "capacityId" => 3, "styleId" => 2, "carrierId" => 2, "companyId" => 2, "priceRetail" => 800, "price1" => 800, "price2" => 800, "priceOwn" => 800 ]
+                        ]
+                    ]
+                ]
+            ]
+        ]
+        )->seeJson(
+        [
+            'errors' => [
+                'prices' => 'the Device Prices can not be created'
+            ]
         ]);
     }
 
@@ -551,7 +676,6 @@ class DevicesApiTest extends TestCase
                     'type' => 'devices',
                     'attributes' => [
                         'identification' => rand(9000000000000,9999999999999),
-                        'image' => 'http://static1.uk.businessinsider.com/image/56a24731c08a80431d8b90d5-960/iphone-7-concept-curved-display.jpg',
                         'name' => 'whenIneedMotivation...',
                         'properties' => 'MyOneSolutionIsMyQueen',
                         'deviceTypeId'  => 5
@@ -600,7 +724,6 @@ class DevicesApiTest extends TestCase
             ->seeJson(
             [
                 'type' => 'devices',
-                'image' => 'http://static1.uk.businessinsider.com/image/56a24731c08a80431d8b90d5-960/iphone-7-concept-curved-display.jpg',
                 'name' => 'whenIneedMotivation...',
                 'properties' => 'MyOneSolutionIsMyQueen',
                 'deviceTypeId'  => 5
@@ -622,6 +745,27 @@ class DevicesApiTest extends TestCase
         $this->assertEquals(409, $responseDel2->status());
     }
 
+
+
+    /*
+     *      Transforms an Exception Object and gets the value of the Error Message.
+     *
+     *      @param: 
+     *          \Exception $e
+     *      @return:
+     *          $error->getValue($e);
+     */
+    private function getProtectedId($info){
+        try{
+            $reflectorResponse = new \ReflectionClass($info);
+            $classResponse = $reflectorResponse->getProperty('response');
+            $classResponse->setAccessible(true);
+            $dataResponse = $classResponse->getValue($info);
+            return json_decode($dataResponse->getContent())->data->id;    
+        } catch (\Exception $e){
+            return 1;
+        }
+    }
 }
 
 /*
@@ -646,4 +790,216 @@ class DevicesApiTest extends TestCase
                         'type' => 'assets'
                     ]
                 ]);
+*/
+
+/* EXAMPLE POST DEVICE
+{
+    "data" : {
+        "type" : "devices",
+        "attributes" : {
+            "name" : "nameDevice",
+            "properties" : "propertiesDevice",
+            "deviceTypeId" : 1,
+            "statusId" : 1,
+            "externalId" : 1,
+            "identification" : 123456789,
+            "syncId" : 1
+        },
+        "relationships" : {
+            
+            "images" : {
+                "data" : [
+                    { "type": "images", "id" : 1 },
+                    { "type": "images", "id" : 2 }
+                ]
+            },
+                
+            "assets" : {
+                "data" : [
+                    { "type": "assets", "id" : 1 },
+                    { "type": "assets", "id" : 2 }
+                ]
+            },
+            "modifications" : {
+                "data" : [
+                    { "type": "modifications", "id" : 1 },
+                    { "type": "modifications", "id" : 2 },
+                    { "type": "modifications", "id" : 3 }
+                ]
+            },
+            "carriers" : {
+                "data" : [
+                    { "type": "carriers", "id" : 1 },
+                    { "type": "carriers", "id" : 2 }
+                ]
+            },
+            "companies" : {
+                "data" : [
+                    { "type": "companies", "id" : 1 },
+                    { "type": "companies", "id" : 2 }
+                ]
+            },
+            "prices" : {
+                "data" : [
+                    {
+                        "type": "prices",
+                        "capacityId": 1,
+                        "styleId": 2,
+                        "carrierId": 1,
+                        "companyId": 1,
+                        "priceRetail": 100,
+                        "price1": 100,
+                        "price2": 100,
+                        "priceOwn": 100
+                    },
+                    {
+                        "type": "prices",
+                        "capacityId": 1,
+                        "styleId": 2,
+                        "carrierId": 1,
+                        "companyId": 2,
+                        "priceRetail": 200,
+                        "price1": 200,
+                        "price2": 200,
+                        "priceOwn": 200
+                    },
+                    {
+                        "type": "prices",
+                        "capacityId": 1,
+                        "styleId": 2,
+                        "carrierId": 2,
+                        "companyId": 1,
+                        "priceRetail": 300,
+                        "price1": 300,
+                        "price2": 300,
+                        "priceOwn": 300
+                    },
+                    {
+                        "type": "prices",
+                        "capacityId": 1,
+                        "styleId": 2,
+                        "carrierId": 2,
+                        "companyId": 2,
+                        "priceRetail": 400,
+                        "price1": 400,
+                        "price2": 400,
+                        "priceOwn": 400
+                    },
+                    {
+                        "type": "prices",
+                        "capacityId": 3,
+                        "styleId": 2,
+                        "carrierId": 1,
+                        "companyId": 1,
+                        "priceRetail": 500,
+                        "price1": 500,
+                        "price2": 500,
+                        "priceOwn": 500
+                    },
+                    {
+                        "type": "prices",
+                        "capacityId": 3,
+                        "styleId": 2,
+                        "carrierId": 1,
+                        "companyId": 2,
+                        "priceRetail": 600,
+                        "price1": 600,
+                        "price2": 600,
+                        "priceOwn": 600
+                    },
+                    {
+                        "type": "prices",
+                        "capacityId": 3,
+                        "styleId": 2,
+                        "carrierId": 2,
+                        "companyId": 1,
+                        "priceRetail": 700,
+                        "price1": 700,
+                        "price2": 700,
+                        "priceOwn": 700
+                    },
+                    {
+                        "type": "prices",
+                        "capacityId": 3,
+                        "styleId": 2,
+                        "carrierId": 2,
+                        "companyId": 2,
+                        "priceRetail": 800,
+                        "price1": 800,
+                        "price2": 800,
+                        "priceOwn": 800
+                    }
+                ]
+            }
+        }
+    }
+}
+
+*/
+
+/*
+        $id = $this->getProtectedId($device);
+
+        $assets = $this->json('GET', 'devices/'.$id.'?include=assets')
+            ->seeJsonStructure([
+                'data' => [
+                    'type',
+                    'id',
+                    'attributes' => [
+                        'identification',
+                        'name',
+                        'properties',
+                        'externalId',
+                        'deviceTypeId',
+                        'statusId',
+                        'syncId',
+                        'created_at' => [
+                            'date',
+                            'timezone_type',
+                            'timezone'
+                        ],
+                        'updated_at' => [
+                            'date',
+                            'timezone_type',
+                            'timezone'
+                        ]
+                    ],
+                    'links' => [
+                        'self'
+                    ],
+                    'relationships' => [
+                        'assets' => [
+                            'links' => [
+                                'self',
+                                'related'
+                            ],
+                            'data' => [
+                                0 => [  
+                                    'type',
+                                    'id'
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
+                'included' => [
+                    0 => [
+                        'type',
+                        'id',
+                        'attributes' => [
+                            'identification',
+                            'active',
+                            'statusId',
+                            'typeId',
+                            'externalId',
+                            'carrierId',
+                            'syncId'
+                        ],
+                        'links' => [
+                            'self'
+                        ]
+                    ]
+
+                ]
+            ]);
 */

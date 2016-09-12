@@ -29,9 +29,18 @@ $factory->define(\WA\DataStore\Device\Device::class, function (\Faker\Generator 
         'identification' => $faker->isbn13,
         'name'=> $names[array_rand($names)],
         'properties'=> 'properties',
+        //'externalId' => function () {
+        //    return factory(WA\DataStore\DeviceType::class)->create()->id;
+        //},
         'deviceTypeId' => function () {
             return factory(WA\DataStore\DeviceType::class)->create()->id;
-        }
+        }//,
+        //'statusId' => function () {
+        //    return factory(WA\DataStore\DeviceType::class)->create()->id;
+        //},
+        //'syncId' => function () {
+        //    return factory(WA\DataStore\DeviceType::class)->create()->id;
+        //},
     ];
 });
 
