@@ -22,9 +22,9 @@ class CreateImagesTable extends Migration
                 $table->increments('id');
                 $table->string('originalName')->nullable();
                 $table->string('filename')->nullable();
-                $table->integer('mimeType')->nullable();
-                $table->string('size')->nullable();
-                $table->string('pathName')->nullable();
+                $table->string('mimeType')->nullable();
+                $table->string('extension')->nullable();                
+                $table->integer('size')->nullable();
 
                 $table->nullableTimestamps();
             }

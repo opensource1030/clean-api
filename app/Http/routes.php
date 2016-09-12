@@ -171,7 +171,7 @@ $api->version('v1', function ($api) {
         //=Image
         $imageController = 'WA\Http\Controllers\ImageController';
         $api->get('images', ['as' => 'api.image.index', 'uses' => $imageController . '@index']);
-        $api->get('images/show/{filename}', ['as' => 'api.image.show', 'uses' => $imageController . '@show']);
+        $api->get('images/show/{id}', ['as' => 'api.image.show', 'uses' => $imageController . '@show']);
         $api->post('images/create', ['uses' => $imageController . '@create']);
     });
 });

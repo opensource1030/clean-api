@@ -1,24 +1,14 @@
 <?php
 namespace WA\Http\Controllers;
 
-use WA\DataStore\Image\Image;
 use WA\DataStore\Image\ImageTransformer;
+use WA\DataStore\Image\Image;
 use WA\Repositories\Image\ImageInterface;
-//use Illuminate\Http\Request;
 
-use App\Http\Controllers\Controller;
-//use App\Fileentry;
-use Request;
-//use ProductRequest;
-//use Uploader;
-use Illuminate\Support\Facades\Input;
- 
 use Illuminate\Support\Facades\Storage;
 use Flysystem;
-//use Illuminate\Support\Facades\File;
 use Illuminate\Http\Response;
-//use Fileentry;
-//use Storage;
+use Request;
 use DB;
 
 /**
@@ -57,7 +47,13 @@ class ImageController extends ApiController
     }
 
     public function show($id){
-        return $this->image->byId($id);
+        $image = Image::find($id);
+        if($image == null){
+            $error['errors']['get'] = 'the Image selected doesn\'t exists';   
+            return response()->json($error)->setStatusCode(409);
+        }
+        
+        return $this->response()->item($image, new ImageTransformer(),['key' => 'images']);
     }
 
    
@@ -69,17 +65,15 @@ class ImageController extends ApiController
     public function create()   
     {        
         try{
-            DB::beginTransaction();
-
             $file = Request::file('filename');
 
-            $extension = $imageFile->extension = $file->getClientOriginalExtension();
-            $filename = $imageFile->filename = $file->getFilename();
-            $imageFile->mime = $file->getClientMimeType();
-            $imageFile->original = $file->getClientOriginalName();
-            $imageFile->size = $file->getClientSize();    
-            
-            $value = Flysystem::put($filename.'.'.$extension, $file);
+            $imageFile['originalName'] = $file->getClientOriginalName();
+            $filename = $imageFile['filename'] = $file->getFilename();
+            $imageFile['mimeType'] = $file->getClientMimeType();
+            $extension = $imageFile['extension'] = $file->getClientOriginalExtension();
+            $imageFile['size'] = $file->getClientSize();
+
+            $value = Flysystem::put($filename.'.'.$extension, $imageFile);
 
             if($value){
                 $image = $this->image->create($imageFile);
@@ -91,6 +85,7 @@ class ImageController extends ApiController
             $error['errors']['imageMessage'] = $this->getErrorAndParse($e);
             return response()->json($error)->setStatusCode(409);
         }
+
         return $this->response()->item($image, new ImageTransformer(),['key' => 'images']);
     }
 

@@ -17,8 +17,9 @@ class Image extends BaseDataStore
     protected $fillable = [
                 'originalName',
                 'filename',
+                'mimeType',
+                'extension',
                 'size',
-                'pathName',
                 'update_at'];
 
     /**

@@ -24,8 +24,9 @@ class ImageTransformer extends TransformerAbstract
             'id' => (int)$image->id,
             'originalName' => $image->originalName,
             'filename' => $image->filename,
+            'mimeType' => $image->mimeType,
+            'extension' => $image->extension,
             'size' => $image->size,
-            'pathName' => $image->pathName,
             'created_at' => $image->created_at,
             'updated_at' => $image->updated_at
         ];
