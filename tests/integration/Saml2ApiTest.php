@@ -24,7 +24,7 @@ class Saml2ApiTest extends TestCase
 	public function testApiDoSSOEmailPassword()
 	{
 		// CREATE ARGUMENTS
-		$emailPassword = 'sirion@developers.com';
+		$emailPassword = 'Sample3433@email.com';
 		
         // CALL THE API ROUTE + ASSERTS        
 		$returnPassword = $this->json('GET', 'doSSO/'.$emailPassword)->seeJson([
