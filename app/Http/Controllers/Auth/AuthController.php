@@ -34,14 +34,14 @@ class AuthController
      */
     public function accessToken(Authorizer $authorizer)
     {
-        try {   
+        try {
             return response()->json($authorizer->issueAccessToken());
         } catch (\Exception $e){
             $error['errors']['errorType'] = $e->errorType;
             $error['errors']['message'] = $this->getErrorAndParse($e);
             return response()->json($error)->setStatusCode(401);
         }
-        
+
     }
 
     /**
@@ -70,4 +70,25 @@ class AuthController
             return $laravelUser['attributes']['id'];
         }
     }
+
+    /*
+     *      Transforms an Exception Object and gets the value of the Error Message.
+     *
+     *      @param:
+     *          \Exception $e
+     *      @return:
+     *          $error->getValue($e);
+     */
+    private function getErrorAndParse($error){
+        try{
+            $reflectorResponse = new \ReflectionClass($error);
+            $classResponse = $reflectorResponse->getProperty('message');
+            $classResponse->setAccessible(true);
+            $dataResponse = $classResponse->getValue($error);
+            return $dataResponse;
+        } catch (\Exception $e){
+            return 'Generic Error';
+        }
+    }
+
 }
