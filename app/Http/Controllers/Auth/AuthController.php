@@ -33,14 +33,66 @@ class AuthController
      * @return \Illuminate\Http\JsonResponse
      */
     public function accessToken(Authorizer $authorizer)
-    {      
-        try {
+    {
+        try {   
             return response()->json($authorizer->issueAccessToken());
-        } catch (\Exception $e){
-            $error['errors']['errorType'] = $e->errorType;
-            $error['errors']['message'] = $this->getErrorAndParse($e);
+        
+        } catch (UnsupportedGrantTypeException $ugte) {
+            // GRANT_TŶPE (Invalid)
+            // GRANT_TYPE (Not Found)
+            // ERROR 400
+
+            $error['errors']['errorType'] = $ugte->errorType;
+            $error['errors']['parameter'] = $ugte->parameter;
+            $error['errors']['message'] = $this->getErrorAndParse($ugte);
+            return response()->json($error)->setStatusCode(400);
+
+        } catch (InvalidRequestException $ire) {
+            // CLIENT_ID (Not Found)
+            // CLIENT_SECRET (Not Found)
+            // ERROR 400
+
+            $error['errors']['errorType'] = $ire->errorType;
+            $error['errors']['parameter'] = $ire->parameter;
+            $error['errors']['message'] = $this->getErrorAndParse($ire);
+            return response()->json($error)->setStatusCode(400);
+
+        } catch (InvalidClientException $ice) {
+            // CLIENT_ID (Invalid)
+            // CLIENT_SECRET (Invalid)
+            // ERROR 401
+
+            $error['errors']['errorType'] = $ice->errorType;
+            $error['errors']['message'] = $this->getErrorAndParse($ice);
             return response()->json($error)->setStatusCode(401);
-        }
+
+        } catch (InvalidCredentialsException $icre) {
+            // PASSWORD (No Valid)
+            // ERROR 401
+
+            $error['errors']['errorType'] = $icre->errorType;
+            $error['errors']['message'] = $this->getErrorAndParse($icre);
+            return response()->json($error)->setStatusCode(401);
+
+        } catch (\Exception $e){
+            // ERROR 500
+
+            if(isset($e->errorType) && $e->errorType <> null) {
+                $error['errors']['errorType'] = $e->errorType;    
+            } else {
+                $error['errors']['errorType'] = "Unknown Error";
+            }
+
+            if(isset($e->httpStatusCode) && $e->httpStatusCode <> null) {
+                $httpStatusCode = $e->httpStatusCode;    
+            } else {
+                $httpStatusCode = 500;
+            }
+
+
+            $error['errors']['message'] = $this->getErrorAndParse($e);
+            return response()->json($error)->setStatusCode($httpStatusCode);
+        }        
     }
 
     /**
