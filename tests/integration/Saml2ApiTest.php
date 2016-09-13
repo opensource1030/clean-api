@@ -23,11 +23,13 @@ class Saml2ApiTest extends TestCase
 
 	public function testApiDoSSOEmailPassword()
 	{
-		// CREATE ARGUMENTS
-		$emailPassword = 'sirion@developers.com';
-		
+		// CREATE USER
+		$user = factory(\WA\DataStore\User\User::class)->create();
+		// GET EMAIL
+		$parsed = $this->getErrorAndParse($user);
+
         // CALL THE API ROUTE + ASSERTS        
-		$returnPassword = $this->json('GET', 'doSSO/'.$emailPassword)->seeJson([
+		$returnPassword = $this->json('GET', 'doSSO/'.$parsed['email'])->seeJson([
 			'error' => 'User Found, Password Required',
 			'message' => 'Please, enter your password.'
 		]);
@@ -50,6 +52,8 @@ class Saml2ApiTest extends TestCase
 	}
 
 	public function testApiDoSSOEmailMicrosoftSaml2(){
+
+		// CREATE ARGUMENTS
 		$emailMicrosoft = 'dev@wirelessanalytics.com';
 		$redirectToUrl = 'http://google.es';
 
@@ -61,6 +65,7 @@ class Saml2ApiTest extends TestCase
 		$this->assertStringStartsWith('https://login.microsoftonline.com', $returnMicrosoftArray['data']['redirectUrl']);
 	}
 
+/* This would be deleted
 	public function testApiDoSSOEmailFacebookFail()
 	{
 		// CREATE ARGUMENTS
@@ -86,6 +91,7 @@ class Saml2ApiTest extends TestCase
 		$this->assertArrayHasKey('redirectUrl', $returnFacebookArray['data']);
 		$this->assertStringStartsWith('http://simplesamlphp.dev/simplesaml/saml2/idp/SSOService', $returnFacebookArray['data']['redirectUrl']);
 	}
+*/
 
 	public function testApiDoSSOEmailNoValid()
 	{
@@ -120,5 +126,27 @@ class Saml2ApiTest extends TestCase
 			'uuid' => $uuid,
 		]);
 	}
+
+	/*
+     *      Transforms an Object and gets the value of a protected variable
+     *
+     *      @param: 
+     *          \Exception $e
+     *      @return:
+     *          $object->getValue($value);
+     */
+    private function getErrorAndParse($object){
+        try{
+            $reflectorResponse = new \ReflectionClass($object);
+
+            $classResponse = $reflectorResponse->getProperty('attributes');    
+            $classResponse->setAccessible(true);
+            $dataResponse = $classResponse->getValue($object);
+            return $dataResponse;    
+
+        } catch (\Exception $e){
+            return 'Generic Error';
+        }
+    }
 
 }
