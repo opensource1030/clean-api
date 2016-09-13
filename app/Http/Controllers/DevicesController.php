@@ -116,8 +116,8 @@ class DevicesController extends ApiController
     public function store($id, Request $request) {
 
         $success = true;
-        $dataImagesExists = $dataAssetsExists = $dataModificationsExists = $dataCarriersExists = $dataCompaniesExists = $dataPricesExists = false;
         $dataImages = $dataAssets = $dataModifications = $dataCarriers = $dataCompanies = array();
+
         /*
          * Checks if Json has data, data-type & data-attributes.
          */
@@ -133,7 +133,7 @@ class DevicesController extends ApiController
         DB::beginTransaction();
 
         /*
-         * Now we can Update the Device.
+         * Now we can update the Device.
          */       
         try{
             $device = Device::find($id);
@@ -158,124 +158,108 @@ class DevicesController extends ApiController
         /*
          * Check if Json has relationships to continue or if not and commit + return.
          */
-        if(!isset($data['relationships'])){
-            DB::commit();
-            return $this->response()->item($device, new DeviceTransformer(), ['key' => 'devices']);
-        } else {
+        if(isset($data['relationships'])){
+
             $dataRelationships = $data['relationships'];
 
             if(isset($dataRelationships['images'])){ 
                 if(isset($dataRelationships['images']['data'])){
                     $dataImages = $this->parseJsonToArray($dataRelationships['images']['data'], 'images');
-                    $dataImagesExists = true;
+                    try {
+                        $device->images()->sync($dataImages);    
+                    } catch (\Exception $e){
+                        $error['errors']['images'] = 'the Device Images can not be created';
+                        //$error['errors']['imagesMessage'] = $this->getErrorAndParse($e);
+                    }
                 }
             }
+
             if(isset($dataRelationships['assets'])){ 
                 if(isset($dataRelationships['assets']['data'])){
                     $dataAssets = $this->parseJsonToArray($dataRelationships['assets']['data'], 'assets');
-                    $dataAssetsExists = true;
+                    try {
+                        $device->assets()->sync($dataAssets);    
+                    } catch (\Exception $e){
+                        $error['errors']['assets'] = 'the Device Assets can not be created';
+                        //$error['errors']['assetsMessage'] = $this->getErrorAndParse($e);
+                    }
                 }
             }
+
             if(isset($dataRelationships['modifications'])){ 
                 if(isset($dataRelationships['modifications']['data'])){
                     $dataModifications = $this->parseJsonToArray($dataRelationships['modifications']['data'], 'modifications');
-                    $dataModificationsExists = true;
+                     try {
+                        $device->modifications()->sync($dataModifications);
+                    } catch (\Exception $e){
+                        $success = false;
+                        $error['errors']['modifications'] = 'the Device Modifications can not be created';
+                        //$error['errors']['modificationsMessage'] = $this->getErrorAndParse($e);
+                    }
                 }
             }
+
             if(isset($dataRelationships['carriers'])){ 
                 if(isset($dataRelationships['carriers']['data'])){
                     $dataCarriers = $this->parseJsonToArray($dataRelationships['carriers']['data'], 'carriers');
-                    $dataCarriersExists = true;
+                    try {
+                        $device->carriers()->sync($dataCarriers);
+                    } catch (\Exception $e){
+                        $success = false;
+                        $error['errors']['carriers'] = 'the Device Carriers can not be created';
+                        //$error['errors']['carriersMessage'] = $this->getErrorAndParse($e);
+                    }
                 }
             }
+
             if(isset($dataRelationships['companies'])){ 
                 if(isset($dataRelationships['companies']['data'])){
                     $dataCompanies = $this->parseJsonToArray($dataRelationships['companies']['data'], 'companies');
-                    $dataCompaniesExists = true;
+                        try {
+                        $device->companies()->sync($dataCompanies);
+                    } catch (\Exception $e){
+                        $success = false;
+                        $error['errors']['companies'] = 'the Device Companies can not be created';
+                        //$error['errors']['companiesMessage'] = $this->getErrorAndParse($e);
+                    }
                 }
             }
+
             if(isset($dataRelationships['prices'])){ 
                 if(isset($dataRelationships['prices']['data'])){
                     $dataPrices = $dataRelationships['prices']['data'];
-                    $dataPricesExists = true;
-                }
-            }
-        }
 
-        if($dataImagesExists){
-            try {
-                $device->images()->sync($dataImages);    
-            } catch (\Exception $e){
-                $success = false;
-                $error['errors']['images'] = 'the Device Images can not be created';
-                //$error['errors']['imagesMessage'] = $this->getErrorAndParse($e);
-            }
-        }
-        
-        if($dataAssetsExists){
-            try {
-                $device->assets()->sync($dataAssets);    
-            } catch (\Exception $e){
-                $success = false;
-                $error['errors']['assets'] = 'the Device Assets can not be created';
-                //$error['errors']['assetsMessage'] = $this->getErrorAndParse($e);
-            }
-        }
+                    if($success){
+                        try {
+                            $priceInterface = app()->make('WA\Repositories\Device\DevicePriceInterface');
 
-        if($dataModificationsExists){
-            try {
-                $device->modifications()->sync($dataModifications);
-            } catch (\Exception $e){
-                $success = false;
-                $error['errors']['modifications'] = 'the Device Modifications can not be created';
-                //$error['errors']['modificationsMessage'] = $this->getErrorAndParse($e);
-            }
-        }
+                            $dataPrices = $this->deleteRepeat($dataPrices);
 
-        if($dataCarriersExists){
-            try {
-                $device->carriers()->sync($dataCarriers);
-            } catch (\Exception $e){
-                $success = false;
-                $error['errors']['carriers'] = 'the Device Carriers can not be created';
-                //$error['errors']['carriersMessage'] = $this->getErrorAndParse($e);
-            }
-        }
-
-        if($dataCompaniesExists){
-            try {
-                $device->companies()->sync($dataCompanies);
-            } catch (\Exception $e){
-                $success = false;
-                $error['errors']['companies'] = 'the Device Companies can not be created';
-                //$error['errors']['companiesMessage'] = $this->getErrorAndParse($e);
-            }
-        }
-
-        if($dataPricesExists && $dataModificationsExists && $dataCarriersExists && $dataCompaniesExists){
-            try {
-                $priceInterface = app()->make('WA\Repositories\Device\DevicePriceInterface');
-
-                $dataPrices = $this->deleteRepeat($dataPrices);
-
-                foreach ($dataPrices as $price) {
-                    $check = $this->checkIfPriceRowIsCorrect($price, $dataModifications, $dataCarriers, $dataCompanies);
-                    if($check['bool']){
-                        $price['deviceId'] = $device->id;
-                        $priceInterface->create($price);    
+                            foreach ($dataPrices as $price) {
+                                $check = $this->checkIfPriceRowIsCorrect($price, $dataModifications, $dataCarriers, $dataCompanies);
+                                if($check['bool']){
+                                    $price['deviceId'] = $device->id;
+                                    $priceInterface->create($price);    
+                                } else {
+                                    $success = false;
+                                    $error['errors']['prices'] = 'the Device Prices can not be created';
+                                    //$error['errors']['pricesCheck'] = $check['error'];
+                                    //$error['errors']['pricesIdError'] = $check['id'];
+                                    //$error['errors']['pricesMessage'] = 'Any price rows are not correct and no references provided relationships.';
+                                }                    
+                            }    
+                        } catch (\Exception $e) {
+                            $success = false;
+                            $error['errors']['prices'] = 'the Device Prices can not be created';
+                            //$error['errors']['pricesMessage'] = $this->getErrorAndParse($e);
+                        }
                     } else {
                         $success = false;
-                        $error['errors']['prices'] = 'the Device Prices can not be created';
-                        //$error['errors']['pricesCheck'] = $check['error'];
-                        //$error['errors']['pricesIdError'] = $check['id'];
-                        //$error['errors']['pricesMessage'] = 'Any price rows are not correct and no references provided relationships.';
-                    }                    
-                }    
-            } catch (\Exception $e) {
-                $success = false;
-                $error['errors']['prices'] = 'the Device Prices can not be created';
-                //$error['errors']['pricesMessage'] = $this->getErrorAndParse($e);
-            }
+                        $error['errors']['prices'] = 'the Device Prices can not be created because other relationships can\'t be created';
+                        //$error['errors']['pricesMessage'] = $this->getErrorAndParse($e);
+                    }
+                }
+            }            
         }
 
         if(!$success){
@@ -295,8 +279,8 @@ class DevicesController extends ApiController
     public function create(Request $request) {   
 
         $success = true;
-        $dataImagesExists = $dataAssetsExists = $dataModificationsExists = $dataCarriersExists = $dataCompaniesExists = $dataPricesExists = false;
         $dataImages = $dataAssets = $dataModifications = $dataCarriers = $dataCompanies = array();
+
         /*
          * Checks if Json has data, data-type & data-attributes.
          */
@@ -334,124 +318,101 @@ class DevicesController extends ApiController
             if(isset($dataRelationships['images'])){ 
                 if(isset($dataRelationships['images']['data'])){
                     $dataImages = $this->parseJsonToArray($dataRelationships['images']['data'], 'images');
-                    $dataImagesExists = true;
+                    try {
+                        $device->images()->sync($dataImages);    
+                    } catch (\Exception $e){
+                        $error['errors']['images'] = 'the Device Images can not be created';
+                        //$error['errors']['imagesMessage'] = $this->getErrorAndParse($e);
+                    }
                 }
             }
+
             if(isset($dataRelationships['assets'])){ 
                 if(isset($dataRelationships['assets']['data'])){
                     $dataAssets = $this->parseJsonToArray($dataRelationships['assets']['data'], 'assets');
-                    $dataAssetsExists = true;
+                    try {
+                        $device->assets()->sync($dataAssets);    
+                    } catch (\Exception $e){
+                        $error['errors']['assets'] = 'the Device Assets can not be created';
+                        //$error['errors']['assetsMessage'] = $this->getErrorAndParse($e);
+                    }
                 }
             }
+
             if(isset($dataRelationships['modifications'])){ 
                 if(isset($dataRelationships['modifications']['data'])){
                     $dataModifications = $this->parseJsonToArray($dataRelationships['modifications']['data'], 'modifications');
-                    $dataModificationsExists = true;
+                     try {
+                        $device->modifications()->sync($dataModifications);
+                    } catch (\Exception $e){
+                        $success = false;
+                        $error['errors']['modifications'] = 'the Device Modifications can not be created';
+                        //$error['errors']['modificationsMessage'] = $this->getErrorAndParse($e);
+                    }
                 }
             }
+
             if(isset($dataRelationships['carriers'])){ 
                 if(isset($dataRelationships['carriers']['data'])){
                     $dataCarriers = $this->parseJsonToArray($dataRelationships['carriers']['data'], 'carriers');
-                    $dataCarriersExists = true;
+                    try {
+                        $device->carriers()->sync($dataCarriers);
+                    } catch (\Exception $e){
+                        $success = false;
+                        $error['errors']['carriers'] = 'the Device Carriers can not be created';
+                        //$error['errors']['carriersMessage'] = $this->getErrorAndParse($e);
+                    }
                 }
             }
+
             if(isset($dataRelationships['companies'])){ 
                 if(isset($dataRelationships['companies']['data'])){
                     $dataCompanies = $this->parseJsonToArray($dataRelationships['companies']['data'], 'companies');
-                    $dataCompaniesExists = true;
+                        try {
+                        $device->companies()->sync($dataCompanies);
+                    } catch (\Exception $e){
+                        $success = false;
+                        $error['errors']['companies'] = 'the Device Companies can not be created';
+                        //$error['errors']['companiesMessage'] = $this->getErrorAndParse($e);
+                    }
                 }
             }
+
             if(isset($dataRelationships['prices'])){ 
                 if(isset($dataRelationships['prices']['data'])){
                     $dataPrices = $dataRelationships['prices']['data'];
-                    $dataPricesExists = true;
-                }
-            }
 
-            if($dataImagesExists){
-                try {
-                    $device->images()->sync($dataImages);    
-                } catch (\Exception $e){
-                    $success = false;
-                    $dataImagesExists = false;
-                    $error['errors']['images'] = 'the Device Images can not be created';
-                    //$error['errors']['imagesMessage'] = $this->getErrorAndParse($e);
-                }
-            }
-            
-            if($dataAssetsExists){
-                try {
-                    $device->assets()->sync($dataAssets);    
-                } catch (\Exception $e){
-                    $success = false;
-                    $dataAssetsExists = false;
-                    $error['errors']['assets'] = 'the Device Assets can not be created';
-                    //$error['errors']['assetsMessage'] = $this->getErrorAndParse($e);
-                }
-            }
+                    if($success){
+                        try {
+                            $priceInterface = app()->make('WA\Repositories\Device\DevicePriceInterface');
 
-            if($dataModificationsExists){
-                try {
-                    $device->modifications()->sync($dataModifications);
-                } catch (\Exception $e){
-                    $success = false;
-                    $dataModificationsExists = false;
-                    $error['errors']['modifications'] = 'the Device Modifications can not be created';
-                    //$error['errors']['modificationsMessage'] = $this->getErrorAndParse($e);
-                }
-            }
+                            $dataPrices = $this->deleteRepeat($dataPrices);
 
-            if($dataCarriersExists){
-                try {
-                    $device->carriers()->sync($dataCarriers);
-                } catch (\Exception $e){
-                    $success = false;
-                    $dataCarriersExists = false;
-                    $error['errors']['carriers'] = 'the Device Carriers can not be created';
-                    //$error['errors']['carriersMessage'] = $this->getErrorAndParse($e);
-                }
-            }
-
-            if($dataCompaniesExists){
-                try {
-                    $device->companies()->sync($dataCompanies);
-                } catch (\Exception $e){
-                    $success = false;
-                    $dataCompaniesExists = false;
-                    $error['errors']['companies'] = 'the Device Companies can not be created';
-                    //$error['errors']['companiesMessage'] = $this->getErrorAndParse($e);
-                }
-            }
-
-            if($dataPricesExists && $dataModificationsExists && $dataCarriersExists && $dataCompaniesExists){
-                try {
-                    $priceInterface = app()->make('WA\Repositories\Device\DevicePriceInterface');
-
-                    $dataPrices = $this->deleteRepeat($dataPrices);
-
-                    foreach ($dataPrices as $price) {
-                        $check = $this->checkIfPriceRowIsCorrect($price, $dataModifications, $dataCarriers, $dataCompanies);
-                        if($check['bool']){
-                            $price['deviceId'] = $device->id;
-                            $priceInterface->create($price);    
-                        } else {
+                            foreach ($dataPrices as $price) {
+                                $check = $this->checkIfPriceRowIsCorrect($price, $dataModifications, $dataCarriers, $dataCompanies);
+                                if($check['bool']){
+                                    $price['deviceId'] = $device->id;
+                                    $priceInterface->create($price);    
+                                } else {
+                                    $success = false;
+                                    $error['errors']['prices'] = 'the Device Prices can not be created';
+                                    //$error['errors']['pricesCheck'] = $check['error'];
+                                    //$error['errors']['pricesIdError'] = $check['id'];
+                                    //$error['errors']['pricesMessage'] = 'Any price rows are not correct and no references provided relationships.';
+                                }                    
+                            }    
+                        } catch (\Exception $e) {
                             $success = false;
                             $error['errors']['prices'] = 'the Device Prices can not be created';
-                            //$error['errors']['pricesCheck'] = $check['error'];
-                            //$error['errors']['pricesIdError'] = $check['id'];
-                            //$error['errors']['pricesMessage'] = 'Any price rows are not correct and no references provided relationships.';
-                        }                    
-                    }    
-                } catch (\Exception $e) {
-                    $success = false;
-                    $error['errors']['prices'] = 'the Device Prices can not be created';
-                    //$error['errors']['pricesMessage'] = $this->getErrorAndParse($e);
+                            //$error['errors']['pricesMessage'] = $this->getErrorAndParse($e);
+                        }
+                    } else {
+                        $success = false;
+                        $error['errors']['prices'] = 'the Device Prices can not be created because other relationships can\'t be created';
+                        //$error['errors']['pricesMessage'] = $this->getErrorAndParse($e);
+                    }
                 }
-            } else {
-                $success = false;
-                $error['errors']['prices'] = 'the Device Prices can not be created because other relationships can\'t be created';
-                //$error['errors']['pricesMessage'] = $this->getErrorAndParse($e);
-            }
+            }            
         }
 
         if(!$success){

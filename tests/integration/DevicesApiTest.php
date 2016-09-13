@@ -264,7 +264,7 @@ class DevicesApiTest extends TestCase
         );
     }
 
-/*
+
     public function testCreateDeviceReturnRelationshipNoExists() {
         $device = $this->post('/devices',
         [
@@ -387,7 +387,7 @@ class DevicesApiTest extends TestCase
             'deviceTypeId'  => 5
         ]);
     }
-*/
+
     public function testCreateDeviceReturnPriceModificationCapacityForeignKeyError() {
 
         $device = $this->post('/devices',
@@ -612,7 +612,7 @@ class DevicesApiTest extends TestCase
         ]);
     }
 
-    public function testCreateDeviceReturnPriceCheckIfPriceRowIsCorrect() {
+    public function testCreateDeviceReturnPriceCheckIfPriceRowIsNotCorrect() {
 
         $device = $this->post('/devices',
         [
