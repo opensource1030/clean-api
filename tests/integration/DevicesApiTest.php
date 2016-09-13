@@ -7,7 +7,6 @@ class DevicesApiTest extends TestCase
 
     use DatabaseTransactions;
 
-
     public function testGetDevices() {
         $res = $this->json('GET', 'devices');
 
@@ -106,9 +105,76 @@ class DevicesApiTest extends TestCase
 
     public function testGetDeviceByIdIfNoExists() {
         // GET NO CREATED
-        $response = $this->call('GET', '/devices/1000000');
+        $response = $this->call('GET', '/devices/0');
         $this->assertEquals(409, $response->status());
     }
+
+    public function testGetDeviceByIdandIncludes(){
+
+        $response = $this->get('/devices/650?include=assets')
+            ->seeJsonStructure([
+                'data' => [
+                    'type',
+                    'id',
+                    'attributes' => [
+                        'identification',
+                        'name',
+                        'properties',
+                        'externalId',
+                        'deviceTypeId',
+                        'statusId',
+                        'syncId',
+                        'created_at' => [
+                            'date',
+                            'timezone_type',
+                            'timezone'
+                        ],
+                        'updated_at' => [
+                            'date',
+                            'timezone_type',
+                            'timezone'
+                        ]
+                    ],
+                    'links' => [
+                        'self'
+                    ],
+                    'relationships' => [
+                        'assets' => [
+                            'links' => [
+                                'self',
+                                'related'
+                            ],
+                            'data' => [
+                                0 => [  
+                                    'type',
+                                    'id'
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
+                'included' => [
+                    0 => [
+                        'type',
+                        'id',
+                        'attributes' => [
+                            'identification',
+                            'active',
+                            'statusId',
+                            'typeId',
+                            'externalId',
+                            'carrierId',
+                            'syncId'
+                        ],
+                        'links' => [
+                            'self'
+                        ]
+                    ]
+
+                ]
+            ]);
+    }
+
 
     public function testCreateDevice() {
         $device = $this->post('/devices',
@@ -120,7 +186,7 @@ class DevicesApiTest extends TestCase
                         'properties' => 'MyOneSolutionIsMyQueen',
                         'deviceTypeId'  => 1,
                         'statusId' => 1,
-                        'externalId' => 1,
+                        'externalId' => 2,
                         'identification' => rand(9000000000000,9999999999999)
                     ],
                     'relationships' => [
@@ -177,8 +243,12 @@ class DevicesApiTest extends TestCase
                 'properties' => 'MyOneSolutionIsMyQueen',
                 'deviceTypeId'  => 1,
                 'statusId' => 1,
-                'externalId' => 1
+                'externalId' => 2
             ]);
+
+        $id = $this->getProtectedId($device);
+        $assets = $this->call('GET', '/devices/'.$id.'?include=assets');
+        var_dump($assets);
     }
 
     public function testCreateDeviceReturnNoValidData() {
@@ -744,8 +814,6 @@ class DevicesApiTest extends TestCase
         $responseDel2 = $this->call('DELETE', '/devices/1000000');
         $this->assertEquals(409, $responseDel2->status());
     }
-
-
 
     /*
      *      Transforms an Exception Object and gets the value of the Error Message.

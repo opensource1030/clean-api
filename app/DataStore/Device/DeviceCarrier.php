@@ -4,8 +4,6 @@
 namespace WA\DataStore\Device;
 
 use WA\DataStore\MutableDataStore;
-use WA\DataStore\Traits\BelongsToDeviceType;
-use WA\DataStore\Traits\BelongsToJobStatus;
 
 /**
  * An Eloquent Model: 'WA\DataStore\Device\Device'.
@@ -35,9 +33,6 @@ use WA\DataStore\Traits\BelongsToJobStatus;
 class DeviceCarrier extends MutableDataStore
 {
     protected $table = 'device_carriers';
-
-    use BelongsToJobStatus;
-    use BelongsToDeviceType;
 
     public $timestamps = true;
 

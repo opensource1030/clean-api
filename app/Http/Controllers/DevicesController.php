@@ -76,7 +76,7 @@ class DevicesController extends ApiController
             $error['errors']['get'] = 'the Device selected doesn\'t exists';   
             return response()->json($error)->setStatusCode(409);
         }
-        
+
         return $this->response()->item($device, new DeviceTransformer(),['key' => 'devices']);
     }
 
