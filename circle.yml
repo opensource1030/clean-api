@@ -23,6 +23,8 @@ test:
   override:
     - cp .env.test .env
 #    - php vendor/bin/coveralls --root_dir=app
+#    - php artisan migrate
+#    - php artisan db:seed
 
 deployment:
   development:
