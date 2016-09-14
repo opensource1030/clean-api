@@ -457,13 +457,9 @@ class DevicesController extends ApiController
     /*
      *      Transforms an Object to an Array for Sync purposes.
      *
-     *      @param: 
-     *          "example" : {
-     *              "data" : [
-     *                  { "type": "example", "id" : 1 },
-     *                  { "type": "example", "id" : 2 }
-     *              ]
-     *          }
+     *      @param:
+     *          { "type": "example", "id" : 1 },
+     *          { "type": "example", "id" : 2 }
      *      @return
      *          array( 1, 2 );
      */
@@ -653,6 +649,13 @@ class DevicesController extends ApiController
      */
     private function checkIfPriceRowIsCorrect($price, $modifications, $carriers, $companies){
 
+        var_dump($price);
+        var_dump($modifications);
+        var_dump($carriers);
+        var_dump($companies);
+
+
+
         $modInterface = app()->make('WA\Repositories\Modification\ModificationInterface');
 
         if(isset($price['capacityId'])){
@@ -664,6 +667,9 @@ class DevicesController extends ApiController
                 $classResponse = $reflectorResponse->getProperty('attributes');    
                 $classResponse->setAccessible(true);
                 $dataResponse = $classResponse->getValue($modification);
+
+                var_dump($price['capacityId']);
+                var_dump($dataResponse['id']);
 
                 if($price['capacityId'] == $dataResponse['id']){
                     if($dataResponse['type'] <> 'capacity'){
