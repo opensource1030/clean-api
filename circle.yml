@@ -27,7 +27,6 @@ test:
     - cp -r build/logs/{clover.xml,coverage_html} $CIRCLE_ARTIFACTS
     - php vendor/bin/coveralls -v
 
-
 deployment:
   development:
     branch: develop
