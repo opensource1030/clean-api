@@ -1,39 +1,71 @@
 <?php
 
-use Laravel\Lumen\Testing\DatabaseTransactions;
+//use Laravel\Lumen\Testing\DatabaseTransactions;
+use Laravel\Lumen\Testing\DatabaseMigrations;
+
+use WA\DataStore\Apps\Apps;
 
 class AppsApiTest extends TestCase
 {
-    use DatabaseTransactions;     
-     
+    //use DatabaseTransactions;
+    use DatabaseMigrations;
 
     /**
-     * A basic functional test for services
+     * A basic functional test for apps
      *
      *
      */
-    public function testGetApps()
-    {       
+    public function testGetApps() {       
+        
+        factory(\WA\DataStore\App\App::class, 40)->create();
+
         $res = $this->json('GET', 'apps');
 
         $res->seeJsonStructure([
-                'data' => [
-                    0 => [ 'type','id',
-                        'attributes' => [
-                            'type',
-                            'image',
-                            'description',
-                            'created_at',
-                            'updated_at',
+            'data' => [
+                0 => [  
+                    'type',
+                    'id',
+                    'attributes' => [
+                        'type',
+                        'image',
+                        'description',
+                        'created_at' => [
+                            'date',
+                            'timezone_type',
+                            'timezone'
                         ],
-                        'links'
+                        'updated_at' => [
+                            'date',
+                            'timezone_type',
+                            'timezone'
+                        ]
+                    ],
+                    'links' => [
+                        'self'
                     ]
                 ]
-            ]);
+            ],
+            'meta' => [
+                'pagination' => [
+                    'total',
+                    'count',
+                    'per_page',
+                    'current_page',
+                    'total_pages'
+                ]
+            ],
+            'links' => [
+                'self',
+                'first',
+                'next',
+                'last'
+            ]
+        ]);
     }
 
-    public function testGetAppById()
-    {
+    public function testGetAppById() {
+
         $app = factory(\WA\DataStore\App\App::class)->create();
 
         $res = $this->json('GET', 'apps/'.$app->id)
@@ -45,8 +77,8 @@ class AppsApiTest extends TestCase
             ]);
     }
 
-    public function testCreateApp()
-    {
+    public function testCreateApp() {
+
         $this->post('/apps',
             [
                 'type' => 'AppType',
@@ -61,8 +93,8 @@ class AppsApiTest extends TestCase
             ]);
     }
 
-    public function testUpdateApp()
-    {
+    public function testUpdateApp() {
+
         $app = factory(\WA\DataStore\App\App::class)->create();
 
         $this->put('/apps/'.$app->id, [
@@ -78,8 +110,8 @@ class AppsApiTest extends TestCase
             ]);
     }
 
-    public function testDeleteApp()
-    {
+    public function testDeleteApp() {
+        
         $app = factory(\WA\DataStore\App\App::class)->create();
         $this->delete('/apps/'. $app->id);
         $response = $this->call('GET', '/apps/'.$app->id);

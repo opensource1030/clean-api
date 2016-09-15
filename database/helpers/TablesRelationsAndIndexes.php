@@ -16,12 +16,25 @@ trait TablesRelationsAndIndexes
      */
     public function forceDropTable($tableName)
     {
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        switch(DB::getDriverName()) {
+            case 'mysql':
+                DB::statement('SET FOREIGN_KEY_CHECKS=0');
+                break;
+            case 'sqlite':
+                DB::statement('PRAGMA foreign_keys = OFF');
+                break;
+        }
 
         Schema::dropIfExists($tableName);
 
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
-
+        switch(DB::getDriverName()) {
+            case 'mysql':
+                DB::statement('SET FOREIGN_KEY_CHECKS=1');
+                break;
+            case 'sqlite':
+                DB::statement('PRAGMA foreign_keys = ON');
+                break;
+        }
     }
 
     /**

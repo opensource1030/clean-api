@@ -121,7 +121,7 @@ class DevicesController extends ApiController
         /*
          * Checks if Json has data, data-type & data-attributes.
          */
-        if(!$this->isJsonCorrect($request)){
+        if(!$this->isJsonCorrect($request->all())){
             $error['errors']['json'] = 'Json is Invalid';
             return response()->json($error)->setStatusCode(409);
         } else {
@@ -242,16 +242,16 @@ class DevicesController extends ApiController
                                     $priceInterface->create($price);    
                                 } else {
                                     $success = false;
-                                    $error['errors']['prices'] = 'the Device Prices can not be created';
-                                    //$error['errors']['pricesCheck'] = $check['error'];
-                                    //$error['errors']['pricesIdError'] = $check['id'];
-                                    //$error['errors']['pricesMessage'] = 'Any price rows are not correct and no references provided relationships.';
+                                    $error['errors']['prices'] = 'the Device Prices can not be created (Incorrect Row)';
+                                    $error['errors']['pricesCheck'] = $check['error'];
+                                    $error['errors']['pricesIdError'] = $check['id'];
+                                    $error['errors']['pricesMessage'] = 'Any price rows are not correct and no references provided relationships.';
                                 }                    
                             }    
                         } catch (\Exception $e) {
                             $success = false;
-                            $error['errors']['prices'] = 'the Device Prices can not be created';
-                            //$error['errors']['pricesMessage'] = $this->getErrorAndParse($e);
+                            $error['errors']['prices'] = 'the Device Prices can not be created (Exception)';
+                            $error['errors']['pricesMessage'] = $this->getErrorAndParse($e);
                         }
                     } else {
                         $success = false;
@@ -395,7 +395,7 @@ class DevicesController extends ApiController
                                     $priceInterface->create($price);    
                                 } else {
                                     $success = false;
-                                    $error['errors']['prices'] = 'the Device Prices can not be created';
+                                    $error['errors']['prices'] = 'the Device Prices can not be created (Incorrect Row)';
                                     //$error['errors']['pricesCheck'] = $check['error'];
                                     //$error['errors']['pricesIdError'] = $check['id'];
                                     //$error['errors']['pricesMessage'] = 'Any price rows are not correct and no references provided relationships.';
@@ -403,7 +403,7 @@ class DevicesController extends ApiController
                             }    
                         } catch (\Exception $e) {
                             $success = false;
-                            $error['errors']['prices'] = 'the Device Prices can not be created';
+                            $error['errors']['prices'] = 'the Device Prices can not be created (Exception)';
                             //$error['errors']['pricesMessage'] = $this->getErrorAndParse($e);
                         }
                     } else {
@@ -512,10 +512,10 @@ class DevicesController extends ApiController
      */
     private function isJsonCorrect($request){
 
-        if(!isset($request->all()['data'])){ 
+        if(!isset($request['data'])){ 
             return false;
         } else {
-            $data = $request->all()['data'];    
+            $data = $request['data'];    
             if(!isset($data['type'])){
                 return false; 
             } else {
@@ -649,15 +649,9 @@ class DevicesController extends ApiController
      */
     private function checkIfPriceRowIsCorrect($price, $modifications, $carriers, $companies){
 
-        var_dump($price);
-        var_dump($modifications);
-        var_dump($carriers);
-        var_dump($companies);
-
-
-
         $modInterface = app()->make('WA\Repositories\Modification\ModificationInterface');
 
+        $existsCapacity = false;
         if(isset($price['capacityId'])){
                        
             foreach ($modifications as $mod) {
@@ -668,17 +662,20 @@ class DevicesController extends ApiController
                 $classResponse->setAccessible(true);
                 $dataResponse = $classResponse->getValue($modification);
 
-                var_dump($price['capacityId']);
-                var_dump($dataResponse['id']);
-
                 if($price['capacityId'] == $dataResponse['id']){
-                    if($dataResponse['type'] <> 'capacity'){
-                        return array( "bool" => false, "error" => "Capacity Not Found", "id" => $price['capacityId']);
+                    if($dataResponse['type'] == 'capacity'){
+                        $existsCapacity = true;
                     }
                 }
             }
+
+            if(!$existsCapacity){
+                return array( "bool" => false, "error" => "Capacity Not Found", "id" => $price['capacityId']);
+            }
         }
 
+
+        $existsStyle = false;
         if(isset($price['styleId'])){
             
             foreach ($modifications as $mod) {
@@ -690,25 +687,14 @@ class DevicesController extends ApiController
                 $dataResponse = $classResponse->getValue($modification);
 
                 if($price['styleId'] == $dataResponse['id']){
-
-                    if($dataResponse['type'] <> 'style'){
-                        return array( "bool" => false, "error" => "Style Not Found", "id" => $price['styleId']);
+                    if($dataResponse['type'] == 'style'){
+                        $existsStyle = true;
                     }
                 }
             }
-        }
 
-        $existsAsset = false;
-        if(isset($price['assetId'])){
-
-            foreach ($assets as $as) {
-                if($as == $price['assetId']){
-                    $existsAsset = true;
-                }
-            }
-
-            if(!$existsAsset){
-                return array( "bool" => false, "error" => "Asset Not Found", "id" => $price['assetId']);
+            if(!$existsStyle){
+                return array( "bool" => false, "error" => "Style Not Found", "id" => $price['styleId']);
             }
         }
 
@@ -732,7 +718,7 @@ class DevicesController extends ApiController
             foreach ($companies as $as) {
                 if($as == $price['companyId']){
                     $existsCompany = true;
-                }
+                } 
             }
             
             if(!$existsCompany){

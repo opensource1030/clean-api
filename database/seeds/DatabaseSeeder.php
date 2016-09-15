@@ -11,7 +11,14 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        switch(DB::getDriverName()) {
+            case 'mysql':
+                DB::statement('SET FOREIGN_KEY_CHECKS=0');
+                break;
+            case 'sqlite':
+                DB::statement('PRAGMA foreign_keys = OFF');
+                break;
+        }
 
         $this->call(AllocationsTableSeeder::class);
         $this->call(AppsTableSeeder::class);
@@ -35,6 +42,13 @@ class DatabaseSeeder extends Seeder
         $this->call(ServicesTableSeeder::class);
         $this->call(UsersTableSeeder::class);
         
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+        switch(DB::getDriverName()) {
+            case 'mysql':
+                DB::statement('SET FOREIGN_KEY_CHECKS=1');
+                break;
+            case 'sqlite':
+                DB::statement('PRAGMA foreign_keys = ON');
+                break;
+        }
     }
 }

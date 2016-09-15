@@ -1,19 +1,25 @@
 <?php
 
-use Laravel\Lumen\Testing\DatabaseTransactions;
+//use Laravel\Lumen\Testing\DatabaseTransactions;
+use Laravel\Lumen\Testing\DatabaseMigrations;
+
+use WA\DataStore\Carrier\Carrier;
+use WA\DataStore\Location\Location;
 
 class CarriersApiTest extends TestCase
 {
-    use DatabaseTransactions;     
-     
+    //use DatabaseTransactions;
+    use DatabaseMigrations;
 
     /**
      * A basic functional test for Carriers
      *
      *
      */
-    public function testGetCarriers()
-    {       
+    public function testGetCarriers() {
+
+        $carrier = factory(\WA\DataStore\Carrier\Carrier::class)->create();
+
         $res = $this->json('GET', 'carriers');
 
         $res->seeJsonStructure([
@@ -32,8 +38,8 @@ class CarriersApiTest extends TestCase
             ]);
     }
 
-    public function testGetCarrierById()
-    {
+    public function testGetCarrierById() {
+
         $carrier = factory(\WA\DataStore\Carrier\Carrier::class)->create();
 
         $res = $this->json('GET', 'carriers/'.$carrier->id)
@@ -41,14 +47,14 @@ class CarriersApiTest extends TestCase
                 'type' => 'carriers',
                 'name'=> $carrier->name,
                 'presentation'=> $carrier->presentation,
-                'active'=> $carrier->active,
-                'locationId'=> $carrier->locationId,
+                'active'=> "$carrier->active",
+                'locationId'=> "$carrier->locationId",
                 'shortName'=> $carrier->shortName,
             ]);
     }
 
-    public function testCreateCarrier()
-    {
+    public function testCreateCarrier() {
+
         $this->post('/carriers',
             [
                 'name'=> 'Carrier Name',
@@ -68,8 +74,8 @@ class CarriersApiTest extends TestCase
             ]);
     }
 
-    public function testUpdateCarrier()
-    {
+    public function testUpdateCarrier() {
+
         $location = factory(\WA\DataStore\Location\Location::class)->create(); 
         $carrier = factory(\WA\DataStore\Carrier\Carrier::class)->create();
 
@@ -92,8 +98,8 @@ class CarriersApiTest extends TestCase
             ]);
     }
 
-    public function testDeleteCarrier()
-    {
+    public function testDeleteCarrier() {
+        
         $carrier = factory(\WA\DataStore\Carrier\Carrier::class)->create();
         $this->delete('/carriers/'. $carrier->id);
         $response = $this->call('GET', '/carriers/'.$carrier->id);

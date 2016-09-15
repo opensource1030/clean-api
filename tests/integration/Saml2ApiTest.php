@@ -2,14 +2,20 @@
 
 namespace WA\Testing\Auth;
 
+//use Laravel\Lumen\Testing\DatabaseTransactions;
+use Laravel\Lumen\Testing\DatabaseMigrations;
+
 use WA\Auth\Login;
 use TestCase;
 use Cache;
 
 class Saml2ApiTest extends TestCase
 {
-	public function testApiDoSSOEmailRegister()
-	{
+    //use DatabaseTransactions;
+    use DatabaseMigrations;    
+
+	public function testApiDoSSOEmailRegister()	{
+		
 		// CREATE ARGUMENTS
 		$emailRegister = 'dev@algo.com';
 		
@@ -21,8 +27,8 @@ class Saml2ApiTest extends TestCase
 	}
 
 
-	public function testApiDoSSOEmailPassword()
-	{
+	public function testApiDoSSOEmailPassword() {
+		
 		// CREATE USER
 		$user = factory(\WA\DataStore\User\User::class)->create();
 		// GET EMAIL
@@ -35,9 +41,10 @@ class Saml2ApiTest extends TestCase
 		]);
 	}
 
-	public function testApiDoSSOEmailMicrosoftFail()
-	{
-		// CREATE ARGUMENTS
+	public function testApiDoSSOEmailMicrosoftFail() {
+
+		$this->artisan('db:seed');
+
 		$emailMicrosoft = 'dev@wirelessanalytics.com';
 		
         // CALL THE API ROUTE + ASSERTS        
@@ -49,9 +56,12 @@ class Saml2ApiTest extends TestCase
 		$this->assertArrayHasKey('message', $returnMicrosoftArray);
 		$this->assertStringStartsWith('URL Not Found', $returnMicrosoftArray['error']);
 		$this->assertStringStartsWith('Url to redirect not found.', $returnMicrosoftArray['message']);
+
 	}
 
 	public function testApiDoSSOEmailMicrosoftSaml2(){
+
+		$this->artisan('db:seed');
 
 		// CREATE ARGUMENTS
 		$emailMicrosoft = 'dev@wirelessanalytics.com';
@@ -65,36 +75,9 @@ class Saml2ApiTest extends TestCase
 		$this->assertStringStartsWith('https://login.microsoftonline.com', $returnMicrosoftArray['data']['redirectUrl']);
 	}
 
-/* This would be deleted
-	public function testApiDoSSOEmailFacebookFail()
-	{
-		// CREATE ARGUMENTS
-		$emailFacebook = 'dev@sharkninja.com';
+
+	public function testApiDoSSOEmailNoValid() {
 		
-        // CALL THE API ROUTE + ASSERTS        
-		$returnFacebook = $this->call('GET', 'doSSO/'.$emailFacebook, array(), array(), array(), array(), array());
-		$returnFacebookArray = json_decode($returnFacebook->content(), true);
-		$this->assertArrayHasKey('error', $returnFacebookArray);
-		$this->assertArrayHasKey('message', $returnFacebookArray);
-		$this->assertStringStartsWith('URL Not Found', $returnFacebookArray['error']);
-		$this->assertStringStartsWith('Url to redirect not found.', $returnFacebookArray['message']);
-	}
-
-	public function testApiDoSSOEmailFacebookSaml2(){
-		$emailFacebook = 'dev@sharkninja.com';
-		$redirectToUrl = 'http://google.es';
-
-        // CALL THE API ROUTE + ASSERTS        
-		$returnFacebook = $this->call('GET', 'doSSO/'.$emailFacebook.'?redirectToUrl='.$redirectToUrl, array(), array(), array(), array(), array());
-		$returnFacebookArray = json_decode($returnFacebook->content(), true);
-		$this->assertArrayHasKey('data', $returnFacebookArray);
-		$this->assertArrayHasKey('redirectUrl', $returnFacebookArray['data']);
-		$this->assertStringStartsWith('http://simplesamlphp.dev/simplesaml/saml2/idp/SSOService', $returnFacebookArray['data']['redirectUrl']);
-	}
-*/
-
-	public function testApiDoSSOEmailNoValid()
-	{
 		// CREATE ARGUMENTS
 		$emailNoValid = 'dev';
 
@@ -105,8 +88,8 @@ class Saml2ApiTest extends TestCase
 		]);
 	}
 
-	public function testApiDoSSOLoginUuid()
-	{
+	public function testApiDoSSOLoginUuid()	{
+		
 		// CREATE ARGUMENTS ERROR
 		$uuid = 'siriondevelopers';
 
@@ -127,6 +110,7 @@ class Saml2ApiTest extends TestCase
 		]);
 	}
 
+
 	/*
      *      Transforms an Object and gets the value of a protected variable
      *
@@ -135,7 +119,8 @@ class Saml2ApiTest extends TestCase
      *      @return:
      *          $object->getValue($value);
      */
-    private function getErrorAndParse($object){
+    private function getErrorAndParse($object) {
+        
         try{
             $reflectorResponse = new \ReflectionClass($object);
 

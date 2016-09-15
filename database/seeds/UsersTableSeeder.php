@@ -22,6 +22,7 @@ class UsersTableSeeder extends BaseTableSeeder
         	'username' => 'sirion',
         	'defaultLang' => 'en',
 	        'supervisorId' => 4,
+            'notify' => 0,
     	    'approverId' => 3,
         	'defaultLocationId' => 'location',
 	        'companyId' => 1

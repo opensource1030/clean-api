@@ -1,21 +1,25 @@
 <?php
 
-use Laravel\Lumen\Testing\DatabaseTransactions;
+use Laravel\Lumen\Testing\DatabaseMigrations;
 
 use WA\DataStore\Device\Device;
 use WA\DataStore\Asset\Asset;
 use WA\DataStore\Image\Image;
 use WA\DataStore\Company\Company;
 use WA\DataStore\Carrier\Carrier;
+use WA\DataStore\Modification\Modification;
+use WA\DataStore\DeviceType;
 
 use WA\Http\Controllers\DevicesController;
 
 class DevicesApiTest extends TestCase
 {
 
-    use DatabaseTransactions;
-/*
+    use DatabaseMigrations;
+
     public function testGetDevices() {
+
+        factory(\WA\DataStore\Device\Device::class, 40)->create();
 
         $res = $this->json('GET', 'devices');
 
@@ -67,7 +71,7 @@ class DevicesApiTest extends TestCase
     }
 
     public function testGetDeviceByIdIfExists() {
-        // CREATE & GET
+      
         $device = factory(\WA\DataStore\Device\Device::class)->create();
 
         $res = $this->json('GET', 'devices/'.$device->id)
@@ -77,7 +81,7 @@ class DevicesApiTest extends TestCase
                 'name'=> $device->name,
                 'properties'=> $device->properties,
                 'externalId'=> $device->externalId,
-                'deviceTypeId'=> $device->deviceTypeId,
+                'deviceTypeId'=> "$device->deviceTypeId",
                 'statusId'=> $device->statusId,
                 'syncId'=> $device->syncId
             ]);
@@ -113,23 +117,20 @@ class DevicesApiTest extends TestCase
     }
 
     public function testGetDeviceByIdIfNoExists() {
-        // GET THE LAST DEVICE ID
-        $device = Device::orderBy('id', 'desc')->first();
-        $id = $this->getProtectedIdfromDevice($device);
 
-        // ADD 10 to the ID for a Device that not exists.
-        $id = $id + 10;
+        $deviceId = factory(\WA\DataStore\Device\Device::class)->create()->id;
+        $deviceId = $deviceId + 10;
 
-        $response = $this->call('GET', '/devices/'.$id);
+        $response = $this->call('GET', '/devices/'.$deviceId);
         $this->assertEquals(409, $response->status());
     }
 
     public function testGetDeviceByIdandIncludesAssets(){
 
-        $device = Device::orderBy('id', 'asc')->first();
+        $device = factory(\WA\DataStore\Device\Device::class)->create();
 
-        $asset1 = Asset::orderBy('id', 'asc')->first()->id;
-        $asset2 = Asset::orderBy('id', 'desc')->first()->id;
+        $asset1 = factory(\WA\DataStore\Asset\Asset::class)->create()->id;
+        $asset2 = factory(\WA\DataStore\Asset\Asset::class)->create()->id;
 
         $dataAssets = array($asset1, $asset2);
 
@@ -197,17 +198,14 @@ class DevicesApiTest extends TestCase
 
                 ]
             ]);
-
-            $dataAssetsVoid = array();
-            $device->assets()->sync($dataAssetsVoid);            
     }
 
     public function testGetDeviceByIdandIncludesImages(){
 
-        $device = Device::orderBy('id', 'asc')->first();
+        $device = factory(\WA\DataStore\Device\Device::class)->create();
 
-        $image1 = Image::orderBy('id', 'asc')->first()->id;
-        $image2 = Image::orderBy('id', 'desc')->first()->id;
+        $image1 = factory(\WA\DataStore\Image\Image::class)->create()->id;
+        $image2 = factory(\WA\DataStore\Image\Image::class)->create()->id;
 
         $dataImages = array($image1, $image2);
 
@@ -273,17 +271,14 @@ class DevicesApiTest extends TestCase
 
                 ]
             ]);
-
-            $dataAssetsVoid = array();
-            $device->assets()->sync($dataAssetsVoid);            
     }
 
     public function testGetDeviceByIdandIncludesCompanies(){
 
-        $device = Device::orderBy('id', 'asc')->first();
+        $device = factory(\WA\DataStore\Device\Device::class)->create();
 
-        $company1 = Company::orderBy('id', 'asc')->first()->id;
-        $company2 = Company::orderBy('id', 'desc')->first()->id;
+        $company1 = factory(\WA\DataStore\Company\Company::class)->create()->id;
+        $company2 = factory(\WA\DataStore\Company\Company::class)->create()->id;
 
         $dataCompanies = array($company1, $company2);
 
@@ -351,17 +346,14 @@ class DevicesApiTest extends TestCase
 
                 ]
             ]);
-
-            $dataCompaniesVoid = array();
-            $device->companies()->sync($dataCompaniesVoid);            
     }
 
     public function testGetDeviceByIdandIncludesCarriers(){
 
-        $device = Device::orderBy('id', 'asc')->first();
+        $device = factory(\WA\DataStore\Device\Device::class)->create();
 
-        $carrier1 = Carrier::orderBy('id', 'asc')->first()->id;
-        $carrier2 = Carrier::orderBy('id', 'desc')->first()->id;
+        $carrier1 = factory(\WA\DataStore\Carrier\Carrier::class)->create()->id;
+        $carrier2 = factory(\WA\DataStore\Carrier\Carrier::class)->create()->id;
 
         $dataCarriers = array($carrier1, $carrier2);
 
@@ -433,6 +425,11 @@ class DevicesApiTest extends TestCase
     }
 
     public function testCreateDevice() {
+
+        $this->artisan('db:seed');
+
+        $deviceTypeId = DeviceType::orderBy('id', 'asc')->first()->id;
+
         $device = $this->post('/devices',
             [
                 'data' => [
@@ -440,7 +437,7 @@ class DevicesApiTest extends TestCase
                     'attributes' => [
                         'name' => 'whenIneedMotivation...',
                         'properties' => 'MyOneSolutionIsMyQueen',
-                        'deviceTypeId'  => 1,
+                        'deviceTypeId'  => $deviceTypeId,
                         'statusId' => 1,
                         'externalId' => 2,
                         'identification' => rand(9000000000000,9999999999999)
@@ -565,6 +562,10 @@ class DevicesApiTest extends TestCase
     }
 
     public function testCreateDeviceReturnNoValidDeviceTypeId() {
+
+        $device = factory(\WA\DataStore\Device\Device::class)->create();
+        $deviceTypeId = $device->deviceTypeId + 10;
+
         // deviceTyoeId integrity foreign key error.
         $device = $this->post('/devices',
             [
@@ -573,7 +574,7 @@ class DevicesApiTest extends TestCase
                     "attributes"=> [
                         "name"=> "whenIneedMotivation...",
                         "properties"=> "MyOneSolutionIsMyQueen",
-                        "deviceTypeId" => 1000
+                        "deviceTypeId" => $deviceTypeId
                     ]
                 ]
             ]
@@ -586,8 +587,8 @@ class DevicesApiTest extends TestCase
         );
     }
 
-
     public function testCreateDeviceReturnRelationshipNoExists() {
+
         $device = $this->post('/devices',
         [
             'data' => [
@@ -720,7 +721,7 @@ class DevicesApiTest extends TestCase
                     'identification' => rand(9000000000000,9999999999999),
                     'name' => 'whenIneedMotivation...',
                     'properties' => 'MyOneSolutionIsMyQueen',
-                    'deviceTypeId'  => 5
+                    'deviceTypeId'  => 1
                 ],
                 "relationships" => [
                     "modifications" => [
@@ -760,8 +761,7 @@ class DevicesApiTest extends TestCase
         )->seeJson(
         [
             'errors' => [
-                'modifications' => 'the Device Modifications can not be created',
-                'prices' => 'the Device Prices can not be created because other relationships can\'t be created'
+                'prices' => 'the Device Prices can not be created (Exception)'
             ]
         ]);
     }
@@ -816,8 +816,7 @@ class DevicesApiTest extends TestCase
         )->seeJson(
         [
             'errors' => [
-                'modifications' => 'the Device Modifications can not be created',
-                'prices' => 'the Device Prices can not be created because other relationships can\'t be created'
+                'prices' => 'the Device Prices can not be created (Exception)'
             ]
         ]);
     }
@@ -872,8 +871,7 @@ class DevicesApiTest extends TestCase
         )->seeJson(
         [
             'errors' => [
-                'carriers' => 'the Device Carriers can not be created',
-                'prices' => 'the Device Prices can not be created because other relationships can\'t be created'
+                'prices' => 'the Device Prices can not be created (Exception)'
             ]
         ]);
     }
@@ -928,8 +926,7 @@ class DevicesApiTest extends TestCase
         )->seeJson(
         [
             'errors' => [
-                'companies' => 'the Device Companies can not be created',
-                'prices' => 'the Device Prices can not be created because other relationships can\'t be created'
+                'prices' => 'the Device Prices can not be created (Exception)'
             ]
         ]);
     }
@@ -984,23 +981,47 @@ class DevicesApiTest extends TestCase
         )->seeJson(
         [
             'errors' => [
-                'prices' => 'the Device Prices can not be created'
+                'prices' => 'the Device Prices can not be created (Exception)'
             ]
         ]);
     }
 
     public function testUpdateDevice() {
-        $device = factory(\WA\DataStore\Device\Device::class)->create();
 
+        $device = factory(\WA\DataStore\Device\Device::class)->create(
+            ['properties' => 'properties1', 'name' => 'Phone1']
+        );
+        $deviceAux = factory(\WA\DataStore\Device\Device::class)->create(
+            ['properties' => 'properties2', 'name' => 'Phone2']
+        );
+
+        $this->assertNotEquals($device->id, $deviceAux->id);
+        $this->assertNotEquals($device->identification, $deviceAux->identification);
+        $this->assertNotEquals($device->name, $deviceAux->name);
+        $this->assertNotEquals($device->properties, $deviceAux->properties);
+        $this->assertNotEquals($device->deviceTypeId, $deviceAux->deviceTypeId);
+
+        $modCap1 = factory(\WA\DataStore\Modification\Modification::class)->create(
+            ['type' => 'capacity']
+        );
+
+        $modSty1 = factory(\WA\DataStore\Modification\Modification::class)->create(
+            ['type' => 'style']
+        );
+
+        $modCap2 = factory(\WA\DataStore\Modification\Modification::class)->create(
+            ['type' => 'capacity']
+        );
+
+        
         $this->put('/devices/'.$device->id, 
             [
                 'data' => [
                     'type' => 'devices',
                     'attributes' => [
-                        'identification' => rand(9000000000000,9999999999999),
-                        'name' => 'whenIneedMotivation...',
-                        'properties' => 'MyOneSolutionIsMyQueen',
-                        'deviceTypeId'  => 5
+                        'name' => $deviceAux->name,
+                        'properties' => $deviceAux->properties,
+                        'deviceTypeId'  => $deviceAux->deviceTypeId
                     ],
                     'relationships' => [
                         'assets' => [
@@ -1011,9 +1032,9 @@ class DevicesApiTest extends TestCase
                         ],
                         'modifications' => [
                             'data' => [
-                                [ 'type' => 'modifications', 'id' => '1' ],
-                                [ 'type' => 'modifications', 'id' => '2' ],
-                                [ 'type' => 'modifications', 'id' => '3' ]
+                                [ 'type' => 'modifications', 'id' => $modCap1->id ],
+                                [ 'type' => 'modifications', 'id' => $modSty1->id ],
+                                [ 'type' => 'modifications', 'id' => $modCap2->id ]
                             ]
                         ],
                         'carriers' => [
@@ -1046,37 +1067,35 @@ class DevicesApiTest extends TestCase
             ->seeJson(
             [
                 'type' => 'devices',
-                'name' => 'whenIneedMotivation...',
-                'properties' => 'MyOneSolutionIsMyQueen',
-                'deviceTypeId'  => 5
+                'name' => $deviceAux->name,
+                'properties' => $deviceAux->properties,
+                'deviceTypeId'  => $deviceAux->deviceTypeId
             ]);
     }
 
     public function testDeleteDeviceIfExists() {
         // CREATE & DELETE
         $device = factory(\WA\DataStore\Device\Device::class)->create();
-        $responseDel1 = $this->call('DELETE', '/devices/'.$device->id);
-        $this->assertEquals(200, $responseDel1->status());
-        $responseGet1 = $this->call('GET', '/devices/'.$device->id);
-        $this->assertEquals(409, $responseGet1->status());        
+        $responseDel = $this->call('DELETE', '/devices/'.$device->id);
+        $this->assertEquals(200, $responseDel->status());
+        $responseGet = $this->call('GET', '/devices/'.$device->id);
+        $this->assertEquals(409, $responseGet->status());        
     }
 
     public function testDeleteDeviceIfNoExists(){
         // DELETE NO EXISTING.
-        $responseDel2 = $this->call('DELETE', '/devices/1000000');
-        $this->assertEquals(409, $responseDel2->status());
+        $responseDel = $this->call('DELETE', '/devices/1');
+        $this->assertEquals(409, $responseDel->status());
     }
 
     public function testParseJsonToArray(){
 
-        $i = 1;
         $array = array();
         $type = 'anytype';
 
-        while( $i<5){
+        for ($i = 1; $i < 5; $i++) {
             $arrayAux = array('type' => $type, 'id' => $i);
             array_push($array, $arrayAux);
-            $i++;
         }
 
         $devicesController = app()->make('WA\Http\Controllers\DevicesController');
@@ -1091,14 +1110,12 @@ class DevicesApiTest extends TestCase
 
     public function testParseJsonToArrayReturnVoidNoType(){
 
-        $i = 1;
         $array = array();
         $type = 'anytype';
         
-        while( $i<5){
+        for ($i = 1; $i < 5; $i++) {
             $arrayAux = array('error' => $type, 'id' => $i);
             array_push($array, $arrayAux);
-            $i++;
         }
 
         $devicesController = app()->make('WA\Http\Controllers\DevicesController');
@@ -1113,14 +1130,12 @@ class DevicesApiTest extends TestCase
 
     public function testParseJsonToArrayReturnVoidNoSameType(){
 
-        $i = 1;
         $array = array();
         $type = 'anytype';
         
-        while( $i<5){
+        for ($i = 1; $i < 5; $i++) {
             $arrayAux = array('type' => 'error', 'id' => $i);
             array_push($array, $arrayAux);
-            $i++;
         }
 
         $devicesController = app()->make('WA\Http\Controllers\DevicesController');
@@ -1135,14 +1150,12 @@ class DevicesApiTest extends TestCase
 
     public function testParseJsonToArrayReturnVoidNoId(){
 
-        $i = 1;
         $array = array();
         $type = 'anytype';
         
-        while( $i<5){
+        for ($i = 1; $i < 5; $i++) {
             $arrayAux = array('type' => $type, 'error' => $i);
             array_push($array, $arrayAux);
-            $i++;
         }
 
         $devicesController = app()->make('WA\Http\Controllers\DevicesController');
@@ -1256,6 +1269,7 @@ class DevicesApiTest extends TestCase
     }
 
     public function testDeleteRepeat(){
+
         $start = array(
             [ 'type' => 'prices', 'capacityId' => 1, 'styleId' => 2, 'carrierId' => 1, 'companyId' => 1, 'priceRetail' => 100, 'price1' => 100, 'price2' => 100, 'priceOwn' => 100 ],
             [ 'type' => 'prices', 'capacityId' => 1, 'styleId' => 2, 'carrierId' => 1, 'companyId' => 1, 'priceRetail' => 200, 'price1' => 200, 'price2' => 200, 'priceOwn' => 200 ],
@@ -1278,6 +1292,7 @@ class DevicesApiTest extends TestCase
     }
 
     public function testDeleteRepeatDoingNothing(){
+
         $start = array(
             [ 'type' => 'prices', 'capacityId' => 1, 'styleId' => 2, 'carrierId' => 1, 'companyId' => 1, 'priceRetail' => 100, 'price1' => 100, 'price2' => 100, 'priceOwn' => 100 ],
             [ 'type' => 'prices', 'capacityId' => 1, 'styleId' => 2, 'carrierId' => 2, 'companyId' => 1, 'priceRetail' => 300, 'price1' => 300, 'price2' => 300, 'priceOwn' => 300 ]
@@ -1298,6 +1313,9 @@ class DevicesApiTest extends TestCase
     }
 
     public function testCheckIfPriceRowIsCorrect(){
+
+        $this->artisan('db:seed');
+
         $price = array(
             'type' => 'prices', 'capacityId' => 1, 'styleId' => 2, 'carrierId' => 1, 'companyId' => 1, 'priceRetail' => 100, 'price1' => 100, 'price2' => 100, 'priceOwn' => 100 
         );
@@ -1314,9 +1332,11 @@ class DevicesApiTest extends TestCase
         $final = array("bool" => true, "error" => "No Error", "id" => 0);
         $this->assertSame($result, $final);
     }
-*/
-/*    
+
     public function testCheckIfPriceRowIsCorrectCapacityFails(){
+
+        $this->artisan('db:seed');
+
         $price = array(
             'type' => 'prices', 'capacityId' => 1, 'styleId' => 2, 'carrierId' => 1, 'companyId' => 1, 'priceRetail' => 100, 'price1' => 100, 'price2' => 100, 'priceOwn' => 100 );
         $modifications = array(2,3,4,5,6);
@@ -1332,9 +1352,11 @@ class DevicesApiTest extends TestCase
         $final = array( "bool" => false, "error" => "Capacity Not Found", "id" => 1);
         $this->assertSame($result, $final);
     }
-*/
 
     public function testCheckIfPriceRowIsCorrectStyleFails(){
+
+        $this->artisan('db:seed');
+
         $price = array(
             'type' => 'prices', 'capacityId' => 1, 'styleId' => 2, 'carrierId' => 1, 'companyId' => 1, 'priceRetail' => 100, 'price1' => 100, 'price2' => 100, 'priceOwn' => 100 );
         $modifications = array(1,3,4,5,6);
@@ -1350,8 +1372,11 @@ class DevicesApiTest extends TestCase
         $final = array( "bool" => false, "error" => "Style Not Found", "id" => 2);
         $this->assertSame($result, $final);
     }
-/*
+
     public function testCheckIfPriceRowIsCorrectCarrierFails(){
+
+        $this->artisan('db:seed');
+
         $price = array(
             'type' => 'prices', 'capacityId' => 1, 'styleId' => 2, 'carrierId' => 1, 'companyId' => 1, 'priceRetail' => 100, 'price1' => 100, 'price2' => 100, 'priceOwn' => 100 );
         $modifications = array(1,2,3,4,5,6);
@@ -1369,6 +1394,9 @@ class DevicesApiTest extends TestCase
     }
 
     public function testCheckIfPriceRowIsCorrectCompanyFails(){
+
+        $this->artisan('db:seed');
+
         $price = array(
             'type' => 'prices', 'capacityId' => 1, 'styleId' => 2, 'carrierId' => 1, 'companyId' => 1, 'priceRetail' => 100, 'price1' => 100, 'price2' => 100, 'priceOwn' => 100 );
         $modifications = array(1,2,3,4,5,6);
@@ -1384,7 +1412,6 @@ class DevicesApiTest extends TestCase
         $final = array( "bool" => false, "error" => "Company Not Found", "id" => 1);
         $this->assertSame($result, $final);
     }
-*/
 
 
 
@@ -1481,9 +1508,9 @@ class DevicesApiTest extends TestCase
                         'type' => 'assets'
                     ]
                 ]);
-*/
 
-/* EXAMPLE POST DEVICE
+
+// EXAMPLE POST DEVICE
 {
     "data" : {
         "type" : "devices",
@@ -1626,9 +1653,9 @@ class DevicesApiTest extends TestCase
     }
 }
 
-*/
 
-/*
+
+
         $id = $this->getProtectedId($device);
 
         $assets = $this->json('GET', 'devices/'.$id.'?include=assets')

@@ -1,19 +1,23 @@
 <?php
 
-use Laravel\Lumen\Testing\DatabaseTransactions;
+//use Laravel\Lumen\Testing\DatabaseTransactions;
+use Laravel\Lumen\Testing\DatabaseMigrations;
 
 class PackagesApiTest extends TestCase
 {
-    use DatabaseTransactions;    
-     
-
+    //use DatabaseTransactions;
+    use DatabaseMigrations;
+  
     /**
      * A basic functional test for packages
      *
      *
      */
+
     public function testGetPackages()
-    {       
+    {      
+        $package = factory(\WA\DataStore\Package\Package::class)->create();
+
         $res = $this->json('GET', 'packages');
 
         $res->seeJsonStructure([
@@ -42,10 +46,10 @@ class PackagesApiTest extends TestCase
             ->seeJson([
                 'type' => 'packages',
                 'name' => $package->name,
-                'conditionsId'=> $package->conditionsId,
-                'devicesId'=> $package->devicesId,
-                'appsId'=> $package->appsId,
-                'servicesId'=> $package->servicesId,
+                'conditionsId' => "$package->conditionsId",
+                'devicesId' => "$package->devicesId",
+                'appsId' => "$package->appsId",
+                'servicesId' => "$package->servicesId",
             ]);
     }
 

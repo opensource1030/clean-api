@@ -21,6 +21,7 @@ $factory->define(WA\DataStore\User\User::class, function (Faker\Generator $faker
         'lastName' => $faker->lastName,
         'username' => explode('@', $email)[0],
         'defaultLang' => 'en',
+        'notify' => 0,
 
         'supervisorId' => $faker->numberBetween(0, 6),
         'approverId' => $faker->numberBetween(0, 4),

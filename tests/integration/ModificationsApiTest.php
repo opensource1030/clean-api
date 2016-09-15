@@ -1,10 +1,11 @@
 <?php
 
-use Laravel\Lumen\Testing\DatabaseTransactions;
+use Laravel\Lumen\Testing\DatabaseMigrations;
+use WA\DataStore\Modification\Modification;
 
 class ModificationsApiTest extends TestCase
 {
-    use DatabaseTransactions;     
+    use DatabaseMigrations;     
      
 
     /**
@@ -14,6 +15,8 @@ class ModificationsApiTest extends TestCase
      */
     public function testGetModifications()
     {       
+        $modification = factory(\WA\DataStore\Modification\Modification::class)->create();
+
         $res = $this->json('GET', 'modifications');
 
         $res->seeJsonStructure([
