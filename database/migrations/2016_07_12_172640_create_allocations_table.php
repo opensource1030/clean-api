@@ -84,6 +84,9 @@ class CreateAllocationsTable extends Migration
 
                 //summation of fees
                 $table->decimal('fees');
+
+                //last upgrade date
+                $table->string('last_upgrade');
         });
 
         Schema::table(

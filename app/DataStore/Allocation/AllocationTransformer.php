@@ -20,6 +20,7 @@ class AllocationTransformer extends TransformerAbstract
             'usage_charge' => $allocations->usageCharges,
             'other_charge' => $allocations->otherCharges,
             'fees' => $allocations->fees,
+            'last_upgrade' => $allocations->last_upgrade,
         ];
 
     }
