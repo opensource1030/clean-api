@@ -8,12 +8,12 @@ machine:
 
   environment:
       CIRCLE_ENV: test
-      COVERALLS_REPO_TOKEN: VNYfNeroWPX3OJkEuV7GNn2Zc8YxORv5h
 
 ## Customize dependencies
 dependencies:
   pre:
     - sed -i 's/^;//' ~/.phpenv/versions/$(phpenv global)/etc/conf.d/xdebug.ini
+    - mkdir -p build/logs/coverage_html
 
   override:
     - composer install --prefer-source --no-interaction
@@ -22,7 +22,11 @@ dependencies:
 test:
   override:
     - cp .env.test .env
-#    - php vendor/bin/coveralls --root_dir=app
+    - php vendor/bin/phpunit -c phpunit.xml --coverage-clover build/logs/clover.xml --coverage-html build/logs/coverage_html
+  post:
+    - cp -r build/logs/{clover.xml,coverage_html} $CIRCLE_ARTIFACTS
+    - php vendor/bin/coveralls -v
+
 
 deployment:
   development:
