@@ -32,7 +32,7 @@ class Saml2ApiTest extends TestCase
 		// CREATE USER
 		$user = factory(\WA\DataStore\User\User::class)->create();
 		// GET EMAIL
-		$parsed = $this->getErrorAndParse($user);
+		$parsed = $this->getErrorAndParse($user, 'attributes');
 
         // CALL THE API ROUTE + ASSERTS        
 		$returnPassword = $this->json('GET', 'doSSO/'.$parsed['email'])->seeJson([
@@ -111,7 +111,7 @@ class Saml2ApiTest extends TestCase
 	}
 
 
-	/*
+    /*
      *      Transforms an Object and gets the value of a protected variable
      *
      *      @param: 
@@ -119,12 +119,12 @@ class Saml2ApiTest extends TestCase
      *      @return:
      *          $object->getValue($value);
      */
-    private function getErrorAndParse($object) {
+    private function getErrorAndParse($object, $value) {
         
         try{
             $reflectorResponse = new \ReflectionClass($object);
 
-            $classResponse = $reflectorResponse->getProperty('attributes');    
+            $classResponse = $reflectorResponse->getProperty($value);
             $classResponse->setAccessible(true);
             $dataResponse = $classResponse->getValue($object);
             return $dataResponse;    
@@ -133,5 +133,4 @@ class Saml2ApiTest extends TestCase
             return 'Generic Error';
         }
     }
-
 }

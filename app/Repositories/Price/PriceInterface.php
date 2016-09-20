@@ -45,4 +45,39 @@ interface PriceInterface extends RepositoryInterface
      */
     public function delete($id, $soft = true);
 
+    /**
+     * Get Array of all Prices Devices.
+     *
+     * @return Array of Prices
+     */
+    public function getPriceDevices($id);
+
+    /**
+     * Get Array of all Prices Capacities.
+     *
+     * @return Array of Prices
+     */
+    public function getPriceCapacities($id);
+
+    /**
+     * Get Array of all Prices Styles.
+     *
+     * @return Array of Prices
+     */
+    public function getPriceStyles($id);
+
+    /**
+     * Get Array of all Prices Carriers.
+     *
+     * @return Array of Prices
+     */
+    public function getPriceCarriers($id);
+
+    /**
+     * Get Array of all Prices Companies.
+     *
+     * @return Array of Prices
+     */
+    public function getPriceCompanies($id);
+
 }

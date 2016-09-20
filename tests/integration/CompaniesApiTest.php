@@ -1,43 +1,41 @@
 <?php
 
-use Laravel\Lumen\Testing\DatabaseTransactions;
+use Laravel\Lumen\Testing\DatabaseMigrations;
+
+use WA\DataStore\Company\Company;
 
 class CompaniesTest extends TestCase
 {
-
-    use DatabaseTransactions;
+    use DatabaseMigrations;
 
     /**
-     * A basic functional test for company endpoints
-     *
-     *
+     * A basic functional test for Company
      */
     public function testGetCompanies()
     {
+        factory(\WA\DataStore\Company\Company::class, 40)->create();
 
-        $company = factory(\WA\DataStore\Company\Company::class)->create();
-
-        $this->get('/companies')
+        $this->json('GET', 'companies')
             ->seeJsonStructure([
                 'data' => [
-                    0 => [ 'type','id',
-                            'attributes' => [
-                                'name', 'label'
-                             ],
-                            'links'
+                    0 => [ 
+                        'type',
+                        'id',
+                        'attributes' => [
+                            'name',
+                            'label'
+                        ],
+                        'links'
                     ]
-
                 ]
-
-         ]);
-
+            ]);
     }
 
     public function testGetByCompanyId()
     {
         $company = factory(\WA\DataStore\Company\Company::class)->create();
 
-        $this->get('/companies/'.$company->id)
+        $this->json('GET', 'companies/'.$company->id)
             ->seeJson([
                 'type' => 'companies',
                 'id' => "$company->id" ,

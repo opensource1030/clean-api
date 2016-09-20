@@ -1,7 +1,7 @@
 <?php
 
 
-namespace WA\DataStore\Device;
+namespace WA\DataStore\Price;
 
 use WA\DataStore\MutableDataStore;
 
@@ -30,9 +30,9 @@ use WA\DataStore\MutableDataStore;
  * @property-read \WA\DataStore\JobStatus $jobstatus
  * @mixin \Eloquent
  */
-class DevicePrice extends MutableDataStore
+class Price extends MutableDataStore
 {
-    protected $table = 'device_prices';
+    protected $table = 'prices';
 
     public $timestamps = true;
 
@@ -55,6 +55,6 @@ class DevicePrice extends MutableDataStore
      */
     public function getTransformer()
     {
-        return new DevicePriceTransformer();
+        return new PriceTransformer();
     }
 }

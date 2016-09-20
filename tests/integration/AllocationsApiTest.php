@@ -1,38 +1,45 @@
 <?php
 
-//use Laravel\Lumen\Testing\DatabaseTransactions;
 use Laravel\Lumen\Testing\DatabaseMigrations;
 
 use WA\DataStore\Allocation\Allocation;
 
 class AllocationsApiTest extends TestCase
 {
-
-    //use DatabaseTransactions;
     use DatabaseMigrations;
 
-
     /**
-     * A basic functional test for allocations endpoints
-     *
-     *
+     * A basic functional test for Allocations
      */
     public function testGetAllocations()
     {
-        $allocation = factory(\WA\DataStore\Allocation\Allocation::class)->create();
+        factory(\WA\DataStore\Allocation\Allocation::class, 40)->create();
 
-        $this->get('/allocations/')
-            ->seeJsonStructure([
+        $this->json('GET', '/allocations/')
+            ->seeJsonStructure(
+            [
                 'data' => [
-                    0 => [ 'type','id',
+                    0 => [ 
+                        'type',
+                        'id',
                         'attributes' => [
-                            'bill_month', 'carrier', 'mobile_number', 'currency', 'device', 'allocated_charge', 'service_plan_charge', 'usage_charge', 'other_charge', 'fees'
+                            'bill_month',
+                            'carrier',
+                            'mobile_number',
+                            'currency',
+                            'device',
+                            'allocated_charge',
+                            'service_plan_charge',
+                            'usage_charge',
+                            'other_charge',
+                            'fees'
+
                         ],
-                        'links'
+                        'links' => [
+                            'self'
+                        ]
                     ]
-
                 ]
-
             ]);
     }
 
@@ -40,7 +47,7 @@ class AllocationsApiTest extends TestCase
     {
         $allocation = factory(\WA\DataStore\Allocation\Allocation::class)->create();
 
-        $this->get('/allocations/'. $allocation->id)
+        $this->json('GET', '/allocations/'. $allocation->id)
             ->seeJson([
                 'type' => 'allocations',
                 'bill_month'=> $allocation->billMonth,
@@ -53,7 +60,5 @@ class AllocationsApiTest extends TestCase
                 'other_charge' => "$allocation->otherCharges",
                 'fees' => "$allocation->fees",
             ]);
-
     }
-
 }

@@ -3,11 +3,11 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateDevicePricesTable extends Migration
+class CreatePricesTable extends Migration
 {
     use \WA\Database\Command\TablesRelationsAndIndexes;
 
-    protected $tableName = 'device_prices';
+    protected $tableName = 'prices';
     
     /**
      * Run the migrations.

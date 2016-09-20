@@ -100,6 +100,14 @@ class Device extends MutableDataStore
     }
 
     /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function prices()
+    {
+        return $this->hasMany('WA\DataStore\Price\Price', 'deviceId');
+    }
+
+    /**
      * @return $this
      */
     public function attributes()

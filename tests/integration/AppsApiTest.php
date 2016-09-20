@@ -1,27 +1,22 @@
 <?php
 
-//use Laravel\Lumen\Testing\DatabaseTransactions;
 use Laravel\Lumen\Testing\DatabaseMigrations;
 
 use WA\DataStore\Apps\Apps;
 
 class AppsApiTest extends TestCase
 {
-    //use DatabaseTransactions;
     use DatabaseMigrations;
 
     /**
-     * A basic functional test for apps
-     *
-     *
+     * A basic functional test for Apps
      */
     public function testGetApps() {       
         
         factory(\WA\DataStore\App\App::class, 40)->create();
 
-        $res = $this->json('GET', 'apps');
-
-        $res->seeJsonStructure([
+        $this->json('GET', 'apps')
+            ->seeJsonStructure([
             'data' => [
                 0 => [  
                     'type',
@@ -56,10 +51,7 @@ class AppsApiTest extends TestCase
                 ]
             ],
             'links' => [
-                'self',
-                'first',
-                'next',
-                'last'
+                'self'
             ]
         ]);
     }
@@ -79,7 +71,7 @@ class AppsApiTest extends TestCase
 
     public function testCreateApp() {
 
-        $this->post('/apps',
+        $this->json('POST', 'apps',
             [
                 'type' => 'AppType',
                 'image'=> 'AppImageLink',
@@ -97,7 +89,7 @@ class AppsApiTest extends TestCase
 
         $app = factory(\WA\DataStore\App\App::class)->create();
 
-        $this->put('/apps/'.$app->id, [
+        $this->json('PUT', 'apps/'.$app->id, [
                 'type' => 'AppTypeEdit',
                 'image'=> 'AppImageLinkEdit',
                 'description'=> 'AppDescriptionEdit',
@@ -110,11 +102,20 @@ class AppsApiTest extends TestCase
             ]);
     }
 
-    public function testDeleteApp() {
-        
+    public function testDeleteAppIfExists() {
+
+        // CREATE & DELETE
         $app = factory(\WA\DataStore\App\App::class)->create();
-        $this->delete('/apps/'. $app->id);
-        $response = $this->call('GET', '/apps/'.$app->id);
-        $this->assertEquals(500, $response->status());
+        $responseDel = $this->call('DELETE', 'apps/'.$app->id);
+        $this->assertEquals(200, $responseDel->status());
+        $responseGet = $this->call('GET', 'apps/'.$app->id);
+        $this->assertEquals(409, $responseGet->status());        
+    }
+
+    public function testDeleteAppIfNoExists(){
+
+        // DELETE NO EXISTING.
+        $responseDel = $this->call('DELETE', 'apps/1');
+        $this->assertEquals(409, $responseDel->status());
     }
 }

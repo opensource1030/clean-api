@@ -166,6 +166,11 @@ $api->version('v1', function ($api) {
         $priceController = 'WA\Http\Controllers\PriceController';
         $api->get('prices', ['as' => 'api.price.index', 'uses' => $priceController . '@index']);
         $api->get('prices/{id}', ['as' => 'api.price.show', 'uses' => $priceController . '@show']);
+        $api->get('prices/device/{id}', ['as' => 'api.price.show', 'uses' => $priceController . '@showDevice']);
+        $api->get('prices/capacity/{id}', ['as' => 'api.price.show', 'uses' => $priceController . '@showCapacity']);
+        $api->get('prices/style/{id}', ['as' => 'api.price.show', 'uses' => $priceController . '@showStyle']);
+        $api->get('prices/carrier/{id}', ['as' => 'api.price.show', 'uses' => $priceController . '@showCarrier']);
+        $api->get('prices/company/{id}', ['as' => 'api.price.show', 'uses' => $priceController . '@showCompany']);
         $api->post('prices', ['uses' => $priceController . '@create']);
         $api->put('prices/{id}', ['uses' => $priceController . '@store']);
         $api->delete('prices/{id}', ['uses' => $priceController . '@delete']);
@@ -173,7 +178,7 @@ $api->version('v1', function ($api) {
         //=Image
         $imageController = 'WA\Http\Controllers\ImageController';
         $api->get('images', ['as' => 'api.image.index', 'uses' => $imageController . '@index']);
-        $api->get('images/show/{id}', ['as' => 'api.image.show', 'uses' => $imageController . '@show']);
+        $api->get('images/{id}', ['as' => 'api.image.show', 'uses' => $imageController . '@show']);
         $api->post('images/create', ['uses' => $imageController . '@create']);
     });
 });

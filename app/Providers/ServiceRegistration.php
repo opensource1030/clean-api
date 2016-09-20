@@ -74,8 +74,8 @@ use WA\DataStore\Device\DeviceCompany;
 use WA\Repositories\Device\EloquentDeviceCarrier;
 use WA\DataStore\Device\DeviceCarrier;
 
-use WA\Repositories\Device\EloquentDevicePrice;
-use WA\DataStore\Device\DevicePrice;
+use WA\Repositories\Price\EloquentPrice;
+use WA\DataStore\Price\Price;
 
 
 
@@ -201,12 +201,12 @@ trait ServiceRegistration
     /**
      * @param
      */
-    public function registerDevicePrice()
+    public function registerPrice()
     {
         app()->singleton(
-            'WA\Repositories\Device\DevicePriceInterface',
+            'WA\Repositories\Price\PriceInterface',
             function () {
-                return new EloquentDevicePrice(new DevicePrice(),
+                return new EloquentPrice(new Price(),
                     app()->make('WA\Repositories\JobStatus\JobStatusInterface')
                 );
             }

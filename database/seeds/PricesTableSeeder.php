@@ -1,14 +1,14 @@
 <?php
 
 /**
- * DevicePricesTableSeeder - Insert info into database.
+ * PricesTableSeeder - Insert info into database.
  *  
  * @author   Agustí Dosaiguas
  */
 
-class DevicePricesTableSeeder extends BaseTableSeeder
+class PricesTableSeeder extends BaseTableSeeder
 {
-    protected $table = "device_prices";
+    protected $table = "prices";
 
     /**
      * Run the database seeds.

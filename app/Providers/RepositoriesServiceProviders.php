@@ -33,7 +33,7 @@ class RepositoriesServiceProviders extends ServiceProvider
         $this->registerDeviceImage();        
         $this->registerModification();
         $this->registerDeviceModification();
-        $this->registerDevicePrice();
+        $this->registerPrice();
         $this->registerDeviceType();        
         $this->registerCensus();
         $this->registerUser();

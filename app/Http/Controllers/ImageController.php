@@ -34,19 +34,31 @@ class ImageController extends ApiController
     }
 
     /**
-     * Show all Image
+     * Show all Images
      *
      * Get a payload of all Image
      *
      */
-    public function index()
-    {
-        $image = $this->image->byPage();
-        return $this->response()->withPaginator($image, new ImageTransformer(),['key' => 'images']);
+    public function index() {
 
+        $criteria = $this->getRequestCriteria();
+        $this->image->setCriteria($criteria);
+        $image = $this->image->byPage();
+      
+        $response = $this->response()->withPaginator($image, new ImageTransformer(),['key' => 'images']);
+        $response = $this->applyMeta($response);
+        return $response;
     }
 
-    public function show($id){
+    /**
+     * Show a single Image
+     *
+     * Get a payload of a single Image
+     *
+     * @Get("/{id}")
+     */
+    public function show($id) {
+
         $image = Image::find($id);
         if($image == null){
             $error['errors']['get'] = 'the Image selected doesn\'t exists';   
@@ -55,15 +67,14 @@ class ImageController extends ApiController
         
         return $this->response()->item($image, new ImageTransformer(),['key' => 'images']);
     }
-
    
     /**
      * Create a new Image
      *
      * @return \Dingo\Api\Http\Response
      */
-    public function create()   
-    {        
+    public function create() {        
+
         try{
             $file = Request::file('filename');
 
@@ -90,25 +101,27 @@ class ImageController extends ApiController
     }
 
     /**
-     * Delete a Image
+     * Delete an Image
      *
      * @param $id
      */
-    public function delete($id)
-    {
-        $this->image->deleteById($id);
-        $this->index();
-    }
+    public function delete($id) {
 
-    private function getErrorAndParse($error){
-        try{
-            $reflectorResponse = new \ReflectionClass($error);
-            $classResponse = $reflectorResponse->getProperty('message');    
-            $classResponse->setAccessible(true);
-            $dataResponse = $classResponse->getValue($error);
-            return $dataResponse;    
-        } catch (\Exception $e){
-            return 'Generic Error';
+        $image = Image::find($id);
+        if($image <> null){
+            $this->image->deleteById($id);
+        } else {
+            $error['errors']['delete'] = 'the Image selected doesn\'t exists';   
+            return response()->json($error)->setStatusCode(409);
+        }
+        
+        $this->index();
+        $image = Image::find($id);        
+        if($image == null){
+            return array("success" => true);
+        } else {
+            $error['errors']['delete'] = 'the Image has not been deleted';   
+            return response()->json($error)->setStatusCode(409);
         }
     }
 }

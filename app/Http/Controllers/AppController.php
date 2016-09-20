@@ -1,10 +1,12 @@
 <?php
 namespace WA\Http\Controllers;
 
-use App;
+use WA\DataStore\App\App;
 use WA\DataStore\App\AppTransformer;
 use WA\Repositories\App\AppInterface;
 use Illuminate\Http\Request;
+
+use Log;
 
 /**
  * app resource.
@@ -50,7 +52,12 @@ class AppController extends ApiController
      */
     public function show($id)
     {
-        $app = $this->app->byId($id);
+        $app = App::find($id);
+        if($app == null){
+            $error['errors']['get'] = 'the App selected doesn\'t exists';   
+            return response()->json($error)->setStatusCode(409);
+        }
+
         return $this->response()->item($app, new AppTransformer(), ['key' => 'apps']);
     }
 
@@ -81,13 +88,27 @@ class AppController extends ApiController
     }
 
     /**
-     * Delete a App
+     * Delete an App
      *
      * @param $id
      */
     public function delete($id)
     {
-        $this->app->deleteById($id);
+        $app = App::find($id);
+        if($app <> null){
+            $this->app->deleteById($id);
+        } else {
+            $error['errors']['delete'] = 'the App selected doesn\'t exists';   
+            return response()->json($error)->setStatusCode(409);
+        }
+        
         $this->index();
+        $app = App::find($id);
+        if($app == null){
+            return array("success" => true);
+        } else {
+            $error['errors']['delete'] = 'the App has not been deleted';   
+            return response()->json($error)->setStatusCode(409);
+        }
     }
 }

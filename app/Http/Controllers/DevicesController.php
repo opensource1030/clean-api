@@ -55,10 +55,12 @@ class DevicesController extends ApiController
 
     public function index() {
 
-        $devices = $this->device->byPage();
-        $response = $this->response()->withPaginator($devices, new DeviceTransformer(),
-            ['key' => 'devices']);
-        //$response = $this->applyMeta($response);
+        $criteria = $this->getRequestCriteria();
+        $this->device->setCriteria($criteria);
+        $device = $this->device->byPage();
+      
+        $response = $this->response()->withPaginator($device, new DeviceTransformer(),['key' => 'devices']);
+        $response = $this->applyMeta($response);
         return $response;
     }
 
@@ -121,7 +123,7 @@ class DevicesController extends ApiController
         /*
          * Checks if Json has data, data-type & data-attributes.
          */
-        if(!$this->isJsonCorrect($request->all())){
+        if(!$this->isJsonCorrect($request, 'devices')){
             $error['errors']['json'] = 'Json is Invalid';
             return response()->json($error)->setStatusCode(409);
         } else {
@@ -231,7 +233,7 @@ class DevicesController extends ApiController
 
                     if($success){
                         try {
-                            $priceInterface = app()->make('WA\Repositories\Device\DevicePriceInterface');
+                            $priceInterface = app()->make('WA\Repositories\Price\PriceInterface');
 
                             $dataPrices = $this->deleteRepeat($dataPrices);
 
@@ -243,15 +245,15 @@ class DevicesController extends ApiController
                                 } else {
                                     $success = false;
                                     $error['errors']['prices'] = 'the Device Prices can not be created (Incorrect Row)';
-                                    $error['errors']['pricesCheck'] = $check['error'];
-                                    $error['errors']['pricesIdError'] = $check['id'];
-                                    $error['errors']['pricesMessage'] = 'Any price rows are not correct and no references provided relationships.';
+                                    //$error['errors']['pricesCheck'] = $check['error'];
+                                    //$error['errors']['pricesIdError'] = $check['id'];
+                                    //$error['errors']['pricesMessage'] = 'Any price rows are not correct and no references provided relationships.';
                                 }                    
                             }    
                         } catch (\Exception $e) {
                             $success = false;
                             $error['errors']['prices'] = 'the Device Prices can not be created (Exception)';
-                            $error['errors']['pricesMessage'] = $this->getErrorAndParse($e);
+                            //$error['errors']['pricesMessage'] = $this->getErrorAndParse($e);
                         }
                     } else {
                         $success = false;
@@ -284,7 +286,7 @@ class DevicesController extends ApiController
         /*
          * Checks if Json has data, data-type & data-attributes.
          */
-        if(!$this->isJsonCorrect($request)){
+        if(!$this->isJsonCorrect($request, 'devices')){
             $error['errors']['json'] = 'Json is Invalid';
             return response()->json($error)->setStatusCode(409);
         } else {
@@ -384,7 +386,7 @@ class DevicesController extends ApiController
 
                     if($success){
                         try {
-                            $priceInterface = app()->make('WA\Repositories\Device\DevicePriceInterface');
+                            $priceInterface = app()->make('WA\Repositories\Price\PriceInterface');
 
                             $dataPrices = $this->deleteRepeat($dataPrices);
 
@@ -430,6 +432,7 @@ class DevicesController extends ApiController
      * @param $id
      */
     public function delete($id) {
+
         $device = Device::find($id);
         if($device <> null){
             $this->device->deleteById($id);
@@ -476,58 +479,6 @@ class DevicesController extends ApiController
             }                        
         }        
         return $array;
-    }
-
-    /*
-     *      Transforms an Exception Object and gets the value of the Error Message.
-     *
-     *      @param: 
-     *          \Exception $e
-     *      @return:
-     *          $error->getValue($e);
-     */
-    private function getErrorAndParse($error){
-        try{
-            $reflectorResponse = new \ReflectionClass($error);
-            $classResponse = $reflectorResponse->getProperty('message');    
-            $classResponse->setAccessible(true);
-            $dataResponse = $classResponse->getValue($error);
-            return $dataResponse;    
-        } catch (\Exception $e){
-            return 'Generic Error';
-        }
-    }
-
-
-    /*
-     *      Checks if a JSON param has "data", "type" and "attributes" keys and "type" is equal to "devices".
-     *
-     *      @param: 
-     *          "data" : {
-     *              "type" : "devices",
-     *              "attributes" : {
-     *              ...
-     *      @return:
-     *          boolean;
-     */
-    private function isJsonCorrect($request){
-
-        if(!isset($request['data'])){ 
-            return false;
-        } else {
-            $data = $request['data'];    
-            if(!isset($data['type'])){
-                return false; 
-            } else {
-                if($data['type'] <> 'devices'){
-                    return false; 
-                } 
-            }
-            if(!isset($data['attributes'])){ 
-                return false; 
-            }
-        }
-        return true;
     }
 
     /*

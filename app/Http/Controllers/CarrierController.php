@@ -2,6 +2,7 @@
 namespace WA\Http\Controllers;
 
 use Illuminate\Http\Request;
+use WA\DataStore\Carrier\Carrier;
 use WA\DataStore\Carrier\CarrierTransformer;
 use WA\Repositories\Carrier\CarrierInterface;
 
@@ -33,11 +34,15 @@ class CarrierController extends ApiController
      * Get a payload of all Carrier
      *
      */
-    public function index()
-    {
-        $carrier = $this->carrier->byPage();
-        return $this->response()->withPaginator($carrier, new CarrierTransformer(),['key' => 'carriers']);
+    public function index() {
 
+        $criteria = $this->getRequestCriteria();
+        $this->carrier->setCriteria($criteria);
+        $carrier = $this->carrier->byPage();
+      
+        $response = $this->response()->withPaginator($carrier, new CarrierTransformer(),['key' => 'carriers']);
+        $response = $this->applyMeta($response);
+        return $response;
     }
 
     /**
@@ -49,7 +54,12 @@ class CarrierController extends ApiController
      */
     public function show($id)
     {
-        $carrier = $this->carrier->byId($id);
+        $carrier = Carrier::find($id);
+        if($carrier == null){
+            $error['errors']['get'] = 'the carrier selected doesn\'t exists';   
+            return response()->json($error)->setStatusCode(409);
+        }
+
         return $this->response()->item($carrier, new CarrierTransformer(), ['key' => 'carriers']);
     }
 
@@ -61,9 +71,19 @@ class CarrierController extends ApiController
      */
     public function store($id, Request $request)   
     {
-        $data = $request->all();       
-        $data['id'] = $id;
-        $carrier = $this->carrier->update($data);
+        /*
+         * Checks if Json has data, data-type & data-attributes.
+         */
+        if(!$this->isJsonCorrect($request, 'carriers')){
+            $error['errors']['json'] = 'Json is Invalid';
+            return response()->json($error)->setStatusCode(409);
+        } else {
+            $data = $request->all()['data'];
+            $dataAttributes = $data['attributes'];           
+        }
+
+        $dataAttributes['id'] = $id;
+        $carrier = $this->carrier->update($dataAttributes);
         return $this->response()->item($carrier, new CarrierTransformer(), ['key' => 'carriers']);
     }
 
@@ -74,8 +94,15 @@ class CarrierController extends ApiController
      */
     public function create(Request $request)
     {
-        $data = $request->all();
-        $carrier = $this->carrier->create($data);
+        if(!$this->isJsonCorrect($request, 'carriers')){
+            $error['errors']['json'] = 'Json is Invalid';
+            return response()->json($error)->setStatusCode(409);
+        } else {
+            $data = $request->all()['data'];
+            $dataAttributes = $data['attributes'];           
+        }
+
+        $carrier = $this->carrier->create($dataAttributes);
         return $this->response()->item($carrier, new CarrierTransformer(), ['key' => 'carriers']);
     }
 
@@ -86,7 +113,21 @@ class CarrierController extends ApiController
      */
     public function delete($id)
     {
-        $this->carrier->deleteById($id);
+        $carrier = Carrier::find($id);
+        if($carrier <> null){
+            $this->carrier->deleteById($id);
+        } else {
+            $error['errors']['delete'] = 'the carrier selected doesn\'t exists';   
+            return response()->json($error)->setStatusCode(409);
+        }
+        
         $this->index();
+        $carrier = Carrier::find($id);        
+        if($carrier == null){
+            return array("success" => true);
+        } else {
+            $error['errors']['delete'] = 'the carrier has not been deleted';   
+            return response()->json($error)->setStatusCode(409);
+        }
     }
 }

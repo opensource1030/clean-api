@@ -48,8 +48,13 @@ class ModificationsApiTest extends TestCase
     {
         $this->post('/modifications',
             [
-                'type' => 'Modification Type',
-                'value' => 'Modification Value',
+                "data" => [
+                    "type" => 'modifications',
+                    "attributes" => [
+                        'type' => 'Modification Type',
+                        'value' => 'Modification Value',
+                    ]
+                ]                
             ])
             ->seeJson([
                 'type' => 'modifications',
@@ -63,10 +68,15 @@ class ModificationsApiTest extends TestCase
     {
         $modification = factory(\WA\DataStore\Modification\Modification::class)->create();
 
-        $this->put('/modifications/'.$modification->id, [
-                'type'=> 'Modification Type Edit',
-                'value'=> 'Modification Value Edit',
-
+        $this->put('/modifications/'.$modification->id, 
+            [
+                "data" => [
+                    "type" => 'modifications',
+                    "attributes" => [
+                        'type' => 'Modification Type Edit',
+                        'value' => 'Modification Value Edit',
+                    ]
+                ]                
             ])
             ->seeJson([
                 'type' => 'modifications',
@@ -76,12 +86,21 @@ class ModificationsApiTest extends TestCase
             ]);
     }
 
-    public function testDeleteModification()
-    {
+    public function testDeleteModificationIfExists() {
+
+        // CREATE & DELETE
         $modification = factory(\WA\DataStore\Modification\Modification::class)->create();
-        $this->delete('/modifications/'. $modification->id);
-        $response = $this->call('GET', '/modifications/'.$modification->id);
-        $this->assertEquals(500, $response->status());
+        $responseDel = $this->call('DELETE', '/modifications/'.$modification->id);
+        $this->assertEquals(200, $responseDel->status());
+        $responseGet = $this->call('GET', '/modifications/'.$modification->id);
+        $this->assertEquals(409, $responseGet->status());        
+    }
+
+    public function testDeleteModificationIfNoExists(){
+
+        // DELETE NO EXISTING.
+        $responseDel = $this->call('DELETE', '/modifications/1');
+        $this->assertEquals(409, $responseDel->status());
     }
 
 }

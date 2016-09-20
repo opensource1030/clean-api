@@ -19,67 +19,94 @@ class EloquentPrice extends AbstractRepository implements PriceInterface
      */
     public function update(array $data)
     {
-        $app = $this->model->find($data['id']);
+        $price = $this->model->find($data['id']);
 
-        if(!$app)
+        if(!$price)
         {
             return false;
         }
 
         if(isset($data['type'])){
-            $app->type =  $data['type'];            
+            $price->type =  $data['type'];
         }
-        if(isset($data['image'])){
-            $app->image =  $data['image'];            
+        if(isset($data['deviceId'])){
+            $price->deviceId =  $data['deviceId'];
         }
-        if(isset($data['description'])){
-            $app->description =  $data['description'];            
+        if(isset($data['capacityId'])){
+            $price->capacityId =  $data['capacityId'];
+        }
+        if(isset($data['styleId'])){
+            $price->styleId =  $data['styleId'];
+        }
+        if(isset($data['carrierId'])){
+            $price->carrierId =  $data['carrierId'];
+        }
+        if(isset($data['companyId'])){
+            $price->companyId =  $data['companyId'];
+        }
+        if(isset($data['priceRetail'])){
+            $price->priceRetail =  $data['priceRetail'];
+        }
+        if(isset($data['price1'])){
+            $price->price1 =  $data['price1'];
+        }
+        if(isset($data['price2'])){
+            $price->price2 =  $data['price2'];        
+        }
+        if(isset($data['priceOwn'])){
+            $price->priceOwn =  $data['priceOwn'];
         }
 
-        if(!$app->save()) {
+        if(!$price->save()) {
             return false;
         }
 
-        return $app;
-
+        return $price;
     }
 
     /**
-     * Get an array of all the available App.
+     * Get an array of all the available Price.
      *
-     * @return Array of App
+     * @return Array of Price
      */
-    public function getAllApp()
+    public function getAllPrice()
     {
-        $app =  $this->model->all();
-        return $app;
+        $prices =  $this->model->all();
+        return $prices;
     }
 
     /**
-     * Create a new app
+     * Create a new Price
      *
      * @param array $data
      * @return bool|static
      */
     public function create(array $data)
     {
-        $appData = [
-            "type" =>  isset($data['type']) ? $data['type'] : null ,
-            "image" => isset($data['image']) ? $data['image'] : null,
-            "description" => isset($data['description']) ? $data['description'] : null,
+        $priceData = [
+            "type" =>  isset($data['type']) ? $data['type'] : null,
+            "deviceId" => isset($data['deviceId']) ? $data['deviceId'] : 0,
+            "capacityId" => isset($data['capacityId']) ? $data['capacityId'] : 0,
+            "styleId" => isset($data['styleId']) ? $data['styleId'] : 0,
+            "carrierId" => isset($data['carrierId']) ? $data['carrierId'] : 0,
+            "companyId" => isset($data['companyId']) ? $data['companyId'] : 0,
+            "priceRetail" => isset($data['priceRetail']) ? $data['priceRetail'] : 0,
+            "price1" => isset($data['price1']) ? $data['price1'] : 0,
+            "price2" => isset($data['price2']) ? $data['price2'] : 0,
+            "priceOwn" => isset($data['priceOwn']) ? $data['priceOwn'] : 0
         ];
 
-        $app = $this->model->create($appData);
+        $price = $this->model->create($priceData);
 
-        if(!$app) {
+        if(!$price) {
             return false;
         }
 
-        return $app;
+        return $price;
     }
 
     /**
-     * Delete a App.
+     * Delete a Price.
      *
      * @param int  $id
      * @param bool $soft true soft deletes
@@ -98,4 +125,61 @@ class EloquentPrice extends AbstractRepository implements PriceInterface
 
         return $this->model->destroy($id);
     }
+
+    /**
+     * Get an array of all the available Price.
+     *
+     * @return Array of Price
+     */
+    public function getPriceDevices($id)
+    {
+        $prices =  $this->model->where('deviceId', $id)->get();
+        /*->take( $filter['numItems'] )->offset( $filter['numItems'] * ( $filter['page'] - 1 ) );*/
+        return $prices;
+    }
+
+    /**
+     * Get an array of all the available Price.
+     *
+     * @return Array of Price
+     */
+    public function getPriceCapacities($id)
+    {
+        $prices =  $this->model->all();
+        return $prices;
+    }
+
+    /**
+     * Get an array of all the available Price.
+     *
+     * @return Array of Price
+     */
+    public function getPriceStyles($id)
+    {
+        $prices =  $this->model->all();
+        return $prices;
+    }
+
+    /**
+     * Get an array of all the available Price.
+     *
+     * @return Array of Price
+     */
+    public function getPriceCarriers($id)
+    {
+        $prices =  $this->model->all();
+        return $prices;
+    }
+
+    /**
+     * Get an array of all the available Price.
+     *
+     * @return Array of Price
+     */
+    public function getPriceCompanies($id)
+    {
+        $prices =  $this->model->all();
+        return $prices;
+    }
+
 }

@@ -3,7 +3,7 @@
 
 $factory->define(WA\DataStore\Modification\Modification::class, function ($faker) {
 
-    $modifications = ["Capacity", "Style"];
+    $modifications = ["capacity", "style"];
 
     return [
         'type'=> $modifications[array_rand($modifications)],

@@ -9,6 +9,7 @@ use WA\DataStore\Service\ServiceTransformer;
 use WA\Helpers\Traits\SetLimits;
 use WA\Http\Controllers\Api\Traits\BasicCrud;
 use WA\Repositories\Service\ServiceInterface;
+use WA\DataStore\Service\Service;
 
 use Illuminate\Http\Request;
 /**
@@ -53,8 +54,7 @@ class ServiceController extends ApiController
       
         $response = $this->response()->withPaginator($service, new ServiceTransformer(),['key' => 'services']);
         $response = $this->applyMeta($response);
-        return $response;
-        
+        return $response;        
     }
 
     /**
@@ -66,9 +66,13 @@ class ServiceController extends ApiController
      */
     public function show($id)
     {
-        $service = $this->service->byId($id);
+        $service = Service::find($id);
+        if($service == null){
+            $error['errors']['get'] = 'the Service selected doesn\'t exists';   
+            return response()->json($error)->setStatusCode(409);
+        }
 
-        return $this->response()->item($service, new ServiceTransformer(), ['key' => 'services']);
+        return $this->response()->item($service, new ServiceTransformer(),['key' => 'services']);
     }
 
     /**
@@ -79,9 +83,19 @@ class ServiceController extends ApiController
      */
     public function store($id, Request $request)   
     {
-        $data = $request->all();
-        $data['id'] = $id;
-        $service = $this->service->update($data);
+        /*
+         * Checks if Json has data, data-type & data-attributes.
+         */
+        if(!$this->isJsonCorrect($request, 'services')){
+            $error['errors']['json'] = 'Json is Invalid';
+            return response()->json($error)->setStatusCode(409);
+        } else {
+            $data = $request->all()['data'];
+            $dataAttributes = $data['attributes'];           
+        }
+
+        $dataAttributes['id'] = $id;
+        $service = $this->service->update($dataAttributes);
         return $this->response()->item($service, new ServiceTransformer(), ['key' => 'services']);
     }
 
@@ -92,8 +106,15 @@ class ServiceController extends ApiController
      */
     public function create(Request $request)
     {
-        $data = $request->all();
-        $service = $this->service->create($data);
+        if(!$this->isJsonCorrect($request, 'services')){
+            $error['errors']['json'] = 'Json is Invalid';
+            return response()->json($error)->setStatusCode(409);
+        } else {
+            $data = $request->all()['data'];
+            $dataAttributes = $data['attributes'];           
+        }
+
+        $service = $this->service->create($dataAttributes);
         return $this->response()->item($service, new ServiceTransformer(), ['key' => 'services']);
     }
 
@@ -104,7 +125,21 @@ class ServiceController extends ApiController
      */
     public function delete($id)
     {
-        $this->service->deleteById($id);
+        $service = Service::find($id);
+        if($service <> null){
+            $this->service->deleteById($id);
+        } else {
+            $error['errors']['delete'] = 'the service selected doesn\'t exists';   
+            return response()->json($error)->setStatusCode(409);
+        }
+        
         $this->index();
+        $service = Service::find($id);        
+        if($service == null){
+            return array("success" => true);
+        } else {
+            $error['errors']['delete'] = 'the service has not been deleted';   
+            return response()->json($error)->setStatusCode(409);
+        }
     }
 }

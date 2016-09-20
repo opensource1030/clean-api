@@ -29,13 +29,13 @@ class DatabaseSeeder extends Seeder
         $this->call(DeviceCarriersTableSeeder::class);        
         $this->call(DeviceCompaniesTableSeeder::class);
         $this->call(DeviceModificationsTableSeeder::class);
-        $this->call(DevicePricesTableSeeder::class);
         $this->call(DevicesTableSeeder::class);
         $this->call(ImagesTableSeeder::class);
         $this->call(ModificationsTableSeeder::class);
         $this->call(OAuthTableSeeder::class);
         $this->call(OrdersTableSeeder::class);
         $this->call(PackagesTableSeeder::class);
+        $this->call(PricesTableSeeder::class);
         //$this->call(PagesTableSeeder::class);
         //$this->call(ProvidersTableSeeder::class);
         $this->call(RequestsTableSeeder::class);        

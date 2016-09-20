@@ -94,4 +94,14 @@ class DeviceTransformer extends TransformerAbstract
     {
         return new ResourceCollection($device->images, new ImageTransformer(),'images');
     }
+
+    /**
+     * @param Device $device
+     *
+     * @return ResourceCollection
+     */
+    public function includePrices(Device $device)
+    {
+        return new ResourceCollection($device->prices, new PriceTransformer(),'prices');
+    }
 }

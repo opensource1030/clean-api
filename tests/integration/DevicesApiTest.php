@@ -1168,106 +1168,6 @@ class DevicesApiTest extends TestCase
         $this->assertSame($value, $real);
     }
 
-    public function testIsJsonCorrect(){
-
-        $array = array(
-            'data' => [
-                'type' => 'devices',
-                'attributes' => [
-                    'something' => 1
-                ]
-            ]
-        );
-
-        $devicesController = app()->make('WA\Http\Controllers\DevicesController');
-        $reflection = new \ReflectionClass($devicesController);
-        $method = $reflection->getMethod('isJsonCorrect');
-        $method->setAccessible(true);
-
-        $value = $method->invokeArgs($devicesController, array($array));
-        $this->assertTrue($value);
-    }
-
-    public function testIsJsonCorrectnoData(){
-
-        $array = array(
-            'error' => [
-                'type' => 'devices',
-                'attributes' => [
-                    'something' => 1
-                ]
-            ]
-        );
-
-        $devicesController = app()->make('WA\Http\Controllers\DevicesController');
-        $reflection = new \ReflectionClass($devicesController);
-        $method = $reflection->getMethod('isJsonCorrect');
-        $method->setAccessible(true);
-
-        $value = $method->invokeArgs($devicesController, array($array));
-        $this->assertFalse($value);
-    }
-
-    public function testIsJsonCorrectnoType(){
-
-        $array = array(
-            'data' => [
-                'error' => 'devices',
-                'attributes' => [
-                    'something' => 1
-                ]
-            ]
-        );
-
-        $devicesController = app()->make('WA\Http\Controllers\DevicesController');
-        $reflection = new \ReflectionClass($devicesController);
-        $method = $reflection->getMethod('isJsonCorrect');
-        $method->setAccessible(true);
-
-        $value = $method->invokeArgs($devicesController, array($array));
-        $this->assertFalse($value);
-    }
-
-    public function testIsJsonCorrectnoTypeValue(){
-
-        $array = array(
-            'data' => [
-                'type' => 'error',
-                'attributes' => [
-                    'something' => 1
-                ]
-            ]
-        );
-
-        $devicesController = app()->make('WA\Http\Controllers\DevicesController');
-        $reflection = new \ReflectionClass($devicesController);
-        $method = $reflection->getMethod('isJsonCorrect');
-        $method->setAccessible(true);
-
-        $value = $method->invokeArgs($devicesController, array($array));
-        $this->assertFalse($value);
-    }
-
-    public function testIsJsonCorrectnoAttributes(){
-
-        $array = array(
-            'data' => [
-                'type' => 'devices',
-                'error' => [
-                    'something' => 1
-                ]
-            ]
-        );
-
-        $devicesController = app()->make('WA\Http\Controllers\DevicesController');
-        $reflection = new \ReflectionClass($devicesController);
-        $method = $reflection->getMethod('isJsonCorrect');
-        $method->setAccessible(true);
-
-        $value = $method->invokeArgs($devicesController, array($array));
-        $this->assertFalse($value);
-    }
-
     public function testDeleteRepeat(){
 
         $start = array(
@@ -1459,7 +1359,6 @@ class DevicesApiTest extends TestCase
             return 1;
         }
     }
-
 }
 
 
@@ -1720,4 +1619,10 @@ class DevicesApiTest extends TestCase
 
                 ]
             ]);
+*/
+
+
+/*
+
+
 */

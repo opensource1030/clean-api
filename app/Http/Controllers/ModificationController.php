@@ -2,6 +2,7 @@
 namespace WA\Http\Controllers;
 
 use Illuminate\Http\Request;
+use WA\DataStore\Modification\Modification;
 use WA\DataStore\Modification\ModificationTransformer;
 use WA\Repositories\Modification\ModificationInterface;
 
@@ -33,11 +34,15 @@ class ModificationController extends ApiController
      * Get a payload of all modification
      *
      */
-    public function index()
-    {
-        $modification = $this->modification->byPage();
-        return $this->response()->withPaginator($modification, new ModificationTransformer(),['key' => 'modifications']);
+    public function index() {
 
+        $criteria = $this->getRequestCriteria();
+        $this->modification->setCriteria($criteria);
+        $modification = $this->modification->byPage();
+      
+        $response = $this->response()->withPaginator($modification, new ModificationTransformer(),['key' => 'modifications']);
+        $response = $this->applyMeta($response);
+        return $response;  
     }
 
     /**
@@ -49,8 +54,13 @@ class ModificationController extends ApiController
      */
     public function show($id)
     {
-        $modification = $this->modification->byId($id);
-        return $this->response()->item($modification, new ModificationTransformer(), ['key' => 'modifications']);
+        $modification = Modification::find($id);
+        if($modification == null){
+            $error['errors']['get'] = 'the modification selected doesn\'t exists';   
+            return response()->json($error)->setStatusCode(409);
+        }
+
+        return $this->response()->item($modification, new ModificationTransformer(),['key' => 'modifications']);
     }
 
     /**
@@ -61,9 +71,19 @@ class ModificationController extends ApiController
      */
     public function store($id, Request $request)   
     {
-        $data = $request->all();       
-        $data['id'] = $id;
-        $modification = $this->modification->update($data);
+        /*
+         * Checks if Json has data, data-type & data-attributes.
+         */
+        if(!$this->isJsonCorrect($request, 'modifications')){
+            $error['errors']['json'] = 'Json is Invalid';
+            return response()->json($error)->setStatusCode(409);
+        } else {
+            $data = $request->all()['data'];
+            $dataAttributes = $data['attributes'];           
+        }
+
+        $dataAttributes['id'] = $id;
+        $modification = $this->modification->update($dataAttributes);
         return $this->response()->item($modification, new ModificationTransformer(), ['key' => 'modifications']);
     }
 
@@ -74,8 +94,15 @@ class ModificationController extends ApiController
      */
     public function create(Request $request)
     {
-        $data = $request->all();
-        $modification = $this->modification->create($data);
+        if(!$this->isJsonCorrect($request, 'modifications')){
+            $error['errors']['json'] = 'Json is Invalid';
+            return response()->json($error)->setStatusCode(409);
+        } else {
+            $data = $request->all()['data'];
+            $dataAttributes = $data['attributes'];           
+        }
+
+        $modification = $this->modification->create($dataAttributes);
         return $this->response()->item($modification, new ModificationTransformer(), ['key' => 'modifications']);
     }
 
@@ -86,7 +113,21 @@ class ModificationController extends ApiController
      */
     public function delete($id)
     {
-        $this->modification->deleteById($id);
+        $modification = Modification::find($id);
+        if($modification <> null){
+            $this->modification->deleteById($id);
+        } else {
+            $error['errors']['delete'] = 'the modification selected doesn\'t exists';   
+            return response()->json($error)->setStatusCode(409);
+        }
+        
         $this->index();
+        $modification = Modification::find($id);        
+        if($modification == null){
+            return array("success" => true);
+        } else {
+            $error['errors']['delete'] = 'the modification has not been deleted';   
+            return response()->json($error)->setStatusCode(409);
+        }
     }
 }
