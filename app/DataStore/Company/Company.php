@@ -116,6 +116,14 @@ class Company extends BaseDataStore
     }
 
     /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function pools()
+    {
+        return $this->belongsToMany('WA\DataStore\PoolGroup', 'pool_bases', 'companyId', 'poolGroupId', 'baseCost');
+    }
+
+    /**
      * Get the transformer instance.
      *
      * @return mixed
