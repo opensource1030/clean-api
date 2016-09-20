@@ -5,10 +5,12 @@ namespace WA\Http\Controllers;
 use Cartalyst\DataGrid\Laravel\Facades\DataGrid;
 use Dingo\Api\Http\Response;
 use WA\DataStore\Company\Company;
+use Faker\Provider\hr_HR\Company;
 use WA\DataStore\Company\CompanyTransformer;
 use WA\Repositories\Carrier\CarrierInterface;
 use WA\Repositories\Company\CompanyInterface;
 use WA\Repositories\Udl\UdlInterface;
+use Illuminate\Http\Request;
 
 /**
  * Class CompaniesController.
@@ -72,6 +74,44 @@ class CompaniesController extends ApiController
 
         return $this->response()->item($company, new CompanyTransformer(), ['key' => 'companies']);
     }
+
+    /**
+     * Create a new company
+     *
+     * @return \Dingo\Api\Http\Response
+     */
+    public function create(Request $request)
+    {
+        $data = $request->all();
+        $company = $this->company->create($data);
+        return $this->response()->item($company, new CompanyTransformer(), ['key' => 'companies']);
+    }
+
+    /**
+     * Update a company
+     *
+     * @param $id
+     * @return \Dingo\Api\Http\Response
+     */
+    public function store($id, Request $request)
+    {
+        $data = $request->all();
+        $data['id'] = $id;
+        $company = $this->company->update($data);
+        return $this->response()->item($company, new CompanyTransformer(), ['key' => 'companies']);
+    }
+
+    /**
+     * Delete a company
+     *
+     * @param $id
+     */
+    public function deleteCompany($id)
+    {
+        $this->company->delete($id);
+        $this->index();
+    }
+
 
     /**
      * Handles the datatables, this needs to be in a specific format to make it compatible

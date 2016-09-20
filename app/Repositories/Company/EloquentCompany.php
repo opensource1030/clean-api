@@ -654,7 +654,7 @@ class EloquentCompany extends AbstractRepository implements CompanyInterface
                 }
             }
 
-            $pooled = 0;
+            /*$pooled = 0;
 
             if (isset($data['poolGroupId']) && count($data['poolGroupId']) >= 1) {
                 for ($x = 0; $x < count($data['poolGroupId']); $x++) {
@@ -686,7 +686,7 @@ class EloquentCompany extends AbstractRepository implements CompanyInterface
                     ]
                 );
                 $company->save();
-            }
+            }*/
 
 
             //Pooling turned off by default for prospect companies
@@ -763,7 +763,7 @@ class EloquentCompany extends AbstractRepository implements CompanyInterface
 
         //Remove existing entries first to avoid duplicate rows
         $company->carriers()->detach();
-        if (count($data['carrierId']) >= 1) {
+        if (!empty($data['carrierId']) && count($data['carrierId']) >= 1) {
             for ($x = 0; $x < count($data['carrierId']); $x++) {
                 if (!empty($data['carrierId'][$x])) {
                     $carrierPAN = !empty($data['carrierPAN'][$x]) ? trim($data['carrierPAN'][$x]) : null;
@@ -782,7 +782,7 @@ class EloquentCompany extends AbstractRepository implements CompanyInterface
         }
 
         //Remove existing entries first to avoid duplicate rows
-        $company->pools()->detach();
+       /* $company->pools()->detach();
         $pooled = 0;
         if (count($data['poolGroupId']) >= 1) {
             for ($x = 0; $x < count($data['poolGroupId']); $x++) {
@@ -813,7 +813,7 @@ class EloquentCompany extends AbstractRepository implements CompanyInterface
                 ]
             );
             $company->save();
-        }
+        }*/
 
 
         return $company;
