@@ -70,6 +70,9 @@ $api->version('v1', function ($api) {
         $companiesController = 'WA\Http\Controllers\CompaniesController';
         $api->get('companies', ['as' => 'api.company.index', 'uses' => $companiesController . '@index']);
         $api->get('companies/{id}', ['as' => 'api.company.show', 'uses' => $companiesController . '@show']);
+        $api->post('companies', ['uses'=> $companiesController . '@create']);
+        $api->put('companies/{id}', ['uses' => $companiesController . '@store']);
+        $api->delete('companies/{id}', ['uses' => $companiesController. '@deleteCompany']);
 
         // =Employees
         $employeesController = 'WA\Http\Controllers\UsersController';
