@@ -622,9 +622,9 @@ class EloquentCompany extends AbstractRepository implements CompanyInterface
 
         $companyData = [
             'name' => isset($data['name']) ? $data['name'] : null,
-            'label' => isset($data['label']) ? $data['label'] : "",
-            'shortName' => isset($data['shortName']) ? $data['shortName'] : "",
-            'rawDataDirectoryPath' => isset($data['rawDataDirectoryPath']) ? $data['rawDataDirectoryPath'] : "",
+            'label' => isset($data['label']) ? $data['label'] : null,
+            'shortName' => isset($data['shortName']) ? $data['shortName'] : null,
+            'rawDataDirectoryPath' => isset($data['rawDataDirectoryPath']) ? $data['rawDataDirectoryPath'] : null,
             'active' => isset($data['active']) ? $data['active'] : 0,
             'isCensus' => isset($data['isCensus']) ? $data['isCensus'] : 0,
             // 'isLive' => isset($data['isLive']) ? $data['isLive'] : 0
@@ -653,57 +653,6 @@ class EloquentCompany extends AbstractRepository implements CompanyInterface
                     }
                 }
             }
-
-            /*$pooled = 0;
-
-            if (isset($data['poolGroupId']) && count($data['poolGroupId']) >= 1) {
-                for ($x = 0; $x < count($data['poolGroupId']); $x++) {
-                    if (!empty($data['poolGroupId'][$x])) {
-                        $base_cost = Money::fromString((string)$data['baseCost'][$x], new Currency('USD'))->getAmount();
-                        $poolBAN = !empty($data['poolBAN'][$x]) ? trim($data['poolBAN'][$x]) : null;
-                        $company->pools()->attach(
-                            $company->id,
-                            [
-                                'poolGroupId' => (int)$data['poolGroupId'][$x],
-                                'baseCost' => $base_cost,
-                                'billingAccountNumber' => $poolBAN
-                            ]
-                        );
-                        $company->save();
-                        $pooled = 1;
-                    }
-                }
-
-            }
-
-            if (!$pooled) {
-                //Set an entry with base cost -1 to turn off pooling
-                $company->pools()->attach(
-                    $company->id,
-                    [
-                        'poolGroupId' => 1,
-                        'baseCost' => -1,
-                    ]
-                );
-                $company->save();
-            }*/
-
-
-            //Pooling turned off by default for prospect companies
-
-            /*( if ($company->isLive == 0) {
-
-                 $pool_base = app()->make('WA\DataStore\PoolBase');
-                 $table_name = !empty($pool_base) ? $pool_base->getTable() : pool_bases;
-                 $data = [
-                     "baseCost" => -1,
-                     "companyId" => $company->id,
-                     "poolGroupId" => 1
-                 ];
-
-                 \DB::table($table_name)->insert($data);
-             }*/
-
 
             return $company;
 
@@ -750,9 +699,9 @@ class EloquentCompany extends AbstractRepository implements CompanyInterface
             return false;
         }
 
-        $company->name = $data['name'];
-        $company->label = $data['label'];
-        $company->shortName = $data['shortName'];
+        $company->name = isset($data['name']) ? $data['name'] : null ;
+        $company->label = isset($data['label']) ? $data['label'] : null;
+        $company->shortName = isset($data['shortName']) ? $data['shortName'] : null;
         $company->active = isset($data['active']) ? $data['active'] : 0;
         // $company->isLive = isset($data['isLive']) ? $data['isLive'] : 0;
         $company->isCensus = isset($data['isCensus']) ? $data['isCensus'] : 0;
@@ -780,40 +729,6 @@ class EloquentCompany extends AbstractRepository implements CompanyInterface
             }
 
         }
-
-        //Remove existing entries first to avoid duplicate rows
-       /* $company->pools()->detach();
-        $pooled = 0;
-        if (count($data['poolGroupId']) >= 1) {
-            for ($x = 0; $x < count($data['poolGroupId']); $x++) {
-                if (!empty($data['poolGroupId'][$x])) {
-                    $base_cost = Money::fromString((string)$data['baseCost'][$x], new Currency('USD'))->getAmount();
-                    $poolBAN = !empty($data['poolBAN'][$x]) ? trim($data['poolBAN'][$x]) : null;
-                    $company->pools()->attach(
-                        $company->id,
-                        [
-                            'poolGroupId' => (int)$data['poolGroupId'][$x],
-                            'baseCost' => $base_cost,
-                            'billingAccountNumber' => $poolBAN
-                        ]
-                    );
-                    $company->save();
-                    $pooled = 1;
-                }
-            }
-        }
-
-        if (!$pooled) {
-            //Set an entry with base cost -1 to turn off pooling
-            $company->pools()->attach(
-                $company->id,
-                [
-                    'poolGroupId' => 1,
-                    'baseCost' => -1,
-                ]
-            );
-            $company->save();
-        }*/
 
 
         return $company;
