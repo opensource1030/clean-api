@@ -18,8 +18,10 @@ class OauthApiTest extends TestCase
 
 	public function testApiOauthAccessToken()
 	{
-		$this->assertTrue(true);
-		/*
+		$this->markTestIncomplete(
+          'TODO: needs to be reviewed.' 
+        );
+
 		$this->artisan('db:seed');
 
 		$parameters = [
@@ -40,11 +42,5 @@ class OauthApiTest extends TestCase
 				$parameters,
 				$headers			
 			);
-
-        var_dump($res);
-        die;
-        
-        $this->assertTrue(true);
-        */
-	}
+    }
 }

@@ -46,8 +46,12 @@ class UsersApiTest extends TestCase
             ]);
     }
 
-   /* public function testRelationshipWithPages()
+    public function testRelationshipWithPages()
     {
+        $this->markTestIncomplete(
+          'TODO: needs to be reviewed.' 
+        );
+
         $user = factory(\WA\DataStore\User\User::class)->create();
 
         $page = factory(\WA\DataStore\Page\Page::class)->create();
@@ -76,6 +80,5 @@ class UsersApiTest extends TestCase
 
             ]);
 
-    }*/
-
+    }
 }

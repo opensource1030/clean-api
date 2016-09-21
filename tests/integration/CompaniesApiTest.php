@@ -45,10 +45,13 @@ class CompaniesTest extends TestCase
 
     }
 
-    /* public function testRelationshipWithPages()
+    public function testRelationshipWithPages()
     {
+        $this->markTestIncomplete(
+          'TODO: needs to be reviewed.' 
+        );
 
-      $company = factory(\WA\DataStore\Company\Company::class)->create();
+        $company = factory(\WA\DataStore\Company\Company::class)->create();
 
         $page = factory(\WA\DataStore\Page\Page::class)->create();
 
@@ -73,7 +76,5 @@ class CompaniesTest extends TestCase
                 'owner_id' => $company->id,
             ]);
 
-    }*/
-
-
+    }
 }
