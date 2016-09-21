@@ -31,6 +31,13 @@ class Carrier extends BaseDataStore
 {
     protected $table = 'carriers';
 
+    protected $fillable = [
+            'name',
+            'presentation',
+            'active',
+            'locationId',
+            'shortName'];
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
@@ -60,7 +67,7 @@ class Carrier extends BaseDataStore
      */
     public function devices()
     {
-        return $this->hasMany('WA\DataStore\Device\Device', 'carrieId');
+        return $this->belongsToMany('WA\DataStore\Device\Device', 'device_carriers', 'deviceId', 'carrierId');
     }
 
 

@@ -1,13 +1,14 @@
 <?php
 
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateStylesTable extends Migration
+class CreateImagesTable extends Migration
 {
     use \WA\Database\Command\TablesRelationsAndIndexes;
 
-    protected $tableName = 'styles';
-    
+    protected $tableName = 'images';
+
     /**
      * Run the migrations.
      *
@@ -19,7 +20,13 @@ class CreateStylesTable extends Migration
             $this->tableName,
             function ($table) {
                 $table->increments('id');
-                $table->string('name');
+                $table->string('originalName')->nullable();
+                $table->string('filename')->nullable();
+                $table->string('mimeType')->nullable();
+                $table->string('extension')->nullable();                
+                $table->integer('size')->nullable();
+
+                $table->nullableTimestamps();
             }
         );
     }

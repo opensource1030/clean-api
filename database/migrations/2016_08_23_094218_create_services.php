@@ -46,7 +46,7 @@ class CreateServices extends Migration
         Schema::table(
             'packages', 
             function($table) {
-                $table->foreign('servicesId')->references('id')->on('services');
+                $table->foreign('servicesId')->references('id')->on('services')->onDelete('cascade');
             }
         );
     }

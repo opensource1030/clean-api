@@ -1,36 +1,45 @@
 <?php
 
-use Laravel\Lumen\Testing\DatabaseTransactions;
+use Laravel\Lumen\Testing\DatabaseMigrations;
 
+use WA\DataStore\Allocation\Allocation;
 
 class AllocationsApiTest extends TestCase
 {
-
-    use DatabaseTransactions;
-
+    use DatabaseMigrations;
 
     /**
-     * A basic functional test for allocations endpoints
-     *
-     *
+     * A basic functional test for Allocations
      */
     public function testGetAllocations()
     {
+        factory(\WA\DataStore\Allocation\Allocation::class, 40)->create();
 
-        $allocation = factory(\WA\DataStore\Allocation\Allocation::class)->create();
-
-        $this->get('/allocations/')
-            ->seeJsonStructure([
+        $this->json('GET', '/allocations/')
+            ->seeJsonStructure(
+            [
                 'data' => [
-                    0 => [ 'type','id',
+                    0 => [ 
+                        'type',
+                        'id',
                         'attributes' => [
-                            'bill_month', 'carrier', 'mobile_number', 'currency', 'device', 'allocated_charge', 'service_plan_charge', 'usage_charge', 'other_charge', 'fees'
+                            'bill_month',
+                            'carrier',
+                            'mobile_number',
+                            'currency',
+                            'device',
+                            'allocated_charge',
+                            'service_plan_charge',
+                            'usage_charge',
+                            'other_charge',
+                            'fees'
+
                         ],
-                        'links'
+                        'links' => [
+                            'self'
+                        ]
                     ]
-
                 ]
-
             ]);
     }
 
@@ -38,26 +47,18 @@ class AllocationsApiTest extends TestCase
     {
         $allocation = factory(\WA\DataStore\Allocation\Allocation::class)->create();
 
-       $allocatedCharge = number_format($allocation->totalAllocatedCharge, 2);
-       $servicePlanCharge =  number_format($allocation->servicePlanCharges, 2);
-       $usageCharge = number_format($allocation->usageCharges, 2);
-       $otherCharge = number_format($allocation->otherCharges, 2);
-       $fees = number_format($allocation->fees, 2);
-
-        $this->get('/allocations/'. $allocation->id)
+        $this->json('GET', '/allocations/'. $allocation->id)
             ->seeJson([
                 'type' => 'allocations',
                 'bill_month'=> $allocation->billMonth,
                 'carrier' => $allocation->carrier,
                 'currency' => $allocation->currency,
                 'device' => $allocation->handsetModel,
-                'allocated_charge' => "$allocatedCharge",
-                'service_plan_charge' => "$servicePlanCharge",
-                'usage_charge' => "$usageCharge",
-                'other_charge' => "$otherCharge",
-                'fees' => "$fees",
+                'allocated_charge' => "$allocation->totalAllocatedCharge",
+                'service_plan_charge' => "$allocation->servicePlanCharges",
+                'usage_charge' => "$allocation->usageCharges",
+                'other_charge' => "$allocation->otherCharges",
+                'fees' => "$allocation->fees",
             ]);
-
     }
-
 }

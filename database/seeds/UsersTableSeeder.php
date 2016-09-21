@@ -12,7 +12,7 @@ class UsersTableSeeder extends BaseTableSeeder
         $data = [
         	'identification' => uniqid('WA-'),
         	'uuid' => '123456789',
-        	'email' => 'sirion@developers.com',
+        	'email' => 'dev@wirelessanalytics.com',
         	'supervisorEmail' => 'admin@siriondev.com',
         	'password' => bcrypt('user'),
         	'confirmation_code' => md5(uniqid(mt_rand(), true)),
@@ -22,6 +22,7 @@ class UsersTableSeeder extends BaseTableSeeder
         	'username' => 'sirion',
         	'defaultLang' => 'en',
 	        'supervisorId' => 4,
+            'notify' => 0,
     	    'approverId' => 3,
         	'defaultLocationId' => 'location',
 	        'companyId' => 1

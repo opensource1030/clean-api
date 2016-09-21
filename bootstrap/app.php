@@ -48,6 +48,11 @@ $app->singleton(
     WA\Console\Kernel::class
 );
 
+/*
+$app->singleton('filesystem', function ($app) {
+    return $app->loadComponent('filesystems', 'Illuminate\Filesystem\FilesystemServiceProvider', 'filesystem');
+});*/
+
 
 /*
 |--------------------------------------------------------------------------
@@ -118,6 +123,7 @@ $app->register(Dingo\Api\Provider\LumenServiceProvider::class);
 $app->register(\WA\Providers\OAuthServiceProvider::class);
 $app->register(\WA\Providers\Saml2ServiceProvider::class);
 $app->register(\WA\Providers\CatchAllOptionsRequestsProvider::class);
+$app->register(\GrahamCampbell\Flysystem\FlysystemServiceProvider::class);
 
 app('Dingo\Api\Transformer\Factory')->setAdapter(function ($app) {
     $base_url = env('API_DOMAIN', 'api.wirelessanalytics.com');
@@ -174,6 +180,10 @@ if (!class_exists('Request')) {
     class_alias('Illuminate\Support\Facades\Request', 'Request');
 }
 
+
+if (!class_exists('Flysystem')) {
+    class_alias('\GrahamCampbell\Flysystem\Facades\Flysystem', 'Flysystem');
+}
 
 
 return $app;

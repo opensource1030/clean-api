@@ -8,7 +8,7 @@
 
 class PricesTableSeeder extends BaseTableSeeder
 {
-    protected $table = "device_prices";
+    protected $table = "prices";
 
     /**
      * Run the database seeds.
@@ -22,92 +22,92 @@ class PricesTableSeeder extends BaseTableSeeder
         $data = [
 
             [
-                'priceRetail'              => 399,
-                'price1'              => 399,
-                'price2'              => 399,
-                'priceOwn'              => 399,
-                'deviceId'              => 1,
-                'styleId'              => 1,
-                'capacityId'              => 1,
-                'carrierId'              => 1,
-                'providerId'              => 4
+                'deviceId' => 1,
+                'capacityId' => 1,
+                'styleId' => 3,
+                'carrierId' => 1,
+                'companyId' => 1,
+                'priceRetail' => 100,
+                'price1' => 100,
+                'price2' => 100,
+                'priceOwn' => 100
             ],
             [
-                'priceRetail'              => 399,
-                'price1'              => 399,
-                'price2'              => 399,
-                'priceOwn'              => 399,
-                'deviceId'              => 1,
-                'styleId'              => 1,
-                'capacityId'              => 1,
-                'carrierId'              => 2,
-                'providerId'              => 4
+                'deviceId' => 1,
+                'capacityId' => 2,
+                'styleId' => 3,
+                'carrierId' => 1,
+                'companyId' => 1,
+                'priceRetail' => 200,
+                'price1' => 200,
+                'price2' => 200,
+                'priceOwn' => 200
             ],
             [
-                'priceRetail'              => 399,
-                'price1'              => 399,
-                'price2'              => 399,
-                'priceOwn'              => 399,
-                'deviceId'              => 1,
-                'styleId'              => 1,
-                'capacityId'              => 2,
-                'carrierId'              => 1,
-                'providerId'              => 4
+                'deviceId' => 1,
+                'capacityId' => 1,
+                'styleId' => 3,
+                'carrierId' => 1,
+                'companyId' => 2,
+                'priceRetail' => 300,
+                'price1' => 300,
+                'price2' => 300,
+                'priceOwn' => 300
             ],
             [
-                'priceRetail'              => 399,
-                'price1'              => 399,
-                'price2'              => 399,
-                'priceOwn'              => 399,
-                'deviceId'              => 1,
-                'styleId'              => 1,
-                'capacityId'              => 2,
-                'carrierId'              => 2,
-                'providerId'              => 4
+                'deviceId' => 1,
+                'capacityId' => 2,
+                'styleId' => 3,
+                'carrierId' => 1,
+                'companyId' => 2,
+                'priceRetail' => 400,
+                'price1' => 400,
+                'price2' => 400,
+                'priceOwn' => 400
             ],
             [
-                'priceRetail'              => 399,
-                'price1'              => 399,
-                'price2'              => 399,
-                'priceOwn'              => 399,
-                'deviceId'              => 1,
-                'styleId'              => 2,
-                'capacityId'              => 1,
-                'carrierId'              => 1,
-                'providerId'              => 4
+                'deviceId' => 1,
+                'capacityId' => 1,
+                'styleId' => 3,
+                'carrierId' => 2,
+                'companyId' => 1,
+                'priceRetail' => 500,
+                'price1' => 500,
+                'price2' => 500,
+                'priceOwn' => 500
             ],
             [
-                'priceRetail'              => 399,
-                'price1'              => 399,
-                'price2'              => 399,
-                'priceOwn'              => 399,
-                'deviceId'              => 1,
-                'styleId'              => 2,
-                'capacityId'              => 1,
-                'carrierId'              => 2,
-                'providerId'              => 4
-            ],
-                        [
-                'priceRetail'              => 399,
-                'price1'              => 399,
-                'price2'              => 399,
-                'priceOwn'              => 399,
-                'deviceId'              => 1,
-                'styleId'              => 2,
-                'capacityId'              => 2,
-                'carrierId'              => 1,
-                'providerId'              => 4
+                'deviceId' => 1,
+                'capacityId' => 2,
+                'styleId' => 3,
+                'carrierId' => 2,
+                'companyId' => 1,
+                'priceRetail' => 600,
+                'price1' => 600,
+                'price2' => 600,
+                'priceOwn' => 600
             ],
             [
-                'priceRetail'              => 399,
-                'price1'              => 399,
-                'price2'              => 399,
-                'priceOwn'              => 399,
-                'deviceId'              => 1,
-                'styleId'              => 2,
-                'capacityId'              => 2,
-                'carrierId'              => 2,
-                'providerId'              => 4
+                'deviceId' => 1,
+                'capacityId' => 1,
+                'styleId' => 3,
+                'carrierId' => 2,
+                'companyId' => 2,
+                'priceRetail' => 700,
+                'price1' => 700,
+                'price2' => 700,
+                'priceOwn' => 700
+            ],
+            [
+                'deviceId' => 1,
+                'capacityId' => 2,
+                'styleId' => 3,
+                'carrierId' => 2,
+                'companyId' => 2,
+                'priceRetail' => 800,
+                'price1' => 800,
+                'price2' => 800,
+                'priceOwn' => 800
             ]
         ];
 

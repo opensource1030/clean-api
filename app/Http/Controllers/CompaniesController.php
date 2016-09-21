@@ -4,6 +4,7 @@ namespace WA\Http\Controllers;
 
 use Cartalyst\DataGrid\Laravel\Facades\DataGrid;
 use Dingo\Api\Http\Response;
+use WA\DataStore\Company\Company;
 use Faker\Provider\hr_HR\Company;
 use WA\DataStore\Company\CompanyTransformer;
 use WA\Repositories\Carrier\CarrierInterface;
@@ -51,8 +52,9 @@ class CompaniesController extends ApiController
     {
         $criteria = $this->getRequestCriteria();
         $this->company->setCriteria($criteria);
-        $companies = $this->company->byPage();
-        $response = $this->response()->paginator($companies, new CompanyTransformer(), ['key' => 'companies']);
+        $company = $this->company->byPage();
+      
+        $response = $this->response()->withPaginator($company, new CompanyTransformer(),['key' => 'companies']);
         $response = $this->applyMeta($response);
         return $response;
     }
@@ -64,10 +66,13 @@ class CompaniesController extends ApiController
      */
     public function show($id)
     {
-        $company = $this->company->byId($id);
+        $company = Company::find($id);
+        if($company == null){
+            $error['errors']['get'] = 'the Company selected doesn\'t exists';   
+            return response()->json($error)->setStatusCode(409);
+        }
 
         return $this->response()->item($company, new CompanyTransformer(), ['key' => 'companies']);
-
     }
 
     /**

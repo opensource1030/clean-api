@@ -1,50 +1,48 @@
 <?php
 
-use Laravel\Lumen\Testing\DatabaseTransactions;
+use Laravel\Lumen\Testing\DatabaseMigrations;
 
+use WA\DataStore\Asset\Asset;
 
 class AssetsApiTest extends TestCase
 {
-
-    use DatabaseTransactions;
-
+    use DatabaseMigrations;
 
     /**
-     * A basic functional test for assets endpoints
-     *
-     *
+     * A basic functional test for Assets
      */
-    public function testGetAssets()
-    {
+    public function testGetAssets() {
 
-        $asset = factory(\WA\DataStore\Asset\Asset::class)->create();
+        factory(\WA\DataStore\Asset\Asset::class, 40)->create();
 
-        $this->get('/assets/')
+        $this->json('GET', 'assets')
             ->seeJsonStructure([
                 'data' => [
-                    0 => [ 'type','id',
+                    0 => [ 
+                        'type',
+                        'id',
                         'attributes' => [
-                           'identification' , 'active'
+                            'identification',
+                            'active'
                         ],
-                        'links'
+                        'links' => [
+                            'self'
+                        ]
                     ]
-
                 ]
-
             ]);
     }
 
-    public function testGetAssetById()
-    {
+    public function testGetAssetById() {
+
         $asset = factory(\WA\DataStore\Asset\Asset::class)->create();
 
-        $this->get('/assets/'. $asset->id)
+        $this->json('GET', 'assets/'. $asset->id)
             ->seeJson([
                 'type' => 'assets',
                 'id'=> "$asset->id",
                 'identification' => $asset->identification,
-                'active' => $asset->active,
+                'active' => "$asset->active",
             ]);
     }
-
 }

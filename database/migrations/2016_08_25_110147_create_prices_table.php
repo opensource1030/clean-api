@@ -3,11 +3,11 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateDevicePricesTable extends Migration
+class CreatePricesTable extends Migration
 {
     use \WA\Database\Command\TablesRelationsAndIndexes;
 
-    protected $tableName = 'device_prices';
+    protected $tableName = 'prices';
     
     /**
      * Run the migrations.
@@ -25,21 +25,23 @@ class CreateDevicePricesTable extends Migration
                 $table->integer('price2');
                 $table->integer('priceOwn');
                 $table->integer('deviceId')->unsigned();
-                $table->integer('styleId')->unsigned();
                 $table->integer('capacityId')->unsigned();
+                $table->integer('styleId')->unsigned();
                 $table->integer('carrierId')->unsigned();
-                $table->integer('providerId')->unsigned();
+                $table->integer('companyId')->unsigned();
+
+                $table->nullableTimestamps();
             }
         );
 
         Schema::table(
             $this->tableName, 
             function($table) {
-                $table->foreign('deviceId')->references('id')->on('devices');
-                $table->foreign('styleId')->references('id')->on('styles');
-                $table->foreign('capacityId')->references('id')->on('capacities');
-                $table->foreign('carrierId')->references('id')->on('carriers');
-                $table->foreign('providerId')->references('id')->on('providers');
+                $table->foreign('deviceId')->references('id')->on('devices')->onDelete('cascade');
+                $table->foreign('capacityId')->references('id')->on('modifications')->onDelete('cascade');
+                $table->foreign('styleId')->references('id')->on('modifications')->onDelete('cascade');
+                $table->foreign('carrierId')->references('id')->on('carriers')->onDelete('cascade');
+                $table->foreign('companyId')->references('id')->on('companies')->onDelete('cascade');
             }
         );
     }

@@ -42,12 +42,13 @@ class Device extends MutableDataStore
     public $timestamps = true;
 
     protected $fillable = [
+        'name',
+        'properties',
         'deviceTypeId',
         'statusId',
         'externalId',
         'identification',
         'syncId',
-        'carrierId',
     ];
 
     /**
@@ -67,11 +68,19 @@ class Device extends MutableDataStore
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function carrier()
+    public function carriers()
     {
-        return $this->belongsTo('WA\DataStore\Carrier\Carrier', 'carrierId');
+        return $this->belongsToMany('WA\DataStore\Carrier\Carrier', 'device_carriers', 'deviceId', 'carrierId');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function modifications()
+    {
+        return $this->belongsToMany('WA\DataStore\Modification\Modification', 'device_modifications', 'deviceId', 'modificationId');
     }
 
     /**
@@ -79,7 +88,23 @@ class Device extends MutableDataStore
      */
     public function companies()
     {
-        return $this->belongsToMany('WA\DataStore\Company\Company', 'companies_devices', 'deviceId', 'companyId');
+        return $this->belongsToMany('WA\DataStore\Company\Company', 'device_companies', 'deviceId', 'companyId');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function images()
+    {
+        return $this->belongsToMany('WA\DataStore\Image\Image', 'device_images', 'deviceId', 'imageId');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function prices()
+    {
+        return $this->hasMany('WA\DataStore\Price\Price', 'deviceId');
     }
 
     /**

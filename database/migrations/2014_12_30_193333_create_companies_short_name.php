@@ -14,7 +14,7 @@ class CreateCompaniesShortName extends Migration
   public function up()
   {
     Schema::table('companies', function ( $table) {
-      $table->string('shortName')->before('rawDataDirectoryPath');
+      $table->string('shortName')->before('rawDataDirectoryPath')->default('shortName');
     });
   }
 

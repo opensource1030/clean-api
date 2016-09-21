@@ -12,7 +12,6 @@ use League\Fractal\TransformerAbstract;
  */
 class ServiceTransformer extends TransformerAbstract
 {
-
     /**
      * @param Service $service
      *

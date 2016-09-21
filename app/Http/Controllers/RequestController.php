@@ -40,10 +40,9 @@ class RequestController extends ApiController
 
         $request = $this->request->byPage();
 
-        $response = $this->response()->collection($request, new RequestTransformer(), ['key' => 'request']);
+        $response = $this->response()->collection($request, new RequestTransformer(), ['key' => 'requests']);
         $response = $this->applyMeta($response);
         return $response;
-
     }
 
     /**
@@ -56,7 +55,7 @@ class RequestController extends ApiController
     public function show($id)
     {
         $request = $this->request->byId($id);
-        return $this->response()->item($request, new RequestTransformer(), ['key' => 'request']);
+        return $this->response()->item($request, new RequestTransformer(), ['key' => 'requests']);
     }
 
     /**
@@ -70,7 +69,7 @@ class RequestController extends ApiController
         $data = $request->all();
         $data['id'] = $id;
         $request = $this->request->update($data);
-        return $this->response()->item($request, new RequestTransformer(), ['key' => 'request']);
+        return $this->response()->item($request, new RequestTransformer(), ['key' => 'requests']);
     }
 
     /**
@@ -82,7 +81,7 @@ class RequestController extends ApiController
     {
         $data = $request->all();
         $request = $this->request->create($data);
-        return $this->response()->item($request, new RequestTransformer(), ['key' => 'request']);
+        return $this->response()->item($request, new RequestTransformer(), ['key' => 'requests']);
     }
 
     /**

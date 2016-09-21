@@ -3,6 +3,7 @@
 namespace WA\Providers;
 
 use Illuminate\Contracts\Foundation\Application;
+
 use WA\DataStore\Allocation\Allocation;
 use WA\DataStore\Asset\Asset;
 use WA\DataStore\Attribute;
@@ -25,9 +26,10 @@ use WA\DataStore\Udl\Udl;
 use WA\DataStore\UdlValue\UdlValue;
 use WA\DataStore\UdlValuePath\UdlValuePath;
 use WA\DataStore\UdlValuePathUsers\UdlValuePathUsers;
+
 use WA\DataStore\User\User;
 use WA\DataStore\UserNotifications;
-use WA\Repositories\Allocation\EloquentAllocation;
+
 use WA\Repositories\Asset\EloquentAsset;
 use WA\Repositories\Attribute\EloquentAttribute;
 use WA\Repositories\Carrier\EloquentCarrier;
@@ -35,7 +37,6 @@ use WA\Repositories\Carrier\EloquentCarrierDetail;
 use WA\Repositories\Census\EloquentCensus;
 use WA\Repositories\Company\EloquentCompany;
 use WA\Repositories\Content\EloquentContent;
-use WA\Repositories\Device\EloquentDevice;
 use WA\Repositories\DeviceType\EloquentDeviceType;
 use WA\Repositories\EmailNotifications\EloquentEmailNotifications;
 use WA\Repositories\HelpDesk\EasyVista;
@@ -43,8 +44,6 @@ use WA\Repositories\HelpDesk\HelpDeskCacheDecorator;
 use WA\Repositories\JobStatus\EloquentJobStatus;
 use WA\Repositories\Location\EloquentLocation;
 use WA\Repositories\NotificationCategory\EloquentNotificationCategory;
-use WA\Repositories\Permission\EloquentPermission;
-use WA\Repositories\Role\EloquentRole;
 use WA\Repositories\Service\EloquentService;
 use WA\Repositories\SyncJob\EloquentSyncJob;
 use WA\Repositories\Udl\EloquentUdl;
@@ -53,8 +52,55 @@ use WA\Repositories\UdlValuePath\EloquentUdlValuePath;
 use WA\Repositories\UdlValuePathUsers\EloquentUdlValuePathUsers;
 use WA\Repositories\User\EloquentUser;
 use WA\Repositories\User\UserCacheDecorator;
+use WA\Repositories\Role\EloquentRole;
+use WA\Repositories\Permission\EloquentPermission;
+use WA\Repositories\Allocation\EloquentAllocation;
+
+use WA\Repositories\Device\EloquentDevice;
+
+
+use WA\Repositories\Image\EloquentImage;
+use WA\DataStore\Image\Image;
+
+use WA\Repositories\Device\EloquentDeviceModification;
+use WA\DataStore\Device\DeviceModification;
+
+use WA\Repositories\Device\EloquentDeviceImage;
+use WA\DataStore\Device\DeviceImage;
+
+use WA\Repositories\Device\EloquentDeviceCompany;
+use WA\DataStore\Device\DeviceCompany;
+
+use WA\Repositories\Device\EloquentDeviceCarrier;
+use WA\DataStore\Device\DeviceCarrier;
+
+use WA\Repositories\Price\EloquentPrice;
+use WA\DataStore\Price\Price;
+
+
+
+
+use WA\Repositories\App\EloquentApp;
+use WA\DataStore\App\App;
+
+use WA\Repositories\Order\EloquentOrder;
+use WA\DataStore\Order\Order;
+
+use WA\Repositories\Package\EloquentPackage;
+use WA\DataStore\Package\Package;
+
+use WA\Repositories\Request\EloquentRequest;
+use WA\DataStore\Request\Request;
+
+use WA\Repositories\Modification\EloquentModification;
+use WA\DataStore\Modification\Modification;
+
+
+
 use WA\Repositories\UserNotifications\EloquentUserNotifications;
 use WA\Services\Cache\Cache;
+
+
 
 
 /**
@@ -67,11 +113,100 @@ trait ServiceRegistration
      */
     public function registerDevice()
     {
-
         app()->singleton(
             'WA\Repositories\Device\DeviceInterface',
             function () {
                 return new EloquentDevice(new Device(),
+                    app()->make('WA\Repositories\JobStatus\JobStatusInterface')
+                );
+            }
+        );
+    }
+
+    /**
+     * @param
+     */
+    public function registerImage()
+    {
+        app()->singleton(
+            'WA\Repositories\Image\ImageInterface',
+            function () {
+                return new EloquentImage(new Image(),
+                    app()->make('WA\Repositories\JobStatus\JobStatusInterface')
+                );
+            }
+        );
+    }
+
+    /**
+     * @param
+     */
+    public function registerDeviceModification()
+    {
+        app()->singleton(
+            'WA\Repositories\Device\DeviceModificationInterface',
+            function () {
+                return new EloquentDeviceModification(new DeviceModification(),
+                    app()->make('WA\Repositories\JobStatus\JobStatusInterface')
+                );
+            }
+        );
+    }
+
+    /**
+     * @param
+     */
+    public function registerDeviceImage()
+    {
+        app()->singleton(
+            'WA\Repositories\Device\DeviceImageInterface',
+            function () {
+                return new EloquentDeviceImage(new DeviceImage(),
+                    app()->make('WA\Repositories\JobStatus\JobStatusInterface')
+                );
+            }
+        );
+    }
+
+    /**
+     * @param
+     */
+    public function registerDeviceCarrier()
+    {
+        app()->singleton(
+            'WA\Repositories\Device\DeviceCarrierInterface',
+            function () {
+                return new EloquentDeviceCarrier(new DeviceCarrier(),
+                    app()->make('WA\Repositories\JobStatus\JobStatusInterface')
+                );
+            }
+        );
+    }
+
+    /**
+     * @param
+     */
+    public function registerDeviceCompany()
+    {
+        app()->singleton(
+            'WA\Repositories\Device\DeviceCompanyInterface',
+            function () {
+                return new EloquentDeviceCompany(new DeviceCompany(),
+                    app()->make('WA\Repositories\JobStatus\JobStatusInterface')
+                );
+            }
+        );
+    }
+
+    /**
+     * @param
+     */
+    public function registerPrice()
+    {
+        app()->singleton(
+            'WA\Repositories\Price\PriceInterface',
+            function () {
+                return new EloquentPrice(new Price(),
                     app()->make('WA\Repositories\JobStatus\JobStatusInterface')
                 );
             }
@@ -384,6 +519,51 @@ trait ServiceRegistration
         app()->bind('WA\Repositories\Service\ServiceInterface',
             function () {
                 return new EloquentService(new Service());
+            }
+        );
+    }
+
+    public function registerApp()
+    {
+        app()->bind('WA\Repositories\App\AppInterface',
+            function () {
+                return new EloquentApp(new App());
+            }
+        );
+    }
+
+    public function registerOrder()
+    {
+        app()->bind('WA\Repositories\Order\OrderInterface',
+            function () {
+                return new EloquentOrder(new Order());
+            }
+        );
+    }
+
+    public function registerPackage()
+    {
+        app()->bind('WA\Repositories\Package\PackageInterface',
+            function () {
+                return new EloquentPackage(new Package());
+            }
+        );
+    }
+
+    public function registerRequest()
+    {
+        app()->bind('WA\Repositories\Request\RequestInterface',
+            function () {
+                return new EloquentRequest(new Request());
+            }
+        );
+    }
+
+    public function registerModification()
+    {
+        app()->bind('WA\Repositories\Modification\ModificationInterface',
+            function () {
+                return new EloquentModification(new Modification());
             }
         );
     }

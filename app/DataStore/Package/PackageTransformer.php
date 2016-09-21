@@ -21,10 +21,14 @@ class PackageTransformer extends TransformerAbstract
     public function transform(Package $package)
     {
         return [
-
             'id' => (int)$package->id,
-
             'name' => $package->name,
+            'conditionsId' => $package->conditionsId,
+            'devicesId' => $package->devicesId,
+            'appsId' => $package->appsId,
+            'servicesId' => $package->servicesId,
+            'created_at' => $package->created_at,
+            'updated_at' => $package->updated_at,
         ];
     }
 }

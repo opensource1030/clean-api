@@ -11,29 +11,44 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        switch(DB::getDriverName()) {
+            case 'mysql':
+                DB::statement('SET FOREIGN_KEY_CHECKS=0');
+                break;
+            case 'sqlite':
+                DB::statement('PRAGMA foreign_keys = OFF');
+                break;
+        }
 
-        $this->call(UsersTableSeeder::class);
         $this->call(AllocationsTableSeeder::class);
-        $this->call(OAuthTableSeeder::class);
+        $this->call(AppsTableSeeder::class);
         $this->call(AssetsTableSeeder::class);
-        $this->call(DevicesTableSeeder::class);
-        $this->call(PagesTableSeeder::class);
-        $this->call(CompanySaml2TableSeeder::class);
-        $this->call(CarriersTableSeeder::class);        
-        $this->call(StylesTableSeeder::class);
-        $this->call(CapacitiesTableSeeder::class);
-        $this->call(ProvidersTableSeeder::class);
-        $this->call(PricesTableSeeder::class);
-        $this->call(DeviceCarriersTableSeeder::class);          
-        $this->call(DeviceStylesTableSeeder::class);
-        $this->call(DeviceCapacitiesTableSeeder::class);
-        $this->call(DeviceProvidersTableSeeder::class);
-        $this->call(ServicesTableSeeder::class);
+        $this->call(CarriersTableSeeder::class);      
         $this->call(CompanyDomainsTableSeeder::class);
-
+        $this->call(CompanySaml2TableSeeder::class);
+        $this->call(DeviceCarriersTableSeeder::class);        
+        $this->call(DeviceCompaniesTableSeeder::class);
+        $this->call(DeviceModificationsTableSeeder::class);
+        $this->call(DevicesTableSeeder::class);
+        $this->call(ImagesTableSeeder::class);
+        $this->call(ModificationsTableSeeder::class);
+        $this->call(OAuthTableSeeder::class);
+        $this->call(OrdersTableSeeder::class);
+        $this->call(PackagesTableSeeder::class);
+        $this->call(PricesTableSeeder::class);
+        //$this->call(PagesTableSeeder::class);
+        //$this->call(ProvidersTableSeeder::class);
+        $this->call(RequestsTableSeeder::class);        
+        $this->call(ServicesTableSeeder::class);
+        $this->call(UsersTableSeeder::class);
         
-
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+        switch(DB::getDriverName()) {
+            case 'mysql':
+                DB::statement('SET FOREIGN_KEY_CHECKS=1');
+                break;
+            case 'sqlite':
+                DB::statement('PRAGMA foreign_keys = ON');
+                break;
+        }
     }
 }

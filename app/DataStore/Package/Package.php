@@ -12,10 +12,15 @@ use WA\DataStore\Package\PackageTransformer;
  */
 class Package extends BaseDataStore
 {
-    protected  $table = 'package';
+    protected  $table = 'packages';
 
-    protected $fillable = array('name');
-
+    protected $fillable = [
+            'name',
+            'conditionsId',
+            'devicesId',
+            'appsId',
+            'servicesId',
+            'updated_at',];
 
     /**
      * Get all the owners for the package

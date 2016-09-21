@@ -22,14 +22,16 @@ class CreateDeviceCarriers extends Migration
                 $table->increments('id');
                 $table->integer('deviceId')->unsigned();
                 $table->integer('carrierId')->unsigned();
+
+                $table->nullableTimestamps();
             }
         );
 
         Schema::table(
             $this->tableName, 
             function($table) {
-                $table->foreign('deviceId')->references('id')->on('devices');
-                $table->foreign('carrierId')->references('id')->on('carriers');
+                $table->foreign('deviceId')->references('id')->on('devices')->onDelete('cascade');
+                $table->foreign('carrierId')->references('id')->on('carriers')->onDelete('cascade');
             }
         );
     }

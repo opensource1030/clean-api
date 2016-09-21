@@ -92,7 +92,7 @@ class AuthController
 
             $error['errors']['message'] = $this->getErrorAndParse($e);
             return response()->json($error)->setStatusCode($httpStatusCode);
-        }        
+        }
     }
 
     /**
@@ -125,7 +125,7 @@ class AuthController
     /*
      *      Transforms an Exception Object and gets the value of the Error Message.
      *
-     *      @param:
+     *      @param: 
      *          \Exception $e
      *      @return:
      *          $error->getValue($e);
@@ -133,13 +133,14 @@ class AuthController
     private function getErrorAndParse($error){
         try{
             $reflectorResponse = new \ReflectionClass($error);
-            $classResponse = $reflectorResponse->getProperty('message');
+
+            $classResponse = $reflectorResponse->getProperty('message');    
             $classResponse->setAccessible(true);
             $dataResponse = $classResponse->getValue($error);
-            return $dataResponse;
+            return $dataResponse;    
+
         } catch (\Exception $e){
             return 'Generic Error';
         }
     }
-
 }

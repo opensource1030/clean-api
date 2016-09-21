@@ -26,9 +26,15 @@ class EloquentApp extends AbstractRepository implements AppInterface
             return false;
         }
 
-        $app->type =  isset($data['type']) ? $data['type'] : null ;
-        $app->image = isset($data['image']) ? $data['image'] : null;
-        $app->description = isset($data['description']) ? $data['description'] : null;
+        if(isset($data['type'])){
+            $app->type =  $data['type'];            
+        }
+        if(isset($data['image'])){
+            $app->image =  $data['image'];            
+        }
+        if(isset($data['description'])){
+            $app->description =  $data['description'];            
+        }
 
         if(!$app->save()) {
             return false;
@@ -57,7 +63,6 @@ class EloquentApp extends AbstractRepository implements AppInterface
      */
     public function create(array $data)
     {
-
         $appData = [
             "type" =>  isset($data['type']) ? $data['type'] : null ,
             "image" => isset($data['image']) ? $data['image'] : null,

@@ -12,7 +12,7 @@ use WA\DataStore\Request\RequestTransformer;
  */
 class Request extends BaseDataStore
 {
-    protected  $table = 'request';
+    protected  $table = 'requests';
 
     protected $fillable = array('name', 'description');
 

@@ -5,10 +5,11 @@ namespace WA\Http\Controllers;
 use Cartalyst\DataGrid\Laravel\Facades\DataGrid;
 use Dingo\Api\Routing\Helpers;
 use Illuminate\Session\SessionManager as Session;
-use WA\DataStore\Device\PackageTransformer;
+use WA\DataStore\Package\PackageTransformer;
 use WA\Helpers\Traits\SetLimits;
 use WA\Http\Controllers\Api\Traits\BasicCrud;
 use WA\Repositories\Package\PackageInterface;
+use Illuminate\Http\Request;
 
 /**
  * Package resource.
@@ -48,7 +49,6 @@ class PackageController extends ApiController
         $response = $this->response()->withPaginator($package, new PackageTransformer(),['key' => 'package']);
         $response = $this->applyMeta($response);
         return $response;
-
     }
 
     /**
@@ -61,7 +61,7 @@ class PackageController extends ApiController
     public function show($id)
     {
         $package = $this->package->byId($id);
-        return $this->response()->item($package, new PackageTransformer(), ['key' => 'package']);
+        return $this->response()->item($package, new PackageTransformer(), ['key' => 'packages']);
     }
 
     /**
@@ -75,7 +75,7 @@ class PackageController extends ApiController
         $data = $request->all();       
         $data['id'] = $id;
         $package = $this->package->update($data);
-        return $this->response()->item($package, new PackageTransformer(), ['key' => 'package']);
+        return $this->response()->item($package, new PackageTransformer(), ['key' => 'packages']);
     }
 
     /**
@@ -87,7 +87,7 @@ class PackageController extends ApiController
     {
         $data = $request->all();
         $package = $this->package->create($data);
-        return $this->response()->item($package, new PackageTransformer(), ['key' => 'package']);
+        return $this->response()->item($package, new PackageTransformer(), ['key' => 'packages']);
     }
 
     /**

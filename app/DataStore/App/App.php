@@ -12,10 +12,13 @@ use WA\DataStore\App\AppTransformer;
  */
 class App extends BaseDataStore
 {
-    protected  $table = 'app';
+    protected  $table = 'apps';
 
-    protected $fillable = array('type', 'image', 'description');
-
+    protected $fillable = [
+            'type',
+            'image',
+            'description',
+            'updated_at'];
 
     /**
      * Get all the owners for the app
@@ -36,5 +39,4 @@ class App extends BaseDataStore
     {
         return new AppTransformer();
     }
-
 }

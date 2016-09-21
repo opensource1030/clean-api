@@ -1,14 +1,14 @@
 <?php
 
 /**
- * DeviceCapacitiesTableSeeder - Insert info into database.
+ * DeviceCompaniesTableSeeder - Insert info into database.
  *  
  * @author   Agustí Dosaiguas
  */
 
-class DeviceCapacitiesTableSeeder extends BaseTableSeeder
+class DeviceCompaniesTableSeeder extends BaseTableSeeder
 {
-    protected $table = "device_capacities";
+    protected $table = "device_companies";
 
     /**
      * Run the database seeds.
@@ -23,11 +23,7 @@ class DeviceCapacitiesTableSeeder extends BaseTableSeeder
 
             [
                 'deviceId'     => 1,
-                'capacityId'      => 1
-            ],
-            [
-                'deviceId'     => 1,
-                'capacityId'      => 2
+                'companyId'      => 1
             ]
         ];
 

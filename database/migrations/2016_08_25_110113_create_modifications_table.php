@@ -1,13 +1,12 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateDeviceStyles extends Migration
+class CreateModificationsTable extends Migration
 {
     use \WA\Database\Command\TablesRelationsAndIndexes;
 
-    protected $tableName = 'device_styles';
+    protected $tableName = 'modifications';
     
     /**
      * Run the migrations.
@@ -20,16 +19,10 @@ class CreateDeviceStyles extends Migration
             $this->tableName,
             function ($table) {
                 $table->increments('id');
-                $table->integer('deviceId')->unsigned();
-                $table->integer('styleId')->unsigned();
-            }
-        );
+                $table->string('type');
+                $table->string('value');
 
-        Schema::table(
-            $this->tableName, 
-            function($table) {
-                $table->foreign('deviceId')->references('id')->on('devices');
-                $table->foreign('styleId')->references('id')->on('styles');
+                $table->nullableTimestamps();
             }
         );
     }

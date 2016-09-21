@@ -23,6 +23,8 @@ class CreateOrders extends Migration
                 $table->string('status');
                 $table->integer('userId')->unsigned();
                 $table->integer('packageId')->unsigned();
+
+                $table->nullableTimestamps();
             }
         );
 

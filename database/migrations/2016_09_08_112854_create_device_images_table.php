@@ -3,12 +3,12 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateDeviceCapacities extends Migration
+class CreateDeviceImagesTable extends Migration
 {
     use \WA\Database\Command\TablesRelationsAndIndexes;
 
-    protected $tableName = 'device_capacities';
-    
+    protected $tableName = 'device_images';
+
     /**
      * Run the migrations.
      *
@@ -21,15 +21,17 @@ class CreateDeviceCapacities extends Migration
             function ($table) {
                 $table->increments('id');
                 $table->integer('deviceId')->unsigned();
-                $table->integer('capacityId')->unsigned();
+                $table->integer('imageId')->unsigned();
+
+                $table->nullableTimestamps();
             }
         );
 
         Schema::table(
             $this->tableName, 
             function($table) {
-                $table->foreign('deviceId')->references('id')->on('devices');
-                $table->foreign('capacityId')->references('id')->on('capacities');
+                $table->foreign('deviceId')->references('id')->on('devices')->onDelete('cascade');
+                $table->foreign('imageId')->references('id')->on('images')->onDelete('cascade');
             }
         );
     }

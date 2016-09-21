@@ -19,19 +19,28 @@ class RepositoriesServiceProviders extends ServiceProvider
      * Register all Providers.
      */
     public function register()
-    {
+    {        
 
+        $this->registerApp();
         $this->registerAsset();
         $this->registerDevice();
-        $this->registerDeviceType();
-        $this->registerUser();
+        $this->registerCarrier();
+        $this->registerCarrierDetail();
+        $this->registerDeviceCarrier();
         $this->registerCompany();
+        $this->registerDeviceCompany();
+        $this->registerImage();
+        $this->registerDeviceImage();        
+        $this->registerModification();
+        $this->registerDeviceModification();
+        $this->registerPrice();
+        $this->registerDeviceType();        
         $this->registerCensus();
+        $this->registerUser();
         $this->registerJobStatus();
         $this->registerUdl();
         $this->registerUdlValue();
         $this->registerAttribute();
-        $this->registerCarrier();
         $this->registerSyncJob();
         $this->registerCarrierDetail();
         $this->registerLocation();
@@ -46,5 +55,8 @@ class RepositoriesServiceProviders extends ServiceProvider
         $this->registerContent();
         $this->registerHelpDesk();
         $this->registerService();
+        $this->registerOrder();
+        $this->registerPackage();
+        $this->registerRequest();
     }
 }

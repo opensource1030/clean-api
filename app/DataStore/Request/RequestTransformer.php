@@ -23,10 +23,11 @@ class RequestTransformer extends TransformerAbstract
         return [
 
             'id' => (int)$request->id,
-
             'name' => $request->name,
-
             'description' => $request->description,
+            'type' => $request->type,
+            'created_at' => $request->created_at,
+            'updated_at' => $request->updated_at,
         ];
     }
 }

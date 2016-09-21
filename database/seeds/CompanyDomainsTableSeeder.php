@@ -19,19 +19,12 @@ class CompanyDomainsTableSeeder extends BaseTableSeeder
     {
         $this->deleteTable();
 
-        $domainFacebook = [
-        'domain' => 'sharkninja.com',
-        'active' => 1,
-        'companyId' => 21
-        ];
-
         $domainMicrosoft = [
             'domain' => 'wirelessanalytics.com',
             'active' => 1,
             'companyId' => 9
         ];
 
-        $this->loadTable($domainFacebook);
         $this->loadTable($domainMicrosoft);
     }
 }

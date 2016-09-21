@@ -118,6 +118,94 @@ class EloquentDevice extends AbstractRepository implements DeviceInterface
         }
     }
 
+        /**
+     * Sync an asset to devices.
+     *
+     * @param int $id of the device
+     * @param array $ids of the assets to sync device with
+     *
+     * @return bool
+     */
+    public function syncCompanies($id, array $ids)
+    {
+        $device = $this->byId($id);
+
+        if (!$device) {
+            Log::error('[' . get_class() . '] | Cannot sync the find the devices');
+
+            return false;
+        }
+
+        try {
+            $device->companies()->sync($ids);
+
+            return true;
+        } catch (\Exception $e) {
+            Log::error('Syncing the company to device ' . $id . 'failed' . $e->getMessage());
+
+            return false;
+        }
+    }
+
+    /**
+     * Sync an asset to devices.
+     *
+     * @param int $id of the device
+     * @param array $ids of the assets to sync device with
+     *
+     * @return bool
+     */
+    public function syncModifications($id, array $ids)
+    {
+        $device = $this->byId($id);
+
+        if (!$device) {
+            Log::error('[' . get_class() . '] | Cannot sync the find the devices');
+
+            return false;
+        }
+
+        try {
+            $device->modifications()->sync($ids);
+
+            return true;
+        } catch (\Exception $e) {
+            echo 'Syncing the modification to device ' . $id . 'failed' . $e->getMessage();
+            Log::error('Syncing the modification to device ' . $id . 'failed' . $e->getMessage());
+
+            return false;
+        }
+    }
+
+        /**
+     * Sync an asset to devices.
+     *
+     * @param int $id of the device
+     * @param array $ids of the assets to sync device with
+     *
+     * @return bool
+     */
+    public function syncCarriers($id, array $ids)
+    {
+        $device = $this->byId($id);
+
+        if (!$device) {
+            Log::error('[' . get_class() . '] | Cannot sync the find the devices');
+
+            return false;
+        }
+
+        try {
+            $device->carriers()->sync($ids);
+
+            return true;
+        } catch (\Exception $e) {
+            Log::error('Syncing the carrier to device ' . $id . 'failed' . $e->getMessage());
+
+            return false;
+        }
+    }
+
     /**
      * Get all the unique identifications.
      *
@@ -198,5 +286,17 @@ class EloquentDevice extends AbstractRepository implements DeviceInterface
     public function getTransformer()
     {
         return $this->model->getTransformer();
+    }
+
+    /**
+     * Update a repository.
+     *
+     * @param array $data to be updated
+     *
+     * @return Object object of updated repo
+     */
+    public function update(array $data)
+    {
+        return $this->model->update($data);
     }
 }

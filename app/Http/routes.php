@@ -149,5 +149,39 @@ $api->version('v1', function ($api) {
         $api->put('services/{id}', ['uses' => $serviceController . '@store']);
         $api->delete('services/{id}', ['uses' => $serviceController . '@delete']);
 
+        //=Modification
+        $modificationController = 'WA\Http\Controllers\ModificationController';
+        $api->get('modifications', ['as' => 'api.modification.index', 'uses' => $modificationController . '@index']);
+        $api->get('modifications/{id}', ['as' => 'api.modification.show', 'uses' => $modificationController . '@show']);
+        $api->post('modifications', ['uses' => $modificationController . '@create']);
+        $api->put('modifications/{id}', ['uses' => $modificationController . '@store']);
+        $api->delete('modifications/{id}', ['uses' => $modificationController . '@delete']);
+
+        //=Carrier
+        $carrierController = 'WA\Http\Controllers\CarrierController';
+        $api->get('carriers', ['as' => 'api.carrier.index', 'uses' => $carrierController . '@index']);
+        $api->get('carriers/{id}', ['as' => 'api.carrier.show', 'uses' => $carrierController . '@show']);
+        $api->post('carriers', ['uses' => $carrierController . '@create']);
+        $api->put('carriers/{id}', ['uses' => $carrierController . '@store']);
+        $api->delete('carriers/{id}', ['uses' => $carrierController . '@delete']);
+
+        //=Price
+        $priceController = 'WA\Http\Controllers\PriceController';
+        $api->get('prices', ['as' => 'api.price.index', 'uses' => $priceController . '@index']);
+        $api->get('prices/{id}', ['as' => 'api.price.show', 'uses' => $priceController . '@show']);
+        $api->get('prices/device/{id}', ['as' => 'api.price.show', 'uses' => $priceController . '@showDevice']);
+        $api->get('prices/capacity/{id}', ['as' => 'api.price.show', 'uses' => $priceController . '@showCapacity']);
+        $api->get('prices/style/{id}', ['as' => 'api.price.show', 'uses' => $priceController . '@showStyle']);
+        $api->get('prices/carrier/{id}', ['as' => 'api.price.show', 'uses' => $priceController . '@showCarrier']);
+        $api->get('prices/company/{id}', ['as' => 'api.price.show', 'uses' => $priceController . '@showCompany']);
+        $api->post('prices', ['uses' => $priceController . '@create']);
+        $api->put('prices/{id}', ['uses' => $priceController . '@store']);
+        $api->delete('prices/{id}', ['uses' => $priceController . '@delete']);
+
+        //=Image
+        $imageController = 'WA\Http\Controllers\ImageController';
+        $api->get('images', ['as' => 'api.image.index', 'uses' => $imageController . '@index']);
+        $api->get('images/{id}', ['as' => 'api.image.show', 'uses' => $imageController . '@show']);
+        $api->post('images/create', ['uses' => $imageController . '@create']);
     });
 });

@@ -25,6 +25,8 @@ class CreateCarriersTable extends Migration
                 $table->boolean('active')->default(0);
                 $table->integer('locationId')->unsigned();
                 $table->string('shortName');
+
+                $table->nullableTimestamps();
             }
         );
     }

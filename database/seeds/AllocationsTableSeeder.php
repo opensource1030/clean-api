@@ -10,7 +10,7 @@ class AllocationsTableSeeder extends BaseTableSeeder
     {
         $this->deleteTable();
 
-        factory(\WA\DataStore\Allocation\Allocation::class, 100)->create();
+        factory(\WA\DataStore\Allocation\Allocation::class, 20)->create();
     }
 
 }

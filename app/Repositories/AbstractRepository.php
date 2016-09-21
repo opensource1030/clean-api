@@ -256,13 +256,7 @@ abstract class AbstractRepository implements RepositoryInterface
      */
     public function create(array $data)
     {
-        try {
-            return $this->model->create($data);
-        } catch (\PDOException $e) {
-            Log::error($e);
-
-            return false;
-        }
+        return $this->model->create($data);
     }
 
     /**
