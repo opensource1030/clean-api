@@ -6,7 +6,7 @@ class CreatePackageConditions extends Migration
 {
     use \WA\Database\Command\TablesRelationsAndIndexes;
 
-    protected $tableName = 'package_conditions';
+    protected $tableName = 'conditions';
     
     /**
      * Run the migrations.
@@ -19,29 +19,9 @@ class CreatePackageConditions extends Migration
             $this->tableName,
             function ( $table) {
                 $table->increments('id');
-                $table->string('profileNameCondition');
-                $table->string('profileNameValue');
-                $table->string('profileEmailCondition');
-                $table->string('profileEmailValue');
-                $table->string('profilePositionCondition');
-                $table->string('profilePositionValue');
-                $table->string('profileLevelCondition');
-                $table->string('profileLevelValue');
-                $table->string('profileDivisionCondition');
-                $table->string('profileDivisionValue');
-                $table->string('profileCostCenterCondition');
-                $table->string('profileCostCenterValue');
-                $table->string('profileBudgetCondition');
-                $table->string('profileBudgetValue');
-                $table->string('locationItemsCountryACondition');
-                $table->string('locationItemsCountryAValue');
-                $table->string('locationItemsCountryBCondition');
-                $table->string('locationItemsCountryBValue');
-                $table->string('locationItemsCityCondition');
-                $table->string('locationItemsCityValue');
-                $table->string('locationItemsAdressCondition');
-                $table->string('locationItemsAdressValue');
-
+                $table->string('condition');
+                $table->string('value');
+        
                 $table->nullableTimestamps();
             }
         );

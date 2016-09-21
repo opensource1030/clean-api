@@ -16,21 +16,17 @@ class Package extends BaseDataStore
 
     protected $fillable = [
             'name',
-            'conditionsId',
-            'devicesId',
-            'appsId',
-            'servicesId',
-            'updated_at',];
+            'updated_at'];
 
     /**
      * Get all the owners for the package
      *
      * @return \Illuminate\Database\Eloquent\Relations\MorphTo
      */
-  public function owner()
-  {
-      return $this->morphTo();
-  }
+    public function owner()
+    {
+        return $this->morphTo();
+    }
 
     /**
      * Get the transformer instance
@@ -42,4 +38,35 @@ class Package extends BaseDataStore
         return new PackageTransformer();
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function conditions()
+    {
+        return $this->belongsToMany('WA\DataStore\Condition\Condition', 'package_conditions', 'packageId', 'conditionsId');
+    }
+    
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function services()
+    {
+        return $this->belongsToMany('WA\DataStore\Company\Company', 'package_services', 'packageId', 'servicesId');
+    }
+    
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function devices()
+    {
+        return $this->belongsToMany('WA\DataStore\Company\Company', 'package_devices', 'packageId', 'devicesId');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function apps()
+    {
+        return $this->belongsToMany('WA\DataStore\Company\Company', 'package_apps', 'packageId', 'appsId');
+    }
 }

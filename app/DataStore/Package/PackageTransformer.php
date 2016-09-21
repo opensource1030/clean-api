@@ -23,12 +23,48 @@ class PackageTransformer extends TransformerAbstract
         return [
             'id' => (int)$package->id,
             'name' => $package->name,
-            'conditionsId' => $package->conditionsId,
-            'devicesId' => $package->devicesId,
-            'appsId' => $package->appsId,
-            'servicesId' => $package->servicesId,
             'created_at' => $package->created_at,
             'updated_at' => $package->updated_at,
         ];
+    }
+
+    /**
+     * @param Package $package
+     *
+     * @return ResourceCollection
+     */
+    public function includeConditions(Package $package)
+    {
+        return new ResourceCollection($package->conditions, new ConditionTransformer(),'conditions');
+    }
+
+    /**
+     * @param Package $package
+     *
+     * @return ResourceCollection
+     */
+    public function includeServices(Package $package)
+    {
+        return new ResourceCollection($package->services, new ServiceTransformer(),'services');
+    }
+
+    /**
+     * @param Package $package
+     *
+     * @return ResourceCollection
+     */
+    public function includeDevices(Package $package)
+    {
+        return new ResourceCollection($package->devices, new DeviceTransformer(),'devices');
+    }
+
+    /**
+     * @param Package $package
+     *
+     * @return ResourceCollection
+     */
+    public function includeApps(Package $package)
+    {
+        return new ResourceCollection($package->apps, new AppTransformer(),'apps');
     }
 }
