@@ -40,21 +40,17 @@ class BaseController extends Controller
     public function isJsonCorrect($request, $type){
 
         if(!isset($request['data'])){ 
-            dd("1");
             return false;
         } else {
             $data = $request['data'];    
             if(!isset($data['type'])){
-                dd("2");
                 return false; 
             } else {
                 if($data['type'] <> $type){
-                    dd("3");
                     return false; 
                 } 
             }
             if(!isset($data['attributes'])){ 
-                dd("4");
                 return false; 
             }
         }
