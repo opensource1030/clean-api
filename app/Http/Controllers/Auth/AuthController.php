@@ -121,26 +121,4 @@ class AuthController
             return $laravelUser['attributes']['id'];
         }
     }
-
-    /*
-     *      Transforms an Exception Object and gets the value of the Error Message.
-     *
-     *      @param: 
-     *          \Exception $e
-     *      @return:
-     *          $error->getValue($e);
-     */
-    private function getErrorAndParse($error){
-        try{
-            $reflectorResponse = new \ReflectionClass($error);
-
-            $classResponse = $reflectorResponse->getProperty('message');    
-            $classResponse->setAccessible(true);
-            $dataResponse = $classResponse->getValue($error);
-            return $dataResponse;    
-
-        } catch (\Exception $e){
-            return 'Generic Error';
-        }
-    }
 }

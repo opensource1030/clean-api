@@ -10,7 +10,10 @@ class AllocationsApiTest extends TestCase
 
     /**
      * A basic functional test for Allocations
+     *
+     * @AD: last_update field needs to be revised in table and Allocation.
      */
+
     public function testGetAllocations()
     {
         factory(\WA\DataStore\Allocation\Allocation::class, 40)->create();
@@ -32,7 +35,8 @@ class AllocationsApiTest extends TestCase
                             'service_plan_charge',
                             'usage_charge',
                             'other_charge',
-                            'fees'
+                            'fees',
+                            'last_upgrade'
 
                         ],
                         'links' => [

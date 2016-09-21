@@ -426,10 +426,24 @@ class DevicesApiTest extends TestCase
 
     public function testCreateDevice() {
 
-        $this->artisan('db:seed');
+        $device = factory(\WA\DataStore\Device\Device::class)->create();
 
-        $deviceTypeId = DeviceType::orderBy('id', 'asc')->first()->id;
-
+        $imag1 = factory(\WA\DataStore\Image\Image::class)->create()->id;
+        $imag2 = factory(\WA\DataStore\Image\Image::class)->create()->id;
+        
+        $asset1 = factory(\WA\DataStore\Asset\Asset::class)->create()->id;
+        $asset2 = factory(\WA\DataStore\Asset\Asset::class)->create()->id;
+        
+        $modCap1 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'capacity'] )->id;
+        $modSty2 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'style'] )->id;
+        $modCap3 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'capacity'] )->id;
+        
+        $carr1 = factory(\WA\DataStore\Carrier\Carrier::class)->create()->id;
+        $carr2 = factory(\WA\DataStore\Carrier\Carrier::class)->create()->id;
+        
+        $comp1 = factory(\WA\DataStore\Company\Company::class)->create()->id;
+        $comp2 = factory(\WA\DataStore\Company\Company::class)->create()->id;
+        
         $device = $this->post('/devices',
             [
                 'data' => [
@@ -437,7 +451,7 @@ class DevicesApiTest extends TestCase
                     'attributes' => [
                         'name' => 'whenIneedMotivation...',
                         'properties' => 'MyOneSolutionIsMyQueen',
-                        'deviceTypeId'  => $deviceTypeId,
+                        'deviceTypeId'  => $device->deviceTypeId,
                         'statusId' => 1,
                         'externalId' => 2,
                         'identification' => rand(9000000000000,9999999999999)
@@ -445,45 +459,45 @@ class DevicesApiTest extends TestCase
                     'relationships' => [
                         'images' => [
                             'data' => [
-                                [ 'type' => 'images', 'id' => '1' ],
-                                [ 'type' => 'images', 'id' => '2' ]
+                                [ 'type' => 'images', 'id' => $imag1 ],
+                                [ 'type' => 'images', 'id' => $imag2 ]
                             ]
                         ],
                         'assets' => [
                             'data' => [
-                                [ 'type' => 'assets', 'id' => '1' ],
-                                [ 'type' => 'assets', 'id' => '2' ]
+                                [ 'type' => 'assets', 'id' => $asset1 ],
+                                [ 'type' => 'assets', 'id' => $asset2 ]
                             ]
                         ],
                         'modifications' => [
                             'data' => [
-                                [ 'type' => 'modifications', 'id' => '1' ],
-                                [ 'type' => 'modifications', 'id' => '2' ],
-                                [ 'type' => 'modifications', 'id' => '3' ]
+                                [ 'type' => 'modifications', 'id' => $modCap1 ],
+                                [ 'type' => 'modifications', 'id' => $modSty2 ],
+                                [ 'type' => 'modifications', 'id' => $modCap3 ]
                             ]
                         ],
                         'carriers' => [
                             'data' => [
-                                [ 'type' => 'carriers', 'id' => '1' ],
-                                [ 'type' => 'carriers', 'id' => '2' ]
+                                [ 'type' => 'carriers', 'id' => $carr1 ],
+                                [ 'type' => 'carriers', 'id' => $carr2 ]
                             ]
                         ],
                         'companies' => [
                             'data' => [
-                                [ 'type' => 'companies', 'id' => '1' ],
-                                [ 'type' => 'companies', 'id' => '2' ]
+                                [ 'type' => 'companies', 'id' => $comp1 ],
+                                [ 'type' => 'companies', 'id' => $comp2 ]
                             ]
                         ],
                         'prices' => [
                             'data' => [
-                                [ 'type' => 'prices', 'capacityId' => 1, 'styleId' => 2, 'carrierId' => 1, 'companyId' => 1, 'priceRetail' => 100, 'price1' => 100, 'price2' => 100, 'priceOwn' => 100 ],
-                                [ 'type' => 'prices', 'capacityId' => 1, 'styleId' => 2, 'carrierId' => 1, 'companyId' => 2, 'priceRetail' => 200, 'price1' => 200, 'price2' => 200, 'priceOwn' => 200 ],
-                                [ 'type' => 'prices', 'capacityId' => 1, 'styleId' => 2, 'carrierId' => 2, 'companyId' => 1, 'priceRetail' => 300, 'price1' => 300, 'price2' => 300, 'priceOwn' => 300 ],
-                                [ 'type' => 'prices', 'capacityId' => 1, 'styleId' => 2, 'carrierId' => 2, 'companyId' => 2, 'priceRetail' => 400, 'price1' => 400, 'price2' => 400, 'priceOwn' => 400 ],
-                                [ 'type' => 'prices', 'capacityId' => 3, 'styleId' => 2, 'carrierId' => 1, 'companyId' => 1, 'priceRetail' => 500, 'price1' => 500, 'price2' => 500, 'priceOwn' => 500 ],
-                                [ 'type' => 'prices', 'capacityId' => 3, 'styleId' => 2, 'carrierId' => 1, 'companyId' => 2, 'priceRetail' => 600, 'price1' => 600, 'price2' => 600, 'priceOwn' => 600 ],
-                                [ 'type' => 'prices', 'capacityId' => 3, 'styleId' => 2, 'carrierId' => 2, 'companyId' => 1, 'priceRetail' => 700, 'price1' => 700, 'price2' => 700, 'priceOwn' => 700 ],
-                                [ 'type' => 'prices', 'capacityId' => 3, 'styleId' => 2, 'carrierId' => 2, 'companyId' => 2, 'priceRetail' => 800, 'price1' => 800, 'price2' => 800, 'priceOwn' => 800 ]
+                                [ 'type' => 'prices', 'capacityId' => $modCap1, 'styleId' => $modSty2, 'carrierId' => $carr1, 'companyId' => $comp1, 'priceRetail' => 100, 'price1' => 100, 'price2' => 100, 'priceOwn' => 100 ],
+                                [ 'type' => 'prices', 'capacityId' => $modCap1, 'styleId' => $modSty2, 'carrierId' => $carr1, 'companyId' => $comp2, 'priceRetail' => 200, 'price1' => 200, 'price2' => 200, 'priceOwn' => 200 ],
+                                [ 'type' => 'prices', 'capacityId' => $modCap1, 'styleId' => $modSty2, 'carrierId' => $carr2, 'companyId' => $comp1, 'priceRetail' => 300, 'price1' => 300, 'price2' => 300, 'priceOwn' => 300 ],
+                                [ 'type' => 'prices', 'capacityId' => $modCap1, 'styleId' => $modSty2, 'carrierId' => $carr2, 'companyId' => $comp2, 'priceRetail' => 400, 'price1' => 400, 'price2' => 400, 'priceOwn' => 400 ],
+                                [ 'type' => 'prices', 'capacityId' => $modCap3, 'styleId' => $modSty2, 'carrierId' => $carr1, 'companyId' => $comp1, 'priceRetail' => 500, 'price1' => 500, 'price2' => 500, 'priceOwn' => 500 ],
+                                [ 'type' => 'prices', 'capacityId' => $modCap3, 'styleId' => $modSty2, 'carrierId' => $carr1, 'companyId' => $comp2, 'priceRetail' => 600, 'price1' => 600, 'price2' => 600, 'priceOwn' => 600 ],
+                                [ 'type' => 'prices', 'capacityId' => $modCap3, 'styleId' => $modSty2, 'carrierId' => $carr2, 'companyId' => $comp1, 'priceRetail' => 700, 'price1' => 700, 'price2' => 700, 'priceOwn' => 700 ],
+                                [ 'type' => 'prices', 'capacityId' => $modCap3, 'styleId' => $modSty2, 'carrierId' => $carr2, 'companyId' => $comp2, 'priceRetail' => 800, 'price1' => 800, 'price2' => 800, 'priceOwn' => 800 ]
                             ]
                         ]
                     ]
@@ -494,7 +508,7 @@ class DevicesApiTest extends TestCase
                 'type' => 'devices',
                 'name' => 'whenIneedMotivation...',
                 'properties' => 'MyOneSolutionIsMyQueen',
-                'deviceTypeId'  => 1,
+                'deviceTypeId'  => $device->deviceTypeId,
                 'statusId' => 1,
                 'externalId' => 2
             ]);
@@ -1214,14 +1228,29 @@ class DevicesApiTest extends TestCase
 
     public function testCheckIfPriceRowIsCorrect(){
 
-        $this->artisan('db:seed');
+        //$this->artisan('db:seed');
+
+        $modCap1 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'capacity'] )->id;
+        $modSty2 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'style'] )->id;
+        $modCap3 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'capacity'] )->id;
+        $modSty4 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'style'] )->id;
+        $modCap5 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'capacity'] )->id;
+        $modSty6 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'style'] )->id;
+
+        $carr1 = factory(\WA\DataStore\Carrier\Carrier::class)->create()->id;
+        $carr2 = factory(\WA\DataStore\Carrier\Carrier::class)->create()->id;
+        $carr3 = factory(\WA\DataStore\Carrier\Carrier::class)->create()->id;
+
+        $comp1 = factory(\WA\DataStore\Company\Company::class)->create()->id;
+        $comp2 = factory(\WA\DataStore\Company\Company::class)->create()->id;
+        $comp3 = factory(\WA\DataStore\Company\Company::class)->create()->id;
 
         $price = array(
-            'type' => 'prices', 'capacityId' => 1, 'styleId' => 2, 'carrierId' => 1, 'companyId' => 1, 'priceRetail' => 100, 'price1' => 100, 'price2' => 100, 'priceOwn' => 100 
+            'type' => 'prices', 'capacityId' => $modCap1, 'styleId' => $modSty2, 'carrierId' => $carr1, 'companyId' => $comp1, 'priceRetail' => 100, 'price1' => 100, 'price2' => 100, 'priceOwn' => 100 
         );
-        $modifications = array(1,2,3,4,5,6);
-        $carriers = array(1,2,3);
-        $companies = array(1,2,3);
+        $modifications = array($modCap1, $modSty2, $modCap3, $modSty4, $modCap5, $modSty6);
+        $carriers = array($carr1, $carr2, $carr3);
+        $companies = array($comp1, $comp2, $comp3);
 
         $devicesController = app()->make('WA\Http\Controllers\DevicesController');
         $reflection = new \ReflectionClass($devicesController);
@@ -1235,13 +1264,27 @@ class DevicesApiTest extends TestCase
 
     public function testCheckIfPriceRowIsCorrectCapacityFails(){
 
-        $this->artisan('db:seed');
+        $modCap1 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'capacity'] )->id;
+        $modSty2 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'style'] )->id;
+        $modCap3 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'capacity'] )->id;
+        $modSty4 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'style'] )->id;
+        $modCap5 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'capacity'] )->id;
+        $modSty6 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'style'] )->id;
+
+        $carr1 = factory(\WA\DataStore\Carrier\Carrier::class)->create()->id;
+        $carr2 = factory(\WA\DataStore\Carrier\Carrier::class)->create()->id;
+        $carr3 = factory(\WA\DataStore\Carrier\Carrier::class)->create()->id;
+
+        $comp1 = factory(\WA\DataStore\Company\Company::class)->create()->id;
+        $comp2 = factory(\WA\DataStore\Company\Company::class)->create()->id;
+        $comp3 = factory(\WA\DataStore\Company\Company::class)->create()->id;
 
         $price = array(
-            'type' => 'prices', 'capacityId' => 1, 'styleId' => 2, 'carrierId' => 1, 'companyId' => 1, 'priceRetail' => 100, 'price1' => 100, 'price2' => 100, 'priceOwn' => 100 );
-        $modifications = array(2,3,4,5,6);
-        $carriers = array(1,2,3);
-        $companies = array(1,2,3);
+            'type' => 'prices', 'capacityId' => $modCap1, 'styleId' => $modSty2, 'carrierId' => $carr1, 'companyId' => $comp1, 'priceRetail' => 100, 'price1' => 100, 'price2' => 100, 'priceOwn' => 100 
+        );
+        $modifications = array($modSty2, $modCap3, $modSty4, $modCap5, $modSty6);
+        $carriers = array($carr1, $carr2, $carr3);
+        $companies = array($comp1, $comp2, $comp3);
 
         $devicesController = app()->make('WA\Http\Controllers\DevicesController');
         $reflection = new \ReflectionClass($devicesController);
@@ -1255,13 +1298,27 @@ class DevicesApiTest extends TestCase
 
     public function testCheckIfPriceRowIsCorrectStyleFails(){
 
-        $this->artisan('db:seed');
+        $modCap1 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'capacity'] )->id;
+        $modSty2 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'style'] )->id;
+        $modCap3 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'capacity'] )->id;
+        $modSty4 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'style'] )->id;
+        $modCap5 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'capacity'] )->id;
+        $modSty6 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'style'] )->id;
+
+        $carr1 = factory(\WA\DataStore\Carrier\Carrier::class)->create()->id;
+        $carr2 = factory(\WA\DataStore\Carrier\Carrier::class)->create()->id;
+        $carr3 = factory(\WA\DataStore\Carrier\Carrier::class)->create()->id;
+
+        $comp1 = factory(\WA\DataStore\Company\Company::class)->create()->id;
+        $comp2 = factory(\WA\DataStore\Company\Company::class)->create()->id;
+        $comp3 = factory(\WA\DataStore\Company\Company::class)->create()->id;
 
         $price = array(
-            'type' => 'prices', 'capacityId' => 1, 'styleId' => 2, 'carrierId' => 1, 'companyId' => 1, 'priceRetail' => 100, 'price1' => 100, 'price2' => 100, 'priceOwn' => 100 );
-        $modifications = array(1,3,4,5,6);
-        $carriers = array(1,2,3);
-        $companies = array(1,2,3);
+            'type' => 'prices', 'capacityId' => $modCap1, 'styleId' => $modSty2, 'carrierId' => $carr1, 'companyId' => $comp1, 'priceRetail' => 100, 'price1' => 100, 'price2' => 100, 'priceOwn' => 100 
+        );
+        $modifications = array($modCap1, $modCap3, $modSty4, $modCap5, $modSty6);
+        $carriers = array($carr1, $carr2, $carr3);
+        $companies = array($comp1, $comp2, $comp3);
 
         $devicesController = app()->make('WA\Http\Controllers\DevicesController');
         $reflection = new \ReflectionClass($devicesController);
@@ -1275,13 +1332,27 @@ class DevicesApiTest extends TestCase
 
     public function testCheckIfPriceRowIsCorrectCarrierFails(){
 
-        $this->artisan('db:seed');
+        $modCap1 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'capacity'] )->id;
+        $modSty2 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'style'] )->id;
+        $modCap3 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'capacity'] )->id;
+        $modSty4 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'style'] )->id;
+        $modCap5 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'capacity'] )->id;
+        $modSty6 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'style'] )->id;
+
+        $carr1 = factory(\WA\DataStore\Carrier\Carrier::class)->create()->id;
+        $carr2 = factory(\WA\DataStore\Carrier\Carrier::class)->create()->id;
+        $carr3 = factory(\WA\DataStore\Carrier\Carrier::class)->create()->id;
+
+        $comp1 = factory(\WA\DataStore\Company\Company::class)->create()->id;
+        $comp2 = factory(\WA\DataStore\Company\Company::class)->create()->id;
+        $comp3 = factory(\WA\DataStore\Company\Company::class)->create()->id;
 
         $price = array(
-            'type' => 'prices', 'capacityId' => 1, 'styleId' => 2, 'carrierId' => 1, 'companyId' => 1, 'priceRetail' => 100, 'price1' => 100, 'price2' => 100, 'priceOwn' => 100 );
-        $modifications = array(1,2,3,4,5,6);
-        $carriers = array(2,3);
-        $companies = array(1,2,3);
+            'type' => 'prices', 'capacityId' => $modCap1, 'styleId' => $modSty2, 'carrierId' => $carr1, 'companyId' => $comp1, 'priceRetail' => 100, 'price1' => 100, 'price2' => 100, 'priceOwn' => 100 
+        );
+        $modifications = array($modCap1, $modSty2, $modCap3, $modSty4, $modCap5, $modSty6);
+        $carriers = array($carr2, $carr3);
+        $companies = array($comp1, $comp2, $comp3);
 
         $devicesController = app()->make('WA\Http\Controllers\DevicesController');
         $reflection = new \ReflectionClass($devicesController);
@@ -1295,13 +1366,27 @@ class DevicesApiTest extends TestCase
 
     public function testCheckIfPriceRowIsCorrectCompanyFails(){
 
-        $this->artisan('db:seed');
+        $modCap1 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'capacity'] )->id;
+        $modSty2 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'style'] )->id;
+        $modCap3 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'capacity'] )->id;
+        $modSty4 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'style'] )->id;
+        $modCap5 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'capacity'] )->id;
+        $modSty6 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'style'] )->id;
+
+        $carr1 = factory(\WA\DataStore\Carrier\Carrier::class)->create()->id;
+        $carr2 = factory(\WA\DataStore\Carrier\Carrier::class)->create()->id;
+        $carr3 = factory(\WA\DataStore\Carrier\Carrier::class)->create()->id;
+
+        $comp1 = factory(\WA\DataStore\Company\Company::class)->create()->id;
+        $comp2 = factory(\WA\DataStore\Company\Company::class)->create()->id;
+        $comp3 = factory(\WA\DataStore\Company\Company::class)->create()->id;
 
         $price = array(
-            'type' => 'prices', 'capacityId' => 1, 'styleId' => 2, 'carrierId' => 1, 'companyId' => 1, 'priceRetail' => 100, 'price1' => 100, 'price2' => 100, 'priceOwn' => 100 );
-        $modifications = array(1,2,3,4,5,6);
-        $carriers = array(1,2,3);
-        $companies = array(2,3);
+            'type' => 'prices', 'capacityId' => $modCap1, 'styleId' => $modSty2, 'carrierId' => $carr1, 'companyId' => $comp1, 'priceRetail' => 100, 'price1' => 100, 'price2' => 100, 'priceOwn' => 100 
+        );
+        $modifications = array($modCap1, $modSty2, $modCap3, $modSty4, $modCap5, $modSty6);
+        $carriers = array($carr1, $carr2, $carr3);
+        $companies = array($comp2, $comp3);
 
         $devicesController = app()->make('WA\Http\Controllers\DevicesController');
         $reflection = new \ReflectionClass($devicesController);
@@ -1312,8 +1397,6 @@ class DevicesApiTest extends TestCase
         $final = array( "bool" => false, "error" => "Company Not Found", "id" => 1);
         $this->assertSame($result, $final);
     }
-
-
 
     /*
      *      Transforms an Object and gets the value of the Response.

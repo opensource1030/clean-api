@@ -1,11 +1,10 @@
 <?php
 
-use Laravel\Lumen\Testing\DatabaseTransactions;
+use Laravel\Lumen\Testing\DatabaseMigrations;
 
 class ContentsApiTest extends TestCase
 {
-    use DatabaseTransactions;     
-     
+    use DatabaseMigrations;     
 
     /**
      * A basic functional test for contents
@@ -42,9 +41,9 @@ class ContentsApiTest extends TestCase
             ->seeJson([
                 'type' => 'contents',
                 'content' => $contents->content,
-                'active' => $contents->active,
+                'active' => "$contents->active",
                 'owner_type' => $contents->owner_type,
-                'owner_id' => $contents->owner_id,
+                'owner_id' => "$contents->owner_id",
 
             ]);
     }

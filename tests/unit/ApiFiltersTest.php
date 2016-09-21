@@ -8,6 +8,7 @@ class ApiFiltersTest extends TestCase
 
     use DatabaseTransactions;
 
+    /*
     public function testCanIncludeFiltersInMeta()
     {
         $this->json('GET', '/devices?filter[identification]=296')
@@ -25,6 +26,7 @@ class ApiFiltersTest extends TestCase
         $this->json('GET', '/devices?filter[id]=2,4')
             ->seeJson(['filter' => ['[id]=2,4']]);
     }
+    */
 
     // Per JSONAPI, invalid criteria MUST return a 400
     public function testWorkProperlyWithIncorrectSortCriteria()

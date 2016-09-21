@@ -5,7 +5,7 @@ namespace WA\Http\Controllers;
 use Cartalyst\DataGrid\Laravel\Facades\DataGrid;
 use Dingo\Api\Http\Response;
 use WA\DataStore\Company\Company;
-use Faker\Provider\hr_HR\Company;
+//use Faker\Provider\hr_HR\Company;
 use WA\DataStore\Company\CompanyTransformer;
 use WA\Repositories\Carrier\CarrierInterface;
 use WA\Repositories\Company\CompanyInterface;

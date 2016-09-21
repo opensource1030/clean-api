@@ -1,19 +1,20 @@
 <?php
 
-use Laravel\Lumen\Testing\DatabaseTransactions;
+use Laravel\Lumen\Testing\DatabaseMigrations;
 
 class OrdersApiTest extends TestCase
 {
-    use DatabaseTransactions;     
-     
+    use DatabaseMigrations;
 
     /**
      * A basic functional test for services
      *
-     *
+     * @AD: Some changes and a little modification in OrderController@index - Comment ApplyMeta()
      */
     public function testGetOrders()
-    {       
+    {
+        factory(\WA\DataStore\Order\Order::class, 40)->create();
+
         $res = $this->json('GET', 'orders');
 
         $res->seeJsonStructure([
