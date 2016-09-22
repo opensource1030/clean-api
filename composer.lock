@@ -4650,8 +4650,8 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/d883566b83ae601a50b38b249e92450dc57cf875",
-                "reference": "d883566b83ae601a50b38b249e92450dc57cf875",
+                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/d3be8294e4729abcf8e6e207f25cdcb299cd1c88",
+                "reference": "d3be8294e4729abcf8e6e207f25cdcb299cd1c88",
                 "shasum": ""
             },
             "require": {
@@ -4700,7 +4700,9 @@
                 "spy",
                 "stub"
             ],
-            "time": "2016-07-19 16:08:43"
+
+            "time": "2016-09-21 19:41:08"
+
         },
         {
             "name": "phpunit/php-code-coverage",
