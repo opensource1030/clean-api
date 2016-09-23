@@ -1,6 +1,7 @@
 <?php
 
 namespace WA\Http\Controllers\Auth;
+use WA\Http\Controllers\ApiController;
 
 use LucaDegasperi\OAuth2Server\Authorizer;
 use WA\Repositories\User\UserInterface;
@@ -10,7 +11,7 @@ use Cache;
 /**
  * Class AuthController.
  */
-class AuthController
+class AuthController extends ApiController
 {
 
     /**
@@ -44,7 +45,7 @@ class AuthController
 
             $error['errors']['errorType'] = $ugte->errorType;
             $error['errors']['parameter'] = $ugte->parameter;
-            $error['errors']['message'] = $this->getErrorAndParse($ugte);
+            $error['errors']['messageUnsupportedGrantType'] = $this->getErrorAndParse($ugte);
             return response()->json($error)->setStatusCode(400);
 
         } catch (InvalidRequestException $ire) {
@@ -54,7 +55,7 @@ class AuthController
 
             $error['errors']['errorType'] = $ire->errorType;
             $error['errors']['parameter'] = $ire->parameter;
-            $error['errors']['message'] = $this->getErrorAndParse($ire);
+            $error['errors']['messageInvalidRequest'] = $this->getErrorAndParse($ire);
             return response()->json($error)->setStatusCode(400);
 
         } catch (InvalidClientException $ice) {
@@ -63,7 +64,7 @@ class AuthController
             // ERROR 401
 
             $error['errors']['errorType'] = $ice->errorType;
-            $error['errors']['message'] = $this->getErrorAndParse($ice);
+            $error['errors']['messageInvalidClient'] = $this->getErrorAndParse($ice);
             return response()->json($error)->setStatusCode(401);
 
         } catch (InvalidCredentialsException $icre) {
@@ -71,7 +72,7 @@ class AuthController
             // ERROR 401
 
             $error['errors']['errorType'] = $icre->errorType;
-            $error['errors']['message'] = $this->getErrorAndParse($icre);
+            $error['errors']['messageInvalidCredentials'] = $this->getErrorAndParse($icre);
             return response()->json($error)->setStatusCode(401);
 
         } catch (\Exception $e){

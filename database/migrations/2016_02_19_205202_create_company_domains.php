@@ -27,6 +27,8 @@ class CreateCompanyDomains extends Migration
                 $table->string('domain');
                 $table->boolean('active')->default(true);
                 $table->integer('companyId')->unsigned();
+
+                $table->nullableTimestamps();
             }
         );
 
