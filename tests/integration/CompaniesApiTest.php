@@ -45,36 +45,5 @@ class CompaniesTest extends TestCase
 
     }
 
-    public function testRelationshipWithPages()
-    {
-        $this->markTestIncomplete(
-          'TODO: needs to be reviewed.' 
-        );
 
-        $company = factory(\WA\DataStore\Company\Company::class)->create();
-
-        $page = factory(\WA\DataStore\Page\Page::class)->create();
-
-        $this->put('/pages/'.$page->id, [
-            'title' => $page->title,
-            'section' => $page->section,
-            'content' => $page->content,
-            'active' => $page->active,
-            'owner_type' => 'company',
-            'owner_id' => $company->id,
-        ]);
-
-        $this->get('/companies/'.$company->id.'?include=pages')
-            ->seeJson([
-                'type' => 'pages',
-                'id' => "$page->id",
-                "title" => $page->title,
-                'section' => $page->section,
-                'content' => $page->content,
-                'active' => $page->active,
-                'owner_type' => 'company',
-                'owner_id' => $company->id,
-            ]);
-
-    }
 }

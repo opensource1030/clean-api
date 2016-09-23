@@ -46,39 +46,5 @@ class UsersApiTest extends TestCase
             ]);
     }
 
-    public function testRelationshipWithPages()
-    {
-        $this->markTestIncomplete(
-          'TODO: needs to be reviewed.' 
-        );
 
-        $user = factory(\WA\DataStore\User\User::class)->create();
-
-        $page = factory(\WA\DataStore\Page\Page::class)->create();
-
-        $this->put('/pages/'.$page->id, [
-            "title" => $page->title,
-            'section' => $page->section,
-            'content' => $page->content,
-            'active' => $page->active,
-            'owner_type' => 'user',
-            'owner_id' => $user->id,
-        ]);
-
-
-
-        $this->get('/users/'.$user->id.'?include=pages')
-            ->seeJson([
-                'type' => 'pages',
-                'id' => "$page->id",
-                'title' => $page->title,
-                'section' => $page->section,
-                //'content' => $page->content,
-                //'active' => $page->active,
-                'owner_type' => 'user',
-                'owner_id' => $user->id,
-
-            ]);
-
-    }
 }
