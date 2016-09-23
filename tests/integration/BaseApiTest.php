@@ -1,8 +1,7 @@
 <?php
 
-
 use Laravel\Lumen\Testing\DatabaseTransactions;
-
+use WA\Http\Controllers\ApiController;
 
 class BaseApiTest extends TestCase
 {
@@ -16,7 +15,7 @@ class BaseApiTest extends TestCase
             ]);
     }
 
-        public function testIsJsonCorrect() {
+    public function testIsJsonCorrect() {
 
  		$type = 'anytype';
         $array = array(
@@ -28,7 +27,7 @@ class BaseApiTest extends TestCase
             ]
         );
 
-        $baseController = app()->make('WA\Http\Controllers\BaseController');
+        $baseController = new class() extends ApiController{};
         $result = $baseController->isJsonCorrect($array, $type);
         $this->assertTrue($result);
     }
@@ -45,7 +44,7 @@ class BaseApiTest extends TestCase
             ]
         );
 
-    	$baseController = app()->make('WA\Http\Controllers\BaseController');
+        $baseController = new class() extends ApiController{};
         $result = $baseController->isJsonCorrect($array, $type);
         $this->assertFalse($result);
     }
@@ -62,7 +61,7 @@ class BaseApiTest extends TestCase
             ]
         );
 
-    	$baseController = app()->make('WA\Http\Controllers\BaseController');
+        $baseController = new class() extends ApiController{};
         $result = $baseController->isJsonCorrect($array, $type);
         $this->assertFalse($result);
     }
@@ -79,7 +78,7 @@ class BaseApiTest extends TestCase
             ]
         );
 
-    	$baseController = app()->make('WA\Http\Controllers\BaseController');
+        $baseController = new class() extends ApiController{};
         $result = $baseController->isJsonCorrect($array, $type);
         $this->assertFalse($result);
     }
@@ -96,7 +95,7 @@ class BaseApiTest extends TestCase
             ]
         );
 
-    	$baseController = app()->make('WA\Http\Controllers\BaseController');
+        $baseController = new class() extends ApiController{};
         $result = $baseController->isJsonCorrect($array, $type);
         $this->assertFalse($result);
     }

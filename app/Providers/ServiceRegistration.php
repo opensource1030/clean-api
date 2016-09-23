@@ -89,6 +89,9 @@ use WA\DataStore\Order\Order;
 use WA\Repositories\Package\EloquentPackage;
 use WA\DataStore\Package\Package;
 
+use WA\Repositories\Address\EloquentAddress;
+use WA\DataStore\Address\Address;
+
 use WA\Repositories\Request\EloquentRequest;
 use WA\DataStore\Request\Request;
 
@@ -546,6 +549,15 @@ trait ServiceRegistration
         app()->bind('WA\Repositories\Package\PackageInterface',
             function () {
                 return new EloquentPackage(new Package());
+            }
+        );
+    }
+
+    public function registerAddress()
+    {
+        app()->bind('WA\Repositories\Address\AddressInterface',
+            function () {
+                return new EloquentAddress(new Address());
             }
         );
     }

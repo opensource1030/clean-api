@@ -91,7 +91,7 @@ class AuthController extends ApiController
             }
 
 
-            $error['errors']['message'] = $this->getErrorAndParse($e);
+            $error['errors']['message'] = $e->getMessage();
             return response()->json($error)->setStatusCode($httpStatusCode);
         }
     }
