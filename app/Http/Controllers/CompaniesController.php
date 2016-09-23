@@ -103,7 +103,7 @@ class CompaniesController extends ApiController
         $company = Company::find($id);
         if(!isset($company))
         {
-            $error['errors']['delete'] = 'Company selected does not exist';
+            $error['errors']['put'] = 'Company selected does not exist';
             return response()->json($error)->setStatusCode(404);
         }
         $data = $request->all();
