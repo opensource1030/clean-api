@@ -49,7 +49,7 @@ class PackageController extends ApiController
 
         $package = $this->package->byPage();
         
-        $response = $this->response()->withPaginator($package, new PackageTransformer(),['key' => 'package']);
+        $response = $this->response()->withPaginator($package, new PackageTransformer(),['key' => 'packages']);
         $response = $this->applyMeta($response);
         return $response;
     }
@@ -64,8 +64,8 @@ class PackageController extends ApiController
     public function show($id)
     {
         $package = Package::find($id);
-        if($device == null){
-            $error['errors']['get'] = 'the Device selected doesn\'t exists';   
+        if($package == null){
+            $error['errors']['get'] = 'the Package selected doesn\'t exists';   
             return response()->json($error)->setStatusCode(409);
         }
 
@@ -80,10 +80,106 @@ class PackageController extends ApiController
      */
     public function store($id, Request $request)   
     {
-        $data = $request->all();       
-        $data['id'] = $id;
-        $package = $this->package->update($data);
-        return $this->response()->item($package, new PackageTransformer(), ['key' => 'packages']);
+        $success = true;
+        $dataConditions = $dataServices = $dataDevices = $dataApps = array();
+
+        /*
+         * Checks if Json has data, data-type & data-attributes.
+         */
+        if(!$this->isJsonCorrect($request, 'packages')){
+            $error['errors']['json'] = 'Json is Invalid';
+            return response()->json($error)->setStatusCode(409);
+        } else {
+            $data = $request->all()['data'];
+            $dataType = $data['type'];
+            $dataAttributes = $data['attributes'];           
+        }
+
+        DB::beginTransaction();
+
+        /*
+         * Now we can create the Package.
+         */       
+        try{
+            $package = Package::find($id);
+
+            $package->name = isset($dataAttributes['name']) ? $dataAttributes['name'] : $package->name;
+            $package->addressId = isset($dataAttributes['addressId']) ? $dataAttributes['addressId'] : $package->addressId;
+            
+            $package->save();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $success = false;
+            $error['errors']['packages'] = 'The Package can not be Modified';
+            $error['errors']['packagesMessage'] = $e->getMessage();
+            return response()->json($error)->setStatusCode(409);
+        }
+
+        /*
+         * Check if Json has relationships to continue or if not and commit + return.
+         */
+        if(isset($data['relationships'])){
+
+            $dataRelationships = $data['relationships'];
+
+            if(isset($dataRelationships['conditions'])){ 
+                if(isset($dataRelationships['conditions']['data'])){
+                    $dataConditions = $this->parseJsonToArray($dataRelationships['conditions']['data'], 'conditions');
+                    try {
+                        $package->conditions()->sync($dataConditions);    
+                    } catch (\Exception $e){
+                        $error['errors']['conditions'] = 'the Package Conditions can not be Modified';
+                        $error['errors']['conditionsMessage'] = $e->getMessage();
+                    }
+                }
+            }
+
+            if(isset($dataRelationships['services'])){ 
+                if(isset($dataRelationships['services']['data'])){
+                    $dataServices = $this->parseJsonToArray($dataRelationships['services']['data'], 'services');
+                    try {
+                        $package->services()->sync($dataServices);
+                    } catch (\Exception $e){
+                        $error['errors']['services'] = 'the Package Services can not be Modified';
+                        //$error['errors']['servicesMessage'] = $e->getMessage();
+                    }
+                }
+            }
+
+            if(isset($dataRelationships['devices'])){ 
+                if(isset($dataRelationships['devices']['data'])){
+                    $dataDevices = $this->parseJsonToArray($dataRelationships['devices']['data'], 'devices');
+                     try {
+                        $package->devices()->sync($dataDevices);
+                    } catch (\Exception $e){
+                        $success = false;
+                        $error['errors']['devices'] = 'the Package Devices can not be Modified';
+                        //$error['errors']['devicesMessage'] = $e->getMessage();
+                    }
+                }
+            }
+
+            if(isset($dataRelationships['apps'])){ 
+                if(isset($dataRelationships['apps']['data'])){
+                    $dataApps = $this->parseJsonToArray($dataRelationships['apps']['data'], 'apps');
+                    try {
+                        $package->apps()->sync($dataApps);
+                    } catch (\Exception $e){
+                        $success = false;
+                        $error['errors']['apps'] = 'the Package Apps can not be Modified';
+                        //$error['errors']['appsMessage'] = $e->getMessage();
+                    }
+                }
+            }
+        }
+
+        if(!$success){
+            DB::rollBack();
+            return response()->json($error)->setStatusCode(409);
+        } else {
+            DB::commit();
+            return $this->response()->item($package, new PackageTransformer(), ['key' => 'packages']);
+        }
     }
 
     /**
@@ -93,12 +189,6 @@ class PackageController extends ApiController
      */
     public function create(Request $request)
     {
-        /*
-        $data = $request->all();
-        $package = $this->package->create($data);
-        return $this->response()->item($package, new PackageTransformer(), ['key' => 'packages']);
-        */
-
         $success = true;
         $dataConditions = $dataServices = $dataDevices = $dataApps = $dataDelivery = array();
 
@@ -120,12 +210,12 @@ class PackageController extends ApiController
          * Now we can create the Package.
          */       
         try{
-            $package = $this->package->create($dataAttributes);
+            $package = $this->package->create($dataAttributes); 
         } catch (\Exception $e) {
             DB::rollBack();
             $success = false;
             $error['errors']['packages'] = 'The Package can not be created';
-            $error['errors']['packagesMessage'] = $this->getErrorAndParse($e);
+            $error['errors']['packagesMessage'] = $e->getMessage();
             return response()->json($error)->setStatusCode(409);
         }
 
@@ -143,7 +233,7 @@ class PackageController extends ApiController
                         $package->conditions()->sync($dataConditions);    
                     } catch (\Exception $e){
                         $error['errors']['conditions'] = 'the Package Conditions can not be created';
-                        //$error['errors']['imagesMessage'] = $this->getErrorAndParse($e);
+                        //$error['errors']['conditionsMessage'] = $e->getMessage();
                     }
                 }
             }
@@ -155,7 +245,7 @@ class PackageController extends ApiController
                         $package->services()->sync($dataServices);
                     } catch (\Exception $e){
                         $error['errors']['services'] = 'the Package Services can not be created';
-                        //$error['errors']['servicesMessage'] = $this->getErrorAndParse($e);
+                        //$error['errors']['servicesMessage'] = $e->getMessage();
                     }
                 }
             }
@@ -168,7 +258,7 @@ class PackageController extends ApiController
                     } catch (\Exception $e){
                         $success = false;
                         $error['errors']['devices'] = 'the Package Devices can not be created';
-                        //$error['errors']['devicesMessage'] = $this->getErrorAndParse($e);
+                        //$error['errors']['devicesMessage'] = $e->getMessage();
                     }
                 }
             }
@@ -181,7 +271,7 @@ class PackageController extends ApiController
                     } catch (\Exception $e){
                         $success = false;
                         $error['errors']['apps'] = 'the Package Apps can not be created';
-                        //$error['errors']['appsMessage'] = $this->getErrorAndParse($e);
+                        //$error['errors']['appsMessage'] = $e->getMessage();
                     }
                 }
             }
@@ -192,7 +282,7 @@ class PackageController extends ApiController
             return response()->json($error)->setStatusCode(409);
         } else {
             DB::commit();
-            return $this->response()->item($package, new DeviceTransformer(), ['key' => 'packages']);
+            return $this->response()->item($package, new PackageTransformer(), ['key' => 'packages']);
         }
     }
 
@@ -203,7 +293,21 @@ class PackageController extends ApiController
      */
     public function delete($id)
     {
-        $this->package->deleteById($id);
+        $package = Package::find($id);
+        if($package <> null){
+            $this->package->deleteById($id);
+        } else {
+            $error['errors']['delete'] = 'the Package selected doesn\'t exists';   
+            return response()->json($error)->setStatusCode(409);
+        }
+        
         $this->index();
+        $package = Package::find($id);        
+        if($package == null){
+            return array("success" => true);
+        } else {
+            $error['errors']['delete'] = 'the Package has not been deleted';   
+            return response()->json($error)->setStatusCode(409);
+        }
     }
 }

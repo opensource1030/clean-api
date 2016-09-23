@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 
-class CreatePackageConditions extends Migration
+class CreateConditionsTable extends Migration
 {
     use \WA\Database\Command\TablesRelationsAndIndexes;
 
@@ -19,17 +19,12 @@ class CreatePackageConditions extends Migration
             $this->tableName,
             function ( $table) {
                 $table->increments('id');
+                $table->string('type');
+                $table->string('name');
                 $table->string('condition');
                 $table->string('value');
         
                 $table->nullableTimestamps();
-            }
-        );
-
-        Schema::table(
-            'packages', 
-            function($table) {
-                $table->foreign('conditionsId')->references('id')->on('package_conditions')->onDelete('cascade');
             }
         );
     }

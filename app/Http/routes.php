@@ -183,5 +183,13 @@ $api->version('v1', function ($api) {
         $api->get('images', ['as' => 'api.image.index', 'uses' => $imageController . '@index']);
         $api->get('images/{id}', ['as' => 'api.image.show', 'uses' => $imageController . '@show']);
         $api->post('images/create', ['uses' => $imageController . '@create']);
+
+        //=Address
+        $addressController = 'WA\Http\Controllers\AddressController';
+        $api->get('address', ['as' => 'api.address.index', 'uses' => $addressController . '@index']);
+        $api->get('address/{id}', ['as' => 'api.address.show', 'uses' => $addressController . '@show']);
+        $api->post('address', ['uses' => $addressController . '@create']);
+        $api->put('address/{id}', ['uses' => $addressController . '@store']);
+        $api->delete('address/{id}', ['uses' => $addressController . '@delete']);
     });
 });

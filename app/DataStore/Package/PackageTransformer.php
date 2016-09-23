@@ -6,12 +6,20 @@ use League\Fractal\Resource\Collection as ResourceCollection;
 use League\Fractal\Resource\Item as ResourceItem;
 use League\Fractal\TransformerAbstract;
 
+use WA\DataStore\App\AppTransformer;
+use WA\DataStore\Condition\ConditionTransformer;
+use WA\DataStore\Service\ServiceTransformer;
+use WA\DataStore\Device\DeviceTransformer;
+
 /**
  * Class PackageTransformer
  *
  */
 class PackageTransformer extends TransformerAbstract
 {
+    protected $availableIncludes = [
+        'conditions', 'services', 'devices', 'apps'
+    ];
 
     /**
      * @param Package $Package
@@ -23,6 +31,7 @@ class PackageTransformer extends TransformerAbstract
         return [
             'id' => (int)$package->id,
             'name' => $package->name,
+            'addressId' => $package->addressId,
             'created_at' => $package->created_at,
             'updated_at' => $package->updated_at,
         ];

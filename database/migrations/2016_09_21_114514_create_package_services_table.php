@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreatePackageServiceTable extends Migration
+class CreatePackageServicesTable extends Migration
 {
     use \WA\Database\Command\TablesRelationsAndIndexes;
 

@@ -25,10 +25,10 @@ class App extends BaseDataStore
      *
      * @return \Illuminate\Database\Eloquent\Relations\MorphTo
      */
-  public function owner()
-  {
-      return $this->morphTo();
-  }
+    public function owner()
+    {
+        return $this->morphTo();
+    }
 
     /**
      * Get the transformer instance
@@ -38,5 +38,13 @@ class App extends BaseDataStore
     public function getTransformer()
     {
         return new AppTransformer();
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function packages()
+    {
+        return $this->belongsToMany('WA\DataStore\Package\Package', 'package_apps', 'packageId', 'appsId');
     }
 }

@@ -3,12 +3,12 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreatePackageConditionsTable extends Migration
+class CreateAddressTable extends Migration
 {
     use \WA\Database\Command\TablesRelationsAndIndexes;
 
-    protected $tableName = 'package_conditions';
-    
+    protected $tableName = 'address';
+
     /**
      * Run the migrations.
      *
@@ -20,18 +20,20 @@ class CreatePackageConditionsTable extends Migration
             $this->tableName,
             function ($table) {
                 $table->increments('id');
-                $table->integer('packageId')->unsigned();
-                $table->integer('conditionsId')->unsigned();
+                $table->string('address')->nullable();
+                $table->string('city')->nullable();
+                $table->string('state')->nullable();
+                $table->string('country')->nullable();                
+                $table->string('postalCode')->nullable();
 
                 $table->nullableTimestamps();
             }
         );
 
         Schema::table(
-            $this->tableName, 
+            'packages', 
             function($table) {
-                $table->foreign('packageId')->references('id')->on('packages')->onDelete('cascade');
-                $table->foreign('conditionsId')->references('id')->on('conditions')->onDelete('cascade');
+                $table->foreign('addressId')->references('id')->on('address')->onDelete('cascade');
             }
         );
     }

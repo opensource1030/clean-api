@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreatePackageAppTable extends Migration
+class CreatePackageAppsTable extends Migration
 {
     use \WA\Database\Command\TablesRelationsAndIndexes;
 
@@ -21,7 +21,7 @@ class CreatePackageAppTable extends Migration
             function ($table) {
                 $table->increments('id');
                 $table->integer('packageId')->unsigned();
-                $table->integer('appId')->unsigned();
+                $table->integer('appsId')->unsigned();
 
                 $table->nullableTimestamps();
             }
@@ -31,7 +31,7 @@ class CreatePackageAppTable extends Migration
             $this->tableName, 
             function($table) {
                 $table->foreign('packageId')->references('id')->on('packages')->onDelete('cascade');
-                $table->foreign('appId')->references('id')->on('apps')->onDelete('cascade');
+                $table->foreign('appsId')->references('id')->on('apps')->onDelete('cascade');
             }
         );
     }

@@ -16,6 +16,7 @@ class Package extends BaseDataStore
 
     protected $fillable = [
             'name',
+            'addressId',
             'updated_at'];
 
     /**
@@ -51,7 +52,7 @@ class Package extends BaseDataStore
      */
     public function services()
     {
-        return $this->belongsToMany('WA\DataStore\Company\Company', 'package_services', 'packageId', 'servicesId');
+        return $this->belongsToMany('WA\DataStore\Service\Service', 'package_services', 'packageId', 'servicesId');
     }
     
     /**
@@ -59,7 +60,7 @@ class Package extends BaseDataStore
      */
     public function devices()
     {
-        return $this->belongsToMany('WA\DataStore\Company\Company', 'package_devices', 'packageId', 'devicesId');
+        return $this->belongsToMany('WA\DataStore\Device\Device', 'package_devices', 'packageId', 'devicesId');
     }
 
     /**
@@ -67,6 +68,6 @@ class Package extends BaseDataStore
      */
     public function apps()
     {
-        return $this->belongsToMany('WA\DataStore\Company\Company', 'package_apps', 'packageId', 'appsId');
+        return $this->belongsToMany('WA\DataStore\App\App', 'package_apps', 'packageId', 'appsId');
     }
 }

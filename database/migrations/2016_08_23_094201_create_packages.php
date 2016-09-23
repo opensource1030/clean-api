@@ -1,6 +1,5 @@
 <?php
 
-
 use Illuminate\Database\Migrations\Migration;
 
 class CreatePackages extends Migration
@@ -21,15 +20,9 @@ class CreatePackages extends Migration
             function ( $table) {
                 $table->increments('id');
                 $table->string('name');
+                $table->integer('addressId')->unsigned();
                 
                 $table->nullableTimestamps();
-            }
-        );
-
-        Schema::table(
-            'orders', 
-            function($table) {
-                $table->foreign('packageId')->references('id')->on('packages');
             }
         );
     }

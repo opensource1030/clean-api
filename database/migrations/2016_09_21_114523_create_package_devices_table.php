@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreatePackageDeviceTable extends Migration
+class CreatePackageDevicesTable extends Migration
 {
     use \WA\Database\Command\TablesRelationsAndIndexes;
 
@@ -21,7 +21,7 @@ class CreatePackageDeviceTable extends Migration
             function ($table) {
                 $table->increments('id');
                 $table->integer('packageId')->unsigned();
-                $table->integer('deviceId')->unsigned();
+                $table->integer('devicesId')->unsigned();
 
                 $table->nullableTimestamps();
             }
@@ -31,7 +31,7 @@ class CreatePackageDeviceTable extends Migration
             $this->tableName, 
             function($table) {
                 $table->foreign('packageId')->references('id')->on('packages')->onDelete('cascade');
-                $table->foreign('deviceId')->references('id')->on('devices')->onDelete('cascade');
+                $table->foreign('devicesId')->references('id')->on('devices')->onDelete('cascade');
             }
         );
     }

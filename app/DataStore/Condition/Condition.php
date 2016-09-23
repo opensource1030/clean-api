@@ -12,31 +12,13 @@ use WA\DataStore\Order\OrderTransformer;
  */
 class Condition extends BaseDataStore
 {
-    protected  $table = 'package_conditions';
+    protected  $table = 'conditions';
 
     protected $fillable = [
-            'profileNameCondition',
-            'profileNameValue',
-            'profileEmailCondition',
-            'profileEmailValue',
-            'profilePositionCondition',
-            'profilePositionValue',
-            'profileLevelCondition',
-            'profileLevelValue',
-            'profileDivisionCondition',
-            'profileDivisionValue',
-            'profileCostCenterCondition',
-            'profileCostCenterValue',
-            'profileBudgetCondition',
-            'profileBudgetValue',
-            'locationItemsCountryACondition',
-            'locationItemsCountryAValue',
-            'locationItemsCountryBCondition',
-            'locationItemsCountryBValue',
-            'locationItemsCityCondition',
-            'locationItemsCityValue',
-            'locationItemsAdressCondition',
-            'locationItemsAdressValue'];
+            'name',
+            'condition',
+            'value'
+        ];
 
     /**
      * Get all the owners for the order
@@ -58,4 +40,11 @@ class Condition extends BaseDataStore
         return new ConditionTransformer();
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function packages()
+    {
+        return $this->belongsToMany('WA\DataStore\Package\Package', 'package_conditions', 'packageId', 'conditionsId');
+    }
 }
