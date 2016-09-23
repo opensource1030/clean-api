@@ -108,6 +108,14 @@ class Device extends MutableDataStore
     }
 
     /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function packages()
+    {
+        return $this->belongsToMany('WA\DataStore\Package\Package', 'package_devices', 'packageId', 'devicesId');
+    }
+
+    /**
      * @return $this
      */
     public function attributes()

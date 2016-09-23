@@ -419,9 +419,6 @@ class DevicesApiTest extends TestCase
 
                 ]
             ]);
-
-            $dataCarriersVoid = array();
-            $device->carriers()->sync($dataCarriersVoid);            
     }
 
     public function testCreateDevice() {

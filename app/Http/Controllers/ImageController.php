@@ -93,7 +93,7 @@ class ImageController extends ApiController
             }   
         } catch (\Exception $e) {
             $error['errors']['image'] = 'the Image can not be created';
-            $error['errors']['imageMessage'] = $this->getErrorAndParse($e);
+            $error['errors']['imageMessage'] = $e->getMessage();
             return response()->json($error)->setStatusCode(409);
         }
 
