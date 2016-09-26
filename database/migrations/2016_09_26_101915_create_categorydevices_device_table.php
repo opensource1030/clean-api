@@ -3,11 +3,11 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateImagesTable extends Migration
+class CreateCategorydevicesDeviceTable extends Migration
 {
     use \WA\Database\Command\TablesRelationsAndIndexes;
 
-    protected $tableName = 'images';
+    protected $tableName = 'categorydevices_device';
 
     /**
      * Run the migrations.
@@ -20,14 +20,18 @@ class CreateImagesTable extends Migration
             $this->tableName,
             function ($table) {
                 $table->increments('id');
-                $table->string('originalName')->nullable();
-                $table->string('filename')->nullable();
-                $table->string('mimeType')->nullable();
-                $table->string('extension')->nullable();
-                $table->integer('size')->nullable();
-                $table->string('url')->nullable();
+                $table->integer('categorydeviceId')->unsigned();
+                $table->integer('deviceId')->unsigned();
 
                 $table->nullableTimestamps();
+            }
+        );
+
+        Schema::table(
+            $this->tableName, 
+            function($table) {
+                $table->foreign('categorydeviceId')->references('id')->on('categorydevices')->onDelete('cascade');
+                $table->foreign('deviceId')->references('id')->on('devices')->onDelete('cascade');
             }
         );
     }

@@ -1,10 +1,11 @@
 <?php
 
 
-namespace WA\DataStore;
+namespace WA\DataStore\DeviceType;
 
 use WA\DataStore\Traits\BelongsToJobStatus;
 use WA\DataStore\Traits\FindIfProspectClient;
+use WA\DataStore\MutableDataStore;
 
 /**
  * An Eloquent Model: 'WA\DataStore\DeviceType'.
@@ -34,16 +35,11 @@ class DeviceType extends MutableDataStore
     protected $table = 'device_types';
 
     protected $fillable = [
-        'make'
-        ,
-        'model'
-        ,
-        'class'
-        ,
-        'deviceOS'
-        ,
-        'description'
-        ,
+        'make',
+        'model',
+        'class',
+        'deviceOS',
+        'description',
         'statusId',
     ];
 
@@ -71,5 +67,13 @@ class DeviceType extends MutableDataStore
         return $this->hasOne('WA\DataStore\CarrierDevice', 'deviceTypeId');
     }
 
-
+    /**
+     * Get the transformer instance
+     *
+     * @return ImageTransformer
+     */
+    public function getTransformer()
+    {
+        return new ImageTransformer();
+    }
 }

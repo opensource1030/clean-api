@@ -99,4 +99,70 @@ class BaseApiTest extends TestCase
         $result = $baseController->isJsonCorrect($array, $type);
         $this->assertFalse($result);
     }
+
+
+
+    public function testParseJsonToArray(){
+  
+        $array = array();
+        $type = 'anytype';
+        for ($i = 1; $i < 5; $i++) {
+            $arrayAux = array('type' => $type, 'id' => $i);
+            array_push($array, $arrayAux);
+        }
+
+        $arrayFinal = [1,2,3,4];
+  
+        $baseController = new class() extends ApiController{};
+        $result = $baseController->parseJsonToArray($array, $type);
+        $this->assertSame($result, $arrayFinal);
+    }
+ 
+    public function testParseJsonToArrayReturnVoidNoType(){
+  
+        $array = array();
+        $type = 'anytype';
+        for ($i = 1; $i < 5; $i++) {
+              $arrayAux = array('error' => $type, 'id' => $i);
+              array_push($array, $arrayAux);
+        }
+  
+        $arrayFinal = [];
+  
+        $baseController = new class() extends ApiController{};
+        $result = $baseController->parseJsonToArray($array, $type);
+        $this->assertSame($result, $arrayFinal);
+    } 
+  
+    public function testParseJsonToArrayReturnVoidNoSameType(){
+  
+        $array = array();
+        $type = 'anytype';
+        for ($i = 1; $i < 5; $i++) {
+              $arrayAux = array('type' => 'error', 'id' => $i);
+              array_push($array, $arrayAux);
+        }
+  
+        $arrayFinal = [];
+  
+        $baseController = new class() extends ApiController{};
+        $result = $baseController->parseJsonToArray($array, $type);
+        $this->assertSame($result, $arrayFinal);
+    } 
+  
+    public function testParseJsonToArrayReturnVoidNoId(){
+  
+        $array = array();
+        $type = 'anytype';
+        for ($i = 1; $i < 5; $i++) {
+              $arrayAux = array('type' => $type, 'error' => $i);
+              array_push($array, $arrayAux);
+        }
+  
+        $arrayFinal = [];
+  
+        $baseController = new class() extends ApiController{};
+        $result = $baseController->parseJsonToArray($array, $type);
+        $this->assertSame($result, $arrayFinal);
+    }
 }

@@ -27,6 +27,18 @@ $app->withFacades();
 
 $app->withEloquent();
 
+config([
+    "filesystems" => [
+        'default' => 'local',
+        'disks' => [
+            'local' => [
+                'driver' => 'local',
+                'root' => storage_path('app'),
+            ],
+        ],
+    ],
+]);
+
 /*
 |--------------------------------------------------------------------------
 | Register Container Bindings
@@ -48,10 +60,10 @@ $app->singleton(
     WA\Console\Kernel::class
 );
 
-/*
+
 $app->singleton('filesystem', function ($app) {
     return $app->loadComponent('filesystems', 'Illuminate\Filesystem\FilesystemServiceProvider', 'filesystem');
-});*/
+});
 
 
 /*

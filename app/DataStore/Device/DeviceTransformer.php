@@ -12,8 +12,7 @@ use WA\DataStore\Carrier\CarrierTransformer;
 use WA\DataStore\Company\CompanyTransformer;
 use WA\DataStore\Modification\ModificationTransformer;
 use WA\DataStore\Image\ImageTransformer;
-
-
+use WA\DataStore\Price\PriceTransformer;
 
 /**
  * Class DeviceTransformer.
@@ -21,7 +20,7 @@ use WA\DataStore\Image\ImageTransformer;
 class DeviceTransformer extends TransformerAbstract
 {
     protected $availableIncludes = [
-        'assets', 'carriers', 'companies', 'modifications', 'images'
+        'assets', 'carriers', 'companies', 'modifications', 'images', 'prices'
     ];
 
     /**

@@ -38,6 +38,19 @@ abstract class ApiController extends BaseController
     ];
 
     /**
+     * @var Errors
+     */
+    protected $errors = [
+        'ok' => 200,
+        'created' => 201,
+        'accepted' => 202,
+        'createdCI' => 204,
+        'forbidden' => 403,
+        'notexists' => 404,
+        'conflict' => 409
+    ];
+
+    /**
      * @return mixed
      */
     public function getRequestCriteria()

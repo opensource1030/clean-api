@@ -80,6 +80,14 @@ class Carrier extends BaseDataStore
     }
 
     /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function images()
+    {
+        return $this->belongsToMany('WA\DataStore\Image\Image', 'carrier_images', 'carrierId', 'imageId');
+    }
+
+    /**
      * Get the transformer instance.
      *
      * @return mixed

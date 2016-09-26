@@ -16,8 +16,6 @@ use WA\Repositories\Device\DeviceInterface;
 use Validator;
 use DB;
 
-use Log;
-
 /**
  * Devices resource.
  *
@@ -76,7 +74,7 @@ class DevicesController extends ApiController
         $device = Device::find($id);
         if($device == null){
             $error['errors']['get'] = 'the Device selected doesn\'t exists';   
-            return response()->json($error)->setStatusCode(409);
+            return response()->json($error)->setStatusCode($this->errors['notexists']);
         }
 
         return $this->response()->item($device, new DeviceTransformer(),['key' => 'devices']);
@@ -125,7 +123,7 @@ class DevicesController extends ApiController
          */
         if(!$this->isJsonCorrect($request, 'devices')){
             $error['errors']['json'] = 'Json is Invalid';
-            return response()->json($error)->setStatusCode(409);
+            return response()->json($error)->setStatusCode($this->errors['accepted']);
         } else {
             $data = $request->all()['data'];
             $dataType = $data['type'];
@@ -153,8 +151,8 @@ class DevicesController extends ApiController
             DB::rollBack();
             $success = false;
             $error['errors']['devices'] = 'The Device can not be created';
-            $error['errors']['devicesMessage'] = $e->getMessage();
-            return response()->json($error)->setStatusCode(409);
+            //$error['errors']['devicesMessage'] = $e->getMessage();
+            return response()->json($error)->setStatusCode($this->errors['accepted']);
         }
 
         /*
@@ -266,10 +264,10 @@ class DevicesController extends ApiController
 
         if(!$success){
             DB::rollBack();
-            return response()->json($error)->setStatusCode(409);
+            return response()->json($error)->setStatusCode($this->errors['accepted']);
         } else {
             DB::commit();
-            return $this->response()->item($device, new DeviceTransformer(), ['key' => 'devices']);
+            return $this->response()->item($device, new DeviceTransformer(), ['key' => 'devices'])->setStatusCode($this->errors['created']);
         }
     }
 
@@ -288,7 +286,7 @@ class DevicesController extends ApiController
          */
         if(!$this->isJsonCorrect($request, 'devices')){
             $error['errors']['json'] = 'Json is Invalid';
-            return response()->json($error)->setStatusCode(409);
+            return response()->json($error)->setStatusCode($this->errors['accepted']);
         } else {
             $data = $request->all()['data'];
             $dataType = $data['type'];
@@ -307,7 +305,7 @@ class DevicesController extends ApiController
             $success = false;
             $error['errors']['devices'] = 'The Device can not be created';
             //$error['errors']['devicesMessage'] = $e->getMessage();
-            return response()->json($error)->setStatusCode(409);
+            return response()->json($error)->setStatusCode($this->errors['accepted']);
         }
 
         /*
@@ -411,7 +409,7 @@ class DevicesController extends ApiController
                     } else {
                         $success = false;
                         $error['errors']['prices'] = 'the Device Prices can not be created because other relationships can\'t be created';
-                        //$error['errors']['pricesMessage'] = $e->getMessage();
+                        $error['errors']['pricesMessage'] = $e->getMessage();
                     }
                 }
             }            
@@ -419,10 +417,10 @@ class DevicesController extends ApiController
 
         if(!$success){
             DB::rollBack();
-            return response()->json($error)->setStatusCode(409);
+            return response()->json($error)->setStatusCode($this->errors['accepted']);
         } else {
             DB::commit();
-            return $this->response()->item($device, new DeviceTransformer(), ['key' => 'devices']);
+            return $this->response()->item($device, new DeviceTransformer(), ['key' => 'devices'])->setStatusCode($this->errors['created']);
         }
     }
 
@@ -438,7 +436,7 @@ class DevicesController extends ApiController
             $this->device->deleteById($id);
         } else {
             $error['errors']['delete'] = 'the Device selected doesn\'t exists';   
-            return response()->json($error)->setStatusCode(409);
+            return response()->json($error)->setStatusCode($this->errors['notexists']);
         }
         
         $this->index();
@@ -447,7 +445,7 @@ class DevicesController extends ApiController
             return array("success" => true);
         } else {
             $error['errors']['delete'] = 'the Device has not been deleted';   
-            return response()->json($error)->setStatusCode(409);
+            return response()->json($error)->setStatusCode($this->errors['accepted']);
         }
     }
 

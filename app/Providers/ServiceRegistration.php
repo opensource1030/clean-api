@@ -13,7 +13,7 @@ use WA\DataStore\Census;
 use WA\DataStore\Company\Company;
 use WA\DataStore\Content\Content;
 use WA\DataStore\Device\Device;
-use WA\DataStore\DeviceType;
+use WA\DataStore\DeviceType\DeviceType;
 use WA\DataStore\EasyVistaHelpDesk;
 use WA\DataStore\EmailNotifications;
 use WA\DataStore\JobStatus;

@@ -6,6 +6,7 @@ use WA\DataStore\Carrier\Carrier;
 use WA\DataStore\Carrier\CarrierTransformer;
 use WA\Repositories\Carrier\CarrierInterface;
 
+use DB;
 /**
  * Carrier resource.
  *
@@ -82,6 +83,30 @@ class CarrierController extends ApiController
             $dataAttributes = $data['attributes'];           
         }
 
+        try {
+            $dataAttributes['id'] = $id;
+            $carrier = $this->carrier->update($dataAttributes);
+        } catch (\Exception $e) {
+            $success = false;
+            $error['errors']['carriers'] = 'The Carrier can not be updated';
+            //$error['errors']['carriersMessage'] = $e->getMessage();
+            return response()->json($error)->setStatusCode($this->errors['accepted']);
+        } 
+
+        if(isset($data['relationships'])){
+            if(isset($data['relationships']['images'])){ 
+                if(isset($data['relationships']['images']['data'])){
+                    $dataImages = $this->parseJsonToArray($data['relationships']['images']['data'], 'images');
+                    try {
+                        $carrier->images()->sync($dataImages);    
+                    } catch (\Exception $e){
+                        $error['errors']['images'] = 'the Carrier Images can not be created';
+                        //$error['errors']['imagesMessage'] = $e->getMessage();
+                    }
+                }
+            }
+        }
+
         $dataAttributes['id'] = $id;
         $carrier = $this->carrier->update($dataAttributes);
         return $this->response()->item($carrier, new CarrierTransformer(), ['key' => 'carriers']);
@@ -102,7 +127,30 @@ class CarrierController extends ApiController
             $dataAttributes = $data['attributes'];           
         }
 
-        $carrier = $this->carrier->create($dataAttributes);
+        try {
+            $carrier = $this->carrier->create($dataAttributes);
+        } catch (\Exception $e) {
+            $success = false;
+            $error['errors']['carriers'] = 'The Carrier can not be created';
+            $error['errors']['carriersMessage'] = $e->getMessage();
+            return response()->json($error)->setStatusCode($this->errors['accepted']);
+        }        
+
+        if(isset($data['relationships'])){
+            if(isset($data['relationships']['images'])){ 
+                if(isset($data['relationships']['images']['data'])){
+                    $dataImages = $this->parseJsonToArray($data['relationships']['images']['data'], 'images');
+                    try {
+                        $carrier->images()->sync($dataImages);    
+                    } catch (\Exception $e){
+                        $error['errors']['images'] = 'the Carrier Images can not be created';
+                        $error['errors']['imagesMessage'] = $e->getMessage();
+                        return response()->json($error)->setStatusCode($this->errors['accepted']);
+                    }
+                }
+            }
+        }
+
         return $this->response()->item($carrier, new CarrierTransformer(), ['key' => 'carriers']);
     }
 

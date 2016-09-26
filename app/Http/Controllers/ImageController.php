@@ -23,6 +23,8 @@ class ImageController extends ApiController
      */
     protected $image;
 
+    protected $urlFile;
+
     /**
      * Image Controller constructor
      *
@@ -31,6 +33,7 @@ class ImageController extends ApiController
     public function __construct(ImageInterface $image)
     {
         $this->image = $image;
+        $this->urlFile = 'storage/files/';
     }
 
     /**
@@ -83,13 +86,14 @@ class ImageController extends ApiController
             $imageFile['mimeType'] = $file->getClientMimeType();
             $extension = $imageFile['extension'] = $file->getClientOriginalExtension();
             $imageFile['size'] = $file->getClientSize();
+            $imageFile['url'] = $this->urlFile.$filename.'.'.$extension;
 
-            $value = Flysystem::put($filename.'.'.$extension, $imageFile);
+            $value = Storage::put($filename.'.'.$extension, $file);
 
             if($value){
                 $image = $this->image->create($imageFile);
             } else {
-                Flysystem::delete($file);
+                Storage::delete($file);
             }   
         } catch (\Exception $e) {
             $error['errors']['image'] = 'the Image can not be created';
