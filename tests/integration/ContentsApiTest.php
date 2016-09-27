@@ -90,9 +90,10 @@ class ContentsApiTest extends TestCase
     public function testDeleteContents()
     {
         $contents = factory(\WA\DataStore\Content\Content::class)->create();
-        $this->delete('/contents/'. $contents->id);
-        $response = $this->call('GET', '/contents/'.$contents->id);
-        $this->assertEquals(500, $response->status());
+        //$this->delete('/contents/'. $contents->id);
+        //$response = $this->call('GET', '/contents/'.$contents->id);
+        $response = $this->call('DELETE', '/contents/'.$contents->id);
+        $this->assertEquals(204, $response->status());
 
     }
 

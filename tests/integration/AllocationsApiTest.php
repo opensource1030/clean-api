@@ -16,10 +16,7 @@ class AllocationsApiTest extends TestCase
 
     public function testGetAllocations()
     {
-        $this->markTestIncomplete(
-          'TODO: needs to be reviewed.' 
-        );
-        
+
         factory(\WA\DataStore\Allocation\Allocation::class, 40)->create();
 
         $this->json('GET', '/allocations/')
@@ -53,9 +50,6 @@ class AllocationsApiTest extends TestCase
 
     public function testGetAllocationById()
     {
-        $this->markTestIncomplete(
-          'TODO: needs to be reviewed.' 
-        );
 
         $allocation = factory(\WA\DataStore\Allocation\Allocation::class)->create();
 

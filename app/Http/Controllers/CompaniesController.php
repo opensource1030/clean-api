@@ -84,6 +84,11 @@ class CompaniesController extends ApiController
     {
         $data = $request->all();
         $company = $this->company->create($data);
+        if(!$company)
+        {
+            $error['errors']['post'] = 'Company could not be created. Please check your data';
+            return response()->json($error)->setStatusCode(403);
+        }
         return $this->response()->item($company, new CompanyTransformer(), ['key' => 'companies']);
     }
 
@@ -95,9 +100,20 @@ class CompaniesController extends ApiController
      */
     public function store($id, Request $request)
     {
+        $company = Company::find($id);
+        if(!isset($company))
+        {
+            $error['errors']['put'] = 'Company selected does not exist';
+            return response()->json($error)->setStatusCode(404);
+        }
         $data = $request->all();
         $data['id'] = $id;
         $company = $this->company->update($data);
+        if(!$company)
+        {
+            $error['errors']['put'] = 'Company could not be updated. Please check your data';
+            return response()->json($error)->setStatusCode(403);
+        }
         return $this->response()->item($company, new CompanyTransformer(), ['key' => 'companies']);
     }
 
@@ -105,10 +121,25 @@ class CompaniesController extends ApiController
      * Delete a company
      *
      * @param $id
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function deleteCompany($id)
     {
+        $company = Company::find($id);
+        if(!isset($company))
+        {
+           $error['errors']['delete'] = 'Company selected does not exist';
+           return response()->json($error)->setStatusCode(404);
+        }
+
         $this->company->delete($id);
+        $company = Company::find($id);
+        if(!$company)
+        {
+            return response()->json()->setStatusCode(204);
+        }else{
+            return response()->json()->setStatusCode(202);
+        }
         $this->index();
     }
 
