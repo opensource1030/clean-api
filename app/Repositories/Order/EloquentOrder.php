@@ -26,23 +26,11 @@ class EloquentOrder extends AbstractRepository implements OrderInterface
             return false;
         }
 
-        if(isset($data['status'])){
-            $order->status = $data['status'];    
-        }
-        if(isset($data['userId'])){
-            $order->userId = $data['userId'];    
-        }
-        if(isset($data['packageId'])){
-            $order->packageId = $data['packageId'];    
-        }
-        if(isset($data['deviceId'])){
-            $order->deviceId = $data['deviceId'];    
-        }
-        if(isset($data['serviceId'])){
-            $order->serviceId = $data['serviceId'];    
-        }
-
-
+        if(isset($data['status'])){     $order->status = $data['status'];       }
+        if(isset($data['userId'])){     $order->userId = $data['userId'];       }
+        if(isset($data['packageId'])){  $order->packageId = $data['packageId']; }
+        if(isset($data['deviceId'])){   $order->deviceId = $data['deviceId'];   }
+        if(isset($data['serviceId'])){  $order->serviceId = $data['serviceId']; }
 
         if(!$order->save()) {
             return false;
