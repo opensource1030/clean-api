@@ -12,7 +12,6 @@ use League\Fractal\TransformerAbstract;
  */
 class OrderTransformer extends TransformerAbstract
 {
-
     /**
      * @param Order $order
      *
@@ -26,6 +25,8 @@ class OrderTransformer extends TransformerAbstract
             'status' => $order->status,
             'userId' => (int)$order->userId,
             'packageId' => (int)$order->packageId,
+            'deviceId' => (int)$order->deviceId,
+            'serviceId' => (int)$order->serviceId,
             'created_at' => $order->created_at,
             'updated_at' => $order->updated_at,
         ];

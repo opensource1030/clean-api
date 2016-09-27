@@ -18,6 +18,8 @@ class Order extends BaseDataStore
             'status',
             'userId',
             'packageId',
+            'deviceId',
+            'serviceId',
             'updated_at'];
 
 
