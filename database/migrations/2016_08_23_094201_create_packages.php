@@ -25,6 +25,14 @@ class CreatePackages extends Migration
                 $table->nullableTimestamps();
             }
         );
+
+        Schema::table(
+            'orders', 
+            function($table) {
+                $table->foreign('packageId')->references('id')->on('packages');
+            }
+        );
+
     }
 
     /**

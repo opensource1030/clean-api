@@ -30,7 +30,7 @@ class CreateCategorydevicesImageTable extends Migration
         Schema::table(
             $this->tableName, 
             function($table) {
-                $table->foreign('categorydeviceId')->references('id')->on('categorydevice')->onDelete('cascade');
+                $table->foreign('categorydeviceId')->references('id')->on('categorydevices')->onDelete('cascade');
                 $table->foreign('imageId')->references('id')->on('images')->onDelete('cascade');
             }
         );

@@ -122,7 +122,7 @@ class DevicesApiTest extends TestCase
         $deviceId = $deviceId + 10;
 
         $response = $this->call('GET', '/devices/'.$deviceId);
-        $this->assertEquals(409, $response->status());
+        $this->assertEquals(404, $response->status());
     }
 
     public function testGetDeviceByIdandIncludesAssets(){
@@ -1090,13 +1090,13 @@ class DevicesApiTest extends TestCase
         $responseDel = $this->call('DELETE', '/devices/'.$device->id);
         $this->assertEquals(200, $responseDel->status());
         $responseGet = $this->call('GET', '/devices/'.$device->id);
-        $this->assertEquals(409, $responseGet->status());        
+        $this->assertEquals(404, $responseGet->status());        
     }
 
     public function testDeleteDeviceIfNoExists(){
         // DELETE NO EXISTING.
         $responseDel = $this->call('DELETE', '/devices/1');
-        $this->assertEquals(409, $responseDel->status());
+        $this->assertEquals(404, $responseDel->status());
     }
 
     public function testParseJsonToArray(){

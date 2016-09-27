@@ -42,6 +42,12 @@ class CreateServices extends Migration
                 //$table->foreign('companyId')->references('id')->on('companies');
             }
         );
+        Schema::table(
+            'orders', 
+            function($table) {
+                $table->foreign('serviceId')->references('id')->on('services');
+            }
+        );        
     }
 
     /**

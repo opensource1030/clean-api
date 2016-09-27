@@ -41,13 +41,13 @@ abstract class ApiController extends BaseController
      * @var Errors
      */
     protected $errors = [
-        'ok' => 200,
-        'created' => 201,
-        'accepted' => 202,
-        'createdCI' => 204,
-        'forbidden' => 403,
-        'notexists' => 404,
-        'conflict' => 409
+        'ok' => 200,            //  
+        'created' => 201,       // Object created and return that object.
+        'accepted' => 202,      //  
+        'createdCI' => 204,     //
+        'forbidden' => 403,     // Unsupported Request (Permissions).
+        'notexists' => 404,     // Get Put or Delete Not Exists Objects.
+        'conflict' => 409       // Other Conflicts.
     ];
 
     /**
@@ -156,5 +156,11 @@ abstract class ApiController extends BaseController
             }                        
         }        
         return $array;
+    }
+
+    public function areEquals($value1, $value2){
+        var_dump($value1);
+        var_dump($value2);
+        die;
     }
 }
