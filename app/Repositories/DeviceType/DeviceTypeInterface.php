@@ -24,4 +24,38 @@ interface DeviceTypeInterface extends RepositoryInterface
      * @return Object object of device type
      */
     public function byModelOrCreate($name, array $data);
+
+    /**
+     * Get Array of all DeviceTypes.
+     *
+     * @return Array of DeviceType
+     */
+    public function getAllDeviceType();
+
+    /**
+     * Create DeviceType
+     *
+     * @param array $data
+     * @return bool|static
+     */
+    public function create(array $data);
+
+    /**
+     * Update DeviceType.
+     *
+     * @param array $data
+     *
+     * @return bool
+     */
+    public function update(array $data);
+
+    /**
+     * Delete DeviceType.
+     *
+     * @param int  $id
+     * @param bool $soft true soft deletes
+     *
+     * @return bool
+     */
+    public function delete($id, $soft = true);
 }

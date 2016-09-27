@@ -21,8 +21,10 @@ class CreateOrders extends Migration
             function ($table) {
                 $table->increments('id');
                 $table->string('status');
-                $table->integer('userId')->unsigned();
-                $table->integer('packageId')->unsigned();
+                $table->integer('userId')->unsigned()->nullable();
+                $table->integer('packageId')->unsigned()->nullable();
+                $table->integer('deviceId')->unsigned()->nullable();
+                $table->integer('serviceId')->unsigned()->nullable();
 
                 $table->nullableTimestamps();
             }
@@ -32,6 +34,7 @@ class CreateOrders extends Migration
             $this->tableName, 
             function($table) {
                 $table->foreign('userId')->references('id')->on('users');
+                $table->foreign('deviceId')->references('id')->on('devices');
             }
         );
     }

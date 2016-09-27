@@ -24,6 +24,8 @@ class ModificationTransformer extends TransformerAbstract
 
             'id' => (int)$modification->id,
             'type' => $modification->type,
+            'name' => $modification->name,
+            'condition' => $modification->condition,
             'value' => $modification->value,
             'created_at' => $modification->created_at,
             'updated_at' => $modification->updated_at,

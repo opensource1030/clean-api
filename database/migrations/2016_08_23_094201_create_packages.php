@@ -1,6 +1,5 @@
 <?php
 
-
 use Illuminate\Database\Migrations\Migration;
 
 class CreatePackages extends Migration
@@ -21,21 +20,9 @@ class CreatePackages extends Migration
             function ( $table) {
                 $table->increments('id');
                 $table->string('name');
-
-                $table->integer('conditionsId')->unsigned();
-                $table->integer('devicesId')->unsigned();
-                $table->integer('appsId')->unsigned();
-                $table->integer('servicesId')->unsigned();
+                $table->integer('addressId')->unsigned();
                 
                 $table->nullableTimestamps();
-            }
-        );
-
-        Schema::table(
-            $this->tableName, 
-            function($table) {
-                $table->foreign('devicesId')->references('id')->on('devices')->onDelete('cascade');
-                $table->foreign('appsId')->references('id')->on('apps')->onDelete('cascade');
             }
         );
 
@@ -45,6 +32,7 @@ class CreatePackages extends Migration
                 $table->foreign('packageId')->references('id')->on('packages');
             }
         );
+
     }
 
     /**

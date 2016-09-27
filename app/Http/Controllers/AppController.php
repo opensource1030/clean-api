@@ -38,9 +38,13 @@ class AppController extends ApiController
      */
     public function index()
     {
-        $app = $this->app->byPage();
-        return $this->response()->withPaginator($app, new AppTransformer(),['key' => 'apps']);
+        $criteria = $this->getRequestCriteria();
+        $this->app->setCriteria($criteria);
+        $apps = $this->app->byPage();
 
+        $response = $this->response()->withPaginator($apps, new AppTransformer(), ['key' => 'apps']);
+        $response = $this->applyMeta($response);
+        return $response;
     }
 
     /**

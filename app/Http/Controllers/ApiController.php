@@ -38,6 +38,19 @@ abstract class ApiController extends BaseController
     ];
 
     /**
+     * @var Errors
+     */
+    protected $errors = [
+        'ok' => 200,            //  
+        'created' => 201,       // Object created and return that object.
+        'accepted' => 202,      //  
+        'createdCI' => 204,     //
+        'forbidden' => 403,     // Unsupported Request (Permissions).
+        'notexists' => 404,     // Get Put or Delete Not Exists Objects.
+        'conflict' => 409       // Other Conflicts.
+    ];
+
+    /**
      * @return mixed
      */
     public function getRequestCriteria()
@@ -86,5 +99,68 @@ abstract class ApiController extends BaseController
         $response->addMeta('filter', $this->criteria['filters']->get());
         $response->addMeta('fields', $this->criteria['fields']->get());
         return $response;
+    }
+
+
+
+    /*
+     *      Checks if a JSON param has "data", "type" and "attributes" keys and "type" is equal to $type.
+     *
+     *      @param: 
+     *          "data" : {
+     *              "type" : $type,
+     *              "attributes" : {
+     *              ...
+     *      @return:
+     *          boolean;
+     */
+    public function isJsonCorrect($request, $type){
+
+        if(!isset($request['data'])){ 
+            return false;
+        } else {
+            $data = $request['data'];    
+            if(!isset($data['type'])){
+                return false; 
+            } else {
+                if($data['type'] <> $type){
+                    return false; 
+                } 
+            }
+            if(!isset($data['attributes'])){ 
+                return false; 
+            }
+        }
+        return true;
+    }
+
+    /*
+     *      Transforms an Object to an Array for Sync purposes.
+     *
+     *      @param:
+     *          { "type": "example", "id" : 1 },
+     *          { "type": "example", "id" : 2 }
+     *      @return
+     *          array( 1, 2 );
+     */
+    public function parseJsonToArray($data, $value){
+        $array = array();
+        
+        foreach ($data as $info) {
+            if(isset($info['type'])){
+                if($info['type'] == $value){
+                    if(isset($info['id'])){
+                           array_push($array, $info['id']);    
+                    }        
+                }
+            }                        
+        }        
+        return $array;
+    }
+
+    public function areEquals($value1, $value2){
+        var_dump($value1);
+        var_dump($value2);
+        die;
     }
 }

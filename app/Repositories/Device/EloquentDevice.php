@@ -101,19 +101,14 @@ class EloquentDevice extends AbstractRepository implements DeviceInterface
         $device = $this->byId($id);
 
         if (!$device) {
-            Log::error('[' . get_class() . '] | Cannot sync the find the devices');
-
             return false;
         }
 
         try {
-            $device->assets()->detach($ids['old']);
-            $device->assets()->sync($ids['new']);
+            $device->assets()->sync($ids);
 
             return true;
         } catch (\Exception $e) {
-            Log::error('Syncing the asset to device ' . $id . 'failed' . $e->getMessage());
-
             return false;
         }
     }
@@ -131,8 +126,6 @@ class EloquentDevice extends AbstractRepository implements DeviceInterface
         $device = $this->byId($id);
 
         if (!$device) {
-            Log::error('[' . get_class() . '] | Cannot sync the find the devices');
-
             return false;
         }
 
@@ -141,8 +134,6 @@ class EloquentDevice extends AbstractRepository implements DeviceInterface
 
             return true;
         } catch (\Exception $e) {
-            Log::error('Syncing the company to device ' . $id . 'failed' . $e->getMessage());
-
             return false;
         }
     }
@@ -160,8 +151,6 @@ class EloquentDevice extends AbstractRepository implements DeviceInterface
         $device = $this->byId($id);
 
         if (!$device) {
-            Log::error('[' . get_class() . '] | Cannot sync the find the devices');
-
             return false;
         }
 
@@ -170,9 +159,6 @@ class EloquentDevice extends AbstractRepository implements DeviceInterface
 
             return true;
         } catch (\Exception $e) {
-            echo 'Syncing the modification to device ' . $id . 'failed' . $e->getMessage();
-            Log::error('Syncing the modification to device ' . $id . 'failed' . $e->getMessage());
-
             return false;
         }
     }
@@ -190,8 +176,6 @@ class EloquentDevice extends AbstractRepository implements DeviceInterface
         $device = $this->byId($id);
 
         if (!$device) {
-            Log::error('[' . get_class() . '] | Cannot sync the find the devices');
-
             return false;
         }
 
@@ -200,8 +184,6 @@ class EloquentDevice extends AbstractRepository implements DeviceInterface
 
             return true;
         } catch (\Exception $e) {
-            Log::error('Syncing the carrier to device ' . $id . 'failed' . $e->getMessage());
-
             return false;
         }
     }

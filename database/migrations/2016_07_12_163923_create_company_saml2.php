@@ -40,6 +40,8 @@ class CreateCompanySaml2 extends Migration
                 $table->string('singleLogoutServiceBinding');
                 $table->longtext('x509cert');
                 $table->integer('companyId')->unsigned();
+
+                $table->nullableTimestamps();
             }
         );
         Schema::table(

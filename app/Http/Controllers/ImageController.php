@@ -6,7 +6,8 @@ use WA\DataStore\Image\Image;
 use WA\Repositories\Image\ImageInterface;
 
 use Illuminate\Support\Facades\Storage;
-use Flysystem;
+use League\Flysystem\Filesystem;
+//use Flysystem;
 use Illuminate\Http\Response;
 use Request;
 use DB;
@@ -22,6 +23,8 @@ class ImageController extends ApiController
      * @var ImageInterface
      */
     protected $image;
+
+    protected $urlFile;
 
     /**
      * Image Controller constructor
@@ -64,8 +67,12 @@ class ImageController extends ApiController
             $error['errors']['get'] = 'the Image selected doesn\'t exists';   
             return response()->json($error)->setStatusCode(409);
         }
+
+        $filePath = $image->filename.'.'.$image->extension;
+        $file = Storage::get($filePath);
+        return $file;
         
-        return $this->response()->item($image, new ImageTransformer(),['key' => 'images']);
+        //return $this->response()->item($file, new ImageTransformer(),['key' => 'images']);
     }
    
     /**
@@ -83,17 +90,18 @@ class ImageController extends ApiController
             $imageFile['mimeType'] = $file->getClientMimeType();
             $extension = $imageFile['extension'] = $file->getClientOriginalExtension();
             $imageFile['size'] = $file->getClientSize();
+            $imageFile['url'] = $filename.'.'.$extension;
 
-            $value = Flysystem::put($filename.'.'.$extension, $imageFile);
+            $value = Storage::put($filename.'.'.$extension, file_get_contents($file));
 
             if($value){
                 $image = $this->image->create($imageFile);
             } else {
-                Flysystem::delete($file);
+                Storage::delete($file);
             }   
         } catch (\Exception $e) {
             $error['errors']['image'] = 'the Image can not be created';
-            $error['errors']['imageMessage'] = $this->getErrorAndParse($e);
+            $error['errors']['imageMessage'] = $e->getMessage();
             return response()->json($error)->setStatusCode(409);
         }
 

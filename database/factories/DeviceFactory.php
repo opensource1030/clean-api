@@ -9,7 +9,7 @@
 */
 
 
-$factory->define(\WA\DataStore\DeviceType::class, 
+$factory->define(\WA\DataStore\DeviceType\DeviceType::class, 
     function () {
 
         return []; // Workaround, as this factory is not working for unknown reasons
@@ -44,7 +44,7 @@ $factory->define(\WA\DataStore\Device\Device::class,
                 $makes = ['Apple', 'Samsung', 'Blackberry'];
                 $models = ['Galaxy S7', 'IPhone SE', 'Q10', 'IPad Air'];
                 $class = ['Phone', 'Tablet', 'M2M'];
-                $deviceType = factory(\WA\DataStore\DeviceType::class)->make();
+                $deviceType = factory(\WA\DataStore\DeviceType\DeviceType::class)->make();
                 $deviceType->make = $makes[array_rand($makes)];
                 $deviceType->model = $models[array_rand($models)];
                 $deviceType->class = $class[array_rand($class)];
