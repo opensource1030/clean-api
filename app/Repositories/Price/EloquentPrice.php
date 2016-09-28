@@ -84,7 +84,6 @@ class EloquentPrice extends AbstractRepository implements PriceInterface
     public function create(array $data)
     {
         $priceData = [
-            "type" =>  isset($data['type']) ? $data['type'] : null,
             "deviceId" => isset($data['deviceId']) ? $data['deviceId'] : 0,
             "capacityId" => isset($data['capacityId']) ? $data['capacityId'] : 0,
             "styleId" => isset($data['styleId']) ? $data['styleId'] : 0,

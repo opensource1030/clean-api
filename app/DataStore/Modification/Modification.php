@@ -15,7 +15,7 @@ class Modification extends BaseDataStore
     protected  $table = 'modifications';
 
     protected $fillable = [
-            'type',
+            'modType',
             'value',
             'updated_at'];
 

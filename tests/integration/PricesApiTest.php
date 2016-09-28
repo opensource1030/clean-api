@@ -93,10 +93,10 @@ class PricesApiTest extends TestCase
 
         $device = factory(\WA\DataStore\Device\Device::class)->create();
         $capacity = factory(\WA\DataStore\Modification\Modification::class)->create(
-            ['type' => 'capacity']
+            ['modType' => 'capacity']
         );
         $style = factory(\WA\DataStore\Modification\Modification::class)->create(
-            ['type' => 'style']
+            ['modType' => 'style']
         );
         $carrier = factory(\WA\DataStore\Carrier\Carrier::class)->create();
         $company = factory(\WA\DataStore\Company\Company::class)->create();
@@ -136,20 +136,20 @@ class PricesApiTest extends TestCase
     {
         $device1 = factory(\WA\DataStore\Device\Device::class)->create();
         $capacity1 = factory(\WA\DataStore\Modification\Modification::class)->create(
-            ['type' => 'capacity']
+            ['modType' => 'capacity']
         );
         $style1 = factory(\WA\DataStore\Modification\Modification::class)->create(
-            ['type' => 'style']
+            ['modType' => 'style']
         );
         $carrier1 = factory(\WA\DataStore\Carrier\Carrier::class)->create();
         $company1 = factory(\WA\DataStore\Company\Company::class)->create();
 
         $device2 = factory(\WA\DataStore\Device\Device::class)->create();
         $capacity2 = factory(\WA\DataStore\Modification\Modification::class)->create(
-            ['type' => 'capacity']
+            ['modType' => 'capacity']
         );
         $style2 = factory(\WA\DataStore\Modification\Modification::class)->create(
-            ['type' => 'style']
+            ['modType' => 'style']
         );
         $carrier2 = factory(\WA\DataStore\Carrier\Carrier::class)->create();
         $company2 = factory(\WA\DataStore\Company\Company::class)->create();

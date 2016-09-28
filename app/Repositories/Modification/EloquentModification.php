@@ -26,8 +26,8 @@ class EloquentModification extends AbstractRepository implements ModificationInt
             return false;
         }
 
-        if(isset($data['type'])){
-            $modification->type = $data['type'];    
+        if(isset($data['modType'])){
+            $modification->modType = $data['modType'];    
         }
         if(isset($data['value'])){
             $modification->value = $data['value'];    
@@ -60,7 +60,7 @@ class EloquentModification extends AbstractRepository implements ModificationInt
     public function create(array $data)
     {
         $modificationData = [
-            "type" =>  isset($data['type']) ? $data['type'] : null ,
+            "modType" =>  isset($data['modType']) ? $data['modType'] : null ,
             "value" => isset($data['value']) ? $data['value'] : null,
         ];
 

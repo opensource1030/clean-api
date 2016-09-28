@@ -1,7 +1,9 @@
 <?php
+
 namespace WA\Http\Controllers;
 
 use Illuminate\Http\Request;
+
 use WA\DataStore\Modification\Modification;
 use WA\DataStore\Modification\ModificationTransformer;
 use WA\Repositories\Modification\ModificationInterface;
@@ -23,8 +25,8 @@ class ModificationController extends ApiController
      *
      * @param modificationInterface $modification
      */
-    public function __construct(ModificationInterface $modification)
-    {
+    public function __construct(ModificationInterface $modification) {
+
         $this->modification = $modification;
     }
 
@@ -52,13 +54,16 @@ class ModificationController extends ApiController
      *
      * @Get("/{id}")
      */
-    public function show($id)
-    {
+    public function show($id) {
+
         $modification = Modification::find($id);
         if($modification == null){
             $error['errors']['get'] = 'the modification selected doesn\'t exists';   
             return response()->json($error)->setStatusCode(409);
         }
+
+        // Dingo\Api\src\Http\Response\Factory.php
+        // Dingo\Api\src\Http\Transformer\Factory.php
 
         return $this->response()->item($modification, new ModificationTransformer(),['key' => 'modifications']);
     }
@@ -69,22 +74,23 @@ class ModificationController extends ApiController
      * @param $id
      * @return \Dingo\Api\Http\Response
      */
-    public function store($id, Request $request)   
-    {
-        /*
-         * Checks if Json has data, data-type & data-attributes.
-         */
-        if(!$this->isJsonCorrect($request, 'modifications')){
-            $error['errors']['json'] = 'Json is Invalid';
-            return response()->json($error)->setStatusCode(409);
+    public function store($id, Request $request) {
+
+        if($this->isJsonCorrect($request, 'modifications')){
+            try {
+                $data = $request->all()['data']['attributes'];
+                $data['id'] = $id;
+                $modification = $this->modification->update($data);
+                return $this->response()->item($modification, new ModificationTransformer(), ['key' => 'modifications'])->setStatusCode($this->status_codes['created']);
+            } catch (\Exception $e){
+                $error['errors']['modifications'] = 'the Modification has not been updated';
+                //$error['errors']['modificationsMessage'] = $e->getMessage();
+            }
         } else {
-            $data = $request->all()['data'];
-            $dataAttributes = $data['attributes'];           
+            $error['errors']['json'] = 'Json is Invalid';
         }
 
-        $dataAttributes['id'] = $id;
-        $modification = $this->modification->update($dataAttributes);
-        return $this->response()->item($modification, new ModificationTransformer(), ['key' => 'modifications']);
+        return response()->json($error)->setStatusCode($this->status_codes['conflict']);
     }
 
     /**
@@ -92,18 +98,22 @@ class ModificationController extends ApiController
      *
      * @return \Dingo\Api\Http\Response
      */
-    public function create(Request $request)
-    {
-        if(!$this->isJsonCorrect($request, 'modifications')){
-            $error['errors']['json'] = 'Json is Invalid';
-            return response()->json($error)->setStatusCode(409);
+    public function create(Request $request) {
+
+        if($this->isJsonCorrect($request, 'modifications')){
+            try {
+                $data = $request->all()['data']['attributes'];
+                $modification = $this->modification->create($data);
+                return $this->response()->item($modification, new ModificationTransformer(), ['key' => 'modifications']);
+            } catch (\Exception $e){
+                $error['errors']['modifications'] = 'the Modification has not been created';
+                //$error['errors']['modificationsMessage'] = $e->getMessage();
+            }
         } else {
-            $data = $request->all()['data'];
-            $dataAttributes = $data['attributes'];           
+            $error['errors']['json'] = 'Json is Invalid';
         }
 
-        $modification = $this->modification->create($dataAttributes);
-        return $this->response()->item($modification, new ModificationTransformer(), ['key' => 'modifications']);
+        return response()->json($error)->setStatusCode($this->status_codes['conflict']);
     }
 
     /**
