@@ -2,16 +2,12 @@
 
 namespace WA\Http\Controllers;
 
-use Cartalyst\DataGrid\Laravel\Facades\DataGrid;
-use Dingo\Api\Routing\Helpers;
-use Illuminate\Session\SessionManager as Session;
-use WA\DataStore\Service\ServiceTransformer;
-use WA\Helpers\Traits\SetLimits;
-use WA\Http\Controllers\Api\Traits\BasicCrud;
-use WA\Repositories\Service\ServiceInterface;
-use WA\DataStore\Service\Service;
-
 use Illuminate\Http\Request;
+
+use WA\DataStore\Service\Service;
+use WA\DataStore\Service\ServiceTransformer;
+use WA\Repositories\Service\ServiceInterface;
+
 /**
  * Service resource.
  *

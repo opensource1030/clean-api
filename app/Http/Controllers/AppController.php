@@ -1,17 +1,17 @@
 <?php
+
 namespace WA\Http\Controllers;
+
+use Illuminate\Http\Request;
 
 use WA\DataStore\App\App;
 use WA\DataStore\App\AppTransformer;
 use WA\Repositories\App\AppInterface;
-use Illuminate\Http\Request;
-
-use Log;
 
 /**
- * app resource.
+ * App resource.
  *
- * @Resource("App", uri="/app")
+ * @Resource("app", uri="/apps")
  */
 class AppController extends ApiController
 {
@@ -25,8 +25,8 @@ class AppController extends ApiController
      *
      * @param AppInterface $app
      */
-    public function __construct(AppInterface $app)
-    {
+    public function __construct(AppInterface $app) {
+        
         $this->app = $app;
     }
 
@@ -36,8 +36,8 @@ class AppController extends ApiController
      * Get a payload of all App
      *
      */
-    public function index()
-    {
+    public function index() {
+
         $criteria = $this->getRequestCriteria();
         $this->app->setCriteria($criteria);
         $apps = $this->app->byPage();
@@ -54,15 +54,18 @@ class AppController extends ApiController
      *
      * @Get("/{id}")
      */
-    public function show($id)
-    {
+    public function show($id) {
+
         $app = App::find($id);
         if($app == null){
             $error['errors']['get'] = 'the App selected doesn\'t exists';   
-            return response()->json($error)->setStatusCode(409);
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
-        return $this->response()->item($app, new AppTransformer(), ['key' => 'apps']);
+        // Dingo\Api\src\Http\Response\Factory.php
+        // Dingo\Api\src\Http\Transformer\Factory.php
+
+        return $this->response()->item($app, new AppTransformer(),['key' => 'apps'])->setStatusCode($this->status_codes['created']);
     }
 
     /**
@@ -71,12 +74,23 @@ class AppController extends ApiController
      * @param $id
      * @return \Dingo\Api\Http\Response
      */
-    public function store($id, Request $request)   
-    {
-        $data = $request->all();       
-        $data['id'] = $id;
-        $app = $this->app->update($data);
-        return $this->response()->item($app, new AppTransformer(), ['key' => 'apps']);
+    public function store($id, Request $request) {
+
+        if($this->isJsonCorrect($request, 'apps')){
+            try {
+                $data = $request->all()['data']['attributes'];
+                $data['id'] = $id;
+                $app = $this->app->update($data);
+                return $this->response()->item($app, new AppTransformer(), ['key' => 'apps'])->setStatusCode($this->status_codes['created']);
+            } catch (\Exception $e){
+                $error['errors']['apps'] = 'the App has not been updated';
+                //$error['errors']['appsMessage'] = $e->getMessage();
+            }
+        } else {
+            $error['errors']['json'] = 'Json is Invalid';
+        }
+
+        return response()->json($error)->setStatusCode($this->status_codes['conflict']);
     }
 
     /**
@@ -84,11 +98,22 @@ class AppController extends ApiController
      *
      * @return \Dingo\Api\Http\Response
      */
-    public function create(Request $request)
-    {
-        $data = $request->all();
-        $app = $this->app->create($data);
-        return $this->response()->item($app, new AppTransformer(), ['key' => 'apps']);
+    public function create(Request $request) {
+
+        if($this->isJsonCorrect($request, 'apps')){
+            try {
+                $data = $request->all()['data']['attributes'];
+                $app = $this->app->create($data);
+                return $this->response()->item($app, new AppTransformer(), ['key' => 'apps']);
+            } catch (\Exception $e){
+                $error['errors']['apps'] = 'the App has not been created';
+                //$error['errors']['appsMessage'] = $e->getMessage();
+            }
+        } else {
+            $error['errors']['json'] = 'Json is Invalid';
+        }
+
+        return response()->json($error)->setStatusCode($this->status_codes['conflict']);
     }
 
     /**
@@ -96,8 +121,8 @@ class AppController extends ApiController
      *
      * @param $id
      */
-    public function delete($id)
-    {
+    public function delete($id) {
+
         $app = App::find($id);
         if($app <> null){
             $this->app->deleteById($id);

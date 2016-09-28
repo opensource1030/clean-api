@@ -110,7 +110,7 @@ class PackageController extends ApiController
         } catch (\Exception $e) {
             DB::rollBack();
             $success = false;
-            $error['errors']['packages'] = 'The Package can not be Modified';
+            $error['errors']['packages'] = 'The Package has not been Modified';
             $error['errors']['packagesMessage'] = $e->getMessage();
             return response()->json($error)->setStatusCode(409);
         }
@@ -128,7 +128,7 @@ class PackageController extends ApiController
                     try {
                         $package->conditions()->sync($dataConditions);    
                     } catch (\Exception $e){
-                        $error['errors']['conditions'] = 'the Package Conditions can not be Modified';
+                        $error['errors']['conditions'] = 'the Package Conditions has not been Modified';
                         $error['errors']['conditionsMessage'] = $e->getMessage();
                     }
                 }
@@ -140,7 +140,7 @@ class PackageController extends ApiController
                     try {
                         $package->services()->sync($dataServices);
                     } catch (\Exception $e){
-                        $error['errors']['services'] = 'the Package Services can not be Modified';
+                        $error['errors']['services'] = 'the Package Services has not been Modified';
                         //$error['errors']['servicesMessage'] = $e->getMessage();
                     }
                 }
@@ -153,7 +153,7 @@ class PackageController extends ApiController
                         $package->devices()->sync($dataDevices);
                     } catch (\Exception $e){
                         $success = false;
-                        $error['errors']['devices'] = 'the Package Devices can not be Modified';
+                        $error['errors']['devices'] = 'the Package Devices has not been Modified';
                         //$error['errors']['devicesMessage'] = $e->getMessage();
                     }
                 }
@@ -166,7 +166,7 @@ class PackageController extends ApiController
                         $package->apps()->sync($dataApps);
                     } catch (\Exception $e){
                         $success = false;
-                        $error['errors']['apps'] = 'the Package Apps can not be Modified';
+                        $error['errors']['apps'] = 'the Package Apps has not been Modified';
                         //$error['errors']['appsMessage'] = $e->getMessage();
                     }
                 }
@@ -214,7 +214,7 @@ class PackageController extends ApiController
         } catch (\Exception $e) {
             DB::rollBack();
             $success = false;
-            $error['errors']['packages'] = 'The Package can not be created';
+            $error['errors']['packages'] = 'The Package has not been created';
             $error['errors']['packagesMessage'] = $e->getMessage();
             return response()->json($error)->setStatusCode(409);
         }
@@ -232,7 +232,7 @@ class PackageController extends ApiController
                     try {
                         $package->conditions()->sync($dataConditions);    
                     } catch (\Exception $e){
-                        $error['errors']['conditions'] = 'the Package Conditions can not be created';
+                        $error['errors']['conditions'] = 'the Package Conditions has not been created';
                         //$error['errors']['conditionsMessage'] = $e->getMessage();
                     }
                 }
@@ -244,7 +244,7 @@ class PackageController extends ApiController
                     try {
                         $package->services()->sync($dataServices);
                     } catch (\Exception $e){
-                        $error['errors']['services'] = 'the Package Services can not be created';
+                        $error['errors']['services'] = 'the Package Services has not been created';
                         //$error['errors']['servicesMessage'] = $e->getMessage();
                     }
                 }
@@ -257,7 +257,7 @@ class PackageController extends ApiController
                         $package->devices()->sync($dataDevices);
                     } catch (\Exception $e){
                         $success = false;
-                        $error['errors']['devices'] = 'the Package Devices can not be created';
+                        $error['errors']['devices'] = 'the Package Devices has not been created';
                         //$error['errors']['devicesMessage'] = $e->getMessage();
                     }
                 }
@@ -270,7 +270,7 @@ class PackageController extends ApiController
                         $package->apps()->sync($dataApps);
                     } catch (\Exception $e){
                         $success = false;
-                        $error['errors']['apps'] = 'the Package Apps can not be created';
+                        $error['errors']['apps'] = 'the Package Apps has not been created';
                         //$error['errors']['appsMessage'] = $e->getMessage();
                     }
                 }

@@ -29,7 +29,9 @@ class CarrierTransformer extends TransformerAbstract
             'presentation' => $carrier->presentation,
             'active' => $carrier->active,
             'locationId' => $carrier->locationId,
-            'shortName' => $carrier->shortName
+            'shortName' => $carrier->shortName,
+            'created_at' => $carrier->created_at,
+            'updated_at' => $carrier->updated_at
         ];
     }
 

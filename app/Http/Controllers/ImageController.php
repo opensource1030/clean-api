@@ -1,5 +1,9 @@
 <?php
+
 namespace WA\Http\Controllers;
+
+use Illuminate\Http\Response;
+use Request;
 
 use WA\DataStore\Image\ImageTransformer;
 use WA\DataStore\Image\Image;
@@ -7,9 +11,7 @@ use WA\Repositories\Image\ImageInterface;
 
 use Illuminate\Support\Facades\Storage;
 use League\Flysystem\Filesystem;
-//use Flysystem;
-use Illuminate\Http\Response;
-use Request;
+
 use DB;
 
 /**
@@ -65,7 +67,7 @@ class ImageController extends ApiController
         $image = Image::find($id);
         if($image == null){
             $error['errors']['get'] = 'the Image selected doesn\'t exists';   
-            return response()->json($error)->setStatusCode(409);
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
         $filePath = $image->filename.'.'.$image->extension;
@@ -100,12 +102,12 @@ class ImageController extends ApiController
                 Storage::delete($file);
             }   
         } catch (\Exception $e) {
-            $error['errors']['image'] = 'the Image can not be created';
+            $error['errors']['image'] = 'the Image has not been created';
             $error['errors']['imageMessage'] = $e->getMessage();
-            return response()->json($error)->setStatusCode(409);
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
-        return $this->response()->item($image, new ImageTransformer(),['key' => 'images']);
+        return $this->response()->item($image, new ImageTransformer(),['key' => 'images'])->setStatusCode($this->status_codes['created']);
     }
 
     /**
@@ -120,7 +122,7 @@ class ImageController extends ApiController
             $this->image->deleteById($id);
         } else {
             $error['errors']['delete'] = 'the Image selected doesn\'t exists';   
-            return response()->json($error)->setStatusCode(409);
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
         
         $this->index();
@@ -129,7 +131,7 @@ class ImageController extends ApiController
             return array("success" => true);
         } else {
             $error['errors']['delete'] = 'the Image has not been deleted';   
-            return response()->json($error)->setStatusCode(409);
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
     }
 }

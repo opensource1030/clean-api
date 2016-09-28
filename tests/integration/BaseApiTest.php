@@ -15,6 +15,18 @@ class BaseApiTest extends TestCase
             ]);
     }
 
+    public function testStatusCodes(){
+
+        $baseController = new class() extends ApiController{};
+        $this->assertSame($baseController->status_codes['ok'], 200);
+        $this->assertSame($baseController->status_codes['created'], 201);
+        $this->assertSame($baseController->status_codes['accepted'], 202);
+        $this->assertSame($baseController->status_codes['createdCI'], 204);
+        $this->assertSame($baseController->status_codes['forbidden'], 403);
+        $this->assertSame($baseController->status_codes['notexists'], 404);
+        $this->assertSame($baseController->status_codes['conflict'], 409);
+    }
+
     public function testIsJsonCorrect() {
 
  		$type = 'anytype';

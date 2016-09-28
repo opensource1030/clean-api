@@ -1,7 +1,7 @@
 <?php
 
-
 $factory->define(WA\DataStore\App\App::class, function ($faker) {
+
     return [
         'type'=> $faker->sentence,
         'image'=> $faker->sentence,

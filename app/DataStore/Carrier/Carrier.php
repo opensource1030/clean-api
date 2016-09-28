@@ -36,7 +36,8 @@ class Carrier extends BaseDataStore
             'presentation',
             'active',
             'locationId',
-            'shortName'];
+            'shortName',
+            'updated_at'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany

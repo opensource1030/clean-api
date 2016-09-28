@@ -89,95 +89,6 @@ class OrdersApiTest extends TestCase
             ]);
     }
 
-    public function testCreateOrderNoData()
-    {
-        $user = factory(\WA\DataStore\User\User::class)->create();
-        $package = factory(\WA\DataStore\Package\Package::class)->create();
-        $device = factory(\WA\DataStore\Device\Device::class)->create();
-        $service = factory(\WA\DataStore\Service\Service::class)->create();
-
-        $this->post('/orders',
-            [
-                'error' => [
-
-                ]
-            ])
-            ->seeJson([
-                'errors' => [
-                    'json' => 'Json is Invalid'
-                ]
-            ]);
-    }
-
-    public function testCreateOrderNoType()
-    {
-        $user = factory(\WA\DataStore\User\User::class)->create();
-        $package = factory(\WA\DataStore\Package\Package::class)->create();
-        $device = factory(\WA\DataStore\Device\Device::class)->create();
-        $service = factory(\WA\DataStore\Service\Service::class)->create();
-
-        $this->post('/orders',
-            [
-                'data' => [
-                    'error' => 'orders',
-                    'attributes' => [
-                        
-                    ]
-                ]
-            ])
-            ->seeJson([
-                'errors' => [
-                    'json' => 'Json is Invalid'
-                ]
-            ]);
-    }
-
-    public function testCreateOrderNoCorrectType()
-    {
-        $user = factory(\WA\DataStore\User\User::class)->create();
-        $package = factory(\WA\DataStore\Package\Package::class)->create();
-        $device = factory(\WA\DataStore\Device\Device::class)->create();
-        $service = factory(\WA\DataStore\Service\Service::class)->create();
-
-        $this->post('/orders',
-            [
-                'data' => [
-                    'type' => 'error',
-                    'attributes' => [
-                        
-                    ]
-                ]
-            ])
-            ->seeJson([
-                'errors' => [
-                    'json' => 'Json is Invalid'
-                ]
-            ]);
-    }    
-
-    public function testCreateOrderNoAttributes()
-    {
-        $user = factory(\WA\DataStore\User\User::class)->create();
-        $package = factory(\WA\DataStore\Package\Package::class)->create();
-        $device = factory(\WA\DataStore\Device\Device::class)->create();
-        $service = factory(\WA\DataStore\Service\Service::class)->create();
-
-        $this->post('/orders',
-            [
-                'data' => [
-                    'type' => 'orders',
-                    'error' => [
-                        
-                    ]
-                ]
-            ])
-            ->seeJson([
-                'errors' => [
-                    'json' => 'Json is Invalid'
-                ]
-            ]);
-    }
-
     public function testUpdateOrder()
     {
         $order1 = factory(\WA\DataStore\Order\Order::class)->create();
@@ -205,6 +116,7 @@ class OrdersApiTest extends TestCase
             ])
             ->seeJson([
                 'type' => 'orders',
+                'id' => "$order1->id",
                 'status' => $order2->status,
                 'userId'=> $order2->userId,
                 'packageId'=> $order2->packageId,

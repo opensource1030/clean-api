@@ -8,7 +8,6 @@ use WA\Http\Requests\Parameters\Fields;
 use WA\Http\Requests\Parameters\Filters;
 use WA\Http\Requests\Parameters\Sorting;
 
-
 /**
  * Extensible API controller
  *
@@ -38,9 +37,9 @@ abstract class ApiController extends BaseController
     ];
 
     /**
-     * @var Errors
+     * @var status_codes
      */
-    protected $errors = [
+    public $status_codes = [
         'ok' => 200,            //  
         'created' => 201,       // Object created and return that object.
         'accepted' => 202,      //  

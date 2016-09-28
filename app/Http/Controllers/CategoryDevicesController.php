@@ -1,12 +1,15 @@
 <?php
+
 namespace WA\Http\Controllers;
 
 use Illuminate\Http\Request;
+
 use WA\DataStore\Category\CategoryDevices;
 use WA\DataStore\Category\CategoryDevicesTransformer;
 use WA\Repositories\CategoryDevices\CategoryDevicesInterface;
 
 use DB;
+
 /**
  * CategoryDevices resource.
  *
@@ -24,8 +27,8 @@ class CategoryDevicesController extends ApiController
      *
      * @param CategoryDevicesInterface $categoryDevices
      */
-    public function __construct(CategoryDevicesInterface $categoryDevices)
-    {
+    public function __construct(CategoryDevicesInterface $categoryDevices) {
+
         $this->categoryDevices = $categoryDevices;
     }
 
@@ -41,7 +44,7 @@ class CategoryDevicesController extends ApiController
         $this->categoryDevices->setCriteria($criteria);
         $categoryDevices = $this->categoryDevices->byPage();
       
-        $response = $this->response()->withPaginator($categoryDevices, new CategoryDevicesTransformer(),['key' => 'CategoryDevicess']);
+        $response = $this->response()->withPaginator($categoryDevices, new CategoryDevicesTransformer(),['key' => 'categorydevicess']);
         $response = $this->applyMeta($response);
         return $response;
     }
@@ -53,15 +56,18 @@ class CategoryDevicesController extends ApiController
      *
      * @Get("/{id}")
      */
-    public function show($id)
-    {
+    public function show($id) {
+
         $categoryDevices = CategoryDevices::find($id);
         if($categoryDevices == null){
             $error['errors']['get'] = 'the CategoryDevices selected doesn\'t exists';   
-            return response()->json($error)->setStatusCode(409);
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
-        return $this->response()->item($categoryDevices, new CategoryDevicesTransformer(), ['key' => 'CategoryDevicess']);
+        // Dingo\Api\src\Http\Response\Factory.php
+        // Dingo\Api\src\Http\Transformer\Factory.php
+
+        return $this->response()->item($categoryDevices, new CategoryDevicesTransformer(), ['key' => 'categorydevices'])->setStatusCode($this->status_codes['created']);
     }
 
     /**
@@ -70,58 +76,61 @@ class CategoryDevicesController extends ApiController
      * @param $id
      * @return \Dingo\Api\Http\Response
      */
-    public function store($id, Request $request)   
-    {
+    public function store($id, Request $request) {
+
         /*
          * Checks if Json has data, data-type & data-attributes.
          */
-        if(!$this->isJsonCorrect($request, 'CategoryDevicess')){
+        if(!$this->isJsonCorrect($request, 'categorydevices')){
             $error['errors']['json'] = 'Json is Invalid';
-            return response()->json($error)->setStatusCode(409);
-        } else {
-            $data = $request->all()['data'];
-            $dataAttributes = $data['attributes'];           
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
+        DB::beginTransaction();
+
         try {
-            $dataAttributes['id'] = $id;
-            $categoryDevices = $this->categoryDevices->update($dataAttributes);
+            $data = $request->all()['data']['attributes'];
+            $data['id'] = $id;
+            $categoryDevices = $this->categoryDevices->update($data);
         } catch (\Exception $e) {
-            $success = false;
-            $error['errors']['CategoryDevicess'] = 'The CategoryDevices can not be updated';
-            //$error['errors']['CategoryDevicessMessage'] = $e->getMessage();
-            return response()->json($error)->setStatusCode($this->errors['accepted']);
+            DB::rollBack();
+            $error['errors']['categoryDevices'] = 'The CategoryDevices has not been updated';
+            //$error['errors']['categoryDevicesMessage'] = $e->getMessage();
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         } 
 
         if(isset($data['relationships'])){
             if(isset($data['relationships']['images'])){ 
                 if(isset($data['relationships']['images']['data'])){
-                    $dataImages = $this->parseJsonToArray($data['relationships']['images']['data'], 'images');
                     try {
+                        $dataImages = $this->parseJsonToArray($data['relationships']['images']['data'], 'images');
                         $categoryDevices->images()->sync($dataImages);    
                     } catch (\Exception $e){
-                        $error['errors']['images'] = 'the CategoryDevices Images can not be created';
+                        DB::rollBack();
+                        $error['errors']['images'] = 'the CategoryDevices Images has not been created';
                         //$error['errors']['imagesMessage'] = $e->getMessage();
+                        return response()->json($error)->setStatusCode($this->status_codes['conflict']);
                     }
                 }
             }
 
             if(isset($data['relationships']['devices'])){ 
                 if(isset($data['relationships']['devices']['data'])){
-                    $dataDevices = $this->parseJsonToArray($data['relationships']['devices']['data'], 'devices');
                     try {
+                        $dataDevices = $this->parseJsonToArray($data['relationships']['devices']['data'], 'devices');
                         $categoryDevices->devices()->sync($dataDevices);    
                     } catch (\Exception $e){
-                        $error['errors']['devices'] = 'the CategoryDevices Devices can not be created';
+                        DB::rollBack();
+                        $error['errors']['devices'] = 'the CategoryDevices Devices has not been created';
                         //$error['errors']['devicesMessage'] = $e->getMessage();
+                        return response()->json($error)->setStatusCode($this->status_codes['conflict']);
                     }
                 }
             }
         }
 
-        $dataAttributes['id'] = $id;
-        $categoryDevices = $this->categoryDevices->update($dataAttributes);
-        return $this->response()->item($categoryDevices, new CategoryDevicesTransformer(), ['key' => 'CategoryDevicess']);
+        DB::commit();
+        return $this->response()->item($categoryDevices, new CategoryDevicesTransformer(), ['key' => 'categorydevices'])->setStatusCode($this->status_codes['created']);
     }
 
     /**
@@ -129,53 +138,60 @@ class CategoryDevicesController extends ApiController
      *
      * @return \Dingo\Api\Http\Response
      */
-    public function create(Request $request)
-    {
-        if(!$this->isJsonCorrect($request, 'CategoryDevicess')){
+    public function create(Request $request) {
+
+        /*
+         * Checks if Json has data, data-type & data-attributes.
+         */
+        if(!$this->isJsonCorrect($request, 'categorydevices')){
             $error['errors']['json'] = 'Json is Invalid';
-            return response()->json($error)->setStatusCode(409);
-        } else {
-            $data = $request->all()['data'];
-            $dataAttributes = $data['attributes'];           
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
+        DB::beginTransaction();
+
         try {
-            $categoryDevices = $this->categoryDevices->create($dataAttributes);
+            $data = $request->all()['data']['attributes'];           
+            $categoryDevices = $this->categoryDevices->create($data);
         } catch (\Exception $e) {
-            $success = false;
-            $error['errors']['CategoryDevicess'] = 'The CategoryDevices can not be created';
-            $error['errors']['CategoryDevicessMessage'] = $e->getMessage();
-            return response()->json($error)->setStatusCode($this->errors['accepted']);
+            DB::rollBack();
+            $error['errors']['categoryDevices'] = 'The CategoryDevices has not been created';
+            //$error['errors']['categoryDevicesMessage'] = $e->getMessage();
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }        
 
         if(isset($data['relationships'])){
             if(isset($data['relationships']['images'])){ 
                 if(isset($data['relationships']['images']['data'])){
-                    $dataImages = $this->parseJsonToArray($data['relationships']['images']['data'], 'images');
                     try {
+                        $dataImages = $this->parseJsonToArray($data['relationships']['images']['data'], 'images');
                         $categoryDevices->images()->sync($dataImages);    
                     } catch (\Exception $e){
-                        $error['errors']['images'] = 'the CategoryDevices Images can not be created';
-                        $error['errors']['imagesMessage'] = $e->getMessage();
-                        return response()->json($error)->setStatusCode($this->errors['accepted']);
+                        DB::rollBack();
+                        $error['errors']['images'] = 'the CategoryDevices Images has not been created';
+                        //$error['errors']['imagesMessage'] = $e->getMessage();
+                        return response()->json($error)->setStatusCode($this->status_codes['conflict']);
                     }
                 }
             }
 
             if(isset($data['relationships']['devices'])){ 
                 if(isset($data['relationships']['devices']['data'])){
-                    $dataDevices = $this->parseJsonToArray($data['relationships']['devices']['data'], 'devices');
                     try {
+                        $dataDevices = $this->parseJsonToArray($data['relationships']['devices']['data'], 'devices');
                         $categoryDevices->devices()->sync($dataDevices);    
                     } catch (\Exception $e){
-                        $error['errors']['devices'] = 'the CategoryDevices Devices can not be created';
+                        DB::rollBack();
+                        $error['errors']['devices'] = 'the CategoryDevices Devices has not been created';
                         //$error['errors']['devicesMessage'] = $e->getMessage();
+                        return response()->json($error)->setStatusCode($this->status_codes['conflict']);
                     }
                 }
             }
         }
 
-        return $this->response()->item($categoryDevices, new CategoryDevicesTransformer(), ['key' => 'CategoryDevicess']);
+        DB::commit();
+        return $this->response()->item($categoryDevices, new CategoryDevicesTransformer(), ['key' => 'CategoryDevicess'])->setStatusCode($this->status_codes['created']);
     }
 
     /**
@@ -183,14 +199,14 @@ class CategoryDevicesController extends ApiController
      *
      * @param $id
      */
-    public function delete($id)
-    {
+    public function delete($id) {
+
         $categoryDevices = CategoryDevices::find($id);
         if($categoryDevices <> null){
             $this->categoryDevices->deleteById($id);
         } else {
             $error['errors']['delete'] = 'the CategoryDevices selected doesn\'t exists';   
-            return response()->json($error)->setStatusCode(409);
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
         
         $this->index();
@@ -199,7 +215,7 @@ class CategoryDevicesController extends ApiController
             return array("success" => true);
         } else {
             $error['errors']['delete'] = 'the CategoryDevices has not been deleted';   
-            return response()->json($error)->setStatusCode(409);
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
     }
 }

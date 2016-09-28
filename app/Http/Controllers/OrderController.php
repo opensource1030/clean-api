@@ -1,10 +1,12 @@
 <?php
+
 namespace WA\Http\Controllers;
+
+use Illuminate\Http\Request;
 
 use WA\DataStore\Order\OrderTransformer;
 use WA\DataStore\Order\Order;
 use WA\Repositories\Order\OrderInterface;
-use Illuminate\Http\Request;
 
 /**
  * Order resource.
@@ -57,13 +59,13 @@ class OrderController extends ApiController
         $order = Order::find($id);
         if($order == null){
             $error['errors']['get'] = 'the Order selected doesn\'t exists';   
-            return response()->json($error)->setStatusCode($this->errors['notexists']);
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
         // Dingo\Api\src\Http\Response\Factory.php
         // Dingo\Api\src\Http\Transformer\Factory.php
 
-        return $this->response()->item($order, new OrderTransformer(),['key' => 'orders'])->setStatusCode($this->errors['created']);
+        return $this->response()->item($order, new OrderTransformer(),['key' => 'orders'])->setStatusCode($this->status_codes['created']);
     }
 
     /**
@@ -81,14 +83,14 @@ class OrderController extends ApiController
                 $order = $this->order->update($data);
                 return $this->response()->item($order, new OrderTransformer(), ['key' => 'orders']);
             } catch (\Exception $e){
-                $error['errors']['images'] = 'the Order can not be updated';
-                //$error['errors']['imagesMessage'] = $e->getMessage();
+                $error['errors']['orders'] = 'the Order has not been updated';
+                //$error['errors']['ordersMessage'] = $e->getMessage();
             }
         } else {
             $error['errors']['json'] = 'Json is Invalid';
         }
 
-        return response()->json($error)->setStatusCode($this->errors['conflict']);
+        return response()->json($error)->setStatusCode($this->status_codes['conflict']);
     }
 
     /**
@@ -104,14 +106,14 @@ class OrderController extends ApiController
                 $order = $this->order->create($data);
                 return $this->response()->item($order, new OrderTransformer(), ['key' => 'orders']);
             } catch (\Exception $e){
-                $error['errors']['images'] = 'the Order can not be created';
-                //$error['errors']['imagesMessage'] = $e->getMessage();
+                $error['errors']['orders'] = 'the Order has not been created';
+                //$error['errors']['ordersMessage'] = $e->getMessage();
             }
         } else {
             $error['errors']['json'] = 'Json is Invalid';
         }
 
-        return response()->json($error)->setStatusCode($this->errors['conflict']);
+        return response()->json($error)->setStatusCode($this->status_codes['conflict']);
     }
 
     /**
@@ -126,7 +128,7 @@ class OrderController extends ApiController
             $this->order->deleteById($id);
         } else {
             $error['errors']['delete'] = 'the Order selected doesn\'t exists';   
-            return response()->json($error)->setStatusCode($this->errors['notexists']);
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
         
         $this->index();
@@ -135,7 +137,7 @@ class OrderController extends ApiController
             return array("success" => true);
         } else {
             $error['errors']['delete'] = 'the Order has not been deleted';   
-            return response()->json($error)->setStatusCode($this->errors['conflict']);
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
     }
 }
