@@ -8,6 +8,8 @@ use WA\DataStore\App\App;
 use WA\DataStore\App\AppTransformer;
 use WA\Repositories\App\AppInterface;
 
+use Auth;
+
 /**
  * App resource.
  *
@@ -55,6 +57,14 @@ class AppController extends ApiController
      * @Get("/{id}")
      */
     public function show($id) {
+
+        //Auth::loggedIn();
+        //dd(Auth::check());
+        //$auth = new Auth();
+        //dd($auth);
+        //$user = $auth->user();
+        //$user = Auth::user();
+        //dd($user);
 
         $app = App::find($id);
         if($app == null){

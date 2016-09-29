@@ -11,7 +11,6 @@ use WA\Http\Controllers\PackageController;
 
 class PackageApiTest extends TestCase
 {
-
     use DatabaseMigrations;
 
     public function testGetPackages() {
@@ -120,7 +119,7 @@ class PackageApiTest extends TestCase
 
         $package->conditions()->sync($dataConditions);    
 
-        $response = $this->get('/packages/'.$package->id.'?include=conditions')
+        $this->get('/packages/'.$package->id.'?include=conditions')
             ->seeJsonStructure([
                 'data' => [
                     'type',
@@ -187,7 +186,7 @@ class PackageApiTest extends TestCase
 
         $package->services()->sync($dataServices);
 
-        $response = $this->get('/packages/'.$package->id.'?include=services')
+        $this->get('/packages/'.$package->id.'?include=services')
             ->seeJsonStructure([
                 'data' => [
                     'type',
@@ -260,7 +259,7 @@ class PackageApiTest extends TestCase
 
         $package->devices()->sync($dataDevices);    
 
-        $response = $this->get('/packages/'.$package->id.'?include=devices')
+        $this->get('/packages/'.$package->id.'?include=devices')
             ->seeJsonStructure([
                 'data' => [
                     'type',
@@ -327,7 +326,7 @@ class PackageApiTest extends TestCase
 
         $package->apps()->sync($dataApps);    
 
-        $response = $this->get('/packages/'.$package->id.'?include=apps')
+        $this->get('/packages/'.$package->id.'?include=apps')
             ->seeJsonStructure([
                 'data' => [
                     'type',
@@ -399,7 +398,7 @@ class PackageApiTest extends TestCase
         $app1 = factory(\WA\DataStore\App\App::class)->create()->id;
         $app2 = factory(\WA\DataStore\App\App::class)->create()->id;
         
-        $device = $this->post('/packages',
+        $this->post('/packages',
             [
                 "data" => [
                     "type" => "packages",

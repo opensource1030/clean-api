@@ -2,15 +2,11 @@
 
 namespace WA\Http\Controllers;
 
-use Cartalyst\DataGrid\Laravel\Facades\DataGrid;
-use Dingo\Api\Routing\Helpers;
-use Illuminate\Session\SessionManager as Session;
+use Illuminate\Http\Request;
+
 use WA\DataStore\Package\Package;
 use WA\DataStore\Package\PackageTransformer;
-use WA\Helpers\Traits\SetLimits;
-use WA\Http\Controllers\Api\Traits\BasicCrud;
 use WA\Repositories\Package\PackageInterface;
-use Illuminate\Http\Request;
 
 use DB;
 
@@ -61,12 +57,17 @@ class PackageController extends ApiController
      *
      * @Get("/{id}")
      */
-    public function show($id)
+    public function show($id, Request $request)
     {
         $package = Package::find($id);
         if($package == null){
             $error['errors']['get'] = 'the Package selected doesn\'t exists';   
             return response()->json($error)->setStatusCode(409);
+        }
+
+        if(!$this->includesAreCorrect($request->server->get('QUERY_STRING'), new PackageTransformer())){
+            $error['errors']['getincludes'] = 'One or More Includes selected doesn\'t exists';
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
         return $this->response()->item($package, new PackageTransformer(), ['key' => 'packages']);
