@@ -4,7 +4,7 @@ namespace WA\Repositories\Category;
 
 use WA\Repositories\AbstractRepository;
 
-class EloquentCategoryDevice extends AbstractRepository implements CategoryDeviceInterface
+class EloquentCategoryApps extends AbstractRepository implements CategoryAppsInterface
 {
     /**
      * Update category

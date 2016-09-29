@@ -4,74 +4,76 @@ namespace WA\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-use WA\DataStore\Category\CategoryDevices;
-use WA\DataStore\Category\CategoryDevicesTransformer;
-use WA\Repositories\CategoryDevices\CategoryDevicesInterface;
+use WA\DataStore\Category\Preset;
+use WA\DataStore\Category\PresetTransformer;
+use WA\Repositories\Category\PresetInterface;
 
 use DB;
 
 /**
- * CategoryDevices resource.
+ * Preset resource.
  *
- * @Resource("categoryDevices", uri="/categoryDevices")
+ * @Resource("preset", uri="/preset")
  */
-class CategoryDevicesController extends ApiController
+class PresetController extends ApiController
 {
     /**
-     * @var CategoryDevicesInterface
+     * @var PresetInterface
      */
-    protected $categoryDevices;
+    protected $preset;
 
     /**
-     * CategoryDevices Controller constructor
+     * Preset Controller constructor
      *
-     * @param CategoryDevicesInterface $categoryDevices
+     * @param PresetInterface $preset
      */
-    public function __construct(CategoryDevicesInterface $categoryDevices) {
+    public function __construct(PresetInterface $preset) {
 
-        $this->categoryDevices = $categoryDevices;
+        $this->preset = $preset;
     }
 
     /**
-     * Show all CategoryDevices
+     * Show all Preset
      *
-     * Get a payload of all CategoryDevices
+     * Get a payload of all Preset
      *
      */
     public function index() {
 
         $criteria = $this->getRequestCriteria();
-        $this->categoryDevices->setCriteria($criteria);
-        $categoryDevices = $this->categoryDevices->byPage();
+        $this->preset->setCriteria($criteria);
+        $preset = $this->preset->byPage();
       
-        $response = $this->response()->withPaginator($categoryDevices, new CategoryDevicesTransformer(),['key' => 'categorydevicess']);
+        $response = $this->response()->withPaginator($preset, new PresetTransformer(),['key' => 'preset']);
         $response = $this->applyMeta($response);
         return $response;
     }
 
     /**
-     * Show a single CategoryDevices
+     * Show a single Preset
      *
-     * Get a payload of a single CategoryDevices
+     * Get a payload of a single Preset
      *
      * @Get("/{id}")
      */
-    public function show($id) {
+    public function show($id, Request $request) {
 
-        $categoryDevices = CategoryDevices::find($id);
-        if($categoryDevices == null){
-            $error['errors']['get'] = 'the CategoryDevices selected doesn\'t exists';   
+        $preset = Preset::find($id);
+        if($preset == null){
+            $error['errors']['get'] = 'the Preset selected doesn\'t exists';   
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
-        // Dingo\Api\src\Http\Response\Factory.php
-        // Dingo\Api\src\Http\Transformer\Factory.php
+        if(!$this->includesAreCorrect($request->server->get('QUERY_STRING'), new PresetTransformer())){
+            $error['errors']['getincludes'] = 'One or More Includes selected doesn\'t exists';   
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);            
+        }
 
-        return $this->response()->item($categoryDevices, new CategoryDevicesTransformer(), ['key' => 'categorydevices'])->setStatusCode($this->status_codes['created']);
+        return $this->response()->item($preset, new PresetTransformer(), ['key' => 'presets'])->setStatusCode($this->status_codes['created']);
     }
 
     /**
-     * Update contents of a CategoryDevices
+     * Update contents of a Preset
      *
      * @param $id
      * @return \Dingo\Api\Http\Response
@@ -81,7 +83,7 @@ class CategoryDevicesController extends ApiController
         /*
          * Checks if Json has data, data-type & data-attributes.
          */
-        if(!$this->isJsonCorrect($request, 'categorydevices')){
+        if(!$this->isJsonCorrect($request, 'presets')){
             $error['errors']['json'] = 'Json is Invalid';
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
@@ -91,11 +93,11 @@ class CategoryDevicesController extends ApiController
         try {
             $data = $request->all()['data']['attributes'];
             $data['id'] = $id;
-            $categoryDevices = $this->categoryDevices->update($data);
+            $preset = $this->preset->update($data);
         } catch (\Exception $e) {
             DB::rollBack();
-            $error['errors']['categoryDevices'] = 'The CategoryDevices has not been updated';
-            //$error['errors']['categoryDevicesMessage'] = $e->getMessage();
+            $error['errors']['preset'] = 'The Preset has not been updated';
+            //$error['errors']['presetMessage'] = $e->getMessage();
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         } 
 
@@ -104,10 +106,10 @@ class CategoryDevicesController extends ApiController
                 if(isset($data['relationships']['images']['data'])){
                     try {
                         $dataImages = $this->parseJsonToArray($data['relationships']['images']['data'], 'images');
-                        $categoryDevices->images()->sync($dataImages);    
+                        $preset->images()->sync($dataImages);    
                     } catch (\Exception $e){
                         DB::rollBack();
-                        $error['errors']['images'] = 'the CategoryDevices Images has not been created';
+                        $error['errors']['images'] = 'the Preset Images has not been created';
                         //$error['errors']['imagesMessage'] = $e->getMessage();
                         return response()->json($error)->setStatusCode($this->status_codes['conflict']);
                     }
@@ -118,10 +120,10 @@ class CategoryDevicesController extends ApiController
                 if(isset($data['relationships']['devices']['data'])){
                     try {
                         $dataDevices = $this->parseJsonToArray($data['relationships']['devices']['data'], 'devices');
-                        $categoryDevices->devices()->sync($dataDevices);    
+                        $preset->devices()->sync($dataDevices);    
                     } catch (\Exception $e){
                         DB::rollBack();
-                        $error['errors']['devices'] = 'the CategoryDevices Devices has not been created';
+                        $error['errors']['devices'] = 'the Preset Devices has not been created';
                         //$error['errors']['devicesMessage'] = $e->getMessage();
                         return response()->json($error)->setStatusCode($this->status_codes['conflict']);
                     }
@@ -130,11 +132,11 @@ class CategoryDevicesController extends ApiController
         }
 
         DB::commit();
-        return $this->response()->item($categoryDevices, new CategoryDevicesTransformer(), ['key' => 'categorydevices'])->setStatusCode($this->status_codes['created']);
+        return $this->response()->item($preset, new PresetTransformer(), ['key' => 'presets'])->setStatusCode($this->status_codes['created']);
     }
 
     /**
-     * Create a new CategoryDevices
+     * Create a new Preset
      *
      * @return \Dingo\Api\Http\Response
      */
@@ -143,7 +145,7 @@ class CategoryDevicesController extends ApiController
         /*
          * Checks if Json has data, data-type & data-attributes.
          */
-        if(!$this->isJsonCorrect($request, 'categorydevices')){
+        if(!$this->isJsonCorrect($request, 'presets')){
             $error['errors']['json'] = 'Json is Invalid';
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
@@ -152,11 +154,11 @@ class CategoryDevicesController extends ApiController
 
         try {
             $data = $request->all()['data']['attributes'];           
-            $categoryDevices = $this->categoryDevices->create($data);
+            $preset = $this->preset->create($data);
         } catch (\Exception $e) {
             DB::rollBack();
-            $error['errors']['categoryDevices'] = 'The CategoryDevices has not been created';
-            //$error['errors']['categoryDevicesMessage'] = $e->getMessage();
+            $error['errors']['preset'] = 'The Preset has not been created';
+            //$error['errors']['presetMessage'] = $e->getMessage();
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }        
 
@@ -165,10 +167,10 @@ class CategoryDevicesController extends ApiController
                 if(isset($data['relationships']['images']['data'])){
                     try {
                         $dataImages = $this->parseJsonToArray($data['relationships']['images']['data'], 'images');
-                        $categoryDevices->images()->sync($dataImages);    
+                        $preset->images()->sync($dataImages);    
                     } catch (\Exception $e){
                         DB::rollBack();
-                        $error['errors']['images'] = 'the CategoryDevices Images has not been created';
+                        $error['errors']['images'] = 'the Preset Images has not been created';
                         //$error['errors']['imagesMessage'] = $e->getMessage();
                         return response()->json($error)->setStatusCode($this->status_codes['conflict']);
                     }
@@ -179,10 +181,10 @@ class CategoryDevicesController extends ApiController
                 if(isset($data['relationships']['devices']['data'])){
                     try {
                         $dataDevices = $this->parseJsonToArray($data['relationships']['devices']['data'], 'devices');
-                        $categoryDevices->devices()->sync($dataDevices);    
+                        $preset->devices()->sync($dataDevices);    
                     } catch (\Exception $e){
                         DB::rollBack();
-                        $error['errors']['devices'] = 'the CategoryDevices Devices has not been created';
+                        $error['errors']['devices'] = 'the Preset Devices has not been created';
                         //$error['errors']['devicesMessage'] = $e->getMessage();
                         return response()->json($error)->setStatusCode($this->status_codes['conflict']);
                     }
@@ -191,30 +193,30 @@ class CategoryDevicesController extends ApiController
         }
 
         DB::commit();
-        return $this->response()->item($categoryDevices, new CategoryDevicesTransformer(), ['key' => 'CategoryDevicess'])->setStatusCode($this->status_codes['created']);
+        return $this->response()->item($preset, new PresetTransformer(), ['key' => 'presets'])->setStatusCode($this->status_codes['created']);
     }
 
     /**
-     * Delete a CategoryDevices
+     * Delete a Preset
      *
      * @param $id
      */
     public function delete($id) {
 
-        $categoryDevices = CategoryDevices::find($id);
-        if($categoryDevices <> null){
-            $this->categoryDevices->deleteById($id);
+        $preset = Preset::find($id);
+        if($preset <> null){
+            $this->preset->deleteById($id);
         } else {
-            $error['errors']['delete'] = 'the CategoryDevices selected doesn\'t exists';   
+            $error['errors']['delete'] = 'the Preset selected doesn\'t exists';   
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
         
         $this->index();
-        $categoryDevices = CategoryDevices::find($id);        
-        if($categoryDevices == null){
+        $preset = Preset::find($id);        
+        if($preset == null){
             return array("success" => true);
         } else {
-            $error['errors']['delete'] = 'the CategoryDevices has not been deleted';   
+            $error['errors']['delete'] = 'the Preset has not been deleted';   
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
     }

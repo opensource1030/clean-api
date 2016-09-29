@@ -4,68 +4,68 @@ namespace WA\Repositories\Category;
 
 use WA\Repositories\AbstractRepository;
 
-class EloquentCategoryApp extends AbstractRepository implements CategoryAppInterface
+class EloquentPreset extends AbstractRepository implements PresetInterface
 {
     /**
-     * Update category
+     * Update preset
      *
      * @param array $data
      * @return bool
      */
     public function update(array $data)
     {
-        $category = $this->model->find($data['id']);
+        $preset = $this->model->find($data['id']);
 
-        if(!$category)
+        if(!$preset)
         {
             return false;
         }
 
         if(isset($data['name'])){
-            $category->name =  $data['name'];            
+            $preset->name =  $data['name'];            
         }
 
-        if(!$category->save()) {
+        if(!$preset->save()) {
             return false;
         }
 
-        return $category;
+        return $preset;
     }
 
     /**
-     * Get an array of all the available category.
+     * Get an array of all the available preset.
      *
-     * @return Array of category
+     * @return Array of preset
      */
-    public function getAllCategories()
+    public function getAllPresets()
     {
-        $category =  $this->model->all();
-        return $category;
+        $preset =  $this->model->all();
+        return $preset;
     }
 
     /**
-     * Create a new category
+     * Create a new preset
      *
      * @param array $data
      * @return bool|static
      */
     public function create(array $data)
     {
-        $categoryData = [
+        $presetData = [
             "name" =>  isset($data['name']) ? $data['name'] : null,
         ];
 
-        $category = $this->model->create($categoryData);
+        $preset = $this->model->create($presetData);
 
-        if(!$category) {
+        if(!$preset) {
             return false;
         }
 
-        return $category;
+        return $preset;
     }
 
     /**
-     * Delete a category.
+     * Delete a preset.
      *
      * @param int  $id
      * @param bool $soft true soft deletes

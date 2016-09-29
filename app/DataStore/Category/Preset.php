@@ -4,9 +4,9 @@ namespace WA\DataStore\Category;
 
 use WA\DataStore\BaseDataStore;
 
-class CategoryDevices extends BaseDataStore
+class Preset extends BaseDataStore
 {
-    protected $table = 'categorydevices';
+    protected $table = 'presets';
 
     protected $fillable = [
             'name'
@@ -17,7 +17,7 @@ class CategoryDevices extends BaseDataStore
      */
     public function devices()
     {
-        return $this->belongsToMany('WA\DataStore\Device\Device', 'categorydevices_device', 'categorydevicesId', 'deviceId');
+        return $this->belongsToMany('WA\DataStore\Device\Device', 'preset_devices', 'presetId', 'deviceId');
     }
 
     /**
@@ -25,7 +25,7 @@ class CategoryDevices extends BaseDataStore
      */
     public function images()
     {
-        return $this->belongsToMany('WA\DataStore\Image\Image', 'categorydevices_images', 'categorydevicesId', 'imageId');
+        return $this->belongsToMany('WA\DataStore\Image\Image', 'preset_images', 'presetId', 'imageId');
     }
 
     /**
@@ -35,6 +35,6 @@ class CategoryDevices extends BaseDataStore
      */
     public function getTransformer()
     {
-        return new CategoryDevicesTransformer();
+        return new PresetsTransformer();
     }
 }

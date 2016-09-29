@@ -3,11 +3,11 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateCategorydevicesDeviceTable extends Migration
+class CreatePresetsDeviceTable extends Migration
 {
     use \WA\Database\Command\TablesRelationsAndIndexes;
 
-    protected $tableName = 'categorydevices_device';
+    protected $tableName = 'preset_devices';
 
     /**
      * Run the migrations.
@@ -20,7 +20,7 @@ class CreateCategorydevicesDeviceTable extends Migration
             $this->tableName,
             function ($table) {
                 $table->increments('id');
-                $table->integer('categorydeviceId')->unsigned();
+                $table->integer('presetId')->unsigned();
                 $table->integer('deviceId')->unsigned();
 
                 $table->nullableTimestamps();
@@ -30,7 +30,7 @@ class CreateCategorydevicesDeviceTable extends Migration
         Schema::table(
             $this->tableName, 
             function($table) {
-                $table->foreign('categorydeviceId')->references('id')->on('categorydevices')->onDelete('cascade');
+                $table->foreign('presetId')->references('id')->on('presets')->onDelete('cascade');
                 $table->foreign('deviceId')->references('id')->on('devices')->onDelete('cascade');
             }
         );
