@@ -44,6 +44,8 @@ abstract class ApiController extends BaseController
         'created' => 201,       // Object created and return that object.
         'accepted' => 202,      //  
         'createdCI' => 204,     //
+        'badrequest' => 400,    // Bad Request
+        'unauthorized' => 401,  // Unauthorized
         'forbidden' => 403,     // Unsupported Request (Permissions).
         'notexists' => 404,     // Get Put or Delete Not Exists Objects.
         'conflict' => 409       // Other Conflicts.
@@ -161,5 +163,32 @@ abstract class ApiController extends BaseController
         var_dump($value1);
         var_dump($value2);
         die;
+    }
+
+    protected function includesAreCorrect($request, $class){
+
+        if($request == ''){
+            return true;
+        }
+
+        $aux = explode("=", $request);
+        $values = explode(",", $aux[1]);
+
+        $avaIncludes = $class->getAvailableIncludes();
+
+        for ($i = 0; $i < count($values); $i++) {
+            $exists = false;
+            for ($j = 0; $j < count($avaIncludes); $j++) {
+                if($avaIncludes[$j] == $values[$i]){
+                    $exists = true;
+                }
+            }
+
+            if($exists == false){
+                return false;
+            }
+        }
+
+        return true;
     }
 }
