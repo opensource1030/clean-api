@@ -16,6 +16,8 @@ class CreatePackageConditionsTable extends Migration
      */
     public function up()
     {
+        Schema::dropIfExists($this->tableName);
+
         Schema::create(
             $this->tableName,
             function ($table) {
