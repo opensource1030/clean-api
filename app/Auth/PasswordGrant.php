@@ -115,7 +115,7 @@ class PasswordGrant extends PassGrant
         }
 
         $response = $this->server->getTokenType()->generateResponse();
-        $response['id'] = $userId;
+        $response['user_id'] = $userId;
         return $response;
     }
 }
