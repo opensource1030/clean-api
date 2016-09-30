@@ -4,8 +4,8 @@ namespace WA\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-use WA\DataStore\Category\CategoryApps;
-use WA\DataStore\Category\CategoryAppsTransformer;
+use WA\DataStore\Category\CategoryApp;
+use WA\DataStore\Category\CategoryAppTransformer;
 use WA\Repositories\Category\CategoryAppsInterface;
 
 use DB;
@@ -44,7 +44,7 @@ class CategoryAppsController extends ApiController
         $this->categoryApps->setCriteria($criteria);
         $categoryApps = $this->categoryApps->byPage();
       
-        $response = $this->response()->withPaginator($categoryApps, new CategoryAppsTransformer(),['key' => 'categoryapps']);
+        $response = $this->response()->withPaginator($categoryApps, new CategoryAppTransformer(),['key' => 'categoryapps']);
         $response = $this->applyMeta($response);
         return $response;
     }
@@ -56,18 +56,20 @@ class CategoryAppsController extends ApiController
      *
      * @Get("/{id}")
      */
-    public function show($id) {
+    public function show($id, Request $request) {
 
-        $categoryApps = CategoryApps::find($id);
+        $categoryApps = CategoryApp::find($id);
         if($categoryApps == null){
             $error['errors']['get'] = 'the CategoryApps selected doesn\'t exists';   
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
-        // Dingo\Api\src\Http\Response\Factory.php
-        // Dingo\Api\src\Http\Transformer\Factory.php
+        if(!$this->includesAreCorrect($request, new CategoryAppTransformer())){
+            $error['errors']['getincludes'] = 'One or More Includes selected doesn\'t exists';   
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);            
+        }
 
-        return $this->response()->item($categoryApps, new CategoryAppsTransformer(), ['key' => 'CategoryApps'])->setStatusCode($this->status_codes['created']);
+        return $this->response()->item($categoryApps, new CategoryAppTransformer(), ['key' => 'categoryapps'])->setStatusCode($this->status_codes['created']);
     }
 
     /**
@@ -117,7 +119,7 @@ class CategoryAppsController extends ApiController
             if(isset($data['relationships']['Apps'])){
                 if(isset($data['relationships']['Apps']['data'])){
                     try {
-                        $dataApps = $this->parseJsonToArray($data['relationships']['Apps']['data'], 'apps');
+                        $dataApps = $this->parseJsonToArray($data['relationships']['apps']['data'], 'apps');
                         $categoryApps->apps()->sync($dataApps);    
                     } catch (\Exception $e){
                         DB::rollBack();
@@ -130,7 +132,7 @@ class CategoryAppsController extends ApiController
         }
 
         DB::commit();
-        return $this->response()->item($categoryApps, new CategoryAppsTransformer(), ['key' => 'categoryapps'])->setStatusCode($this->status_codes['created']);
+        return $this->response()->item($categoryApps, new CategoryAppTransformer(), ['key' => 'categoryapps'])->setStatusCode($this->status_codes['created']);
     }
 
     /**
@@ -178,7 +180,7 @@ class CategoryAppsController extends ApiController
             if(isset($data['relationships']['Apps'])){ 
                 if(isset($data['relationships']['Apps']['data'])){
                     try {
-                        $dataApps = $this->parseJsonToArray($data['relationships']['Apps']['data'], 'Apps');
+                        $dataApps = $this->parseJsonToArray($data['relationships']['apps']['data'], 'apps');
                         $categoryApps->Apps()->sync($dataApps);    
                     } catch (\Exception $e){
                         DB::rollBack();
@@ -191,7 +193,7 @@ class CategoryAppsController extends ApiController
         }
 
         DB::commit();
-        return $this->response()->item($categoryApps, new CategoryAppsTransformer(), ['key' => 'categoryapps'])->setStatusCode($this->status_codes['created']);
+        return $this->response()->item($categoryApps, new CategoryAppTransformer(), ['key' => 'categoryapps'])->setStatusCode($this->status_codes['created']);
     }
 
     /**
@@ -201,7 +203,7 @@ class CategoryAppsController extends ApiController
      */
     public function delete($id) {
 
-        $categoryApps = CategoryApps::find($id);
+        $categoryApps = CategoryApp::find($id);
         if($categoryApps <> null){
             $this->categoryApps->deleteById($id);
         } else {
@@ -210,7 +212,7 @@ class CategoryAppsController extends ApiController
         }
         
         $this->index();
-        $categoryApps = CategoryApps::find($id);        
+        $categoryApps = CategoryApp::find($id);        
         if($categoryApps == null){
             return array("success" => true);
         } else {

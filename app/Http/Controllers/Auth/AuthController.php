@@ -45,8 +45,8 @@ class AuthController extends ApiController
 
             $error['errors']['errorType'] = $ugte->errorType;
             $error['errors']['parameter'] = $ugte->parameter;
-            $error['errors']['messageUnsupportedGrantType'] = $this->getErrorAndParse($ugte);
-            return response()->json($error)->setStatusCode(400);
+            $error['errors']['messageUnsupportedGrantType'] = $ugte->getMessage();
+            return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
 
         } catch (InvalidRequestException $ire) {
             // CLIENT_ID (Not Found)
@@ -55,8 +55,8 @@ class AuthController extends ApiController
 
             $error['errors']['errorType'] = $ire->errorType;
             $error['errors']['parameter'] = $ire->parameter;
-            $error['errors']['messageInvalidRequest'] = $this->getErrorAndParse($ire);
-            return response()->json($error)->setStatusCode(400);
+            $error['errors']['messageInvalidRequest'] = $ire->getMessage();
+            return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
 
         } catch (InvalidClientException $ice) {
             // CLIENT_ID (Invalid)
@@ -64,16 +64,16 @@ class AuthController extends ApiController
             // ERROR 401
 
             $error['errors']['errorType'] = $ice->errorType;
-            $error['errors']['messageInvalidClient'] = $this->getErrorAndParse($ice);
-            return response()->json($error)->setStatusCode(401);
+            $error['errors']['messageInvalidClient'] = $ice->getMessage();
+            return response()->json($error)->setStatusCode($this->status_codes['unauthorized']);
 
         } catch (InvalidCredentialsException $icre) {
             // PASSWORD (No Valid)
             // ERROR 401
 
             $error['errors']['errorType'] = $icre->errorType;
-            $error['errors']['messageInvalidCredentials'] = $this->getErrorAndParse($icre);
-            return response()->json($error)->setStatusCode(401);
+            $error['errors']['messageInvalidCredentials'] = $icre->getMessage();
+            return response()->json($error)->setStatusCode($this->status_codes['unauthorized']);
 
         } catch (\Exception $e){
             // ERROR 500

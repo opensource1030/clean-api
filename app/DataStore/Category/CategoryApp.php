@@ -4,7 +4,7 @@ namespace WA\DataStore\Category;
 
 use WA\DataStore\BaseDataStore;
 
-class CategoryApps extends BaseDataStore
+class CategoryApp extends BaseDataStore
 {
     protected $table = 'categoryapps';
 
@@ -15,9 +15,9 @@ class CategoryApps extends BaseDataStore
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function devices()
+    public function apps()
     {
-        return $this->belongsToMany('WA\DataStore\Device\Device', 'categoryapps_device', 'categoryappsId', 'deviceId');
+        return $this->belongsToMany('WA\DataStore\App\App', 'categoryapps_app', 'categoryappId', 'appId');
     }
 
     /**
@@ -25,7 +25,7 @@ class CategoryApps extends BaseDataStore
      */
     public function images()
     {
-        return $this->belongsToMany('WA\DataStore\Image\Image', 'categoryapps_images', 'categoryappsId', 'imageId');
+        return $this->belongsToMany('WA\DataStore\Image\Image', 'categoryapps_image', 'categoryappId', 'imageId');
     }
 
     /**
@@ -35,6 +35,6 @@ class CategoryApps extends BaseDataStore
      */
     public function getTransformer()
     {
-        return new CategoryAppsTransformer();
+        return new CategoryAppTransformer();
     }
 }

@@ -11,7 +11,6 @@ use WA\Http\Controllers\PackageController;
 
 class PackageApiTest extends TestCase
 {
-
     use DatabaseMigrations;
 
     public function testGetPackages() {
@@ -120,7 +119,7 @@ class PackageApiTest extends TestCase
 
         $package->conditions()->sync($dataConditions);    
 
-        $response = $this->get('/packages/'.$package->id.'?include=conditions')
+        $this->json('GET', 'packages/'.$package->id.'?include=conditions')
             ->seeJsonStructure([
                 'data' => [
                     'type',
@@ -187,7 +186,7 @@ class PackageApiTest extends TestCase
 
         $package->services()->sync($dataServices);
 
-        $response = $this->get('/packages/'.$package->id.'?include=services')
+        $this->json('GET', 'packages/'.$package->id.'?include=services')
             ->seeJsonStructure([
                 'data' => [
                     'type',
@@ -260,7 +259,7 @@ class PackageApiTest extends TestCase
 
         $package->devices()->sync($dataDevices);    
 
-        $response = $this->get('/packages/'.$package->id.'?include=devices')
+        $this->json('GET', 'packages/'.$package->id.'?include=devices')
             ->seeJsonStructure([
                 'data' => [
                     'type',
@@ -327,7 +326,7 @@ class PackageApiTest extends TestCase
 
         $package->apps()->sync($dataApps);    
 
-        $response = $this->get('/packages/'.$package->id.'?include=apps')
+        $this->json('GET', 'packages/'.$package->id.'?include=apps')
             ->seeJsonStructure([
                 'data' => [
                     'type',
@@ -399,7 +398,7 @@ class PackageApiTest extends TestCase
         $app1 = factory(\WA\DataStore\App\App::class)->create()->id;
         $app2 = factory(\WA\DataStore\App\App::class)->create()->id;
         
-        $device = $this->post('/packages',
+        $this->json('POST', 'packages',
             [
                 "data" => [
                     "type" => "packages",
@@ -444,7 +443,7 @@ class PackageApiTest extends TestCase
 
     public function testCreatePackageReturnNoValidData() {
         // 'data' no valid.
-        $package = $this->post('/packages',
+        $package = $this->json('POST', 'packages',
             [
                 'NoValid' => [
                     ]
@@ -460,7 +459,7 @@ class PackageApiTest extends TestCase
 
     public function testCreatePackageReturnNoValidType() {
         // 'type' no valid.
-        $package = $this->post('/packages',
+        $package = $this->json('POST', 'packages',
             [
                 "data" => [
                     "NoValid"=> "packages",
@@ -481,7 +480,7 @@ class PackageApiTest extends TestCase
 
     public function testCreatePackageReturnNoValidAttributes() {
         // 'attributes' no valid.
-        $package = $this->post('/packages',
+        $package = $this->json('POST', 'packages',
             [
                 "data" => [
                     "type"=> "packages",
@@ -503,7 +502,7 @@ class PackageApiTest extends TestCase
 
         $address = factory(WA\DataStore\Address\Address::class)->create()->id;
 
-        $package = $this->post('/packages',
+        $package = $this->json('POST', 'packages',
         [
             'data' => [
                 'type' => 'packages',
@@ -533,7 +532,7 @@ class PackageApiTest extends TestCase
 
         $address = factory(WA\DataStore\Address\Address::class)->create()->id;
 
-        $package = $this->post('/packages',
+        $package = $this->json('POST', 'packages',
         [
             'data' => [
                 'type' => 'packages',
@@ -563,7 +562,7 @@ class PackageApiTest extends TestCase
 
         $address = factory(WA\DataStore\Address\Address::class)->create()->id;
 
-        $package = $this->post('/packages',
+        $package = $this->json('POST', 'packages',
         [
             'data' => [
                 'type' => 'packages',
@@ -593,7 +592,7 @@ class PackageApiTest extends TestCase
 
         $address = factory(WA\DataStore\Address\Address::class)->create()->id;
 
-        $package = $this->post('/packages',
+        $package = $this->json('POST', 'packages',
         [
             'data' => [
                 'type' => 'packages',

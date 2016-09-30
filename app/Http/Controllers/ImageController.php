@@ -11,6 +11,7 @@ use WA\Repositories\Image\ImageInterface;
 
 use Illuminate\Support\Facades\Storage;
 use League\Flysystem\Filesystem;
+use Intervention\Image\ImageManager;
 
 use DB;
 
@@ -70,11 +71,11 @@ class ImageController extends ApiController
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
-        $filePath = $image->filename.'.'.$image->extension;
-        $file = Storage::get($filePath);
-        return $file;
-        
-        //return $this->response()->item($file, new ImageTransformer(),['key' => 'images']);
+        $path = $image->filename.'.'.$image->extension;
+
+        $value = Storage::get($path);
+
+        return response($value, 200)->header('Content-Type', $image->mimeType);
     }
    
     /**
@@ -120,6 +121,7 @@ class ImageController extends ApiController
         $image = Image::find($id);
         if($image <> null){
             $this->image->deleteById($id);
+            Storage::delete($path = $image->filename.'.'.$image->extension);
         } else {
             $error['errors']['delete'] = 'the Image selected doesn\'t exists';   
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);

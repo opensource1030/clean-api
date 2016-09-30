@@ -56,7 +56,7 @@ class CarrierController extends ApiController
      *
      * @Get("/{id}")
      */
-    public function show($id) {
+    public function show($id, Request $request) {
 
         $carrier = Carrier::find($id);
         if($carrier == null){
@@ -64,8 +64,10 @@ class CarrierController extends ApiController
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
-        // Dingo\Api\src\Http\Response\Factory.php
-        // Dingo\Api\src\Http\Transformer\Factory.php
+        if(!$this->includesAreCorrect($request, new CarrierTransformer())){
+            $error['errors']['getincludes'] = 'One or More Includes selected doesn\'t exists';
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+        }
 
         return $this->response()->item($carrier, new CarrierTransformer(), ['key' => 'carriers'])->setStatusCode($this->status_codes['created']);
     }

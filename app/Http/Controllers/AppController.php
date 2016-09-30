@@ -54,7 +54,7 @@ class AppController extends ApiController
      *
      * @Get("/{id}")
      */
-    public function show($id) {
+    public function show($id, Request $request) {
 
         $app = App::find($id);
         if($app == null){
@@ -62,8 +62,10 @@ class AppController extends ApiController
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
-        // Dingo\Api\src\Http\Response\Factory.php
-        // Dingo\Api\src\Http\Transformer\Factory.php
+        if(!$this->includesAreCorrect($request, new AppTransformer())){
+            $error['errors']['getIncludes'] = 'One or More Includes selected doesn\'t exists';
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+        }
 
         return $this->response()->item($app, new AppTransformer(),['key' => 'apps'])->setStatusCode($this->status_codes['created']);
     }

@@ -5,21 +5,21 @@ namespace WA\Repositories\Category;
 use WA\Repositories\RepositoryInterface;
 
 /**
- * Interface CategoryDeviceInterface
+ * Interface PresetInterface
  *
  * @package WA\Repositories\Category
  */
-interface CategoryAppInterface extends RepositoryInterface
+interface PresetInterface extends RepositoryInterface
 {
     /**
-     * Get Array of all Categories.
+     * Get Array of all Presets.
      *
-     * @return Array of Category
+     * @return Array of Preset
      */
-    public function getAllCategories();
+    public function getAllPresets();
 
     /**
-     * Create Category
+     * Create Preset
      *
      * @param array $data
      * @return bool|static
@@ -27,7 +27,7 @@ interface CategoryAppInterface extends RepositoryInterface
     public function create(array $data);
 
     /**
-     * Update Category.
+     * Update Preset.
      *
      * @param array $data
      *
@@ -36,7 +36,7 @@ interface CategoryAppInterface extends RepositoryInterface
     public function update(array $data);
 
     /**
-     * Delete Category.
+     * Delete Preset.
      *
      * @param int  $id
      * @param bool $soft true soft deletes

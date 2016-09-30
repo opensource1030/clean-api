@@ -9,7 +9,7 @@ use WA\Repositories\RepositoryInterface;
  *
  * @package WA\Repositories\Category
  */
-interface CategoryDeviceInterface extends RepositoryInterface
+interface CategoryAppsInterface extends RepositoryInterface
 {
     /**
      * Get Array of all Categories.

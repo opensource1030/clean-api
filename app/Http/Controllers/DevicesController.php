@@ -2,15 +2,10 @@
 
 namespace WA\Http\Controllers;
 
-use Cartalyst\DataGrid\Laravel\Facades\DataGrid;
-use Dingo\Api\Routing\Helpers;
-use Illuminate\Session\SessionManager as Session;
-use WA\Helpers\Traits\SetLimits;
-use WA\Http\Controllers\Api\Traits\BasicCrud;
 use Illuminate\Http\Request;
 
-use WA\DataStore\Device\DeviceTransformer;
 use WA\DataStore\Device\Device;
+use WA\DataStore\Device\DeviceTransformer;
 use WA\Repositories\Device\DeviceInterface;
 
 use Validator;
@@ -69,7 +64,7 @@ class DevicesController extends ApiController
      *
      * @Get("/{id}")
      */
-    public function show($id) {
+    public function show($id, Request $request) {
 
         $device = Device::find($id);
         if($device == null){
@@ -77,8 +72,10 @@ class DevicesController extends ApiController
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
-        // Dingo\Api\src\Http\Response\Factory.php
-        // Dingo\Api\src\Http\Transformer\Factory.php
+        if(!$this->includesAreCorrect($request, new DeviceTransformer())){
+            $error['errors']['getIncludes'] = 'One or More Includes selected doesn\'t exists';
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+        }
 
         return $this->response()->item($device, new DeviceTransformer(),['key' => 'devices'])->setStatusCode($this->status_codes['created']);
     }
