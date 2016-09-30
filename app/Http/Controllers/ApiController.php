@@ -167,19 +167,19 @@ abstract class ApiController extends BaseController
 
     protected function includesAreCorrect($request, $class){
 
-        if($request == ''){
+        if ($request->has('include')) {
+            $aux = $request->input('include');
+            $includes = explode(",", $aux[1]);
+        } else {
             return true;
         }
 
-        $aux = explode("=", $request);
-        $values = explode(",", $aux[1]);
-
         $avaIncludes = $class->getAvailableIncludes();
 
-        for ($i = 0; $i < count($values); $i++) {
+        for ($i = 0; $i < count($includes); $i++) {
             $exists = false;
             for ($j = 0; $j < count($avaIncludes); $j++) {
-                if($avaIncludes[$j] == $values[$i]){
+                if($avaIncludes[$j] == $includes[$i]){
                     $exists = true;
                 }
             }

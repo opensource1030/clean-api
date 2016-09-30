@@ -64,7 +64,7 @@ class CategoryAppsController extends ApiController
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
-        if(!$this->includesAreCorrect($request->server->get('QUERY_STRING'), new CategoryAppTransformer())){
+        if(!$this->includesAreCorrect($request, new CategoryAppTransformer())){
             $error['errors']['getincludes'] = 'One or More Includes selected doesn\'t exists';   
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);            
         }

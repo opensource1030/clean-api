@@ -8,8 +8,6 @@ use WA\DataStore\App\App;
 use WA\DataStore\App\AppTransformer;
 use WA\Repositories\App\AppInterface;
 
-use Auth;
-
 /**
  * App resource.
  *
@@ -58,22 +56,16 @@ class AppController extends ApiController
      */
     public function show($id) {
 
-        //Auth::loggedIn();
-        //dd(Auth::check());
-        //$auth = new Auth();
-        //dd($auth);
-        //$user = $auth->user();
-        //$user = Auth::user();
-        //dd($user);
-
         $app = App::find($id);
         if($app == null){
             $error['errors']['get'] = 'the App selected doesn\'t exists';   
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
-        // Dingo\Api\src\Http\Response\Factory.php
-        // Dingo\Api\src\Http\Transformer\Factory.php
+        if(!$this->includesAreCorrect($request, new AppTransformer())){
+            $error['errors']['getIncludes'] = 'One or More Includes selected doesn\'t exists';
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+        }
 
         return $this->response()->item($app, new AppTransformer(),['key' => 'apps'])->setStatusCode($this->status_codes['created']);
     }

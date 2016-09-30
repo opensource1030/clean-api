@@ -64,7 +64,7 @@ class CarrierController extends ApiController
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
-        if(!$this->includesAreCorrect($request->server->get('QUERY_STRING'), new CarrierTransformer())){
+        if(!$this->includesAreCorrect($request, new CarrierTransformer())){
             $error['errors']['getincludes'] = 'One or More Includes selected doesn\'t exists';
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }

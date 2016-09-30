@@ -72,7 +72,7 @@ class DevicesController extends ApiController
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
-        if(!$this->includesAreCorrect($request->server->get('QUERY_STRING'), new DeviceTransformer())){
+        if(!$this->includesAreCorrect($request, new DeviceTransformer())){
             $error['errors']['getIncludes'] = 'One or More Includes selected doesn\'t exists';
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }

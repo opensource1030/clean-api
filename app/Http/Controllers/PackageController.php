@@ -65,7 +65,7 @@ class PackageController extends ApiController
             return response()->json($error)->setStatusCode(409);
         }
 
-        if(!$this->includesAreCorrect($request->server->get('QUERY_STRING'), new PackageTransformer())){
+        if(!$this->includesAreCorrect($request, new PackageTransformer())){
             $error['errors']['getincludes'] = 'One or More Includes selected doesn\'t exists';
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
