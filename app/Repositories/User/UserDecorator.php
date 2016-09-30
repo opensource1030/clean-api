@@ -2,9 +2,10 @@
 
 namespace WA\Repositories\User;
 
+use WA\Repositories\AbstractRepository;
 use WA\Services\Form\User\UserForm;
 
-abstract class UserDecorator implements UserInterface
+abstract class UserDecorator  extends AbstractRepository implements UserInterface
 {
     protected $nextUser;
 

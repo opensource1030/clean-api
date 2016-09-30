@@ -4,13 +4,18 @@ namespace WA\Http\Controllers;
 
 use App;
 use Cartalyst\DataGrid\Laravel\Facades\DataGrid;
-use Illuminate\Session\SessionManager as Session;
+
 use Input;
 use Response;
 use View;
 use WA\DataStore\User\UserTransformer;
 use WA\Helpers\Traits\SetLimits;
 use WA\Repositories\User\UserInterface;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+
+
 
 /**
  * Users resource.
@@ -47,9 +52,13 @@ class UsersController extends ApiController
      */
     public function index()
     {
+        $criteria = $this->getRequestCriteria();
+        $this->user->setCriteria($criteria);
         $users = $this->user->byPage();
 
-        return $this->response()->withPaginator($users, new UserTransformer(), ['key' => 'users']);
+        $response = $this->response()->withPaginator($users, new UserTransformer(),['key' => 'users']);
+        $response = $this->applyMeta($response);
+        return $response;
     }
 
 
@@ -65,6 +74,15 @@ class UsersController extends ApiController
         $user = $this->user->byId($id);
 
         return $this->response()->item($user, new UserTransformer(), ['key' => 'users']);
+
+    }
+
+    public function getLoggedInUser(Request $request)
+    {
+
+        $user =  Auth::user();
+        var_dump($user);
+
 
     }
 
