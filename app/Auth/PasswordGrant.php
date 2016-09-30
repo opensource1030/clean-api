@@ -1,17 +1,8 @@
 <?php
-/**
- * OAuth 2.0 SSO grant
- *
- * @package     WA\Auth
- * @author      Agustí Dosaiguas
- *
- *
- * @copyright   Copyright (c) Alex Bilbie
- * @license     http://mit-license.org/
- * @link        https://github.com/thephpleague/oauth2-server
- */
 
 namespace WA\Auth;
+
+use League\OAuth2\Server\Grant\PasswordGrant as PassGrant;
 
 use League\OAuth2\Server\Entity\AccessTokenEntity;
 use League\OAuth2\Server\Entity\ClientEntity;
@@ -21,74 +12,11 @@ use League\OAuth2\Server\Event;
 use League\OAuth2\Server\Exception;
 use League\OAuth2\Server\Util\SecureKey;
 
-use League\OAuth2\Server\Grant\AbstractGrant;
-
-use Log;
-use WA\DataStore\Employee\Employee;
-use Cache;
-use Session;
-
 /**
- * SSO grant class
+ * Password grant class
  */
-class SSOGrant extends AbstractGrant
+class PasswordGrant extends PassGrant
 {
-    /**
-     * Grant identifier
-     *
-     * @var string
-     */
-    protected $identifier = 'sso';
-
-    /**
-     * Response type
-     *
-     * @var string
-     */
-    protected $responseType;
-
-    /**
-     * Callback to authenticate a user's name and password
-     *
-     * @var callable
-     */
-    protected $callback;
-
-    /**
-     * Access token expires in override
-     *
-     * @var int
-     */
-    protected $accessTokenTTL;
-
-    /**
-     * Set the callback to verify a user's username and password
-     *
-     * @param callable $callback The callback function
-     *
-     * @return void
-     */
-    public function setVerifyCredentialsCallback(callable $callback)
-    {
-        $this->callback = $callback;
-    }
-
-    /**
-     * Return the callback function
-     *
-     * @return callable
-     *
-     * @throws
-     */
-    protected function getVerifyCredentialsCallback()
-    {
-        if (is_null($this->callback) || !is_callable($this->callback)) {
-            throw new Exception\ServerErrorException('Null or non-callable callback set on Password grant');
-        }
-
-        return $this->callback;
-    }
-
     /**
      * Complete the password grant
      *
@@ -122,13 +50,19 @@ class SSOGrant extends AbstractGrant
             $this->server->getEventEmitter()->emit(new Event\ClientAuthenticationFailedEvent($this->server->getRequest()));
             throw new Exception\InvalidClientException();
         }
-        
-        // Get the UUID from url.
-        $uuid = app('request')->input('uuid');
-   
+
+        $username = $this->server->getRequest()->request->get('username', null);
+        if (is_null($username)) {
+            throw new Exception\InvalidRequestException('username');
+        }
+
+        $password = $this->server->getRequest()->request->get('password', null);
+        if (is_null($password)) {
+            throw new Exception\InvalidRequestException('password');
+        }
+
         // Check if user's username and password are correct
-        // IF FAILS CHECK storage/framwork/cache permissions.
-        $userId = call_user_func($this->getVerifyCredentialsCallback(), $uuid);
+        $userId = call_user_func($this->getVerifyCredentialsCallback(), $username, $password);
 
         if ($userId === false) {
             $this->server->getEventEmitter()->emit(new Event\UserAuthenticationFailedEvent($this->server->getRequest()));
