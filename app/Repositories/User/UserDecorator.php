@@ -6,6 +6,7 @@ use WA\Repositories\AbstractRepository;
 use WA\Services\Form\User\UserForm;
 
 abstract class UserDecorator  extends AbstractRepository implements UserInterface
+
 {
     protected $nextUser;
 

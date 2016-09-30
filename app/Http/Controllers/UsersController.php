@@ -59,6 +59,7 @@ class UsersController extends ApiController
         $response = $this->response()->withPaginator($users, new UserTransformer(),['key' => 'users']);
         $response = $this->applyMeta($response);
         return $response;
+
     }
 
 
