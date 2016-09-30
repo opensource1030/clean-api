@@ -54,7 +54,7 @@ class AppController extends ApiController
      *
      * @Get("/{id}")
      */
-    public function show($id) {
+    public function show($id, Request $request) {
 
         $app = App::find($id);
         if($app == null){

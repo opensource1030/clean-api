@@ -159,17 +159,10 @@ abstract class ApiController extends BaseController
         return $array;
     }
 
-    public function areEquals($value1, $value2){
-        var_dump($value1);
-        var_dump($value2);
-        die;
-    }
+    protected function includesAreCorrect($req, $class){
 
-    protected function includesAreCorrect($request, $class){
-
-        if ($request->has('include')) {
-            $aux = $request->input('include');
-            $includes = explode(",", $aux[1]);
+        if ($req->has('include')) {
+            $includes = explode(",", $req->input('include'));
         } else {
             return true;
         }
