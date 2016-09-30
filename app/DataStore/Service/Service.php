@@ -48,4 +48,11 @@ class Service extends BaseDataStore
         return new ServiceTransformer();
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function packages()
+    {
+        return $this->belongsToMany('WA\DataStore\Package\Package', 'package_services', 'packageId', 'servicesId');
+    }
 }

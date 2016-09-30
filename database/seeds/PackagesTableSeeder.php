@@ -22,32 +22,16 @@ class PackagesTableSeeder extends BaseTableSeeder
         $data = [
 
             [
-                'name'     => "Package1",
-                'conditionsId'      => 1,
-                'devicesId'      => 2,
-                'appsId'      => 1,
-                'servicesId'      => 3
+                'name'     => "Package1"
             ],
             [
-                'name'     => "Package2",
-                'conditionsId'      => 1,
-                'devicesId'      => 2,
-                'appsId'      => 4,
-                'servicesId'      => 2
+                'name'     => "Package2"
             ],
             [
-                'name'     => "Package3",
-                'conditionsId'      => 1,
-                'devicesId'      => 3,
-                'appsId'      => 1,
-                'servicesId'      => 1
+                'name'     => "Package3"
             ],
             [
-                'name'     => "Package4",
-                'conditionsId'      => 3,
-                'devicesId'      => 4,
-                'appsId'      => 1,
-                'servicesId'      => 2
+                'name'     => "Package4"
             ],
         ];
 

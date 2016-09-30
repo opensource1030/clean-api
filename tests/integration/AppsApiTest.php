@@ -2,8 +2,6 @@
 
 use Laravel\Lumen\Testing\DatabaseMigrations;
 
-use WA\DataStore\Apps\Apps;
-
 class AppsApiTest extends TestCase
 {
     use DatabaseMigrations;
@@ -17,43 +15,43 @@ class AppsApiTest extends TestCase
 
         $this->json('GET', 'apps')
             ->seeJsonStructure([
-            'data' => [
-                0 => [  
-                    'type',
-                    'id',
-                    'attributes' => [
+                'data' => [
+                    0 => [  
                         'type',
-                        'image',
-                        'description',
-                        'created_at' => [
-                            'date',
-                            'timezone_type',
-                            'timezone'
+                        'id',
+                        'attributes' => [
+                            'type',
+                            'image',
+                            'description',
+                            'created_at' => [
+                                'date',
+                                'timezone_type',
+                                'timezone'
+                            ],
+                            'updated_at' => [
+                                'date',
+                                'timezone_type',
+                                'timezone'
+                            ]
                         ],
-                        'updated_at' => [
-                            'date',
-                            'timezone_type',
-                            'timezone'
+                        'links' => [
+                            'self'
                         ]
-                    ],
-                    'links' => [
-                        'self'
                     ]
+                ],
+                'meta' => [
+                    'pagination' => [
+                        'total',
+                        'count',
+                        'per_page',
+                        'current_page',
+                        'total_pages'
+                    ]
+                ],
+                'links' => [
+                    'self'
                 ]
-            ],
-            'meta' => [
-                'pagination' => [
-                    'total',
-                    'count',
-                    'per_page',
-                    'current_page',
-                    'total_pages'
-                ]
-            ],
-            'links' => [
-                'self'
-            ]
-        ]);
+            ]);
     }
 
     public function testGetAppById() {
@@ -73,9 +71,14 @@ class AppsApiTest extends TestCase
 
         $this->json('POST', 'apps',
             [
-                'type' => 'AppType',
-                'image'=> 'AppImageLink',
-                'description'=> 'AppDescription',
+                'data' => [
+                    'type' => 'apps',
+                    'attributes' => [
+                        'type' => 'AppType',
+                        'image'=> 'AppImageLink',
+                        'description'=> 'AppDescription',
+                    ]
+                ]
             ])
             ->seeJson([
                 'type' => 'apps',
@@ -87,34 +90,55 @@ class AppsApiTest extends TestCase
 
     public function testUpdateApp() {
 
-        $app = factory(\WA\DataStore\App\App::class)->create();
+        $app1 = factory(\WA\DataStore\App\App::class)->create();
+        $app2 = factory(\WA\DataStore\App\App::class)->create();
 
-        $this->json('PUT', 'apps/'.$app->id, [
-                'type' => 'AppTypeEdit',
-                'image'=> 'AppImageLinkEdit',
-                'description'=> 'AppDescriptionEdit',
+        $this->assertNotEquals($app1->id, $app2->id);
+        $this->assertNotEquals($app1->type, $app2->type);
+        $this->assertNotEquals($app1->image, $app2->image);
+        $this->assertNotEquals($app1->description, $app2->description);
+
+        $this->assertNotEquals($app1->id, $app2->id);
+        
+        $this->json('GET', 'apps/'.$app1->id)
+            ->seeJson([
+                'type' => 'apps',
+                'type' => $app1->type,
+                'image'=> $app1->image,
+                'description'=> $app1->description,
+            ]);
+
+        $this->json('PUT', 'apps/'.$app1->id, 
+            [
+                'data' => [
+                    'type' => 'apps',
+                    'attributes' => [
+                        'type' => $app2->type,
+                        'image'=> $app2->image,
+                        'description'=> $app2->description,
+                    ]
+                ]
             ])
             ->seeJson([
                 'type' => 'apps',
-                'type' => 'AppTypeEdit',
-                'image'=> 'AppImageLinkEdit',
-                'description'=> 'AppDescriptionEdit',
+                'id' => $app1->id,
+                'type' => $app2->type,
+                'image'=> $app2->image,
+                'description'=> $app2->description,
             ]);
     }
 
     public function testDeleteAppIfExists() {
 
-        // CREATE & DELETE
         $app = factory(\WA\DataStore\App\App::class)->create();
         $responseDel = $this->call('DELETE', 'apps/'.$app->id);
         $this->assertEquals(200, $responseDel->status());
         $responseGet = $this->call('GET', 'apps/'.$app->id);
-        $this->assertEquals(409, $responseGet->status());        
+        $this->assertEquals(404, $responseGet->status());        
     }
 
     public function testDeleteAppIfNoExists(){
 
-        // DELETE NO EXISTING.
         $responseDel = $this->call('DELETE', 'apps/1');
         $this->assertEquals(409, $responseDel->status());
     }

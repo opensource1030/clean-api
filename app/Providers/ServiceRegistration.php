@@ -13,7 +13,7 @@ use WA\DataStore\Census;
 use WA\DataStore\Company\Company;
 use WA\DataStore\Content\Content;
 use WA\DataStore\Device\Device;
-use WA\DataStore\DeviceType;
+use WA\DataStore\DeviceType\DeviceType;
 use WA\DataStore\EasyVistaHelpDesk;
 use WA\DataStore\EmailNotifications;
 use WA\DataStore\JobStatus;
@@ -89,12 +89,20 @@ use WA\DataStore\Order\Order;
 use WA\Repositories\Package\EloquentPackage;
 use WA\DataStore\Package\Package;
 
+use WA\Repositories\Address\EloquentAddress;
+use WA\DataStore\Address\Address;
+
 use WA\Repositories\Request\EloquentRequest;
 use WA\DataStore\Request\Request;
 
 use WA\Repositories\Modification\EloquentModification;
 use WA\DataStore\Modification\Modification;
 
+use WA\Repositories\Category\EloquentPreset;
+use WA\DataStore\Category\Preset;
+
+use WA\Repositories\Category\EloquentCategoryApps;
+use WA\DataStore\Category\CategoryApp;
 
 
 use WA\Repositories\UserNotifications\EloquentUserNotifications;
@@ -550,6 +558,15 @@ trait ServiceRegistration
         );
     }
 
+    public function registerAddress()
+    {
+        app()->bind('WA\Repositories\Address\AddressInterface',
+            function () {
+                return new EloquentAddress(new Address());
+            }
+        );
+    }
+
     public function registerRequest()
     {
         app()->bind('WA\Repositories\Request\RequestInterface',
@@ -564,6 +581,30 @@ trait ServiceRegistration
         app()->bind('WA\Repositories\Modification\ModificationInterface',
             function () {
                 return new EloquentModification(new Modification());
+            }
+        );
+    }
+
+    /**
+     * @param
+     */
+    public function registerPreset()
+    {
+        app()->bind('WA\Repositories\Category\PresetInterface',
+            function () {
+                return new EloquentPreset(new Preset());
+            }
+        );
+    }
+
+    /**
+     * @param
+     */
+    public function registerCategoryApp()
+    {
+        app()->bind('WA\Repositories\Category\CategoryAppsInterface',
+            function () {
+                return new EloquentCategoryApps(new CategoryApp());
             }
         );
     }

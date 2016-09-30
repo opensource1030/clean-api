@@ -1,14 +1,18 @@
 <?php
+
 namespace WA\Http\Controllers;
+
+use Illuminate\Http\Response;
+use Request;
 
 use WA\DataStore\Image\ImageTransformer;
 use WA\DataStore\Image\Image;
 use WA\Repositories\Image\ImageInterface;
 
 use Illuminate\Support\Facades\Storage;
-use Flysystem;
-use Illuminate\Http\Response;
-use Request;
+use League\Flysystem\Filesystem;
+use Intervention\Image\ImageManager;
+
 use DB;
 
 /**
@@ -22,6 +26,8 @@ class ImageController extends ApiController
      * @var ImageInterface
      */
     protected $image;
+
+    protected $urlFile;
 
     /**
      * Image Controller constructor
@@ -62,10 +68,14 @@ class ImageController extends ApiController
         $image = Image::find($id);
         if($image == null){
             $error['errors']['get'] = 'the Image selected doesn\'t exists';   
-            return response()->json($error)->setStatusCode(409);
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
-        
-        return $this->response()->item($image, new ImageTransformer(),['key' => 'images']);
+
+        $path = $image->filename.'.'.$image->extension;
+
+        $value = Storage::get($path);
+
+        return response($value, 200)->header('Content-Type', $image->mimeType);
     }
    
     /**
@@ -83,21 +93,22 @@ class ImageController extends ApiController
             $imageFile['mimeType'] = $file->getClientMimeType();
             $extension = $imageFile['extension'] = $file->getClientOriginalExtension();
             $imageFile['size'] = $file->getClientSize();
+            $imageFile['url'] = $filename.'.'.$extension;
 
-            $value = Flysystem::put($filename.'.'.$extension, $imageFile);
+            $value = Storage::put($filename.'.'.$extension, file_get_contents($file));
 
             if($value){
                 $image = $this->image->create($imageFile);
             } else {
-                Flysystem::delete($file);
+                Storage::delete($file);
             }   
         } catch (\Exception $e) {
-            $error['errors']['image'] = 'the Image can not be created';
-            $error['errors']['imageMessage'] = $this->getErrorAndParse($e);
-            return response()->json($error)->setStatusCode(409);
+            $error['errors']['image'] = 'the Image has not been created';
+            $error['errors']['imageMessage'] = $e->getMessage();
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
-        return $this->response()->item($image, new ImageTransformer(),['key' => 'images']);
+        return $this->response()->item($image, new ImageTransformer(),['key' => 'images'])->setStatusCode($this->status_codes['created']);
     }
 
     /**
@@ -110,9 +121,10 @@ class ImageController extends ApiController
         $image = Image::find($id);
         if($image <> null){
             $this->image->deleteById($id);
+            Storage::delete($path = $image->filename.'.'.$image->extension);
         } else {
             $error['errors']['delete'] = 'the Image selected doesn\'t exists';   
-            return response()->json($error)->setStatusCode(409);
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
         
         $this->index();
@@ -121,7 +133,7 @@ class ImageController extends ApiController
             return array("success" => true);
         } else {
             $error['errors']['delete'] = 'the Image has not been deleted';   
-            return response()->json($error)->setStatusCode(409);
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
     }
 }

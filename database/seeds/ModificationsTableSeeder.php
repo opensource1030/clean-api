@@ -22,27 +22,27 @@ class ModificationsTableSeeder extends BaseTableSeeder
         $data = [
 
             [
-                'type'     => 'capacity',
+                'modType'     => 'capacity',
                 'value'      => '16Gb'
             ],
             [
-                'type'     => 'style',
+                'modType'     => 'style',
                 'value'      => 'White'
             ],
             [
-                'type'     => 'capacity',
+                'modType'     => 'capacity',
                 'value'      => '8Gb'
             ],
             [
-                'type'     => 'capacity',
+                'modType'     => 'capacity',
                 'value'      => '128Gb'
             ],
             [
-                'type'     => 'style',
+                'modType'     => 'style',
                 'value'      => 'Gold'
             ],
             [
-                'type'     => 'style',
+                'modType'     => 'style',
                 'value'      => 'Space Grey'
             ]
         ];

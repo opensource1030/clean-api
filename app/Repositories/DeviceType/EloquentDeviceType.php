@@ -36,4 +36,108 @@ class EloquentDeviceType extends AbstractRepository implements DeviceTypeInterfa
 
         return $type;
     }
+
+    /**
+     * Update DeviceType
+     *
+     * @param array $data
+     * @return bool
+     */
+    public function update(array $data)
+    {
+        $deviceType = $this->model->find($data['id']);
+
+        if(!$deviceType)
+        {
+            return false;
+        }
+
+        if(isset($data['make'])){
+            $deviceType->make =  $data['make'];            
+        }
+        if(isset($data['model'])){
+            $deviceType->model =  $data['model'];            
+        }
+        if(isset($data['class'])){
+            $deviceType->class =  $data['class'];            
+        }
+        if(isset($data['deviceOS'])){
+            $deviceType->deviceOS =  $data['deviceOS'];            
+        }
+        if(isset($data['description'])){
+            $deviceType->description =  $data['description'];            
+        }
+        if(isset($data['statusId'])){
+            $deviceType->statusId =  $data['statusId'];            
+        }
+        if(isset($data['image'])){
+            $deviceType->image =  $data['image'];            
+        }
+
+        if(!$deviceType->save()) {
+            return false;
+        }
+
+        return $deviceType;
+
+    }
+
+    /**
+     * Get an array of all the available DeviceType.
+     *
+     * @return Array of DeviceType
+     */
+    public function getAllDeviceType()
+    {
+        $deviceType =  $this->model->all();
+        return $deviceType;
+    }
+
+    /**
+     * Create a new DeviceType
+     *
+     * @param array $data
+     * @return bool|static
+     */
+    public function create(array $data)
+    {
+        $deviceTypeData = [
+            "make" =>  isset($data['make']) ? $data['make'] : null ,
+            "model" => isset($data['model']) ? $data['model'] : null,
+            "class" => isset($data['class']) ? $data['class'] : null,
+            "deviceOS" => isset($data['deviceOS']) ? $data['deviceOS'] : null,
+            "description" => isset($data['description']) ? $data['description'] : null,
+            "statusId" => isset($data['statusId']) ? $data['statusId'] : null,
+            "image" => isset($data['image']) ? $data['image'] : null,
+        ];
+
+        $deviceType = $this->model->create($deviceTypeData);
+
+        if(!$deviceType) {
+            return false;
+        }
+
+        return $deviceType;
+    }
+
+    /**
+     * Delete a DeviceType.
+     *
+     * @param int  $id
+     * @param bool $soft true soft deletes
+     *
+     * @return bool
+     */
+    public function delete($id, $soft = true)
+    {
+        if (!$this->model->find($id)) {
+            return false;
+        }
+
+        if (!$soft) {
+            $this->model->forceDelete($id);
+        }
+
+        return $this->model->destroy($id);
+    }
 }

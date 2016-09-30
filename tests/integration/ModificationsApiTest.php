@@ -23,7 +23,7 @@ class ModificationsApiTest extends TestCase
                 'data' => [
                     0 => [ 'type','id',
                         'attributes' => [
-                            'type',
+                            'modType',
                             'value',
                         ],
                         'links'
@@ -39,7 +39,7 @@ class ModificationsApiTest extends TestCase
         $res = $this->json('GET', 'modifications/'.$modification->id)
             ->seeJson([
                 'type' => 'modifications',
-                'type'=> $modification->type,
+                'modType'=> $modification->modType,
                 'value'=> $modification->value,
             ]);
     }
@@ -51,14 +51,14 @@ class ModificationsApiTest extends TestCase
                 "data" => [
                     "type" => 'modifications',
                     "attributes" => [
-                        'type' => 'Modification Type',
+                        'modType' => 'Modification Type',
                         'value' => 'Modification Value',
                     ]
                 ]                
             ])
             ->seeJson([
                 'type' => 'modifications',
-                'type' => 'Modification Type',
+                'modType' => 'Modification Type',
                 'value' => 'Modification Value',
 
             ]);
@@ -73,14 +73,14 @@ class ModificationsApiTest extends TestCase
                 "data" => [
                     "type" => 'modifications',
                     "attributes" => [
-                        'type' => 'Modification Type Edit',
+                        'modType' => 'Modification Type Edit',
                         'value' => 'Modification Value Edit',
                     ]
                 ]                
             ])
             ->seeJson([
                 'type' => 'modifications',
-                'type'=> 'Modification Type Edit',
+                'modType'=> 'Modification Type Edit',
                 'value'=> 'Modification Value Edit',
 
             ]);

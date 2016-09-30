@@ -42,13 +42,12 @@ class CreateServices extends Migration
                 //$table->foreign('companyId')->references('id')->on('companies');
             }
         );
-
         Schema::table(
-            'packages', 
+            'orders', 
             function($table) {
-                $table->foreign('servicesId')->references('id')->on('services')->onDelete('cascade');
+                $table->foreign('serviceId')->references('id')->on('services');
             }
-        );
+        );        
     }
 
     /**
@@ -62,12 +61,6 @@ class CreateServices extends Migration
             $this->tableName, 
             function ( $table) {
                 //$table->dropForeign('companyId');
-        });
-
-        Schema::table(
-            'packages', 
-            function ( $table) {
-                //$table->dropForeign('servicesId');
         });
 
         $this->forceDropTable($this->tableName);

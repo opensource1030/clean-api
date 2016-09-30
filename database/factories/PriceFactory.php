@@ -13,10 +13,10 @@ $factory->define(\WA\DataStore\Price\Price::class,
 
         $device = factory(\WA\DataStore\Device\Device::class)->create();
         $capacity = factory(\WA\DataStore\Modification\Modification::class)->create(
-            ['type' => 'capacity']
+            ['modType' => 'capacity']
         );
         $style = factory(\WA\DataStore\Modification\Modification::class)->create(
-            ['type' => 'style']
+            ['modType' => 'style']
         );
         $carrier = factory(\WA\DataStore\Carrier\Carrier::class)->create();
         $company = factory(\WA\DataStore\Company\Company::class)->create();

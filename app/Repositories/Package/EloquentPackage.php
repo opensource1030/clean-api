@@ -29,17 +29,8 @@ class EloquentPackage extends AbstractRepository implements PackageInterface
         if(isset($data['name'])){
             $package->name = $data['name'];
         }
-        if(isset($data['conditionsId'])){
-            $package->conditionsId = $data['conditionsId'];
-        }
-        if(isset($data['devicesId'])){
-            $package->devicesId = $data['devicesId'];
-        }
-        if(isset($data['appsId'])){
-            $package->appsId = $data['appsId'];
-        }
-        if(isset($data['servicesId'])){
-            $package->servicesId = $data['servicesId'];
+        if(isset($data['addressId'])){
+            $package->addressId = $data['addressId'];
         }
         
         if(!$package->save()) {
@@ -69,11 +60,8 @@ class EloquentPackage extends AbstractRepository implements PackageInterface
     public function create(array $data)
     {
         $packageData = [
-            "name" =>  isset($data['name']) ? $data['name'] : null ,
-            "conditionsId" => isset($data['conditionsId']) ? $data['conditionsId'] : 0,
-            "devicesId" =>  isset($data['devicesId']) ? $data['devicesId'] : 0 ,
-            "appsId" => isset($data['appsId']) ? $data['appsId'] : 0,
-            "servicesId" => isset($data['servicesId']) ? $data['servicesId'] : 0,
+            "name" =>  isset($data['name']) ? $data['name'] : '',
+            "addressId" =>  isset($data['addressId']) ? $data['addressId'] : 0
         ];
 
         $package = $this->model->create($packageData);

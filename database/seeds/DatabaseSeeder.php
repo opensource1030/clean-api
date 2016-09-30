@@ -20,12 +20,14 @@ class DatabaseSeeder extends Seeder
                 break;
         }
 
+        $this->call(AddressTableSeeder::class);
         $this->call(AllocationsTableSeeder::class);
         $this->call(AppsTableSeeder::class);
         $this->call(AssetsTableSeeder::class);
         $this->call(CarriersTableSeeder::class);      
         $this->call(CompanyDomainsTableSeeder::class);
         $this->call(CompanySaml2TableSeeder::class);
+        $this->call(ConditionsTableSeeder::class);        
         $this->call(DeviceCarriersTableSeeder::class);        
         $this->call(DeviceCompaniesTableSeeder::class);
         $this->call(DeviceModificationsTableSeeder::class);

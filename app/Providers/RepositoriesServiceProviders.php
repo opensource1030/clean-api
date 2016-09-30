@@ -57,6 +57,10 @@ class RepositoriesServiceProviders extends ServiceProvider
         $this->registerService();
         $this->registerOrder();
         $this->registerPackage();
+        $this->registerAddress();
         $this->registerRequest();
+        $this->registerPreset();
+        $this->registerCategoryApp();
+
     }
 }

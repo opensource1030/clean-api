@@ -23,8 +23,9 @@ class CreateImagesTable extends Migration
                 $table->string('originalName')->nullable();
                 $table->string('filename')->nullable();
                 $table->string('mimeType')->nullable();
-                $table->string('extension')->nullable();                
+                $table->string('extension')->nullable();
                 $table->integer('size')->nullable();
+                $table->string('url')->nullable();
 
                 $table->nullableTimestamps();
             }

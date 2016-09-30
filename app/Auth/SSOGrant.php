@@ -180,6 +180,8 @@ class SSOGrant extends AbstractGrant
             $refreshToken->save();
         }
 
-        return $this->server->getTokenType()->generateResponse();
+        $response = $this->server->getTokenType()->generateResponse();
+        $response['user_id'] = $userId;
+        return $response;
     }
 }

@@ -2,7 +2,6 @@
 
 namespace WA\Testing\Auth;
 
-//use Laravel\Lumen\Testing\DatabaseTransactions;
 use Laravel\Lumen\Testing\DatabaseMigrations;
 
 use WA\Auth\Login;
@@ -11,8 +10,8 @@ use Cache;
 
 class Saml2ApiTest extends TestCase
 {
-    //use DatabaseTransactions;
     use DatabaseMigrations;    
+
 
 	public function testApiDoSSOEmailRegister()	{
 		
@@ -30,12 +29,10 @@ class Saml2ApiTest extends TestCase
 	public function testApiDoSSOEmailPassword() {
 		
 		// CREATE USER
-		$user = factory(\WA\DataStore\User\User::class)->create();
-		// GET EMAIL
-		$parsed = $this->getErrorAndParse($user, 'attributes');
+		$user = factory(\WA\DataStore\User\User::class)->create()->email;
 
         // CALL THE API ROUTE + ASSERTS        
-		$returnPassword = $this->json('GET', 'doSSO/'.$parsed['email'])->seeJson([
+		$returnPassword = $this->json('GET', 'doSSO/'.$user)->seeJson([
 			'error' => 'User Found, Password Required',
 			'message' => 'Please, enter your password.'
 		]);
@@ -43,18 +40,17 @@ class Saml2ApiTest extends TestCase
 
 	public function testApiDoSSOEmailMicrosoftFail() {
 
-		$this->markTestIncomplete(
-          'TODO: needs to be reviewed.' 
-        );
-
-		$this->artisan('db:seed');
-
+		// CREATE ARGUMENTS
 		$emailMicrosoft = 'dev@wirelessanalytics.com';
-		
+
+		$company = factory(\WA\DataStore\Company\Company::class)->create()->id;
+		$companyDomains = factory(\WA\DataStore\Company\CompanyDomains::class)->create([ 'companyId' => $company ]);
+		$companySaml2 = factory(\WA\DataStore\Company\CompanySaml2::class)->create([ 'companyId' => $company ]);
+		$user = factory(\WA\DataStore\User\User::class)->create([ 'email' => $emailMicrosoft , 'companyId' => $company ]);
+
         // CALL THE API ROUTE + ASSERTS        
 		$returnMicrosoft = $this->call('GET', 'doSSO/'.$emailMicrosoft, array(), array(), array(), array(), array());
 		$returnMicrosoftArray = json_decode($returnMicrosoft->content(), true);
-		// ->json(['error' => 'URL Not Found', 'message' => 'Url to redirect not found.'])->setStatusCode(409);
 
 		$this->assertArrayHasKey('error', $returnMicrosoftArray);
 		$this->assertArrayHasKey('message', $returnMicrosoftArray);
@@ -65,15 +61,14 @@ class Saml2ApiTest extends TestCase
 
 	public function testApiDoSSOEmailMicrosoftSaml2(){
 
-		$this->markTestIncomplete(
-          'TODO: needs to be reviewed.' 
-        );
-
-		$this->artisan('db:seed');
-
 		// CREATE ARGUMENTS
 		$emailMicrosoft = 'dev@wirelessanalytics.com';
 		$redirectToUrl = 'http://google.es';
+
+		$company = factory(\WA\DataStore\Company\Company::class)->create()->id;
+		$companyDomains = factory(\WA\DataStore\Company\CompanyDomains::class)->create([ 'companyId' => $company ]);
+		$companySaml2 = factory(\WA\DataStore\Company\CompanySaml2::class)->create([ 'companyId' => $company ]);
+		$user = factory(\WA\DataStore\User\User::class)->create([ 'email' => $emailMicrosoft , 'companyId' => $company ]);
 
         // CALL THE API ROUTE + ASSERTS        
 		$returnMicrosoft = $this->call('GET', 'doSSO/'.$emailMicrosoft.'?redirectToUrl='.$redirectToUrl, array(), array(), array(), array(), array());
@@ -117,28 +112,4 @@ class Saml2ApiTest extends TestCase
 			'uuid' => $uuid,
 		]);
 	}
-
-
-    /*
-     *      Transforms an Object and gets the value of a protected variable
-     *
-     *      @param: 
-     *          \Exception $e
-     *      @return:
-     *          $object->getValue($value);
-     */
-    private function getErrorAndParse($object, $value) {
-        
-        try{
-            $reflectorResponse = new \ReflectionClass($object);
-
-            $classResponse = $reflectorResponse->getProperty($value);
-            $classResponse->setAccessible(true);
-            $dataResponse = $classResponse->getValue($object);
-            return $dataResponse;    
-
-        } catch (\Exception $e){
-            return 'Generic Error';
-        }
-    }
 }

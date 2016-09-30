@@ -36,7 +36,8 @@ class Carrier extends BaseDataStore
             'presentation',
             'active',
             'locationId',
-            'shortName'];
+            'shortName',
+            'updated_at'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
@@ -77,6 +78,14 @@ class Carrier extends BaseDataStore
     public function location()
     {
         return $this->belongsTo('WA\DataStore\Location\Location', 'locationId');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function images()
+    {
+        return $this->belongsToMany('WA\DataStore\Image\Image', 'carrier_images', 'carrierId', 'imageId');
     }
 
     /**

@@ -2,21 +2,14 @@
 
 namespace WA\Http\Controllers;
 
-use Cartalyst\DataGrid\Laravel\Facades\DataGrid;
-use Dingo\Api\Routing\Helpers;
-use Illuminate\Session\SessionManager as Session;
-use WA\Helpers\Traits\SetLimits;
-use WA\Http\Controllers\Api\Traits\BasicCrud;
 use Illuminate\Http\Request;
 
-use WA\DataStore\Device\DeviceTransformer;
 use WA\DataStore\Device\Device;
+use WA\DataStore\Device\DeviceTransformer;
 use WA\Repositories\Device\DeviceInterface;
 
 use Validator;
 use DB;
-
-use Log;
 
 /**
  * Devices resource.
@@ -71,17 +64,21 @@ class DevicesController extends ApiController
      *
      * @Get("/{id}")
      */
-    public function show($id) {
+    public function show($id, Request $request) {
 
         $device = Device::find($id);
         if($device == null){
             $error['errors']['get'] = 'the Device selected doesn\'t exists';   
-            return response()->json($error)->setStatusCode(409);
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
-        return $this->response()->item($device, new DeviceTransformer(),['key' => 'devices']);
-    }
+        if(!$this->includesAreCorrect($request, new DeviceTransformer())){
+            $error['errors']['getIncludes'] = 'One or More Includes selected doesn\'t exists';
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+        }
 
+        return $this->response()->item($device, new DeviceTransformer(),['key' => 'devices'])->setStatusCode($this->status_codes['created']);
+    }
 
     public function datatable() {
 
@@ -114,7 +111,6 @@ class DevicesController extends ApiController
      * @param $id
      * @return \Dingo\Api\Http\Response
      */
-
     public function store($id, Request $request) {
 
         $success = true;
@@ -125,7 +121,7 @@ class DevicesController extends ApiController
          */
         if(!$this->isJsonCorrect($request, 'devices')){
             $error['errors']['json'] = 'Json is Invalid';
-            return response()->json($error)->setStatusCode(409);
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         } else {
             $data = $request->all()['data'];
             $dataType = $data['type'];
@@ -140,6 +136,12 @@ class DevicesController extends ApiController
         try{
             $device = Device::find($id);
 
+            if($device == null) {
+                $error['errors']['devices'] = 'The Device doesn\'t exists';
+                //$error['errors']['devicesMessage'] = $e->getMessage();
+                return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+            }
+
             $device->name = isset($dataAttributes['name']) ? $dataAttributes['name'] : $device->name;
             $device->properties = isset($dataAttributes['properties']) ? $dataAttributes['properties'] : $device->properties;
             $device->deviceTypeId = isset($dataAttributes['deviceTypeId']) ? $dataAttributes['deviceTypeId'] : $device->deviceTypeId;
@@ -148,13 +150,12 @@ class DevicesController extends ApiController
             $device->identification = isset($dataAttributes['identification']) ? $dataAttributes['identification'] : $device->identification;
             $device->syncId = isset($dataAttributes['syncId']) ? $dataAttributes['syncId'] : $device->syncId;
 
-            $device->save();
+            $device->save();            
         } catch (\Exception $e) {
             DB::rollBack();
-            $success = false;
-            $error['errors']['devices'] = 'The Device can not be created';
-            //$error['errors']['devicesMessage'] = $this->getErrorAndParse($e);
-            return response()->json($error)->setStatusCode(409);
+            $error['errors']['devices'] = 'The Device has not been created';
+            //$error['errors']['devicesMessage'] = $e->getMessage();
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
         /*
@@ -170,8 +171,8 @@ class DevicesController extends ApiController
                     try {
                         $device->images()->sync($dataImages);    
                     } catch (\Exception $e){
-                        $error['errors']['images'] = 'the Device Images can not be created';
-                        //$error['errors']['imagesMessage'] = $this->getErrorAndParse($e);
+                        $error['errors']['images'] = 'the Device Images has not been created';
+                        //$error['errors']['imagesMessage'] = $e->getMessage();
                     }
                 }
             }
@@ -182,8 +183,8 @@ class DevicesController extends ApiController
                     try {
                         $device->assets()->sync($dataAssets);    
                     } catch (\Exception $e){
-                        $error['errors']['assets'] = 'the Device Assets can not be created';
-                        //$error['errors']['assetsMessage'] = $this->getErrorAndParse($e);
+                        $error['errors']['assets'] = 'the Device Assets has not been created';
+                        //$error['errors']['assetsMessage'] = $e->getMessage();
                     }
                 }
             }
@@ -195,8 +196,8 @@ class DevicesController extends ApiController
                         $device->modifications()->sync($dataModifications);
                     } catch (\Exception $e){
                         $success = false;
-                        $error['errors']['modifications'] = 'the Device Modifications can not be created';
-                        //$error['errors']['modificationsMessage'] = $this->getErrorAndParse($e);
+                        $error['errors']['modifications'] = 'the Device Modifications has not been created';
+                        //$error['errors']['modificationsMessage'] = $e->getMessage();
                     }
                 }
             }
@@ -208,8 +209,8 @@ class DevicesController extends ApiController
                         $device->carriers()->sync($dataCarriers);
                     } catch (\Exception $e){
                         $success = false;
-                        $error['errors']['carriers'] = 'the Device Carriers can not be created';
-                        //$error['errors']['carriersMessage'] = $this->getErrorAndParse($e);
+                        $error['errors']['carriers'] = 'the Device Carriers has not been created';
+                        //$error['errors']['carriersMessage'] = $e->getMessage();
                     }
                 }
             }
@@ -221,8 +222,8 @@ class DevicesController extends ApiController
                         $device->companies()->sync($dataCompanies);
                     } catch (\Exception $e){
                         $success = false;
-                        $error['errors']['companies'] = 'the Device Companies can not be created';
-                        //$error['errors']['companiesMessage'] = $this->getErrorAndParse($e);
+                        $error['errors']['companies'] = 'the Device Companies has not been created';
+                        //$error['errors']['companiesMessage'] = $e->getMessage();
                     }
                 }
             }
@@ -244,7 +245,7 @@ class DevicesController extends ApiController
                                     $priceInterface->create($price);    
                                 } else {
                                     $success = false;
-                                    $error['errors']['prices'] = 'the Device Prices can not be created (Incorrect Row)';
+                                    $error['errors']['prices'] = 'the Device Prices has not been created (Incorrect Row)';
                                     //$error['errors']['pricesCheck'] = $check['error'];
                                     //$error['errors']['pricesIdError'] = $check['id'];
                                     //$error['errors']['pricesMessage'] = 'Any price rows are not correct and no references provided relationships.';
@@ -252,13 +253,13 @@ class DevicesController extends ApiController
                             }    
                         } catch (\Exception $e) {
                             $success = false;
-                            $error['errors']['prices'] = 'the Device Prices can not be created (Exception)';
-                            //$error['errors']['pricesMessage'] = $this->getErrorAndParse($e);
+                            $error['errors']['prices'] = 'the Device Prices has not been created (Exception)';
+                            //$error['errors']['pricesMessage'] = $e->getMessage();
                         }
                     } else {
                         $success = false;
-                        $error['errors']['prices'] = 'the Device Prices can not be created because other relationships can\'t be created';
-                        //$error['errors']['pricesMessage'] = $this->getErrorAndParse($e);
+                        $error['errors']['prices'] = 'the Device Prices has not been created because other relationships can\'t be created';
+                        //$error['errors']['pricesMessage'] = $e->getMessage();
                     }
                 }
             }            
@@ -266,10 +267,10 @@ class DevicesController extends ApiController
 
         if(!$success){
             DB::rollBack();
-            return response()->json($error)->setStatusCode(409);
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         } else {
             DB::commit();
-            return $this->response()->item($device, new DeviceTransformer(), ['key' => 'devices']);
+            return $this->response()->item($device, new DeviceTransformer(), ['key' => 'devices'])->setStatusCode($this->status_codes['created']);
         }
     }
 
@@ -288,7 +289,7 @@ class DevicesController extends ApiController
          */
         if(!$this->isJsonCorrect($request, 'devices')){
             $error['errors']['json'] = 'Json is Invalid';
-            return response()->json($error)->setStatusCode(409);
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         } else {
             $data = $request->all()['data'];
             $dataType = $data['type'];
@@ -304,10 +305,9 @@ class DevicesController extends ApiController
             $device = $this->device->create($dataAttributes);
         } catch (\Exception $e) {
             DB::rollBack();
-            $success = false;
-            $error['errors']['devices'] = 'The Device can not be created';
-            //$error['errors']['devicesMessage'] = $this->getErrorAndParse($e);
-            return response()->json($error)->setStatusCode(409);
+            $error['errors']['devices'] = 'The Device has not been created';
+            //$error['errors']['devicesMessage'] = $e->getMessage();
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
         /*
@@ -323,8 +323,8 @@ class DevicesController extends ApiController
                     try {
                         $device->images()->sync($dataImages);    
                     } catch (\Exception $e){
-                        $error['errors']['images'] = 'the Device Images can not be created';
-                        //$error['errors']['imagesMessage'] = $this->getErrorAndParse($e);
+                        $error['errors']['images'] = 'the Device Images has not been created';
+                        //$error['errors']['imagesMessage'] = $e->getMessage();
                     }
                 }
             }
@@ -335,8 +335,8 @@ class DevicesController extends ApiController
                     try {
                         $device->assets()->sync($dataAssets);    
                     } catch (\Exception $e){
-                        $error['errors']['assets'] = 'the Device Assets can not be created';
-                        //$error['errors']['assetsMessage'] = $this->getErrorAndParse($e);
+                        $error['errors']['assets'] = 'the Device Assets has not been created';
+                        //$error['errors']['assetsMessage'] = $e->getMessage();
                     }
                 }
             }
@@ -348,8 +348,8 @@ class DevicesController extends ApiController
                         $device->modifications()->sync($dataModifications);
                     } catch (\Exception $e){
                         $success = false;
-                        $error['errors']['modifications'] = 'the Device Modifications can not be created';
-                        //$error['errors']['modificationsMessage'] = $this->getErrorAndParse($e);
+                        $error['errors']['modifications'] = 'the Device Modifications has not been created';
+                        //$error['errors']['modificationsMessage'] = $e->getMessage();
                     }
                 }
             }
@@ -361,8 +361,8 @@ class DevicesController extends ApiController
                         $device->carriers()->sync($dataCarriers);
                     } catch (\Exception $e){
                         $success = false;
-                        $error['errors']['carriers'] = 'the Device Carriers can not be created';
-                        //$error['errors']['carriersMessage'] = $this->getErrorAndParse($e);
+                        $error['errors']['carriers'] = 'the Device Carriers has not been created';
+                        //$error['errors']['carriersMessage'] = $e->getMessage();
                     }
                 }
             }
@@ -374,8 +374,8 @@ class DevicesController extends ApiController
                         $device->companies()->sync($dataCompanies);
                     } catch (\Exception $e){
                         $success = false;
-                        $error['errors']['companies'] = 'the Device Companies can not be created';
-                        //$error['errors']['companiesMessage'] = $this->getErrorAndParse($e);
+                        $error['errors']['companies'] = 'the Device Companies has not been created';
+                        //$error['errors']['companiesMessage'] = $e->getMessage();
                     }
                 }
             }
@@ -397,7 +397,7 @@ class DevicesController extends ApiController
                                     $priceInterface->create($price);    
                                 } else {
                                     $success = false;
-                                    $error['errors']['prices'] = 'the Device Prices can not be created (Incorrect Row)';
+                                    $error['errors']['prices'] = 'the Device Prices has not been created (Incorrect Row)';
                                     //$error['errors']['pricesCheck'] = $check['error'];
                                     //$error['errors']['pricesIdError'] = $check['id'];
                                     //$error['errors']['pricesMessage'] = 'Any price rows are not correct and no references provided relationships.';
@@ -405,13 +405,13 @@ class DevicesController extends ApiController
                             }    
                         } catch (\Exception $e) {
                             $success = false;
-                            $error['errors']['prices'] = 'the Device Prices can not be created (Exception)';
-                            //$error['errors']['pricesMessage'] = $this->getErrorAndParse($e);
+                            $error['errors']['prices'] = 'the Device Prices has not been created (Exception)';
+                            //$error['errors']['pricesMessage'] = $e->getMessage();
                         }
                     } else {
                         $success = false;
-                        $error['errors']['prices'] = 'the Device Prices can not be created because other relationships can\'t be created';
-                        //$error['errors']['pricesMessage'] = $this->getErrorAndParse($e);
+                        $error['errors']['prices'] = 'the Device Prices has not been created because other relationships can\'t be created';
+                        $error['errors']['pricesMessage'] = $e->getMessage();
                     }
                 }
             }            
@@ -419,10 +419,10 @@ class DevicesController extends ApiController
 
         if(!$success){
             DB::rollBack();
-            return response()->json($error)->setStatusCode(409);
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         } else {
             DB::commit();
-            return $this->response()->item($device, new DeviceTransformer(), ['key' => 'devices']);
+            return $this->response()->item($device, new DeviceTransformer(), ['key' => 'devices'])->setStatusCode($this->status_codes['created']);
         }
     }
 
@@ -438,7 +438,7 @@ class DevicesController extends ApiController
             $this->device->deleteById($id);
         } else {
             $error['errors']['delete'] = 'the Device selected doesn\'t exists';   
-            return response()->json($error)->setStatusCode(409);
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
         
         $this->index();
@@ -447,7 +447,7 @@ class DevicesController extends ApiController
             return array("success" => true);
         } else {
             $error['errors']['delete'] = 'the Device has not been deleted';   
-            return response()->json($error)->setStatusCode(409);
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
     }
 
@@ -456,30 +456,6 @@ class DevicesController extends ApiController
      * PRIVATE FUNCTIONS
      *
      */
-
-    /*
-     *      Transforms an Object to an Array for Sync purposes.
-     *
-     *      @param:
-     *          { "type": "example", "id" : 1 },
-     *          { "type": "example", "id" : 2 }
-     *      @return
-     *          array( 1, 2 );
-     */
-    private function parseJsonToArray($data, $value){
-        $array = array();
-        
-        foreach ($data as $info) {
-            if(isset($info['type'])){
-                if($info['type'] == $value){
-                    if(isset($info['id'])){
-                           array_push($array, $info['id']);    
-                    }        
-                }
-            }                        
-        }        
-        return $array;
-    }
 
     /*
      *      Checks if an ARRAY has repeated rows and returns an ARRAY without them.
@@ -614,7 +590,7 @@ class DevicesController extends ApiController
                 $dataResponse = $classResponse->getValue($modification);
 
                 if($price['capacityId'] == $dataResponse['id']){
-                    if($dataResponse['type'] == 'capacity'){
+                    if($dataResponse['modType'] == 'capacity'){
                         $existsCapacity = true;
                     }
                 }
@@ -638,7 +614,7 @@ class DevicesController extends ApiController
                 $dataResponse = $classResponse->getValue($modification);
 
                 if($price['styleId'] == $dataResponse['id']){
-                    if($dataResponse['type'] == 'style'){
+                    if($dataResponse['modType'] == 'style'){
                         $existsStyle = true;
                     }
                 }

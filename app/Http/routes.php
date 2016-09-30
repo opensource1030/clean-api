@@ -63,7 +63,6 @@ $api->version('v1', function ($api) {
         }
     }
 
-
     $api->group(['middleware' => $middleware ], function ($api) {
 
         // =Companies
@@ -182,6 +181,40 @@ $api->version('v1', function ($api) {
         $imageController = 'WA\Http\Controllers\ImageController';
         $api->get('images', ['as' => 'api.image.index', 'uses' => $imageController . '@index']);
         $api->get('images/{id}', ['as' => 'api.image.show', 'uses' => $imageController . '@show']);
-        $api->post('images/create', ['uses' => $imageController . '@create']);
+        $api->post('images', ['uses' => $imageController . '@create']);
+        $api->delete('images/{id}', ['uses' => $imageController . '@delete']);
+
+        //=Address
+        $addressController = 'WA\Http\Controllers\AddressController';
+        $api->get('address', ['as' => 'api.address.index', 'uses' => $addressController . '@index']);
+        $api->get('address/{id}', ['as' => 'api.address.show', 'uses' => $addressController . '@show']);
+        $api->post('address', ['uses' => $addressController . '@create']);
+        $api->put('address/{id}', ['uses' => $addressController . '@store']);
+        $api->delete('address/{id}', ['uses' => $addressController . '@delete']);
+
+        //=DeviceType
+        $deviceTypeController = 'WA\Http\Controllers\DeviceTypeController';
+        $api->get('devicetype', ['as' => 'api.devicetype.index', 'uses' => $deviceTypeController . '@index']);
+        $api->get('devicetype/{id}', ['as' => 'api.devicetype.show', 'uses' => $deviceTypeController . '@show']);
+        $api->post('devicetype', ['uses' => $deviceTypeController . '@create']);
+        $api->put('devicetype/{id}', ['uses' => $deviceTypeController . '@store']);
+        $api->delete('devicetype/{id}', ['uses' => $deviceTypeController . '@delete']);
+        
+        //=CategoryDevices
+        $presetController = 'WA\Http\Controllers\PresetController';
+        $api->get('presets', ['as' => 'api.presets.index', 'uses' => $presetController . '@index']);
+        $api->get('presets/{id}', ['as' => 'api.presets.show', 'uses' => $presetController . '@show']);
+        $api->post('presets', ['uses' => $presetController . '@create']);
+        $api->put('presets/{id}', ['uses' => $presetController . '@store']);
+        $api->delete('presets/{id}', ['uses' => $presetController . '@delete']);
+
+        //=CategoryApps
+        $categoryAppController = 'WA\Http\Controllers\CategoryAppsController';
+        $api->get('categoryapps', ['as' => 'api.categoryapps.index', 'uses' => $categoryAppController . '@index']);
+        $api->get('categoryapps/{id}', ['as' => 'api.categoryapps.show', 'uses' => $categoryAppController . '@show']);
+        $api->post('categoryapps', ['uses' => $categoryAppController . '@create']);
+        $api->put('categoryapps/{id}', ['uses' => $categoryAppController . '@store']);
+        $api->delete('categoryapps/{id}', ['uses' => $categoryAppController . '@delete']);
+
     });
 });

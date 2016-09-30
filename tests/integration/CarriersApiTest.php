@@ -1,39 +1,57 @@
 <?php
 
-//use Laravel\Lumen\Testing\DatabaseTransactions;
 use Laravel\Lumen\Testing\DatabaseMigrations;
-
-use WA\DataStore\Carrier\Carrier;
-use WA\DataStore\Location\Location;
 
 class CarriersApiTest extends TestCase
 {
-    //use DatabaseTransactions;
     use DatabaseMigrations;
 
     /**
      * A basic functional test for Carriers
-     *
-     *
      */
     public function testGetCarriers() {
 
         $carrier = factory(\WA\DataStore\Carrier\Carrier::class)->create();
 
-        $res = $this->json('GET', 'carriers');
-
-        $res->seeJsonStructure([
+        $this->json('GET', 'carriers')
+            ->seeJsonStructure([
                 'data' => [
-                    0 => [ 'type','id',
+                    0 => [  
+                        'type',
+                        'id',
                         'attributes' => [
                             'name',
                             'presentation',
                             'active',
                             'locationId',
                             'shortName',
+                            'created_at' => [
+                                'date',
+                                'timezone_type',
+                                'timezone'
+                            ],
+                            'updated_at' => [
+                                'date',
+                                'timezone_type',
+                                'timezone'
+                            ]
                         ],
-                        'links'
+                        'links' => [
+                            'self'
+                        ]
                     ]
+                ],
+                'meta' => [
+                    'pagination' => [
+                        'total',
+                        'count',
+                        'per_page',
+                        'current_page',
+                        'total_pages'
+                    ]
+                ],
+                'links' => [
+                    'self'
                 ]
             ]);
     }
@@ -55,7 +73,9 @@ class CarriersApiTest extends TestCase
 
     public function testCreateCarrier() {
 
-        $this->post('/carriers',
+        $locationId = factory(WA\DataStore\Location\Location::class)->create()->id;
+
+        $this->json('POST', 'carriers',
             [
                 "data" => [
                     "type" => 'carriers',
@@ -63,7 +83,7 @@ class CarriersApiTest extends TestCase
                         'name'=> 'Carrier Name',
                         'presentation'=> 'Carrier Presentation',
                         'active'=> 1,
-                        'locationId'=> 1,
+                        'locationId'=> $locationId,
                         'shortName'=> 'Carrier ShortName',
                     ]
                 ] 
@@ -73,7 +93,7 @@ class CarriersApiTest extends TestCase
                 'name'=> 'Carrier Name',
                 'presentation'=> 'Carrier Presentation',
                 'active'=> 1,
-                'locationId'=> 1,
+                'locationId'=> $locationId,
                 'shortName'=> 'Carrier ShortName',
 
             ]);
@@ -81,48 +101,60 @@ class CarriersApiTest extends TestCase
 
     public function testUpdateCarrier() {
 
-        $location = factory(\WA\DataStore\Location\Location::class)->create(); 
-        $carrier = factory(\WA\DataStore\Carrier\Carrier::class)->create();
+        $carrier1 = factory(\WA\DataStore\Carrier\Carrier::class)->create();
+        $carrier2 = factory(\WA\DataStore\Carrier\Carrier::class)->create();
 
-        $this->put('/carriers/'.$carrier->id, 
-            [
-                "data" => [
-                    "type" => 'carriers',
-                    "attributes" => [
-                        'name'=> 'Carrier Name',
-                        'presentation'=> 'Carrier Presentation',
-                        'active'=> 1,
-                        'locationId'=> $location->id,
-                        'shortName'=> 'Carrier ShortName',
-                    ]
-                ] 
-            ])
+        $this->assertNotEquals($carrier1->id, $carrier2->id);
+        $this->assertNotEquals($carrier1->locationId, $carrier2->locationId);
+        
+        $this->assertNotEquals($carrier1->id, $carrier2->id);
+        
+        $this->json('GET', 'carriers/'.$carrier1->id)
             ->seeJson([
                 'type' => 'carriers',
-                'name'=> 'Carrier Name',
-                'presentation'=> 'Carrier Presentation',
-                'active'=> 1,
-                'locationId'=> $location->id,
-                'shortName'=> 'Carrier ShortName',
+                'name' => $carrier1->name,
+                'presentation'=> $carrier1->presentation,
+                'active'=> "$carrier1->active",
+                'locationId'=> "$carrier1->locationId",
+                'shortName'=> $carrier1->shortName,
+            ]);
 
+        $this->json('PUT', 'carriers/'.$carrier1->id, 
+            [
+                'data' => [
+                    'type' => 'carriers',
+                    'attributes' => [
+                        'name' => $carrier2->name,
+                        'presentation'=> $carrier2->presentation,
+                        'active'=> $carrier2->active,
+                        'locationId'=> $carrier1->locationId,
+                        'shortName'=> $carrier1->shortName,
+                    ]
+                ]
+            ])
+            ->seeJson([
+                //'type' => 'carriers',
+                'id' => $carrier1->id,
+                'name' => $carrier2->name,
+                'presentation'=> $carrier2->presentation,
+                'active'=> $carrier2->active,
+                'locationId'=> $carrier1->locationId,
+                'shortName'=> $carrier1->shortName,
             ]);
     }
 
     public function testDeleteCarrierIfExists() {
 
-        // CREATE & DELETE
         $carrier = factory(\WA\DataStore\Carrier\Carrier::class)->create();
         $responseDel = $this->call('DELETE', '/carriers/'.$carrier->id);
         $this->assertEquals(200, $responseDel->status());
         $responseGet = $this->call('GET', '/carriers/'.$carrier->id);
-        $this->assertEquals(409, $responseGet->status());        
+        $this->assertEquals(404, $responseGet->status());        
     }
 
     public function testDeleteCarrierIfNoExists(){
 
-        // DELETE NO EXISTING.
         $responseDel = $this->call('DELETE', '/carriers/1');
-        $this->assertEquals(409, $responseDel->status());
+        $this->assertEquals(404, $responseDel->status());
     }
-
 }

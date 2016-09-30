@@ -122,7 +122,7 @@ class DevicesApiTest extends TestCase
         $deviceId = $deviceId + 10;
 
         $response = $this->call('GET', '/devices/'.$deviceId);
-        $this->assertEquals(409, $response->status());
+        $this->assertEquals(404, $response->status());
     }
 
     public function testGetDeviceByIdandIncludesAssets(){
@@ -419,9 +419,6 @@ class DevicesApiTest extends TestCase
 
                 ]
             ]);
-
-            $dataCarriersVoid = array();
-            $device->carriers()->sync($dataCarriersVoid);            
     }
 
     public function testCreateDevice() {
@@ -434,9 +431,9 @@ class DevicesApiTest extends TestCase
         $asset1 = factory(\WA\DataStore\Asset\Asset::class)->create()->id;
         $asset2 = factory(\WA\DataStore\Asset\Asset::class)->create()->id;
         
-        $modCap1 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'capacity'] )->id;
-        $modSty2 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'style'] )->id;
-        $modCap3 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'capacity'] )->id;
+        $modCap1 = factory(\WA\DataStore\Modification\Modification::class)->create( ['modType' => 'capacity'] )->id;
+        $modSty2 = factory(\WA\DataStore\Modification\Modification::class)->create( ['modType' => 'style'] )->id;
+        $modCap3 = factory(\WA\DataStore\Modification\Modification::class)->create( ['modType' => 'capacity'] )->id;
         
         $carr1 = factory(\WA\DataStore\Carrier\Carrier::class)->create()->id;
         $carr2 = factory(\WA\DataStore\Carrier\Carrier::class)->create()->id;
@@ -595,7 +592,7 @@ class DevicesApiTest extends TestCase
             )->seeJson(
             [
                 'errors' => [
-                    'devices' => 'The Device can not be created'
+                    'devices' => 'The Device has not been created'
                 ]
             ]
         );
@@ -775,7 +772,7 @@ class DevicesApiTest extends TestCase
         )->seeJson(
         [
             'errors' => [
-                'prices' => 'the Device Prices can not be created (Exception)'
+                'prices' => 'the Device Prices has not been created (Exception)'
             ]
         ]);
     }
@@ -830,7 +827,7 @@ class DevicesApiTest extends TestCase
         )->seeJson(
         [
             'errors' => [
-                'prices' => 'the Device Prices can not be created (Exception)'
+                'prices' => 'the Device Prices has not been created (Exception)'
             ]
         ]);
     }
@@ -885,7 +882,7 @@ class DevicesApiTest extends TestCase
         )->seeJson(
         [
             'errors' => [
-                'prices' => 'the Device Prices can not be created (Exception)'
+                'prices' => 'the Device Prices has not been created (Exception)'
             ]
         ]);
     }
@@ -940,7 +937,7 @@ class DevicesApiTest extends TestCase
         )->seeJson(
         [
             'errors' => [
-                'prices' => 'the Device Prices can not be created (Exception)'
+                'prices' => 'the Device Prices has not been created (Exception)'
             ]
         ]);
     }
@@ -995,7 +992,7 @@ class DevicesApiTest extends TestCase
         )->seeJson(
         [
             'errors' => [
-                'prices' => 'the Device Prices can not be created (Exception)'
+                'prices' => 'the Device Prices has not been created (Exception)'
             ]
         ]);
     }
@@ -1016,15 +1013,15 @@ class DevicesApiTest extends TestCase
         $this->assertNotEquals($device->deviceTypeId, $deviceAux->deviceTypeId);
 
         $modCap1 = factory(\WA\DataStore\Modification\Modification::class)->create(
-            ['type' => 'capacity']
+            ['modType' => 'capacity']
         );
 
         $modSty1 = factory(\WA\DataStore\Modification\Modification::class)->create(
-            ['type' => 'style']
+            ['modType' => 'style']
         );
 
         $modCap2 = factory(\WA\DataStore\Modification\Modification::class)->create(
-            ['type' => 'capacity']
+            ['modType' => 'capacity']
         );
 
         
@@ -1093,13 +1090,13 @@ class DevicesApiTest extends TestCase
         $responseDel = $this->call('DELETE', '/devices/'.$device->id);
         $this->assertEquals(200, $responseDel->status());
         $responseGet = $this->call('GET', '/devices/'.$device->id);
-        $this->assertEquals(409, $responseGet->status());        
+        $this->assertEquals(404, $responseGet->status());        
     }
 
     public function testDeleteDeviceIfNoExists(){
         // DELETE NO EXISTING.
         $responseDel = $this->call('DELETE', '/devices/1');
-        $this->assertEquals(409, $responseDel->status());
+        $this->assertEquals(404, $responseDel->status());
     }
 
     public function testParseJsonToArray(){
@@ -1230,12 +1227,12 @@ class DevicesApiTest extends TestCase
 
         //$this->artisan('db:seed');
 
-        $modCap1 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'capacity'] )->id;
-        $modSty2 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'style'] )->id;
-        $modCap3 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'capacity'] )->id;
-        $modSty4 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'style'] )->id;
-        $modCap5 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'capacity'] )->id;
-        $modSty6 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'style'] )->id;
+        $modCap1 = factory(\WA\DataStore\Modification\Modification::class)->create( ['modType' => 'capacity'] )->id;
+        $modSty2 = factory(\WA\DataStore\Modification\Modification::class)->create( ['modType' => 'style'] )->id;
+        $modCap3 = factory(\WA\DataStore\Modification\Modification::class)->create( ['modType' => 'capacity'] )->id;
+        $modSty4 = factory(\WA\DataStore\Modification\Modification::class)->create( ['modType' => 'style'] )->id;
+        $modCap5 = factory(\WA\DataStore\Modification\Modification::class)->create( ['modType' => 'capacity'] )->id;
+        $modSty6 = factory(\WA\DataStore\Modification\Modification::class)->create( ['modType' => 'style'] )->id;
 
         $carr1 = factory(\WA\DataStore\Carrier\Carrier::class)->create()->id;
         $carr2 = factory(\WA\DataStore\Carrier\Carrier::class)->create()->id;
@@ -1264,12 +1261,12 @@ class DevicesApiTest extends TestCase
 
     public function testCheckIfPriceRowIsCorrectCapacityFails(){
 
-        $modCap1 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'capacity'] )->id;
-        $modSty2 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'style'] )->id;
-        $modCap3 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'capacity'] )->id;
-        $modSty4 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'style'] )->id;
-        $modCap5 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'capacity'] )->id;
-        $modSty6 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'style'] )->id;
+        $modCap1 = factory(\WA\DataStore\Modification\Modification::class)->create( ['modType' => 'capacity'] )->id;
+        $modSty2 = factory(\WA\DataStore\Modification\Modification::class)->create( ['modType' => 'style'] )->id;
+        $modCap3 = factory(\WA\DataStore\Modification\Modification::class)->create( ['modType' => 'capacity'] )->id;
+        $modSty4 = factory(\WA\DataStore\Modification\Modification::class)->create( ['modType' => 'style'] )->id;
+        $modCap5 = factory(\WA\DataStore\Modification\Modification::class)->create( ['modType' => 'capacity'] )->id;
+        $modSty6 = factory(\WA\DataStore\Modification\Modification::class)->create( ['modType' => 'style'] )->id;
 
         $carr1 = factory(\WA\DataStore\Carrier\Carrier::class)->create()->id;
         $carr2 = factory(\WA\DataStore\Carrier\Carrier::class)->create()->id;
@@ -1298,12 +1295,12 @@ class DevicesApiTest extends TestCase
 
     public function testCheckIfPriceRowIsCorrectStyleFails(){
 
-        $modCap1 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'capacity'] )->id;
-        $modSty2 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'style'] )->id;
-        $modCap3 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'capacity'] )->id;
-        $modSty4 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'style'] )->id;
-        $modCap5 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'capacity'] )->id;
-        $modSty6 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'style'] )->id;
+        $modCap1 = factory(\WA\DataStore\Modification\Modification::class)->create( ['modType' => 'capacity'] )->id;
+        $modSty2 = factory(\WA\DataStore\Modification\Modification::class)->create( ['modType' => 'style'] )->id;
+        $modCap3 = factory(\WA\DataStore\Modification\Modification::class)->create( ['modType' => 'capacity'] )->id;
+        $modSty4 = factory(\WA\DataStore\Modification\Modification::class)->create( ['modType' => 'style'] )->id;
+        $modCap5 = factory(\WA\DataStore\Modification\Modification::class)->create( ['modType' => 'capacity'] )->id;
+        $modSty6 = factory(\WA\DataStore\Modification\Modification::class)->create( ['modType' => 'style'] )->id;
 
         $carr1 = factory(\WA\DataStore\Carrier\Carrier::class)->create()->id;
         $carr2 = factory(\WA\DataStore\Carrier\Carrier::class)->create()->id;
@@ -1332,12 +1329,12 @@ class DevicesApiTest extends TestCase
 
     public function testCheckIfPriceRowIsCorrectCarrierFails(){
 
-        $modCap1 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'capacity'] )->id;
-        $modSty2 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'style'] )->id;
-        $modCap3 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'capacity'] )->id;
-        $modSty4 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'style'] )->id;
-        $modCap5 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'capacity'] )->id;
-        $modSty6 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'style'] )->id;
+        $modCap1 = factory(\WA\DataStore\Modification\Modification::class)->create( ['modType' => 'capacity'] )->id;
+        $modSty2 = factory(\WA\DataStore\Modification\Modification::class)->create( ['modType' => 'style'] )->id;
+        $modCap3 = factory(\WA\DataStore\Modification\Modification::class)->create( ['modType' => 'capacity'] )->id;
+        $modSty4 = factory(\WA\DataStore\Modification\Modification::class)->create( ['modType' => 'style'] )->id;
+        $modCap5 = factory(\WA\DataStore\Modification\Modification::class)->create( ['modType' => 'capacity'] )->id;
+        $modSty6 = factory(\WA\DataStore\Modification\Modification::class)->create( ['modType' => 'style'] )->id;
 
         $carr1 = factory(\WA\DataStore\Carrier\Carrier::class)->create()->id;
         $carr2 = factory(\WA\DataStore\Carrier\Carrier::class)->create()->id;
@@ -1366,12 +1363,12 @@ class DevicesApiTest extends TestCase
 
     public function testCheckIfPriceRowIsCorrectCompanyFails(){
 
-        $modCap1 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'capacity'] )->id;
-        $modSty2 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'style'] )->id;
-        $modCap3 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'capacity'] )->id;
-        $modSty4 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'style'] )->id;
-        $modCap5 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'capacity'] )->id;
-        $modSty6 = factory(\WA\DataStore\Modification\Modification::class)->create( ['type' => 'style'] )->id;
+        $modCap1 = factory(\WA\DataStore\Modification\Modification::class)->create( ['modType' => 'capacity'] )->id;
+        $modSty2 = factory(\WA\DataStore\Modification\Modification::class)->create( ['modType' => 'style'] )->id;
+        $modCap3 = factory(\WA\DataStore\Modification\Modification::class)->create( ['modType' => 'capacity'] )->id;
+        $modSty4 = factory(\WA\DataStore\Modification\Modification::class)->create( ['modType' => 'style'] )->id;
+        $modCap5 = factory(\WA\DataStore\Modification\Modification::class)->create( ['modType' => 'capacity'] )->id;
+        $modSty6 = factory(\WA\DataStore\Modification\Modification::class)->create( ['modType' => 'style'] )->id;
 
         $carr1 = factory(\WA\DataStore\Carrier\Carrier::class)->create()->id;
         $carr2 = factory(\WA\DataStore\Carrier\Carrier::class)->create()->id;

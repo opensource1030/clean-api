@@ -19,7 +19,7 @@ class CreateModificationsTable extends Migration
             $this->tableName,
             function ($table) {
                 $table->increments('id');
-                $table->string('type');
+                $table->string('modType');
                 $table->string('value');
 
                 $table->nullableTimestamps();

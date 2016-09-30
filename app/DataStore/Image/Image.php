@@ -20,6 +20,7 @@ class Image extends BaseDataStore
                 'mimeType',
                 'extension',
                 'size',
+                'url',
                 'update_at'];
 
     /**
