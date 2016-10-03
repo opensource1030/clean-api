@@ -129,7 +129,6 @@ $app->register(\WA\Providers\RepositoriesServiceProviders::class);
 $app->register(\WA\Providers\AppServiceProvider::class);
 $app->register(\Illuminate\Auth\Passwords\PasswordResetServiceProvider::class);
 $app->register(\Illuminate\Mail\MailServiceProvider::class);
-$app->register(\WA\Providers\FormServiceProvider::class);
 $app->register(\WA\Providers\EventServiceProvider::class);
 $app->register(Dingo\Api\Provider\LumenServiceProvider::class);
 $app->register(\WA\Providers\OAuthServiceProvider::class);

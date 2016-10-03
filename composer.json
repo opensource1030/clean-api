@@ -23,7 +23,8 @@
     "satooshi/php-coveralls": "dev-master",
     "barryvdh/laravel-ide-helper": "^2.1",
     "phpunit/phpunit": "5.3.*",
-    "ext-sqlite3":"*"
+    "ext-sqlite3":"*",
+    "raveren/kint": "*"
   },
   "autoload": {
     "psr-4": {

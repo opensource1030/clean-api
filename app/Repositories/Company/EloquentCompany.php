@@ -5,13 +5,10 @@ namespace WA\Repositories\Company;
 use Illuminate\Database\Eloquent\Model;
 use Log;
 use WA\Repositories\AbstractRepository;
-use WA\Repositories\Carrier\CarrierDetailInterface;
 use WA\Repositories\Carrier\CarrierInterface;
-use WA\Repositories\Census\CensusInterface;
 use WA\Repositories\Device\DeviceInterface;
-use WA\Repositories\User\UserInterface;
 use WA\Repositories\Udl\UdlInterface;
-use WA\Services\Form\Company\CompanyForm;
+use WA\Repositories\User\UserInterface;
 
 
 class EloquentCompany extends AbstractRepository implements CompanyInterface
@@ -28,11 +25,6 @@ class EloquentCompany extends AbstractRepository implements CompanyInterface
 
 
     /**
-     * @var \WA\Repositories\Census\CensusInterface
-     */
-    protected $census;
-
-    /**
      * @var \WA\Repositories\Udl\UdlInterface
      */
     protected $udl;
@@ -47,40 +39,29 @@ class EloquentCompany extends AbstractRepository implements CompanyInterface
      */
     protected $carrier;
 
-    /**
-     * @var CarrierDetailInterface
-     */
-    protected $carrierDetail;
-
     protected $account;
 
     protected $domainsTable = 'company_domains';
 
     /**
-     * @param Model                  $model
-     * @param UserInterface      $user
-     * @param CensusInterface        $census
-     * @param UdlInterface           $udl
-     * @param CarrierInterface       $carrier
-     * @param DeviceInterface        $device
-     * @param CarrierDetailInterface $carrierDetail
+     * @param Model $model
+     * @param UserInterface $user
+     * @param UdlInterface $udl
+     * @param CarrierInterface $carrier
+     * @param DeviceInterface $device
      */
     public function __construct(
         Model $model,
         UserInterface $user,
-        CensusInterface $census,
         UdlInterface $udl,
         CarrierInterface $carrier,
-        DeviceInterface $device,
-        CarrierDetailInterface $carrierDetail
+        DeviceInterface $device
     ) {
         $this->model = $model;
         $this->user = $user;
-        $this->census = $census;
         $this->udl = $udl;
         $this->device = $device;
         $this->carrier = $carrier;
-        $this->carrierDetail = $carrierDetail;
     }
 
 
@@ -88,7 +69,7 @@ class EloquentCompany extends AbstractRepository implements CompanyInterface
      * Get All Companies.
      *
      * @param bool $paginate
-     * @param int  $perPage
+     * @param int $perPage
      *
      *
      * @return Object as Collection of object information, will return paginated if pagination is true
@@ -133,7 +114,7 @@ class EloquentCompany extends AbstractRepository implements CompanyInterface
     /**
      * Creates new employee for a company.
      *
-     * @param int   $id of the company
+     * @param int $id of the company
      * @param array $user
      *
      * @return bool true successful | false
@@ -155,52 +136,10 @@ class EloquentCompany extends AbstractRepository implements CompanyInterface
         return $this->user->update($user);
     }
 
-
-
-    /**
-     *  Update a census record for a company.
-     *
-     * @param int    $id      of company
-     * @param int    $censusId
-     * @param string $status
-     * @param array  $options to update census with
-     *
-     * @return bool
-     */
-    public function updateCensus($id, $censusId, $status, $options = [])
-    {
-        return $this->census->update($censusId, $id, $status, $options);
-    }
-
-    /**
-     * Syncs up employee on every census load for a company.
-     *
-     * @param $censusId
-     * @param $companyId
-     *
-     * @return bool
-     */
-    public function syncUserSupervisor($censusId, $companyId)
-    {
-        $updatedUsers = $this->user->byCensus($censusId, $companyId);
-
-        foreach ($updatedUsers as $user) {
-
-            $synced = $this->user->syncSupervisor($user->email, $user->supervisorEmail);
-
-            if (!$synced) {
-                continue;
-            }
-
-        }
-
-        return true;
-    }
-
     /**
      * Creates UDLs for a company.
      *
-     * @param int   $id of company
+     * @param int $id of company
      * @param array $udls
      *
      * @return bool
@@ -216,19 +155,6 @@ class EloquentCompany extends AbstractRepository implements CompanyInterface
         }
 
         return true;
-    }
-
-    /**
-     * Get the Most Recent census for a company.
-     *
-     * @param int $companyId
-     *
-     * @return Object of the census information
-     */
-    public function getRecentCensus(
-        $companyId
-    ) {
-        return $this->census->byCompany($companyId, true);
     }
 
     /**
@@ -259,23 +185,6 @@ class EloquentCompany extends AbstractRepository implements CompanyInterface
         $id
     ) {
         return $this->device->byCompany($id);
-    }
-
-    /**
-     * Get a company's carrier details by month.
-     *
-     * @param $id
-     * @param $billMonth
-     * @param $carrierId
-     *
-     * @return Object object of company carrier details
-     */
-    public function getCarrierDetails(
-        $id,
-        $carrierId,
-        $billMonth
-    ) {
-        return $this->carrierDetail->byCompany($id, $carrierId, $billMonth);
     }
 
     /**
@@ -329,11 +238,11 @@ class EloquentCompany extends AbstractRepository implements CompanyInterface
     /**
      * Given some UDL, it gets the matching path ID.
      *
-     * @param int   $id         company id
-     * @param array $udls       the values to match
-     * @param bool  $externalId should return the externalId instead | false
-     * @param int   $creatorId  current user id
-     * @param array $userInfo   Info of user being created/edited
+     * @param int $id company id
+     * @param array $udls the values to match
+     * @param bool $externalId should return the externalId instead | false
+     * @param int $creatorId current user id
+     * @param array $userInfo Info of user being created/edited
      *
      * @return int ID value if there is a match | null id there is no match found
      */
@@ -365,7 +274,7 @@ class EloquentCompany extends AbstractRepository implements CompanyInterface
                 //create the entry
                 $udl_path = $udlValuePath->create([
                     'udlPath' => $lookup_string,
-                    'udlId' => count($udl_path_stack) - 1, // use the last udlId in the stack
+                    'udlId'   => count($udl_path_stack) - 1, // use the last udlId in the stack
                 ]);
             }
 
@@ -385,11 +294,11 @@ class EloquentCompany extends AbstractRepository implements CompanyInterface
                 //Store creator and user info for udl path
                 $udlValuePathUsers->create([
                     'udlValuePathId' => $udl_path['id'],
-                    'creatorId' => $creatorId,
-                    'userEmail' => $userEmail,
-                    'userFirstName' => $userFirstName,
-                    'userLastName' => $userLastName,
-                    'userUserId' => $companyUserId,
+                    'creatorId'      => $creatorId,
+                    'userEmail'      => $userEmail,
+                    'userFirstName'  => $userFirstName,
+                    'userLastName'   => $userLastName,
+                    'userUserId'     => $companyUserId,
                 ]);
             }
 
@@ -404,7 +313,7 @@ class EloquentCompany extends AbstractRepository implements CompanyInterface
      * Splits a UDL path, niftly.
      *
      * @param string $path
-     * @param array  $delimiters
+     * @param array $delimiters
      *
      * @return array
      */
@@ -418,7 +327,7 @@ class EloquentCompany extends AbstractRepository implements CompanyInterface
     /**
      * Given a UDL string, it parses the the string based on the company.
      *
-     * @param array  $udls to construct the values from
+     * @param array $udls to construct the values from
      * @param string $udlPathRule
      *
      * @return string of the UDL oto search for
@@ -502,18 +411,6 @@ class EloquentCompany extends AbstractRepository implements CompanyInterface
         return $mappableFields;
     }
 
-    /**
-     * Get all census for a company
-     *
-     * @param int $companyId
-     *
-     * @return Object collection of all census information
-     */
-    public function getCensuses($companyId)
-    {
-        return $this->census->byCompany($companyId, false, 5, false);
-    }
-
     protected function syncUsers(Model $company, array $users)
     {
         try {
@@ -532,7 +429,7 @@ class EloquentCompany extends AbstractRepository implements CompanyInterface
     /**
      * Get the total amount of employee
      *
-     * @param int  $id   of the company
+     * @param int $id of the company
      * @param bool $sync with external system (EasyVista in our case)
      *
      * @return int count of employee
@@ -554,32 +451,10 @@ class EloquentCompany extends AbstractRepository implements CompanyInterface
         return $count;
     }
 
-
-    /**
-     *  Get the active raw data version for a company.
-     *
-     * @param int    $id          of the company
-     * @param string $dataMapType {ivd | cdr | wls | als | inv | census}
-     * @param bool   $active      | true
-     *
-     * @return string of the version (defaults to active)
-     */
-    public function getMapVersion($id, $dataMapType, $active = true)
-    {
-        $dataMap = $this->dataMap->byCompany($id, $dataMapType, $active);
-
-        if (!$dataMap) {
-            return false;
-        }
-
-
-        return $dataMap->versionId;
-    }
-
     /**
      * Get respective rule
      *
-     * @param int    $companyId
+     * @param int $companyId
      * @param string $type
      *
      * @return array of rules
@@ -611,22 +486,20 @@ class EloquentCompany extends AbstractRepository implements CompanyInterface
     /*
      * Create a New Company
      * @param array     $data
-     * @param CompanyForm $companyForm
      *
      * @return Object of the company | false
      */
     public function create(
-        array $data,
-        CompanyForm $companyForm = null
+        array $data
     ) {
 
         $companyData = [
-            'name' => isset($data['name']) ? $data['name'] : null,
-            'label' => isset($data['label']) ? $data['label'] : null,
-            'shortName' => isset($data['shortName']) ? $data['shortName'] : null,
+            'name'                 => isset($data['name']) ? $data['name'] : null,
+            'label'                => isset($data['label']) ? $data['label'] : null,
+            'shortName'            => isset($data['shortName']) ? $data['shortName'] : null,
             'rawDataDirectoryPath' => isset($data['rawDataDirectoryPath']) ? $data['rawDataDirectoryPath'] : null,
-            'active' => isset($data['active']) ? $data['active'] : 0,
-            'isCensus' => isset($data['isCensus']) ? $data['isCensus'] : 0,
+            'active'               => isset($data['active']) ? $data['active'] : 0,
+            'isCensus'             => isset($data['isCensus']) ? $data['isCensus'] : 0,
             // 'isLive' => isset($data['isLive']) ? $data['isLive'] : 0
         ];
 
@@ -644,9 +517,9 @@ class EloquentCompany extends AbstractRepository implements CompanyInterface
                         $company->carriers()->attach(
                             $company->id,
                             [
-                                'carrierId' => (int)$data['carrierId'][$x],
+                                'carrierId'            => (int)$data['carrierId'][$x],
                                 'billingAccountNumber' => trim($data['carrierBAN'][$x]),
-                                'parentAccountNumber' => $carrierPAN,
+                                'parentAccountNumber'  => $carrierPAN,
                             ]
                         );
                         $company->save();
@@ -665,7 +538,7 @@ class EloquentCompany extends AbstractRepository implements CompanyInterface
     /**
      * Delete a Company.
      *
-     * @param int  $id
+     * @param int $id
      * @param bool $soft true soft deletes
      *
      * @return bool
@@ -699,7 +572,7 @@ class EloquentCompany extends AbstractRepository implements CompanyInterface
             return false;
         }
 
-        $company->name = isset($data['name']) ? $data['name'] : null ;
+        $company->name = isset($data['name']) ? $data['name'] : null;
         $company->label = isset($data['label']) ? $data['label'] : null;
         $company->shortName = isset($data['shortName']) ? $data['shortName'] : null;
         $company->active = isset($data['active']) ? $data['active'] : 0;
@@ -719,9 +592,9 @@ class EloquentCompany extends AbstractRepository implements CompanyInterface
                     $company->carriers()->attach(
                         $company->id,
                         [
-                            'carrierId' => (int)$data['carrierId'][$x],
+                            'carrierId'            => (int)$data['carrierId'][$x],
                             'billingAccountNumber' => trim($data['carrierBAN'][$x]),
-                            'parentAccountNumber' => $carrierPAN,
+                            'parentAccountNumber'  => $carrierPAN,
                         ]
                     );
                     $company->save();
@@ -805,7 +678,7 @@ class EloquentCompany extends AbstractRepository implements CompanyInterface
     {
         $all_company_domains = $this->getDomains();
         $domain = explode('@', $email)[1];
-        $match = $this->searchArrayObject($domain,'domain',$all_company_domains);
+        $match = $this->searchArrayObject($domain, 'domain', $all_company_domains);
 
         if (!isset($match->id)) {
             return 0;
@@ -822,7 +695,8 @@ class EloquentCompany extends AbstractRepository implements CompanyInterface
      *
      * @return int|null|string
      */
-    private function searchArrayObject($value, $key, $array) {
+    private function searchArrayObject($value, $key, $array)
+    {
         foreach ($array as $k => $val) {
             if ($val->$key == $value) {
                 return $val;
