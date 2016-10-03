@@ -14,7 +14,7 @@ class UserCacheDecorator extends UserDecorator
 
     /**
      * @param UserInterface $nextUser
-     * @param CacheInterface    $cache
+     * @param CacheInterface $cache
      */
     public function __construct(UserInterface $nextUser, CacheInterface $cache)
     {
@@ -26,15 +26,15 @@ class UserCacheDecorator extends UserDecorator
     /**
      * Try to get pagination from cache.
      *
-     * @param int  $page
-     * @param int  $limit
+     * @param int $page
+     * @param int $limit
      * @param bool $all
      *
      * @return mixed
      */
     public function byPage($page = 1, $limit = 10, $all = false)
     {
-        $key = md5('page'.$page.'.'.$limit);
+        $key = md5('page' . $page . '.' . $limit);
 //
 //        if ($this->cache->has($key)) {
 //            return $this->cache->get($key);
@@ -112,28 +112,6 @@ class UserCacheDecorator extends UserDecorator
     }
 
     /**
-     * Get User information by the census.
-     *
-     * @param int $censusId
-     * @param int $companyId
-     *
-     * @return Object of employee information
-     */
-    public function byCensus($censusId, $companyId)
-    {
-        $key = $this->makeKey('censusId', $censusId);
-
-        if ($this->cache->has($key)) {
-            return $this->cache->get($key);
-        }
-
-        $user = $this->nextUser->byCensus($censusId, $companyId);
-        $this->cache->put($key, $user);
-
-        return $user;
-    }
-
-    /**
      * Get an employee information by email.
      *
      * @param string $userEmail
@@ -175,30 +153,6 @@ class UserCacheDecorator extends UserDecorator
         return $user;
     }
 
-    /**
-     * Users updated by census.
-     *
-     * @param $censusId
-     * @param int  $page
-     * @param int  $limit
-     * @param bool $all
-     *
-     * @return mixed
-     */
-    public function updatedByCensus($censusId, $page = 1, $limit = 10, $all = true)
-    {
-        $key = md5('updatedbyCensus'.$page.'.'.$limit);
-
-        if ($this->cache->has($key)) {
-            return $this->cache->get($key);
-        }
-
-        $paginated = $this->nextUser->updatedByCensus($censusId, $page, $limit, $all);
-
-        $this->cache->put($key, $paginated);
-
-        return $paginated;
-    }
 
     /**
      * Generate a cache key.
@@ -212,16 +166,16 @@ class UserCacheDecorator extends UserDecorator
         $slug,
         $name
     ) {
-        return md5($slug.'.'.$name);
+        return md5($slug . '.' . $name);
     }
 
     /**
      * Get users by search term.
      *
      * @param string $query
-     * @param int    $page
-     * @param int    $limit
-     * @param bool   $paginate
+     * @param int $page
+     * @param int $limit
+     * @param bool $paginate
      */
     public function bySearch($query, $page = 1, $limit = 10, $paginate = true)
     {
@@ -309,7 +263,8 @@ class UserCacheDecorator extends UserDecorator
      * @param $name
      * @return Object of employee
      */
-    public function byUsernameOrEmail($name){
+    public function byUsernameOrEmail($name)
+    {
 
         $key = $this->makeKey('name', $name);
 
@@ -328,7 +283,8 @@ class UserCacheDecorator extends UserDecorator
      *
      * @return mixed
      */
-    public function getModel(){
+    public function getModel()
+    {
         return $this->nextUser->getModel();
     }
 
@@ -338,7 +294,8 @@ class UserCacheDecorator extends UserDecorator
      * @param $userId
      * @return Object
      */
-    public function getUdls($userId){
+    public function getUdls($userId)
+    {
 
 
         $key = $this->makeKey('employeeudls', $userId);
@@ -361,8 +318,9 @@ class UserCacheDecorator extends UserDecorator
      * @param bool $soft true soft deletes
      * @return bool
      */
-    public function delete($id, $soft = true){
-        return $this->nextUser->delete($id, $soft=true);
+    public function delete($id, $soft = true)
+    {
+        return $this->nextUser->delete($id, $soft = true);
     }
 
 
@@ -371,7 +329,8 @@ class UserCacheDecorator extends UserDecorator
      *
      * @return array
      */
-    public function getMappableFields(){
+    public function getMappableFields()
+    {
         return $this->nextUser->getMappableFields();
     }
 
@@ -381,7 +340,8 @@ class UserCacheDecorator extends UserDecorator
      * @param int $companyId of company selected
      * @return Array of employee validator information
      */
-    public function getAllValidators($companyId = null){
+    public function getAllValidators($companyId = null)
+    {
         $key = $this->makeKey('validators', $companyId);
 
         if ($this->cache->has($key)) {
@@ -402,8 +362,14 @@ class UserCacheDecorator extends UserDecorator
      * @param bool $force completely remove for the DB instead of marking it as "deleted"
      * @return bool of the effect of the creation
      */
-    public function deleteById($id, $force = false){
-        return $this->nextUser->deleteById($id, $force=false);
+    public function deleteById($id, $force = false)
+    {
+        return $this->nextUser->deleteById($id, $force = false);
+    }
+
+    public function setCriteria($criteria = [])
+    {
+        $this->nextUser->setCriteria($criteria);
     }
 
     /**
@@ -419,9 +385,9 @@ class UserCacheDecorator extends UserDecorator
     /**
      * Create a new User.
      *
-     * @param array        $data
-     * @param array        $udlValues
-     * @param bool         $pushToExternalService |true
+     * @param array $data
+     * @param array $udlValues
+     * @param bool $pushToExternalService |true
      * @param UserForm $userForm
      *
      * @return Object object of the employee | false
@@ -482,7 +448,8 @@ class UserCacheDecorator extends UserDecorator
      *
      * @return object Object of users information
      */
-    public function byCompanyId($companyId){
+    public function byCompanyId($companyId)
+    {
         return $this->nextUser->byCompanyId($companyId);
     }
 
@@ -495,7 +462,7 @@ class UserCacheDecorator extends UserDecorator
      */
     public function update(array $data)
     {
-       return $this->nextUser->update($data);
+        return $this->nextUser->update($data);
     }
 
     /**
@@ -571,6 +538,7 @@ class UserCacheDecorator extends UserDecorator
 
     /**
      * Get identification values of users with missing external Ids
+     *
      * @return array
      */
     public function getMissingExternalIds()

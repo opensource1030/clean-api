@@ -1,15 +1,15 @@
 <?php
 
-namespace WA\Repositories;
+namespace WA\DataStore;
 
-use Illuminate\Database\Eloquent\Model;
-use WA\DataStore\BaseDataStore;
+use League\Fractal\TransformerAbstract;
 use WA\Exceptions\BadCriteriaException;
 use WA\Http\Requests\Parameters\Filters;
 use WA\Http\Requests\Parameters\Sorting;
 
-abstract class AbstractRepository implements RepositoryInterface
+abstract class BaseTransformer extends TransformerAbstract
 {
+
     /**
      * @var \Illuminate\Database\Eloquent\Model|BaseDataStore
      */
@@ -30,27 +30,15 @@ abstract class AbstractRepository implements RepositoryInterface
      */
     protected $filterCriteria = null;
 
-
-    /**
-     * AbstractRepository constructor.
-     *
-     * @param Model $model
-     */
-    public function __construct(Model $model)
-    {
-        $this->model = $model;
-    }
-
     /**
      * Get a query-builder instance for this model
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    protected function getQuery()
+    protected function getQuery($model, $clear = false)
     {
-        if ($this->query === null) {
-            $model = $this->model;
-            $this->query = $model::query();
+        if ($clear == true || $this->query === null) {
+            $this->query = $model;
         }
         return $this->query;
     }
@@ -102,15 +90,17 @@ abstract class AbstractRepository implements RepositoryInterface
         return $this;
     }
 
-
     /**
-     * Convenience method to apply sorting and filtering criteria
-     *
-     * @return $this
+     * @param $model
+     * @return \Illuminate\Database\Eloquent\Builder
      */
-    protected function applyCriteria()
+    protected function applyCriteria($model, $criteria)
     {
-        return $this->sort()->filter();
+        $this->setCriteria($criteria);
+        $this->model = $model;
+        $this->getQuery($model, true);
+        $this->sort()->filter();
+        return $this->query;
     }
 
     /**
@@ -121,21 +111,23 @@ abstract class AbstractRepository implements RepositoryInterface
      */
     protected function filter()
     {
-        $this->getQuery();
-
         if ($this->filterCriteria === null) {
             return $this;
         }
 
+        $modelName = $this->model->getRelated()->getTable();
+        $modelColumns = $this->model->getRelated()->getTableColumns();
+
+
         foreach ($this->filterCriteria->filtering() as $filterKey => $filterVal) {
             if (strpos($filterKey, ".")) {
-                if (substr($filterKey, 0, strpos($filterKey, ".")) !== $this->model->getName()) {
+                if (substr($filterKey, 0, strpos($filterKey, ".")) !== $modelName) {
                     continue;
                 }
                 $filterKey = substr($filterKey, strpos($filterKey, ".") + 1);
             }
 
-            if (in_array($filterKey, $this->model->getTableColumns())) {
+            if (in_array($filterKey, $modelColumns)) {
                 $op = strtolower(key($filterVal));
                 $val = current($filterVal);
                 switch ($op) {
@@ -184,7 +176,6 @@ abstract class AbstractRepository implements RepositoryInterface
      */
     protected function sort()
     {
-        $this->getQuery();
 
         if ($this->sortCriteria === null) {
             return $this;
@@ -199,93 +190,5 @@ abstract class AbstractRepository implements RepositoryInterface
         }
 
         return $this;
-    }
-
-
-    /**
-     * Get paginated resource
-     *
-     * @param int $perPage
-     * @param bool $api false|true
-     * @param bool $paginate
-     *
-     * @return mixed Object as Collection of object information, | Paginator Collection if pagination is true (default)
-     */
-    public function byPage($paginate = true, $perPage = 25, $api = false)
-    {
-        // Apply filtering and sorting criteria, if set
-        $this->applyCriteria();
-
-        if (!$paginate) {
-            return $this->query->get();
-        }
-
-        return $this->query->paginate($perPage);
-    }
-
-    /**
-     * Wrapper function.
-     *
-     * @param $id
-     *
-     * @return Object
-     */
-    public function getById($id)
-    {
-        return $this->byId($id);
-    }
-
-    /**
-     * Get the model by its Id.
-     *
-     * $param int $id
-     *
-     * @return Object object of model information
-     */
-    public function byId($id)
-    {
-        if (is_array($id)) {
-            return $this->model->whereIn('id', $id)
-                ->get();
-        }
-
-        return $this->model->findOrFail($id);
-    }
-
-    /**
-     * Create a repository.
-     *
-     * @param array $data to be created
-     *
-     * @return mixed Object object of created model
-     */
-    public function create(array $data)
-    {
-        return $this->model->create($data);
-    }
-
-    /**
-     * Get the model used on the class.
-     */
-    public function getModel()
-    {
-        return $this->model;
-    }
-
-    /**
-     * Delete from the repo by the ID.
-     *
-     * @param int $id
-     * @param bool $force completely remove for the DB instead of marking it as "deleted"
-     * @return int
-     */
-    public function deleteById($id, $force = false)
-    {
-        if ($force && !is_array($id)) {
-            $instance = $this->byId($id);
-            $instance->forceDelete();
-        }
-
-        return $this->model->destroy($id);
     }
 }
