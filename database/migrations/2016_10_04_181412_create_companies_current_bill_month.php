@@ -13,7 +13,7 @@ class CreateCompaniesCurrentBillMonth extends Migration
     public function up()
     {
         Schema::table('companies', function ( $table) {
-        $table->date('currentBillMonth');
+        $table->date('currentBillMonth')->nullable();
     });
     }
 
