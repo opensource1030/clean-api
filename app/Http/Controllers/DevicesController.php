@@ -252,7 +252,7 @@ class DevicesController extends ApiController
                                     $dataCompanies);
                                 if ($check['bool']) {
                                     $price['deviceId'] = $device->id;
-<<<<<<< HEAD
+
                                     if(isset($price['id'])){
                                         if($price['id'] == 0){
                                             $priceInterface->create($price);
@@ -267,9 +267,8 @@ class DevicesController extends ApiController
                                         $error['errors']['prices'] = 'the Price has no id';
                                     }
                                             
-=======
                                     $priceInterface->create($price);
->>>>>>> 4c8650082bba7cceb451cd9e5ad13216b6fdbef9
+
                                 } else {
                                     $success = false;
                                     $error['errors']['prices'] = 'the Device Prices has not been created (Incorrect Row)';
