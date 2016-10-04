@@ -22,7 +22,7 @@ class ConditionTransformer extends TransformerAbstract
         return [
 
             'id' => (int)$condition->id,
-            'type' => $condition->type,
+            'typeCond' => $condition->typeCond,
             'name' => $condition->name,
             'condition' => $condition->condition,
             'value' => $condition->value,

@@ -105,6 +105,10 @@ use WA\Repositories\Category\EloquentCategoryApps;
 use WA\DataStore\Category\CategoryApp;
 
 
+use WA\Repositories\Condition\EloquentCondition;
+use WA\DataStore\Condition\Condition;
+
+
 use WA\Repositories\UserNotifications\EloquentUserNotifications;
 use WA\Services\Cache\Cache;
 
@@ -605,6 +609,18 @@ trait ServiceRegistration
         app()->bind('WA\Repositories\Category\CategoryAppsInterface',
             function () {
                 return new EloquentCategoryApps(new CategoryApp());
+            }
+        );
+    }
+
+    /**
+     * @param
+     */
+    public function registerCondition()
+    {
+        app()->bind('WA\Repositories\Condition\ConditionInterface',
+            function () {
+                return new EloquentCondition(new Condition());
             }
         );
     }

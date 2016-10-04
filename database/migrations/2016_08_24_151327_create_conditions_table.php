@@ -19,7 +19,7 @@ class CreateConditionsTable extends Migration
             $this->tableName,
             function ( $table) {
                 $table->increments('id');
-                $table->string('type');
+                $table->string('typeCond');
                 $table->string('name');
                 $table->string('condition');
                 $table->string('value');

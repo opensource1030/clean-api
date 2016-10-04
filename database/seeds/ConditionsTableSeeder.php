@@ -22,25 +22,25 @@ class ConditionsTableSeeder extends BaseTableSeeder
         $data = [
 
             [
-                'type'      => "type1",
+                'typeCond'      => "type1",
                 'name'      => "name1",
                 'condition' => "condition1",
                 'value'     => "value1"
             ],
             [
-                'type'      => "type2",
+                'typeCond'      => "type2",
                 'name'      => "name2",
                 'condition' => "condition2",
                 'value'     => "value2"
             ],
             [
-                'type'      => "type3",
+                'typeCond'      => "type3",
                 'name'      => "name3",
                 'condition' => "condition3",
                 'value'     => "value3"
             ],
             [
-                'type'      => "type4",
+                'typeCond'      => "type4",
                 'name'      => "name4",
                 'condition' => "condition4",
                 'value'     => "value4"
