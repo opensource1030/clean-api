@@ -252,7 +252,23 @@ class DevicesController extends ApiController
                                     $dataCompanies);
                                 if ($check['bool']) {
                                     $price['deviceId'] = $device->id;
+
+                                    if(isset($price['id'])){
+                                        if($price['id'] == 0){
+                                            $priceInterface->create($price);
+                                        } else if ($price['id'] > 0 ){
+                                            $priceInterface->update($price);
+                                        } else {
+                                            $success = false;
+                                            $error['errors']['prices'] = 'the Price has an incorrect id';
+                                        }
+                                    } else {
+                                        $success = false;
+                                        $error['errors']['prices'] = 'the Price has no id';
+                                    }
+                                            
                                     $priceInterface->create($price);
+
                                 } else {
                                     $success = false;
                                     $error['errors']['prices'] = 'the Device Prices has not been created (Incorrect Row)';
@@ -263,12 +279,12 @@ class DevicesController extends ApiController
                             }
                         } catch (\Exception $e) {
                             $success = false;
-                            $error['errors']['prices'] = 'the Device Prices has not been created (Exception)';
+                            $error['errors']['prices'] = 'the Device Prices has not been updated (Exception)';
                             //$error['errors']['pricesMessage'] = $e->getMessage();
                         }
                     } else {
                         $success = false;
-                        $error['errors']['prices'] = 'the Device Prices has not been created because other relationships can\'t be created';
+                        $error['errors']['prices'] = 'the Device Prices has not been updated because other relationships can\'t be created or updated';
                         //$error['errors']['pricesMessage'] = $e->getMessage();
                     }
                 }

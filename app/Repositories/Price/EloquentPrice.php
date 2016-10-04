@@ -26,9 +26,6 @@ class EloquentPrice extends AbstractRepository implements PriceInterface
             return false;
         }
 
-        if(isset($data['type'])){
-            $price->type =  $data['type'];
-        }
         if(isset($data['deviceId'])){
             $price->deviceId =  $data['deviceId'];
         }

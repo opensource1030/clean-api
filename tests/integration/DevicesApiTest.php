@@ -1024,6 +1024,101 @@ class DevicesApiTest extends TestCase
             ['modType' => 'capacity']
         );
 
+        $price1 = factory(\WA\DataStore\Price\Price::class)->create(
+            [
+                'capacityId' => 1,
+                'styleId' => 2,
+                'carrierId' => 1,
+                'companyId' => 1,
+                'priceRetail' => 100,
+                'price1' => 100,
+                'price2' => 100,
+                'priceOwn' => 100 ]
+        );
+
+        $price2 = factory(\WA\DataStore\Price\Price::class)->create(
+            [
+                'capacityId' => 1,
+                'styleId' => 2,
+                'carrierId' => 1,
+                'companyId' => 2,
+                'priceRetail' => 200,
+                'price1' => 200,
+                'price2' => 200,
+                'priceOwn' => 200 ]
+        );
+
+        $price3 = factory(\WA\DataStore\Price\Price::class)->create(
+            [
+                'capacityId' => 1,
+                'styleId' => 2,
+                'carrierId' => 2,
+                'companyId' => 1,
+                'priceRetail' => 300,
+                'price1' => 300,
+                'price2' => 300,
+                'priceOwn' => 300 ]
+        );
+
+        $price4 = factory(\WA\DataStore\Price\Price::class)->create(
+            [
+                'capacityId' => 1,
+                'styleId' => 2,
+                'carrierId' => 2,
+                'companyId' => 2,
+                'priceRetail' => 400,
+                'price1' => 400,
+                'price2' => 400,
+                'priceOwn' => 400 ]
+        );
+
+        $price5 = factory(\WA\DataStore\Price\Price::class)->create(
+            [
+                'capacityId' => 3,
+                'styleId' => 2,
+                'carrierId' => 1,
+                'companyId' => 1,
+                'priceRetail' => 500,
+                'price1' => 500,
+                'price2' => 500,
+                'priceOwn' => 500 ]
+        );
+
+        $price6 = factory(\WA\DataStore\Price\Price::class)->create(
+            [
+                'capacityId' => 3,
+                'styleId' => 2,
+                'carrierId' => 1,
+                'companyId' => 2,
+                'priceRetail' => 600,
+                'price1' => 600,
+                'price2' => 600,
+                'priceOwn' => 600 ]
+        );
+
+        $price7 = factory(\WA\DataStore\Price\Price::class)->create(
+            [
+                'capacityId' => 3,
+                'styleId' => 2,
+                'carrierId' => 2,
+                'companyId' => 1,
+                'priceRetail' => 700,
+                'price1' => 700,
+                'price2' => 700,
+                'priceOwn' => 700 ]
+        );
+
+        $price8 = factory(\WA\DataStore\Price\Price::class)->create(
+            [
+                'capacityId' => 3,
+                'styleId' => 2,
+                'carrierId' => 2,
+                'companyId' => 2,
+                'priceRetail' => 800,
+                'price1' => 800,
+                'price2' => 800,
+                'priceOwn' => 800 ]
+        );
         
         $this->put('/devices/'.$device->id, 
             [
@@ -1062,14 +1157,14 @@ class DevicesApiTest extends TestCase
                         ],
                         'prices' => [
                             'data' => [
-                                [ 'type' => 'prices', 'capacityId' => 1, 'styleId' => 2, 'carrierId' => 1, 'companyId' => 1, 'priceRetail' => 100, 'price1' => 100, 'price2' => 100, 'priceOwn' => 100 ],
-                                [ 'type' => 'prices', 'capacityId' => 1, 'styleId' => 2, 'carrierId' => 1, 'companyId' => 2, 'priceRetail' => 200, 'price1' => 200, 'price2' => 200, 'priceOwn' => 200 ],
-                                [ 'type' => 'prices', 'capacityId' => 1, 'styleId' => 2, 'carrierId' => 2, 'companyId' => 1, 'priceRetail' => 300, 'price1' => 300, 'price2' => 300, 'priceOwn' => 300 ],
-                                [ 'type' => 'prices', 'capacityId' => 1, 'styleId' => 2, 'carrierId' => 2, 'companyId' => 2, 'priceRetail' => 400, 'price1' => 400, 'price2' => 400, 'priceOwn' => 400 ],
-                                [ 'type' => 'prices', 'capacityId' => 3, 'styleId' => 2, 'carrierId' => 1, 'companyId' => 1, 'priceRetail' => 500, 'price1' => 500, 'price2' => 500, 'priceOwn' => 500 ],
-                                [ 'type' => 'prices', 'capacityId' => 3, 'styleId' => 2, 'carrierId' => 1, 'companyId' => 2, 'priceRetail' => 600, 'price1' => 600, 'price2' => 600, 'priceOwn' => 600 ],
-                                [ 'type' => 'prices', 'capacityId' => 3, 'styleId' => 2, 'carrierId' => 2, 'companyId' => 1, 'priceRetail' => 700, 'price1' => 700, 'price2' => 700, 'priceOwn' => 700 ],
-                                [ 'type' => 'prices', 'capacityId' => 3, 'styleId' => 2, 'carrierId' => 2, 'companyId' => 2, 'priceRetail' => 800, 'price1' => 800, 'price2' => 800, 'priceOwn' => 800 ]
+                                [ 'type' => 'prices', 'id' => $price1->id, 'capacityId' => 1, 'styleId' => 2, 'carrierId' => 1, 'companyId' => 1, 'priceRetail' => 1100, 'price1' => 1100, 'price2' => 1100, 'priceOwn' => 1100 ],
+                                [ 'type' => 'prices', 'id' => $price2->id, 'capacityId' => 1, 'styleId' => 2, 'carrierId' => 1, 'companyId' => 2, 'priceRetail' => 1200, 'price1' => 1200, 'price2' => 1200, 'priceOwn' => 1200 ],
+                                [ 'type' => 'prices', 'id' => $price3->id, 'capacityId' => 1, 'styleId' => 2, 'carrierId' => 2, 'companyId' => 1, 'priceRetail' => 1300, 'price1' => 1300, 'price2' => 1300, 'priceOwn' => 1300 ],
+                                [ 'type' => 'prices', 'id' => $price4->id, 'capacityId' => 1, 'styleId' => 2, 'carrierId' => 2, 'companyId' => 2, 'priceRetail' => 1400, 'price1' => 1400, 'price2' => 1400, 'priceOwn' => 1400 ],
+                                [ 'type' => 'prices', 'id' => $price5->id, 'capacityId' => 3, 'styleId' => 2, 'carrierId' => 1, 'companyId' => 1, 'priceRetail' => 1500, 'price1' => 1500, 'price2' => 1500, 'priceOwn' => 1500 ],
+                                [ 'type' => 'prices', 'id' => $price6->id, 'capacityId' => 3, 'styleId' => 2, 'carrierId' => 1, 'companyId' => 2, 'priceRetail' => 1600, 'price1' => 1600, 'price2' => 1600, 'priceOwn' => 1600 ],
+                                [ 'type' => 'prices', 'id' => $price7->id, 'capacityId' => 3, 'styleId' => 2, 'carrierId' => 2, 'companyId' => 1, 'priceRetail' => 1700, 'price1' => 1700, 'price2' => 1700, 'priceOwn' => 1700 ],
+                                [ 'type' => 'prices', 'id' => $price8->id, 'capacityId' => 3, 'styleId' => 2, 'carrierId' => 2, 'companyId' => 2, 'priceRetail' => 1800, 'price1' => 1800, 'price2' => 1800, 'priceOwn' => 1800 ]
                             ]
                         ]
                     ]
