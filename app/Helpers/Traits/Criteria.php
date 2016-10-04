@@ -1,24 +1,26 @@
 <?php
 
-namespace WA\DataStore;
+namespace WA\Helpers\Traits;
 
-use League\Fractal\TransformerAbstract;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use WA\DataStore\BaseDataStore;
 use WA\Exceptions\BadCriteriaException;
 use WA\Http\Requests\Parameters\Filters;
 use WA\Http\Requests\Parameters\Sorting;
 
-abstract class BaseTransformer extends TransformerAbstract
+trait Criteria
 {
+
 
     /**
      * @var \Illuminate\Database\Eloquent\Model|BaseDataStore
      */
-    protected $model;
+    protected $criteriaModel;
 
     /**
      * @var \Illuminate\Database\Eloquent\Builder
      */
-    protected $query;
+    protected $criteriaQuery;
 
     /**
      * @var Sorting
@@ -31,16 +33,49 @@ abstract class BaseTransformer extends TransformerAbstract
     protected $filterCriteria = null;
 
     /**
+     * @var array
+     */
+    protected $criteria = [];
+
+    protected $criteriaModelName = null;
+    protected $criteriaModelColumns = null;
+
+
+    /**
+     * CriteriaTransformer constructor.
+     *
+     * @param array $criteria
+     */
+    public function __construct($criteria = [])
+    {
+        $this->criteria = $criteria;
+    }
+
+
+    /**
      * Get a query-builder instance for this model
      *
+     * @param $criteriaModel
+     * @param bool $clear
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    protected function getQuery($model, $clear = false)
+    protected function getQuery($criteriaModel, $clear = false)
     {
-        if ($clear == true || $this->query === null) {
-            $this->query = $model;
+        if ($clear == true) {
+            $this->criteriaQuery = null;
         }
-        return $this->query;
+        if ($this->criteriaQuery === null) {
+            if ($criteriaModel instanceOf Relation) {
+                $this->criteriaQuery = $criteriaModel;
+                $this->criteriaModelName = $criteriaModel->getRelated()->getTable();
+                $this->criteriaModelColumns = $criteriaModel->getRelated()->getTableColumns();
+            } elseif ($criteriaModel instanceOf BaseDataStore) {
+                $this->criteriaQuery = $criteriaModel->newQuery();
+                $this->criteriaModelName = $criteriaModel->getTable();
+                $this->criteriaModelColumns = $criteriaModel->getTableColumns();
+            }
+        }
+        return $this->criteriaQuery;
     }
 
     /**
@@ -91,16 +126,22 @@ abstract class BaseTransformer extends TransformerAbstract
     }
 
     /**
-     * @param $model
+     * @param $criteriaModel
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    protected function applyCriteria($model, $criteria)
+    protected function applyCriteria($criteriaModel, $criteria = null)
     {
-        $this->setCriteria($criteria);
-        $this->model = $model;
-        $this->getQuery($model, true);
+
+        if ($criteria !== null) {
+            $this->setCriteria($criteria);
+        }
+
+        $this->criteriaModel = $criteriaModel;
+
+        $this->getQuery($criteriaModel, true);
         $this->sort()->filter();
-        return $this->query;
+
+        return $this->criteriaQuery;
     }
 
     /**
@@ -115,47 +156,46 @@ abstract class BaseTransformer extends TransformerAbstract
             return $this;
         }
 
-        $modelName = $this->model->getRelated()->getTable();
-        $modelColumns = $this->model->getRelated()->getTableColumns();
-
+        $criteriaModelName = $this->criteriaModelName;
+        $criteriaModelColumns = $this->criteriaModelColumns;
 
         foreach ($this->filterCriteria->filtering() as $filterKey => $filterVal) {
             if (strpos($filterKey, ".")) {
-                if (substr($filterKey, 0, strpos($filterKey, ".")) !== $modelName) {
+                if (substr($filterKey, 0, strpos($filterKey, ".")) !== $criteriaModelName) {
                     continue;
                 }
                 $filterKey = substr($filterKey, strpos($filterKey, ".") + 1);
             }
 
-            if (in_array($filterKey, $modelColumns)) {
+            if (in_array($filterKey, $criteriaModelColumns)) {
                 $op = strtolower(key($filterVal));
                 $val = current($filterVal);
                 switch ($op) {
                     case "gt":
-                        $this->query->where($filterKey, '>', $val);
+                        $this->criteriaQuery->where($filterKey, '>', $val);
                         break;
                     case "lt":
-                        $this->query->where($filterKey, '<', $val);
+                        $this->criteriaQuery->where($filterKey, '<', $val);
                         break;
                     case "ge":
-                        $this->query->where($filterKey, '>=', $val);
+                        $this->criteriaQuery->where($filterKey, '>=', $val);
                         break;
                     case "le":
-                        $this->query->where($filterKey, '>=', $val);
+                        $this->criteriaQuery->where($filterKey, '>=', $val);
                         break;
                     case "ne":
                         // Handle delimited lists
                         $vals = explode(",", $val);
-                        $this->query->whereNotIn($filterKey, $vals);
+                        $this->criteriaQuery->whereNotIn($filterKey, $vals);
                         break;
                     case "eq":
                         // Handle delimited lists
                         $vals = explode(",", $val);
-                        $this->query->whereIn($filterKey, $vals);
+                        $this->criteriaQuery->whereIn($filterKey, $vals);
                         break;
                     case "like":
                         $val = str_replace("*", "%", $val);
-                        $this->query->where($filterKey, 'LIKE', $val);
+                        $this->criteriaQuery->where($filterKey, 'LIKE', $val);
                         break;
                     default:
                         throw new BadCriteriaException("Invalid filter operator");
@@ -182,8 +222,8 @@ abstract class BaseTransformer extends TransformerAbstract
         }
 
         foreach ($this->sortCriteria->sorting() as $sortColumn => $direction) {
-            if (in_array($sortColumn, $this->model->getTableColumns())) {
-                $this->query->orderBy($sortColumn, $direction);
+            if (in_array($sortColumn, $this->criteriaModel->getTableColumns())) {
+                $this->criteriaQuery->orderBy($sortColumn, $direction);
             } else {
                 throw new BadCriteriaException("Invalid sort criteria");
             }

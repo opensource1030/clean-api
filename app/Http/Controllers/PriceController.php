@@ -1,16 +1,12 @@
 <?php
 namespace WA\Http\Controllers;
 
-use Illuminate\Pagination\LengthAwarePaginator;
-
+use Collection;
+use Illuminate\Http\Request;
 use WA\DataStore\Price\Price;
 use WA\DataStore\Price\PriceTransformer;
-use WA\Repositories\Price\PriceInterface;
-use Illuminate\Http\Request;
 use WA\Http\Requests\Parameters\Filters;
-
-use Log;
-use Collection;
+use WA\Repositories\Price\PriceInterface;
 
 /**
  * Price resource.
@@ -40,13 +36,14 @@ class PriceController extends ApiController
      * Get a payload of all Price
      *
      */
-    public function index() {
+    public function index()
+    {
 
         $criteria = $this->getRequestCriteria();
         $this->price->setCriteria($criteria);
         $price = $this->price->byPage();
-      
-        $response = $this->response()->withPaginator($price, new PriceTransformer(),['key' => 'prices']);
+
+        $response = $this->response()->withPaginator($price, new PriceTransformer(), ['key' => 'prices']);
         $response = $this->applyMeta($response);
         return $response;
     }
@@ -58,11 +55,15 @@ class PriceController extends ApiController
      *
      * @Get("/{id}")
      */
-    public function show($id) {
+    public function show($id)
+    {
 
-        $price = Price::find($id);
-        if($price == null){
-            $error['errors']['get'] = 'the price selected doesn\'t exists';   
+        $criteria = $this->getRequestCriteria();
+        $this->price->setCriteria($criteria);
+        $price = $this->price->byId($id);
+
+        if ($price == null) {
+            $error['errors']['get'] = 'the price selected doesn\'t exists';
             return response()->json($error)->setStatusCode(409);
         }
 
@@ -76,16 +77,17 @@ class PriceController extends ApiController
      *
      * @Get("/{id}")
      */
-    public function showDevice($id) {
+    public function showDevice($id)
+    {
 
         $filter = new Filters([
             "deviceId" => ["eq" => $id]
-            ]);
-        
+        ]);
+
         $this->price->setFilters($filter);
 
         $prices = $this->price->byPage();
-        
+
         $response = $this->response()->withPaginator($prices, new PriceTransformer(), ['key' => 'prices']);
     }
 
@@ -96,16 +98,17 @@ class PriceController extends ApiController
      *
      * @Get("/{id}")
      */
-    public function showCapacity($id) {
+    public function showCapacity($id)
+    {
 
         $filter = new Filters([
             "capacityId" => ["eq" => $id]
-            ]);
-        
+        ]);
+
         $this->price->setFilters($filter);
 
         $prices = $this->price->byPage();
-        
+
         $response = $this->response()->withPaginator($prices, new PriceTransformer(), ['key' => 'prices']);
     }
 
@@ -116,16 +119,17 @@ class PriceController extends ApiController
      *
      * @Get("/{id}")
      */
-    public function showStyle($id) {
+    public function showStyle($id)
+    {
 
         $filter = new Filters([
             "styleId" => ["eq" => $id]
-            ]);
-        
+        ]);
+
         $this->price->setFilters($filter);
 
         $prices = $this->price->byPage();
-        
+
         $response = $this->response()->withPaginator($prices, new PriceTransformer(), ['key' => 'prices']);
     }
 
@@ -136,16 +140,17 @@ class PriceController extends ApiController
      *
      * @Get("/{id}")
      */
-    public function showCarrier($id) {
+    public function showCarrier($id)
+    {
 
         $filter = new Filters([
             "carrierId" => ["eq" => $id]
-            ]);
-        
+        ]);
+
         $this->price->setFilters($filter);
 
         $prices = $this->price->byPage();
-        
+
         $response = $this->response()->withPaginator($prices, new PriceTransformer(), ['key' => 'prices']);
     }
 
@@ -156,19 +161,19 @@ class PriceController extends ApiController
      *
      * @Get("/{id}")
      */
-    public function showCompany($id) {
+    public function showCompany($id)
+    {
 
         $filter = new Filters([
             "companyId" => ["eq" => $id]
-            ]);
-        
+        ]);
+
         $this->price->setFilters($filter);
 
         $prices = $this->price->byPage();
-        
+
         $response = $this->response()->withPaginator($prices, new PriceTransformer(), ['key' => 'prices']);
     }
-
 
 
     /**
@@ -177,17 +182,18 @@ class PriceController extends ApiController
      * @param $id
      * @return \Dingo\Api\Http\Response
      */
-    public function store($id, Request $request) {
+    public function store($id, Request $request)
+    {
 
         /*
          * Checks if Json has data, data-type & data-attributes.
          */
-        if(!$this->isJsonCorrect($request, 'prices')){
+        if (!$this->isJsonCorrect($request, 'prices')) {
             $error['errors']['json'] = 'Json is Invalid';
             return response()->json($error)->setStatusCode(409);
         } else {
             $data = $request->all()['data'];
-            $dataAttributes = $data['attributes'];           
+            $dataAttributes = $data['attributes'];
         }
 
         $dataAttributes['id'] = $id;
@@ -200,13 +206,14 @@ class PriceController extends ApiController
      *
      * @return \Dingo\Api\Http\Response
      */
-    public function create(Request $request) {
-                if(!$this->isJsonCorrect($request, 'prices')){
+    public function create(Request $request)
+    {
+        if (!$this->isJsonCorrect($request, 'prices')) {
             $error['errors']['json'] = 'Json is Invalid';
             return response()->json($error)->setStatusCode(409);
         } else {
             $data = $request->all()['data'];
-            $dataAttributes = $data['attributes'];           
+            $dataAttributes = $data['attributes'];
         }
 
         $price = $this->price->create($dataAttributes);
@@ -221,19 +228,19 @@ class PriceController extends ApiController
     public function delete($id)
     {
         $price = Price::find($id);
-        if($price <> null){
+        if ($price <> null) {
             $this->price->deleteById($id);
         } else {
-            $error['errors']['delete'] = 'the price selected doesn\'t exists';   
+            $error['errors']['delete'] = 'the price selected doesn\'t exists';
             return response()->json($error)->setStatusCode(409);
         }
-        
+
         $this->index();
-        $price = Price::find($id);        
-        if($price == null){
+        $price = Price::find($id);
+        if ($price == null) {
             return array("success" => true);
         } else {
-            $error['errors']['delete'] = 'the price has not been deleted';   
+            $error['errors']['delete'] = 'the price has not been deleted';
             return response()->json($error)->setStatusCode(409);
         }
     }

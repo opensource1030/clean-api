@@ -51,7 +51,10 @@ class ContentsController extends ApiController
      */
     public function show($id)
     {
-        $content = Content::find($id);
+        $criteria = $this->getRequestCriteria();
+        $this->contents->setCriteria($criteria);
+        $content = $this->contents->byId($id);
+
         if(!isset($content))
         {
             $error['errors']['put'] = 'Content selected does not exist';

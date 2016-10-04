@@ -3,7 +3,6 @@
 namespace WA\Http\Controllers;
 
 use Illuminate\Http\Request;
-
 use WA\DataStore\App\App;
 use WA\DataStore\App\AppTransformer;
 use WA\Repositories\App\AppInterface;
@@ -25,8 +24,9 @@ class AppController extends ApiController
      *
      * @param AppInterface $app
      */
-    public function __construct(AppInterface $app) {
-        
+    public function __construct(AppInterface $app)
+    {
+
         $this->app = $app;
     }
 
@@ -36,7 +36,8 @@ class AppController extends ApiController
      * Get a payload of all App
      *
      */
-    public function index() {
+    public function index()
+    {
 
         $criteria = $this->getRequestCriteria();
         $this->app->setCriteria($criteria);
@@ -54,20 +55,25 @@ class AppController extends ApiController
      *
      * @Get("/{id}")
      */
-    public function show($id, Request $request) {
+    public function show($id, Request $request)
+    {
 
-        $app = App::find($id);
-        if($app == null){
-            $error['errors']['get'] = 'the App selected doesn\'t exists';   
+        $criteria = $this->getRequestCriteria();
+        $this->app->setCriteria($criteria);
+        $app = $this->app->byId($id);
+
+        if ($app == null) {
+            $error['errors']['get'] = 'the App selected doesn\'t exists';
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
-        if(!$this->includesAreCorrect($request, new AppTransformer())){
+        if (!$this->includesAreCorrect($request, new AppTransformer())) {
             $error['errors']['getIncludes'] = 'One or More Includes selected doesn\'t exists';
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
-        return $this->response()->item($app, new AppTransformer(),['key' => 'apps'])->setStatusCode($this->status_codes['created']);
+        return $this->response()->item($app, new AppTransformer(),
+            ['key' => 'apps'])->setStatusCode($this->status_codes['created']);
     }
 
     /**
@@ -76,15 +82,17 @@ class AppController extends ApiController
      * @param $id
      * @return \Dingo\Api\Http\Response
      */
-    public function store($id, Request $request) {
+    public function store($id, Request $request)
+    {
 
-        if($this->isJsonCorrect($request, 'apps')){
+        if ($this->isJsonCorrect($request, 'apps')) {
             try {
                 $data = $request->all()['data']['attributes'];
                 $data['id'] = $id;
                 $app = $this->app->update($data);
-                return $this->response()->item($app, new AppTransformer(), ['key' => 'apps'])->setStatusCode($this->status_codes['created']);
-            } catch (\Exception $e){
+                return $this->response()->item($app, new AppTransformer(),
+                    ['key' => 'apps'])->setStatusCode($this->status_codes['created']);
+            } catch (\Exception $e) {
                 $error['errors']['apps'] = 'the App has not been updated';
                 //$error['errors']['appsMessage'] = $e->getMessage();
             }
@@ -100,14 +108,15 @@ class AppController extends ApiController
      *
      * @return \Dingo\Api\Http\Response
      */
-    public function create(Request $request) {
+    public function create(Request $request)
+    {
 
-        if($this->isJsonCorrect($request, 'apps')){
+        if ($this->isJsonCorrect($request, 'apps')) {
             try {
                 $data = $request->all()['data']['attributes'];
                 $app = $this->app->create($data);
                 return $this->response()->item($app, new AppTransformer(), ['key' => 'apps']);
-            } catch (\Exception $e){
+            } catch (\Exception $e) {
                 $error['errors']['apps'] = 'the App has not been created';
                 //$error['errors']['appsMessage'] = $e->getMessage();
             }
@@ -123,22 +132,23 @@ class AppController extends ApiController
      *
      * @param $id
      */
-    public function delete($id) {
+    public function delete($id)
+    {
 
         $app = App::find($id);
-        if($app <> null){
+        if ($app <> null) {
             $this->app->deleteById($id);
         } else {
-            $error['errors']['delete'] = 'the App selected doesn\'t exists';   
+            $error['errors']['delete'] = 'the App selected doesn\'t exists';
             return response()->json($error)->setStatusCode(409);
         }
-        
+
         $this->index();
         $app = App::find($id);
-        if($app == null){
+        if ($app == null) {
             return array("success" => true);
         } else {
-            $error['errors']['delete'] = 'the App has not been deleted';   
+            $error['errors']['delete'] = 'the App has not been deleted';
             return response()->json($error)->setStatusCode(409);
         }
     }

@@ -8,6 +8,7 @@ use WA\Services\Form\User\UserForm;
 abstract class UserDecorator extends AbstractRepository implements UserInterface
 
 {
+
     protected $nextUser;
 
     public function __construct(UserInterface $nextUser)
@@ -15,6 +16,12 @@ abstract class UserDecorator extends AbstractRepository implements UserInterface
         parent::__construct($nextUser->getModel());
         $this->nextUser = $nextUser;
     }
+
+    public function setCriteria($criteria = [])
+    {
+        $this->nextUser->setCriteria($criteria);
+    }
+
 
     /**
      * Get paginated users.
@@ -76,11 +83,6 @@ abstract class UserDecorator extends AbstractRepository implements UserInterface
     public function byId($id)
     {
         return $this->nextUser->byId($id);
-    }
-
-    public function setCriteria($criteria = [])
-    {
-        $this->nextUser->setCriteria($criteria);
     }
 
 

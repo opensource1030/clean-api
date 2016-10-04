@@ -15,6 +15,7 @@ use Webpatser\Uuid\Uuid;
 
 class EloquentUser extends AbstractRepository implements UserInterface
 {
+
     /**
      * @var \Illuminate\Database\Eloquent\Model
      */
@@ -57,12 +58,10 @@ class EloquentUser extends AbstractRepository implements UserInterface
      */
     public function byPage($paginate = true, $perPage = 25)
     {
-        $model = $this->model;
-
-        $this->applyCriteria();
+        $query = $this->applyCriteria($this->model);
 
         if (!$paginate) {
-            $ownTable = $model->getTable();
+            $ownTable = $query->getTable();
 
             // manually run the queries
             $response = \DB::table($ownTable)
@@ -81,7 +80,7 @@ class EloquentUser extends AbstractRepository implements UserInterface
             return $response;
         }
 
-        return $this->query->paginate($perPage);
+        return $query->paginate($perPage);
     }
 
     /**
@@ -143,12 +142,10 @@ class EloquentUser extends AbstractRepository implements UserInterface
      */
     public function byId($id, $active = null)
     {
-        $this->applyCriteria();
-
-        $model = $this->query;
+        $query = $this->applyCriteria($this->model);
 
         if (!empty($active)) {
-            $model = $model->where('isActive', (int)$active);
+            $query = $query->where('isActive', (int)$active);
         }
 
         $response = null;
@@ -156,18 +153,18 @@ class EloquentUser extends AbstractRepository implements UserInterface
         // We want to allow for the passing of  multiple ID (for smarted API)
         if (is_array($id)) {
             if (count($id) == 1) {
-                $response = $model->where('id', $id[0])->first();
+                $response = $query->where('id', $id[0])->first();
 
                 return $response;
             } else {
-                $response = $model->whereIn('id', $id)
+                $response = $query->whereIn('id', $id)
                     ->get();
 
                 return $response;
             }
         }
 
-        $em = $model->where('id', $id)->first();
+        $em = $query->where('id', $id)->first();
 
         return $em;
     }

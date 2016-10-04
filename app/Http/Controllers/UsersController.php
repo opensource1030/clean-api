@@ -55,6 +55,7 @@ class UsersController extends ApiController
     {
         $criteria = $this->getRequestCriteria();
         $this->user->setCriteria($criteria);
+
         $users = $this->user->byPage();
 
         $response = $this->response()->withPaginator($users, new UserTransformer(),['key' => 'users']);
@@ -75,7 +76,9 @@ class UsersController extends ApiController
     {
         $criteria = $this->getRequestCriteria();
         $this->user->setCriteria($criteria);
+
         $user = $this->user->byId($id);
+
         return $this->response()->item($user, new UserTransformer($criteria), ['key' => 'users']);
 
     }

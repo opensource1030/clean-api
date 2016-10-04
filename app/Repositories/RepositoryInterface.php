@@ -48,5 +48,4 @@ interface RepositoryInterface
      */
     public function getModel();
 
-    public function setCriteria($criteria = []);
 }

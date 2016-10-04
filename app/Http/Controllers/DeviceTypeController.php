@@ -1,12 +1,10 @@
 <?php
 namespace WA\Http\Controllers;
 
+use Illuminate\Http\Request;
 use WA\DataStore\DeviceType\DeviceType;
 use WA\DataStore\DeviceType\DeviceTypeTransformer;
 use WA\Repositories\DeviceType\DeviceTypeInterface;
-use Illuminate\Http\Request;
-
-use Log;
 
 /**
  * DeviceType resource.
@@ -42,7 +40,8 @@ class DeviceTypeController extends ApiController
         $this->deviceType->setCriteria($criteria);
         $deviceTypes = $this->deviceType->byPage();
 
-        $response = $this->response()->withPaginator($deviceTypes, new DeviceTypeTransformer(), ['key' => 'devicetypes']);
+        $response = $this->response()->withPaginator($deviceTypes, new DeviceTypeTransformer(),
+            ['key' => 'devicetypes']);
         $response = $this->applyMeta($response);
         return $response;
     }
@@ -56,9 +55,12 @@ class DeviceTypeController extends ApiController
      */
     public function show($id)
     {
-        $deviceType = DeviceType::find($id);
-        if($deviceType == null){
-            $error['errors']['get'] = 'the DeviceType selected doesn\'t exists';   
+        $criteria = $this->getRequestCriteria();
+        $this->deviceType->setCriteria($criteria);
+        $deviceType = $this->deviceType->byId($id);
+
+        if ($deviceType == null) {
+            $error['errors']['get'] = 'the DeviceType selected doesn\'t exists';
             return response()->json($error)->setStatusCode(409);
         }
 
@@ -71,9 +73,9 @@ class DeviceTypeController extends ApiController
      * @param $id
      * @return \Dingo\Api\Http\Response
      */
-    public function store($id, Request $request)   
+    public function store($id, Request $request)
     {
-        $data = $request->all();       
+        $data = $request->all();
         $data['id'] = $id;
         $deviceType = $this->deviceType->update($data);
         return $this->response()->item($deviceType, new DeviceTypeTransformer(), ['key' => 'devicetypes']);
@@ -99,19 +101,19 @@ class DeviceTypeController extends ApiController
     public function delete($id)
     {
         $deviceType = DeviceType::find($id);
-        if($deviceType <> null){
+        if ($deviceType <> null) {
             $this->deviceType->deleteById($id);
         } else {
-            $error['errors']['delete'] = 'the DeviceType selected doesn\'t exists';   
+            $error['errors']['delete'] = 'the DeviceType selected doesn\'t exists';
             return response()->json($error)->setStatusCode(409);
         }
-        
+
         $this->index();
         $deviceType = DeviceType::find($id);
-        if($deviceType == null){
+        if ($deviceType == null) {
             return array("success" => true);
         } else {
-            $error['errors']['delete'] = 'the DeviceType has not been deleted';   
+            $error['errors']['delete'] = 'the DeviceType has not been deleted';
             return response()->json($error)->setStatusCode(409);
         }
     }

@@ -66,7 +66,10 @@ class CompaniesController extends ApiController
      */
     public function show($id)
     {
-        $company = Company::find($id);
+        $criteria = $this->getRequestCriteria();
+        $this->company->setCriteria($criteria);
+        $company = $this->company->byId($id);
+
         if($company == null){
             $error['errors']['get'] = 'the Company selected doesn\'t exists';   
             return response()->json($error)->setStatusCode(409);

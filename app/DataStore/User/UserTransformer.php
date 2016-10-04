@@ -4,19 +4,22 @@ namespace WA\DataStore\User;
 
 use League\Fractal\Resource\Collection as ResourceCollection;
 use League\Fractal\Resource\Item as ResourceItem;
+use League\Fractal\TransformerAbstract;
 use WA\DataStore\Allocation\AllocationTransformer;
 use WA\DataStore\Asset\AssetTransformer;
-use WA\DataStore\BaseTransformer;
 use WA\DataStore\Company\CompanyTransformer;
 use WA\DataStore\Content\ContentTransformer;
 use WA\DataStore\Device\DeviceTransformer;
 use WA\DataStore\Role\RoleTransformer;
+use WA\Helpers\Traits\Criteria;
 
 /**
  * Class UserTransformer.
  */
-class UserTransformer extends BaseTransformer
+class UserTransformer extends TransformerAbstract 
 {
+
+    use Criteria;
 
     protected $availableIncludes = [
         'assets',
@@ -26,13 +29,6 @@ class UserTransformer extends BaseTransformer
         'allocations',
         'contents'
     ];
-
-    protected $criteria = [];
-
-    public function __construct($criteria = [])
-    {
-        $this->criteria = $criteria;
-    }
 
     /**
      * @param User $user
@@ -113,6 +109,5 @@ class UserTransformer extends BaseTransformer
     {
         return new ResourceCollection($user->contents, new ContentTransformer(), 'contents');
     }
-
 
 }

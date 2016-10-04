@@ -54,6 +54,9 @@ class RequestController extends ApiController
      */
     public function show($id)
     {
+        $criteria = $this->getRequestCriteria();
+        $this->request->setCriteria($criteria);
+
         $request = $this->request->byId($id);
         return $this->response()->item($request, new RequestTransformer(), ['key' => 'requests']);
     }

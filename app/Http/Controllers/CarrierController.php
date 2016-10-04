@@ -58,7 +58,10 @@ class CarrierController extends ApiController
      */
     public function show($id, Request $request) {
 
-        $carrier = Carrier::find($id);
+        $criteria = $this->getRequestCriteria();
+        $this->carrier->setCriteria($criteria);
+        $carrier = $this->carrier->byId($id);
+
         if($carrier == null){
             $error['errors']['get'] = 'the carrier selected doesn\'t exists';   
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);

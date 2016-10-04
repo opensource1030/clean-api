@@ -3,7 +3,6 @@
 namespace WA\Http\Controllers;
 
 use Illuminate\Http\Request;
-
 use WA\DataStore\Modification\Modification;
 use WA\DataStore\Modification\ModificationTransformer;
 use WA\Repositories\Modification\ModificationInterface;
@@ -25,7 +24,8 @@ class ModificationController extends ApiController
      *
      * @param modificationInterface $modification
      */
-    public function __construct(ModificationInterface $modification) {
+    public function __construct(ModificationInterface $modification)
+    {
 
         $this->modification = $modification;
     }
@@ -36,15 +36,17 @@ class ModificationController extends ApiController
      * Get a payload of all modification
      *
      */
-    public function index() {
+    public function index()
+    {
 
         $criteria = $this->getRequestCriteria();
         $this->modification->setCriteria($criteria);
         $modification = $this->modification->byPage();
-      
-        $response = $this->response()->withPaginator($modification, new ModificationTransformer(),['key' => 'modifications']);
+
+        $response = $this->response()->withPaginator($modification, new ModificationTransformer(),
+            ['key' => 'modifications']);
         $response = $this->applyMeta($response);
-        return $response;  
+        return $response;
     }
 
     /**
@@ -54,18 +56,22 @@ class ModificationController extends ApiController
      *
      * @Get("/{id}")
      */
-    public function show($id) {
+    public function show($id)
+    {
 
-        $modification = Modification::find($id);
-        if($modification == null){
-            $error['errors']['get'] = 'the modification selected doesn\'t exists';   
+        $criteria = $this->getRequestCriteria();
+        $this->modification->setCriteria($criteria);
+        $modification = $this->modification->byId($id);
+
+        if ($modification == null) {
+            $error['errors']['get'] = 'the modification selected doesn\'t exists';
             return response()->json($error)->setStatusCode(409);
         }
 
         // Dingo\Api\src\Http\Response\Factory.php
         // Dingo\Api\src\Http\Transformer\Factory.php
 
-        return $this->response()->item($modification, new ModificationTransformer(),['key' => 'modifications']);
+        return $this->response()->item($modification, new ModificationTransformer(), ['key' => 'modifications']);
     }
 
     /**
@@ -74,15 +80,17 @@ class ModificationController extends ApiController
      * @param $id
      * @return \Dingo\Api\Http\Response
      */
-    public function store($id, Request $request) {
+    public function store($id, Request $request)
+    {
 
-        if($this->isJsonCorrect($request, 'modifications')){
+        if ($this->isJsonCorrect($request, 'modifications')) {
             try {
                 $data = $request->all()['data']['attributes'];
                 $data['id'] = $id;
                 $modification = $this->modification->update($data);
-                return $this->response()->item($modification, new ModificationTransformer(), ['key' => 'modifications'])->setStatusCode($this->status_codes['created']);
-            } catch (\Exception $e){
+                return $this->response()->item($modification, new ModificationTransformer(),
+                    ['key' => 'modifications'])->setStatusCode($this->status_codes['created']);
+            } catch (\Exception $e) {
                 $error['errors']['modifications'] = 'the Modification has not been updated';
                 //$error['errors']['modificationsMessage'] = $e->getMessage();
             }
@@ -98,14 +106,16 @@ class ModificationController extends ApiController
      *
      * @return \Dingo\Api\Http\Response
      */
-    public function create(Request $request) {
+    public function create(Request $request)
+    {
 
-        if($this->isJsonCorrect($request, 'modifications')){
+        if ($this->isJsonCorrect($request, 'modifications')) {
             try {
                 $data = $request->all()['data']['attributes'];
                 $modification = $this->modification->create($data);
-                return $this->response()->item($modification, new ModificationTransformer(), ['key' => 'modifications']);
-            } catch (\Exception $e){
+                return $this->response()->item($modification, new ModificationTransformer(),
+                    ['key' => 'modifications']);
+            } catch (\Exception $e) {
                 $error['errors']['modifications'] = 'the Modification has not been created';
                 //$error['errors']['modificationsMessage'] = $e->getMessage();
             }
@@ -124,19 +134,19 @@ class ModificationController extends ApiController
     public function delete($id)
     {
         $modification = Modification::find($id);
-        if($modification <> null){
+        if ($modification <> null) {
             $this->modification->deleteById($id);
         } else {
-            $error['errors']['delete'] = 'the modification selected doesn\'t exists';   
+            $error['errors']['delete'] = 'the modification selected doesn\'t exists';
             return response()->json($error)->setStatusCode(409);
         }
-        
+
         $this->index();
-        $modification = Modification::find($id);        
-        if($modification == null){
+        $modification = Modification::find($id);
+        if ($modification == null) {
             return array("success" => true);
         } else {
-            $error['errors']['delete'] = 'the modification has not been deleted';   
+            $error['errors']['delete'] = 'the modification has not been deleted';
             return response()->json($error)->setStatusCode(409);
         }
     }

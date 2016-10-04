@@ -23,6 +23,11 @@ class UserCacheDecorator extends UserDecorator
         $this->cache = $cache;
     }
 
+    public function setCriteria($criteria = [])
+    {
+        $this->nextUser->setCriteria($criteria);
+    }
+
     /**
      * Try to get pagination from cache.
      *
@@ -131,6 +136,7 @@ class UserCacheDecorator extends UserDecorator
 
         return $user;
     }
+
 
     /**
      * Get employee supervisor information by supervisor email.
@@ -365,11 +371,6 @@ class UserCacheDecorator extends UserDecorator
     public function deleteById($id, $force = false)
     {
         return $this->nextUser->deleteById($id, $force = false);
-    }
-
-    public function setCriteria($criteria = [])
-    {
-        $this->nextUser->setCriteria($criteria);
     }
 
     /**

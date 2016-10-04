@@ -3,13 +3,16 @@
 namespace WA\Repositories;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use WA\DataStore\BaseDataStore;
-use WA\Exceptions\BadCriteriaException;
+use WA\Helpers\Traits\Criteria;
 use WA\Http\Requests\Parameters\Filters;
 use WA\Http\Requests\Parameters\Sorting;
 
 abstract class AbstractRepository implements RepositoryInterface
 {
+    use Criteria;
+
     /**
      * @var \Illuminate\Database\Eloquent\Model|BaseDataStore
      */
@@ -42,167 +45,6 @@ abstract class AbstractRepository implements RepositoryInterface
     }
 
     /**
-     * Get a query-builder instance for this model
-     *
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    protected function getQuery()
-    {
-        if ($this->query === null) {
-            $model = $this->model;
-            $this->query = $model::query();
-        }
-        return $this->query;
-    }
-
-    /**
-     * Convenience method to set all criteria at once
-     *
-     * @param array $criteria
-     * @return bool
-     */
-    public function setCriteria($criteria = [])
-    {
-        if (isset($criteria['sort'])) {
-            $this->setSort($criteria['sort']);
-        }
-
-        if (isset($criteria['filters'])) {
-            $this->setFilters($criteria['filters']);
-        }
-
-        return true;
-    }
-
-    /**
-     * Set sort criteria
-     *
-     * @param Sorting $sortCriteria
-     * @return $this
-     */
-    public function setSort(Sorting $sortCriteria)
-    {
-        if ($sortCriteria !== null) {
-            $this->sortCriteria = $sortCriteria;
-        }
-        return $this;
-    }
-
-    /**
-     * Set filter criteria
-     *
-     * @param Filters $filterCriteria
-     * @return $this
-     */
-    public function setFilters(Filters $filterCriteria)
-    {
-        if ($filterCriteria !== null) {
-            $this->filterCriteria = $filterCriteria;
-        }
-        return $this;
-    }
-
-
-    /**
-     * Convenience method to apply sorting and filtering criteria
-     *
-     * @return $this
-     */
-    protected function applyCriteria()
-    {
-        return $this->sort()->filter();
-    }
-
-    /**
-     * Apply filter criteria to the current query
-     *
-     * @return $this
-     * @throws BadCriteriaException
-     */
-    protected function filter()
-    {
-        $this->getQuery();
-
-        if ($this->filterCriteria === null) {
-            return $this;
-        }
-
-        foreach ($this->filterCriteria->filtering() as $filterKey => $filterVal) {
-            if (strpos($filterKey, ".")) {
-                if (substr($filterKey, 0, strpos($filterKey, ".")) !== $this->model->getName()) {
-                    continue;
-                }
-                $filterKey = substr($filterKey, strpos($filterKey, ".") + 1);
-            }
-
-            if (in_array($filterKey, $this->model->getTableColumns())) {
-                $op = strtolower(key($filterVal));
-                $val = current($filterVal);
-                switch ($op) {
-                    case "gt":
-                        $this->query->where($filterKey, '>', $val);
-                        break;
-                    case "lt":
-                        $this->query->where($filterKey, '<', $val);
-                        break;
-                    case "ge":
-                        $this->query->where($filterKey, '>=', $val);
-                        break;
-                    case "le":
-                        $this->query->where($filterKey, '>=', $val);
-                        break;
-                    case "ne":
-                        // Handle delimited lists
-                        $vals = explode(",", $val);
-                        $this->query->whereNotIn($filterKey, $vals);
-                        break;
-                    case "eq":
-                        // Handle delimited lists
-                        $vals = explode(",", $val);
-                        $this->query->whereIn($filterKey, $vals);
-                        break;
-                    case "like":
-                        $val = str_replace("*", "%", $val);
-                        $this->query->where($filterKey, 'LIKE', $val);
-                        break;
-                    default:
-                        throw new BadCriteriaException("Invalid filter operator");
-                        break;
-                }
-            } else {
-                throw new BadCriteriaException("Invalid filter criteria");
-            }
-        }
-        return $this;
-    }
-
-    /**
-     * Apply sort criteria to the current query
-     *
-     * @return $this
-     * @throws BadCriteriaException
-     */
-    protected function sort()
-    {
-        $this->getQuery();
-
-        if ($this->sortCriteria === null) {
-            return $this;
-        }
-
-        foreach ($this->sortCriteria->sorting() as $sortColumn => $direction) {
-            if (in_array($sortColumn, $this->model->getTableColumns())) {
-                $this->query->orderBy($sortColumn, $direction);
-            } else {
-                throw new BadCriteriaException("Invalid sort criteria");
-            }
-        }
-
-        return $this;
-    }
-
-
-    /**
      * Get paginated resource
      *
      * @param int $perPage
@@ -214,25 +56,13 @@ abstract class AbstractRepository implements RepositoryInterface
     public function byPage($paginate = true, $perPage = 25, $api = false)
     {
         // Apply filtering and sorting criteria, if set
-        $this->applyCriteria();
+        $query = $this->applyCriteria($this->model);
 
         if (!$paginate) {
-            return $this->query->get();
+            return $query->get();
         }
 
-        return $this->query->paginate($perPage);
-    }
-
-    /**
-     * Wrapper function.
-     *
-     * @param $id
-     *
-     * @return Object
-     */
-    public function getById($id)
-    {
-        return $this->byId($id);
+        return $query->paginate($perPage);
     }
 
     /**
@@ -248,8 +78,12 @@ abstract class AbstractRepository implements RepositoryInterface
             return $this->model->whereIn('id', $id)
                 ->get();
         }
+        try {
+            return $this->model->findOrFail($id);
+        } catch (ModelNotFoundException $e) {
+            return null;
+        }
 
-        return $this->model->findOrFail($id);
     }
 
     /**
@@ -287,5 +121,25 @@ abstract class AbstractRepository implements RepositoryInterface
         }
 
         return $this->model->destroy($id);
+    }
+
+    /**
+     * Update a repository.
+     *
+     * @param array $data to be updated
+     *
+     * @return Object object of updated repo
+     */
+    public function update(array $data)
+    {
+        return $this->model->update($data);
+    }
+
+    /**
+     * Get the model's transformation.
+     */
+    public function getTransformer()
+    {
+        return $this->model->getTransformer();
     }
 }
