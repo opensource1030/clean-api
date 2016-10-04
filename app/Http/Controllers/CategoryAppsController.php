@@ -57,8 +57,9 @@ class CategoryAppsController extends ApiController
      * @Get("/{id}")
      */
     public function show($id, Request $request) {
-
-        $categoryApps = CategoryApp::find($id);
+        $criteria = $this->getRequestCriteria();
+        $this->categoryApps->setCriteria($criteria);
+        $categoryApps = $this->categoryApps->byId($id);
         if($categoryApps == null){
             $error['errors']['get'] = 'the CategoryApps selected doesn\'t exists';   
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);

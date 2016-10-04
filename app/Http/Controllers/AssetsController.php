@@ -54,7 +54,10 @@ class AssetsController extends ApiController
      */
     public function show($id)
     {
-        $asset = Asset::find($id);
+        $criteria = $this->getRequestCriteria();
+        $this->asset->setCriteria($criteria);
+        $asset = $this->asset->byId($id);
+
         if($asset == null){
             $error['errors']['get'] = 'the asset selected doesn\'t exists';   
             return response()->json($error)->setStatusCode(409);

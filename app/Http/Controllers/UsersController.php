@@ -4,13 +4,18 @@ namespace WA\Http\Controllers;
 
 use App;
 use Cartalyst\DataGrid\Laravel\Facades\DataGrid;
-use Illuminate\Session\SessionManager as Session;
+
 use Input;
 use Response;
 use View;
 use WA\DataStore\User\UserTransformer;
 use WA\Helpers\Traits\SetLimits;
 use WA\Repositories\User\UserInterface;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+
+
 
 /**
  * Users resource.
@@ -21,6 +26,9 @@ class UsersController extends ApiController
 {
     use SetLimits;
 
+    /**
+     * @var UserInterface
+     */
     protected $user;
 
 
@@ -36,8 +44,6 @@ class UsersController extends ApiController
     /**
      * Show all users
      *
-     * Get a payload of all users as reported by the companies imported census
-     *
      * @Get("/")
      * @Parameters({
      *      @Parameter("page", description="The page of results to view.", default=1),
@@ -47,24 +53,42 @@ class UsersController extends ApiController
      */
     public function index()
     {
+        $criteria = $this->getRequestCriteria();
+        $this->user->setCriteria($criteria);
+
         $users = $this->user->byPage();
 
-        return $this->response()->withPaginator($users, new UserTransformer(), ['key' => 'users']);
+        $response = $this->response()->withPaginator($users, new UserTransformer(),['key' => 'users']);
+        $response = $this->applyMeta($response);
+        return $response;
+
     }
 
 
     /**
      * Show a single users
      *
-     * Get a payload of a single users as reported by the companies imported census
+     * Get a payload of a single users
      *
      * @Get("/{id}")
      */
     public function show($id)
     {
+        $criteria = $this->getRequestCriteria();
+        $this->user->setCriteria($criteria);
+
         $user = $this->user->byId($id);
 
-        return $this->response()->item($user, new UserTransformer(), ['key' => 'users']);
+        return $this->response()->item($user, new UserTransformer($criteria), ['key' => 'users']);
+
+    }
+
+    public function getLoggedInUser(Request $request)
+    {
+
+        $user =  Auth::user();
+        var_dump($user);
+
 
     }
 

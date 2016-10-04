@@ -2,14 +2,13 @@
 
 namespace WA\Http\Controllers;
 
+use DB;
 use Illuminate\Http\Request;
-//use Symfony\Components\HttpFoundation\Request;
-
 use WA\DataStore\Package\Package;
 use WA\DataStore\Package\PackageTransformer;
 use WA\Repositories\Package\PackageInterface;
 
-use DB;
+//use Symfony\Components\HttpFoundation\Request;
 
 /**
  * Package resource.
@@ -45,8 +44,8 @@ class PackageController extends ApiController
         $this->package->setCriteria($criteria);
 
         $package = $this->package->byPage();
-        
-        $response = $this->response()->withPaginator($package, new PackageTransformer(),['key' => 'packages']);
+
+        $response = $this->response()->withPaginator($package, new PackageTransformer(), ['key' => 'packages']);
         $response = $this->applyMeta($response);
         return $response;
     }
@@ -60,13 +59,17 @@ class PackageController extends ApiController
      */
     public function show($id, Request $request)
     {
-        $package = Package::find($id);
-        if($package == null){
-            $error['errors']['get'] = 'the Package selected doesn\'t exists';   
+        $criteria = $this->getRequestCriteria();
+        $this->package->setCriteria($criteria);
+
+        $package = $this->package->byId($id);
+
+        if ($package == null) {
+            $error['errors']['get'] = 'the Package selected doesn\'t exists';
             return response()->json($error)->setStatusCode(409);
         }
 
-        if(!$this->includesAreCorrect($request, new PackageTransformer())){
+        if (!$this->includesAreCorrect($request, new PackageTransformer())) {
             $error['errors']['getincludes'] = 'One or More Includes selected doesn\'t exists';
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
@@ -80,7 +83,7 @@ class PackageController extends ApiController
      * @param $id
      * @return \Dingo\Api\Http\Response
      */
-    public function store($id, Request $request)   
+    public function store($id, Request $request)
     {
         $success = true;
         $dataConditions = $dataServices = $dataDevices = $dataApps = array();
@@ -88,26 +91,26 @@ class PackageController extends ApiController
         /*
          * Checks if Json has data, data-type & data-attributes.
          */
-        if(!$this->isJsonCorrect($request, 'packages')){
+        if (!$this->isJsonCorrect($request, 'packages')) {
             $error['errors']['json'] = 'Json is Invalid';
             return response()->json($error)->setStatusCode(409);
         } else {
             $data = $request->all()['data'];
             $dataType = $data['type'];
-            $dataAttributes = $data['attributes'];           
+            $dataAttributes = $data['attributes'];
         }
 
         DB::beginTransaction();
 
         /*
          * Now we can create the Package.
-         */       
-        try{
+         */
+        try {
             $package = Package::find($id);
 
             $package->name = isset($dataAttributes['name']) ? $dataAttributes['name'] : $package->name;
             $package->addressId = isset($dataAttributes['addressId']) ? $dataAttributes['addressId'] : $package->addressId;
-            
+
             $package->save();
         } catch (\Exception $e) {
             DB::rollBack();
@@ -120,40 +123,40 @@ class PackageController extends ApiController
         /*
          * Check if Json has relationships to continue or if not and commit + return.
          */
-        if(isset($data['relationships'])){
+        if (isset($data['relationships'])) {
 
             $dataRelationships = $data['relationships'];
 
-            if(isset($dataRelationships['conditions'])){ 
-                if(isset($dataRelationships['conditions']['data'])){
+            if (isset($dataRelationships['conditions'])) {
+                if (isset($dataRelationships['conditions']['data'])) {
                     $dataConditions = $this->parseJsonToArray($dataRelationships['conditions']['data'], 'conditions');
                     try {
-                        $package->conditions()->sync($dataConditions);    
-                    } catch (\Exception $e){
+                        $package->conditions()->sync($dataConditions);
+                    } catch (\Exception $e) {
                         $error['errors']['conditions'] = 'the Package Conditions has not been Modified';
                         $error['errors']['conditionsMessage'] = $e->getMessage();
                     }
                 }
             }
 
-            if(isset($dataRelationships['services'])){ 
-                if(isset($dataRelationships['services']['data'])){
+            if (isset($dataRelationships['services'])) {
+                if (isset($dataRelationships['services']['data'])) {
                     $dataServices = $this->parseJsonToArray($dataRelationships['services']['data'], 'services');
                     try {
                         $package->services()->sync($dataServices);
-                    } catch (\Exception $e){
+                    } catch (\Exception $e) {
                         $error['errors']['services'] = 'the Package Services has not been Modified';
                         //$error['errors']['servicesMessage'] = $e->getMessage();
                     }
                 }
             }
 
-            if(isset($dataRelationships['devices'])){ 
-                if(isset($dataRelationships['devices']['data'])){
+            if (isset($dataRelationships['devices'])) {
+                if (isset($dataRelationships['devices']['data'])) {
                     $dataDevices = $this->parseJsonToArray($dataRelationships['devices']['data'], 'devices');
-                     try {
+                    try {
                         $package->devices()->sync($dataDevices);
-                    } catch (\Exception $e){
+                    } catch (\Exception $e) {
                         $success = false;
                         $error['errors']['devices'] = 'the Package Devices has not been Modified';
                         //$error['errors']['devicesMessage'] = $e->getMessage();
@@ -161,12 +164,12 @@ class PackageController extends ApiController
                 }
             }
 
-            if(isset($dataRelationships['apps'])){ 
-                if(isset($dataRelationships['apps']['data'])){
+            if (isset($dataRelationships['apps'])) {
+                if (isset($dataRelationships['apps']['data'])) {
                     $dataApps = $this->parseJsonToArray($dataRelationships['apps']['data'], 'apps');
                     try {
                         $package->apps()->sync($dataApps);
-                    } catch (\Exception $e){
+                    } catch (\Exception $e) {
                         $success = false;
                         $error['errors']['apps'] = 'the Package Apps has not been Modified';
                         //$error['errors']['appsMessage'] = $e->getMessage();
@@ -175,7 +178,7 @@ class PackageController extends ApiController
             }
         }
 
-        if(!$success){
+        if (!$success) {
             DB::rollBack();
             return response()->json($error)->setStatusCode(409);
         } else {
@@ -197,22 +200,22 @@ class PackageController extends ApiController
         /*
          * Checks if Json has data, data-type & data-attributes.
          */
-        if(!$this->isJsonCorrect($request, 'packages')){
+        if (!$this->isJsonCorrect($request, 'packages')) {
             $error['errors']['json'] = 'Json is Invalid';
             return response()->json($error)->setStatusCode(409);
         } else {
             $data = $request->all()['data'];
             $dataType = $data['type'];
-            $dataAttributes = $data['attributes'];           
+            $dataAttributes = $data['attributes'];
         }
 
         DB::beginTransaction();
 
         /*
          * Now we can create the Package.
-         */       
-        try{
-            $package = $this->package->create($dataAttributes); 
+         */
+        try {
+            $package = $this->package->create($dataAttributes);
         } catch (\Exception $e) {
             DB::rollBack();
             $success = false;
@@ -224,40 +227,40 @@ class PackageController extends ApiController
         /*
          * Check if Json has relationships to continue or if not and commit + return.
          */
-        if(isset($data['relationships'])){
+        if (isset($data['relationships'])) {
 
             $dataRelationships = $data['relationships'];
 
-            if(isset($dataRelationships['conditions'])){ 
-                if(isset($dataRelationships['conditions']['data'])){
+            if (isset($dataRelationships['conditions'])) {
+                if (isset($dataRelationships['conditions']['data'])) {
                     $dataConditions = $this->parseJsonToArray($dataRelationships['conditions']['data'], 'conditions');
                     try {
-                        $package->conditions()->sync($dataConditions);    
-                    } catch (\Exception $e){
+                        $package->conditions()->sync($dataConditions);
+                    } catch (\Exception $e) {
                         $error['errors']['conditions'] = 'the Package Conditions has not been created';
                         //$error['errors']['conditionsMessage'] = $e->getMessage();
                     }
                 }
             }
 
-            if(isset($dataRelationships['services'])){ 
-                if(isset($dataRelationships['services']['data'])){
+            if (isset($dataRelationships['services'])) {
+                if (isset($dataRelationships['services']['data'])) {
                     $dataServices = $this->parseJsonToArray($dataRelationships['services']['data'], 'services');
                     try {
                         $package->services()->sync($dataServices);
-                    } catch (\Exception $e){
+                    } catch (\Exception $e) {
                         $error['errors']['services'] = 'the Package Services has not been created';
                         //$error['errors']['servicesMessage'] = $e->getMessage();
                     }
                 }
             }
 
-            if(isset($dataRelationships['devices'])){ 
-                if(isset($dataRelationships['devices']['data'])){
+            if (isset($dataRelationships['devices'])) {
+                if (isset($dataRelationships['devices']['data'])) {
                     $dataDevices = $this->parseJsonToArray($dataRelationships['devices']['data'], 'devices');
-                     try {
+                    try {
                         $package->devices()->sync($dataDevices);
-                    } catch (\Exception $e){
+                    } catch (\Exception $e) {
                         $success = false;
                         $error['errors']['devices'] = 'the Package Devices has not been created';
                         //$error['errors']['devicesMessage'] = $e->getMessage();
@@ -265,12 +268,12 @@ class PackageController extends ApiController
                 }
             }
 
-            if(isset($dataRelationships['apps'])){ 
-                if(isset($dataRelationships['apps']['data'])){
+            if (isset($dataRelationships['apps'])) {
+                if (isset($dataRelationships['apps']['data'])) {
                     $dataApps = $this->parseJsonToArray($dataRelationships['apps']['data'], 'apps');
                     try {
                         $package->apps()->sync($dataApps);
-                    } catch (\Exception $e){
+                    } catch (\Exception $e) {
                         $success = false;
                         $error['errors']['apps'] = 'the Package Apps has not been created';
                         //$error['errors']['appsMessage'] = $e->getMessage();
@@ -279,7 +282,7 @@ class PackageController extends ApiController
             }
         }
 
-        if(!$success){
+        if (!$success) {
             DB::rollBack();
             return response()->json($error)->setStatusCode(409);
         } else {
@@ -296,19 +299,19 @@ class PackageController extends ApiController
     public function delete($id)
     {
         $package = Package::find($id);
-        if($package <> null){
+        if ($package <> null) {
             $this->package->deleteById($id);
         } else {
-            $error['errors']['delete'] = 'the Package selected doesn\'t exists';   
+            $error['errors']['delete'] = 'the Package selected doesn\'t exists';
             return response()->json($error)->setStatusCode(409);
         }
-        
+
         $this->index();
-        $package = Package::find($id);        
-        if($package == null){
+        $package = Package::find($id);
+        if ($package == null) {
             return array("success" => true);
         } else {
-            $error['errors']['delete'] = 'the Package has not been deleted';   
+            $error['errors']['delete'] = 'the Package has not been deleted';
             return response()->json($error)->setStatusCode(409);
         }
     }

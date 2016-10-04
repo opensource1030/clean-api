@@ -2,113 +2,77 @@
 
 namespace WA\Providers;
 
-use Illuminate\Contracts\Foundation\Application;
-
+use WA\DataStore\Address\Address;
 use WA\DataStore\Allocation\Allocation;
+use WA\DataStore\App\App;
 use WA\DataStore\Asset\Asset;
 use WA\DataStore\Attribute;
 use WA\DataStore\Carrier\Carrier;
-use WA\DataStore\Carrier\CarrierDetail;
-use WA\DataStore\Census;
+use WA\DataStore\Category\CategoryApp;
+use WA\DataStore\Category\Preset;
 use WA\DataStore\Company\Company;
 use WA\DataStore\Content\Content;
 use WA\DataStore\Device\Device;
+use WA\DataStore\Device\DeviceCarrier;
+use WA\DataStore\Device\DeviceCompany;
+use WA\DataStore\Device\DeviceImage;
+use WA\DataStore\Device\DeviceModification;
 use WA\DataStore\DeviceType\DeviceType;
-use WA\DataStore\EasyVistaHelpDesk;
 use WA\DataStore\EmailNotifications;
+use WA\DataStore\Image\Image;
 use WA\DataStore\JobStatus;
 use WA\DataStore\Location\Location;
+use WA\DataStore\Modification\Modification;
 use WA\DataStore\NotificationCategory;
+use WA\DataStore\Order\Order;
+use WA\DataStore\Package\Package;
+use WA\DataStore\Price\Price;
+use WA\DataStore\Request\Request;
 use WA\DataStore\Role\Role;
 use WA\DataStore\Service\Service;
-use WA\DataStore\SyncJob;
 use WA\DataStore\Udl\Udl;
 use WA\DataStore\UdlValue\UdlValue;
 use WA\DataStore\UdlValuePath\UdlValuePath;
 use WA\DataStore\UdlValuePathUsers\UdlValuePathUsers;
-
 use WA\DataStore\User\User;
 use WA\DataStore\UserNotifications;
-
+use WA\Repositories\Address\EloquentAddress;
+use WA\Repositories\Allocation\EloquentAllocation;
+use WA\Repositories\App\EloquentApp;
 use WA\Repositories\Asset\EloquentAsset;
 use WA\Repositories\Attribute\EloquentAttribute;
 use WA\Repositories\Carrier\EloquentCarrier;
-use WA\Repositories\Carrier\EloquentCarrierDetail;
-use WA\Repositories\Census\EloquentCensus;
+use WA\Repositories\Category\EloquentCategoryApps;
+use WA\Repositories\Category\EloquentPreset;
 use WA\Repositories\Company\EloquentCompany;
 use WA\Repositories\Content\EloquentContent;
+use WA\Repositories\Device\EloquentDevice;
+use WA\Repositories\Device\EloquentDeviceCarrier;
+use WA\Repositories\Device\EloquentDeviceCompany;
+use WA\Repositories\Device\EloquentDeviceImage;
+use WA\Repositories\Device\EloquentDeviceModification;
 use WA\Repositories\DeviceType\EloquentDeviceType;
 use WA\Repositories\EmailNotifications\EloquentEmailNotifications;
-use WA\Repositories\HelpDesk\EasyVista;
-use WA\Repositories\HelpDesk\HelpDeskCacheDecorator;
+use WA\Repositories\Image\EloquentImage;
 use WA\Repositories\JobStatus\EloquentJobStatus;
 use WA\Repositories\Location\EloquentLocation;
+use WA\Repositories\Modification\EloquentModification;
 use WA\Repositories\NotificationCategory\EloquentNotificationCategory;
+use WA\Repositories\Order\EloquentOrder;
+use WA\Repositories\Package\EloquentPackage;
+use WA\Repositories\Permission\EloquentPermission;
+use WA\Repositories\Price\EloquentPrice;
+use WA\Repositories\Request\EloquentRequest;
+use WA\Repositories\Role\EloquentRole;
 use WA\Repositories\Service\EloquentService;
-use WA\Repositories\SyncJob\EloquentSyncJob;
 use WA\Repositories\Udl\EloquentUdl;
 use WA\Repositories\UdlValue\EloquentUdlValue;
 use WA\Repositories\UdlValuePath\EloquentUdlValuePath;
 use WA\Repositories\UdlValuePathUsers\EloquentUdlValuePathUsers;
 use WA\Repositories\User\EloquentUser;
 use WA\Repositories\User\UserCacheDecorator;
-use WA\Repositories\Role\EloquentRole;
-use WA\Repositories\Permission\EloquentPermission;
-use WA\Repositories\Allocation\EloquentAllocation;
-
-use WA\Repositories\Device\EloquentDevice;
-
-
-use WA\Repositories\Image\EloquentImage;
-use WA\DataStore\Image\Image;
-
-use WA\Repositories\Device\EloquentDeviceModification;
-use WA\DataStore\Device\DeviceModification;
-
-use WA\Repositories\Device\EloquentDeviceImage;
-use WA\DataStore\Device\DeviceImage;
-
-use WA\Repositories\Device\EloquentDeviceCompany;
-use WA\DataStore\Device\DeviceCompany;
-
-use WA\Repositories\Device\EloquentDeviceCarrier;
-use WA\DataStore\Device\DeviceCarrier;
-
-use WA\Repositories\Price\EloquentPrice;
-use WA\DataStore\Price\Price;
-
-
-
-
-use WA\Repositories\App\EloquentApp;
-use WA\DataStore\App\App;
-
-use WA\Repositories\Order\EloquentOrder;
-use WA\DataStore\Order\Order;
-
-use WA\Repositories\Package\EloquentPackage;
-use WA\DataStore\Package\Package;
-
-use WA\Repositories\Address\EloquentAddress;
-use WA\DataStore\Address\Address;
-
-use WA\Repositories\Request\EloquentRequest;
-use WA\DataStore\Request\Request;
-
-use WA\Repositories\Modification\EloquentModification;
-use WA\DataStore\Modification\Modification;
-
-use WA\Repositories\Category\EloquentPreset;
-use WA\DataStore\Category\Preset;
-
-use WA\Repositories\Category\EloquentCategoryApps;
-use WA\DataStore\Category\CategoryApp;
-
-
 use WA\Repositories\UserNotifications\EloquentUserNotifications;
 use WA\Services\Cache\Cache;
-
-
 
 
 /**
@@ -224,20 +188,6 @@ trait ServiceRegistration
     /**
      * @param
      */
-    public function registerCensus()
-    {
-        app()->bind(
-            'WA\Repositories\Census\CensusInterface',
-            function () {
-                return new EloquentCensus(new Census(), app()->make('WA\Repositories\JobStatus\JobStatusInterface'));
-            }
-        );
-    }
-
-
-    /**
-     * @param
-     */
     public function registerJobStatus()
     {
         app()->bind(
@@ -312,11 +262,9 @@ trait ServiceRegistration
                 return new EloquentCompany(
                     new Company(),
                     app()->make('WA\Repositories\User\UserInterface'),
-                    app()->make('WA\Repositories\Census\CensusInterface'),
                     app()->make('WA\Repositories\Udl\UdlInterface'),
                     app()->make('WA\Repositories\Carrier\CarrierInterface'),
-                    app()->make('WA\Repositories\Device\DeviceInterface'),
-                    app()->make('WA\Repositories\Carrier\CarrierDetailInterface')
+                    app()->make('WA\Repositories\Device\DeviceInterface')
                 );
             }
         );
@@ -332,10 +280,8 @@ trait ServiceRegistration
             function () {
                 $user = new EloquentUser(
                     new User(),
-                    app()->make('WA\Repositories\Census\CensusInterface'),
                     app()->make('WA\Repositories\UdlValue\UdlValueInterface'),
-                    app()->make('WA\Repositories\Udl\UdlInterface'),
-                    app()->make('WA\Services\Form\HelpDesk\EasyVista')
+                    app()->make('WA\Repositories\Udl\UdlInterface')
                 );
                 //return $user
                 //
@@ -398,30 +344,6 @@ trait ServiceRegistration
             });
     }
 
-
-    /**
-     * @param
-     */
-    public function registerSyncJob()
-    {
-        app()->bind('WA\Repositories\SyncJob\SyncJobInterface', function ($app) {
-            return new EloquentSyncJob(
-                new SyncJob(),
-                app()->make('WA\Repositories\JobStatus\JobStatusInterface')
-            );
-        });
-    }
-
-
-    /**
-     * @param
-     */
-    public function registerCarrierDetail()
-    {
-        app()->bind('WA\Repositories\Carrier\CarrierDetailInterface', function ($app) {
-            return new EloquentCarrierDetail(new CarrierDetail());
-        });
-    }
 
     /**
      * @param
@@ -494,32 +416,6 @@ trait ServiceRegistration
             function () {
                 return new EloquentContent(new Content());
             });
-    }
-
-    /**
-     * @param Application $app
-     */
-    public function registerHelpDesk()
-    {
-
-        app()->bind(
-            'WA\Repositories\HelpDesk\HelpDeskInterface',
-            function () {
-                $helpdesk = new EasyVista(
-                    new EasyVistaHelpDesk,
-                    app()->make('WA\Repositories\Asset\AssetInterface'),
-                    app()->make('WA\Repositories\Device\DeviceInterface'),
-                    app()->make('WA\Repositories\SyncJob\SyncJobInterface'),
-                    app()->make('WA\Repositories\Employee\EmployeeInterface')
-
-                );
-
-                return new HelpDeskCacheDecorator($helpdesk,
-                    new Cache(app()->make('cache'), 'helpdesk', 10));
-            }
-
-        );
-
     }
 
     public function registerService()

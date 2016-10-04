@@ -8,16 +8,19 @@ use League\Fractal\TransformerAbstract;
 use WA\DataStore\Allocation\AllocationTransformer;
 use WA\DataStore\Asset\AssetTransformer;
 use WA\DataStore\Company\CompanyTransformer;
-use WA\DataStore\Device\DeviceTransformer;
 use WA\DataStore\Content\ContentTransformer;
-use WA\DataStore\Role\Role;
+use WA\DataStore\Device\DeviceTransformer;
 use WA\DataStore\Role\RoleTransformer;
+use WA\Helpers\Traits\Criteria;
 
 /**
  * Class UserTransformer.
  */
-class UserTransformer extends TransformerAbstract
+class UserTransformer extends TransformerAbstract 
 {
+
+    use Criteria;
+
     protected $availableIncludes = [
         'assets',
         'devices',
@@ -35,13 +38,13 @@ class UserTransformer extends TransformerAbstract
     public function transform(User $user)
     {
         return [
-            'id' => $user->id,
-            'identification' => $user->identification,
-            'email' => $user->email,
-            'username' => $user->username,
+            'id'               => $user->id,
+            'identification'   => $user->identification,
+            'email'            => $user->email,
+            'username'         => $user->username,
             'supervisor_email' => $user->supervisorEmail,
-            'first_name' => $user->firstName,
-            'last_name' => $user->lastName,
+            'first_name'       => $user->firstName,
+            'last_name'        => $user->lastName,
         ];
     }
 
@@ -93,7 +96,8 @@ class UserTransformer extends TransformerAbstract
      */
     public function includeAllocations(User $user)
     {
-        return new ResourceCollection($user->allocations, new AllocationTransformer(), 'allocations');
+        $allocations = $this->applyCriteria($user->allocations(), $this->criteria);
+        return new ResourceCollection($allocations->get(), new AllocationTransformer(), 'allocations');
     }
 
     /**
@@ -105,6 +109,5 @@ class UserTransformer extends TransformerAbstract
     {
         return new ResourceCollection($user->contents, new ContentTransformer(), 'contents');
     }
-
 
 }

@@ -6,7 +6,7 @@ interface RepositoryInterface
 {
 
     /**
-     * Get paginated census.
+     * Get paginated resource
      *
      * @param bool $paginate
      * @param int $perPage
@@ -47,4 +47,5 @@ interface RepositoryInterface
      * Get the model used on the class.
      */
     public function getModel();
+
 }

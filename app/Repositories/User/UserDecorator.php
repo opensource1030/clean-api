@@ -2,16 +2,26 @@
 
 namespace WA\Repositories\User;
 
+use WA\Repositories\AbstractRepository;
 use WA\Services\Form\User\UserForm;
 
-abstract class UserDecorator implements UserInterface
+abstract class UserDecorator extends AbstractRepository implements UserInterface
+
 {
+
     protected $nextUser;
 
     public function __construct(UserInterface $nextUser)
     {
+        parent::__construct($nextUser->getModel());
         $this->nextUser = $nextUser;
     }
+
+    public function setCriteria($criteria = [])
+    {
+        $this->nextUser->setCriteria($criteria);
+    }
+
 
     /**
      * Get paginated users.
@@ -72,8 +82,9 @@ abstract class UserDecorator implements UserInterface
      */
     public function byId($id)
     {
-        $this->nextUser->byId($id);
+        return $this->nextUser->byId($id);
     }
+
 
     /**
      * @param $companyId
@@ -89,9 +100,9 @@ abstract class UserDecorator implements UserInterface
     /**
      * Create a new User.
      *
-     * @param array        $data
-     * @param array        $udlValues
-     * @param bool         $pushToExternalService |true
+     * @param array $data
+     * @param array $udlValues
+     * @param bool $pushToExternalService |true
      * @param UserForm $userForm
      *
      * @return Object object of the employee | false

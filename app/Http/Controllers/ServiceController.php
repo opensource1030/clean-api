@@ -3,7 +3,6 @@
 namespace WA\Http\Controllers;
 
 use Illuminate\Http\Request;
-
 use WA\DataStore\Service\Service;
 use WA\DataStore\Service\ServiceTransformer;
 use WA\Repositories\Service\ServiceInterface;
@@ -47,10 +46,10 @@ class ServiceController extends ApiController
         $criteria = $this->getRequestCriteria();
         $this->service->setCriteria($criteria);
         $service = $this->service->byPage();
-      
-        $response = $this->response()->withPaginator($service, new ServiceTransformer(),['key' => 'services']);
+
+        $response = $this->response()->withPaginator($service, new ServiceTransformer(), ['key' => 'services']);
         $response = $this->applyMeta($response);
-        return $response;        
+        return $response;
     }
 
     /**
@@ -62,13 +61,16 @@ class ServiceController extends ApiController
      */
     public function show($id)
     {
-        $service = Service::find($id);
-        if($service == null){
-            $error['errors']['get'] = 'the Service selected doesn\'t exists';   
+        $criteria = $this->getRequestCriteria();
+        $this->service->setCriteria($criteria);
+        $service = $this->service->byId($id);
+
+        if ($service == null) {
+            $error['errors']['get'] = 'the Service selected doesn\'t exists';
             return response()->json($error)->setStatusCode(409);
         }
 
-        return $this->response()->item($service, new ServiceTransformer(),['key' => 'services']);
+        return $this->response()->item($service, new ServiceTransformer(), ['key' => 'services']);
     }
 
     /**
@@ -77,17 +79,17 @@ class ServiceController extends ApiController
      * @param $id
      * @return \Dingo\Api\Http\Response
      */
-    public function store($id, Request $request)   
+    public function store($id, Request $request)
     {
         /*
          * Checks if Json has data, data-type & data-attributes.
          */
-        if(!$this->isJsonCorrect($request, 'services')){
+        if (!$this->isJsonCorrect($request, 'services')) {
             $error['errors']['json'] = 'Json is Invalid';
             return response()->json($error)->setStatusCode(409);
         } else {
             $data = $request->all()['data'];
-            $dataAttributes = $data['attributes'];           
+            $dataAttributes = $data['attributes'];
         }
 
         $dataAttributes['id'] = $id;
@@ -102,12 +104,12 @@ class ServiceController extends ApiController
      */
     public function create(Request $request)
     {
-        if(!$this->isJsonCorrect($request, 'services')){
+        if (!$this->isJsonCorrect($request, 'services')) {
             $error['errors']['json'] = 'Json is Invalid';
             return response()->json($error)->setStatusCode(409);
         } else {
             $data = $request->all()['data'];
-            $dataAttributes = $data['attributes'];           
+            $dataAttributes = $data['attributes'];
         }
 
         $service = $this->service->create($dataAttributes);
@@ -122,19 +124,19 @@ class ServiceController extends ApiController
     public function delete($id)
     {
         $service = Service::find($id);
-        if($service <> null){
+        if ($service <> null) {
             $this->service->deleteById($id);
         } else {
-            $error['errors']['delete'] = 'the service selected doesn\'t exists';   
+            $error['errors']['delete'] = 'the service selected doesn\'t exists';
             return response()->json($error)->setStatusCode(409);
         }
-        
+
         $this->index();
-        $service = Service::find($id);        
-        if($service == null){
+        $service = Service::find($id);
+        if ($service == null) {
             return array("success" => true);
         } else {
-            $error['errors']['delete'] = 'the service has not been deleted';   
+            $error['errors']['delete'] = 'the service has not been deleted';
             return response()->json($error)->setStatusCode(409);
         }
     }

@@ -40,7 +40,7 @@ class MainHandler extends BaseHandler
      * @param ProcessLogRepositoryInterface    $processLog
      * @param DumpExceptionRepositoryInterface $dumpExceptions
      */
-    
+
     public function __construct(UserForm $userForm) {
         $this->userForm = $userForm;
     }

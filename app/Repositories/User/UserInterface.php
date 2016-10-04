@@ -3,7 +3,6 @@
 namespace WA\Repositories\User;
 
 use WA\Repositories\RepositoryInterface;
-use WA\Services\Form\User\UserForm;
 
 
 interface UserInterface extends RepositoryInterface
@@ -13,16 +12,12 @@ interface UserInterface extends RepositoryInterface
      *
      * @param array        $data
      * @param array        $udlValues
-     * @param bool         $pushToExternalService |true
-     * @param UserForm $userForm
      *
      * @return Object object of the employee | false
      */
     public function create(
         array $data,
-        array $udlValues = [],
-        $pushToExternalService = false,
-        UserForm $userForm = null
+        array $udlValues = []
     );
 
     /**
@@ -130,16 +125,6 @@ interface UserInterface extends RepositoryInterface
     public function hasDevice($userId, $deviceId);
 
     /**
-     * Get User information by the census.
-     *
-     * @param int $censusId
-     * @param int $companyId
-     *
-     * @return Object of employee information
-     */
-    public function byCensus($censusId, $companyId);
-
-    /**
      * Update an employee's supervisor.
      *
      * @param $userEmail
@@ -165,18 +150,6 @@ interface UserInterface extends RepositoryInterface
      * @return Object of employee information
      */
     public function byToken($token);
-
-    /**
-     * Users updated by census.
-     *
-     * @param      $censusId
-     * @param int  $page
-     * @param int  $limit
-     * @param bool $all
-     *
-     * @return mixed
-     */
-    public function updatedByCensus($censusId, $page = 1, $limit = 10, $all = true);
 
     /**
      * Get the transformer used by this model.

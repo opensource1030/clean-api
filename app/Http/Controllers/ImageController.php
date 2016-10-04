@@ -2,18 +2,12 @@
 
 namespace WA\Http\Controllers;
 
-use Illuminate\Http\Response;
-use Request;
-
-use WA\DataStore\Image\ImageTransformer;
-use WA\DataStore\Image\Image;
-use WA\Repositories\Image\ImageInterface;
-
 use Illuminate\Support\Facades\Storage;
-use League\Flysystem\Filesystem;
 use Intervention\Image\ImageManager;
-
-use DB;
+use Request;
+use WA\DataStore\Image\Image;
+use WA\DataStore\Image\ImageTransformer;
+use WA\Repositories\Image\ImageInterface;
 
 /**
  * Image resource.
@@ -45,13 +39,14 @@ class ImageController extends ApiController
      * Get a payload of all Image
      *
      */
-    public function index() {
+    public function index()
+    {
 
         $criteria = $this->getRequestCriteria();
         $this->image->setCriteria($criteria);
         $image = $this->image->byPage();
-      
-        $response = $this->response()->withPaginator($image, new ImageTransformer(),['key' => 'images']);
+
+        $response = $this->response()->withPaginator($image, new ImageTransformer(), ['key' => 'images']);
         $response = $this->applyMeta($response);
         return $response;
     }
@@ -63,29 +58,34 @@ class ImageController extends ApiController
      *
      * @Get("/{id}")
      */
-    public function show($id) {
+    public function show($id)
+    {
 
-        $image = Image::find($id);
-        if($image == null){
-            $error['errors']['get'] = 'the Image selected doesn\'t exists';   
+        $criteria = $this->getRequestCriteria();
+        $this->image->setCriteria($criteria);
+        $image = $this->image->byId($id);
+
+        if ($image == null) {
+            $error['errors']['get'] = 'the Image selected doesn\'t exists';
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
-        $path = $image->filename.'.'.$image->extension;
+        $path = $image->filename . '.' . $image->extension;
 
         $value = Storage::get($path);
 
         return response($value, 200)->header('Content-Type', $image->mimeType);
     }
-   
+
     /**
      * Create a new Image
      *
      * @return \Dingo\Api\Http\Response
      */
-    public function create() {        
+    public function create()
+    {
 
-        try{
+        try {
             $file = Request::file('filename');
 
             $imageFile['originalName'] = $file->getClientOriginalName();
@@ -93,22 +93,23 @@ class ImageController extends ApiController
             $imageFile['mimeType'] = $file->getClientMimeType();
             $extension = $imageFile['extension'] = $file->getClientOriginalExtension();
             $imageFile['size'] = $file->getClientSize();
-            $imageFile['url'] = $filename.'.'.$extension;
+            $imageFile['url'] = $filename . '.' . $extension;
 
-            $value = Storage::put($filename.'.'.$extension, file_get_contents($file));
+            $value = Storage::put($filename . '.' . $extension, file_get_contents($file));
 
-            if($value){
+            if ($value) {
                 $image = $this->image->create($imageFile);
             } else {
                 Storage::delete($file);
-            }   
+            }
         } catch (\Exception $e) {
             $error['errors']['image'] = 'the Image has not been created';
             $error['errors']['imageMessage'] = $e->getMessage();
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
-        return $this->response()->item($image, new ImageTransformer(),['key' => 'images'])->setStatusCode($this->status_codes['created']);
+        return $this->response()->item($image, new ImageTransformer(),
+            ['key' => 'images'])->setStatusCode($this->status_codes['created']);
     }
 
     /**
@@ -116,23 +117,24 @@ class ImageController extends ApiController
      *
      * @param $id
      */
-    public function delete($id) {
+    public function delete($id)
+    {
 
         $image = Image::find($id);
-        if($image <> null){
+        if ($image <> null) {
             $this->image->deleteById($id);
-            Storage::delete($path = $image->filename.'.'.$image->extension);
+            Storage::delete($path = $image->filename . '.' . $image->extension);
         } else {
-            $error['errors']['delete'] = 'the Image selected doesn\'t exists';   
+            $error['errors']['delete'] = 'the Image selected doesn\'t exists';
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
-        
+
         $this->index();
-        $image = Image::find($id);        
-        if($image == null){
+        $image = Image::find($id);
+        if ($image == null) {
             return array("success" => true);
         } else {
-            $error['errors']['delete'] = 'the Image has not been deleted';   
+            $error['errors']['delete'] = 'the Image has not been deleted';
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
     }

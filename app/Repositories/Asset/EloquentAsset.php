@@ -47,6 +47,7 @@ class EloquentAsset extends AbstractRepository implements AssetInterface
         UserInterface $user,
         CarrierInterface $carrier
     ) {
+        parent::__construct($model);
         $this->model = $model;
         $this->jobStatus = $jobStatus;
         $this->user = $user;
@@ -236,12 +237,6 @@ class EloquentAsset extends AbstractRepository implements AssetInterface
     private function setAsValue($varName, array $bucket, $model)
     {
         return !empty($bucket[$varName]) ? $bucket[$varName] : $model->identification;
-    }
-
-
-    public function getTransformer()
-    {
-        return $this->model->getTransformer();
     }
 
     /**

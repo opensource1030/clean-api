@@ -4,30 +4,23 @@ namespace WA\Repositories\User;
 
 use Illuminate\Database\Eloquent\Model;
 use Log;
-use DB;
-use Webpatser\Uuid\Uuid;
 use WA\DataStore\User\User;
 use WA\DataStore\User\UserTransformer;
 use WA\Repositories\AbstractRepository;
-use WA\Repositories\Census\CensusInterface;
 use WA\Repositories\Company\CompanyInterface;
 use WA\Repositories\Udl\UdlInterface;
 use WA\Repositories\UdlValue\UdlValueInterface;
 use WA\Repositories\UdlValuePath\UdlValuePathInterface;
-use WA\Services\Form\User\UserForm;
-use WA\Services\Form\HelpDesk\EasyVista as ExternalHelpDesk;
+use Webpatser\Uuid\Uuid;
 
 class EloquentUser extends AbstractRepository implements UserInterface
 {
+
     /**
      * @var \Illuminate\Database\Eloquent\Model
      */
     protected $model;
 
-    /**
-     * @var \WA\Repositories\Census\CensusInterface
-     */
-    protected $census;
 
     /**
      * @var \WA\Repositories\UdlValue\UdlValueInterface
@@ -40,48 +33,35 @@ class EloquentUser extends AbstractRepository implements UserInterface
     protected $udl;
 
     /**
-     * @var ExternalHelpDesk
-     */
-    protected $externalHelpDeskService;
-
-    /**
-     * @param Model             $model
-     * @param CensusInterface   $census
+     * @param Model $model
      * @param UdlValueInterface $udlValue
-     * @param UdlInterface      $udl
-     * @param ExternalHelpDesk  $externalHelpDeskService
+     * @param UdlInterface $udl
      */
     public function __construct(
         Model $model,
-        CensusInterface $census,
         UdlValueInterface $udlValue,
-        UdlInterface $udl,
-        ExternalHelpDesk $externalHelpDeskService
+        UdlInterface $udl
     ) {
-
+        parent::__construct($model);
         $this->model = $model;
-        $this->census = $census;
         $this->udl = $udl;
         $this->udlValue = $udlValue;
-//        $this->device = $device;
-        $this->externalHelpDeskService = $externalHelpDeskService;
-
     }
 
     /**
-     * Get paginated census.
+     * Get paginated user.
      *
-     * @param int  $perPage
+     * @param int $perPage
      * @param bool $paginate
      *
      * @return Object as Collection of object information, | Paginator Collection if pagination is true (default)
      */
     public function byPage($paginate = true, $perPage = 25)
     {
-        $model = $this->model;
+        $query = $this->applyCriteria($this->model);
 
         if (!$paginate) {
-            $ownTable = $model->getTable();
+            $ownTable = $query->getTable();
 
             // manually run the queries
             $response = \DB::table($ownTable)
@@ -100,16 +80,16 @@ class EloquentUser extends AbstractRepository implements UserInterface
             return $response;
         }
 
-        return $this->model->paginate($perPage);
+        return $query->paginate($perPage);
     }
 
     /**
      * Get the object by search.
      *
      * @param string $query
-     * @param int    $page
-     * @param int    $limit
-     * @param bool   $paginate
+     * @param int $page
+     * @param int $limit
+     * @param bool $paginate
      *
      * @return \StdClass
      */
@@ -155,17 +135,17 @@ class EloquentUser extends AbstractRepository implements UserInterface
     }
 
     /**
-     * @param int  $id
+     * @param int $id
      * @param bool $active
      *
      * @return Object Object of employee information
      */
     public function byId($id, $active = null)
     {
-        $model = $this->model;
+        $query = $this->applyCriteria($this->model);
 
         if (!empty($active)) {
-            $model = $model->where('isActive', (int)$active);
+            $query = $query->where('isActive', (int)$active);
         }
 
         $response = null;
@@ -173,18 +153,18 @@ class EloquentUser extends AbstractRepository implements UserInterface
         // We want to allow for the passing of  multiple ID (for smarted API)
         if (is_array($id)) {
             if (count($id) == 1) {
-                $response = $model->where('id', $id[0])->first();
+                $response = $query->where('id', $id[0])->first();
 
                 return $response;
             } else {
-                $response = $model->whereIn('id', $id)
+                $response = $query->whereIn('id', $id)
                     ->get();
 
                 return $response;
             }
         }
 
-        $em = $model->where('id', $id)->first();
+        $em = $query->where('id', $id)->first();
 
         return $em;
     }
@@ -249,21 +229,16 @@ class EloquentUser extends AbstractRepository implements UserInterface
     /**
      * Create a new User.
      *
-     * @param array        $data
-     * @param array        $udlValues
-     * @param bool         $pushToExternalService |true
-     * @param UserForm $userForm
+     * @param array $data
+     * @param array $udlValues
      *
      * @return User | false
      */
     public function create(
         array $data,
-        array $udlValues = [],
-        $pushToExternalService = false,
-        UserForm $userForm = null
+        array $udlValues = []
     ) {
 
-        $userForm = $userForm ?: app()->make('WA\Services\Form\User\UserForm');
         $tmp_password = null;
 
         if (isset($data['udlValues'])) {
@@ -303,36 +278,36 @@ class EloquentUser extends AbstractRepository implements UserInterface
         }
 
         $userData = [
-            'supervisorEmail' => $sup_email = isset($data['supervisorEmail']) ? strtolower($data['supervisorEmail']) : null,
-            'supervisorId' => isset($data['supervisorId']) ? $data['supervisorId'] : null,
-            'firstName' => isset($data['firstName']) ? $data['firstName'] : null,
-            'alternateFirstName' => isset($data['alternateFirstName']) ? $data['alternateFirstName'] : null,
-            'lastName' => isset($data['lastName']) ? $data['lastName'] : null,
-            'companyId' => isset($data['companyId']) ? $data['companyId'] : 0,
-            'companyExternalId' => isset($data['companyExternalId']) ? $data['companyExternalId'] : $this->getCompanyExternalId($data['companyId']),
+            'supervisorEmail'       => $sup_email = isset($data['supervisorEmail']) ? strtolower($data['supervisorEmail']) : null,
+            'supervisorId'          => isset($data['supervisorId']) ? $data['supervisorId'] : null,
+            'firstName'             => isset($data['firstName']) ? $data['firstName'] : null,
+            'alternateFirstName'    => isset($data['alternateFirstName']) ? $data['alternateFirstName'] : null,
+            'lastName'              => isset($data['lastName']) ? $data['lastName'] : null,
+            'companyId'             => isset($data['companyId']) ? $data['companyId'] : 0,
+            'companyExternalId'     => isset($data['companyExternalId']) ? $data['companyExternalId'] : $this->getCompanyExternalId($data['companyId']),
             'companyUserIdentifier' => isset($data['companyUserIdentifier']) ?
                 $id = $data['companyUserIdentifier'] :
                 $id = $data['identification'],
-            'isActive' => isset($data['isActive']) ? $data['isActive'] : 0,
-            'syncId' => isset($data['syncId']) ? $data['syncId'] : null,
-            'defaultLocationId' => isset($data['defaultLocationId']) ? $data['defaultLocationId'] : 236, //US
-            'defaultLang' => isset($data['defaultLang']) ? $data['defaultLang'] : 'en',
-            'email' => strtolower(isset($data['email']) ? strtolower($data['email']) : null),
-            'alternateEmail' => strtolower(isset($data['alternateEmail']) ? strtolower($data['alternateEmail']) : null),
-            'password' => $pwd = isset($data['password']) ? bcrypt($data['password']) : $tmp_password,
+            'isActive'              => isset($data['isActive']) ? $data['isActive'] : 0,
+            'syncId'                => isset($data['syncId']) ? $data['syncId'] : null,
+            'defaultLocationId'     => isset($data['defaultLocationId']) ? $data['defaultLocationId'] : 236, //US
+            'defaultLang'           => isset($data['defaultLang']) ? $data['defaultLang'] : 'en',
+            'email'                 => strtolower(isset($data['email']) ? strtolower($data['email']) : null),
+            'alternateEmail'        => strtolower(isset($data['alternateEmail']) ? strtolower($data['alternateEmail']) : null),
+            'password'              => $pwd = isset($data['password']) ? bcrypt($data['password']) : $tmp_password,
             'password_confirmation' => $pwd,
-            'confirmed' => isset($data['confirmed']) ? $data['confirmed'] : 0,
-            'username' => isset($data['username']) ? $data['username'] : null,
-            'confirmation_code' => md5(uniqid(mt_rand(), true)),
-            'identification' => $data['identification'],
-            'notify' => isset($data['notify']) ? $data['notify'] : 0,
-            'isSupervisor' => isset($data['isSupervisor']) ? $data['isSupervisor'] : 0,
-            'isValidator' => isset($data['isValidator']) ? $data['isValidator'] : 0,
-            'notes' => isset($data['notes']) ? $data['notes'] : '',
-            'level' => isset($data['level']) ? $data['level'] : '',
-            'evDepartmentId' => ($pushToExternalService && isset($data['evDepartmentId'])) ? $data['evDepartmentId'] : '',
-            'approverId' => isset($data['approverId']) && isset($data['approverId']) ? $data['approverId'] : 0,
-            'externalSupervisorId' => $this->getExternalSupervisorId($sup_email)
+            'confirmed'             => isset($data['confirmed']) ? $data['confirmed'] : 0,
+            'username'              => isset($data['username']) ? $data['username'] : null,
+            'confirmation_code'     => md5(uniqid(mt_rand(), true)),
+            'identification'        => $data['identification'],
+            'notify'                => isset($data['notify']) ? $data['notify'] : 0,
+            'isSupervisor'          => isset($data['isSupervisor']) ? $data['isSupervisor'] : 0,
+            'isValidator'           => isset($data['isValidator']) ? $data['isValidator'] : 0,
+            'notes'                 => isset($data['notes']) ? $data['notes'] : '',
+            'level'                 => isset($data['level']) ? $data['level'] : '',
+            'evDepartmentId'        => (isset($data['evDepartmentId'])) ? $data['evDepartmentId'] : '',
+            'approverId'            => isset($data['approverId']) && isset($data['approverId']) ? $data['approverId'] : 0,
+            'externalSupervisorId'  => $this->getExternalSupervisorId($sup_email)
 
         ];
 
@@ -348,24 +323,21 @@ class EloquentUser extends AbstractRepository implements UserInterface
             }*/
 
 
-            if(!empty($data['user_roles']) && !is_null($user->id)){
-                foreach($data['user_roles'] as $role)
-                {
-                    $user->roles()->attach($user->id, ['role_id' => (int)$role] );
+            if (!empty($data['user_roles']) && !is_null($user->id)) {
+                foreach ($data['user_roles'] as $role) {
+                    $user->roles()->attach($user->id, ['role_id' => (int)$role]);
                     $user->save();
                 }
-            }else{
-                if(!is_null($user->id))
-                {
-                    $user->roles()->attach($user->id, ['role_id' => 5] );
+            } else {
+                if (!is_null($user->id)) {
+                    $user->roles()->attach($user->id, ['role_id' => 5]);
                     $user->save();
                 }
             }
 
             //Save Udl Values
-            if(!empty($data['udls']) && !is_null($user->id)){
-                foreach($data['udls'] as $udl)
-                {
+            if (!empty($data['udls']) && !is_null($user->id)) {
+                foreach ($data['udls'] as $udl) {
                     foreach ($udl as $udl_id => $udl_value) {
 
                         $udlValueId = $udl_value['value'];
@@ -375,20 +347,7 @@ class EloquentUser extends AbstractRepository implements UserInterface
                         continue;
                     }
 
-                    $user->udlValues()->attach($user->id,['udlValueId' => (int)$udlValueId]);
-                }
-            }
-
-            if ($pushToExternalService) {
-                if (!$this->externalHelpDeskService->createUser(['input' => $userData])) {
-
-                    if (!isset($userData['syncId'])) {
-                        $userForm->notify('error', 'Could not create employee in EasyVista. Try again later');
-                    }
-
-                    $this->deleteById($user->id, true);
-
-                    return false;
+                    $user->udlValues()->attach($user->id, ['udlValueId' => (int)$udlValueId]);
                 }
             }
 
@@ -453,22 +412,15 @@ class EloquentUser extends AbstractRepository implements UserInterface
     /**
      * Update a new employee.
      *
-     * @param array        $data
-     * @param array        $udlValues
-     * @param bool         $pushToExternalService |true
-     * @param UserForm $userForm
+     * @param array $data
+     * @param array $udlValues
      *
      * @return bool
      */
     public function update(
         array $data,
-        array $udlValues = [],
-        $pushToExternalService = true,
-        UserForm $userForm = null
+        array $udlValues = []
     ) {
-        $userForm = $userForm ?: app()->make('WA\Services\Form\User\UserForm');
-        $userForm = $userForm ?: app()->make('WA\Services\Form\User\UserForm');
-
 
         if (empty($udlValues) && (isset($data['udlValues']) && !empty($data['udlValues']))) {
             $udlValues = $this->compactUdlValues($data['udlValues'], $data['companyId']);
@@ -516,55 +468,31 @@ class EloquentUser extends AbstractRepository implements UserInterface
         $data['isValidator'] = $user->isValidator;
         $user->syncId = isset($data['syncId']) ? $data['syncId'] : $user->syncId;
 
-        // let's make sure this are properly filled before pushing to external service
-        if ($pushToExternalService) {
-            $user_info = [
-                'firstName' => $data['firstName'],
-                'lastName' => $data['lastName'],
-                'companyUserIdentifier' => $data['companyUserIdentifier'],
-                'email' => $data['email']
-            ];
 
-            if (empty($data['departmentId'])) {
-                $data['departmentId'] = $userForm->getDepartmentPathId($udlValues, 18, $user_info, false,
-                    $data['companyId']); //18 => adminID
-            }
-
-            if (empty($data['evDepartmentId'])) {
-                $data['evDepartmentId'] = $userForm->getDepartmentPathId($udlValues, 18, $user_info, true,
-                    $data['companyId']); //18 => adminID
-            }
-
-        }
-
-        $data['approverId'] = ($pushToExternalService) ? 0 : 0;
+        $data['approverId'] = 0;
 
         if (!$user->save()) {
             return false;
         };
 
-        $this->externalHelpDeskService->updateUser(['input' => $data, 'employee' => $user]);
-
-       /* if (!empty($udlValues)) {
-            $this->syncUDLValues($user, $udlValues);
-        }*/
+        /* if (!empty($udlValues)) {
+             $this->syncUDLValues($user, $udlValues);
+         }*/
 
 
-       //Save User Roles
+        //Save User Roles
         $user->roles()->detach();
-        if(!empty($data['user_roles']) && !is_null($user->id)){
-            foreach($data['user_roles'] as $role)
-            {
-                $user->roles()->attach($user->id, ['role_id' => (int)$role] );
+        if (!empty($data['user_roles']) && !is_null($user->id)) {
+            foreach ($data['user_roles'] as $role) {
+                $user->roles()->attach($user->id, ['role_id' => (int)$role]);
                 $user->save();
             }
         }
 
         //Save Udl Values
         $user->udlValues()->detach();
-        if(!empty($data['udls']) && !is_null($user->id)){
-            foreach($data['udls'] as $udl)
-            {
+        if (!empty($data['udls']) && !is_null($user->id)) {
+            foreach ($data['udls'] as $udl) {
                 foreach ($udl as $udl_id => $udl_value) {
 
                     $udlValueId = $udl_value['value'];
@@ -574,7 +502,7 @@ class EloquentUser extends AbstractRepository implements UserInterface
                     continue;
                 }
 
-                $user->udlValues()->attach($user->id,['udlValueId' => (int)$udlValueId]);
+                $user->udlValues()->attach($user->id, ['udlValueId' => (int)$udlValueId]);
             }
         }
 
@@ -635,23 +563,6 @@ class EloquentUser extends AbstractRepository implements UserInterface
         return true;
     }
 
-    /**
-     * Get User information by the census.
-     *
-     * @param int $censusId
-     * @param int $companyId |null
-     *
-     * @return Object of employee information
-     */
-    public function byCensus($censusId, $companyId = null)
-    {
-        return
-            $this->model->whereHas('census', function ($q) use ($censusId, $companyId) {
-                $q->where('companyId', $companyId)
-                    ->where('id', $censusId);
-            })->get();
-
-    }
 
     /**
      * Get employee information by supervisor email.
@@ -742,41 +653,6 @@ class EloquentUser extends AbstractRepository implements UserInterface
             ->get();
     }
 
-    /**
-     * Users updated by census.
-     *
-     * @param      $censusId
-     * @param int  $page
-     * @param int  $limit
-     * @param bool $paginate
-     *
-     * @return mixed
-     */
-    public function updatedByCensus($censusId, $page = 1, $limit = 10, $paginate = true)
-    {
-        $result = new \StdClass();
-        $result->page = $page;
-        $result->limit = $limit;
-        $result->totalItems = 0;
-        $result->items = [];
-
-        $models = $this->model
-            ->where('censusId', $censusId)
-            ->orderBy('lastName', 'DESC');
-
-        if ($paginate) {
-            $models->skip($limit * ($page - 1))
-                ->take($limit)
-                ->get();
-        }
-
-        $result->totalItems = $this->totalUsers(['censusId', $censusId]);
-
-        $result->items = $models->get();
-
-        return $result;
-    }
-
     protected function totalUsers(array $whereClause = [])
     {
         $model = $this->model->where('isActive', 1);
@@ -846,7 +722,7 @@ class EloquentUser extends AbstractRepository implements UserInterface
     /**
      * Delete an Users.
      *
-     * @param int  $id
+     * @param int $id
      * @param bool $soft true soft deletes
      *
      * @return bool
@@ -872,16 +748,16 @@ class EloquentUser extends AbstractRepository implements UserInterface
     public function getMappableFields()
     {
         return [
-            'Main Email' => 'email',
-            'Alternate Email' => 'alternateEmail',
+            'Main Email'             => 'email',
+            'Alternate Email'        => 'alternateEmail',
 //            'User Name' => 'username',
-            'First Name' => 'firstName',
-            'Alternate First Name' => 'alternateFirstName',
-            'Last Name' => 'lastName',
-            'Supervisor Email' => 'supervisorEmail',
+            'First Name'             => 'firstName',
+            'Alternate First Name'   => 'alternateFirstName',
+            'Last Name'              => 'lastName',
+            'Supervisor Email'       => 'supervisorEmail',
             'Company Identification' => 'companyUserIdentifier',
-            'Location' => 'defaultLocationId',
-            'Notes' => 'notes',
+            'Location'               => 'defaultLocationId',
+            'Notes'                  => 'notes',
         ];
     }
 
@@ -982,7 +858,7 @@ class EloquentUser extends AbstractRepository implements UserInterface
      * Compact UDL values into a format suitable to easily gettting the UDL/Value/Paths
      *
      * @param array $udlValues
-     * @param int   $companyId
+     * @param int $companyId
      *
      * @return array
      */

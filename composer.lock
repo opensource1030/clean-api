@@ -4,8 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "5990c3b7ce4ab980e272decbf4dd3429",
-    "content-hash": "a3e14cbac5375aec88294356051ecb75",
+    "content-hash": "8dd8532fd729b9a3082f591c38141fc4",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -864,12 +863,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/guzzle.git",
-                "reference": "f314080006142bc05a8a92ee0863751acaa7238f"
+                "reference": "a0d75173c8553b4281c8319333d9ee90e4656ed1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/f314080006142bc05a8a92ee0863751acaa7238f",
-                "reference": "f314080006142bc05a8a92ee0863751acaa7238f",
+                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/a0d75173c8553b4281c8319333d9ee90e4656ed1",
+                "reference": "a0d75173c8553b4281c8319333d9ee90e4656ed1",
                 "shasum": ""
             },
             "require": {
@@ -918,7 +917,7 @@
                 "rest",
                 "web service"
             ],
-            "time": "2016-09-19 09:50:28"
+            "time": "2016-09-22 14:23:55"
         },
         {
             "name": "guzzlehttp/promises",
@@ -1416,12 +1415,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/database.git",
-                "reference": "4a70c0598ed41d18a99f23c12be4e22b5006d30a"
+                "reference": "a0bb57a2b7140b26d149d127aae2bc66ca4e9a8d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/database/zipball/4a70c0598ed41d18a99f23c12be4e22b5006d30a",
-                "reference": "4a70c0598ed41d18a99f23c12be4e22b5006d30a",
+                "url": "https://api.github.com/repos/illuminate/database/zipball/a0bb57a2b7140b26d149d127aae2bc66ca4e9a8d",
+                "reference": "a0bb57a2b7140b26d149d127aae2bc66ca4e9a8d",
                 "shasum": ""
             },
             "require": {
@@ -1468,7 +1467,7 @@
                 "orm",
                 "sql"
             ],
-            "time": "2016-08-25 07:01:20"
+            "time": "2016-09-28 15:22:37"
         },
         {
             "name": "illuminate/encryption",
@@ -2625,12 +2624,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Seldaek/monolog.git",
-                "reference": "dacec2fe1ead778f90d0149caa8f047a0856571b"
+                "reference": "7f135e9ed0d5c3b6102f3df5d5fd258c6b746afc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/dacec2fe1ead778f90d0149caa8f047a0856571b",
-                "reference": "dacec2fe1ead778f90d0149caa8f047a0856571b",
+                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/7f135e9ed0d5c3b6102f3df5d5fd258c6b746afc",
+                "reference": "7f135e9ed0d5c3b6102f3df5d5fd258c6b746afc",
                 "shasum": ""
             },
             "require": {
@@ -2641,7 +2640,7 @@
                 "psr/log-implementation": "1.0.0"
             },
             "require-dev": {
-                "aws/aws-sdk-php": "^2.4.9",
+                "aws/aws-sdk-php": "^2.4.9 || ^3.0",
                 "doctrine/couchdb": "~1.0@dev",
                 "graylog2/gelf-php": "~1.0",
                 "jakub-onderka/php-parallel-lint": "0.9",
@@ -2695,7 +2694,7 @@
                 "logging",
                 "psr-3"
             ],
-            "time": "2016-09-18 16:07:11"
+            "time": "2016-09-29 07:29:30"
         },
         {
             "name": "mtdowling/cron-expression",
@@ -3056,16 +3055,16 @@
         },
         {
             "name": "phpdocumentor/reflection-docblock",
-            "version": "3.1.0",
+            "version": "3.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpDocumentor/ReflectionDocBlock.git",
-                "reference": "9270140b940ff02e58ec577c237274e92cd40cdd"
+                "reference": "8331b5efe816ae05461b7ca1e721c01b46bafb3e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpDocumentor/ReflectionDocBlock/zipball/9270140b940ff02e58ec577c237274e92cd40cdd",
-                "reference": "9270140b940ff02e58ec577c237274e92cd40cdd",
+                "url": "https://api.github.com/repos/phpDocumentor/ReflectionDocBlock/zipball/8331b5efe816ae05461b7ca1e721c01b46bafb3e",
+                "reference": "8331b5efe816ae05461b7ca1e721c01b46bafb3e",
                 "shasum": ""
             },
             "require": {
@@ -3097,7 +3096,7 @@
                 }
             ],
             "description": "With this component, a library can provide support for annotations via DocBlocks or otherwise retrieve information that is embedded in a DocBlock.",
-            "time": "2016-06-10 09:48:41"
+            "time": "2016-09-30 07:12:33"
         },
         {
             "name": "phpdocumentor/type-resolver",
@@ -3202,12 +3201,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-fig/log.git",
-                "reference": "5277094ed527a1c4477177d102fe4c53551953e0"
+                "reference": "607ce1d4005af32dd866c4a402459494c168d555"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/log/zipball/5277094ed527a1c4477177d102fe4c53551953e0",
-                "reference": "5277094ed527a1c4477177d102fe4c53551953e0",
+                "url": "https://api.github.com/repos/php-fig/log/zipball/607ce1d4005af32dd866c4a402459494c168d555",
+                "reference": "607ce1d4005af32dd866c4a402459494c168d555",
                 "shasum": ""
             },
             "require": {
@@ -3241,7 +3240,7 @@
                 "psr",
                 "psr-3"
             ],
-            "time": "2016-09-19 16:02:08"
+            "time": "2016-09-25 13:41:54"
         },
         {
             "name": "sofa/eloquence",
@@ -3521,12 +3520,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/event-dispatcher.git",
-                "reference": "9558911a4071ace3523c70ba4d0c6315b567f460"
+                "reference": "f6118190787912bc15de082ee9664eb0876a5b8b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/event-dispatcher/zipball/9558911a4071ace3523c70ba4d0c6315b567f460",
-                "reference": "9558911a4071ace3523c70ba4d0c6315b567f460",
+                "url": "https://api.github.com/repos/symfony/event-dispatcher/zipball/f6118190787912bc15de082ee9664eb0876a5b8b",
+                "reference": "f6118190787912bc15de082ee9664eb0876a5b8b",
                 "shasum": ""
             },
             "require": {
@@ -3573,7 +3572,7 @@
             ],
             "description": "Symfony EventDispatcher Component",
             "homepage": "https://symfony.com",
-            "time": "2016-09-17 14:23:22"
+            "time": "2016-09-20 15:12:39"
         },
         {
             "name": "symfony/finder",
@@ -4646,12 +4645,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpspec/prophecy.git",
-                "reference": "d883566b83ae601a50b38b249e92450dc57cf875"
+                "reference": "c1016e6501312201ede77e3911748024d78cdd31"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/d3be8294e4729abcf8e6e207f25cdcb299cd1c88",
-                "reference": "d3be8294e4729abcf8e6e207f25cdcb299cd1c88",
+                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/c1016e6501312201ede77e3911748024d78cdd31",
+                "reference": "c1016e6501312201ede77e3911748024d78cdd31",
                 "shasum": ""
             },
             "require": {
@@ -4662,7 +4661,8 @@
                 "sebastian/recursion-context": "^1.0"
             },
             "require-dev": {
-                "phpspec/phpspec": "^2.0"
+                "phpspec/phpspec": "^2.0",
+                "phpunit/phpunit": "^4.8 || ^5"
             },
             "type": "library",
             "extra": {
@@ -4700,9 +4700,7 @@
                 "spy",
                 "stub"
             ],
-
-            "time": "2016-09-21 19:41:08"
-
+            "time": "2016-09-28 11:19:12"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -4954,12 +4952,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "3fcd103a28a34f2bc0835aee37b8eeaa78c12ebf"
+                "reference": "35f376bf4ce6d7cdce04833883a2069d11eccc71"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/3fcd103a28a34f2bc0835aee37b8eeaa78c12ebf",
-                "reference": "3fcd103a28a34f2bc0835aee37b8eeaa78c12ebf",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/35f376bf4ce6d7cdce04833883a2069d11eccc71",
+                "reference": "35f376bf4ce6d7cdce04833883a2069d11eccc71",
                 "shasum": ""
             },
             "require": {
@@ -5021,7 +5019,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2016-08-28 06:17:24"
+            "time": "2016-09-22 17:38:11"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
@@ -5078,6 +5076,57 @@
                 "xunit"
             ],
             "time": "2016-05-26 06:15:11"
+        },
+        {
+            "name": "raveren/kint",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/raveren/kint.git",
+                "reference": "1368541570b47b6d36dd6705105d70f78d69d1ca"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/raveren/kint/zipball/1368541570b47b6d36dd6705105d70f78d69d1ca",
+                "reference": "1368541570b47b6d36dd6705105d70f78d69d1ca",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.1.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "files": [
+                    "Kint.class.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Rokas Šleinius",
+                    "homepage": "https://github.com/raveren"
+                },
+                {
+                    "name": "Contributors",
+                    "homepage": "https://github.com/raveren/kint/contributors"
+                }
+            ],
+            "description": "Kint - debugging helper for PHP developers",
+            "homepage": "https://github.com/raveren/kint",
+            "keywords": [
+                "debug",
+                "kint",
+                "php"
+            ],
+            "time": "2016-06-17 11:38:25"
         },
         {
             "name": "satooshi/php-coveralls",
@@ -5717,12 +5766,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/config.git",
-                "reference": "dd9921cab28b9605a0693d04e851d86e83b4a0fa"
+                "reference": "ffb34cb37ffe11a2e218e2025960d03549924414"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/config/zipball/dd9921cab28b9605a0693d04e851d86e83b4a0fa",
-                "reference": "dd9921cab28b9605a0693d04e851d86e83b4a0fa",
+                "url": "https://api.github.com/repos/symfony/config/zipball/ffb34cb37ffe11a2e218e2025960d03549924414",
+                "reference": "ffb34cb37ffe11a2e218e2025960d03549924414",
                 "shasum": ""
             },
             "require": {
@@ -5765,7 +5814,7 @@
             ],
             "description": "Symfony Config Component",
             "homepage": "https://symfony.com",
-            "time": "2016-09-15 14:03:09"
+            "time": "2016-10-01 05:24:10"
         },
         {
             "name": "symfony/filesystem",
@@ -5871,12 +5920,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
-                "reference": "7fbb0dfc86370757774ff2d9bd5c3b89c9aac1a8"
+                "reference": "f3abbc0c63c0c7803db79a7398bb983e5b089f53"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/yaml/zipball/7fbb0dfc86370757774ff2d9bd5c3b89c9aac1a8",
-                "reference": "7fbb0dfc86370757774ff2d9bd5c3b89c9aac1a8",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/f3abbc0c63c0c7803db79a7398bb983e5b089f53",
+                "reference": "f3abbc0c63c0c7803db79a7398bb983e5b089f53",
                 "shasum": ""
             },
             "require": {
@@ -5918,7 +5967,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2016-09-20 08:33:13"
+            "time": "2016-09-28 14:20:56"
         }
     ],
     "aliases": [],

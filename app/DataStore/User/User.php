@@ -19,7 +19,6 @@ use Zizaco\Entrust\Traits\EntrustUserTrait as EntrustUserTrait;
  * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\UdlValue\UdlValue[] $udlValues
  * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\Asset\Asset[] $assets
  * @property-read \WA\DataStore\Company\Company $company
- * @property-read \WA\DataStore\Census $census
  * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\Device\Device[] $devices
  * @property-read \WA\DataStore\UdlValuePath\UdlValuePath $department
  * @property-read \WA\DataStore\Location\Location $location
@@ -161,13 +160,6 @@ class User extends BaseDataStore implements IlluminateCanResetPasswordContract, 
         return $this->belongsTo('WA\DataStore\Company\Company', 'companyId');
     }
 
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function census()
-    {
-        return $this->belongsTo('WA\DataStore\Census', 'syncId');
-    }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany

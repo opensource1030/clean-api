@@ -3,7 +3,6 @@
 namespace WA\Repositories\Device;
 
 use Illuminate\Database\Eloquent\Model;
-use Log;
 use Schema;
 use WA\Repositories\AbstractRepository;
 use WA\Repositories\JobStatus\JobStatusInterface as StatusInterface;
@@ -29,6 +28,7 @@ class EloquentDevice extends AbstractRepository implements DeviceInterface
      */
     public function __construct(Model $model, StatusInterface $status)
     {
+        parent::__construct($model);
         $this->model = $model;
         $this->status = $status;
     }
@@ -113,7 +113,7 @@ class EloquentDevice extends AbstractRepository implements DeviceInterface
         }
     }
 
-        /**
+    /**
      * Sync an asset to devices.
      *
      * @param int $id of the device
@@ -163,7 +163,7 @@ class EloquentDevice extends AbstractRepository implements DeviceInterface
         }
     }
 
-        /**
+    /**
      * Sync an asset to devices.
      *
      * @param int $id of the device
@@ -261,24 +261,4 @@ class EloquentDevice extends AbstractRepository implements DeviceInterface
         return $query;
     }
 
-
-    /**
-     * Get the model's transformation.
-     */
-    public function getTransformer()
-    {
-        return $this->model->getTransformer();
-    }
-
-    /**
-     * Update a repository.
-     *
-     * @param array $data to be updated
-     *
-     * @return Object object of updated repo
-     */
-    public function update(array $data)
-    {
-        return $this->model->update($data);
-    }
 }

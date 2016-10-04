@@ -66,6 +66,8 @@ class AllocationsController extends ApiController
      */
     public function show($id)
     {
+        $criteria = $this->getRequestCriteria();
+        $this->allocations->setCriteria($criteria);
         $allocation = $this->allocations->byId($id);
 
         return $this->response()->item($allocation, new AllocationTransformer(), ['key' => 'allocations']);
