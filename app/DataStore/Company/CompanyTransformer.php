@@ -35,6 +35,7 @@ class CompanyTransformer extends TransformerAbstract
             'isCensus' => $company->isCensus,
             'udlPathRule' => $company->udlPathRule,
             'assetPath' => $company->assetPath,
+            'current_billMonth' => $company->currentBillMonth,
         ];
     }
 
