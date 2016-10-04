@@ -66,7 +66,7 @@ class CategoryAppsController extends ApiController
 
         if(!$this->includesAreCorrect($request, new CategoryAppTransformer())){
             $error['errors']['getincludes'] = 'One or More Includes selected doesn\'t exists';   
-            return response()->json($error)->setStatusCode($this->status_codes['conflict']);            
+            return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
         }
 
         return $this->response()->item($categoryApps, new CategoryAppTransformer(), ['key' => 'categoryapps'])->setStatusCode($this->status_codes['created']);

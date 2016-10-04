@@ -27,9 +27,7 @@ class DeviceTypeTransformer extends TransformerAbstract
             'deviceOS' => $deviceType->deviceOS,
             'description' => $deviceType->description,
             'statusId' => $deviceType->statusId,
-            'image' => $deviceType->image,
-            'created_at' => $deviceType->created_at,
-            'updated_at' => $deviceType->updated_at
+            'image' => $deviceType->image
         ];
     }
 }

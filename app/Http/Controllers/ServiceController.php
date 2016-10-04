@@ -65,7 +65,7 @@ class ServiceController extends ApiController
         $service = Service::find($id);
         if($service == null){
             $error['errors']['get'] = 'the Service selected doesn\'t exists';   
-            return response()->json($error)->setStatusCode(409);
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
         return $this->response()->item($service, new ServiceTransformer(),['key' => 'services']);
@@ -84,7 +84,7 @@ class ServiceController extends ApiController
          */
         if(!$this->isJsonCorrect($request, 'services')){
             $error['errors']['json'] = 'Json is Invalid';
-            return response()->json($error)->setStatusCode(409);
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         } else {
             $data = $request->all()['data'];
             $dataAttributes = $data['attributes'];           
@@ -104,7 +104,7 @@ class ServiceController extends ApiController
     {
         if(!$this->isJsonCorrect($request, 'services')){
             $error['errors']['json'] = 'Json is Invalid';
-            return response()->json($error)->setStatusCode(409);
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         } else {
             $data = $request->all()['data'];
             $dataAttributes = $data['attributes'];           
@@ -126,7 +126,7 @@ class ServiceController extends ApiController
             $this->service->deleteById($id);
         } else {
             $error['errors']['delete'] = 'the service selected doesn\'t exists';   
-            return response()->json($error)->setStatusCode(409);
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
         
         $this->index();
@@ -135,7 +135,7 @@ class ServiceController extends ApiController
             return array("success" => true);
         } else {
             $error['errors']['delete'] = 'the service has not been deleted';   
-            return response()->json($error)->setStatusCode(409);
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
     }
 }

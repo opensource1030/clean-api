@@ -66,7 +66,7 @@ class PresetController extends ApiController
 
         if(!$this->includesAreCorrect($request, new PresetTransformer())){
             $error['errors']['getincludes'] = 'One or More Includes selected doesn\'t exists';   
-            return response()->json($error)->setStatusCode($this->status_codes['conflict']);            
+            return response()->json($error)->setStatusCode($this->status_codes['badrequest']);            
         }
 
         return $this->response()->item($preset, new PresetTransformer(), ['key' => 'presets'])->setStatusCode($this->status_codes['created']);
@@ -79,6 +79,8 @@ class PresetController extends ApiController
      * @return \Dingo\Api\Http\Response
      */
     public function store($id, Request $request) {
+
+        $success = true;
 
         /*
          * Checks if Json has data, data-type & data-attributes.
@@ -108,10 +110,9 @@ class PresetController extends ApiController
                         $dataImages = $this->parseJsonToArray($data['relationships']['images']['data'], 'images');
                         $preset->images()->sync($dataImages);    
                     } catch (\Exception $e){
-                        DB::rollBack();
+                        $success = false;
                         $error['errors']['images'] = 'the Preset Images has not been created';
                         //$error['errors']['imagesMessage'] = $e->getMessage();
-                        return response()->json($error)->setStatusCode($this->status_codes['conflict']);
                     }
                 }
             }
@@ -122,17 +123,21 @@ class PresetController extends ApiController
                         $dataDevices = $this->parseJsonToArray($data['relationships']['devices']['data'], 'devices');
                         $preset->devices()->sync($dataDevices);    
                     } catch (\Exception $e){
-                        DB::rollBack();
+                        $success = false;
                         $error['errors']['devices'] = 'the Preset Devices has not been created';
                         //$error['errors']['devicesMessage'] = $e->getMessage();
-                        return response()->json($error)->setStatusCode($this->status_codes['conflict']);
                     }
                 }
             }
         }
 
-        DB::commit();
-        return $this->response()->item($preset, new PresetTransformer(), ['key' => 'presets'])->setStatusCode($this->status_codes['created']);
+        if($success){
+            DB::commit();
+            return $this->response()->item($preset, new PresetTransformer(), ['key' => 'presets'])->setStatusCode($this->status_codes['created']);
+        } else {
+            DB::rollBack();
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+        }
     }
 
     /**
@@ -142,6 +147,7 @@ class PresetController extends ApiController
      */
     public function create(Request $request) {
 
+        $success = true;
         /*
          * Checks if Json has data, data-type & data-attributes.
          */
@@ -169,10 +175,9 @@ class PresetController extends ApiController
                         $dataImages = $this->parseJsonToArray($data['relationships']['images']['data'], 'images');
                         $preset->images()->sync($dataImages);    
                     } catch (\Exception $e){
-                        DB::rollBack();
+                        $success = false;
                         $error['errors']['images'] = 'the Preset Images has not been created';
                         //$error['errors']['imagesMessage'] = $e->getMessage();
-                        return response()->json($error)->setStatusCode($this->status_codes['conflict']);
                     }
                 }
             }
@@ -183,17 +188,21 @@ class PresetController extends ApiController
                         $dataDevices = $this->parseJsonToArray($data['relationships']['devices']['data'], 'devices');
                         $preset->devices()->sync($dataDevices);    
                     } catch (\Exception $e){
-                        DB::rollBack();
+                        $success = false;
                         $error['errors']['devices'] = 'the Preset Devices has not been created';
                         //$error['errors']['devicesMessage'] = $e->getMessage();
-                        return response()->json($error)->setStatusCode($this->status_codes['conflict']);
                     }
                 }
             }
         }
 
-        DB::commit();
-        return $this->response()->item($preset, new PresetTransformer(), ['key' => 'presets'])->setStatusCode($this->status_codes['created']);
+        if($success){
+            DB::commit();
+            return $this->response()->item($preset, new PresetTransformer(), ['key' => 'presets'])->setStatusCode($this->status_codes['created']);
+        } else {
+            DB::rollBack();
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+        }
     }
 
     /**

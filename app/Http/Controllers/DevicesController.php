@@ -74,7 +74,7 @@ class DevicesController extends ApiController
 
         if(!$this->includesAreCorrect($request, new DeviceTransformer())){
             $error['errors']['getIncludes'] = 'One or More Includes selected doesn\'t exists';
-            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+            return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
         }
 
         return $this->response()->item($device, new DeviceTransformer(),['key' => 'devices'])->setStatusCode($this->status_codes['created']);
@@ -265,12 +265,12 @@ class DevicesController extends ApiController
             }            
         }
 
-        if(!$success){
-            DB::rollBack();
-            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
-        } else {
+        if($success){
             DB::commit();
             return $this->response()->item($device, new DeviceTransformer(), ['key' => 'devices'])->setStatusCode($this->status_codes['created']);
+        } else {
+            DB::rollBack();
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
     }
 
@@ -417,12 +417,12 @@ class DevicesController extends ApiController
             }            
         }
 
-        if(!$success){
-            DB::rollBack();
-            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
-        } else {
+        if($success){
             DB::commit();
             return $this->response()->item($device, new DeviceTransformer(), ['key' => 'devices'])->setStatusCode($this->status_codes['created']);
+        } else {
+            DB::rollBack();
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
     }
 
@@ -656,148 +656,3 @@ class DevicesController extends ApiController
         return array("bool" => true, "error" => "No Error", "id" => 0);
     }
 }
-
-/* EXAMPLE POST DEVICE
-{
-    "data" : {
-        "type" : "devices",
-        "attributes" : {
-            "name" : "nameDevice",
-            "properties" : "propertiesDevice",
-            "deviceTypeId" : 1,
-            "statusId" : 1,
-            "externalId" : 1,
-            "identification" : 123456789,
-            "syncId" : 1
-        },
-        "relationships" : {
-            
-            "images" : {
-                "data" : [
-                    { "type": "images", "id" : 1 },
-                    { "type": "images", "id" : 2 }
-                ]
-            },
-                
-            "assets" : {
-                "data" : [
-                    { "type": "assets", "id" : 1 },
-                    { "type": "assets", "id" : 2 }
-                ]
-            },
-            "modifications" : {
-                "data" : [
-                    { "type": "modifications", "id" : 1 },
-                    { "type": "modifications", "id" : 2 },
-                    { "type": "modifications", "id" : 3 }
-                ]
-            },
-            "carriers" : {
-                "data" : [
-                    { "type": "carriers", "id" : 1 },
-                    { "type": "carriers", "id" : 2 }
-                ]
-            },
-            "companies" : {
-                "data" : [
-                    { "type": "companies", "id" : 1 },
-                    { "type": "companies", "id" : 2 }
-                ]
-            },
-            "prices" : {
-                "data" : [
-                    {
-                        "type": "prices",
-                        "capacityId": 1,
-                        "styleId": 2,
-                        "carrierId": 1,
-                        "companyId": 1,
-                        "priceRetail": 100,
-                        "price1": 100,
-                        "price2": 100,
-                        "priceOwn": 100
-                    },
-                    {
-                        "type": "prices",
-                        "capacityId": 1,
-                        "styleId": 2,
-                        "carrierId": 1,
-                        "companyId": 2,
-                        "priceRetail": 200,
-                        "price1": 200,
-                        "price2": 200,
-                        "priceOwn": 200
-                    },
-                    {
-                        "type": "prices",
-                        "capacityId": 1,
-                        "styleId": 2,
-                        "carrierId": 2,
-                        "companyId": 1,
-                        "priceRetail": 300,
-                        "price1": 300,
-                        "price2": 300,
-                        "priceOwn": 300
-                    },
-                    {
-                        "type": "prices",
-                        "capacityId": 1,
-                        "styleId": 2,
-                        "carrierId": 2,
-                        "companyId": 2,
-                        "priceRetail": 400,
-                        "price1": 400,
-                        "price2": 400,
-                        "priceOwn": 400
-                    },
-                    {
-                        "type": "prices",
-                        "capacityId": 3,
-                        "styleId": 2,
-                        "carrierId": 1,
-                        "companyId": 1,
-                        "priceRetail": 500,
-                        "price1": 500,
-                        "price2": 500,
-                        "priceOwn": 500
-                    },
-                    {
-                        "type": "prices",
-                        "capacityId": 3,
-                        "styleId": 2,
-                        "carrierId": 1,
-                        "companyId": 2,
-                        "priceRetail": 600,
-                        "price1": 600,
-                        "price2": 600,
-                        "priceOwn": 600
-                    },
-                    {
-                        "type": "prices",
-                        "capacityId": 3,
-                        "styleId": 2,
-                        "carrierId": 2,
-                        "companyId": 1,
-                        "priceRetail": 700,
-                        "price1": 700,
-                        "price2": 700,
-                        "priceOwn": 700
-                    },
-                    {
-                        "type": "prices",
-                        "capacityId": 3,
-                        "styleId": 2,
-                        "carrierId": 2,
-                        "companyId": 2,
-                        "priceRetail": 800,
-                        "price1": 800,
-                        "price2": 800,
-                        "priceOwn": 800
-                    }
-                ]
-            }
-        }
-    }
-}
-
-*/

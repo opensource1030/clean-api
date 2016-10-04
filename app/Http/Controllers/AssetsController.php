@@ -57,9 +57,9 @@ class AssetsController extends ApiController
         $asset = Asset::find($id);
         if($asset == null){
             $error['errors']['get'] = 'the asset selected doesn\'t exists';   
-            return response()->json($error)->setStatusCode(409);
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
         
-        return $this->response()->item($asset, new AssetTransformer(),['key' => 'assets']);
+        return $this->response()->item($asset, new AssetTransformer(),['key' => 'assets'])->setStatusCode($this->status_codes['created']);
     }
 }

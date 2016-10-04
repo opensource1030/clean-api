@@ -140,6 +140,6 @@ class AppsApiTest extends TestCase
     public function testDeleteAppIfNoExists(){
 
         $responseDel = $this->call('DELETE', 'apps/1');
-        $this->assertEquals(409, $responseDel->status());
+        $this->assertEquals(404, $responseDel->status());
     }
 }

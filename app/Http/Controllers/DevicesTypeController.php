@@ -13,7 +13,7 @@ use Log;
  *
  * @Resource("DeviceType", uri="/DeviceType")
  */
-class DeviceTypeController extends ApiController
+class DevicesTypeController extends ApiController
 {
     /**
      * @var DeviceTypeInterface
@@ -59,10 +59,10 @@ class DeviceTypeController extends ApiController
         $deviceType = DeviceType::find($id);
         if($deviceType == null){
             $error['errors']['get'] = 'the DeviceType selected doesn\'t exists';   
-            return response()->json($error)->setStatusCode(409);
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
-        return $this->response()->item($deviceType, new DeviceTypeTransformer(), ['key' => 'devicetypes']);
+        return $this->response()->item($deviceType, new DeviceTypeTransformer(), ['key' => 'devicetypes'])->setStatusCode($this->status_codes['created']);
     }
 
     /**
@@ -73,10 +73,21 @@ class DeviceTypeController extends ApiController
      */
     public function store($id, Request $request)   
     {
-        $data = $request->all();       
-        $data['id'] = $id;
-        $deviceType = $this->deviceType->update($data);
-        return $this->response()->item($deviceType, new DeviceTypeTransformer(), ['key' => 'devicetypes']);
+        if($this->isJsonCorrect($request, 'devicetypes')){
+            try {
+                $data = $request->all()['data']['attributes'];
+                $data['id'] = $id;
+                $devicetype = $this->deviceType->update($data);
+                return $this->response()->item($devicetype, new DeviceTypeTransformer(), ['key' => 'devicetypes'])->setStatusCode($this->status_codes['created']);
+            } catch (\Exception $e){
+                $error['errors']['devicetypes'] = 'the Devicetype has not been updated';
+                //$error['errors']['devicetypesMessage'] = $e->getMessage();
+            }
+        } else {
+            $error['errors']['json'] = 'Json is Invalid';
+        }
+
+        return response()->json($error)->setStatusCode($this->status_codes['conflict']);
     }
 
     /**
@@ -86,9 +97,20 @@ class DeviceTypeController extends ApiController
      */
     public function create(Request $request)
     {
-        $data = $request->all();
-        $deviceType = $this->deviceType->create($data);
-        return $this->response()->item($deviceType, new DeviceTypeTransformer(), ['key' => 'devicetypes']);
+        if($this->isJsonCorrect($request, 'devicetypes')){
+            try {
+                $data = $request->all()['data']['attributes'];
+                $devicetype = $this->deviceType->create($data);
+                return $this->response()->item($devicetype, new DeviceTypeTransformer(), ['key' => 'devicetypes'])->setStatusCode($this->status_codes['created']);
+            } catch (\Exception $e){
+                $error['errors']['devicetypes'] = 'the Devicetype has not been created';
+                //$error['errors']['devicetypesMessage'] = $e->getMessage();
+            }
+        } else {
+            $error['errors']['json'] = 'Json is Invalid';
+        }
+
+        return response()->json($error)->setStatusCode($this->status_codes['conflict']);
     }
 
     /**
@@ -103,7 +125,7 @@ class DeviceTypeController extends ApiController
             $this->deviceType->deleteById($id);
         } else {
             $error['errors']['delete'] = 'the DeviceType selected doesn\'t exists';   
-            return response()->json($error)->setStatusCode(409);
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
         
         $this->index();
@@ -112,7 +134,7 @@ class DeviceTypeController extends ApiController
             return array("success" => true);
         } else {
             $error['errors']['delete'] = 'the DeviceType has not been deleted';   
-            return response()->json($error)->setStatusCode(409);
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
     }
 }

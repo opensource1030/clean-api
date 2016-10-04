@@ -12,7 +12,6 @@ use League\Fractal\TransformerAbstract;
  */
 class ModificationTransformer extends TransformerAbstract
 {
-
     /**
      * @param Modification $modification
      *
@@ -21,13 +20,11 @@ class ModificationTransformer extends TransformerAbstract
     public function transform(Modification $modification)
     {
         return [
-
             'id' => (int)$modification->id,
             'modType' => $modification->modType,
             'value' => $modification->value,
             'created_at' => $modification->created_at,
             'updated_at' => $modification->updated_at,
-
         ];
     }
 }

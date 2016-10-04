@@ -62,9 +62,6 @@ class AddressController extends ApiController
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
-        // Dingo\Api\src\Http\Response\Factory.php
-        // Dingo\Api\src\Http\Transformer\Factory.php
-
         return $this->response()->item($address, new AddressTransformer(), ['key' => 'address'])->setStatusCode($this->status_codes['created']);
     }
 

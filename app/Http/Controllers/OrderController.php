@@ -62,9 +62,6 @@ class OrderController extends ApiController
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
-        // Dingo\Api\src\Http\Response\Factory.php
-        // Dingo\Api\src\Http\Transformer\Factory.php
-
         return $this->response()->item($order, new OrderTransformer(),['key' => 'orders'])->setStatusCode($this->status_codes['created']);
     }
 
@@ -81,7 +78,7 @@ class OrderController extends ApiController
                 $data = $request->all()['data']['attributes'];
                 $data['id'] = $id;
                 $order = $this->order->update($data);
-                return $this->response()->item($order, new OrderTransformer(), ['key' => 'orders']);
+                return $this->response()->item($order, new OrderTransformer(), ['key' => 'orders'])->setStatusCode($this->status_codes['created']);
             } catch (\Exception $e){
                 $error['errors']['orders'] = 'the Order has not been updated';
                 //$error['errors']['ordersMessage'] = $e->getMessage();
@@ -104,7 +101,7 @@ class OrderController extends ApiController
             try {
                 $data = $request->all()['data']['attributes'];
                 $order = $this->order->create($data);
-                return $this->response()->item($order, new OrderTransformer(), ['key' => 'orders']);
+                return $this->response()->item($order, new OrderTransformer(), ['key' => 'orders'])->setStatusCode($this->status_codes['created']);
             } catch (\Exception $e){
                 $error['errors']['orders'] = 'the Order has not been created';
                 //$error['errors']['ordersMessage'] = $e->getMessage();

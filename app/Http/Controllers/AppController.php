@@ -64,7 +64,7 @@ class AppController extends ApiController
 
         if(!$this->includesAreCorrect($request, new AppTransformer())){
             $error['errors']['getIncludes'] = 'One or More Includes selected doesn\'t exists';
-            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+            return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
         }
 
         return $this->response()->item($app, new AppTransformer(),['key' => 'apps'])->setStatusCode($this->status_codes['created']);
@@ -106,7 +106,7 @@ class AppController extends ApiController
             try {
                 $data = $request->all()['data']['attributes'];
                 $app = $this->app->create($data);
-                return $this->response()->item($app, new AppTransformer(), ['key' => 'apps']);
+                return $this->response()->item($app, new AppTransformer(), ['key' => 'apps'])->setStatusCode($this->status_codes['created']);
             } catch (\Exception $e){
                 $error['errors']['apps'] = 'the App has not been created';
                 //$error['errors']['appsMessage'] = $e->getMessage();
@@ -130,7 +130,7 @@ class AppController extends ApiController
             $this->app->deleteById($id);
         } else {
             $error['errors']['delete'] = 'the App selected doesn\'t exists';   
-            return response()->json($error)->setStatusCode(409);
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
         
         $this->index();
@@ -139,7 +139,7 @@ class AppController extends ApiController
             return array("success" => true);
         } else {
             $error['errors']['delete'] = 'the App has not been deleted';   
-            return response()->json($error)->setStatusCode(409);
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
     }
 }

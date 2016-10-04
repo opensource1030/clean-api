@@ -8,6 +8,28 @@ use WA\Http\Requests\Parameters\Fields;
 use WA\Http\Requests\Parameters\Filters;
 use WA\Http\Requests\Parameters\Sorting;
 
+use WA\DataStore\Address\AddressTransformer;
+use WA\DataStore\Allocation\AllocationsTransformer;
+use WA\DataStore\App\AppTransformer;
+use WA\DataStore\Asset\AssetTransformer;
+use WA\DataStore\Carrier\CarrierTransformer;
+use WA\DataStore\Category\CategoryAppTransformer;
+use WA\DataStore\Company\CompanyTransformer;
+use WA\DataStore\Condition\ConditionTransformer;
+use WA\DataStore\Device\DeviceTransformer;
+use WA\DataStore\DeviceType\DeviceTypeTransformer;
+use WA\DataStore\Image\ImageTransformer;
+use WA\DataStore\Location\LocationTransformer;
+use WA\DataStore\Modification\ModificationTransformer;
+use WA\DataStore\Notification\NotificationTransformer;
+use WA\DataStore\Order\OrderTransformer;
+use WA\DataStore\Package\PackageTransformer;
+use WA\DataStore\Preset\PresetTransformer;
+use WA\DataStore\Price\PriceTransformer;
+use WA\DataStore\Request\RequestTransformer;
+use WA\DataStore\Role\RoleTransformer;
+use WA\DataStore\Service\ServiceTransformer;
+
 /**
  * Extensible API controller
  *
@@ -177,11 +199,80 @@ abstract class ApiController extends BaseController
                 }
             }
 
-            if($exists == false){
+            if(!$exists){
                 return false;
             }
         }
 
         return true;
+    }
+
+    protected function includesAreCorrectAux($req, $class){
+
+        if ($req->has('include')) {
+            $includes = explode(",", $req->input('include'));
+        } else {
+            return true;
+        }
+
+        var_dump($includes);
+
+        $avaIncludes = $class->getAvailableIncludes();
+        var_dump($avaIncludes);
+
+        for ($i = 0; $i < count($includes); $i++) {
+            $exists = false;
+            $includesAux = explode(".", $includes[$i]);
+
+            for ($j = 0; $j < count($avaIncludes); $j++) {
+                if($avaIncludes[$j] == $includesAux[0]){
+                    if(count($includesAux) > 1){
+                        var_dump($includesAux[1]);
+                        $transformer = $this->returnTransformer($includesAux[0]);
+                        $avaIncludesAux = $transformer->getAvailableIncludes();
+
+                        var_dump($avaIncludesAux);
+                        for($k = 0; count($avaIncludesAux); $k++){
+                            var_dump($k);
+                            //if($avaIncludesAux[$k] == $includesAux[1]){ $exists = true; }
+                        }
+                    } else {
+                        $exists = true;
+                    }
+                }
+            }
+
+            if(!$exists){
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private function returnTransformer($value){
+        switch($value){
+            case 'address' : return new AddressTransformer();
+            case 'allocation' : return new AllocationTransformer();
+            case 'apps' : return new AppTransformer();
+            case 'assets' : return new AssetTransformer();
+            case 'carriers' : return new CarrierTransformer();
+            case 'categoryapps' : return new CategoryAppTransformer();
+            case 'companies' : return new CompanyTransformer();
+            case 'conditions' : return new ConditionTransformer();
+            case 'devices' : return new DeviceTransformer();
+            case 'devicetypes' : return new DeviceTypeTransformer();
+            case 'images' : return new ImageTransformer();
+            case 'modifications' : return new ModificationTransformer();
+            case 'notifications' : return new NotificationTransformer();
+            case 'orders' : return new OrderTransformer();
+            case 'packages' : return new PackageTransformer();
+            case 'presets' : return new PresetTransformer();
+            case 'prices' : return new PriceTransformer();
+            case 'request' : return new RequestTransformer();
+            case 'role' : return new RoleTransformer();
+            case 'services' : return new ServiceTransformer();
+            default : return null;
+        }
     }
 }

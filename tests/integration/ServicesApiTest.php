@@ -191,6 +191,6 @@ class ServicesApiTest extends TestCase
     public function testDeleteServiceIfNoExists(){
         // DELETE NO EXISTING.
         $responseDel = $this->call('DELETE', '/services/1');
-        $this->assertEquals(409, $responseDel->status());
+        $this->assertEquals(404, $responseDel->status());
     }
 }

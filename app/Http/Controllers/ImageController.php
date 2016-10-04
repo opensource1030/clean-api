@@ -77,6 +77,24 @@ class ImageController extends ApiController
 
         return response($value, 200)->header('Content-Type', $image->mimeType);
     }
+
+    /**
+     * Show a single Image Information
+     *
+     * Get a payload of a single Image information
+     *
+     * @Get("/{id}")
+     */
+    public function info($id) {
+
+        $image = Image::find($id);
+        if($image == null){
+            $error['errors']['get'] = 'the Image selected doesn\'t exists';
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+        }
+
+        return $this->response()->item($image, new ImageTransformer(),['key' => 'images'])->setStatusCode($this->status_codes['created']);
+    }
    
     /**
      * Create a new Image
@@ -104,7 +122,7 @@ class ImageController extends ApiController
             }   
         } catch (\Exception $e) {
             $error['errors']['image'] = 'the Image has not been created';
-            $error['errors']['imageMessage'] = $e->getMessage();
+            //$error['errors']['imageMessage'] = $e->getMessage();
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
@@ -124,7 +142,7 @@ class ImageController extends ApiController
             Storage::delete($path = $image->filename.'.'.$image->extension);
         } else {
             $error['errors']['delete'] = 'the Image selected doesn\'t exists';   
-            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
         
         $this->index();

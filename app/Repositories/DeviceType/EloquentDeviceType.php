@@ -102,20 +102,28 @@ class EloquentDeviceType extends AbstractRepository implements DeviceTypeInterfa
     public function create(array $data)
     {
         $deviceTypeData = [
-            "make" =>  isset($data['make']) ? $data['make'] : null ,
-            "model" => isset($data['model']) ? $data['model'] : null,
-            "class" => isset($data['class']) ? $data['class'] : null,
-            "deviceOS" => isset($data['deviceOS']) ? $data['deviceOS'] : null,
-            "description" => isset($data['description']) ? $data['description'] : null,
-            "statusId" => isset($data['statusId']) ? $data['statusId'] : null,
-            "image" => isset($data['image']) ? $data['image'] : null,
+            'make' =>  isset($data['make']) ? $data['make'] : null ,
+            'model' => isset($data['model']) ? $data['model'] : null,
+            'class' => isset($data['class']) ? $data['class'] : null,
+            'deviceOS' => isset($data['deviceOS']) ? $data['deviceOS'] : null,
+            'description' => isset($data['description']) ? $data['description'] : null,
+            'statusId' => isset($data['statusId']) ? $data['statusId'] : null,
+            'image' => isset($data['image']) ? $data['image'] : null,
         ];
 
+        //var_dump($deviceTypeData);
+        //die;
+
         $deviceType = $this->model->create($deviceTypeData);
+
+        //var_dump($deviceType);
+        //die;
 
         if(!$deviceType) {
             return false;
         }
+
+        //dd("AQUI");
 
         return $deviceType;
     }

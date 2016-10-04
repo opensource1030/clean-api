@@ -63,10 +63,10 @@ class PriceController extends ApiController
         $price = Price::find($id);
         if($price == null){
             $error['errors']['get'] = 'the price selected doesn\'t exists';   
-            return response()->json($error)->setStatusCode(409);
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
-        return $this->response()->item($price, new PriceTransformer(), ['key' => 'prices']);
+        return $this->response()->item($price, new PriceTransformer(), ['key' => 'prices'])->setStatusCode($this->status_codes['created']);
     }
 
     /**
@@ -184,15 +184,14 @@ class PriceController extends ApiController
          */
         if(!$this->isJsonCorrect($request, 'prices')){
             $error['errors']['json'] = 'Json is Invalid';
-            return response()->json($error)->setStatusCode(409);
-        } else {
-            $data = $request->all()['data'];
-            $dataAttributes = $data['attributes'];           
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
-        $dataAttributes['id'] = $id;
-        $price = $this->price->update($dataAttributes);
-        return $this->response()->item($price, new PriceTransformer(), ['key' => 'prices']);
+        $data = $request->all()['data']['attributes'];           
+        $data['id'] = $id;
+        $price = $this->price->update($data);
+        
+        return $this->response()->item($price, new PriceTransformer(), ['key' => 'prices'])->setStatusCode($this->status_codes['created']);
     }
 
     /**
@@ -201,16 +200,16 @@ class PriceController extends ApiController
      * @return \Dingo\Api\Http\Response
      */
     public function create(Request $request) {
-                if(!$this->isJsonCorrect($request, 'prices')){
+        
+        if(!$this->isJsonCorrect($request, 'prices')){
             $error['errors']['json'] = 'Json is Invalid';
-            return response()->json($error)->setStatusCode(409);
-        } else {
-            $data = $request->all()['data'];
-            $dataAttributes = $data['attributes'];           
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
+        
+        $data = $request->all()['data']['attributes'];
+        $price = $this->price->create($data);
 
-        $price = $this->price->create($dataAttributes);
-        return $this->response()->item($price, new PriceTransformer(), ['key' => 'prices']);
+        return $this->response()->item($price, new PriceTransformer(), ['key' => 'prices'])->setStatusCode($this->status_codes['created']);
     }
 
     /**
@@ -225,7 +224,7 @@ class PriceController extends ApiController
             $this->price->deleteById($id);
         } else {
             $error['errors']['delete'] = 'the price selected doesn\'t exists';   
-            return response()->json($error)->setStatusCode(409);
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
         
         $this->index();
@@ -234,7 +233,7 @@ class PriceController extends ApiController
             return array("success" => true);
         } else {
             $error['errors']['delete'] = 'the price has not been deleted';   
-            return response()->json($error)->setStatusCode(409);
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
     }
 }
