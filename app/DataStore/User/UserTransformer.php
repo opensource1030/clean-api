@@ -16,7 +16,7 @@ use WA\Helpers\Traits\Criteria;
 /**
  * Class UserTransformer.
  */
-class UserTransformer extends TransformerAbstract 
+class UserTransformer extends TransformerAbstract
 {
 
     use Criteria;
@@ -69,6 +69,8 @@ class UserTransformer extends TransformerAbstract
         return new ResourceCollection($user->devices, new DeviceTransformer(), 'devices');
     }
 
+    protected $currentBillMonth = null;
+
     /**
      * @param User $user
      *
@@ -76,7 +78,11 @@ class UserTransformer extends TransformerAbstract
      */
     public function includeCompany(User $user)
     {
-        return new ResourceItem($user->company, new CompanyTransformer(), 'company');
+        $company = $this->applyCriteria($user->company(), $this->criteria);
+        $company = $company->first();
+        $this->currentBillMonth = $company->currentBillMonth;
+
+        return new ResourceItem($company->first(), new CompanyTransformer(), 'company');
     }
 
     /**
@@ -97,6 +103,12 @@ class UserTransformer extends TransformerAbstract
     public function includeAllocations(User $user)
     {
         $allocations = $this->applyCriteria($user->allocations(), $this->criteria);
+        $filters = $this->criteria['filters']->get();
+
+        if (in_array("[allocations.billMonth]=[company.billEndMonth]", $filters)) {
+            $allocations->where('billMonth', $this->currentBillMonth);
+        }
+
         return new ResourceCollection($allocations->get(), new AllocationTransformer(), 'allocations');
     }
 
