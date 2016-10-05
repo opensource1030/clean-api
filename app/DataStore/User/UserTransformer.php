@@ -101,7 +101,7 @@ class UserTransformer extends TransformerAbstract
         $allocations = $this->applyCriteria($user->allocations(), $this->criteria);
         $filters = $this->criteria['filters']->get();
 
-        if (in_array("[allocations.billMonth]=[company.billEndMonth]", $filters)) {
+        if (in_array("[allocations.billMonth]=[company.currentBillMonth]", $filters)) {
             $allocations->where('billMonth', $user->company->currentBillMonth);
         }
 

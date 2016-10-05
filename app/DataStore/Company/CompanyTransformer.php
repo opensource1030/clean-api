@@ -52,7 +52,7 @@ class CompanyTransformer extends TransformerAbstract
         $allocations = $this->applyCriteria($company->allocations(), $this->criteria);
         $filters = $this->criteria['filters']->get();
 
-        if (in_array("[allocations.billMonth]=[company.billEndMonth]", $filters)) {
+        if (in_array("[allocations.billMonth]=[company.currentBillMonth]", $filters)) {
             $allocations->where('billMonth', $company->currentBillMonth);
         }
         return new ResourceCollection($company->allocations, new AllocationTransformer(), 'allocations');
