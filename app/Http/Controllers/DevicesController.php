@@ -53,13 +53,13 @@ class DevicesController extends ApiController
         $this->device->setCriteria($criteria);
         $device = $this->device->byPage();
 
-        $response = $this->response()->withPaginator($device, new DeviceTransformer(), ['key' => 'devices']);
         if(!$this->includesAreCorrect($request, new DeviceTransformer())){
             $error['errors']['getIncludes'] = Lang::get('messages.NotExistClass', ['class' => 'Device']);
             return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
         }
       
         $response = $this->response()->withPaginator($device, new DeviceTransformer(),['key' => 'devices']);
+
         $response = $this->applyMeta($response);
         return $response;
     }

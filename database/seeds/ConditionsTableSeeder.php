@@ -1,7 +1,7 @@
 <?php
 
 /**
- * AppsTableSeeder - Insert info into database.
+ * ConditionsTableSeeder - Insert info into database.
  *  
  * @author   Agustí Dosaiguas
  */
