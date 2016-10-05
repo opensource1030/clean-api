@@ -186,11 +186,19 @@ trait Criteria
                     case "ne":
                         // Handle delimited lists
                         $vals = explode(",", $val);
+                        $vals = $this->extractAdvancedCriteria($vals);
+                        if (count($vals) === 0) {
+                            continue;
+                        }
                         $this->criteriaQuery->whereNotIn($filterKey, $vals);
                         break;
                     case "eq":
                         // Handle delimited lists
                         $vals = explode(",", $val);
+                        $vals = $this->extractAdvancedCriteria($vals);
+                        if (count($vals) === 0) {
+                            continue;
+                        }
                         $this->criteriaQuery->whereIn($filterKey, $vals);
                         break;
                     case "like":
@@ -230,5 +238,20 @@ trait Criteria
         }
 
         return $this;
+    }
+
+    /**
+     * @param $vals
+     * @return mixed
+     */
+    protected function extractAdvancedCriteria($vals)
+    {
+        // Ignore more complicated criteria, it's handled elsewhere
+        foreach ($vals as $key => $val) {
+            if (strpos($val, "[") === 0) {
+                unset($vals[$key]);
+            }
+        }
+        return $vals;
     }
 }
