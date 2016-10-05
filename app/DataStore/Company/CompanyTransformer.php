@@ -4,17 +4,19 @@ namespace WA\DataStore\Company;
 
 use League\Fractal\Resource\Collection as ResourceCollection;
 use League\Fractal\TransformerAbstract;
-use WA\DataStore\Account\AccountTransformer;
 use WA\DataStore\Allocation\AllocationTransformer;
 use WA\DataStore\Content\ContentTransformer;
+use WA\Helpers\Traits\Criteria;
 
 /**
  * Class CompanyTransformer.
  */
 class CompanyTransformer extends TransformerAbstract
 {
+
+    use Criteria;
+
     protected $availableIncludes = [
-        'accounts',
         'allocations',
         'contents'
     ];
@@ -27,14 +29,14 @@ class CompanyTransformer extends TransformerAbstract
     public function transform(Company $company)
     {
         return [
-            'id' => (int)$company->id,
-            'name' => $company->name,
-            'label' => $company->label,
-            'active' => $company->active,
-            'udlpath' => $company->udlpath,
-            'isCensus' => $company->isCensus,
-            'udlPathRule' => $company->udlPathRule,
-            'assetPath' => $company->assetPath,
+            'id'               => (int)$company->id,
+            'name'             => $company->name,
+            'label'            => $company->label,
+            'active'           => $company->active,
+            'udlpath'          => $company->udlpath,
+            'isCensus'         => $company->isCensus,
+            'udlPathRule'      => $company->udlPathRule,
+            'assetPath'        => $company->assetPath,
             'currentBillMonth' => $company->currentBillMonth,
         ];
     }
@@ -47,6 +49,12 @@ class CompanyTransformer extends TransformerAbstract
      */
     public function includeAllocations(Company $company)
     {
+        $allocations = $this->applyCriteria($company->allocations(), $this->criteria);
+        $filters = $this->criteria['filters']->get();
+
+        if (in_array("[allocations.billMonth]=[company.billEndMonth]", $filters)) {
+            $allocations->where('billMonth', $company->currentBillMonth);
+        }
         return new ResourceCollection($company->allocations, new AllocationTransformer(), 'allocations');
     }
 
