@@ -8,6 +8,8 @@ use WA\DataStore\Modification\Modification;
 use WA\DataStore\Modification\ModificationTransformer;
 use WA\Repositories\Modification\ModificationInterface;
 
+use Illuminate\Support\Facades\Lang;
+
 /**
  * Modification resource.
  *
@@ -58,7 +60,7 @@ class ModificationController extends ApiController
 
         $modification = Modification::find($id);
         if($modification == null){
-            $error['errors']['get'] = 'the modification selected doesn\'t exists';   
+            $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'Modification']);   
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
@@ -80,11 +82,11 @@ class ModificationController extends ApiController
                 $modification = $this->modification->update($data);
                 return $this->response()->item($modification, new ModificationTransformer(), ['key' => 'modifications'])->setStatusCode($this->status_codes['created']);
             } catch (\Exception $e){
-                $error['errors']['modifications'] = 'the Modification has not been updated';
+                $error['errors']['modifications'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Modification', 'option' => 'updated', 'include' => '']);
                 //$error['errors']['modificationsMessage'] = $e->getMessage();
             }
         } else {
-            $error['errors']['json'] = 'Json is Invalid';
+            $error['errors']['json'] = Lang::get('messages.InvalidJson');
         }
 
         return response()->json($error)->setStatusCode($this->status_codes['conflict']);
@@ -103,11 +105,11 @@ class ModificationController extends ApiController
                 $modification = $this->modification->create($data);
                 return $this->response()->item($modification, new ModificationTransformer(), ['key' => 'modifications'])->setStatusCode($this->status_codes['created']);
             } catch (\Exception $e){
-                $error['errors']['modifications'] = 'the Modification has not been created';
+                $error['errors']['modifications'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Modification', 'option' => 'created', 'include' => '']);
                 //$error['errors']['modificationsMessage'] = $e->getMessage();
             }
         } else {
-            $error['errors']['json'] = 'Json is Invalid';
+            $error['errors']['json'] = Lang::get('messages.InvalidJson');
         }
 
         return response()->json($error)->setStatusCode($this->status_codes['conflict']);
@@ -124,16 +126,16 @@ class ModificationController extends ApiController
         if($modification <> null){
             $this->modification->deleteById($id);
         } else {
-            $error['errors']['delete'] = 'the modification selected doesn\'t exists';   
+            $error['errors']['delete'] = Lang::get('messages.NotExistClass', ['class' => 'Modification']);   
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
         
-        $this->index();
+        
         $modification = Modification::find($id);        
         if($modification == null){
             return array("success" => true);
         } else {
-            $error['errors']['delete'] = 'the modification has not been deleted';   
+            $error['errors']['delete'] = Lang::get('messages.NotDeletedClass', ['class' => 'Modification']);   
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
     }

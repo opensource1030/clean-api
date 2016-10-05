@@ -10,6 +10,8 @@ use WA\Repositories\Category\CategoryAppsInterface;
 
 use DB;
 
+use Illuminate\Support\Facades\Lang;
+
 /**
  * CategoryApps resource.
  *
@@ -60,12 +62,12 @@ class CategoryAppsController extends ApiController
 
         $categoryApps = CategoryApp::find($id);
         if($categoryApps == null){
-            $error['errors']['get'] = 'the CategoryApps selected doesn\'t exists';   
+            $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'CategoryApps']);   
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
         if(!$this->includesAreCorrect($request, new CategoryAppTransformer())){
-            $error['errors']['getincludes'] = 'One or More Includes selected doesn\'t exists';   
+            $error['errors']['getincludes'] = Lang::get('messages.NotExistInclude');   
             return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
         }
 
@@ -84,7 +86,7 @@ class CategoryAppsController extends ApiController
          * Checks if Json has data, data-type & data-attributes.
          */
         if(!$this->isJsonCorrect($request, 'categoryapps')){
-            $error['errors']['json'] = 'Json is Invalid';
+            $error['errors']['json'] = Lang::get('messages.InvalidJson');
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
@@ -96,7 +98,7 @@ class CategoryAppsController extends ApiController
             $categoryApps = $this->categoryApps->update($data);
         } catch (\Exception $e) {
             DB::rollBack();
-            $error['errors']['categoryapps'] = 'The CategoryApps has not been updated';
+            $error['errors']['categoryapps'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'CategoryApps', 'option' => 'updated', 'include' => '']);
             //$error['errors']['CategoryAppsMessage'] = $e->getMessage();
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         } 
@@ -109,7 +111,7 @@ class CategoryAppsController extends ApiController
                         $categoryApps->images()->sync($dataImages);    
                     } catch (\Exception $e){
                         DB::rollBack();
-                        $error['errors']['images'] = 'the CategoryApps Images has not been created';
+                        $error['errors']['images'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'CategoryApps', 'option' => 'created', 'include' => 'Images']);
                         //$error['errors']['imagesMessage'] = $e->getMessage();
                         return response()->json($error)->setStatusCode($this->status_codes['conflict']);
                     }
@@ -123,7 +125,7 @@ class CategoryAppsController extends ApiController
                         $categoryApps->apps()->sync($dataApps);    
                     } catch (\Exception $e){
                         DB::rollBack();
-                        $error['errors']['Apps'] = 'the CategoryApps Apps has not been created';
+                        $error['errors']['Apps'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'CategoryApps', 'option' => 'created', 'include' => 'Apps']);
                         //$error['errors']['AppsMessage'] = $e->getMessage();
                         return response()->json($error)->setStatusCode($this->status_codes['conflict']);
                     }
@@ -146,7 +148,7 @@ class CategoryAppsController extends ApiController
          * Checks if Json has data, data-type & data-attributes.
          */
         if(!$this->isJsonCorrect($request, 'categoryapps')){
-            $error['errors']['json'] = 'Json is Invalid';
+            $error['errors']['json'] = Lang::get('messages.InvalidJson');
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
@@ -157,7 +159,7 @@ class CategoryAppsController extends ApiController
             $categoryApps = $this->categoryApps->create($data);
         } catch (\Exception $e) {
             DB::rollBack();
-            $error['errors']['categoryapps'] = 'The CategoryApps has not been created';
+            $error['errors']['categoryapps'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'CategoryApps', 'option' => 'created', 'include' => '']);
             //$error['errors']['CategoryAppsMessage'] = $e->getMessage();
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }        
@@ -170,7 +172,7 @@ class CategoryAppsController extends ApiController
                         $categoryApps->images()->sync($dataImages);    
                     } catch (\Exception $e){
                         DB::rollBack();
-                        $error['errors']['images'] = 'the CategoryApps Images has not been created';
+                        $error['errors']['images'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'CategoryApps', 'option' => 'created', 'include' => 'Images']);
                         //$error['errors']['imagesMessage'] = $e->getMessage();
                         return response()->json($error)->setStatusCode($this->status_codes['conflict']);
                     }
@@ -178,13 +180,14 @@ class CategoryAppsController extends ApiController
             }
 
             if(isset($data['relationships']['Apps'])){ 
+
                 if(isset($data['relationships']['Apps']['data'])){
                     try {
                         $dataApps = $this->parseJsonToArray($data['relationships']['apps']['data'], 'apps');
                         $categoryApps->Apps()->sync($dataApps);    
                     } catch (\Exception $e){
                         DB::rollBack();
-                        $error['errors']['apps'] = 'the CategoryApps Apps has not been created';
+                        $error['errors']['apps'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'CategoryApps', 'option' => 'created', 'include' => 'Apps']);
                         //$error['errors']['AppsMessage'] = $e->getMessage();
                         return response()->json($error)->setStatusCode($this->status_codes['conflict']);
                     }
@@ -207,16 +210,16 @@ class CategoryAppsController extends ApiController
         if($categoryApps <> null){
             $this->categoryApps->deleteById($id);
         } else {
-            $error['errors']['delete'] = 'the CategoryApps selected doesn\'t exists';   
+            $error['errors']['delete'] = Lang::get('messages.NotExistClass', ['class' => 'CategoryApps']);   
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
         
-        $this->index();
+        
         $categoryApps = CategoryApp::find($id);        
         if($categoryApps == null){
             return array("success" => true);
         } else {
-            $error['errors']['delete'] = 'the CategoryApps has not been deleted';   
+            $error['errors']['delete'] = Lang::get('messages.NotDeletedClass', ['class' => 'CategoryApps']);   
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
     }

@@ -8,6 +8,8 @@ use WA\DataStore\Condition\Condition;
 use WA\DataStore\Condition\ConditionTransformer;
 use WA\Repositories\Condition\ConditionInterface;
 
+use Illuminate\Support\Facades\Lang;
+
 /**
  * Condition resource.
  *
@@ -58,12 +60,12 @@ class ConditionsController extends ApiController
 
         $condition = Condition::find($id);
         if($condition == null){
-            $error['errors']['get'] = 'the Condition selected doesn\'t exists';   
+            $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'Condition']);   
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
         if(!$this->includesAreCorrect($request, new ConditionTransformer())){
-            $error['errors']['getIncludes'] = 'One or More Includes selected doesn\'t exists';
+            $error['errors']['getIncludes'] = Lang::get('messages.NotExistInclude');
             return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
         }
 
@@ -85,11 +87,11 @@ class ConditionsController extends ApiController
                 $condition = $this->condition->update($data);
                 return $this->response()->item($condition, new ConditionTransformer(), ['key' => 'conditions'])->setStatusCode($this->status_codes['created']);
             } catch (\Exception $e){
-                $error['errors']['conditions'] = 'the Condition has not been updated';
+                $error['errors']['conditions'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Condition', 'option' => 'updated', 'include' => '']);
                 //$error['errors']['conditionsMessage'] = $e->getMessage();
             }
         } else {
-            $error['errors']['json'] = 'Json is Invalid';
+            $error['errors']['json'] = Lang::get('messages.InvalidJson');
         }
 
         return response()->json($error)->setStatusCode($this->status_codes['conflict']);
@@ -108,11 +110,11 @@ class ConditionsController extends ApiController
                 $condition = $this->condition->create($data);
                 return $this->response()->item($condition, new ConditionTransformer(), ['key' => 'conditions'])->setStatusCode($this->status_codes['created']);
             } catch (\Exception $e){
-                $error['errors']['conditions'] = 'the Condition has not been created';
+                $error['errors']['conditions'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Condition', 'option' => 'created', 'include' => '']);
                 //$error['errors']['conditionsMessage'] = $e->getMessage();
             }
         } else {
-            $error['errors']['json'] = 'Json is Invalid';
+            $error['errors']['json'] = Lang::get('messages.InvalidJson');
         }
 
         return response()->json($error)->setStatusCode($this->status_codes['conflict']);
@@ -129,16 +131,16 @@ class ConditionsController extends ApiController
         if($condition <> null){
             $this->condition->deleteById($id);
         } else {
-            $error['errors']['delete'] = 'the Condition selected doesn\'t exists';   
+            $error['errors']['delete'] = Lang::get('messages.NotExistClass', ['class' => 'Condition']);   
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
         
-        $this->index();
+        
         $condition = Condition::find($id);
         if($condition == null){
             return array("success" => true);
         } else {
-            $error['errors']['delete'] = 'the Condition has not been deleted';   
+            $error['errors']['delete'] = Lang::get('messages.NotDeletedClass', ['class' => 'Condition']);   
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
     }

@@ -12,6 +12,8 @@ use WA\DataStore\User\UserTransformer;
 use WA\Helpers\Traits\SetLimits;
 use WA\Repositories\User\UserInterface;
 
+use Illuminate\Support\Facades\Lang;
+
 /**
  * Users resource.
  *

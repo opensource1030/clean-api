@@ -15,6 +15,8 @@ use Intervention\Image\ImageManager;
 
 use DB;
 
+use Illuminate\Support\Facades\Lang;
+
 /**
  * Image resource.
  *
@@ -67,7 +69,7 @@ class ImageController extends ApiController
 
         $image = Image::find($id);
         if($image == null){
-            $error['errors']['get'] = 'the Image selected doesn\'t exists';   
+            $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'Image']);   
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
@@ -89,7 +91,7 @@ class ImageController extends ApiController
 
         $image = Image::find($id);
         if($image == null){
-            $error['errors']['get'] = 'the Image selected doesn\'t exists';
+            $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'Image']);
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
@@ -121,7 +123,7 @@ class ImageController extends ApiController
                 Storage::delete($file);
             }   
         } catch (\Exception $e) {
-            $error['errors']['image'] = 'the Image has not been created';
+            $error['errors']['image'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Image', 'option' => 'created', 'include' => '']);
             //$error['errors']['imageMessage'] = $e->getMessage();
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
@@ -141,16 +143,16 @@ class ImageController extends ApiController
             $this->image->deleteById($id);
             Storage::delete($path = $image->filename.'.'.$image->extension);
         } else {
-            $error['errors']['delete'] = 'the Image selected doesn\'t exists';   
+            $error['errors']['delete'] = Lang::get('messages.NotExistClass', ['class' => 'Image']);   
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
         
-        $this->index();
+        
         $image = Image::find($id);        
         if($image == null){
             return array("success" => true);
         } else {
-            $error['errors']['delete'] = 'the Image has not been deleted';   
+            $error['errors']['delete'] = Lang::get('messages.NotDeletedClass', ['class' => 'Image']);   
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
     }

@@ -6,7 +6,7 @@ use WA\DataStore\DeviceType\DeviceTypeTransformer;
 use WA\Repositories\DeviceType\DeviceTypeInterface;
 use Illuminate\Http\Request;
 
-use Log;
+use Illuminate\Support\Facades\Lang;
 
 /**
  * DeviceType resource.
@@ -58,7 +58,7 @@ class DevicesTypeController extends ApiController
     {
         $deviceType = DeviceType::find($id);
         if($deviceType == null){
-            $error['errors']['get'] = 'the DeviceType selected doesn\'t exists';   
+            $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'DeviceType']);   
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
@@ -80,11 +80,11 @@ class DevicesTypeController extends ApiController
                 $devicetype = $this->deviceType->update($data);
                 return $this->response()->item($devicetype, new DeviceTypeTransformer(), ['key' => 'devicetypes'])->setStatusCode($this->status_codes['created']);
             } catch (\Exception $e){
-                $error['errors']['devicetypes'] = 'the Devicetype has not been updated';
+                $error['errors']['devicetypes'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'DeviceType', 'option' => 'updated', 'include' => '']);
                 //$error['errors']['devicetypesMessage'] = $e->getMessage();
             }
         } else {
-            $error['errors']['json'] = 'Json is Invalid';
+            $error['errors']['json'] = Lang::get('messages.InvalidJson');
         }
 
         return response()->json($error)->setStatusCode($this->status_codes['conflict']);
@@ -103,11 +103,11 @@ class DevicesTypeController extends ApiController
                 $devicetype = $this->deviceType->create($data);
                 return $this->response()->item($devicetype, new DeviceTypeTransformer(), ['key' => 'devicetypes'])->setStatusCode($this->status_codes['created']);
             } catch (\Exception $e){
-                $error['errors']['devicetypes'] = 'the Devicetype has not been created';
+                $error['errors']['devicetypes'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'DeviceType', 'option' => 'created', 'include' => '']);
                 //$error['errors']['devicetypesMessage'] = $e->getMessage();
             }
         } else {
-            $error['errors']['json'] = 'Json is Invalid';
+            $error['errors']['json'] = Lang::get('messages.InvalidJson');
         }
 
         return response()->json($error)->setStatusCode($this->status_codes['conflict']);
@@ -124,16 +124,16 @@ class DevicesTypeController extends ApiController
         if($deviceType <> null){
             $this->deviceType->deleteById($id);
         } else {
-            $error['errors']['delete'] = 'the DeviceType selected doesn\'t exists';   
+            $error['errors']['delete'] = Lang::get('messages.NotExistClass', ['class' => 'DeviceType']);   
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
         
-        $this->index();
+        
         $deviceType = DeviceType::find($id);
         if($deviceType == null){
             return array("success" => true);
         } else {
-            $error['errors']['delete'] = 'the DeviceType has not been deleted';   
+            $error['errors']['delete'] = Lang::get('messages.NotDeletedClass', ['class' => 'DeviceType']);   
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
     }

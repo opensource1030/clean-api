@@ -292,7 +292,7 @@ class PresetsApiTest extends TestCase
             )->seeJson(
             [
                 'errors' => [
-                    'json' => 'Json is Invalid'
+                    'json' => 'JSON is Invalid'
                 ]
             ]
         );
@@ -313,7 +313,7 @@ class PresetsApiTest extends TestCase
             )->seeJson(
             [
                 'errors' => [
-                    'json' => 'Json is Invalid'
+                    'json' => 'JSON is Invalid'
                 ]
             ]
         );
@@ -333,7 +333,7 @@ class PresetsApiTest extends TestCase
             )->seeJson(
             [
                 'errors' => [
-                    'json' => 'Json is Invalid'
+                    'json' => 'JSON is Invalid'
                 ]
             ]
         );

@@ -10,6 +10,8 @@ use WA\Repositories\Category\PresetInterface;
 
 use DB;
 
+use Illuminate\Support\Facades\Lang;
+
 /**
  * Preset resource.
  *
@@ -60,12 +62,12 @@ class PresetController extends ApiController
 
         $preset = Preset::find($id);
         if($preset == null){
-            $error['errors']['get'] = 'the Preset selected doesn\'t exists';   
+            $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'Preset']);   
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
         if(!$this->includesAreCorrect($request, new PresetTransformer())){
-            $error['errors']['getincludes'] = 'One or More Includes selected doesn\'t exists';   
+            $error['errors']['getincludes'] = Lang::get('messages.NotExistInclude');   
             return response()->json($error)->setStatusCode($this->status_codes['badrequest']);            
         }
 
@@ -86,7 +88,7 @@ class PresetController extends ApiController
          * Checks if Json has data, data-type & data-attributes.
          */
         if(!$this->isJsonCorrect($request, 'presets')){
-            $error['errors']['json'] = 'Json is Invalid';
+            $error['errors']['json'] = Lang::get('messages.InvalidJson');
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
@@ -98,7 +100,7 @@ class PresetController extends ApiController
             $preset = $this->preset->update($data);
         } catch (\Exception $e) {
             DB::rollBack();
-            $error['errors']['preset'] = 'The Preset has not been updated';
+            $error['errors']['preset'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Preset', 'option' => 'updated', 'include' => '']);
             //$error['errors']['presetMessage'] = $e->getMessage();
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         } 
@@ -111,7 +113,7 @@ class PresetController extends ApiController
                         $preset->images()->sync($dataImages);    
                     } catch (\Exception $e){
                         $success = false;
-                        $error['errors']['images'] = 'the Preset Images has not been created';
+                        $error['errors']['images'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Preset', 'option' => 'created', 'include' => 'Images']);
                         //$error['errors']['imagesMessage'] = $e->getMessage();
                     }
                 }
@@ -124,7 +126,7 @@ class PresetController extends ApiController
                         $preset->devices()->sync($dataDevices);    
                     } catch (\Exception $e){
                         $success = false;
-                        $error['errors']['devices'] = 'the Preset Devices has not been created';
+                        $error['errors']['devices'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Preset', 'option' => 'created', 'include' => 'Devices']);
                         //$error['errors']['devicesMessage'] = $e->getMessage();
                     }
                 }
@@ -152,7 +154,7 @@ class PresetController extends ApiController
          * Checks if Json has data, data-type & data-attributes.
          */
         if(!$this->isJsonCorrect($request, 'presets')){
-            $error['errors']['json'] = 'Json is Invalid';
+            $error['errors']['json'] = Lang::get('messages.InvalidJson');
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
@@ -163,7 +165,7 @@ class PresetController extends ApiController
             $preset = $this->preset->create($data);
         } catch (\Exception $e) {
             DB::rollBack();
-            $error['errors']['preset'] = 'The Preset has not been created';
+            $error['errors']['preset'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Preset', 'option' => 'created', 'include' => '']);
             //$error['errors']['presetMessage'] = $e->getMessage();
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }        
@@ -176,7 +178,7 @@ class PresetController extends ApiController
                         $preset->images()->sync($dataImages);    
                     } catch (\Exception $e){
                         $success = false;
-                        $error['errors']['images'] = 'the Preset Images has not been created';
+                        $error['errors']['images'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Preset', 'option' => 'created', 'include' => 'Images']);
                         //$error['errors']['imagesMessage'] = $e->getMessage();
                     }
                 }
@@ -189,7 +191,7 @@ class PresetController extends ApiController
                         $preset->devices()->sync($dataDevices);    
                     } catch (\Exception $e){
                         $success = false;
-                        $error['errors']['devices'] = 'the Preset Devices has not been created';
+                        $error['errors']['devices'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Preset', 'option' => 'created', 'include' => 'Devices']);
                         //$error['errors']['devicesMessage'] = $e->getMessage();
                     }
                 }
@@ -216,16 +218,16 @@ class PresetController extends ApiController
         if($preset <> null){
             $this->preset->deleteById($id);
         } else {
-            $error['errors']['delete'] = 'the Preset selected doesn\'t exists';   
+            $error['errors']['delete'] = Lang::get('messages.NotExistClass', ['class' => 'Preset']);   
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
         
-        $this->index();
+        
         $preset = Preset::find($id);        
         if($preset == null){
             return array("success" => true);
         } else {
-            $error['errors']['delete'] = 'the Preset has not been deleted';   
+            $error['errors']['delete'] = Lang::get('messages.NotDeletedClass', ['class' => 'Preset']);   
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
     }

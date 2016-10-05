@@ -11,6 +11,8 @@ use WA\Repositories\Package\PackageInterface;
 
 use DB;
 
+use Illuminate\Support\Facades\Lang;
+
 /**
  * Package resource.
  *
@@ -62,12 +64,12 @@ class PackageController extends ApiController
     {
         $package = Package::find($id);
         if($package == null){
-            $error['errors']['get'] = 'the Package selected doesn\'t exists';   
+            $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'Package']);   
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
         if(!$this->includesAreCorrect($request, new PackageTransformer())){
-            $error['errors']['getincludes'] = 'One or More Includes selected doesn\'t exists';
+            $error['errors']['getincludes'] = Lang::get('messages.NotExistInclude');
             return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
         }
 
@@ -89,7 +91,7 @@ class PackageController extends ApiController
          * Checks if Json has data, data-type & data-attributes.
          */
         if(!$this->isJsonCorrect($request, 'packages')){
-            $error['errors']['json'] = 'Json is Invalid';
+            $error['errors']['json'] = Lang::get('messages.InvalidJson');
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         } else {
             $data = $request->all()['data'];
@@ -130,7 +132,7 @@ class PackageController extends ApiController
                     try {
                         $package->conditions()->sync($dataConditions);    
                     } catch (\Exception $e){
-                        $error['errors']['conditions'] = 'the Package Conditions has not been Modified';
+                        $error['errors']['conditions'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Package', 'option' => 'updated', 'include' => 'Conditions']);
                         //$error['errors']['conditionsMessage'] = $e->getMessage();
                     }
                 }
@@ -142,7 +144,7 @@ class PackageController extends ApiController
                     try {
                         $package->services()->sync($dataServices);
                     } catch (\Exception $e){
-                        $error['errors']['services'] = 'the Package Services has not been Modified';
+                        $error['errors']['services'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Package', 'option' => 'updated', 'include' => 'Services']);
                         //$error['errors']['servicesMessage'] = $e->getMessage();
                     }
                 }
@@ -155,7 +157,7 @@ class PackageController extends ApiController
                         $package->devices()->sync($dataDevices);
                     } catch (\Exception $e){
                         $success = false;
-                        $error['errors']['devices'] = 'the Package Devices has not been Modified';
+                        $error['errors']['devices'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Package', 'option' => 'updated', 'include' => 'Devices']);
                         //$error['errors']['devicesMessage'] = $e->getMessage();
                     }
                 }
@@ -168,7 +170,7 @@ class PackageController extends ApiController
                         $package->apps()->sync($dataApps);
                     } catch (\Exception $e){
                         $success = false;
-                        $error['errors']['apps'] = 'the Package Apps has not been Modified';
+                        $error['errors']['apps'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Package', 'option' => 'updated', 'include' => 'Apps']);;
                         //$error['errors']['appsMessage'] = $e->getMessage();
                     }
                 }
@@ -198,7 +200,7 @@ class PackageController extends ApiController
          * Checks if Json has data, data-type & data-attributes.
          */
         if(!$this->isJsonCorrect($request, 'packages')){
-            $error['errors']['json'] = 'Json is Invalid';
+            $error['errors']['json'] = Lang::get('messages.InvalidJson');
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         } else {
             $data = $request->all()['data'];
@@ -215,7 +217,7 @@ class PackageController extends ApiController
             $package = $this->package->create($dataAttributes); 
         } catch (\Exception $e) {
             DB::rollBack();
-            $error['errors']['packages'] = 'The Package has not been created';
+            $error['errors']['packages'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Package', 'option' => 'created', 'include' => '']);
             //$error['errors']['packagesMessage'] = $e->getMessage();
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
@@ -234,7 +236,7 @@ class PackageController extends ApiController
                         $package->conditions()->sync($dataConditions);    
                     } catch (\Exception $e){
                         $success = false;
-                        $error['errors']['conditions'] = 'the Package Conditions has not been created';
+                        $error['errors']['conditions'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Package', 'option' => 'created', 'include' => 'Conditions']);
                         //$error['errors']['conditionsMessage'] = $e->getMessage();
                     }
                 }
@@ -247,7 +249,7 @@ class PackageController extends ApiController
                         $package->services()->sync($dataServices);
                     } catch (\Exception $e){
                         $success = false;
-                        $error['errors']['services'] = 'the Package Services has not been created';
+                        $error['errors']['services'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Package', 'option' => 'created', 'include' => 'Services']);
                         //$error['errors']['servicesMessage'] = $e->getMessage();
                     }
                 }
@@ -260,7 +262,7 @@ class PackageController extends ApiController
                         $package->devices()->sync($dataDevices);
                     } catch (\Exception $e){
                         $success = false;
-                        $error['errors']['devices'] = 'the Package Devices has not been created';
+                        $error['errors']['devices'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Package', 'option' => 'created', 'include' => 'Devices']);
                         //$error['errors']['devicesMessage'] = $e->getMessage();
                     }
                 }
@@ -273,7 +275,7 @@ class PackageController extends ApiController
                         $package->apps()->sync($dataApps);
                     } catch (\Exception $e){
                         $success = false;
-                        $error['errors']['apps'] = 'the Package Apps has not been created';
+                        $error['errors']['apps'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Package', 'option' => 'created', 'include' => 'Apps']);
                         //$error['errors']['appsMessage'] = $e->getMessage();
                     }
                 }
@@ -300,16 +302,16 @@ class PackageController extends ApiController
         if($package <> null){
             $this->package->deleteById($id);
         } else {
-            $error['errors']['delete'] = 'the Package selected doesn\'t exists';   
+            $error['errors']['delete'] = Lang::get('messages.NotExistClass', ['class' => 'Package']);   
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
         
-        $this->index();
+        
         $package = Package::find($id);        
         if($package == null){
             return array("success" => true);
         } else {
-            $error['errors']['delete'] = 'the Package has not been deleted';   
+            $error['errors']['delete'] = Lang::get('messages.NotDeletedClass', ['class' => 'Package']);   
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
     }

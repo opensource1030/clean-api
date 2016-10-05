@@ -5,6 +5,8 @@ use Illuminate\Http\Request;
 use WA\DataStore\Request\RequestTransformer;
 use WA\Repositories\Request\RequestInterface;
 
+use Illuminate\Support\Facades\Lang;
+
 /**
  * Request resource.
  *
@@ -92,6 +94,6 @@ class RequestController extends ApiController
     public function delete($id)
     {
         $this->request->deleteById($id);
-        $this->index();
+        
     }
 }

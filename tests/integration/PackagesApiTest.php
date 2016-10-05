@@ -451,7 +451,7 @@ class PackageApiTest extends TestCase
             )->seeJson(
             [
                 'errors' => [
-                    'json' => 'Json is Invalid'
+                    'json' => 'JSON is Invalid'
                 ]
             ]
         );
@@ -472,7 +472,7 @@ class PackageApiTest extends TestCase
             )->seeJson(
             [
                 'errors' => [
-                    'json' => 'Json is Invalid'
+                    'json' => 'JSON is Invalid'
                 ]
             ]
         );
@@ -492,7 +492,7 @@ class PackageApiTest extends TestCase
             )->seeJson(
             [
                 'errors' => [
-                    'json' => 'Json is Invalid'
+                    'json' => 'JSON is Invalid'
                 ]
             ]
         );

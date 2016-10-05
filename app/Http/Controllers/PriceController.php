@@ -12,6 +12,8 @@ use WA\Http\Requests\Parameters\Filters;
 use Log;
 use Collection;
 
+use Illuminate\Support\Facades\Lang;
+
 /**
  * Price resource.
  *
@@ -62,7 +64,7 @@ class PriceController extends ApiController
 
         $price = Price::find($id);
         if($price == null){
-            $error['errors']['get'] = 'the price selected doesn\'t exists';   
+            $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'Price']);   
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
@@ -169,8 +171,6 @@ class PriceController extends ApiController
         $response = $this->response()->withPaginator($prices, new PriceTransformer(), ['key' => 'prices']);
     }
 
-
-
     /**
      * Update contents of a Price
      *
@@ -183,7 +183,7 @@ class PriceController extends ApiController
          * Checks if Json has data, data-type & data-attributes.
          */
         if(!$this->isJsonCorrect($request, 'prices')){
-            $error['errors']['json'] = 'Json is Invalid';
+            $error['errors']['json'] = Lang::get('messages.InvalidJson');
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
@@ -202,7 +202,7 @@ class PriceController extends ApiController
     public function create(Request $request) {
         
         if(!$this->isJsonCorrect($request, 'prices')){
-            $error['errors']['json'] = 'Json is Invalid';
+            $error['errors']['json'] = Lang::get('messages.InvalidJson');
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
         
@@ -223,16 +223,16 @@ class PriceController extends ApiController
         if($price <> null){
             $this->price->deleteById($id);
         } else {
-            $error['errors']['delete'] = 'the price selected doesn\'t exists';   
+            $error['errors']['delete'] = Lang::get('messages.NotExistClass', ['class' => 'Price']);   
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
         
-        $this->index();
+        
         $price = Price::find($id);        
         if($price == null){
             return array("success" => true);
         } else {
-            $error['errors']['delete'] = 'the price has not been deleted';   
+            $error['errors']['delete'] = Lang::get('messages.NotDeletedClass', ['class' => 'Price']);   
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
     }
