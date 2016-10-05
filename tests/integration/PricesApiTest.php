@@ -231,12 +231,12 @@ class PricesApiTest extends TestCase
         $responseDel = $this->call('DELETE', '/prices/'.$price->id);
         $this->assertEquals(200, $responseDel->status());
         $responseGet = $this->call('GET', '/prices/'.$price->id);
-        $this->assertEquals(409, $responseGet->status());        
+        $this->assertEquals(404, $responseGet->status());        
     }
 
     public function testDeletepriceIfNoExists(){
         // DELETE NO EXISTING.
         $responseDel = $this->call('DELETE', '/prices/1');
-        $this->assertEquals(409, $responseDel->status());
+        $this->assertEquals(404, $responseDel->status());
     }
 }

@@ -93,14 +93,14 @@ class ModificationsApiTest extends TestCase
         $responseDel = $this->call('DELETE', '/modifications/'.$modification->id);
         $this->assertEquals(200, $responseDel->status());
         $responseGet = $this->call('GET', '/modifications/'.$modification->id);
-        $this->assertEquals(409, $responseGet->status());        
+        $this->assertEquals(404, $responseGet->status());
     }
 
     public function testDeleteModificationIfNoExists(){
 
         // DELETE NO EXISTING.
         $responseDel = $this->call('DELETE', '/modifications/1');
-        $this->assertEquals(409, $responseDel->status());
+        $this->assertEquals(404, $responseDel->status());
     }
 
 }

@@ -12,6 +12,8 @@ use WA\Repositories\Company\CompanyInterface;
 use WA\Repositories\Udl\UdlInterface;
 use Illuminate\Http\Request;
 
+use Illuminate\Support\Facades\Lang;
+
 /**
  * Class CompaniesController.
  */
@@ -71,7 +73,7 @@ class CompaniesController extends ApiController
         $company = $this->company->byId($id);
 
         if($company == null){
-            $error['errors']['get'] = 'the Company selected doesn\'t exists';   
+            $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'Company']);   
             return response()->json($error)->setStatusCode(409);
         }
 
@@ -106,7 +108,7 @@ class CompaniesController extends ApiController
         $company = Company::find($id);
         if(!isset($company))
         {
-            $error['errors']['put'] = 'Company selected does not exist';
+            $error['errors']['put'] = Lang::get('messages.NotExistClass', ['class' => 'Company']);
             return response()->json($error)->setStatusCode(404);
         }
         $data = $request->all();
@@ -143,7 +145,7 @@ class CompaniesController extends ApiController
         }else{
             return response()->json()->setStatusCode(202);
         }
-        $this->index();
+        
     }
 
 

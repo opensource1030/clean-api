@@ -128,7 +128,7 @@ class ContentsController extends ApiController
         }else{
             return response()->json()->setStatusCode(202);
         }
-        $this->index();
+        
     }
 
 

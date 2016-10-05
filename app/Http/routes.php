@@ -181,6 +181,7 @@ $api->version('v1', function ($api) {
         $imageController = 'WA\Http\Controllers\ImageController';
         $api->get('images', ['as' => 'api.image.index', 'uses' => $imageController . '@index']);
         $api->get('images/{id}', ['as' => 'api.image.show', 'uses' => $imageController . '@show']);
+        $api->get('images/info/{id}', ['as' => 'api.image.info', 'uses' => $imageController . '@info']);
         $api->post('images', ['uses' => $imageController . '@create']);
         $api->delete('images/{id}', ['uses' => $imageController . '@delete']);
 
@@ -193,12 +194,12 @@ $api->version('v1', function ($api) {
         $api->delete('address/{id}', ['uses' => $addressController . '@delete']);
 
         //=DeviceType
-        $deviceTypeController = 'WA\Http\Controllers\DeviceTypeController';
-        $api->get('devicetype', ['as' => 'api.devicetype.index', 'uses' => $deviceTypeController . '@index']);
-        $api->get('devicetype/{id}', ['as' => 'api.devicetype.show', 'uses' => $deviceTypeController . '@show']);
-        $api->post('devicetype', ['uses' => $deviceTypeController . '@create']);
-        $api->put('devicetype/{id}', ['uses' => $deviceTypeController . '@store']);
-        $api->delete('devicetype/{id}', ['uses' => $deviceTypeController . '@delete']);
+        $devicesTypeController = 'WA\Http\Controllers\DevicesTypeController';
+        $api->get('devicetypes', ['as' => 'api.devicetype.index', 'uses' => $devicesTypeController . '@index']);
+        $api->get('devicetypes/{id}', ['as' => 'api.devicetype.show', 'uses' => $devicesTypeController . '@show']);
+        $api->post('devicetypes', ['uses' => $devicesTypeController . '@create']);
+        $api->put('devicetypes/{id}', ['uses' => $devicesTypeController . '@store']);
+        $api->delete('devicetypes/{id}', ['uses' => $devicesTypeController . '@delete']);
         
         //=CategoryDevices
         $presetController = 'WA\Http\Controllers\PresetController';
@@ -216,5 +217,12 @@ $api->version('v1', function ($api) {
         $api->put('categoryapps/{id}', ['uses' => $categoryAppController . '@store']);
         $api->delete('categoryapps/{id}', ['uses' => $categoryAppController . '@delete']);
 
+        //=Conditions
+        $conditionsController = 'WA\Http\Controllers\ConditionsController';
+        $api->get('conditions', ['as' => 'api.conditions.index', 'uses' => $conditionsController . '@index']);
+        $api->get('conditions/{id}', ['as' => 'api.conditions.show', 'uses' => $conditionsController . '@show']);
+        $api->post('conditions', ['uses' => $conditionsController . '@create']);
+        $api->put('conditions/{id}', ['uses' => $conditionsController . '@store']);
+        $api->delete('conditions/{id}', ['uses' => $conditionsController . '@delete']);
     });
 });

@@ -8,6 +8,8 @@ use WA\DataStore\Price\PriceTransformer;
 use WA\Http\Requests\Parameters\Filters;
 use WA\Repositories\Price\PriceInterface;
 
+use Illuminate\Support\Facades\Lang;
+
 /**
  * Price resource.
  *
@@ -57,17 +59,16 @@ class PriceController extends ApiController
      */
     public function show($id)
     {
-
         $criteria = $this->getRequestCriteria();
         $this->price->setCriteria($criteria);
-        $price = $this->price->byId($id);
+        $price = Price::find($id);
 
-        if ($price == null) {
-            $error['errors']['get'] = 'the price selected doesn\'t exists';
-            return response()->json($error)->setStatusCode(409);
+        if($price == null){
+            $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'Price']);   
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
-        return $this->response()->item($price, new PriceTransformer(), ['key' => 'prices']);
+        return $this->response()->item($price, new PriceTransformer(), ['key' => 'prices'])->setStatusCode($this->status_codes['created']);
     }
 
     /**
@@ -175,7 +176,6 @@ class PriceController extends ApiController
         $response = $this->response()->withPaginator($prices, new PriceTransformer(), ['key' => 'prices']);
     }
 
-
     /**
      * Update contents of a Price
      *
@@ -184,21 +184,19 @@ class PriceController extends ApiController
      */
     public function store($id, Request $request)
     {
-
         /*
          * Checks if Json has data, data-type & data-attributes.
          */
-        if (!$this->isJsonCorrect($request, 'prices')) {
-            $error['errors']['json'] = 'Json is Invalid';
-            return response()->json($error)->setStatusCode(409);
-        } else {
-            $data = $request->all()['data'];
-            $dataAttributes = $data['attributes'];
+        if(!$this->isJsonCorrect($request, 'prices')){
+            $error['errors']['json'] = Lang::get('messages.InvalidJson');
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
-        $dataAttributes['id'] = $id;
-        $price = $this->price->update($dataAttributes);
-        return $this->response()->item($price, new PriceTransformer(), ['key' => 'prices']);
+        $data = $request->all()['data']['attributes'];           
+        $data['id'] = $id;
+        $price = $this->price->update($data);
+        
+        return $this->response()->item($price, new PriceTransformer(), ['key' => 'prices'])->setStatusCode($this->status_codes['created']);
     }
 
     /**
@@ -206,18 +204,17 @@ class PriceController extends ApiController
      *
      * @return \Dingo\Api\Http\Response
      */
-    public function create(Request $request)
-    {
-        if (!$this->isJsonCorrect($request, 'prices')) {
-            $error['errors']['json'] = 'Json is Invalid';
-            return response()->json($error)->setStatusCode(409);
-        } else {
-            $data = $request->all()['data'];
-            $dataAttributes = $data['attributes'];
+    public function create(Request $request) {
+        
+        if(!$this->isJsonCorrect($request, 'prices')){
+            $error['errors']['json'] = Lang::get('messages.InvalidJson');
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
+        
+        $data = $request->all()['data']['attributes'];
+        $price = $this->price->create($data);
 
-        $price = $this->price->create($dataAttributes);
-        return $this->response()->item($price, new PriceTransformer(), ['key' => 'prices']);
+        return $this->response()->item($price, new PriceTransformer(), ['key' => 'prices'])->setStatusCode($this->status_codes['created']);
     }
 
     /**
@@ -231,17 +228,17 @@ class PriceController extends ApiController
         if ($price <> null) {
             $this->price->deleteById($id);
         } else {
-            $error['errors']['delete'] = 'the price selected doesn\'t exists';
-            return response()->json($error)->setStatusCode(409);
+            $error['errors']['delete'] = Lang::get('messages.NotExistClass', ['class' => 'Price']);   
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
-
-        $this->index();
-        $price = Price::find($id);
-        if ($price == null) {
+        
+        
+        $price = Price::find($id);        
+        if($price == null){
             return array("success" => true);
         } else {
-            $error['errors']['delete'] = 'the price has not been deleted';
-            return response()->json($error)->setStatusCode(409);
+            $error['errors']['delete'] = Lang::get('messages.NotDeletedClass', ['class' => 'Price']);   
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
     }
 }

@@ -521,7 +521,7 @@ class DevicesApiTest extends TestCase
             )->seeJson(
             [
                 'errors' => [
-                    'json' => 'Json is Invalid'
+                    'json' => 'JSON is Invalid'
                 ]
             ]
         );
@@ -544,7 +544,7 @@ class DevicesApiTest extends TestCase
             )->seeJson(
             [
                 'errors' => [
-                    'json' => 'Json is Invalid'
+                    'json' => 'JSON is Invalid'
                 ]
             ]
         );
@@ -566,7 +566,7 @@ class DevicesApiTest extends TestCase
             )->seeJson(
             [
                 'errors' => [
-                    'json' => 'Json is Invalid'
+                    'json' => 'JSON is Invalid'
                 ]
             ]
         );
@@ -592,7 +592,7 @@ class DevicesApiTest extends TestCase
             )->seeJson(
             [
                 'errors' => [
-                    'devices' => 'The Device has not been created'
+                    'devices' => 'the Device  has not been created'
                 ]
             ]
         );
@@ -772,7 +772,7 @@ class DevicesApiTest extends TestCase
         )->seeJson(
         [
             'errors' => [
-                'prices' => 'the Device Prices has not been created (Exception)'
+                'prices' => 'the Device Prices has not been created'
             ]
         ]);
     }
@@ -827,7 +827,7 @@ class DevicesApiTest extends TestCase
         )->seeJson(
         [
             'errors' => [
-                'prices' => 'the Device Prices has not been created (Exception)'
+                'prices' => 'the Device Prices has not been created'
             ]
         ]);
     }
@@ -882,7 +882,7 @@ class DevicesApiTest extends TestCase
         )->seeJson(
         [
             'errors' => [
-                'prices' => 'the Device Prices has not been created (Exception)'
+                'prices' => 'the Device Prices has not been created'
             ]
         ]);
     }
@@ -937,7 +937,7 @@ class DevicesApiTest extends TestCase
         )->seeJson(
         [
             'errors' => [
-                'prices' => 'the Device Prices has not been created (Exception)'
+                'prices' => 'the Device Prices has not been created'
             ]
         ]);
     }
@@ -992,7 +992,7 @@ class DevicesApiTest extends TestCase
         )->seeJson(
         [
             'errors' => [
-                'prices' => 'the Device Prices has not been created (Exception)'
+                'prices' => 'the Device Prices has not been created'
             ]
         ]);
     }
@@ -1183,6 +1183,7 @@ class DevicesApiTest extends TestCase
         // CREATE & DELETE
         $device = factory(\WA\DataStore\Device\Device::class)->create();
         $responseDel = $this->call('DELETE', '/devices/'.$device->id);
+        //dd($responseDel);
         $this->assertEquals(200, $responseDel->status());
         $responseGet = $this->call('GET', '/devices/'.$device->id);
         $this->assertEquals(404, $responseGet->status());        

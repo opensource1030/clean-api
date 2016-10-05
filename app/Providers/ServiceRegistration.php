@@ -11,6 +11,7 @@ use WA\DataStore\Carrier\Carrier;
 use WA\DataStore\Category\CategoryApp;
 use WA\DataStore\Category\Preset;
 use WA\DataStore\Company\Company;
+use WA\DataStore\Condition\Condition;
 use WA\DataStore\Content\Content;
 use WA\DataStore\Device\Device;
 use WA\DataStore\Device\DeviceCarrier;
@@ -36,6 +37,7 @@ use WA\DataStore\UdlValuePath\UdlValuePath;
 use WA\DataStore\UdlValuePathUsers\UdlValuePathUsers;
 use WA\DataStore\User\User;
 use WA\DataStore\UserNotifications;
+
 use WA\Repositories\Address\EloquentAddress;
 use WA\Repositories\Allocation\EloquentAllocation;
 use WA\Repositories\App\EloquentApp;
@@ -45,6 +47,7 @@ use WA\Repositories\Carrier\EloquentCarrier;
 use WA\Repositories\Category\EloquentCategoryApps;
 use WA\Repositories\Category\EloquentPreset;
 use WA\Repositories\Company\EloquentCompany;
+use WA\Repositories\Condition\EloquentCondition;
 use WA\Repositories\Content\EloquentContent;
 use WA\Repositories\Device\EloquentDevice;
 use WA\Repositories\Device\EloquentDeviceCarrier;
@@ -71,9 +74,8 @@ use WA\Repositories\UdlValuePath\EloquentUdlValuePath;
 use WA\Repositories\UdlValuePathUsers\EloquentUdlValuePathUsers;
 use WA\Repositories\User\EloquentUser;
 use WA\Repositories\User\UserCacheDecorator;
-use WA\Repositories\UserNotifications\EloquentUserNotifications;
-use WA\Services\Cache\Cache;
 
+use WA\Services\Cache\Cache;
 
 /**
  * Class ServiceRegistration.
@@ -505,4 +507,15 @@ trait ServiceRegistration
         );
     }
 
+    /**
+     * @param
+     */
+    public function registerCondition()
+    {
+        app()->bind('WA\Repositories\Condition\ConditionInterface',
+            function () {
+                return new EloquentCondition(new Condition());
+            }
+        );
+    }
 }

@@ -9,7 +9,7 @@ $factory->define(WA\DataStore\Condition\Condition::class, function ($faker) {
     $value = ['engineer','3','Sales','600','USA','Canada'];
 
     return [
-        'type' => $type[array_rand($type)],
+        'typeCond' => $type[array_rand($type)],
         'name' => $name[array_rand($name)],
         'condition' => $condition[array_rand($condition)],
         'value' => $value[array_rand($value)]

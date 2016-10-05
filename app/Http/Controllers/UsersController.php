@@ -17,6 +17,8 @@ use Illuminate\Support\Facades\Auth;
 
 
 
+use Illuminate\Support\Facades\Lang;
+
 /**
  * Users resource.
  *

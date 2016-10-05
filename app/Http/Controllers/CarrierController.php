@@ -10,6 +10,8 @@ use WA\Repositories\Carrier\CarrierInterface;
 
 use DB;
 
+use Illuminate\Support\Facades\Lang;
+
 /**
  * Carrier resource.
  *
@@ -63,13 +65,13 @@ class CarrierController extends ApiController
         $carrier = $this->carrier->byId($id);
 
         if($carrier == null){
-            $error['errors']['get'] = 'the carrier selected doesn\'t exists';   
+            $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'Carrier']);   
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
         if(!$this->includesAreCorrect($request, new CarrierTransformer())){
-            $error['errors']['getincludes'] = 'One or More Includes selected doesn\'t exists';
-            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+            $error['errors']['getincludes'] = Lang::get('messages.NotExistInclude');
+            return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
         }
 
         return $this->response()->item($carrier, new CarrierTransformer(), ['key' => 'carriers'])->setStatusCode($this->status_codes['created']);
@@ -87,7 +89,7 @@ class CarrierController extends ApiController
          * Checks if Json has data, data-type & data-attributes.
          */
         if(!$this->isJsonCorrect($request, 'carriers')){
-            $error['errors']['json'] = 'Json is Invalid';
+            $error['errors']['json'] = Lang::get('messages.InvalidJson');
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
@@ -99,7 +101,7 @@ class CarrierController extends ApiController
             $carrier = $this->carrier->update($data);
         } catch (\Exception $e) {
             DB::rollBack();
-            $error['errors']['carriers'] = 'The Carrier has not been updated';
+            $error['errors']['carriers'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Carrier', 'option' => 'updated', 'include' => '']);
             //$error['errors']['carriersMessage'] = $e->getMessage();
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         } 
@@ -112,7 +114,7 @@ class CarrierController extends ApiController
                         $carrier->images()->sync($dataImages);    
                     } catch (\Exception $e){
                         DB::rollBack();
-                        $error['errors']['images'] = 'the Carrier Images has not been created';
+                        $error['errors']['images'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Carrier', 'option' => 'created', 'include' => 'Images']);
                         //$error['errors']['imagesMessage'] = $e->getMessage();
                         return response()->json($error)->setStatusCode($this->status_codes['conflict']);
                     }
@@ -135,7 +137,7 @@ class CarrierController extends ApiController
          * Checks if Json has data, data-type & data-attributes.
          */
         if(!$this->isJsonCorrect($request, 'carriers')){
-            $error['errors']['json'] = 'Json is Invalid';
+            $error['errors']['json'] = Lang::get('messages.InvalidJson');
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
@@ -146,7 +148,7 @@ class CarrierController extends ApiController
             $carrier = $this->carrier->create($data);
         } catch (\Exception $e) {
             DB::rollBack();
-            $error['errors']['carriers'] = 'The Carrier has not been created';
+            $error['errors']['carriers'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Carrier', 'option' => 'created', 'include' => '']);
             //$error['errors']['carriersMessage'] = $e->getMessage();
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }        
@@ -159,7 +161,7 @@ class CarrierController extends ApiController
                         $carrier->images()->sync($dataImages);    
                     } catch (\Exception $e){
                         DB::rollBack();
-                        $error['errors']['images'] = 'the Carrier Images has not been created';
+                        $error['errors']['images'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Carrier', 'option' => 'created', 'include' => 'Images']);
                         //$error['errors']['imagesMessage'] = $e->getMessage();
                         return response()->json($error)->setStatusCode($this->status_codes['conflict']);
                     }
@@ -182,16 +184,16 @@ class CarrierController extends ApiController
         if($carrier <> null){
             $this->carrier->deleteById($id);
         } else {
-            $error['errors']['delete'] = 'the carrier selected doesn\'t exists';   
+            $error['errors']['delete'] = Lang::get('messages.NotExistClass', ['class' => 'Carrier']);   
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
         
-        $this->index();
+        
         $carrier = Carrier::find($id);        
         if($carrier == null){
             return array("success" => true);
         } else {
-            $error['errors']['delete'] = 'the carrier has not been deleted';   
+            $error['errors']['delete'] = Lang::get('messages.NotDeletedClass', ['class' => 'Carrier']);   
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
     }

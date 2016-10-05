@@ -7,6 +7,8 @@ use WA\DataStore\Address\Address;
 use WA\DataStore\Address\AddressTransformer;
 use WA\Repositories\Address\AddressInterface;
 
+use Illuminate\Support\Facades\Lang;
+
 /**
  * Address resource.
  *
@@ -38,7 +40,6 @@ class AddressController extends ApiController
      */
     public function index()
     {
-
         $criteria = $this->getRequestCriteria();
         $this->address->setCriteria($criteria);
         $address = $this->address->byPage();
@@ -59,18 +60,14 @@ class AddressController extends ApiController
     {
         $criteria = $this->getRequestCriteria();
         $this->address->setCriteria($criteria);
-        $address = $this->address->byId($id);
+        $address = Address::find($id);
 
-        if ($address == null) {
-            $error['errors']['get'] = 'the Address selected doesn\'t exists';
+        if($address == null){
+            $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'Address']);   
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
-        // Dingo\Api\src\Http\Response\Factory.php
-        // Dingo\Api\src\Http\Transformer\Factory.php
-
-        return $this->response()->item($address, new AddressTransformer(),
-            ['key' => 'address'])->setStatusCode($this->status_codes['created']);
+        return $this->response()->item($address, new AddressTransformer(), ['key' => 'address'])->setStatusCode($this->status_codes['created']);
     }
 
     /**
@@ -81,20 +78,20 @@ class AddressController extends ApiController
      */
     public function store($id, Request $request)
     {
-
         if ($this->isJsonCorrect($request, 'address')) {
             try {
+                
                 $data = $request->all()['data']['attributes'];
                 $data['id'] = $id;
                 $address = $this->address->update($data);
-                return $this->response()->item($address, new AddressTransformer(),
-                    ['key' => 'address'])->setStatusCode($this->status_codes['created']);
-            } catch (\Exception $e) {
-                $error['errors']['address'] = 'the Address has not been updated';
+
+                return $this->response()->item($address, new AddressTransformer(), ['key' => 'address'])->setStatusCode($this->status_codes['created']);
+            } catch (\Exception $e){
+                $error['errors']['address'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Address', 'option' => 'updated', 'include' => '']);
                 //$error['errors']['addressMessage'] = $e->getMessage();
             }
         } else {
-            $error['errors']['json'] = 'Json is Invalid';
+            $error['errors']['json'] = Lang::get('messages.InvalidJson');
         }
 
         return response()->json($error)->setStatusCode($this->status_codes['conflict']);
@@ -107,19 +104,19 @@ class AddressController extends ApiController
      */
     public function create(Request $request)
     {
-
         if ($this->isJsonCorrect($request, 'address')) {
             try {
+
                 $data = $request->all()['data']['attributes'];
                 $address = $this->address->create($data);
-                return $this->response()->item($address, new AddressTransformer(),
-                    ['key' => 'address'])->setStatusCode($this->status_codes['created']);
-            } catch (\Exception $e) {
-                $error['errors']['address'] = 'the Address has not been created';
+
+                return $this->response()->item($address, new AddressTransformer(), ['key' => 'address'])->setStatusCode($this->status_codes['created']);
+            } catch (\Exception $e){
+                $error['errors']['address'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Address', 'option' => 'created', 'include' => '']);
                 //$error['errors']['addressMessage'] = $e->getMessage();
             }
         } else {
-            $error['errors']['json'] = 'Json is Invalid';
+            $error['errors']['json'] = Lang::get('messages.InvalidJson');
         }
 
         return response()->json($error)->setStatusCode($this->status_codes['conflict']);
@@ -132,21 +129,19 @@ class AddressController extends ApiController
      */
     public function delete($id)
     {
-
         $address = Address::find($id);
         if ($address <> null) {
             $this->address->deleteById($id);
         } else {
-            $error['errors']['delete'] = 'the Address selected doesn\'t exists';
+            $error['errors']['delete'] = Lang::get('messages.NotExistClass', ['class' => 'Address']);   
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
-
-        $this->index();
-        $address = Address::find($id);
-        if ($address == null) {
+        
+        $address = Address::find($id);        
+        if($address == null){
             return array("success" => true);
         } else {
-            $error['errors']['delete'] = 'the Address has not been deleted';
+            $error['errors']['delete'] = Lang::get('messages.NotDeletedClass', ['class' => 'Address']);   
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
     }

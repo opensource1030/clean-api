@@ -6,6 +6,8 @@ use WA\DataStore\Asset\Asset;
 use WA\DataStore\Asset\AssetTransformer;
 use WA\Repositories\Asset\AssetInterface;
 
+use Illuminate\Support\Facades\Lang;
+
 /**
  * Class AssetsController.
  */
@@ -59,10 +61,10 @@ class AssetsController extends ApiController
         $asset = $this->asset->byId($id);
 
         if($asset == null){
-            $error['errors']['get'] = 'the asset selected doesn\'t exists';   
-            return response()->json($error)->setStatusCode(409);
+            $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'Asset']);   
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
         
-        return $this->response()->item($asset, new AssetTransformer(),['key' => 'assets']);
+        return $this->response()->item($asset, new AssetTransformer(),['key' => 'assets'])->setStatusCode($this->status_codes['created']);
     }
 }

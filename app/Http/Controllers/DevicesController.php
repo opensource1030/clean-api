@@ -9,6 +9,8 @@ use WA\DataStore\Device\Device;
 use WA\DataStore\Device\DeviceTransformer;
 use WA\Repositories\Device\DeviceInterface;
 
+use Illuminate\Support\Facades\Lang;
+
 /**
  * Devices resource.
  *
@@ -45,14 +47,19 @@ class DevicesController extends ApiController
      * })
      */
 
-    public function index()
-    {
+    public function index(Request $request) {
 
         $criteria = $this->getRequestCriteria();
         $this->device->setCriteria($criteria);
         $device = $this->device->byPage();
 
         $response = $this->response()->withPaginator($device, new DeviceTransformer(), ['key' => 'devices']);
+        if(!$this->includesAreCorrect($request, new DeviceTransformer())){
+            $error['errors']['getIncludes'] = Lang::get('messages.NotExistClass', ['class' => 'Device']);
+            return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
+        }
+      
+        $response = $this->response()->withPaginator($device, new DeviceTransformer(),['key' => 'devices']);
         $response = $this->applyMeta($response);
         return $response;
     }
@@ -70,16 +77,15 @@ class DevicesController extends ApiController
         $criteria = $this->getRequestCriteria();
         $this->device->setCriteria($criteria);
 
-        $device = $this->device->byId($id);
-
-        if ($device == null) {
-            $error['errors']['get'] = 'the Device selected doesn\'t exists';
+        $device = Device::find($id);
+        if($device == null){
+            $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'Device']);   
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
-        if (!$this->includesAreCorrect($request, new DeviceTransformer())) {
-            $error['errors']['getIncludes'] = 'One or More Includes selected doesn\'t exists';
-            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+        if(!$this->includesAreCorrect($request, new DeviceTransformer())){
+            $error['errors']['getIncludes'] = Lang::get('messages.NotExistInclude');
+            return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
         }
 
         return $this->response()->item($device, new DeviceTransformer(),
@@ -127,8 +133,8 @@ class DevicesController extends ApiController
         /*
          * Checks if Json has data, data-type & data-attributes.
          */
-        if (!$this->isJsonCorrect($request, 'devices')) {
-            $error['errors']['json'] = 'Json is Invalid';
+        if(!$this->isJsonCorrect($request, 'devices')){
+            $error['errors']['json'] = Lang::get('messages.InvalidJson');
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         } else {
             $data = $request->all()['data'];
@@ -144,8 +150,8 @@ class DevicesController extends ApiController
         try {
             $device = Device::find($id);
 
-            if ($device == null) {
-                $error['errors']['devices'] = 'The Device doesn\'t exists';
+            if($device == null) {
+                $error['errors']['devices'] = Lang::get('messages.NotExistClass', ['class' => 'Device']);
                 //$error['errors']['devicesMessage'] = $e->getMessage();
                 return response()->json($error)->setStatusCode($this->status_codes['notexists']);
             }
@@ -161,7 +167,7 @@ class DevicesController extends ApiController
             $device->save();
         } catch (\Exception $e) {
             DB::rollBack();
-            $error['errors']['devices'] = 'The Device has not been created';
+            $error['errors']['devices'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Device', 'option' => 'updated', 'include' => '']);
             //$error['errors']['devicesMessage'] = $e->getMessage();
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
@@ -177,9 +183,9 @@ class DevicesController extends ApiController
                 if (isset($dataRelationships['images']['data'])) {
                     $dataImages = $this->parseJsonToArray($dataRelationships['images']['data'], 'images');
                     try {
-                        $device->images()->sync($dataImages);
-                    } catch (\Exception $e) {
-                        $error['errors']['images'] = 'the Device Images has not been created';
+                        $device->images()->sync($dataImages);    
+                    } catch (\Exception $e){
+                        $error['errors']['images'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Device', 'option' => 'updated', 'include' => 'Images']);
                         //$error['errors']['imagesMessage'] = $e->getMessage();
                     }
                 }
@@ -189,9 +195,9 @@ class DevicesController extends ApiController
                 if (isset($dataRelationships['assets']['data'])) {
                     $dataAssets = $this->parseJsonToArray($dataRelationships['assets']['data'], 'assets');
                     try {
-                        $device->assets()->sync($dataAssets);
-                    } catch (\Exception $e) {
-                        $error['errors']['assets'] = 'the Device Assets has not been created';
+                        $device->assets()->sync($dataAssets);    
+                    } catch (\Exception $e){
+                        $error['errors']['assets'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Device', 'option' => 'updated', 'include' => 'Assets']);
                         //$error['errors']['assetsMessage'] = $e->getMessage();
                     }
                 }
@@ -205,7 +211,7 @@ class DevicesController extends ApiController
                         $device->modifications()->sync($dataModifications);
                     } catch (\Exception $e) {
                         $success = false;
-                        $error['errors']['modifications'] = 'the Device Modifications has not been created';
+                        $error['errors']['modifications'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Device', 'option' => 'updated', 'include' => 'Modifications']);
                         //$error['errors']['modificationsMessage'] = $e->getMessage();
                     }
                 }
@@ -218,7 +224,7 @@ class DevicesController extends ApiController
                         $device->carriers()->sync($dataCarriers);
                     } catch (\Exception $e) {
                         $success = false;
-                        $error['errors']['carriers'] = 'the Device Carriers has not been created';
+                        $error['errors']['carriers'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Device', 'option' => 'updated', 'include' => 'Carriers']);
                         //$error['errors']['carriersMessage'] = $e->getMessage();
                     }
                 }
@@ -231,7 +237,7 @@ class DevicesController extends ApiController
                         $device->companies()->sync($dataCompanies);
                     } catch (\Exception $e) {
                         $success = false;
-                        $error['errors']['companies'] = 'the Device Companies has not been created';
+                        $error['errors']['companies'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Device', 'option' => 'updated', 'include' => 'Companies']);
                         //$error['errors']['companiesMessage'] = $e->getMessage();
                     }
                 }
@@ -271,7 +277,7 @@ class DevicesController extends ApiController
 
                                 } else {
                                     $success = false;
-                                    $error['errors']['prices'] = 'the Device Prices has not been created (Incorrect Row)';
+                                    $error['errors']['prices'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Device', 'option' => 'updated', 'include' => 'Prices']);
                                     //$error['errors']['pricesCheck'] = $check['error'];
                                     //$error['errors']['pricesIdError'] = $check['id'];
                                     //$error['errors']['pricesMessage'] = 'Any price rows are not correct and no references provided relationships.';
@@ -279,25 +285,24 @@ class DevicesController extends ApiController
                             }
                         } catch (\Exception $e) {
                             $success = false;
-                            $error['errors']['prices'] = 'the Device Prices has not been updated (Exception)';
+                            $error['errors']['prices'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Device', 'option' => 'updated', 'include' => 'Prices']);
                             //$error['errors']['pricesMessage'] = $e->getMessage();
                         }
                     } else {
                         $success = false;
-                        $error['errors']['prices'] = 'the Device Prices has not been updated because other relationships can\'t be created or updated';
+                        $error['errors']['prices'] = Lang::get('messages.NotIncludeExistsOptionClass', ['class' => 'Device', 'option' => 'updated', 'include' => 'Prices']);
                         //$error['errors']['pricesMessage'] = $e->getMessage();
                     }
                 }
             }
         }
 
-        if (!$success) {
+        if($success){
+            DB::commit();
+            return $this->response()->item($device, new DeviceTransformer(), ['key' => 'devices'])->setStatusCode($this->status_codes['created']);
+        } else {
             DB::rollBack();
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
-        } else {
-            DB::commit();
-            return $this->response()->item($device, new DeviceTransformer(),
-                ['key' => 'devices'])->setStatusCode($this->status_codes['created']);
         }
     }
 
@@ -315,8 +320,8 @@ class DevicesController extends ApiController
         /*
          * Checks if Json has data, data-type & data-attributes.
          */
-        if (!$this->isJsonCorrect($request, 'devices')) {
-            $error['errors']['json'] = 'Json is Invalid';
+        if(!$this->isJsonCorrect($request, 'devices')){
+            $error['errors']['json'] = Lang::get('messages.InvalidJson');
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         } else {
             $data = $request->all()['data'];
@@ -333,7 +338,7 @@ class DevicesController extends ApiController
             $device = $this->device->create($dataAttributes);
         } catch (\Exception $e) {
             DB::rollBack();
-            $error['errors']['devices'] = 'The Device has not been created';
+            $error['errors']['devices'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Device', 'option' => 'created', 'include' => '']);
             //$error['errors']['devicesMessage'] = $e->getMessage();
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
@@ -349,9 +354,9 @@ class DevicesController extends ApiController
                 if (isset($dataRelationships['images']['data'])) {
                     $dataImages = $this->parseJsonToArray($dataRelationships['images']['data'], 'images');
                     try {
-                        $device->images()->sync($dataImages);
-                    } catch (\Exception $e) {
-                        $error['errors']['images'] = 'the Device Images has not been created';
+                        $device->images()->sync($dataImages);    
+                    } catch (\Exception $e){
+                        $error['errors']['images'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Device', 'option' => 'created', 'include' => 'Images']);
                         //$error['errors']['imagesMessage'] = $e->getMessage();
                     }
                 }
@@ -361,9 +366,9 @@ class DevicesController extends ApiController
                 if (isset($dataRelationships['assets']['data'])) {
                     $dataAssets = $this->parseJsonToArray($dataRelationships['assets']['data'], 'assets');
                     try {
-                        $device->assets()->sync($dataAssets);
-                    } catch (\Exception $e) {
-                        $error['errors']['assets'] = 'the Device Assets has not been created';
+                        $device->assets()->sync($dataAssets);    
+                    } catch (\Exception $e){
+                        $error['errors']['assets'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Device', 'option' => 'created', 'Assets' => '']);
                         //$error['errors']['assetsMessage'] = $e->getMessage();
                     }
                 }
@@ -377,7 +382,7 @@ class DevicesController extends ApiController
                         $device->modifications()->sync($dataModifications);
                     } catch (\Exception $e) {
                         $success = false;
-                        $error['errors']['modifications'] = 'the Device Modifications has not been created';
+                        $error['errors']['modifications'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Device', 'option' => 'created', 'include' => 'Modifications']);
                         //$error['errors']['modificationsMessage'] = $e->getMessage();
                     }
                 }
@@ -390,7 +395,7 @@ class DevicesController extends ApiController
                         $device->carriers()->sync($dataCarriers);
                     } catch (\Exception $e) {
                         $success = false;
-                        $error['errors']['carriers'] = 'the Device Carriers has not been created';
+                        $error['errors']['carriers'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Device', 'option' => 'created', 'include' => 'Carriers']);
                         //$error['errors']['carriersMessage'] = $e->getMessage();
                     }
                 }
@@ -403,7 +408,7 @@ class DevicesController extends ApiController
                         $device->companies()->sync($dataCompanies);
                     } catch (\Exception $e) {
                         $success = false;
-                        $error['errors']['companies'] = 'the Device Companies has not been created';
+                        $error['errors']['companies'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Device', 'option' => 'created', 'include' => 'Companies']);
                         //$error['errors']['companiesMessage'] = $e->getMessage();
                     }
                 }
@@ -427,7 +432,7 @@ class DevicesController extends ApiController
                                     $priceInterface->create($price);
                                 } else {
                                     $success = false;
-                                    $error['errors']['prices'] = 'the Device Prices has not been created (Incorrect Row)';
+                                    $error['errors']['prices'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Device', 'option' => 'created', 'include' => 'Prices']);
                                     //$error['errors']['pricesCheck'] = $check['error'];
                                     //$error['errors']['pricesIdError'] = $check['id'];
                                     //$error['errors']['pricesMessage'] = 'Any price rows are not correct and no references provided relationships.';
@@ -435,25 +440,24 @@ class DevicesController extends ApiController
                             }
                         } catch (\Exception $e) {
                             $success = false;
-                            $error['errors']['prices'] = 'the Device Prices has not been created (Exception)';
+                            $error['errors']['prices'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Device', 'option' => 'created', 'include' => 'Prices']);
                             //$error['errors']['pricesMessage'] = $e->getMessage();
                         }
                     } else {
                         $success = false;
-                        $error['errors']['prices'] = 'the Device Prices has not been created because other relationships can\'t be created';
+                        $error['errors']['prices'] = Lang::get('messages.NotIncludeExistsOptionClass', ['class' => 'Device', 'option' => 'created', 'include' => 'Prices']);
                         $error['errors']['pricesMessage'] = $e->getMessage();
                     }
                 }
             }
         }
 
-        if (!$success) {
+        if($success){
+            DB::commit();
+            return $this->response()->item($device, new DeviceTransformer(), ['key' => 'devices'])->setStatusCode($this->status_codes['created']);
+        } else {
             DB::rollBack();
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
-        } else {
-            DB::commit();
-            return $this->response()->item($device, new DeviceTransformer(),
-                ['key' => 'devices'])->setStatusCode($this->status_codes['created']);
         }
     }
 
@@ -469,16 +473,15 @@ class DevicesController extends ApiController
         if ($device <> null) {
             $this->device->deleteById($id);
         } else {
-            $error['errors']['delete'] = 'the Device selected doesn\'t exists';
+            $error['errors']['delete'] = Lang::get('messages.NotExistClass', ['class' => 'Device']);   
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
-
-        $this->index();
-        $device = Device::find($id);
-        if ($device == null) {
+        
+        $device = Device::find($id);        
+        if($device == null){
             return array("success" => true);
         } else {
-            $error['errors']['delete'] = 'the Device has not been deleted';
+            $error['errors']['delete'] = Lang::get('messages.NotDeletedClass', ['class' => 'Device']);   
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
     }
@@ -690,148 +693,3 @@ class DevicesController extends ApiController
         return array("bool" => true, "error" => "No Error", "id" => 0);
     }
 }
-
-/* EXAMPLE POST DEVICE
-{
-    "data" : {
-        "type" : "devices",
-        "attributes" : {
-            "name" : "nameDevice",
-            "properties" : "propertiesDevice",
-            "deviceTypeId" : 1,
-            "statusId" : 1,
-            "externalId" : 1,
-            "identification" : 123456789,
-            "syncId" : 1
-        },
-        "relationships" : {
-            
-            "images" : {
-                "data" : [
-                    { "type": "images", "id" : 1 },
-                    { "type": "images", "id" : 2 }
-                ]
-            },
-                
-            "assets" : {
-                "data" : [
-                    { "type": "assets", "id" : 1 },
-                    { "type": "assets", "id" : 2 }
-                ]
-            },
-            "modifications" : {
-                "data" : [
-                    { "type": "modifications", "id" : 1 },
-                    { "type": "modifications", "id" : 2 },
-                    { "type": "modifications", "id" : 3 }
-                ]
-            },
-            "carriers" : {
-                "data" : [
-                    { "type": "carriers", "id" : 1 },
-                    { "type": "carriers", "id" : 2 }
-                ]
-            },
-            "companies" : {
-                "data" : [
-                    { "type": "companies", "id" : 1 },
-                    { "type": "companies", "id" : 2 }
-                ]
-            },
-            "prices" : {
-                "data" : [
-                    {
-                        "type": "prices",
-                        "capacityId": 1,
-                        "styleId": 2,
-                        "carrierId": 1,
-                        "companyId": 1,
-                        "priceRetail": 100,
-                        "price1": 100,
-                        "price2": 100,
-                        "priceOwn": 100
-                    },
-                    {
-                        "type": "prices",
-                        "capacityId": 1,
-                        "styleId": 2,
-                        "carrierId": 1,
-                        "companyId": 2,
-                        "priceRetail": 200,
-                        "price1": 200,
-                        "price2": 200,
-                        "priceOwn": 200
-                    },
-                    {
-                        "type": "prices",
-                        "capacityId": 1,
-                        "styleId": 2,
-                        "carrierId": 2,
-                        "companyId": 1,
-                        "priceRetail": 300,
-                        "price1": 300,
-                        "price2": 300,
-                        "priceOwn": 300
-                    },
-                    {
-                        "type": "prices",
-                        "capacityId": 1,
-                        "styleId": 2,
-                        "carrierId": 2,
-                        "companyId": 2,
-                        "priceRetail": 400,
-                        "price1": 400,
-                        "price2": 400,
-                        "priceOwn": 400
-                    },
-                    {
-                        "type": "prices",
-                        "capacityId": 3,
-                        "styleId": 2,
-                        "carrierId": 1,
-                        "companyId": 1,
-                        "priceRetail": 500,
-                        "price1": 500,
-                        "price2": 500,
-                        "priceOwn": 500
-                    },
-                    {
-                        "type": "prices",
-                        "capacityId": 3,
-                        "styleId": 2,
-                        "carrierId": 1,
-                        "companyId": 2,
-                        "priceRetail": 600,
-                        "price1": 600,
-                        "price2": 600,
-                        "priceOwn": 600
-                    },
-                    {
-                        "type": "prices",
-                        "capacityId": 3,
-                        "styleId": 2,
-                        "carrierId": 2,
-                        "companyId": 1,
-                        "priceRetail": 700,
-                        "price1": 700,
-                        "price2": 700,
-                        "priceOwn": 700
-                    },
-                    {
-                        "type": "prices",
-                        "capacityId": 3,
-                        "styleId": 2,
-                        "carrierId": 2,
-                        "companyId": 2,
-                        "priceRetail": 800,
-                        "price1": 800,
-                        "price2": 800,
-                        "priceOwn": 800
-                    }
-                ]
-            }
-        }
-    }
-}
-
-*/

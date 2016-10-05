@@ -105,7 +105,7 @@ class PackageApiTest extends TestCase
         $packageId = $packageId + 10;
 
         $response = $this->call('GET', '/packages/'.$packageId);
-        $this->assertEquals(409, $response->status());
+        $this->assertEquals(404, $response->status());
     }
 
     public function testGetDeviceByIdandIncludesConditions(){
@@ -161,7 +161,7 @@ class PackageApiTest extends TestCase
                         'type',
                         'id',
                         'attributes' => [
-                            'type',
+                            'typeCond',
                             'name',
                             'condition',
                             'value'
@@ -451,7 +451,7 @@ class PackageApiTest extends TestCase
             )->seeJson(
             [
                 'errors' => [
-                    'json' => 'Json is Invalid'
+                    'json' => 'JSON is Invalid'
                 ]
             ]
         );
@@ -472,7 +472,7 @@ class PackageApiTest extends TestCase
             )->seeJson(
             [
                 'errors' => [
-                    'json' => 'Json is Invalid'
+                    'json' => 'JSON is Invalid'
                 ]
             ]
         );
@@ -492,7 +492,7 @@ class PackageApiTest extends TestCase
             )->seeJson(
             [
                 'errors' => [
-                    'json' => 'Json is Invalid'
+                    'json' => 'JSON is Invalid'
                 ]
             ]
         );
@@ -655,12 +655,12 @@ class PackageApiTest extends TestCase
         $responseDel = $this->call('DELETE', '/packages/'.$package->id);
         $this->assertEquals(200, $responseDel->status());
         $responseGet = $this->call('GET', '/packages/'.$package->id);
-        $this->assertEquals(409, $responseGet->status());        
+        $this->assertEquals(404, $responseGet->status());        
     }
 
     public function testDeletePackageIfNoExists(){
         // DELETE NO EXISTING.
         $responseDel = $this->call('DELETE', '/packages/1');
-        $this->assertEquals(409, $responseDel->status());
+        $this->assertEquals(404, $responseDel->status());
     }
 }

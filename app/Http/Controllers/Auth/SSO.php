@@ -15,14 +15,14 @@ use Validator;
 use Webpatser\Uuid\Uuid;
 use Illuminate\Http\Request as Request;
 
-use WA\Http\Controllers\BaseController;
+use WA\Http\Controllers\ApiController;
 use WA\Repositories\Company\CompanyInterface;
 use WA\Repositories\User\UserInterface;
 
 /**
  * Class SSO.
  */
-class SSO extends BaseController
+class SSO extends ApiController
 {
     // Call the Interface to get the info of DB.
     protected $company;
@@ -71,7 +71,7 @@ class SSO extends BaseController
 
                     return response()
                         ->json(['error' => 'User Not Found, Register Required', 'message' => 'Please, register a new user.'])
-                        ->setStatusCode(409);
+                        ->setStatusCode($this->status_codes['conflict']);
 
                 // EMPLOYEE != NULL
                 } else {
@@ -80,7 +80,7 @@ class SSO extends BaseController
 
                     return response()
                         ->json(['error' => 'User Found, Password Required', 'message' => 'Please, enter your password.'])
-                        ->setStatusCode(409);
+                        ->setStatusCode($this->status_codes['conflict']);
                 }
 
             // SSO COMPANY == NUMBER -> CONTINUE DOSSO
@@ -97,7 +97,7 @@ class SSO extends BaseController
                 if($validator->fails()){
                     return response()
                         ->json(['error' => 'URL Not Found', 'message' => 'Url to redirect not found.'])
-                        ->setStatusCode(409);
+                        ->setStatusCode($this->status_codes['conflict']);
                 } else {
                     Cache::put('saml2_idcompany_'.$email, $idCompany, 15);
                     $uuid = Uuid::generate();
@@ -115,7 +115,7 @@ class SSO extends BaseController
 
             return response()
                 ->json(['error' => 'Invalid Email', 'message' => 'Please, enter a valid Email Address.'])
-                ->setStatusCode(409);
+                ->setStatusCode($this->status_codes['conflict']);
         }        
     }
 
@@ -130,14 +130,14 @@ class SSO extends BaseController
         if (!isset($laravelUser)) {
             return response()
                 ->json(['error' => 'Required User', 'message' => 'Please, user is not available now, try again later.'])
-                ->setStatusCode(409);
+                ->setStatusCode($this->status_codes['conflict']);
         } else {
             //echo ('SUCCESS UUID = '.$uuid);
             //echo ('<br>');
             //echo ('Laravel User: ');
             return response()
                 ->json(['success' => 'User Successfully Logged', 'uuid' => $uuid])
-                ->setStatusCode(200);
+                ->setStatusCode($this->status_codes['conflict']);
         }
     }
 }

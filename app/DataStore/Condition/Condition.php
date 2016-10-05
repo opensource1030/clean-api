@@ -15,9 +15,10 @@ class Condition extends BaseDataStore
     protected  $table = 'conditions';
 
     protected $fillable = [
+            'typeCond',
             'name',
             'condition',
-            'value'
+            'value',
         ];
 
     /**

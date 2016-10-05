@@ -7,6 +7,8 @@ use WA\DataStore\App\App;
 use WA\DataStore\App\AppTransformer;
 use WA\Repositories\App\AppInterface;
 
+use Illuminate\Support\Facades\Lang;
+
 /**
  * App resource.
  *
@@ -57,19 +59,18 @@ class AppController extends ApiController
      */
     public function show($id, Request $request)
     {
-
         $criteria = $this->getRequestCriteria();
         $this->app->setCriteria($criteria);
-        $app = $this->app->byId($id);
 
-        if ($app == null) {
-            $error['errors']['get'] = 'the App selected doesn\'t exists';
+        $app = App::find($id);
+        if($app == null){
+            $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'App']);   
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
-        if (!$this->includesAreCorrect($request, new AppTransformer())) {
-            $error['errors']['getIncludes'] = 'One or More Includes selected doesn\'t exists';
-            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+        if(!$this->includesAreCorrect($request, new AppTransformer())){
+            $error['errors']['getIncludes'] = Lang::get('messages.NotExistInclude');
+            return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
         }
 
         return $this->response()->item($app, new AppTransformer(),
@@ -90,14 +91,14 @@ class AppController extends ApiController
                 $data = $request->all()['data']['attributes'];
                 $data['id'] = $id;
                 $app = $this->app->update($data);
-                return $this->response()->item($app, new AppTransformer(),
-                    ['key' => 'apps'])->setStatusCode($this->status_codes['created']);
-            } catch (\Exception $e) {
-                $error['errors']['apps'] = 'the App has not been updated';
+
+                return $this->response()->item($app, new AppTransformer(), ['key' => 'apps'])->setStatusCode($this->status_codes['created']);
+            } catch (\Exception $e){
+                $error['errors']['apps'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'App', 'option' => 'updated', 'include' => '']);
                 //$error['errors']['appsMessage'] = $e->getMessage();
             }
         } else {
-            $error['errors']['json'] = 'Json is Invalid';
+            $error['errors']['json'] = Lang::get('messages.InvalidJson');
         }
 
         return response()->json($error)->setStatusCode($this->status_codes['conflict']);
@@ -115,13 +116,13 @@ class AppController extends ApiController
             try {
                 $data = $request->all()['data']['attributes'];
                 $app = $this->app->create($data);
-                return $this->response()->item($app, new AppTransformer(), ['key' => 'apps']);
-            } catch (\Exception $e) {
-                $error['errors']['apps'] = 'the App has not been created';
+                return $this->response()->item($app, new AppTransformer(), ['key' => 'apps'])->setStatusCode($this->status_codes['created']);
+            } catch (\Exception $e){
+                $error['errors']['apps'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'App', 'option' => 'created', 'include' => '']);
                 //$error['errors']['appsMessage'] = $e->getMessage();
             }
         } else {
-            $error['errors']['json'] = 'Json is Invalid';
+            $error['errors']['json'] = Lang::get('messages.InvalidJson');
         }
 
         return response()->json($error)->setStatusCode($this->status_codes['conflict']);
@@ -139,17 +140,16 @@ class AppController extends ApiController
         if ($app <> null) {
             $this->app->deleteById($id);
         } else {
-            $error['errors']['delete'] = 'the App selected doesn\'t exists';
-            return response()->json($error)->setStatusCode(409);
+            $error['errors']['delete'] = Lang::get('messages.NotExistClass', ['class' => 'App']);   
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
-
-        $this->index();
+        
         $app = App::find($id);
         if ($app == null) {
             return array("success" => true);
         } else {
-            $error['errors']['delete'] = 'the App has not been deleted';
-            return response()->json($error)->setStatusCode(409);
+            $error['errors']['delete'] = Lang::get('messages.NotDeletedClass', ['class' => 'App']);   
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
     }
 }

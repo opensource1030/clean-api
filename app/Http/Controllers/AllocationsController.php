@@ -5,6 +5,8 @@ use WA\DataStore\Allocation\AllocationTransformer;
 use WA\Repositories\Allocation\AllocationInterface;
 use WA\Repositories\User\UserInterface;
 
+use Illuminate\Support\Facades\Lang;
+
 /**
  * Allocations resource.
  *
