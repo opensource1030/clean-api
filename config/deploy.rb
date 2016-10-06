@@ -13,8 +13,8 @@ set :file_permissions_users, ["www-data","deploy"]
 set :slackistrano, {
     klass: Slackistrano::CustomMessaging,
     team: "wirelessanalytics",
-    webhook: "https://hooks.slack.com/services/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",
-    token: "xoxp-2153660998-7383443462-7449051621-4e69f4",
+   webhook: "https://hooks.slack.com/services/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",
+   token: "xoxp-2153660998-7383443462-7449051621-4e69f4",
     channel:'#dev-lobby'
 }
 
@@ -96,7 +96,7 @@ namespace :laravel do
     task :optimize do
         on roles(:app), in: :sequence, wait: 5 do
             within release_path  do
-                execute "cd #{release_path} && php clear-compiled"
+                execute "cd #{release_path} && php artisan clear-compiled"
             end
         end
     end
