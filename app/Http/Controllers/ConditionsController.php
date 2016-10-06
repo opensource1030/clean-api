@@ -97,7 +97,7 @@ class ConditionsController extends ApiController
                     return response()->json($error)->setStatusCode($this->status_codes['conflict']);
                 }
 
-                return $this->response()->item($condition, new ConditionTransformer(), ['key' => 'conditions'])->setStatusCode($this->status_codes['updated']);
+                return $this->response()->item($condition, new ConditionTransformer(), ['key' => 'conditions'])->setStatusCode($this->status_codes['created']);
             } catch (\Exception $e){
                 $error['errors']['conditions'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Condition', 'option' => 'updated', 'include' => '']);
                 //$error['errors']['Message'] = $e->getMessage();

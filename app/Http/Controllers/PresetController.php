@@ -40,7 +40,7 @@ class PresetController extends ApiController
      * Get a payload of all Preset
      *
      */
-    public function index()
+    public function index(Request $request)
     {
         $criteria = $this->getRequestCriteria();
         $this->preset->setCriteria($criteria);

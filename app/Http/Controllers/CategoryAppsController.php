@@ -40,7 +40,7 @@ class CategoryAppsController extends ApiController
      * Get a payload of all CategoryApps
      *
      */
-    public function index()
+    public function index(Request $request)
     {
         $criteria = $this->getRequestCriteria();
         $this->categoryApps->setCriteria($criteria);
