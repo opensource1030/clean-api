@@ -53,4 +53,11 @@ interface ContentInterface extends RepositoryInterface
      */
     public function delete($id, $soft = true);
 
+    /**
+     * Return Default Contents
+     *
+     * @return mixed
+     */
+    public function getDefaultContent();
+
 }

@@ -107,4 +107,14 @@ class EloquentContent extends AbstractRepository implements ContentInterface
 
         return $this->model->destroy($id);
     }
+
+    /**
+     * Return Default Contents
+     *
+     * @return mixed
+     */
+    public function getDefaultContent()
+    {
+        return $this->model->where('owner_id', 0)->get();
+    }
 }

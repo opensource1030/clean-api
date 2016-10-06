@@ -65,6 +65,16 @@ class CompanyTransformer extends TransformerAbstract
      */
     public function includeContents(Company $company)
     {
-        return new ResourceCollection($company->contents, new ContentTransformer(), 'contents');
+        $contents = $company->contents;
+
+        if(count($contents) < 1)
+        {
+            //Return the default contents
+            $contentInterface = app()->make('WA\Repositories\Content\ContentInterface');
+            $defaultContents = $contentInterface->getDefaultContent();
+            $contents = !empty($defaultContents) ? $defaultContents : $contents ;
+        }
+
+        return new ResourceCollection($contents, new ContentTransformer(), 'contents');
     }
 }
