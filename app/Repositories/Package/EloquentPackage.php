@@ -23,7 +23,7 @@ class EloquentPackage extends AbstractRepository implements PackageInterface
 
         if(!$package)
         {
-            return false;
+            return 'notExist';
         }
 
         if(isset($data['name'])){
@@ -34,7 +34,7 @@ class EloquentPackage extends AbstractRepository implements PackageInterface
         }
         
         if(!$package->save()) {
-            return false;
+            return 'notSaved';
         }
 
         return $package;

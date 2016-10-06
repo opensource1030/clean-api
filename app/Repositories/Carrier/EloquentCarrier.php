@@ -70,7 +70,7 @@ class EloquentCarrier extends AbstractRepository implements CarrierInterface
 
         if(!$carrier)
         {
-            return false;
+            return 'notExist';
         }
 
         if(isset($data['name'])){
@@ -90,7 +90,7 @@ class EloquentCarrier extends AbstractRepository implements CarrierInterface
         }
         
         if(!$carrier->save()) {
-            return false;
+            return 'notSaved';
         }
 
         return $carrier;

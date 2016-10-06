@@ -23,14 +23,14 @@ class EloquentConditionField extends AbstractRepository implements ConditionFiel
 
         if(!$conditionField)
         {
-            return false;
+            return 'notExist';
         }
 
         $conditionField->typeField = isset($data['typeField']) ? $data['typeField'] : null;
         $conditionField->field = isset($data['field']) ? $data['field'] : null;
 
         if(!$Condition->save()) {
-            return false;
+            return 'notSaved';
         }
 
         return $Condition;

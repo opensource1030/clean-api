@@ -261,4 +261,34 @@ class EloquentDevice extends AbstractRepository implements DeviceInterface
         return $query;
     }
 
+    /**
+     * Update Device
+     *
+     * @param array $data
+     * @return bool
+     */
+    public function update(array $data)
+    {
+        $device = $this->model->find($data['id']);
+
+        if(!$device)
+        {
+            return 'notExist';
+        }
+
+        $device->name = isset($data['name']) ? $data['name'] : $device->name;
+        $device->properties = isset($data['properties']) ? $data['properties'] : $device->properties;
+        $device->deviceTypeId = isset($data['deviceTypeId']) ? $data['deviceTypeId'] : $device->deviceTypeId;
+        $device->statusId = isset($data['statusId']) ? $data['statusId'] : $device->statusId;
+        $device->externalId = isset($data['externalId']) ? $data['externalId'] : $device->externalId;
+        $device->identification = isset($data['identification']) ? $data['identification'] : $device->identification;
+        $device->syncId = isset($data['syncId']) ? $data['syncId'] : $device->syncId;
+
+        if(!$device->save()) {
+            return 'notSaved';
+        }
+
+        return $device;
+    }
+
 }

@@ -23,7 +23,7 @@ class EloquentModification extends AbstractRepository implements ModificationInt
 
         if(!$modification)
         {
-            return false;
+            return 'notExist';
         }
 
         if(isset($data['modType'])){
@@ -34,7 +34,7 @@ class EloquentModification extends AbstractRepository implements ModificationInt
         }
 
         if(!$modification->save()) {
-            return false;
+            return 'notSaved';
         }
 
         return $modification;

@@ -23,7 +23,7 @@ class EloquentApp extends AbstractRepository implements AppInterface
 
         if(!$app)
         {
-            return false;
+            return 'notExist';
         }
 
         if(isset($data['type'])){
@@ -37,7 +37,7 @@ class EloquentApp extends AbstractRepository implements AppInterface
         }
 
         if(!$app->save()) {
-            return false;
+            return 'notSaved';
         }
 
         return $app;

@@ -27,8 +27,8 @@ class ConditionFieldsController extends ApiController
      *
      * @param ConditionFieldInterface $conditionField
      */
-    public function __construct(ConditionFieldInterface $conditionField) {
-        
+    public function __construct(ConditionFieldInterface $conditionField)
+    {        
         $this->conditionField = $conditionField;
     }
 
@@ -38,8 +38,8 @@ class ConditionFieldsController extends ApiController
      * Get a payload of all ConditionField
      *
      */
-    public function index() {
-
+    public function index()
+    {
         $criteria = $this->getRequestCriteria();
         $this->conditionField->setCriteria($criteria);
         $conditionFields = $this->conditionField->byPage();
@@ -56,9 +56,12 @@ class ConditionFieldsController extends ApiController
      *
      * @Get("/{id}")
      */
-    public function show($id, Request $request) {
-
+    public function show($id, Request $request)
+    {
+        $criteria = $this->getRequestCriteria();
+        $this->app->setCriteria($criteria);
         $conditionField = ConditionField::find($id);
+
         if($conditionField == null){
             $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'ConditionField']);   
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
@@ -73,17 +76,31 @@ class ConditionFieldsController extends ApiController
      * @param $id
      * @return \Dingo\Api\Http\Response
      */
-    public function store($id, Request $request) {
-
+    public function store($id, Request $request)
+    {
         if($this->isJsonCorrect($request, 'conditionFields')){
             try {
+
                 $data = $request->all()['data']['attributes'];
                 $data['id'] = $id;
                 $conditionField = $this->conditionField->update($data);
+
+                if($conditionField == 'notExist') {
+                    $error['errors']['conditionField'] = Lang::get('messages.NotExistClass', ['class' => 'ConditionField']);
+                    //$error['errors']['Message'] = $e->getMessage();
+                    return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+                }
+
+                if($conditionField == 'notSaved') {
+                    $error['errors']['conditionField'] = Lang::get('messages.NotSavedClass', ['class' => 'ConditionField']);
+                    //$error['errors']['Message'] = $e->getMessage();
+                    return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+                }
+
                 return $this->response()->item($conditionField, new ConditionFieldTransformer(), ['key' => 'conditionfields'])->setStatusCode($this->status_codes['created']);
             } catch (\Exception $e){
                 $error['errors']['conditionFields'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'ConditionField', 'option' => 'updated', 'include' => '']);
-                //$error['errors']['conditionFieldsMessage'] = $e->getMessage();
+                //$error['errors']['Message'] = $e->getMessage();
             }
         } else {
             $error['errors']['json'] = Lang::get('messages.InvalidJson');
@@ -97,16 +114,18 @@ class ConditionFieldsController extends ApiController
      *
      * @return \Dingo\Api\Http\Response
      */
-    public function create(Request $request) {
-
+    public function create(Request $request)
+    {
         if($this->isJsonCorrect($request, 'conditionFields')){
             try {
+
                 $data = $request->all()['data']['attributes'];
                 $conditionField = $this->conditionField->create($data);
+
                 return $this->response()->item($conditionField, new ConditionFieldTransformer(), ['key' => 'conditionfields'])->setStatusCode($this->status_codes['created']);
             } catch (\Exception $e){
                 $error['errors']['conditionFields'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'ConditionField', 'option' => 'created', 'include' => '']);
-                //$error['errors']['conditionFieldsMessage'] = $e->getMessage();
+                //$error['errors']['Message'] = $e->getMessage();
             }
         } else {
             $error['errors']['json'] = Lang::get('messages.InvalidJson');
@@ -120,8 +139,8 @@ class ConditionFieldsController extends ApiController
      *
      * @param $id
      */
-    public function delete($id) {
-
+    public function delete($id)
+    {
         $conditionField = ConditionField::find($id);
         if($conditionField <> null){
             $this->conditionField->deleteById($id);
@@ -129,8 +148,7 @@ class ConditionFieldsController extends ApiController
             $error['errors']['delete'] = Lang::get('messages.NotExistClass', ['class' => 'ConditionField']);   
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
-        
-        
+
         $conditionField = ConditionField::find($id);
         if($conditionField == null){
             return array("success" => true);

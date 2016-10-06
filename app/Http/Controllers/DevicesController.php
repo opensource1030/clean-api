@@ -28,8 +28,7 @@ class DevicesController extends ApiController
      *
      * @param DeviceInterface $device
      */
-    public function __construct(DeviceInterface $device)
-    {
+    public function __construct(DeviceInterface $device) {
 
         $this->device = $device;
     }
@@ -54,7 +53,7 @@ class DevicesController extends ApiController
         $device = $this->device->byPage();
 
         if(!$this->includesAreCorrect($request, new DeviceTransformer())){
-            $error['errors']['getIncludes'] = Lang::get('messages.NotExistClass', ['class' => 'Device']);
+            $error['errors']['getincludes'] = Lang::get('messages.NotExistInclude');
             return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
         }
       
@@ -71,8 +70,7 @@ class DevicesController extends ApiController
      *
      * @Get("/{id}")
      */
-    public function show($id, Request $request)
-    {
+    public function show($id, Request $request) {
 
         $criteria = $this->getRequestCriteria();
         $this->device->setCriteria($criteria);
@@ -124,8 +122,7 @@ class DevicesController extends ApiController
      * @param $id
      * @return \Dingo\Api\Http\Response
      */
-    public function store($id, Request $request)
-    {
+    public function store($id, Request $request) {
 
         $success = true;
         $dataImages = $dataAssets = $dataModifications = $dataCarriers = $dataCompanies = array();
@@ -148,27 +145,28 @@ class DevicesController extends ApiController
          * Now we can update the Device.
          */
         try {
-            $device = Device::find($id);
+            $data = $request->all()['data']['attributes'];
+            $data['id'] = $id;
+            $device = $this->device->update($data);
 
-            if($device == null) {
-                $error['errors']['devices'] = Lang::get('messages.NotExistClass', ['class' => 'Device']);
-                //$error['errors']['devicesMessage'] = $e->getMessage();
+            if($device == 'notExist') {
+                DB::rollBack();
+                $error['errors']['device'] = Lang::get('messages.NotExistClass', ['class' => 'Device']);
+                //$error['errors']['Message'] = $e->getMessage();
                 return response()->json($error)->setStatusCode($this->status_codes['notexists']);
             }
 
-            $device->name = isset($dataAttributes['name']) ? $dataAttributes['name'] : $device->name;
-            $device->properties = isset($dataAttributes['properties']) ? $dataAttributes['properties'] : $device->properties;
-            $device->deviceTypeId = isset($dataAttributes['deviceTypeId']) ? $dataAttributes['deviceTypeId'] : $device->deviceTypeId;
-            $device->statusId = isset($dataAttributes['statusId']) ? $dataAttributes['statusId'] : $device->statusId;
-            $device->externalId = isset($dataAttributes['externalId']) ? $dataAttributes['externalId'] : $device->externalId;
-            $device->identification = isset($dataAttributes['identification']) ? $dataAttributes['identification'] : $device->identification;
-            $device->syncId = isset($dataAttributes['syncId']) ? $dataAttributes['syncId'] : $device->syncId;
+            if($device == 'notSaved') {
+                DB::rollBack();
+                $error['errors']['device'] = Lang::get('messages.NotSavedClass', ['class' => 'Device']);
+                //$error['errors']['Message'] = $e->getMessage();
+                return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+            }
 
-            $device->save();
         } catch (\Exception $e) {
             DB::rollBack();
             $error['errors']['devices'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Device', 'option' => 'updated', 'include' => '']);
-            //$error['errors']['devicesMessage'] = $e->getMessage();
+            //$error['errors']['Message'] = $e->getMessage();
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
@@ -186,7 +184,7 @@ class DevicesController extends ApiController
                         $device->images()->sync($dataImages);    
                     } catch (\Exception $e){
                         $error['errors']['images'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Device', 'option' => 'updated', 'include' => 'Images']);
-                        //$error['errors']['imagesMessage'] = $e->getMessage();
+                        //$error['errors']['Message'] = $e->getMessage();
                     }
                 }
             }
@@ -198,7 +196,7 @@ class DevicesController extends ApiController
                         $device->assets()->sync($dataAssets);    
                     } catch (\Exception $e){
                         $error['errors']['assets'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Device', 'option' => 'updated', 'include' => 'Assets']);
-                        //$error['errors']['assetsMessage'] = $e->getMessage();
+                        //$error['errors']['Message'] = $e->getMessage();
                     }
                 }
             }
@@ -212,7 +210,7 @@ class DevicesController extends ApiController
                     } catch (\Exception $e) {
                         $success = false;
                         $error['errors']['modifications'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Device', 'option' => 'updated', 'include' => 'Modifications']);
-                        //$error['errors']['modificationsMessage'] = $e->getMessage();
+                        //$error['errors']['Message'] = $e->getMessage();
                     }
                 }
             }
@@ -225,7 +223,7 @@ class DevicesController extends ApiController
                     } catch (\Exception $e) {
                         $success = false;
                         $error['errors']['carriers'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Device', 'option' => 'updated', 'include' => 'Carriers']);
-                        //$error['errors']['carriersMessage'] = $e->getMessage();
+                        //$error['errors']['Message'] = $e->getMessage();
                     }
                 }
             }
@@ -238,7 +236,7 @@ class DevicesController extends ApiController
                     } catch (\Exception $e) {
                         $success = false;
                         $error['errors']['companies'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Device', 'option' => 'updated', 'include' => 'Companies']);
-                        //$error['errors']['companiesMessage'] = $e->getMessage();
+                        //$error['errors']['Message'] = $e->getMessage();
                     }
                 }
             }
@@ -278,20 +276,20 @@ class DevicesController extends ApiController
                                 } else {
                                     $success = false;
                                     $error['errors']['prices'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Device', 'option' => 'updated', 'include' => 'Prices']);
-                                    //$error['errors']['pricesCheck'] = $check['error'];
-                                    //$error['errors']['pricesIdError'] = $check['id'];
-                                    //$error['errors']['pricesMessage'] = 'Any price rows are not correct and no references provided relationships.';
+                                    //$error['errors']['Check'] = $check['error'];
+                                    //$error['errors']['IdError'] = $check['id'];
+                                    //$error['errors']['Message'] = 'Any price rows are not correct and no references provided relationships.';
                                 }
                             }
                         } catch (\Exception $e) {
                             $success = false;
                             $error['errors']['prices'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Device', 'option' => 'updated', 'include' => 'Prices']);
-                            //$error['errors']['pricesMessage'] = $e->getMessage();
+                            //$error['errors']['Message'] = $e->getMessage();
                         }
                     } else {
                         $success = false;
                         $error['errors']['prices'] = Lang::get('messages.NotIncludeExistsOptionClass', ['class' => 'Device', 'option' => 'updated', 'include' => 'Prices']);
-                        //$error['errors']['pricesMessage'] = $e->getMessage();
+                        //$error['errors']['Message'] = $e->getMessage();
                     }
                 }
             }
@@ -311,8 +309,7 @@ class DevicesController extends ApiController
      *
      * @return \Dingo\Api\Http\Response
      */
-    public function create(Request $request)
-    {
+    public function create(Request $request) {
 
         $success = true;
         $dataImages = $dataAssets = $dataModifications = $dataCarriers = $dataCompanies = array();
@@ -339,7 +336,7 @@ class DevicesController extends ApiController
         } catch (\Exception $e) {
             DB::rollBack();
             $error['errors']['devices'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Device', 'option' => 'created', 'include' => '']);
-            //$error['errors']['devicesMessage'] = $e->getMessage();
+            //$error['errors']['Message'] = $e->getMessage();
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
@@ -357,7 +354,7 @@ class DevicesController extends ApiController
                         $device->images()->sync($dataImages);    
                     } catch (\Exception $e){
                         $error['errors']['images'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Device', 'option' => 'created', 'include' => 'Images']);
-                        //$error['errors']['imagesMessage'] = $e->getMessage();
+                        //$error['errors']['Message'] = $e->getMessage();
                     }
                 }
             }
@@ -369,7 +366,7 @@ class DevicesController extends ApiController
                         $device->assets()->sync($dataAssets);    
                     } catch (\Exception $e){
                         $error['errors']['assets'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Device', 'option' => 'created', 'Assets' => '']);
-                        //$error['errors']['assetsMessage'] = $e->getMessage();
+                        //$error['errors']['Message'] = $e->getMessage();
                     }
                 }
             }
@@ -383,7 +380,7 @@ class DevicesController extends ApiController
                     } catch (\Exception $e) {
                         $success = false;
                         $error['errors']['modifications'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Device', 'option' => 'created', 'include' => 'Modifications']);
-                        //$error['errors']['modificationsMessage'] = $e->getMessage();
+                        //$error['errors']['Message'] = $e->getMessage();
                     }
                 }
             }
@@ -396,7 +393,7 @@ class DevicesController extends ApiController
                     } catch (\Exception $e) {
                         $success = false;
                         $error['errors']['carriers'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Device', 'option' => 'created', 'include' => 'Carriers']);
-                        //$error['errors']['carriersMessage'] = $e->getMessage();
+                        //$error['errors']['Message'] = $e->getMessage();
                     }
                 }
             }
@@ -409,7 +406,7 @@ class DevicesController extends ApiController
                     } catch (\Exception $e) {
                         $success = false;
                         $error['errors']['companies'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Device', 'option' => 'created', 'include' => 'Companies']);
-                        //$error['errors']['companiesMessage'] = $e->getMessage();
+                        //$error['errors']['Message'] = $e->getMessage();
                     }
                 }
             }
@@ -433,20 +430,20 @@ class DevicesController extends ApiController
                                 } else {
                                     $success = false;
                                     $error['errors']['prices'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Device', 'option' => 'created', 'include' => 'Prices']);
-                                    //$error['errors']['pricesCheck'] = $check['error'];
-                                    //$error['errors']['pricesIdError'] = $check['id'];
-                                    //$error['errors']['pricesMessage'] = 'Any price rows are not correct and no references provided relationships.';
+                                    //$error['errors']['Check'] = $check['error'];
+                                    //$error['errors']['IdError'] = $check['id'];
+                                    //$error['errors']['Message'] = 'Any price rows are not correct and no references provided relationships.';
                                 }
                             }
                         } catch (\Exception $e) {
                             $success = false;
                             $error['errors']['prices'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Device', 'option' => 'created', 'include' => 'Prices']);
-                            //$error['errors']['pricesMessage'] = $e->getMessage();
+                            //$error['errors']['Message'] = $e->getMessage();
                         }
                     } else {
                         $success = false;
                         $error['errors']['prices'] = Lang::get('messages.NotIncludeExistsOptionClass', ['class' => 'Device', 'option' => 'created', 'include' => 'Prices']);
-                        $error['errors']['pricesMessage'] = $e->getMessage();
+                        //$error['errors']['Message'] = $e->getMessage();
                     }
                 }
             }
@@ -466,8 +463,7 @@ class DevicesController extends ApiController
      *
      * @param $id
      */
-    public function delete($id)
-    {
+    public function delete($id) {
 
         $device = Device::find($id);
         if ($device <> null) {

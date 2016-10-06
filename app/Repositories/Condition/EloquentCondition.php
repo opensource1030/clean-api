@@ -23,7 +23,7 @@ class EloquentCondition extends AbstractRepository implements ConditionInterface
 
         if(!$condition)
         {
-            return false;
+            return 'notExist';
         }
 
         if(isset($data['typeCond'])){
@@ -40,7 +40,7 @@ class EloquentCondition extends AbstractRepository implements ConditionInterface
         }
 
         if(!$condition->save()) {
-            return false;
+            return 'notSaved';
         }
 
         return $condition;

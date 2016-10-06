@@ -23,7 +23,7 @@ class EloquentService extends AbstractRepository implements ServiceInterface
 
         if(!$service)
         {
-            return false;
+            return 'notExist';
         }
         
         if(isset($data['title'])){
@@ -58,7 +58,7 @@ class EloquentService extends AbstractRepository implements ServiceInterface
         }
         
         if(!$service->save()) {
-            return false;
+            return 'notSaved';
         }
 
         return $service;

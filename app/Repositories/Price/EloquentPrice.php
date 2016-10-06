@@ -23,7 +23,7 @@ class EloquentPrice extends AbstractRepository implements PriceInterface
 
         if(!$price)
         {
-            return false;
+            return 'notExist';
         }
 
         if(isset($data['deviceId'])){
@@ -55,7 +55,7 @@ class EloquentPrice extends AbstractRepository implements PriceInterface
         }
 
         if(!$price->save()) {
-            return false;
+            return 'notSaved';
         }
 
         return $price;

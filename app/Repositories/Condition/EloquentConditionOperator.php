@@ -23,14 +23,14 @@ class EloquentConditionOperator extends AbstractRepository implements ConditionO
 
         if(!$conditionOperator)
         {
-            return false;
+            return 'notExist';
         }
 
         $conditionOperator->originalName = isset($data['originalName']) ? $data['originalName'] : null;
         $conditionOperator->apiName = isset($data['apiName']) ? $data['apiName'] : null;
 
         if(!$Condition->save()) {
-            return false;
+            return 'notSaved';
         }
 
         return $Condition;

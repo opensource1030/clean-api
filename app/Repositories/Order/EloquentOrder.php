@@ -23,7 +23,7 @@ class EloquentOrder extends AbstractRepository implements OrderInterface
 
         if(!$order)
         {
-            return false;
+            return 'notExist';
         }
 
         if(isset($data['status'])){     $order->status = $data['status'];       }
@@ -33,7 +33,7 @@ class EloquentOrder extends AbstractRepository implements OrderInterface
         if(isset($data['serviceId'])){  $order->serviceId = $data['serviceId']; }
 
         if(!$order->save()) {
-            return false;
+            return 'notSaved';
         }
 
         return $order;

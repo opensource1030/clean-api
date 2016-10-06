@@ -23,7 +23,7 @@ class EloquentAddress extends AbstractRepository implements AddressInterface
 
         if(!$address)
         {
-            return false;
+            return 'notExist';
         }
 
         if(isset($data['address'])){
@@ -43,7 +43,7 @@ class EloquentAddress extends AbstractRepository implements AddressInterface
         }
 
         if(!$address->save()) {
-            return false;
+            return 'notSaved';
         }
 
         return $address;
