@@ -109,12 +109,9 @@ class PresetsApiTest extends TestCase
 
         $preset = factory(\WA\DataStore\Category\Preset::class)->create();
 
-        $device1 = factory(\WA\DataStore\Device\Device::class)->create()->id;
-        $device2 = factory(\WA\DataStore\Device\Device::class)->create()->id;
+        $device = factory(\WA\DataStore\Device\Device::class)->create()->id;
 
-        $dataDevices = array($device1, $device2);
-
-        $preset->devices()->sync($dataDevices);    
+        $preset->devices()->sync(array($device));
 
         $this->json('GET', 'presets/'.$preset->id.'?include=devices')
             ->seeJsonStructure([
@@ -157,9 +154,24 @@ class PresetsApiTest extends TestCase
                         'type',
                         'id',
                         'attributes' => [
+                            'make',
+                            'model',
+                            'class',
+                            'deviceOS',
+                            'description',
+                            'statusId',
+                            'image'
+                        ],
+                        'links' => [
+                            'self'
+                        ]
+                    ],
+                    1 => [
+                        'type',
+                        'id',
+                        'attributes' => [
                             'name',
                             'properties',
-                            'deviceTypeId',
                             'statusId',
                             'externalId',
                             'identification',
@@ -167,9 +179,20 @@ class PresetsApiTest extends TestCase
                         ],
                         'links' => [
                             'self'
+                        ],
+                        'relationships' => [
+                            'devicetypes' => [
+                                'links' => [
+                                    'self',
+                                    'related'
+                                ],
+                                'data' => [
+                                    'type',
+                                    'id'
+                                ]
+                            ]
                         ]
                     ]
-
                 ]
             ]);
     }
@@ -237,7 +260,6 @@ class PresetsApiTest extends TestCase
                             'self'
                         ]
                     ]
-
                 ]
             ]);
     }

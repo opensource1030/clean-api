@@ -86,10 +86,23 @@ class ModificationController extends ApiController
                 $data = $request->all()['data']['attributes'];
                 $data['id'] = $id;
                 $modification = $this->modification->update($data);
+
+                if($modification == 'notExist') {
+                    $error['errors']['modification'] = Lang::get('messages.NotExistClass', ['class' => 'Modification']);
+                    //$error['errors']['Message'] = $e->getMessage();
+                    return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+                }
+
+                if($modification == 'notSaved') {
+                    $error['errors']['modification'] = Lang::get('messages.NotSavedClass', ['class' => 'Modification']);
+                    //$error['errors']['Message'] = $e->getMessage();
+                    return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+                }
+
                 return $this->response()->item($modification, new ModificationTransformer(), ['key' => 'modifications'])->setStatusCode($this->status_codes['created']);
             } catch (\Exception $e){
                 $error['errors']['modifications'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Modification', 'option' => 'updated', 'include' => '']);
-                //$error['errors']['modificationsMessage'] = $e->getMessage();
+                //$error['errors']['Message'] = $e->getMessage();
             }
         } else {
             $error['errors']['json'] = Lang::get('messages.InvalidJson');
@@ -105,7 +118,6 @@ class ModificationController extends ApiController
      */
     public function create(Request $request)
     {
-
         if ($this->isJsonCorrect($request, 'modifications')) {
             try {
                 $data = $request->all()['data']['attributes'];
@@ -113,7 +125,7 @@ class ModificationController extends ApiController
                 return $this->response()->item($modification, new ModificationTransformer(), ['key' => 'modifications'])->setStatusCode($this->status_codes['created']);
             } catch (\Exception $e){
                 $error['errors']['modifications'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Modification', 'option' => 'created', 'include' => '']);
-                //$error['errors']['modificationsMessage'] = $e->getMessage();
+                //$error['errors']['Message'] = $e->getMessage();
             }
         } else {
             $error['errors']['json'] = Lang::get('messages.InvalidJson');

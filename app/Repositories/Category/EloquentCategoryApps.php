@@ -18,7 +18,7 @@ class EloquentCategoryApps extends AbstractRepository implements CategoryAppsInt
 
         if(!$category)
         {
-            return false;
+            return 'notExist';
         }
 
         if(isset($data['name'])){
@@ -26,7 +26,7 @@ class EloquentCategoryApps extends AbstractRepository implements CategoryAppsInt
         }
 
         if(!$category->save()) {
-            return false;
+            return 'notSaved';
         }
 
         return $category;

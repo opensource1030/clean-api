@@ -59,6 +59,8 @@ class RepositoriesServiceProviders extends ServiceProvider
         $this->registerPreset();
         $this->registerCategoryApp();
         $this->registerCondition();
+        $this->registerConditionField();
+        $this->registerConditionOperator();
 
     }
 }

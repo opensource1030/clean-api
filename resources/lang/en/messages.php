@@ -7,4 +7,5 @@ return [
     'NotOptionIncludeClass' => 'the :class :include has not been :option',
     'NotIncludeExistsOptionClass' => 'the :class :include has not been :option because other relationships can\'t be created',
     'NotDeletedClass' => 'the :class has not been deleted',
+    'NotSavedClass' => 'the :class has not been saved',
 ];

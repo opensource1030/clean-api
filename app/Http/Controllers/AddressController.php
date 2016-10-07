@@ -3,6 +3,7 @@
 namespace WA\Http\Controllers;
 
 use Illuminate\Http\Request;
+
 use WA\DataStore\Address\Address;
 use WA\DataStore\Address\AddressTransformer;
 use WA\Repositories\Address\AddressInterface;
@@ -28,7 +29,6 @@ class AddressController extends ApiController
      */
     public function __construct(AddressInterface $address)
     {
-
         $this->address = $address;
     }
 
@@ -85,6 +85,18 @@ class AddressController extends ApiController
                 $data['id'] = $id;
                 $address = $this->address->update($data);
 
+                if($address == 'notExist') {
+                    $error['errors']['address'] = Lang::get('messages.NotExistClass', ['class' => 'Address']);
+                    //$error['errors']['Message'] = $e->getMessage();
+                    return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+                }
+
+                if($address == 'notSaved') {
+                    $error['errors']['address'] = Lang::get('messages.NotSavedClass', ['class' => 'Address']);
+                    //$error['errors']['Message'] = $e->getMessage();
+                    return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+                }
+
                 return $this->response()->item($address, new AddressTransformer(), ['key' => 'address'])->setStatusCode($this->status_codes['created']);
             } catch (\Exception $e){
                 $error['errors']['address'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Address', 'option' => 'updated', 'include' => '']);
@@ -113,7 +125,7 @@ class AddressController extends ApiController
                 return $this->response()->item($address, new AddressTransformer(), ['key' => 'address'])->setStatusCode($this->status_codes['created']);
             } catch (\Exception $e){
                 $error['errors']['address'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Address', 'option' => 'created', 'include' => '']);
-                //$error['errors']['addressMessage'] = $e->getMessage();
+                //$error['errors']['Message'] = $e->getMessage();
             }
         } else {
             $error['errors']['json'] = Lang::get('messages.InvalidJson');

@@ -132,6 +132,14 @@ class Device extends MutableDataStore
     }
 
     /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function devicetypes()
+    {
+        return $this->belongsTo('WA\DataStore\DeviceType\DeviceType', 'deviceTypeId');
+    }
+
+    /**
      * Get the transformer instance.
      *
      * @return mixed

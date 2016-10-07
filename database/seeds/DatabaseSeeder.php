@@ -24,11 +24,13 @@ class DatabaseSeeder extends Seeder
         $this->call(AllocationsTableSeeder::class);
         $this->call(AppsTableSeeder::class);
         $this->call(AssetsTableSeeder::class);
-        $this->call(CarriersTableSeeder::class);      
+        $this->call(CarriersTableSeeder::class);
         $this->call(CompanyDomainsTableSeeder::class);
         $this->call(CompanySaml2TableSeeder::class);
-        $this->call(ConditionsTableSeeder::class);        
-        $this->call(DeviceCarriersTableSeeder::class);        
+        $this->call(ConditionsTableSeeder::class);
+        $this->call(ConditionFieldsTableSeeder::class);
+        $this->call(ConditionOperatorsTableSeeder::class);
+        $this->call(DeviceCarriersTableSeeder::class);
         $this->call(DeviceCompaniesTableSeeder::class);
         $this->call(DeviceModificationsTableSeeder::class);
         $this->call(DevicesTableSeeder::class);
@@ -40,7 +42,7 @@ class DatabaseSeeder extends Seeder
         $this->call(PricesTableSeeder::class);
         //$this->call(PagesTableSeeder::class);
         //$this->call(ProvidersTableSeeder::class);
-        $this->call(RequestsTableSeeder::class);        
+        $this->call(RequestsTableSeeder::class);
         $this->call(ServicesTableSeeder::class);
         $this->call(UsersTableSeeder::class);
         

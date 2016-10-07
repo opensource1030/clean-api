@@ -1,12 +1,16 @@
 <?php
+
 namespace WA\Http\Controllers;
 
-use Collection;
+
 use Illuminate\Http\Request;
+
 use WA\DataStore\Price\Price;
 use WA\DataStore\Price\PriceTransformer;
-use WA\Http\Requests\Parameters\Filters;
 use WA\Repositories\Price\PriceInterface;
+
+use WA\Http\Requests\Parameters\Filters;
+use Collection;
 
 use Illuminate\Support\Facades\Lang;
 
@@ -40,7 +44,6 @@ class PriceController extends ApiController
      */
     public function index()
     {
-
         $criteria = $this->getRequestCriteria();
         $this->price->setCriteria($criteria);
         $price = $this->price->byPage();
@@ -195,6 +198,18 @@ class PriceController extends ApiController
         $data = $request->all()['data']['attributes'];           
         $data['id'] = $id;
         $price = $this->price->update($data);
+
+        if($price == 'notExist') {
+            $error['errors']['price'] = Lang::get('messages.NotExistClass', ['class' => 'Price']);
+            //$error['errors']['Message'] = $e->getMessage();
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+        }
+
+        if($price == 'notSaved') {
+            $error['errors']['price'] = Lang::get('messages.NotSavedClass', ['class' => 'Price']);
+            //$error['errors']['Message'] = $e->getMessage();
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+        }
         
         return $this->response()->item($price, new PriceTransformer(), ['key' => 'prices'])->setStatusCode($this->status_codes['created']);
     }

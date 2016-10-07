@@ -40,11 +40,16 @@ class CategoryAppsController extends ApiController
      * Get a payload of all CategoryApps
      *
      */
-    public function index() {
-
+    public function index(Request $request)
+    {
         $criteria = $this->getRequestCriteria();
         $this->categoryApps->setCriteria($criteria);
         $categoryApps = $this->categoryApps->byPage();
+
+        if(!$this->includesAreCorrect($request, new CategoryAppTransformer())){
+            $error['errors']['getincludes'] = Lang::get('messages.NotExistInclude');
+            return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
+        }
       
         $response = $this->response()->withPaginator($categoryApps, new CategoryAppTransformer(),['key' => 'categoryapps']);
         $response = $this->applyMeta($response);
@@ -58,10 +63,12 @@ class CategoryAppsController extends ApiController
      *
      * @Get("/{id}")
      */
-    public function show($id, Request $request) {
+    public function show($id, Request $request)
+    {
         $criteria = $this->getRequestCriteria();
         $this->categoryApps->setCriteria($criteria);
         $categoryApps = $this->categoryApps->byId($id);
+
         if($categoryApps == null){
             $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'CategoryApps']);   
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
@@ -81,8 +88,8 @@ class CategoryAppsController extends ApiController
      * @param $id
      * @return \Dingo\Api\Http\Response
      */
-    public function store($id, Request $request) {
-
+    public function store($id, Request $request)
+    {
         /*
          * Checks if Json has data, data-type & data-attributes.
          */
@@ -97,10 +104,25 @@ class CategoryAppsController extends ApiController
             $data = $request->all()['data']['attributes'];
             $data['id'] = $id;
             $categoryApps = $this->categoryApps->update($data);
+
+            if($categoryApps == 'notExist') {
+                DB::rollBack();
+                $error['errors']['categoryApps'] = Lang::get('messages.NotExistClass', ['class' => 'CategoryApps']);
+                //$error['errors']['Message'] = $e->getMessage();
+                return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+            }
+
+            if($categoryApps == 'notSaved') {
+                DB::rollBack();
+                $error['errors']['categoryApps'] = Lang::get('messages.NotSavedClass', ['class' => 'CategoryApps']);
+                //$error['errors']['Message'] = $e->getMessage();
+                return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+            }
+
         } catch (\Exception $e) {
             DB::rollBack();
             $error['errors']['categoryapps'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'CategoryApps', 'option' => 'updated', 'include' => '']);
-            //$error['errors']['CategoryAppsMessage'] = $e->getMessage();
+            //$error['errors']['Message'] = $e->getMessage();
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         } 
 
@@ -113,7 +135,7 @@ class CategoryAppsController extends ApiController
                     } catch (\Exception $e){
                         DB::rollBack();
                         $error['errors']['images'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'CategoryApps', 'option' => 'created', 'include' => 'Images']);
-                        //$error['errors']['imagesMessage'] = $e->getMessage();
+                        //$error['errors']['Message'] = $e->getMessage();
                         return response()->json($error)->setStatusCode($this->status_codes['conflict']);
                     }
                 }
@@ -127,7 +149,7 @@ class CategoryAppsController extends ApiController
                     } catch (\Exception $e){
                         DB::rollBack();
                         $error['errors']['Apps'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'CategoryApps', 'option' => 'created', 'include' => 'Apps']);
-                        //$error['errors']['AppsMessage'] = $e->getMessage();
+                        //$error['errors']['Message'] = $e->getMessage();
                         return response()->json($error)->setStatusCode($this->status_codes['conflict']);
                     }
                 }
@@ -143,8 +165,8 @@ class CategoryAppsController extends ApiController
      *
      * @return \Dingo\Api\Http\Response
      */
-    public function create(Request $request) {
-
+    public function create(Request $request)
+    {
         /*
          * Checks if Json has data, data-type & data-attributes.
          */
@@ -161,7 +183,7 @@ class CategoryAppsController extends ApiController
         } catch (\Exception $e) {
             DB::rollBack();
             $error['errors']['categoryapps'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'CategoryApps', 'option' => 'created', 'include' => '']);
-            //$error['errors']['CategoryAppsMessage'] = $e->getMessage();
+            //$error['errors']['Message'] = $e->getMessage();
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }        
 
@@ -174,7 +196,7 @@ class CategoryAppsController extends ApiController
                     } catch (\Exception $e){
                         DB::rollBack();
                         $error['errors']['images'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'CategoryApps', 'option' => 'created', 'include' => 'Images']);
-                        //$error['errors']['imagesMessage'] = $e->getMessage();
+                        //$error['errors']['Message'] = $e->getMessage();
                         return response()->json($error)->setStatusCode($this->status_codes['conflict']);
                     }
                 }
@@ -189,7 +211,7 @@ class CategoryAppsController extends ApiController
                     } catch (\Exception $e){
                         DB::rollBack();
                         $error['errors']['apps'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'CategoryApps', 'option' => 'created', 'include' => 'Apps']);
-                        //$error['errors']['AppsMessage'] = $e->getMessage();
+                        //$error['errors']['Message'] = $e->getMessage();
                         return response()->json($error)->setStatusCode($this->status_codes['conflict']);
                     }
                 }
@@ -205,8 +227,8 @@ class CategoryAppsController extends ApiController
      *
      * @param $id
      */
-    public function delete($id) {
-
+    public function delete($id)
+    {
         $categoryApps = CategoryApp::find($id);
         if($categoryApps <> null){
             $this->categoryApps->deleteById($id);
@@ -214,7 +236,6 @@ class CategoryAppsController extends ApiController
             $error['errors']['delete'] = Lang::get('messages.NotExistClass', ['class' => 'CategoryApps']);   
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
-        
         
         $categoryApps = CategoryApp::find($id);        
         if($categoryApps == null){

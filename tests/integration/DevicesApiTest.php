@@ -33,7 +33,6 @@ class DevicesApiTest extends TestCase
                         'name',
                         'properties',
                         'externalId',
-                        'deviceTypeId',
                         'statusId',
                         'syncId',
                         'created_at' => [
@@ -81,7 +80,6 @@ class DevicesApiTest extends TestCase
                 'name'=> $device->name,
                 'properties'=> $device->properties,
                 'externalId'=> $device->externalId,
-                'deviceTypeId'=> "$device->deviceTypeId",
                 'statusId'=> $device->statusId,
                 'syncId'=> $device->syncId
             ]);
@@ -95,7 +93,6 @@ class DevicesApiTest extends TestCase
                     'name',
                     'properties',
                     'externalId',
-                    'deviceTypeId',
                     'statusId',
                     'syncId',
                     'created_at' => [
@@ -136,7 +133,7 @@ class DevicesApiTest extends TestCase
 
         $device->assets()->sync($dataAssets);    
 
-        $response = $this->get('/devices/'.$device->id.'?include=assets')
+        $response = $this->json('GET', 'devices/'.$device->id.'?include=assets')
             ->seeJsonStructure([
                 'data' => [
                     'type',
@@ -146,7 +143,6 @@ class DevicesApiTest extends TestCase
                         'name',
                         'properties',
                         'externalId',
-                        'deviceTypeId',
                         'statusId',
                         'syncId',
                         'created_at' => [
@@ -179,7 +175,7 @@ class DevicesApiTest extends TestCase
                     ]
                 ],
                 'included' => [
-                    0 => [
+                    1 => [
                         'type',
                         'id',
                         'attributes' => [
@@ -221,7 +217,6 @@ class DevicesApiTest extends TestCase
                         'name',
                         'properties',
                         'externalId',
-                        'deviceTypeId',
                         'statusId',
                         'syncId',
                         'created_at' => [
@@ -254,7 +249,7 @@ class DevicesApiTest extends TestCase
                     ]
                 ],
                 'included' => [
-                    0 => [
+                    1 => [
                         'type',
                         'id',
                         'attributes' => [
@@ -294,7 +289,6 @@ class DevicesApiTest extends TestCase
                         'name',
                         'properties',
                         'externalId',
-                        'deviceTypeId',
                         'statusId',
                         'syncId',
                         'created_at' => [
@@ -327,7 +321,7 @@ class DevicesApiTest extends TestCase
                     ]
                 ],
                 'included' => [
-                    0 => [
+                    1 => [
                         'type',
                         'id',
                         'attributes' => [
@@ -369,7 +363,6 @@ class DevicesApiTest extends TestCase
                         'name',
                         'properties',
                         'externalId',
-                        'deviceTypeId',
                         'statusId',
                         'syncId',
                         'created_at' => [
@@ -402,7 +395,7 @@ class DevicesApiTest extends TestCase
                     ]
                 ],
                 'included' => [
-                    0 => [
+                    1 => [
                         'type',
                         'id',
                         'attributes' => [
@@ -505,7 +498,6 @@ class DevicesApiTest extends TestCase
                 'type' => 'devices',
                 'name' => 'whenIneedMotivation...',
                 'properties' => 'MyOneSolutionIsMyQueen',
-                'deviceTypeId'  => $device->deviceTypeId,
                 'statusId' => 1,
                 'externalId' => 2
             ]);
@@ -535,8 +527,7 @@ class DevicesApiTest extends TestCase
                     "NoValid"=> "devices",
                     "attributes"=> [
                         "name"=> "whenIneedMotivation...",
-                        "properties"=> "MyOneSolutionIsMyQueen",
-                        "deviceTypeId" => 5
+                        "properties"=> "MyOneSolutionIsMyQueen"
                     ]
                 ]
                 
@@ -558,8 +549,7 @@ class DevicesApiTest extends TestCase
                     "type"=> "devices",
                     "NoValid"=> [
                         "name"=> "whenIneedMotivation...",
-                        "properties"=> "MyOneSolutionIsMyQueen",
-                        "deviceTypeId" => 5
+                        "properties"=> "MyOneSolutionIsMyQueen"
                     ]
                 ]
             ]
@@ -572,35 +562,12 @@ class DevicesApiTest extends TestCase
         );
     }
 
-    public function testCreateDeviceReturnNoValidDeviceTypeId() {
-
-        $device = factory(\WA\DataStore\Device\Device::class)->create();
-        $deviceTypeId = $device->deviceTypeId + 10;
-
-        // deviceTyoeId integrity foreign key error.
-        $device = $this->post('/devices',
-            [
-                "data" => [
-                    "type"=> "devices",
-                    "attributes"=> [
-                        "name"=> "whenIneedMotivation...",
-                        "properties"=> "MyOneSolutionIsMyQueen",
-                        "deviceTypeId" => $deviceTypeId
-                    ]
-                ]
-            ]
-            )->seeJson(
-            [
-                'errors' => [
-                    'devices' => 'the Device  has not been created'
-                ]
-            ]
-        );
-    }
-
     public function testCreateDeviceReturnRelationshipNoExists() {
 
-        $device = $this->post('/devices',
+        $device = factory(\WA\DataStore\Device\Device::class)->create();
+        $deviceTypeId = $device->deviceTypeId;
+
+        $device = $this->json('POST', '/devices',
         [
             'data' => [
                 'type' => 'devices',
@@ -608,7 +575,7 @@ class DevicesApiTest extends TestCase
                     'identification' => rand(9000000000000,9999999999999),
                     'name' => 'whenIneedMotivation...',
                     'properties' => 'MyOneSolutionIsMyQueen',
-                    'deviceTypeId'  => 5
+                    'deviceTypeId' => $deviceTypeId
                 ],
                 'relationships' => [
                     'IgnoreType' => [
@@ -624,12 +591,14 @@ class DevicesApiTest extends TestCase
         [
             'type' => 'devices',
             'name' => 'whenIneedMotivation...',
-            'properties' => 'MyOneSolutionIsMyQueen',
-            'deviceTypeId'  => 5
+            'properties' => 'MyOneSolutionIsMyQueen'
         ]);
     }
 
     public function testCreateDeviceReturnRelationshipNoExistsData() {
+
+        $device = factory(\WA\DataStore\Device\Device::class)->create();
+        $deviceTypeId = $device->deviceTypeId;
 
         $device = $this->post('/devices',
         [
@@ -639,7 +608,7 @@ class DevicesApiTest extends TestCase
                     'identification' => rand(9000000000000,9999999999999),
                     'name' => 'whenIneedMotivation...',
                     'properties' => 'MyOneSolutionIsMyQueen',
-                    'deviceTypeId'  => 5
+                    'deviceTypeId' => $deviceTypeId
                 ],
                 'relationships' => [
                     'assets' => [
@@ -655,12 +624,14 @@ class DevicesApiTest extends TestCase
         [
             'type' => 'devices',
             'name' => 'whenIneedMotivation...',
-            'properties' => 'MyOneSolutionIsMyQueen',
-            'deviceTypeId'  => 5
+            'properties' => 'MyOneSolutionIsMyQueen'
         ]);
     }
 
     public function testCreateDeviceReturnRelationshipNoAssetsType() {
+
+        $device = factory(\WA\DataStore\Device\Device::class)->create();
+        $deviceTypeId = $device->deviceTypeId;
 
         $device = $this->post('/devices',
         [
@@ -670,7 +641,7 @@ class DevicesApiTest extends TestCase
                     'identification' => rand(9000000000000,9999999999999),
                     'name' => 'whenIneedMotivation...',
                     'properties' => 'MyOneSolutionIsMyQueen',
-                    'deviceTypeId'  => 5
+                    'deviceTypeId' => $deviceTypeId
                 ],
                 'relationships' => [
                     'assets' => [
@@ -686,12 +657,14 @@ class DevicesApiTest extends TestCase
         [
             'type' => 'devices',
             'name' => 'whenIneedMotivation...',
-            'properties' => 'MyOneSolutionIsMyQueen',
-            'deviceTypeId'  => 5
+            'properties' => 'MyOneSolutionIsMyQueen'
         ]);
     }
 
     public function testCreateDeviceReturnRelationshipNoIdExists() {
+
+        $device = factory(\WA\DataStore\Device\Device::class)->create();
+        $deviceTypeId = $device->deviceTypeId;
 
         $device = $this->post('/devices',
         [
@@ -701,7 +674,7 @@ class DevicesApiTest extends TestCase
                     'identification' => rand(9000000000000,9999999999999),
                     'name' => 'whenIneedMotivation...',
                     'properties' => 'MyOneSolutionIsMyQueen',
-                    'deviceTypeId'  => 5
+                    'deviceTypeId' => $deviceTypeId
                 ],
                 'relationships' => [
                     'assets' => [
@@ -717,12 +690,14 @@ class DevicesApiTest extends TestCase
         [
             'type' => 'devices',
             'name' => 'whenIneedMotivation...',
-            'properties' => 'MyOneSolutionIsMyQueen',
-            'deviceTypeId'  => 5
+            'properties' => 'MyOneSolutionIsMyQueen'
         ]);
     }
 
     public function testCreateDeviceReturnPriceModificationCapacityForeignKeyError() {
+
+        $device = factory(\WA\DataStore\Device\Device::class)->create();
+        $deviceTypeId = $device->deviceTypeId;
 
         $device = $this->post('/devices',
         [
@@ -732,7 +707,7 @@ class DevicesApiTest extends TestCase
                     'identification' => rand(9000000000000,9999999999999),
                     'name' => 'whenIneedMotivation...',
                     'properties' => 'MyOneSolutionIsMyQueen',
-                    'deviceTypeId'  => 1
+                    'deviceTypeId' => $deviceTypeId
                 ],
                 "relationships" => [
                     "modifications" => [
@@ -779,6 +754,9 @@ class DevicesApiTest extends TestCase
 
     public function testCreateDeviceReturnPriceModificationStyleForeignKeyError() {
 
+        $device = factory(\WA\DataStore\Device\Device::class)->create();
+        $deviceTypeId = $device->deviceTypeId;
+
         $device = $this->post('/devices',
         [
             'data' => [
@@ -787,7 +765,7 @@ class DevicesApiTest extends TestCase
                     'identification' => rand(9000000000000,9999999999999),
                     'name' => 'whenIneedMotivation...',
                     'properties' => 'MyOneSolutionIsMyQueen',
-                    'deviceTypeId'  => 5
+                    'deviceTypeId' => $deviceTypeId
                 ],
                 "relationships" => [
                     "modifications" => [
@@ -834,6 +812,9 @@ class DevicesApiTest extends TestCase
 
     public function testCreateDeviceReturnPriceCarriersForeignKeyError() {
 
+        $device = factory(\WA\DataStore\Device\Device::class)->create();
+        $deviceTypeId = $device->deviceTypeId;
+
         $device = $this->post('/devices',
         [
             'data' => [
@@ -842,7 +823,7 @@ class DevicesApiTest extends TestCase
                     'identification' => rand(9000000000000,9999999999999),
                     'name' => 'whenIneedMotivation...',
                     'properties' => 'MyOneSolutionIsMyQueen',
-                    'deviceTypeId'  => 5
+                    'deviceTypeId' => $deviceTypeId
                 ],
                 "relationships" => [
                     "modifications" => [
@@ -889,6 +870,9 @@ class DevicesApiTest extends TestCase
 
     public function testCreateDeviceReturnPriceCompaniesForeignKeyError() {
 
+        $device = factory(\WA\DataStore\Device\Device::class)->create();
+        $deviceTypeId = $device->deviceTypeId;
+
         $device = $this->post('/devices',
         [
             'data' => [
@@ -897,7 +881,7 @@ class DevicesApiTest extends TestCase
                     'identification' => rand(9000000000000,9999999999999),
                     'name' => 'whenIneedMotivation...',
                     'properties' => 'MyOneSolutionIsMyQueen',
-                    'deviceTypeId'  => 5
+                    'deviceTypeId' => $deviceTypeId
                 ],
                 "relationships" => [
                     "modifications" => [
@@ -944,6 +928,9 @@ class DevicesApiTest extends TestCase
 
     public function testCreateDeviceReturnPriceCheckIfPriceRowIsNotCorrect() {
 
+        $device = factory(\WA\DataStore\Device\Device::class)->create();
+        $deviceTypeId = $device->deviceTypeId;
+
         $device = $this->post('/devices',
         [
             'data' => [
@@ -952,7 +939,7 @@ class DevicesApiTest extends TestCase
                     'identification' => rand(9000000000000,9999999999999),
                     'name' => 'whenIneedMotivation...',
                     'properties' => 'MyOneSolutionIsMyQueen',
-                    'deviceTypeId'  => 5
+                    'deviceTypeId' => $deviceTypeId
                 ],
                 "relationships" => [
                     "modifications" => [
@@ -1010,7 +997,6 @@ class DevicesApiTest extends TestCase
         $this->assertNotEquals($device->identification, $deviceAux->identification);
         $this->assertNotEquals($device->name, $deviceAux->name);
         $this->assertNotEquals($device->properties, $deviceAux->properties);
-        $this->assertNotEquals($device->deviceTypeId, $deviceAux->deviceTypeId);
 
         $modCap1 = factory(\WA\DataStore\Modification\Modification::class)->create(
             ['modType' => 'capacity']
@@ -1126,8 +1112,7 @@ class DevicesApiTest extends TestCase
                     'type' => 'devices',
                     'attributes' => [
                         'name' => $deviceAux->name,
-                        'properties' => $deviceAux->properties,
-                        'deviceTypeId'  => $deviceAux->deviceTypeId
+                        'properties' => $deviceAux->properties
                     ],
                     'relationships' => [
                         'assets' => [
@@ -1174,8 +1159,7 @@ class DevicesApiTest extends TestCase
             [
                 'type' => 'devices',
                 'name' => $deviceAux->name,
-                'properties' => $deviceAux->properties,
-                'deviceTypeId'  => $deviceAux->deviceTypeId
+                'properties' => $deviceAux->properties
             ]);
     }
 

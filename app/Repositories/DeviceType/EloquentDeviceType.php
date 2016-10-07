@@ -49,7 +49,7 @@ class EloquentDeviceType extends AbstractRepository implements DeviceTypeInterfa
 
         if(!$deviceType)
         {
-            return false;
+            return 'notExist';
         }
 
         if(isset($data['make'])){
@@ -75,7 +75,7 @@ class EloquentDeviceType extends AbstractRepository implements DeviceTypeInterfa
         }
 
         if(!$deviceType->save()) {
-            return false;
+            return 'notSaved';
         }
 
         return $deviceType;

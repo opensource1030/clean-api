@@ -12,6 +12,8 @@ use WA\DataStore\Category\CategoryApp;
 use WA\DataStore\Category\Preset;
 use WA\DataStore\Company\Company;
 use WA\DataStore\Condition\Condition;
+use WA\DataStore\Condition\ConditionField;
+use WA\DataStore\Condition\ConditionOperator;
 use WA\DataStore\Content\Content;
 use WA\DataStore\Device\Device;
 use WA\DataStore\Device\DeviceCarrier;
@@ -48,6 +50,8 @@ use WA\Repositories\Category\EloquentCategoryApps;
 use WA\Repositories\Category\EloquentPreset;
 use WA\Repositories\Company\EloquentCompany;
 use WA\Repositories\Condition\EloquentCondition;
+use WA\Repositories\Condition\EloquentConditionField;
+use WA\Repositories\Condition\EloquentConditionOperator;
 use WA\Repositories\Content\EloquentContent;
 use WA\Repositories\Device\EloquentDevice;
 use WA\Repositories\Device\EloquentDeviceCarrier;
@@ -515,6 +519,30 @@ trait ServiceRegistration
         app()->bind('WA\Repositories\Condition\ConditionInterface',
             function () {
                 return new EloquentCondition(new Condition());
+            }
+        );
+    }
+
+    /**
+     * @param
+     */
+    public function registerConditionField()
+    {
+        app()->bind('WA\Repositories\Condition\ConditionFieldInterface',
+            function () {
+                return new EloquentConditionField(new ConditionField());
+            }
+        );
+    }
+
+    /**
+     * @param
+     */
+    public function registerConditionOperator()
+    {
+        app()->bind('WA\Repositories\Condition\ConditionOperatorInterface',
+            function () {
+                return new EloquentConditionOperator(new ConditionOperator());
             }
         );
     }

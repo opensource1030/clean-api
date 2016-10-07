@@ -252,12 +252,9 @@ class PackageApiTest extends TestCase
 
         $package = factory(\WA\DataStore\Package\Package::class)->create();
 
-        $device1 = factory(\WA\DataStore\Device\Device::class)->create()->id;
-        $device2 = factory(\WA\DataStore\Device\Device::class)->create()->id;
+        $device = factory(\WA\DataStore\Device\Device::class)->create()->id;
 
-        $dataDevices = array($device1, $device2);
-
-        $package->devices()->sync($dataDevices);    
+        $package->devices()->sync(array($device));
 
         $this->json('GET', 'packages/'.$package->id.'?include=devices')
             ->seeJsonStructure([
@@ -301,13 +298,43 @@ class PackageApiTest extends TestCase
                         'type',
                         'id',
                         'attributes' => [
-                            'identification',
-                            'name',
-                            'properties',
-                            'deviceTypeId'
+                            'make',
+                            'model',
+                            'class',
+                            'deviceOS',
+                            'description',
+                            'statusId',
+                            'image'
                         ],
                         'links' => [
                             'self'
+                        ]
+                    ],
+                    1 => [
+                        'type',
+                        'id',
+                        'attributes' => [
+                            'name',
+                            'properties',
+                            'statusId',
+                            'externalId',
+                            'identification',
+                            'syncId'
+                        ],
+                        'links' => [
+                            'self'
+                        ],
+                        'relationships' => [
+                            'devicetypes' => [
+                                'links' => [
+                                    'self',
+                                    'related'
+                                ],
+                                'data' => [
+                                    'type',
+                                    'id'
+                                ]
+                            ]
                         ]
                     ]
 

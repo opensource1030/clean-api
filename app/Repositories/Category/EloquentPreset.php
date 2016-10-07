@@ -18,7 +18,7 @@ class EloquentPreset extends AbstractRepository implements PresetInterface
 
         if(!$preset)
         {
-            return false;
+            return 'notExist';
         }
 
         if(isset($data['name'])){
@@ -26,7 +26,7 @@ class EloquentPreset extends AbstractRepository implements PresetInterface
         }
 
         if(!$preset->save()) {
-            return false;
+            return 'notSaved';
         }
 
         return $preset;

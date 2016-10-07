@@ -2,16 +2,13 @@
 
 namespace WA\Http\Controllers;
 
-use Illuminate\Support\Facades\Storage;
-use Intervention\Image\ImageManager;
 use Request;
+
 use WA\DataStore\Image\Image;
 use WA\DataStore\Image\ImageTransformer;
 use WA\Repositories\Image\ImageInterface;
 
-use League\Flysystem\Filesystem;
-
-use DB;
+use Illuminate\Support\Facades\Storage;
 
 use Illuminate\Support\Facades\Lang;
 
@@ -27,15 +24,13 @@ class ImageController extends ApiController
      */
     protected $image;
 
-    protected $urlFile;
-
     /**
      * Image Controller constructor
      *
      * @param ImageInterface $image
      */
-    public function __construct(ImageInterface $image)
-    {
+    public function __construct(ImageInterface $image) {
+
         $this->image = $image;
     }
 
@@ -45,8 +40,7 @@ class ImageController extends ApiController
      * Get a payload of all Image
      *
      */
-    public function index()
-    {
+    public function index() {
 
         $criteria = $this->getRequestCriteria();
         $this->image->setCriteria($criteria);
@@ -64,8 +58,7 @@ class ImageController extends ApiController
      *
      * @Get("/{id}")
      */
-    public function show($id)
-    {
+    public function show($id) {
 
         $criteria = $this->getRequestCriteria();
         $this->image->setCriteria($criteria);
@@ -106,8 +99,7 @@ class ImageController extends ApiController
      *
      * @return \Dingo\Api\Http\Response
      */
-    public function create()
-    {
+    public function create() {
 
         try {
             $file = Request::file('filename');
@@ -128,7 +120,7 @@ class ImageController extends ApiController
             }
         } catch (\Exception $e) {
             $error['errors']['image'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Image', 'option' => 'created', 'include' => '']);
-            //$error['errors']['imageMessage'] = $e->getMessage();
+            $error['errors']['Message'] = $e->getMessage();
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
@@ -141,8 +133,7 @@ class ImageController extends ApiController
      *
      * @param $id
      */
-    public function delete($id)
-    {
+    public function delete($id) {
 
         $image = Image::find($id);
         if ($image <> null) {

@@ -3,6 +3,7 @@
 namespace WA\Http\Controllers;
 
 use Illuminate\Http\Request;
+
 use WA\DataStore\Order\Order;
 use WA\DataStore\Order\OrderTransformer;
 use WA\Repositories\Order\OrderInterface;
@@ -79,14 +80,27 @@ class OrderController extends ApiController
     {
         if ($this->isJsonCorrect($request, 'orders')) {
             try {
+
                 $data = $request->all()['data']['attributes'];
                 $data['id'] = $id;
                 $order = $this->order->update($data);
 
+                if($order == 'notExist') {
+                    $error['errors']['order'] = Lang::get('messages.NotExistClass', ['class' => 'Order']);
+                    //$error['errors']['Message'] = $e->getMessage();
+                    return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+                }
+
+                if($order == 'notSaved') {
+                    $error['errors']['order'] = Lang::get('messages.NotSavedClass', ['class' => 'Order']);
+                    //$error['errors']['Message'] = $e->getMessage();
+                    return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+                }
+
                 return $this->response()->item($order, new OrderTransformer(), ['key' => 'orders'])->setStatusCode($this->status_codes['created']);
             } catch (\Exception $e){
                 $error['errors']['orders'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Order', 'option' => 'updated', 'include' => '']);
-                //$error['errors']['ordersMessage'] = $e->getMessage();
+                //$error['errors']['Message'] = $e->getMessage();
             }
         } else {
             $error['errors']['json'] = Lang::get('messages.InvalidJson');
@@ -104,13 +118,14 @@ class OrderController extends ApiController
     {
         if ($this->isJsonCorrect($request, 'orders')) {
             try {
+
                 $data = $request->all()['data']['attributes'];
                 $order = $this->order->create($data);
 
                 return $this->response()->item($order, new OrderTransformer(), ['key' => 'orders'])->setStatusCode($this->status_codes['created']);
             } catch (\Exception $e){
                 $error['errors']['orders'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Order', 'option' => 'created', 'include' => '']);
-                //$error['errors']['ordersMessage'] = $e->getMessage();
+                //$error['errors']['Message'] = $e->getMessage();
             }
         } else {
             $error['errors']['json'] = Lang::get('messages.InvalidJson');

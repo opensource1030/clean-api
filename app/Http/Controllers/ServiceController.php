@@ -3,6 +3,7 @@
 namespace WA\Http\Controllers;
 
 use Illuminate\Http\Request;
+
 use WA\DataStore\Service\Service;
 use WA\DataStore\Service\ServiceTransformer;
 use WA\Repositories\Service\ServiceInterface;
@@ -36,12 +37,6 @@ class ServiceController extends ApiController
      *
      * Get a payload of all Service
      *
-     * @Get("/")
-     * @Parameters({
-     *      @Parameter("page", description="The page of results to view.", default=1),
-     *      @Parameter("limit", description="The amount of results per page.", default=10),
-     *      @Parameter("access_token", required=true, description="Access token for authentication")
-     * })
      */
     public function index()
     {
@@ -83,20 +78,35 @@ class ServiceController extends ApiController
      */
     public function store($id, Request $request)
     {
-        /*
-         * Checks if Json has data, data-type & data-attributes.
-         */
-        if(!$this->isJsonCorrect($request, 'services')){
-            $error['errors']['json'] = Lang::get('messages.InvalidJson');
-            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+        if($this->isJsonCorrect($request, 'services')){
+            try {
+
+                $data = $request->all()['data']['attributes'];
+                $data['id'] = $id;
+                $service = $this->service->update($data);
+
+                if($service == 'notExist') {
+                    $error['errors']['service'] = Lang::get('messages.NotExistClass', ['class' => 'Service']);
+                    //$error['errors']['Message'] = $e->getMessage();
+                    return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+                }
+
+                if($service == 'notSaved') {
+                    $error['errors']['service'] = Lang::get('messages.NotSavedClass', ['class' => 'Service']);
+                    //$error['errors']['Message'] = $e->getMessage();
+                    return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+                }
+
+                return $this->response()->item($service, new ServiceTransformer(), ['key' => 'services'])->setStatusCode($this->status_codes['created']);
+            } catch (\Exception $e){
+                $error['errors']['services'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Service', 'option' => 'updated', 'include' => '']);
+                //$error['errors']['Message'] = $e->getMessage();
+            }
         } else {
-            $data = $request->all()['data'];
-            $dataAttributes = $data['attributes'];
+            $error['errors']['json'] = Lang::get('messages.InvalidJson');
         }
 
-        $dataAttributes['id'] = $id;
-        $service = $this->service->update($dataAttributes);
-        return $this->response()->item($service, new ServiceTransformer(), ['key' => 'services']);
+        return response()->json($error)->setStatusCode($this->status_codes['conflict']);
     }
 
     /**
@@ -106,16 +116,22 @@ class ServiceController extends ApiController
      */
     public function create(Request $request)
     {
-        if(!$this->isJsonCorrect($request, 'services')){
-            $error['errors']['json'] = Lang::get('messages.InvalidJson');
-            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+        if($this->isJsonCorrect($request, 'services')){
+            try {
+
+                $data = $request->all()['data']['attributes'];
+                $service = $this->service->create($data);
+
+                return $this->response()->item($service, new ServiceTransformer(), ['key' => 'services'])->setStatusCode($this->status_codes['created']);
+            } catch (\Exception $e){
+                $error['errors']['services'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Service', 'option' => 'created', 'include' => '']);
+                //$error['errors']['Message'] = $e->getMessage();
+            }
         } else {
-            $data = $request->all()['data'];
-            $dataAttributes = $data['attributes'];
+            $error['errors']['json'] = Lang::get('messages.InvalidJson');
         }
 
-        $service = $this->service->create($dataAttributes);
-        return $this->response()->item($service, new ServiceTransformer(), ['key' => 'services']);
+        return response()->json($error)->setStatusCode($this->status_codes['conflict']);
     }
 
     /**
@@ -132,8 +148,7 @@ class ServiceController extends ApiController
             $error['errors']['delete'] = Lang::get('messages.NotExistClass', ['class' => 'Service']);   
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
-        
-        
+
         $service = Service::find($id);        
         if($service == null){
             return array("success" => true);

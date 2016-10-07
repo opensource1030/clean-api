@@ -40,11 +40,16 @@ class CarrierController extends ApiController
      * Get a payload of all Carrier
      *
      */
-    public function index() {
-
+    public function index(Request $request)
+    {
         $criteria = $this->getRequestCriteria();
         $this->carrier->setCriteria($criteria);
         $carrier = $this->carrier->byPage();
+
+        if(!$this->includesAreCorrect($request, new CarrierTransformer())){
+            $error['errors']['getincludes'] = Lang::get('messages.NotExistInclude');
+            return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
+        }
       
         $response = $this->response()->withPaginator($carrier, new CarrierTransformer(),['key' => 'carriers']);
         $response = $this->applyMeta($response);
@@ -58,8 +63,8 @@ class CarrierController extends ApiController
      *
      * @Get("/{id}")
      */
-    public function show($id, Request $request) {
-
+    public function show($id, Request $request)
+    {
         $criteria = $this->getRequestCriteria();
         $this->carrier->setCriteria($criteria);
         $carrier = $this->carrier->byId($id);
@@ -83,8 +88,8 @@ class CarrierController extends ApiController
      * @param $id
      * @return \Dingo\Api\Http\Response
      */
-    public function store($id, Request $request) {
-
+    public function store($id, Request $request)
+    {
         /*
          * Checks if Json has data, data-type & data-attributes.
          */
@@ -99,6 +104,21 @@ class CarrierController extends ApiController
             $data = $request->all()['data']['attributes'];
             $data['id'] = $id;
             $carrier = $this->carrier->update($data);
+
+            if($carrier == 'notExist') {
+                DB::rollBack();
+                $error['errors']['carrier'] = Lang::get('messages.NotExistClass', ['class' => 'Carrier']);
+                //$error['errors']['Message'] = $e->getMessage();
+                return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+            }
+
+            if($carrier == 'notSaved') {
+                DB::rollBack();
+                $error['errors']['carrier'] = Lang::get('messages.NotSavedClass', ['class' => 'Carrier']);
+                //$error['errors']['Message'] = $e->getMessage();
+                return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+            }
+
         } catch (\Exception $e) {
             DB::rollBack();
             $error['errors']['carriers'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Carrier', 'option' => 'updated', 'include' => '']);
@@ -115,7 +135,7 @@ class CarrierController extends ApiController
                     } catch (\Exception $e){
                         DB::rollBack();
                         $error['errors']['images'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Carrier', 'option' => 'created', 'include' => 'Images']);
-                        //$error['errors']['imagesMessage'] = $e->getMessage();
+                        //$error['errors']['Message'] = $e->getMessage();
                         return response()->json($error)->setStatusCode($this->status_codes['conflict']);
                     }
                 }
@@ -131,8 +151,8 @@ class CarrierController extends ApiController
      *
      * @return \Dingo\Api\Http\Response
      */
-    public function create(Request $request) {
-
+    public function create(Request $request)
+    {
         /*
          * Checks if Json has data, data-type & data-attributes.
          */
@@ -149,7 +169,7 @@ class CarrierController extends ApiController
         } catch (\Exception $e) {
             DB::rollBack();
             $error['errors']['carriers'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Carrier', 'option' => 'created', 'include' => '']);
-            //$error['errors']['carriersMessage'] = $e->getMessage();
+            //$error['errors']['Message'] = $e->getMessage();
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }        
 
@@ -162,7 +182,7 @@ class CarrierController extends ApiController
                     } catch (\Exception $e){
                         DB::rollBack();
                         $error['errors']['images'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Carrier', 'option' => 'created', 'include' => 'Images']);
-                        //$error['errors']['imagesMessage'] = $e->getMessage();
+                        //$error['errors']['Message'] = $e->getMessage();
                         return response()->json($error)->setStatusCode($this->status_codes['conflict']);
                     }
                 }
@@ -178,8 +198,8 @@ class CarrierController extends ApiController
      *
      * @param $id
      */
-    public function delete($id) {
-        
+    public function delete($id)
+    {
         $carrier = Carrier::find($id);
         if($carrier <> null){
             $this->carrier->deleteById($id);
@@ -187,8 +207,7 @@ class CarrierController extends ApiController
             $error['errors']['delete'] = Lang::get('messages.NotExistClass', ['class' => 'Carrier']);   
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
-        
-        
+
         $carrier = Carrier::find($id);        
         if($carrier == null){
             return array("success" => true);

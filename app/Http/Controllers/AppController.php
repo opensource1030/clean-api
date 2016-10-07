@@ -3,6 +3,7 @@
 namespace WA\Http\Controllers;
 
 use Illuminate\Http\Request;
+
 use WA\DataStore\App\App;
 use WA\DataStore\App\AppTransformer;
 use WA\Repositories\App\AppInterface;
@@ -28,7 +29,6 @@ class AppController extends ApiController
      */
     public function __construct(AppInterface $app)
     {
-
         $this->app = $app;
     }
 
@@ -40,7 +40,6 @@ class AppController extends ApiController
      */
     public function index()
     {
-
         $criteria = $this->getRequestCriteria();
         $this->app->setCriteria($criteria);
         $apps = $this->app->byPage();
@@ -61,20 +60,14 @@ class AppController extends ApiController
     {
         $criteria = $this->getRequestCriteria();
         $this->app->setCriteria($criteria);
-
         $app = App::find($id);
+
         if($app == null){
             $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'App']);   
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
-        if(!$this->includesAreCorrect($request, new AppTransformer())){
-            $error['errors']['getIncludes'] = Lang::get('messages.NotExistInclude');
-            return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
-        }
-
-        return $this->response()->item($app, new AppTransformer(),
-            ['key' => 'apps'])->setStatusCode($this->status_codes['created']);
+        return $this->response()->item($app, new AppTransformer(), ['key' => 'apps'])->setStatusCode($this->status_codes['created']);
     }
 
     /**
@@ -85,17 +78,29 @@ class AppController extends ApiController
      */
     public function store($id, Request $request)
     {
-
         if ($this->isJsonCorrect($request, 'apps')) {
             try {
+
                 $data = $request->all()['data']['attributes'];
                 $data['id'] = $id;
                 $app = $this->app->update($data);
 
+                if($app == 'notExist') {
+                    $error['errors']['app'] = Lang::get('messages.NotExistClass', ['class' => 'App']);
+                    //$error['errors']['Message'] = $e->getMessage();
+                    return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+                }
+
+                if($app == 'notSaved') {
+                    $error['errors']['app'] = Lang::get('messages.NotSavedClass', ['class' => 'App']);
+                    //$error['errors']['devicesMessage'] = $e->getMessage();
+                    return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+                }
+
                 return $this->response()->item($app, new AppTransformer(), ['key' => 'apps'])->setStatusCode($this->status_codes['created']);
             } catch (\Exception $e){
                 $error['errors']['apps'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'App', 'option' => 'updated', 'include' => '']);
-                //$error['errors']['appsMessage'] = $e->getMessage();
+                //$error['errors']['Message'] = $e->getMessage();
             }
         } else {
             $error['errors']['json'] = Lang::get('messages.InvalidJson');
@@ -111,15 +116,16 @@ class AppController extends ApiController
      */
     public function create(Request $request)
     {
-
         if ($this->isJsonCorrect($request, 'apps')) {
             try {
+
                 $data = $request->all()['data']['attributes'];
                 $app = $this->app->create($data);
+
                 return $this->response()->item($app, new AppTransformer(), ['key' => 'apps'])->setStatusCode($this->status_codes['created']);
             } catch (\Exception $e){
                 $error['errors']['apps'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'App', 'option' => 'created', 'include' => '']);
-                //$error['errors']['appsMessage'] = $e->getMessage();
+                //$error['errors']['Message'] = $e->getMessage();
             }
         } else {
             $error['errors']['json'] = Lang::get('messages.InvalidJson');
@@ -135,7 +141,6 @@ class AppController extends ApiController
      */
     public function delete($id)
     {
-
         $app = App::find($id);
         if ($app <> null) {
             $this->app->deleteById($id);
