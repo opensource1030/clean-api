@@ -45,21 +45,20 @@ class DeviceType extends MutableDataStore
 
     use BelongsToJobStatus;
 
-    /*
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes = []);
         if (!empty($this->isLiveClient)) {
             $this->setTable('clone_device_types');
         }
-    }*/
+    }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function devices()
     {
-        return $this->hasMany('WA\DataStore\DeviceType', 'deviceTypeId');
+        return $this->hasMany('WA\DataStore\Device\Device', 'deviceTypeId');
     }
 
     public function carrierDevice()

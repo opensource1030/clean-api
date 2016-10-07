@@ -5,10 +5,12 @@ namespace WA\DataStore\Device;
 use Dingo\Api\Transformer\FractalTransformer as DingoFractalTransformer;
 use Illuminate\Pagination\Paginator as IlluminatePaginator;
 use League\Fractal\Resource\Collection as ResourceCollection;
+use League\Fractal\Resource\Item as ResourceItem;
 use League\Fractal\TransformerAbstract;
 
 use WA\DataStore\Asset\AssetTransformer;
 use WA\DataStore\Carrier\CarrierTransformer;
+use WA\DataStore\DeviceType\DeviceTypeTransformer;
 use WA\DataStore\Company\CompanyTransformer;
 use WA\DataStore\Modification\ModificationTransformer;
 use WA\DataStore\Image\ImageTransformer;
@@ -21,6 +23,10 @@ class DeviceTransformer extends TransformerAbstract
 {
     protected $availableIncludes = [
         'assets', 'carriers', 'companies', 'modifications', 'images', 'prices'
+    ];
+
+    protected $defaultIncludes = [
+        'devicetypes'
     ];
 
     /**
@@ -36,7 +42,6 @@ class DeviceTransformer extends TransformerAbstract
             'name' => $device->name,
             'properties' => $device->properties,
             'externalId' => $device->externalId,
-            'deviceTypeId' => $device->deviceTypeId,
             'statusId' => $device->statusId,
             'syncId' => $device->syncId,
             'created_at' => $device->created_at,
@@ -102,5 +107,15 @@ class DeviceTransformer extends TransformerAbstract
     public function includePrices(Device $device)
     {
         return new ResourceCollection($device->prices, new PriceTransformer(),'prices');
+    }
+
+    /**
+     * @param Device $device
+     *
+     * @return ResourceCollection
+     */
+    public function includeDevicetypes(Device $device)
+    {
+        return new ResourceItem($device->devicetypes, new DeviceTypeTransformer(), 'devicetypes');
     }
 }
