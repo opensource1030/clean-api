@@ -365,7 +365,7 @@ class DevicesController extends ApiController
                     try {
                         $device->assets()->sync($dataAssets);    
                     } catch (\Exception $e){
-                        $error['errors']['assets'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Device', 'option' => 'created', 'Assets' => '']);
+                        $error['errors']['assets'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Device', 'option' => 'created', 'include' => 'Assets']);
                         //$error['errors']['Message'] = $e->getMessage();
                     }
                 }
