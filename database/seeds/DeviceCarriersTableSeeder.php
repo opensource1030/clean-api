@@ -28,6 +28,34 @@ class DeviceCarriersTableSeeder extends BaseTableSeeder
             [
                 'deviceId'     => 1,
                 'carrierId'      => 2
+            ],
+            [
+                'deviceId'     => 1,
+                'carrierId'      => 3
+            ],
+            [
+                'deviceId'     => 2,
+                'carrierId'      => 1
+            ],
+            [
+                'deviceId'     => 2,
+                'carrierId'      => 5
+            ],
+            [
+                'deviceId'     => 2,
+                'carrierId'      => 6
+            ],
+            [
+                'deviceId'     => 3,
+                'carrierId'      => 2
+            ],
+            [
+                'deviceId'     => 3,
+                'carrierId'      => 11
+            ],
+            [
+                'deviceId'     => 3,
+                'carrierId'      => 13
             ]
         ];
 

@@ -44,10 +44,12 @@ $factory->define(\WA\DataStore\Device\Device::class,
                 $makes = ['Apple', 'Samsung', 'Blackberry'];
                 $models = ['Galaxy S7', 'IPhone SE', 'Q10', 'IPad Air'];
                 $class = ['Phone', 'Tablet', 'M2M'];
+                $deviceOS = ['Android', 'iOS', 'BlackBerry OS', 'Windows Phone'];
                 $deviceType = factory(\WA\DataStore\DeviceType\DeviceType::class)->make();
                 $deviceType->make = $makes[array_rand($makes)];
                 $deviceType->model = $models[array_rand($models)];
                 $deviceType->class = $class[array_rand($class)];
+                $deviceType->deviceOS = $deviceOS[array_rand($deviceOS)];
                 $deviceType->save();
                 return $deviceType->id;
             }//,

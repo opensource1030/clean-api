@@ -28,6 +28,46 @@ class DeviceModificationsTableSeeder extends BaseTableSeeder
             [
                 'deviceId'     => 1,
                 'modificationId'      => 2
+            ],
+            [
+                'deviceId'     => 1,
+                'modificationId'      => 3
+            ],
+            [
+                'deviceId'     => 1,
+                'modificationId'      => 4
+            ],
+            [
+                'deviceId'     => 2,
+                'modificationId'      => 1
+            ],
+            [
+                'deviceId'     => 2,
+                'modificationId'      => 2
+            ],
+            [
+                'deviceId'     => 2,
+                'modificationId'      => 3
+            ],
+            [
+                'deviceId'     => 2,
+                'modificationId'      => 5
+            ],
+                        [
+                'deviceId'     => 3,
+                'modificationId'      => 1
+            ],
+            [
+                'deviceId'     => 3,
+                'modificationId'      => 2
+            ],
+            [
+                'deviceId'     => 3,
+                'modificationId'      => 5
+            ],
+            [
+                'deviceId'     => 3,
+                'modificationId'      => 6
             ]
         ];
 

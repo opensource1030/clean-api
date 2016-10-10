@@ -22,36 +22,68 @@ class ImagesTableSeeder extends BaseTableSeeder
         $data = [
 
             [
-                'originalName' => 'imageName1',
-                'filename' => 'fileImageName1',
-                'mimeType' => 'mimeType1',
-                'extension' => 'extension1',
-                'size' => 40000,
-                'url' => 'storage/files/fileImageName1.extension1'
+                'originalName' => 'iphone6.png',
+                'filename' => 'phpFmndT1',
+                'mimeType' => 'image/png',
+                'extension' => 'png',
+                'size' => 235417,
+                'url' => 'phpFmndT1.png'
             ],
             [
-                'originalName' => 'imageName2',
-                'filename' => 'fileImageName2',
-                'mimeType' => 'mimeType2',
-                'extension' => 'extension2',
-                'size' => 50000,
-                'url' => 'storage/files/fileImageName2.extension2'
+                'originalName' => 'iphone7.jpg',
+                'filename' => 'phps1pu40',
+                'mimeType' => 'image/jpeg',
+                'extension' => 'jpg',
+                'size' => 78965,
+                'url' => 'phps1pu40.jpg'
             ],
             [
-                'originalName' => 'imageName3',
-                'filename' => 'fileImageName3',
-                'mimeType' => 'mimeType3',
-                'extension' => 'extension3',
-                'size' => 60000,
-                'url' => 'storage/files/fileImageName3.extension3'
+                'originalName' => 'samsunggalaxy.png',
+                'filename' => 'phpQ3MhPB',
+                'mimeType' => 'image/png',
+                'extension' => 'png',
+                'size' => 86709,
+                'url' => 'phpQ3MhPB.png'
             ],
             [
-                'originalName' => 'imageName4',
-                'filename' => 'fileImageName4',
-                'mimeType' => 'mimeType4',
-                'extension' => 'extension4',
-                'size' => 70000,
-                'url' => 'storage/files/fileImageName4.extension4'
+                'originalName' => 'huaweip8lite.jpg',
+                'filename' => 'phputBFCS',
+                'mimeType' => 'image/jpeg',
+                'extension' => 'jpg',
+                'size' => 45663,
+                'url' => 'phputBFCS.jpg'
+            ],
+            [
+                'originalName' => 'verizon.png',
+                'filename' => 'phpiicQ3z',
+                'mimeType' => 'image/jpeg',
+                'extension' => 'jpg',
+                'size' => 5099,
+                'url' => 'phpiicQ3z.jpg'
+            ],
+            [
+                'originalName' => 'att.png',
+                'filename' => 'phprwT8UU',
+                'mimeType' => 'image/png',
+                'extension' => 'png',
+                'size' => 101996,
+                'url' => 'phprwT8UU.png'
+            ],
+            [
+                'originalName' => 'rogers.png',
+                'filename' => 'phpjf9GTX',
+                'mimeType' => 'image/png',
+                'extension' => 'png',
+                'size' => 88361,
+                'url' => 'phpjf9GTX.png'
+            ],
+            [
+                'originalName' => 'BellCanada.bmp',
+                'filename' => 'phpjNUU8x',
+                'mimeType' => 'image/bmp',
+                'extension' => 'bmp',
+                'size' => 160054,
+                'url' => 'phpjNUU8x.bmp'
             ]
         ];
 
