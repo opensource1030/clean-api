@@ -54,7 +54,7 @@ class ImagesTableSeeder extends BaseTableSeeder
                 'url' => 'phputBFCS.jpg'
             ],
             [
-                'originalName' => 'verizon.png',
+                'originalName' => 'verizon.jpg',
                 'filename' => 'phpiicQ3z',
                 'mimeType' => 'image/jpeg',
                 'extension' => 'jpg',
@@ -86,6 +86,15 @@ class ImagesTableSeeder extends BaseTableSeeder
                 'url' => 'phpjNUU8x.bmp'
             ]
         ];
+
+        copy('./database/seeds/imagesseeder/phpFmndT1.png', './storage/app/public/phpFmndT1.png');
+        copy('./database/seeds/imagesseeder/phps1pu40.jpg', './storage/app/public/phps1pu40.jpg');
+        copy('./database/seeds/imagesseeder/phpQ3MhPB.png', './storage/app/public/phpQ3MhPB.png');
+        copy('./database/seeds/imagesseeder/phputBFCS.jpg', './storage/app/public/phputBFCS.jpg');
+        copy('./database/seeds/imagesseeder/phpiicQ3z.jpg', './storage/app/public/phpiicQ3z.jpg');
+        copy('./database/seeds/imagesseeder/phprwT8UU.png', './storage/app/public/phprwT8UU.png');
+        copy('./database/seeds/imagesseeder/phpjf9GTX.png', './storage/app/public/phpjf9GTX.png');
+        copy('./database/seeds/imagesseeder/phpjNUU8x.bmp', './storage/app/public/phpjNUU8x.bmp');
 
         $this->loadTable($data);
     }

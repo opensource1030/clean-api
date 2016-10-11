@@ -22,32 +22,36 @@ class ConditionOperatorsTableSeeder extends BaseTableSeeder
         $data = [
 
             [
-                'originalName'      => "Like",
+                'originalName'      => "contains",
                 'apiName'      => "like"
             ],
             [
-                'originalName'      => "Greater Than",
+                'originalName'      => "is greater than",
                 'apiName'      => "gt"
             ],
             [
-                'originalName'      => "Less Than",
+                'originalName'      => "is less than",
                 'apiName'      => "lt"
             ],
             [
-                'originalName'      => "Greater or Equal To",
+                'originalName'      => "is greater or equal to",
                 'apiName'      => "gte"
             ],
             [
-                'originalName'      => "Less or Equal to",
+                'originalName'      => "is less or equal to",
                 'apiName'      => "lte"
             ],
             [
-                'originalName'      => "Not Equal To",
+                'originalName'      => "is not equal to",
                 'apiName'      => "ne"
             ],
             [
-                'originalName'      => "Equal To",
+                'originalName'      => "is equal to",
                 'apiName'      => "eq"
+            ],
+            [
+                'originalName'      => "is any",
+                'apiName'      => ""
             ]
         ];
 

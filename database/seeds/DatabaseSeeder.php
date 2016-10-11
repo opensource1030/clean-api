@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
         $this->call(AllocationsTableSeeder::class);
         $this->call(AppsTableSeeder::class);
         $this->call(AssetsTableSeeder::class);
+        $this->call(CarrierImagesTableSeeder::class);
         $this->call(CarriersTableSeeder::class);
         $this->call(CompanyDomainsTableSeeder::class);
         $this->call(CompanySaml2TableSeeder::class);
@@ -39,6 +40,10 @@ class DatabaseSeeder extends Seeder
         $this->call(ModificationsTableSeeder::class);
         $this->call(OAuthTableSeeder::class);
         $this->call(OrdersTableSeeder::class);
+        $this->call(PackageAppsTableSeeder::class);
+        $this->call(PackageConditionsTableSeeder::class);
+        $this->call(PackageDevicesTableSeeder::class);
+        $this->call(PackageServicesTableSeeder::class);
         $this->call(PackagesTableSeeder::class);
         //$this->call(PagesTableSeeder::class);
         $this->call(PricesTableSeeder::class);
