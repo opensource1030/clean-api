@@ -8,23 +8,26 @@ use League\Fractal\TransformerAbstract;
 use WA\DataStore\Allocation\AllocationTransformer;
 use WA\DataStore\Asset\AssetTransformer;
 use WA\DataStore\Company\CompanyTransformer;
+use WA\DataStore\Content\ContentTransformer;
 use WA\DataStore\Device\DeviceTransformer;
-use WA\DataStore\Page\PageTransformer;
-use WA\DataStore\Role\Role;
 use WA\DataStore\Role\RoleTransformer;
+use WA\Helpers\Traits\Criteria;
 
 /**
  * Class UserTransformer.
  */
 class UserTransformer extends TransformerAbstract
 {
+
+    use Criteria;
+
     protected $availableIncludes = [
         'assets',
         'devices',
         'company',
         'roles',
         'allocations',
-        'pages'
+        'contents'
     ];
 
     /**
@@ -35,13 +38,13 @@ class UserTransformer extends TransformerAbstract
     public function transform(User $user)
     {
         return [
-            'id' => $user->id,
-            'identification' => $user->identification,
-            'email' => $user->email,
-            'username' => $user->username,
+            'id'               => $user->id,
+            'identification'   => $user->identification,
+            'email'            => $user->email,
+            'username'         => $user->username,
             'supervisor_email' => $user->supervisorEmail,
-            'first_name' => $user->firstName,
-            'last_name' => $user->lastName,
+            'first_name'       => $user->firstName,
+            'last_name'        => $user->lastName,
         ];
     }
 
@@ -65,6 +68,8 @@ class UserTransformer extends TransformerAbstract
     {
         return new ResourceCollection($user->devices, new DeviceTransformer(), 'devices');
     }
+
+    protected $currentBillMonth = null;
 
     /**
      * @param User $user
@@ -93,18 +98,24 @@ class UserTransformer extends TransformerAbstract
      */
     public function includeAllocations(User $user)
     {
-        return new ResourceCollection($user->allocations, new AllocationTransformer(), 'allocations');
+        $allocations = $this->applyCriteria($user->allocations(), $this->criteria);
+        $filters = $this->criteria['filters']->get();
+
+        if (in_array("[allocations.billMonth]=[company.currentBillMonth]", $filters)) {
+            $allocations->where('billMonth', $user->company->currentBillMonth);
+        }
+
+        return new ResourceCollection($allocations->get(), new AllocationTransformer(), 'allocations');
     }
 
     /**
      * @param User $user
      *
-     * @return ResourceCollection Pages
+     * @return ResourceCollection Contents
      */
-    public function includePages(User $user)
+    public function includeContents(User $user)
     {
-        return new ResourceCollection($user->pages, new PageTransformer(), 'pages');
+        return new ResourceCollection($user->contents, new ContentTransformer(), 'contents');
     }
-
 
 }

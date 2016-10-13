@@ -1,6 +1,6 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
+
 use Illuminate\Database\Migrations\Migration;
 
 class CreateCompanyDomains extends Migration
@@ -22,11 +22,20 @@ class CreateCompanyDomains extends Migration
     {
         Schema::create(
             $this->tableName,
-            function (Blueprint $table) {
+            function ( $table) {
                 $table->increments('id');
                 $table->string('domain');
                 $table->boolean('active')->default(true);
-                $this->includeForeign($table, $this->foreignColumns);
+                $table->integer('companyId')->unsigned();
+
+                $table->nullableTimestamps();
+            }
+        );
+
+        Schema::table(
+            $this->tableName, 
+            function($table) {
+                $table->foreign('companyId')->references('id')->on('companies');
             }
         );
     }
@@ -38,7 +47,12 @@ class CreateCompanyDomains extends Migration
      */
     public function down()
     {
-        $this->dropForeignKeys($this->tableName, $this->foreignColumns);
+        Schema::table(
+            $this->tableName, 
+            function ( $table) {
+                //$table->dropForeign('companyId');
+        });
+        
         $this->forceDropTable($this->tableName);
     }
 }

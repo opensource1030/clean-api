@@ -3,7 +3,6 @@
 namespace WA\Repositories\Device;
 
 use Illuminate\Database\Eloquent\Model;
-use Log;
 use Schema;
 use WA\Repositories\AbstractRepository;
 use WA\Repositories\JobStatus\JobStatusInterface as StatusInterface;
@@ -29,6 +28,7 @@ class EloquentDevice extends AbstractRepository implements DeviceInterface
      */
     public function __construct(Model $model, StatusInterface $status)
     {
+        parent::__construct($model);
         $this->model = $model;
         $this->status = $status;
     }
@@ -101,19 +101,89 @@ class EloquentDevice extends AbstractRepository implements DeviceInterface
         $device = $this->byId($id);
 
         if (!$device) {
-            Log::error('[' . get_class() . '] | Cannot sync the find the devices');
-
             return false;
         }
 
         try {
-            $device->assets()->detach($ids['old']);
-            $device->assets()->sync($ids['new']);
+            $device->assets()->sync($ids);
 
             return true;
         } catch (\Exception $e) {
-            Log::error('Syncing the asset to device ' . $id . 'failed' . $e->getMessage());
+            return false;
+        }
+    }
 
+    /**
+     * Sync an asset to devices.
+     *
+     * @param int $id of the device
+     * @param array $ids of the assets to sync device with
+     *
+     * @return bool
+     */
+    public function syncCompanies($id, array $ids)
+    {
+        $device = $this->byId($id);
+
+        if (!$device) {
+            return false;
+        }
+
+        try {
+            $device->companies()->sync($ids);
+
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    /**
+     * Sync an asset to devices.
+     *
+     * @param int $id of the device
+     * @param array $ids of the assets to sync device with
+     *
+     * @return bool
+     */
+    public function syncModifications($id, array $ids)
+    {
+        $device = $this->byId($id);
+
+        if (!$device) {
+            return false;
+        }
+
+        try {
+            $device->modifications()->sync($ids);
+
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    /**
+     * Sync an asset to devices.
+     *
+     * @param int $id of the device
+     * @param array $ids of the assets to sync device with
+     *
+     * @return bool
+     */
+    public function syncCarriers($id, array $ids)
+    {
+        $device = $this->byId($id);
+
+        if (!$device) {
+            return false;
+        }
+
+        try {
+            $device->carriers()->sync($ids);
+
+            return true;
+        } catch (\Exception $e) {
             return false;
         }
     }
@@ -191,12 +261,34 @@ class EloquentDevice extends AbstractRepository implements DeviceInterface
         return $query;
     }
 
-
     /**
-     * Get the model's transformation.
+     * Update Device
+     *
+     * @param array $data
+     * @return bool
      */
-    public function getTransformer()
+    public function update(array $data)
     {
-        return $this->model->getTransformer();
+        $device = $this->model->find($data['id']);
+
+        if(!$device)
+        {
+            return 'notExist';
+        }
+
+        $device->name = isset($data['name']) ? $data['name'] : $device->name;
+        $device->properties = isset($data['properties']) ? $data['properties'] : $device->properties;
+        $device->deviceTypeId = isset($data['deviceTypeId']) ? $data['deviceTypeId'] : $device->deviceTypeId;
+        $device->statusId = isset($data['statusId']) ? $data['statusId'] : $device->statusId;
+        $device->externalId = isset($data['externalId']) ? $data['externalId'] : $device->externalId;
+        $device->identification = isset($data['identification']) ? $data['identification'] : $device->identification;
+        $device->syncId = isset($data['syncId']) ? $data['syncId'] : $device->syncId;
+
+        if(!$device->save()) {
+            return 'notSaved';
+        }
+
+        return $device;
     }
+
 }

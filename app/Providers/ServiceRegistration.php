@@ -2,60 +2,84 @@
 
 namespace WA\Providers;
 
-use Illuminate\Contracts\Foundation\Application;
+use WA\DataStore\Address\Address;
 use WA\DataStore\Allocation\Allocation;
+use WA\DataStore\App\App;
 use WA\DataStore\Asset\Asset;
 use WA\DataStore\Attribute;
-
 use WA\DataStore\Carrier\Carrier;
-use WA\DataStore\Carrier\CarrierDetail;
-use WA\DataStore\Census;
+use WA\DataStore\Category\CategoryApp;
+use WA\DataStore\Category\Preset;
 use WA\DataStore\Company\Company;
+use WA\DataStore\Condition\Condition;
+use WA\DataStore\Condition\ConditionField;
+use WA\DataStore\Condition\ConditionOperator;
+use WA\DataStore\Content\Content;
 use WA\DataStore\Device\Device;
-use WA\DataStore\DeviceType;
+use WA\DataStore\Device\DeviceCarrier;
+use WA\DataStore\Device\DeviceCompany;
+use WA\DataStore\Device\DeviceImage;
+use WA\DataStore\Device\DeviceModification;
+use WA\DataStore\DeviceType\DeviceType;
 use WA\DataStore\EmailNotifications;
-use WA\DataStore\User\User;
-use WA\DataStore\UserNotifications;
+use WA\DataStore\Image\Image;
 use WA\DataStore\JobStatus;
 use WA\DataStore\Location\Location;
+use WA\DataStore\Modification\Modification;
 use WA\DataStore\NotificationCategory;
-use WA\DataStore\Page\Page;
-use WA\DataStore\SyncJob;
+use WA\DataStore\Order\Order;
+use WA\DataStore\Package\Package;
+use WA\DataStore\Price\Price;
+use WA\DataStore\Request\Request;
+use WA\DataStore\Role\Role;
+use WA\DataStore\Service\Service;
 use WA\DataStore\Udl\Udl;
 use WA\DataStore\UdlValue\UdlValue;
 use WA\DataStore\UdlValuePath\UdlValuePath;
 use WA\DataStore\UdlValuePathUsers\UdlValuePathUsers;
-use WA\DataStore\Role\Role;
+use WA\DataStore\User\User;
+use WA\DataStore\UserNotifications;
+
+use WA\Repositories\Address\EloquentAddress;
+use WA\Repositories\Allocation\EloquentAllocation;
+use WA\Repositories\App\EloquentApp;
 use WA\Repositories\Asset\EloquentAsset;
 use WA\Repositories\Attribute\EloquentAttribute;
 use WA\Repositories\Carrier\EloquentCarrier;
-use WA\Repositories\Carrier\EloquentCarrierDetail;
-use WA\Repositories\Census\EloquentCensus;
+use WA\Repositories\Category\EloquentCategoryApps;
+use WA\Repositories\Category\EloquentPreset;
 use WA\Repositories\Company\EloquentCompany;
+use WA\Repositories\Condition\EloquentCondition;
+use WA\Repositories\Condition\EloquentConditionField;
+use WA\Repositories\Condition\EloquentConditionOperator;
+use WA\Repositories\Content\EloquentContent;
 use WA\Repositories\Device\EloquentDevice;
+use WA\Repositories\Device\EloquentDeviceCarrier;
+use WA\Repositories\Device\EloquentDeviceCompany;
+use WA\Repositories\Device\EloquentDeviceImage;
+use WA\Repositories\Device\EloquentDeviceModification;
 use WA\Repositories\DeviceType\EloquentDeviceType;
 use WA\Repositories\EmailNotifications\EloquentEmailNotifications;
-use WA\Repositories\User\EloquentUser;
-use WA\Repositories\UserNotifications\EloquentUserNotifications;
+use WA\Repositories\Image\EloquentImage;
 use WA\Repositories\JobStatus\EloquentJobStatus;
 use WA\Repositories\Location\EloquentLocation;
+use WA\Repositories\Modification\EloquentModification;
 use WA\Repositories\NotificationCategory\EloquentNotificationCategory;
-use WA\Repositories\Pages\EloquentPages;
-use WA\Repositories\SyncJob\EloquentSyncJob;
+use WA\Repositories\Order\EloquentOrder;
+use WA\Repositories\Package\EloquentPackage;
+use WA\Repositories\Permission\EloquentPermission;
+use WA\Repositories\Price\EloquentPrice;
+use WA\Repositories\Request\EloquentRequest;
+use WA\Repositories\Role\EloquentRole;
+use WA\Repositories\Service\EloquentService;
 use WA\Repositories\Udl\EloquentUdl;
 use WA\Repositories\UdlValue\EloquentUdlValue;
 use WA\Repositories\UdlValuePath\EloquentUdlValuePath;
 use WA\Repositories\UdlValuePathUsers\EloquentUdlValuePathUsers;
+use WA\Repositories\User\EloquentUser;
 use WA\Repositories\User\UserCacheDecorator;
+
 use WA\Services\Cache\Cache;
-use WA\Repositories\Role\EloquentRole;
-use WA\Repositories\Permission\EloquentPermission;
-use WA\Repositories\Allocation\EloquentAllocation;
-
-use WA\Repositories\HelpDesk\EasyVista;
-use WA\Repositories\HelpDesk\HelpDeskCacheDecorator;
-use WA\DataStore\EasyVistaHelpDesk;
-
 
 /**
  * Class ServiceRegistration.
@@ -67,7 +91,6 @@ trait ServiceRegistration
      */
     public function registerDevice()
     {
-
         app()->singleton(
             'WA\Repositories\Device\DeviceInterface',
             function () {
@@ -81,16 +104,92 @@ trait ServiceRegistration
     /**
      * @param
      */
-    public function registerCensus()
+    public function registerImage()
     {
-        app()->bind(
-            'WA\Repositories\Census\CensusInterface',
+        app()->singleton(
+            'WA\Repositories\Image\ImageInterface',
             function () {
-                return new EloquentCensus(new Census(), app()->make('WA\Repositories\JobStatus\JobStatusInterface'));
+                return new EloquentImage(new Image(),
+                    app()->make('WA\Repositories\JobStatus\JobStatusInterface')
+                );
             }
         );
     }
 
+    /**
+     * @param
+     */
+    public function registerDeviceModification()
+    {
+        app()->singleton(
+            'WA\Repositories\Device\DeviceModificationInterface',
+            function () {
+                return new EloquentDeviceModification(new DeviceModification(),
+                    app()->make('WA\Repositories\JobStatus\JobStatusInterface')
+                );
+            }
+        );
+    }
+
+    /**
+     * @param
+     */
+    public function registerDeviceImage()
+    {
+        app()->singleton(
+            'WA\Repositories\Device\DeviceImageInterface',
+            function () {
+                return new EloquentDeviceImage(new DeviceImage(),
+                    app()->make('WA\Repositories\JobStatus\JobStatusInterface')
+                );
+            }
+        );
+    }
+
+    /**
+     * @param
+     */
+    public function registerDeviceCarrier()
+    {
+        app()->singleton(
+            'WA\Repositories\Device\DeviceCarrierInterface',
+            function () {
+                return new EloquentDeviceCarrier(new DeviceCarrier(),
+                    app()->make('WA\Repositories\JobStatus\JobStatusInterface')
+                );
+            }
+        );
+    }
+
+    /**
+     * @param
+     */
+    public function registerDeviceCompany()
+    {
+        app()->singleton(
+            'WA\Repositories\Device\DeviceCompanyInterface',
+            function () {
+                return new EloquentDeviceCompany(new DeviceCompany(),
+                    app()->make('WA\Repositories\JobStatus\JobStatusInterface')
+                );
+            }
+        );
+    }
+
+    /**
+     * @param
+     */
+    public function registerPrice()
+    {
+        app()->singleton(
+            'WA\Repositories\Price\PriceInterface',
+            function () {
+                return new EloquentPrice(new Price(),
+                    app()->make('WA\Repositories\JobStatus\JobStatusInterface')
+                );
+            }
+        );
+    }
 
     /**
      * @param
@@ -159,30 +258,6 @@ trait ServiceRegistration
     }
 
     /**
-     *register all non - manual resolutions.
-     *
-     * @param
-     */
-    protected function registerAll()
-    {
-
-
-        app()->bind('WA\Repositories\AssetRepositoryInterface', 'WA\Repositories\AssetRepository');
-        app()->bind('WA\Repositories\UserCarrierRepositoryInterface', 'WA\Repositories\UserCarrierRepository');
-        app()->bind('WA\Repositories\DumpExceptionRepositoryInterface', 'WA\Repositories\DumpExceptionRepository');
-        app()->bind('WA\Repositories\JobStatusRepositoryInterface', 'WA\Repositories\JobStatusRepository');
-        app()->bind('WA\Repositories\CurrentChargeRepositoryInterface', 'WA\Repositories\CurrentChargeRepository');
-        app()->bind('WA\Repositories\ServiceBundleRepositoryInterface', 'WA\Repositories\ServiceBundleRepository');
-        app()->bind(
-            'WA\Repositories\CallDetailSummaryRepositoryInterface',
-            'WA\Repositories\CallDetailSummaryRepository'
-        );
-        app()->bind('WA\Repositories\DeviceTypeRepositoryInterface', 'WA\Repositories\DeviceTypeRepository');
-        app()->bind('WA\Repositories\CarrierDeviceRepositoryInterface', 'WA\Repositories\CarrierDeviceRepository');
-        app()->bind('WA\Repositories\ConsolidatedCdrRepositoryInterface', 'WA\Repositories\ConsolidatedCdrRepository');
-    }
-
-    /**
      * @param
      */
     protected function registerCompany()
@@ -193,11 +268,9 @@ trait ServiceRegistration
                 return new EloquentCompany(
                     new Company(),
                     app()->make('WA\Repositories\User\UserInterface'),
-                    app()->make('WA\Repositories\Census\CensusInterface'),
                     app()->make('WA\Repositories\Udl\UdlInterface'),
                     app()->make('WA\Repositories\Carrier\CarrierInterface'),
-                    app()->make('WA\Repositories\Device\DeviceInterface'),
-                    app()->make('WA\Repositories\Carrier\CarrierDetailInterface')
+                    app()->make('WA\Repositories\Device\DeviceInterface')
                 );
             }
         );
@@ -213,10 +286,8 @@ trait ServiceRegistration
             function () {
                 $user = new EloquentUser(
                     new User(),
-                    app()->make('WA\Repositories\Census\CensusInterface'),
                     app()->make('WA\Repositories\UdlValue\UdlValueInterface'),
-                    app()->make('WA\Repositories\Udl\UdlInterface'),
-                    app()->make('WA\Services\Form\HelpDesk\EasyVista')
+                    app()->make('WA\Repositories\Udl\UdlInterface')
                 );
                 //return $user
                 //
@@ -283,30 +354,6 @@ trait ServiceRegistration
     /**
      * @param
      */
-    public function registerSyncJob()
-    {
-        app()->bind('WA\Repositories\SyncJob\SyncJobInterface', function ($app) {
-            return new EloquentSyncJob(
-                new SyncJob(),
-                app()->make('WA\Repositories\JobStatus\JobStatusInterface')
-            );
-        });
-    }
-
-
-    /**
-     * @param
-     */
-    public function registerCarrierDetail()
-    {
-        app()->bind('WA\Repositories\Carrier\CarrierDetailInterface', function ($app) {
-            return new EloquentCarrierDetail(new CarrierDetail());
-        });
-    }
-
-    /**
-     * @param
-     */
     public function registerLocation()
     {
         app()->bind('WA\Repositories\Location\LocationInterface', function () {
@@ -369,38 +416,134 @@ trait ServiceRegistration
             });
     }
 
-    public function registerPages()
+    public function registerContent()
     {
-        app()->bind('WA\Repositories\Pages\PagesInterface',
+        app()->bind('WA\Repositories\Content\ContentInterface',
             function () {
-                return new EloquentPages(new Page());
+                return new EloquentContent(new Content());
             });
     }
 
-    /**
-     * @param Application $app
-     */
-    public function registerHelpDesk()
+    public function registerService()
     {
-
-        app()->bind(
-            'WA\Repositories\HelpDesk\HelpDeskInterface',
+        app()->bind('WA\Repositories\Service\ServiceInterface',
             function () {
-                $helpdesk = new EasyVista(
-                    new EasyVistaHelpDesk,
-                    app()->make('WA\Repositories\Asset\AssetInterface'),
-                    app()->make('WA\Repositories\Device\DeviceInterface'),
-                    app()->make('WA\Repositories\SyncJob\SyncJobInterface'),
-                    app()->make('WA\Repositories\Employee\EmployeeInterface')
-
-                );
-
-                return new HelpDeskCacheDecorator($helpdesk,
-                    new Cache(app()->make('cache'), 'helpdesk', 10));
+                return new EloquentService(new Service());
             }
-
         );
-
     }
 
+    public function registerApp()
+    {
+        app()->bind('WA\Repositories\App\AppInterface',
+            function () {
+                return new EloquentApp(new App());
+            }
+        );
+    }
+
+    public function registerOrder()
+    {
+        app()->bind('WA\Repositories\Order\OrderInterface',
+            function () {
+                return new EloquentOrder(new Order());
+            }
+        );
+    }
+
+    public function registerPackage()
+    {
+        app()->bind('WA\Repositories\Package\PackageInterface',
+            function () {
+                return new EloquentPackage(new Package());
+            }
+        );
+    }
+
+    public function registerAddress()
+    {
+        app()->bind('WA\Repositories\Address\AddressInterface',
+            function () {
+                return new EloquentAddress(new Address());
+            }
+        );
+    }
+
+    public function registerRequest()
+    {
+        app()->bind('WA\Repositories\Request\RequestInterface',
+            function () {
+                return new EloquentRequest(new Request());
+            }
+        );
+    }
+
+    public function registerModification()
+    {
+        app()->bind('WA\Repositories\Modification\ModificationInterface',
+            function () {
+                return new EloquentModification(new Modification());
+            }
+        );
+    }
+
+    /**
+     * @param
+     */
+    public function registerPreset()
+    {
+        app()->bind('WA\Repositories\Category\PresetInterface',
+            function () {
+                return new EloquentPreset(new Preset());
+            }
+        );
+    }
+
+    /**
+     * @param
+     */
+    public function registerCategoryApp()
+    {
+        app()->bind('WA\Repositories\Category\CategoryAppsInterface',
+            function () {
+                return new EloquentCategoryApps(new CategoryApp());
+            }
+        );
+    }
+
+    /**
+     * @param
+     */
+    public function registerCondition()
+    {
+        app()->bind('WA\Repositories\Condition\ConditionInterface',
+            function () {
+                return new EloquentCondition(new Condition());
+            }
+        );
+    }
+
+    /**
+     * @param
+     */
+    public function registerConditionField()
+    {
+        app()->bind('WA\Repositories\Condition\ConditionFieldInterface',
+            function () {
+                return new EloquentConditionField(new ConditionField());
+            }
+        );
+    }
+
+    /**
+     * @param
+     */
+    public function registerConditionOperator()
+    {
+        app()->bind('WA\Repositories\Condition\ConditionOperatorInterface',
+            function () {
+                return new EloquentConditionOperator(new ConditionOperator());
+            }
+        );
+    }
 }

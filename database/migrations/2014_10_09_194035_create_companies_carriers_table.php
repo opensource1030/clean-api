@@ -1,6 +1,6 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
+
 use Illuminate\Database\Migrations\Migration;
 use WA\Database\Command\TablesRelationsAndIndexes;
 
@@ -8,7 +8,6 @@ use WA\Database\Command\TablesRelationsAndIndexes;
 class CreateCompaniesCarriersTable extends Migration {
 
     use TablesRelationsAndIndexes;
-
 
     protected $tableName = 'companies_carriers';
 
@@ -26,19 +25,26 @@ class CreateCompaniesCarriersTable extends Migration {
     {
         Schema::create(
             $this->tableName,
-            function (Blueprint $table) {
+            function ( $table) {
                 $table->increments('id');
                 $table->string('billingAccountNumber');
                 $table->string('parentAccountNumber')->nullable();
                 $table->string('accountName')->nullable();
                 $table->decimal('carrierDiscount', 10, 2)->nullable();
                 $table->boolean('active')->default(0);
-
-                $this->includeForeign($table, $this->foreignColumns);
-
+                $table->integer('carrierId')->unsigned();
+                $table->integer('companyId')->unsigned();
 
                 $table->nullableTimestamps();
-            });
+        });
+
+        Schema::table(
+            $this->tableName, 
+            function($table) {
+                $table->foreign('carrierId')->references('id')->on('carriers');
+                $table->foreign('companyId')->references('id')->on('companies');
+            }
+        );
     }
 
     /**
@@ -48,7 +54,13 @@ class CreateCompaniesCarriersTable extends Migration {
      */
     public function down()
     {
-        $this->dropForeignKeys($this->tableName, $this->foreignColumns);
+        Schema::table(
+            $this->tableName, 
+            function ( $table) {
+                //$table->dropForeign('carrierId');
+                //$table->dropForeign('companyId');
+        });
+
         $this->forceDropTable($this->tableName);
     }
 

@@ -10,7 +10,7 @@
  */
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
+
 use Illuminate\Support\Facades\Schema;
 
 /**
@@ -27,7 +27,7 @@ class CreateOauthGrantsTable extends Migration
      */
     public function up()
     {
-        Schema::create('oauth_grants', function (Blueprint $table) {
+        Schema::create('oauth_grants', function ( $table) {
             $table->string('id', 40)->primary();
             $table->timestamps();
         });

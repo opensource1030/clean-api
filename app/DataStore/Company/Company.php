@@ -17,7 +17,7 @@ use Alert;
  * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\UdlValue\UdlValue[] $udlValues
  * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\Rule\Rule[] $rules
  * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\Allocation\Allocation[] $allocations
- * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\Page\Page[] $pages
+ * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\Content\Content[] $contents
  * @property-read \WA\DataStore\User\User $usersCount
  * @property-read mixed $users_count
  * @mixin \Eloquent
@@ -27,6 +27,8 @@ class Company extends BaseDataStore
     protected $table = 'companies';
 
     protected $fillable = ['name', 'label', 'active', 'isCensus', 'shortName'];
+
+    protected $morphClass = 'company';
 
     //@FIXME: should be referenced by it's own ID
     /**
@@ -103,14 +105,22 @@ class Company extends BaseDataStore
     }
 
    /**
-     * Get all pages that belong to a company
+     * Get all contents that belong to a company
      *
      * @return \Illuminate\Database\Eloquent\Relations\MorphMany
      */
-    public function pages()
+    public function contents()
     {
-        $pages = $this->morphMany('WA\DataStore\Page\Page', 'owner');
-        return $pages;
+        $contents = $this->morphMany('WA\DataStore\Content\Content', 'owner');
+        return $contents;
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function pools()
+    {
+        return $this->belongsToMany('WA\DataStore\PoolGroup', 'pool_bases', 'companyId', 'poolGroupId', 'baseCost');
     }
 
     /**

@@ -27,6 +27,18 @@ $app->withFacades();
 
 $app->withEloquent();
 
+config([
+    "filesystems" => [
+        'default' => 'local',
+        'disks' => [
+            'local' => [
+                'driver' => 'local',
+                'root' => storage_path('app/public'),
+            ],
+        ],
+    ],
+]);
+
 /*
 |--------------------------------------------------------------------------
 | Register Container Bindings
@@ -49,6 +61,11 @@ $app->singleton(
 );
 
 
+$app->singleton('filesystem', function ($app) {
+    return $app->loadComponent('filesystems', 'Illuminate\Filesystem\FilesystemServiceProvider', 'filesystem');
+});
+
+
 /*
 |--------------------------------------------------------------------------
 | Register Middleware
@@ -61,7 +78,8 @@ $app->singleton(
 */
 
 $app->middleware([
-    \LucaDegasperi\OAuth2Server\Middleware\OAuthExceptionHandlerMiddleware::class
+    \LucaDegasperi\OAuth2Server\Middleware\OAuthExceptionHandlerMiddleware::class,
+      \WA\Http\Middleware\CorsMiddleware::class
 ]);
 
 $app->routeMiddleware([
@@ -82,7 +100,6 @@ $app->routeMiddleware([
 |--------------------------------------------------------------------------
 |
 */
-$app->configure('app');
 $app->configure('api');
 $app->configure('services');
 $app->configure('mail');
@@ -112,11 +129,12 @@ $app->register(\WA\Providers\RepositoriesServiceProviders::class);
 $app->register(\WA\Providers\AppServiceProvider::class);
 $app->register(\Illuminate\Auth\Passwords\PasswordResetServiceProvider::class);
 $app->register(\Illuminate\Mail\MailServiceProvider::class);
-$app->register(\WA\Providers\FormServiceProvider::class);
 $app->register(\WA\Providers\EventServiceProvider::class);
 $app->register(Dingo\Api\Provider\LumenServiceProvider::class);
 $app->register(\WA\Providers\OAuthServiceProvider::class);
 $app->register(\WA\Providers\Saml2ServiceProvider::class);
+$app->register(\WA\Providers\CatchAllOptionsRequestsProvider::class);
+$app->register(\GrahamCampbell\Flysystem\FlysystemServiceProvider::class);
 
 app('Dingo\Api\Transformer\Factory')->setAdapter(function ($app) {
     $base_url = env('API_DOMAIN', 'api.wirelessanalytics.com');
@@ -148,11 +166,35 @@ $app->group(['namespace' => 'WA\Http\Controllers'], function ($app) {
 |--------------------------------------------------------------------------
 |
 */
-class_alias('Illuminate\Support\Facades\Response', 'Response');
-class_alias('Illuminate\Support\Facades\Config', 'Config');
-class_alias(\LucaDegasperi\OAuth2Server\Facades\Authorizer::class, 'Authorizer');
-class_alias(\Webpatser\Uuid\Uuid::class, 'Uuid');
-class_alias(\Aacotroneo\Saml2\Facades\Saml2Auth::class, 'Saml2');
-class_alias('Illuminate\Support\Facades\Request', 'Request');
+
+if (!class_exists('Response')) {
+    class_alias('Illuminate\Support\Facades\Response', 'Response');
+}
+
+if (!class_exists('Config')) {
+    class_alias('Illuminate\Support\Facades\Config', 'Config');
+}
+
+if (!class_exists('Authorizer')) {
+    class_alias(\LucaDegasperi\OAuth2Server\Facades\Authorizer::class, 'Authorizer');
+}
+
+if (!class_exists('Uuid')) {
+    class_alias(\Webpatser\Uuid\Uuid::class, 'Uuid');
+}
+
+if (!class_exists('Saml2')) {
+    class_alias(\WA\Auth\Saml2\Saml2AuthFacade::class, 'Saml2');
+}
+
+if (!class_exists('Request')) {
+    class_alias('Illuminate\Support\Facades\Request', 'Request');
+}
+
+
+if (!class_exists('Flysystem')) {
+    class_alias('\GrahamCampbell\Flysystem\Facades\Flysystem', 'Flysystem');
+}
+
 
 return $app;

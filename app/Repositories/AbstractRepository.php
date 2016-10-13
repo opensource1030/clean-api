@@ -3,49 +3,66 @@
 namespace WA\Repositories;
 
 use Illuminate\Database\Eloquent\Model;
-use Log;
-use Paginator;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use WA\DataStore\BaseDataStore;
+use WA\Helpers\Traits\Criteria;
+use WA\Http\Requests\Parameters\Filters;
+use WA\Http\Requests\Parameters\Sorting;
 
 abstract class AbstractRepository implements RepositoryInterface
 {
+    use Criteria;
+
     /**
-     * @var \Illuminate\Database\Eloquent\Model
+     * @var \Illuminate\Database\Eloquent\Model|BaseDataStore
      */
     protected $model;
 
+    /**
+     * @var \Illuminate\Database\Eloquent\Builder
+     */
+    protected $query;
+
+    /**
+     * @var Sorting
+     */
+    protected $sortCriteria = null;
+
+    /**
+     * @var Filters
+     */
+    protected $filterCriteria = null;
+
+
+    /**
+     * AbstractRepository constructor.
+     *
+     * @param Model $model
+     */
     public function __construct(Model $model)
     {
         $this->model = $model;
     }
 
     /**
-     * Get paginated census.
+     * Get paginated resource
      *
-     * @param int  $perPage
-     * @param bool $api      false|true
+     * @param int $perPage
+     * @param bool $api false|true
      * @param bool $paginate
      *
-     * @return Object as Collection of object information, | Paginator Collection if pagination is true (default)
+     * @return mixed Object as Collection of object information, | Paginator Collection if pagination is true (default)
      */
     public function byPage($paginate = true, $perPage = 25, $api = false)
     {
+        // Apply filtering and sorting criteria, if set
+        $query = $this->applyCriteria($this->model);
+
         if (!$paginate) {
-            return $this->model->get();
+            return $query->get();
         }
 
-        return $this->model->paginate($perPage);
-    }
-
-    /**
-     * Wrapper function.
-     *
-     * @param $id
-     *
-     * @return Object
-     */
-    public function getById($id)
-    {
-        return $this->byId($id);
+        return $query->paginate($perPage);
     }
 
     /**
@@ -61,8 +78,12 @@ abstract class AbstractRepository implements RepositoryInterface
             return $this->model->whereIn('id', $id)
                 ->get();
         }
+        try {
+            return $this->model->findOrFail($id);
+        } catch (ModelNotFoundException $e) {
+            return null;
+        }
 
-        return $this->model->findOrFail($id);
     }
 
     /**
@@ -70,17 +91,11 @@ abstract class AbstractRepository implements RepositoryInterface
      *
      * @param array $data to be created
      *
-     * @return Object object of created model
+     * @return mixed Object object of created model
      */
     public function create(array $data)
     {
-        try {
-            return $this->model->create($data);
-        } catch (\PDOException $e) {
-            Log::error($e);
-
-            return false;
-        }
+        return $this->model->create($data);
     }
 
     /**
@@ -94,8 +109,9 @@ abstract class AbstractRepository implements RepositoryInterface
     /**
      * Delete from the repo by the ID.
      *
-     * @param int  $id
+     * @param int $id
      * @param bool $force completely remove for the DB instead of marking it as "deleted"
+     * @return int
      */
     public function deleteById($id, $force = false)
     {
@@ -104,6 +120,26 @@ abstract class AbstractRepository implements RepositoryInterface
             $instance->forceDelete();
         }
 
-        $this->model->destroy($id);
+        return $this->model->destroy($id);
+    }
+
+    /**
+     * Update a repository.
+     *
+     * @param array $data to be updated
+     *
+     * @return Object object of updated repo
+     */
+    public function update(array $data)
+    {
+        return $this->model->update($data);
+    }
+
+    /**
+     * Get the model's transformation.
+     */
+    public function getTransformer()
+    {
+        return $this->model->getTransformer();
     }
 }

@@ -1,10 +1,13 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
+use WA\Database\Command\TablesRelationsAndIndexes;
 
 class CreateCarriersTable extends Migration
 {
+    use TablesRelationsAndIndexes;
+
+    protected $tableName = 'carriers';
 
     /**
      * Run the migrations.
@@ -14,14 +17,16 @@ class CreateCarriersTable extends Migration
     public function up()
     {
         Schema::create(
-            'carriers',
-            function (Blueprint $table) {
+            $this->tableName,
+            function ($table) {
                 $table->increments('id');
                 $table->string('name');
                 $table->string('presentation');
                 $table->boolean('active')->default(0);
                 $table->integer('locationId')->unsigned();
                 $table->string('shortName');
+
+                $table->nullableTimestamps();
             }
         );
     }
@@ -33,7 +38,33 @@ class CreateCarriersTable extends Migration
      */
     public function down()
     {
-        Schema::drop('carriers');
+        /*
+        Schema::table(
+            'devices', 
+            function ($table) {
+                //$table->dropForeign('carrierId');
+        });
+
+        Schema::table(
+            'assets', 
+            function ($table) {
+                //$table->dropForeign('carrierId');
+        });
+
+        Schema::table(
+            'carrier_devices', 
+            function ($table) {
+                //$table->dropForeign('carrierId');
+        });
+
+        Schema::table(
+            'companies_carriers', 
+            function ($table) {
+                //$table->dropForeign('carrierId');
+        });
+        */
+        
+        $this->forceDropTable($this->tableName);
     }
 
 }

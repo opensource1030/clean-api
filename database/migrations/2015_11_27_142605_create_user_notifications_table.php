@@ -1,6 +1,6 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
+
 use Illuminate\Database\Migrations\Migration;
 
 class CreateUserNotificationsTable extends Migration
@@ -18,11 +18,11 @@ class CreateUserNotificationsTable extends Migration
     {
         Schema::create(
             $this->tableName,
-            function (Blueprint $table)
+            function ( $table)
             {
                 $table->increments('id');
                 $table->integer('categoryId')->unsigned();
-                $table->integer('employeeId')->unsigned();
+                $table->integer('userId')->unsigned();
                 $table->string('type');
                 $table->nullableTimestamps();
             });

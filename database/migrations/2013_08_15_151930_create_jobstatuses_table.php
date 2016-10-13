@@ -11,17 +11,18 @@ class CreateJobstatusesTable extends Migration
 
     /**
      * Run the migrations.
-     *`
      *
      * @return void
      */
     public function up()
     {
-        Schema::create('job_statuses', function ($table) {
-            $table->increments('id');
-            $table->string('name');
-            $table->string('type');
-            $table->string('description')->nullable();
+        Schema::create(
+            $this->tableName,
+            function ($table) {
+                $table->increments('id');
+                $table->string('name');
+                $table->string('type');
+                $table->string('description')->nullable();
         });
     }
 

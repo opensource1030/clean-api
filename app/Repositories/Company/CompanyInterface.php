@@ -3,7 +3,6 @@
 namespace WA\Repositories\Company;
 
 use WA\Repositories\RepositoryInterface;
-use WA\Services\Form\Company\CompanyForm;
 
 /**
  * Interface CompanyInterface
@@ -24,7 +23,7 @@ interface CompanyInterface extends RepositoryInterface
     /**
      * Creates new employee for a company.
      *
-     * @param int   $id of the company
+     * @param int $id of the company
      * @param array $user
      *
      * @return bool true successful | false
@@ -34,7 +33,7 @@ interface CompanyInterface extends RepositoryInterface
     /**
      * Get the total amount of employee
      *
-     * @param int  $id   of the company
+     * @param int $id of the company
      * @param bool $sync with external system (EasyVista in our case)
      *
      * @return int count of employee
@@ -51,69 +50,18 @@ interface CompanyInterface extends RepositoryInterface
      */
     public function updateUser(array $user);
 
-    /**
-     * Syncs up employee on every census load for a company.
-     *
-     * @param $censusId
-     * @param $companyId
-     *
-     */
-    public function syncUserSupervisor($censusId, $companyId);
 
 
-
-    /**
-     *  Get the active raw data version for a company.
-     *
-     * @param int    $id          of the company
-     * @param string $dataMapType {ivd | cdr | wls | als | inv | census}
-     * @param bool   $active      | true
-     *
-     * @return string of the version (defaults to active)
-     */
-    public function getMapVersion($id, $dataMapType, $active = true);
-
-
-    /**
-     *  Updates a census record for a company.
-     *
-     * @param       $id
-     * @param       $censusId
-     * @param       $status
-     * @param array $options to update census with
-     *
-     * @return bool
-     */
-    public function updateCensus($id, $censusId, $status, $options = []);
 
     /**
      * Creates UDLs for a company.
      *
-     * @param int   $id of company
+     * @param int $id of company
      * @param array $udls
      *
      * return bool
      */
     public function createUDLs($id, array $udls);
-
-    /**
-     * Get the Most Recent census for a company.
-     *
-     * @param int $companyId
-     *
-     * @return Object of the census information
-     */
-    public function getRecentCensus($companyId);
-
-    /**
-     * Get all census for a company
-     *
-     * @param int $companyId
-     *
-     * @return Object collection of all census information
-     */
-    public function getCensuses($companyId);
-
 
     /**
      * Get a company's account summary information.
@@ -156,17 +104,6 @@ interface CompanyInterface extends RepositoryInterface
 
 
     /**
-     * Get a company's carrier details by month.
-     *
-     * @param $id
-     * @param $carrierId
-     * @param $billMonth
-     *
-     * @return Object object of company carrier details
-     */
-    public function getCarrierDetails($id, $carrierId, $billMonth);
-
-    /**
      * Get a company's account details.
      *
      * @param $id
@@ -183,11 +120,11 @@ interface CompanyInterface extends RepositoryInterface
     /**
      * Given some UDL, it gets the matching path ID.
      *
-     * @param int   $id         company id
-     * @param array $udls       the values to match
-     * @param bool  $externalId should return the externalId instead | false
-     * @param int   $creatorId  current user id
-     * @param array $userInfo   Information on user being created/edited
+     * @param int $id company id
+     * @param array $udls the values to match
+     * @param bool $externalId should return the externalId instead | false
+     * @param int $creatorId current user id
+     * @param array $userInfo Information on user being created/edited
      *
      * @return int ID value if there is a match | null id there is no match found
      */
@@ -205,7 +142,7 @@ interface CompanyInterface extends RepositoryInterface
     /**
      * Get a company census process rules
      *
-     * @param int    $companyId
+     * @param int $companyId
      * @param string $type
      *
      * @return array
@@ -222,20 +159,18 @@ interface CompanyInterface extends RepositoryInterface
     /**
      * Create a new Company.
      *
-     * @param array       $data
-     * @param CompanyForm $companyForm
+     * @param array $data
      *
      * @return Object object of the company | false
      */
     public function create(
-        array $data,
-        CompanyForm $companyForm = null
+        array $data
     );
 
     /**
      * Delete a Company.
      *
-     * @param int  $id
+     * @param int $id
      * @param bool $soft true soft deletes
      *
      * @return bool

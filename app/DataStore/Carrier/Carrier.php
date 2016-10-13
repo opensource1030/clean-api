@@ -31,12 +31,20 @@ class Carrier extends BaseDataStore
 {
     protected $table = 'carriers';
 
+    protected $fillable = [
+            'name',
+            'presentation',
+            'active',
+            'locationId',
+            'shortName',
+            'updated_at'];
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function users()
     {
-        return $this->hasMany('WA\DataStore\User\User', 'employeeId');
+        return $this->hasMany('WA\DataStore\User\User', 'userId');
     }
 
     /**
@@ -60,7 +68,7 @@ class Carrier extends BaseDataStore
      */
     public function devices()
     {
-        return $this->hasMany('WA\DataStore\Device\Device', 'carrieId');
+        return $this->belongsToMany('WA\DataStore\Device\Device', 'device_carriers', 'deviceId', 'carrierId');
     }
 
 
@@ -70,6 +78,14 @@ class Carrier extends BaseDataStore
     public function location()
     {
         return $this->belongsTo('WA\DataStore\Location\Location', 'locationId');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function images()
+    {
+        return $this->belongsToMany('WA\DataStore\Image\Image', 'carrier_images', 'carrierId', 'imageId');
     }
 
     /**

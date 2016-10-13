@@ -21,6 +21,8 @@ class Allocation extends BaseDataStore
 
     public $timestamps = false;
 
+    protected $fillable = ['userId', 'companyId', 'billMonth', 'mobileNumber', 'carrier', 'currency', 'handsetModel', 'totalAllocatedCharge', 'preAllocatedAmountDue', ' therAdjustments', 'preAdjustedAccessCharge', 'adjustedAccessCost', 'bBCost', 'pDACost', 'iPhoneCost', ' eaturesCost', 'dataCardCost', 'lDCanadaCost', 'uSAddOnPlanCost', 'uSLDAddOnPlanCost', 'uSDataRoamingCost', 'nightAndWeekendAddOnCost', 'minuteAddOnCost', 'servicePlanCharges', 'directConnectCost', 'textMessagingCost', 'dataCost', 'intlRoamingCost', 'intlLongDistanceCost', 'directoryAssistanceCost', 'callForwardingCost', 'airtimeCost', 'usageCharges', 'equipmentCost', 'otherDiscountChargesCost', 'taxes', 'thirdPartyCost', 'otherCharges', 'waFees', 'lineFees', 'mobilityFees', 'fees', 'last_upgrade'];
+
 
     public function companies()
     {
@@ -29,7 +31,7 @@ class Allocation extends BaseDataStore
 
     public function users()
     {
-        return $this->belongsTo('WA\DataStore\User\User', 'employeeId');
+        return $this->belongsTo('WA\DataStore\User\User', 'userId');
     }
 
     /**

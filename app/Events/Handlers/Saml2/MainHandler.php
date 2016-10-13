@@ -9,11 +9,9 @@
 namespace WA\Events\Handlers\Saml2;
 
 use Illuminate\Contracts\Events\Dispatcher;
-//use Illuminate\Events\Dispatcher;
 use WA\DataStore\CarrierDestinationMap;
 use WA\Events\Handlers\BaseHandler;
 
-use Log;
 use Auth;
 use WA\Events\PodcastWasPurchased;
 use Illuminate\Queue\InteractsWithQueue;
@@ -34,15 +32,15 @@ class MainHandler extends BaseHandler
 {
     protected $userForm;
 
-   const USER_EMAIL = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name';
-   const USER_LASTNAME = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname';
-   const USER_FIRSTNAME = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname';
+    protected $userEmail = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name';
+    protected $userLastName = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname';
+    protected $userFirstName = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname';
 
     /**
      * @param ProcessLogRepositoryInterface    $processLog
      * @param DumpExceptionRepositoryInterface $dumpExceptions
      */
-    
+
     public function __construct(UserForm $userForm) {
         $this->userForm = $userForm;
     }
@@ -56,20 +54,10 @@ class MainHandler extends BaseHandler
     public function saml2LoginUser($event)
     {
         // Get the UUID from url.
-        $relayState = app('request')->input('RelayState');
-        $parts = parse_url($relayState);
-        $path_parts = explode('/', $parts['path']);
-        $uuid = $path_parts[count($path_parts)-1];         
-
-        // Get Saml2 User from $Event.
-        $user = $event->getSaml2User();
-
+        $uuid = $this->getUuidFromRequestRelayState();
+        
         // Get the User Data Info from the Saml2 User.
-        $userData = [
-        'id' => $user->getUserId(),
-        'attributes' => $user->getAttributes(),
-        'assertion' => $user->getRawSamlAssertion()
-        ];
+        $userData = $this->getUserDataFromSaml2User($event);
 
         // Id Company from Request.
         $idCompany = app('request')->get('idCompany');
@@ -103,24 +91,24 @@ class MainHandler extends BaseHandler
         $carbon = Carbon::today();
 
         switch ($idCompany) {
-            case 21:
-                return $this->createUserFacebookTest($userData);
+            case 21: // facebook
+                return $this->createUserFacebookTest();
                 //return null;                
                 break;
             
-            default:
+            default: // microsoft
                 $user = array(
-                    'email' => $userData['attributes'][USER_EMAIL][0],
+                    'email' => $userData['attributes'][$this->userEmail][0],
                     'alternateEmail' => '',
                     'password' => '1@6~%&',
-                    'username' => explode('@',$userData['attributes'][USER_EMAIL][0])[0],
+                    'username' => explode('@',$userData['attributes'][$this->userEmail][0])[0],
                     'confirmation_code' => '',
                     'remember_token' => NULL,
                     'confirmed' => 1,
-                    'firstName' => $userData['attributes'][USER_FIRSTNAME][0],
+                    'firstName' => $userData['attributes'][$this->userFirstName][0],
                     'alternateFirstName' => NULL,
-                    'lastName' => $userData['attributes'][USER_LASTNAME][0],
-                    'supervisorEmail' => $userData['attributes'][USER_EMAIL][0],
+                    'lastName' => $userData['attributes'][$this->userLastName][0],
+                    'supervisorEmail' => $userData['attributes'][$this->userEmail][0],
                     'companyUserIdentifier' => '',
                     'isSupervisor' => 0,
                     'isValidator' => 0,
@@ -146,7 +134,7 @@ class MainHandler extends BaseHandler
                     'level' => 0
                     );
                 return $user;
-            break;
+                break;
         }
     }
 
@@ -194,9 +182,6 @@ class MainHandler extends BaseHandler
         $data['evDepartmentId'] = $this->userForm->getDepartmentPathId([], null, $userInfo, true);
         $data['user_roles'] = '';
 
-        //var_dump($data);
-        //die;
-
         // @TODO: TODOSAML2: This Function gives me an error. Waiting for news.
         if (!$this->userForm->create($data)) {
             $data['errors'] = $this->userForm->errors();
@@ -211,7 +196,7 @@ class MainHandler extends BaseHandler
         return redirect("users/$userId")->with($data);
     }
 
-    private function createUserFacebookTest($userData){
+    private function createUserFacebookTest(){
 
         // The today's date.
         $carbon = Carbon::today();
@@ -254,6 +239,24 @@ class MainHandler extends BaseHandler
                     );
     }
 
+    private function getUuidFromRequestRelayState(){
+        $relayState = app('request')->input('RelayState');
+        $path_parts = explode('/', $relayState);
+        return $path_parts[count($path_parts)-1];
+    }
+
+    private function getUserDataFromSaml2User($event){
+        // Get Saml2 User from $Event.
+        $user = $event->getSaml2User();
+
+        // Get the User Data Info from the Saml2 User.
+        return [
+        'id' => $user->getUserId(),
+        'attributes' => $user->getAttributes(),
+        'assertion' => $user->getRawSamlAssertion()
+        ];
+    }
+
     private function getEmailFromUserData($userData, $idCompany){
 
         // FACEBOOK VERSION
@@ -263,6 +266,6 @@ class MainHandler extends BaseHandler
         }
 
         // DEFAULT VERSION (MICROSOFT)
-        return $userData['attributes'][USER_EMAIL][0];
+        return $userData['attributes'][$this->userEmail][0];
     }
 }

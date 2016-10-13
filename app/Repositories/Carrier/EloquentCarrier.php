@@ -57,4 +57,42 @@ class EloquentCarrier extends AbstractRepository implements CarrierInterface
     {
         return $this->model->where('presentation', $presentation)->pluck('id');
     }
+
+        /**
+     * Update Service
+     *
+     * @param array $data
+     * @return bool
+     */
+    public function update(array $data)
+    {
+        $carrier = $this->model->find($data['id']);
+
+        if(!$carrier)
+        {
+            return 'notExist';
+        }
+
+        if(isset($data['name'])){
+            $carrier->name = $data['name'];
+        }
+        if(isset($data['presentation'])){
+            $carrier->presentation = $data['presentation'];
+        }
+        if(isset($data['active'])){
+            $carrier->active = $data['active'];
+        }
+        if(isset($data['locationId'])){
+            $carrier->locationId = $data['locationId'];
+        }
+        if(isset($data['shortName'])){
+            $carrier->shortName = $data['shortName'];
+        }
+        
+        if(!$carrier->save()) {
+            return 'notSaved';
+        }
+
+        return $carrier;
+    }
 }

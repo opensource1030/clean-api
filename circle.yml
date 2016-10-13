@@ -1,0 +1,50 @@
+## Customize the test machine
+machine:
+  php:
+    version: 7.0.4
+
+  timezone:
+    America/New_York # Set the timezone
+
+  environment:
+      CIRCLE_ENV: test
+
+## Customize dependencies
+dependencies:
+  pre:
+    - sed -i 's/^;//' ~/.phpenv/versions/$(phpenv global)/etc/conf.d/xdebug.ini
+    - mkdir -p build/logs/coverage_html
+
+  override:
+    - composer install --prefer-source --no-interaction
+    - bundle install
+
+test:
+  override:
+    - cp .env.test .env
+    - php vendor/bin/phpunit -c phpunit.xml --coverage-clover build/logs/clover.xml --coverage-html build/logs/coverage_html
+  post:
+    - cp -r build/logs/{clover.xml,coverage_html} $CIRCLE_ARTIFACTS
+    - php vendor/bin/coveralls -v
+
+deployment:
+  development:
+    branch: develop
+    commands:
+      - bundle exec cap develop deploy
+
+
+  staging:
+    branch: [/^release\/.*/, /^hotfix\/.*/ ]
+    commands:
+      - bundle exec cap staging deploy
+
+general:
+  branches:
+    ignore:
+      - gh-pages # list of branches to ignore
+
+notify:
+  webhooks:
+    # A list of hook hashes, containing the url field
+    - url: https://lit-sea-4960.herokuapp.com/build/

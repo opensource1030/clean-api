@@ -7,62 +7,45 @@
  */
 
 namespace WA\Http\Controllers\Auth;
-//use WA\Repositories\Company;
 
-use WA\Http\Controllers\BaseController;
-use URL;
-use Saml2;
-use Log;
-use Auth;
-use WA\User;
 use Cache;
-use Webpatser\Uuid\Uuid;
-use WA\Auth\AuthInterface;
-use Config;
-use Illuminate\Routing\Redirector as Redirect;
-
-// Call the Interface to get the info of DB.
-use WA\Repositories\Company\CompanyInterface;
-use WA\Repositories\User\UserInterface;
-
-// LOGIN use! (Error)
-use WA\Http\Controllers\Auth\AuthController;
-use WA\Services\Form\Login\LoginForm;
-use Illuminate\Http\Request as Request;
-
+use Saml2;
 use Validator;
 
-use Event;
+use Webpatser\Uuid\Uuid;
+use Illuminate\Http\Request as Request;
+
+use WA\Http\Controllers\ApiController;
+use WA\Repositories\Company\CompanyInterface;
+use WA\Repositories\User\UserInterface;
 
 /**
  * Class SSO.
  */
-class SSO extends BaseController
+class SSO extends ApiController
 {
-    /**
-     * @var \WA\Auth\AuthInterface
-     */
-    protected $auth;
-    
     // Call the Interface to get the info of DB.
     protected $company;
     protected $user;
-    protected $loginForm;    
 
     // Lumen Request needed by Session.
     protected $request;
 
-    public function __construct(CompanyInterface $company, UserInterface $user, LoginForm $loginForm, Request $request)
+    public function __construct(CompanyInterface $company, UserInterface $user, Request $request)
     {
-        $this->loginForm = $loginForm;
         $this->company = $company;
         $this->user = $user;
         $this->request = $request;
     }
 
+    /**
+     * Login Request Function.
+     *
+     * @return response()->json
+     */
     public function loginRequest($email) 
     {
-        // Save email in Session to show it to the user.
+        // email.
         $email = trim($email);
 
         $emailArray['email'] = $email;
@@ -73,10 +56,10 @@ class SSO extends BaseController
         // IF VALIDATOR OK => EMAIL OK!
         if(!$validator->fails()){
             // THIS EMAIL HAS COMPANY RELATED?
-            $companyId = $this->company->getIdByUserEmail($email);
+            $idCompany = $this->company->getIdByUserEmail($email);
 
             // SSO COMPANY == NULL -> LOOK DATABASE USER.        
-            if($companyId == 0){
+            if($idCompany == 0){
 
                 // LOOK DATABASE USER
                 $user = $this->user->byEmail($email);
@@ -84,57 +67,77 @@ class SSO extends BaseController
                 // EMPLOYEE == NULL
                 if($user == null){
                     //echo 'REGISTER USER OPTION';
-                    //URL : http://clean.local/doSSO/dev@algo.com
+                    //URL : http://clean.local/api/doSSO/dev@algo.com
 
-                    response()
-                        ->json(['error' => 'Required Register', 'message' => 'Please, register a new user.'])
-                        ->setCallback($this->request->input($email));
+                    return response()
+                        ->json(['error' => 'User Not Found, Register Required', 'message' => 'Please, register a new user.'])
+                        ->setStatusCode($this->status_codes['conflict']);
 
                 // EMPLOYEE != NULL
                 } else {
                     //echo 'ENTER PASSWORD OPTION';
-                    // URL : http://clean.local/doSSO/dariana.donnelly@example.com
+                    // URL : http://clean.local/api/doSSO/dariana.donnelly@example.com
 
-                    response()
-                        ->json(['error' => 'Required Password', 'message' => 'Please, enter your password.'])
-                        ->setCallback($this->request->input($email));
+                    return response()
+                        ->json(['error' => 'User Found, Password Required', 'message' => 'Please, enter your password.'])
+                        ->setStatusCode($this->status_codes['conflict']);
                 }
 
             // SSO COMPANY == NUMBER -> CONTINUE DOSSO
             } else {
                 //echo 'SINGLE SIGN ON OPTION';
-                // Microsoft : http://clean.local/doSSO/dev@wirelessanalytics.com
-                // Facebook : http://clean.local/doSSO/dev@sharkninja.com
+                // Microsoft : http://clean.local/api/doSSO/dev@wirelessanalytics.com
+                // Facebook : http://clean.local/api/doSSO/dev@sharkninja.com
 
-                Cache::put('saml2_idcompany_'.$email, $companyId, 15);
-                //var_dump('saml2_idcompany: '.Cache::get('saml2_idcompany_'.$email));
-                $uuid = Uuid::generate();
-                Saml2::login("/doSSO/login/".$uuid);
+                $urlArray['url'] = app('request')->get('redirectToUrl');
+                $validator = Validator::make($urlArray, [ 
+                    'url' => 'required|url'
+                ]);
+
+                if($validator->fails()){
+                    return response()
+                        ->json(['error' => 'URL Not Found', 'message' => 'Url to redirect not found.'])
+                        ->setStatusCode($this->status_codes['conflict']);
+                } else {
+                    Cache::put('saml2_idcompany_'.$email, $idCompany, 15);
+                    $uuid = Uuid::generate();
+                    
+                    $redirectUrl = Saml2::login($urlArray['url'].'/'.$uuid);
+                    $arrRU = array('redirectUrl' => $redirectUrl);
+                    $arrD = array('data' => $arrRU);
+                    return response()->json($arrD);
+                }
             }
         // IF VALIDATOR FAILS => Error Response!
         } else {
             //echo 'INVALID EMAIL OPTION';
-            // URL : http://clean.local/doSSO/dev
+            // URL : http://clean.local/api/doSSO/dev
 
-            response()
-                ->json(['error' => 'Required Email', 'message' => 'Please, enter a valid Email Address.'])
-                ->setCallback($this->request->input($email));
+            return response()
+                ->json(['error' => 'Invalid Email', 'message' => 'Please, enter a valid Email Address.'])
+                ->setStatusCode($this->status_codes['conflict']);
         }        
     }
 
+    /**
+     * Login User Function.
+     *
+     * @return response()->json
+     */
     public function loginUser($uuid) 
     {
         $laravelUser = Cache::get('saml2user_'.$uuid);
         if (!isset($laravelUser)) {
-            echo (' ERROR: The user login is not available now, please try again later');
-            response()
+            return response()
                 ->json(['error' => 'Required User', 'message' => 'Please, user is not available now, try again later.'])
-                ->setCallback($this->request->input($email));
+                ->setStatusCode($this->status_codes['conflict']);
         } else {
-            echo ('SUCCESS UUID = '.$uuid);
-            echo ('<br>');
-            echo ('Laravel User: ');
-            var_dump($laravelUser);
+            //echo ('SUCCESS UUID = '.$uuid);
+            //echo ('<br>');
+            //echo ('Laravel User: ');
+            return response()
+                ->json(['success' => 'User Successfully Logged', 'uuid' => $uuid])
+                ->setStatusCode($this->status_codes['conflict']);
         }
     }
 }

@@ -29,7 +29,7 @@ return [
 
     'grant_types' => [
         'password' => [
-            'class' => 'League\OAuth2\Server\Grant\PasswordGrant',
+            'class' => 'WA\Auth\PasswordGrant',
             'access_token_ttl' => 3600,
             'callback' => 'WA\Http\Controllers\Auth\AuthController@passwordGrantVerify'
         ]

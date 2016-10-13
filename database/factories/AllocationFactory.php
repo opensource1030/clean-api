@@ -69,7 +69,10 @@ $factory->define(\WA\DataStore\Allocation\Allocation::class, function (\Faker\Ge
         //summation of fees
         'fees' => $faker->biasedNumberBetween(5, 15),
 
-        'employeeId' => function () {
+        //Last Upgrade
+        'last_upgrade' => "N/A",
+
+        'userId' => function () {
             return factory(\WA\DataStore\User\User::class)->create()->id;
         },
 

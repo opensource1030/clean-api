@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use WA\Database\Command\TablesRelationsAndIndexes;
 
 class CreateAssetDeviceTable extends Migration
@@ -24,14 +23,21 @@ class CreateAssetDeviceTable extends Migration
     {
         Schema::create(
             $this->tableName,
-            function (Blueprint $table) {
+            function ( $table) {
                 $table->increments('id');
                 $table->timestamps();
+                $table->integer('assetId')->unsigned();
+                $table->integer('deviceId')->unsigned();
+        });
 
-                $this->includeForeign($table, $this->foreignColumns);
-            });
+        Schema::table(
+            $this->tableName, 
+            function($table) {
+                $table->foreign('assetId')->references('id')->on('assets')->onDelete('cascade');
+                $table->foreign('deviceId')->references('id')->on('devices')->onDelete('cascade');
+            }
+        );
     }
-
 
     /**
      * Reverse the migrations.
@@ -40,8 +46,13 @@ class CreateAssetDeviceTable extends Migration
      */
     public function down()
     {
-        $this->dropForeignKeys($this->tableName, $this->foreignColumns);
+        Schema::table(
+            $this->tableName, 
+            function ( $table) {
+                //$table->dropForeign('assetId');
+                //$table->dropForeign('deviceId');
+        });
+
         $this->forceDropTable($this->tableName);
     }
-
 }

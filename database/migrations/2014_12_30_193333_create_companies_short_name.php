@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
+
 
 class CreateCompaniesShortName extends Migration
 {
@@ -13,8 +13,8 @@ class CreateCompaniesShortName extends Migration
    */
   public function up()
   {
-    Schema::table('companies', function (Blueprint $table) {
-      $table->string('shortName')->before('rawDataDirectoryPath');
+    Schema::table('companies', function ( $table) {
+      $table->string('shortName')->before('rawDataDirectoryPath')->default('shortName');
     });
   }
 
@@ -25,7 +25,7 @@ class CreateCompaniesShortName extends Migration
    */
   public function down()
   {
-    Schema::table('companies', function (Blueprint $table) {
+    Schema::table('companies', function ( $table) {
       $table->dropColumn('shortName');
     });
   }

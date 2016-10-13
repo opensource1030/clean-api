@@ -84,4 +84,13 @@ interface DeviceInterface extends RepositoryInterface
      * @return int
      */
     public function getMaxExternalId();
+
+    /**
+     * Update a repository.
+     *
+     * @param array $data to be updated
+     *
+     * @return Object object of updated repo
+     */
+    public function update(array $data);
 }

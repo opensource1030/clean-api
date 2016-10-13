@@ -2,15 +2,17 @@
 
 namespace WA\Http\Controllers;
 
+use WA\DataStore\Asset\Asset;
 use WA\DataStore\Asset\AssetTransformer;
 use WA\Repositories\Asset\AssetInterface;
+
+use Illuminate\Support\Facades\Lang;
 
 /**
  * Class AssetsController.
  */
 class AssetsController extends ApiController
 {
-
     /**
      * @var AssetInterface
      */
@@ -24,11 +26,27 @@ class AssetsController extends ApiController
         $this->asset = $asset;
     }
 
+    /**
+     * Show all Assets
+     *
+     * Get a payload of all Assets
+     *
+     * @Get("/")
+     * @Parameters({
+     *      @Parameter("page", description="The page of results to view.", default=1),
+     *      @Parameter("limit", description="The amount of results per page.", default=10),
+     *      @Parameter("access_token", required=true, description="Access token for authentication")
+     * })
+     */
     public function index()
     {
+        $criteria = $this->getRequestCriteria();
+        $this->asset->setCriteria($criteria);
         $assets = $this->asset->byPage();
 
-        return $this->response()->withPaginator($assets, new AssetTransformer(),['key' => 'assets']);
+        $response = $this->response()->withPaginator($assets, new AssetTransformer(), ['key' => 'assets']);
+        $response = $this->applyMeta($response);
+        return $response;
     }
 
     /**
@@ -38,10 +56,15 @@ class AssetsController extends ApiController
      */
     public function show($id)
     {
+        $criteria = $this->getRequestCriteria();
+        $this->asset->setCriteria($criteria);
         $asset = $this->asset->byId($id);
 
-        return $this->response()->item($asset, new AssetTransformer(),['key' => 'assets']);
-
+        if($asset == null){
+            $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'Asset']);   
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+        }
+        
+        return $this->response()->item($asset, new AssetTransformer(),['key' => 'assets'])->setStatusCode($this->status_codes['created']);
     }
-
 }
