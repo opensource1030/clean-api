@@ -8,11 +8,15 @@ use League\Fractal\Resource\Collection as ResourceCollection;
 use WA\DataStore\Device\DeviceTransformer;
 use WA\DataStore\Image\ImageTransformer;
 
+use WA\Helpers\Traits\Criteria;
+
 /**
  * Class CarrierTransformer.
  */
 class PresetTransformer extends TransformerAbstract
 {
+    use Criteria;
+
     protected $availableIncludes = [
         'devices', 'images'
     ];
@@ -38,7 +42,8 @@ class PresetTransformer extends TransformerAbstract
      */
     public function includeDevices(Preset $preset)
     {
-        return new ResourceCollection($preset->devices, new DeviceTransformer(),'devices');
+        $devices = $this->applyCriteria($preset->devices(), $this->criteria);
+        return new ResourceCollection($devices->get(), new DeviceTransformer(), 'devices');
     }
 
     /**
@@ -48,6 +53,7 @@ class PresetTransformer extends TransformerAbstract
      */
     public function includeImages(Preset $preset)
     {
-        return new ResourceCollection($preset->images, new ImageTransformer(),'images');
+        $images = $this->applyCriteria($preset->images(), $this->criteria);
+        return new ResourceCollection($images->get(), new ImageTransformer(), 'images');
     }
 }

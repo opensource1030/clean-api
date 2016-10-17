@@ -65,6 +65,18 @@ $api->version('v1', function ($api) {
 
     $api->group(['middleware' => $middleware ], function ($api) {
 
+        // model/{id}/Relationships/{any}
+        $api->get('{model}/{id}/relationships/{include}', function ($model, $id, $include) {
+            $controller = new class() extends \WA\Http\Controllers\ApiController{};
+            return $controller->includeRelationships($model, $id, $include);
+        });
+
+        // model/{id}/Relationships/{any}
+        $api->get('{model}/{id}/{include}', function ($model, $id, $include) {
+            $controller = new class() extends \WA\Http\Controllers\ApiController{};
+            return $controller->includeInformationRelationships($model, $id, $include);
+        });
+
         // =Companies
         $companiesController = 'WA\Http\Controllers\CompaniesController';
         $api->get('companies', ['as' => 'api.company.index', 'uses' => $companiesController . '@index']);
@@ -168,11 +180,6 @@ $api->version('v1', function ($api) {
         $priceController = 'WA\Http\Controllers\PriceController';
         $api->get('prices', ['as' => 'api.price.index', 'uses' => $priceController . '@index']);
         $api->get('prices/{id}', ['as' => 'api.price.show', 'uses' => $priceController . '@show']);
-        $api->get('prices/device/{id}', ['as' => 'api.price.show', 'uses' => $priceController . '@showDevice']);
-        $api->get('prices/capacity/{id}', ['as' => 'api.price.show', 'uses' => $priceController . '@showCapacity']);
-        $api->get('prices/style/{id}', ['as' => 'api.price.show', 'uses' => $priceController . '@showStyle']);
-        $api->get('prices/carrier/{id}', ['as' => 'api.price.show', 'uses' => $priceController . '@showCarrier']);
-        $api->get('prices/company/{id}', ['as' => 'api.price.show', 'uses' => $priceController . '@showCompany']);
         $api->post('prices', ['uses' => $priceController . '@create']);
         $api->put('prices/{id}', ['uses' => $priceController . '@store']);
         $api->delete('prices/{id}', ['uses' => $priceController . '@delete']);
@@ -242,3 +249,7 @@ $api->version('v1', function ($api) {
         //$api->delete('conditions/operators/{id}', ['uses' => $conditionOpController . '@delete']);
     });
 });
+
+
+//$api->get('images/{id}', ['as' => 'api.image.info', 'uses' => $imageController . '@info']);
+//$api->get('images/{id}/file/{size}', ['as' => 'api.image.show', 'uses' => $imageController . '@show']);

@@ -23,19 +23,19 @@ class PackageAppsTableSeeder extends BaseTableSeeder
 
             [
                 'packageId'     => 1,
-                'appsId'      => 1
+                'appId'      => 1
             ],
             [
                 'packageId'     => 1,
-                'appsId'      => 2
+                'appId'      => 2
             ],
             [
                 'packageId'     => 1,
-                'appsId'      => 3
+                'appId'      => 3
             ],
             [
                 'packageId'     => 1,
-                'appsId'      => 4
+                'appId'      => 4
             ]
         ];
 

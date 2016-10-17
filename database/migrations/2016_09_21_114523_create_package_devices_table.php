@@ -21,7 +21,7 @@ class CreatePackageDevicesTable extends Migration
             function ($table) {
                 $table->increments('id');
                 $table->integer('packageId')->unsigned();
-                $table->integer('devicesId')->unsigned();
+                $table->integer('deviceId')->unsigned();
 
                 $table->nullableTimestamps();
             }
@@ -31,7 +31,7 @@ class CreatePackageDevicesTable extends Migration
             $this->tableName, 
             function($table) {
                 $table->foreign('packageId')->references('id')->on('packages')->onDelete('cascade');
-                $table->foreign('devicesId')->references('id')->on('devices')->onDelete('cascade');
+                $table->foreign('deviceId')->references('id')->on('devices')->onDelete('cascade');
             }
         );
     }

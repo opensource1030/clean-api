@@ -11,12 +11,16 @@ use WA\DataStore\Condition\ConditionTransformer;
 use WA\DataStore\Service\ServiceTransformer;
 use WA\DataStore\Device\DeviceTransformer;
 
+use WA\Helpers\Traits\Criteria;
+
 /**
  * Class PackageTransformer
  *
  */
 class PackageTransformer extends TransformerAbstract
 {
+    use Criteria;
+
     protected $availableIncludes = [
         'conditions', 'services', 'devices', 'apps'
     ];
@@ -44,7 +48,8 @@ class PackageTransformer extends TransformerAbstract
      */
     public function includeConditions(Package $package)
     {
-        return new ResourceCollection($package->conditions, new ConditionTransformer(),'conditions');
+        $conditions = $this->applyCriteria($package->conditions(), $this->criteria);
+        return new ResourceCollection($conditions->get(), new ConditionTransformer(), 'conditions');
     }
 
     /**
@@ -54,7 +59,8 @@ class PackageTransformer extends TransformerAbstract
      */
     public function includeServices(Package $package)
     {
-        return new ResourceCollection($package->services, new ServiceTransformer(),'services');
+        $services = $this->applyCriteria($package->services(), $this->criteria);
+        return new ResourceCollection($services->get(), new ServiceTransformer(), 'services');
     }
 
     /**
@@ -64,7 +70,8 @@ class PackageTransformer extends TransformerAbstract
      */
     public function includeDevices(Package $package)
     {
-        return new ResourceCollection($package->devices, new DeviceTransformer(),'devices');
+        $devices = $this->applyCriteria($package->devices(), $this->criteria);
+        return new ResourceCollection($devices->get(), new DeviceTransformer(), 'devices');
     }
 
     /**
@@ -74,6 +81,7 @@ class PackageTransformer extends TransformerAbstract
      */
     public function includeApps(Package $package)
     {
-        return new ResourceCollection($package->apps, new AppTransformer(),'apps');
+        $apps = $this->applyCriteria($package->apps(), $this->criteria);
+        return new ResourceCollection($apps->get(), new AppTransformer(), 'apps');
     }
 }

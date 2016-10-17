@@ -187,8 +187,10 @@ class PresetsApiTest extends TestCase
                                     'related'
                                 ],
                                 'data' => [
-                                    'type',
-                                    'id'
+                                    0 => [  
+                                        'type',
+                                        'id'
+                                    ]
                                 ]
                             ]
                         ]

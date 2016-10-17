@@ -16,11 +16,15 @@ use WA\DataStore\Modification\ModificationTransformer;
 use WA\DataStore\Image\ImageTransformer;
 use WA\DataStore\Price\PriceTransformer;
 
+use WA\Helpers\Traits\Criteria;
+
 /**
  * Class DeviceTransformer.
  */
 class DeviceTransformer extends TransformerAbstract
 {
+    use Criteria;
+
     protected $availableIncludes = [
         'assets', 'carriers', 'companies', 'modifications', 'images', 'prices'
     ];
@@ -56,7 +60,8 @@ class DeviceTransformer extends TransformerAbstract
      */
     public function includeAssets(Device $device)
     {
-        return new ResourceCollection($device->assets, new AssetTransformer(),'assets');
+        $assets = $this->applyCriteria($device->assets(), $this->criteria);
+        return new ResourceCollection($assets->get(), new AssetTransformer(), 'assets');
     }
 
     /**
@@ -66,7 +71,8 @@ class DeviceTransformer extends TransformerAbstract
      */
     public function includeCarriers(Device $device)
     {
-        return new ResourceCollection($device->carriers, new CarrierTransformer(),'carriers');
+        $carriers = $this->applyCriteria($device->carriers(), $this->criteria);
+        return new ResourceCollection($carriers->get(), new CarrierTransformer(), 'carriers');
     }
 
     /**
@@ -76,7 +82,8 @@ class DeviceTransformer extends TransformerAbstract
      */
     public function includeCompanies(Device $device)
     {
-        return new ResourceCollection($device->companies, new CompanyTransformer(),'companies');
+        $companies = $this->applyCriteria($device->companies(), $this->criteria);
+        return new ResourceCollection($companies->get(), new CompanyTransformer(), 'companies');
     }
 
     /**
@@ -86,7 +93,8 @@ class DeviceTransformer extends TransformerAbstract
      */
     public function includeModifications(Device $device)
     {
-        return new ResourceCollection($device->modifications, new ModificationTransformer(),'modifications');
+        $modifications = $this->applyCriteria($device->modifications(), $this->criteria);
+        return new ResourceCollection($modifications->get(), new ModificationTransformer(), 'modifications');
     }
 
     /**
@@ -96,7 +104,8 @@ class DeviceTransformer extends TransformerAbstract
      */
     public function includeImages(Device $device)
     {
-        return new ResourceCollection($device->images, new ImageTransformer(),'images');
+        $images = $this->applyCriteria($device->images(), $this->criteria);
+        return new ResourceCollection($images->get(), new ImageTransformer(), 'images');
     }
 
     /**
@@ -106,7 +115,8 @@ class DeviceTransformer extends TransformerAbstract
      */
     public function includePrices(Device $device)
     {
-        return new ResourceCollection($device->prices, new PriceTransformer(),'prices');
+        $prices = $this->applyCriteria($device->prices(), $this->criteria);
+        return new ResourceCollection($prices->get(), new PriceTransformer(), 'prices');
     }
 
     /**
@@ -116,6 +126,7 @@ class DeviceTransformer extends TransformerAbstract
      */
     public function includeDevicetypes(Device $device)
     {
-        return new ResourceItem($device->devicetypes, new DeviceTypeTransformer(), 'devicetypes');
+        $devicetypes = $this->applyCriteria($device->devicetypes(), $this->criteria);
+        return new ResourceCollection($devicetypes->get(), new DeviceTypeTransformer(), 'devicetypes');
     }
 }

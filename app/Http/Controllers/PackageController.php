@@ -67,19 +67,23 @@ class PackageController extends ApiController
     {
         $criteria = $this->getRequestCriteria();
         $this->package->setCriteria($criteria);
-        $package = Package::find($id);
 
+        $package = Package::find($id);
         if($package == null){
             $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'Package']);   
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
-        if(!$this->includesAreCorrect($request, new PackageTransformer())){
-            $error['errors']['getincludes'] = Lang::get('messages.NotExistInclude');
+        $packTransformer = new PackageTransformer($criteria);
+
+        if(!$this->includesAreCorrect($request, $packTransformer)){
+            $error['errors']['getIncludes'] = Lang::get('messages.NotExistInclude');
             return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
         }
 
-        return $this->response()->item($package, new PackageTransformer(), ['key' => 'packages'])->setStatusCode($this->status_codes['created']);
+        $response = $this->response()->item($package, $packTransformer, ['key' => 'packages'])->setStatusCode($this->status_codes['created']);
+        $response = $this->applyMeta($response);
+        return $response;
     }
 
     /**

@@ -115,7 +115,7 @@ class CategoryAppsApiTest extends TestCase
 
         $categoryApp->apps()->sync($dataApps);    
 
-        $res = $this->json('GET', 'categoryapps/'.$categoryApp->id.'?include=apps')
+        $this->json('GET', 'categoryapps/'.$categoryApp->id.'?include=apps')
             ->seeJsonStructure([
                 'data' => [
                     'type',
@@ -178,7 +178,7 @@ class CategoryAppsApiTest extends TestCase
 
         $dataImages = array($image1, $image2);
 
-        $categoryApp->images()->sync($dataImages);    
+        $categoryApp->images()->sync($dataImages);
 
         $this->json('GET', 'categoryapps/'.$categoryApp->id.'?include=images')
             ->seeJsonStructure([

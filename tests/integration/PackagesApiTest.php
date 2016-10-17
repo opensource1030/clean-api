@@ -186,7 +186,7 @@ class PackageApiTest extends TestCase
 
         $package->services()->sync($dataServices);
 
-        $this->json('GET', 'packages/'.$package->id.'?include=services')
+        $res = $this->json('GET', 'packages/'.$package->id.'?include=services')
             ->seeJsonStructure([
                 'data' => [
                     'type',
@@ -256,7 +256,7 @@ class PackageApiTest extends TestCase
 
         $package->devices()->sync(array($device));
 
-        $this->json('GET', 'packages/'.$package->id.'?include=devices')
+        $res = $this->json('GET', 'packages/'.$package->id.'?include=devices')
             ->seeJsonStructure([
                 'data' => [
                     'type',
@@ -294,22 +294,6 @@ class PackageApiTest extends TestCase
                     ]
                 ],
                 'included' => [
-                    0 => [
-                        'type',
-                        'id',
-                        'attributes' => [
-                            'make',
-                            'model',
-                            'class',
-                            'deviceOS',
-                            'description',
-                            'statusId',
-                            'image'
-                        ],
-                        'links' => [
-                            'self'
-                        ]
-                    ],
                     1 => [
                         'type',
                         'id',
@@ -331,8 +315,10 @@ class PackageApiTest extends TestCase
                                     'related'
                                 ],
                                 'data' => [
-                                    'type',
-                                    'id'
+                                    0 => [  
+                                        'type',
+                                        'id'
+                                    ]
                                 ]
                             ]
                         ]

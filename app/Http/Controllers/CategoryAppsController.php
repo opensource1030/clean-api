@@ -79,7 +79,9 @@ class CategoryAppsController extends ApiController
             return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
         }
 
-        return $this->response()->item($categoryApps, new CategoryAppTransformer(), ['key' => 'categoryapps'])->setStatusCode($this->status_codes['created']);
+        $response = $this->response()->item($categoryApps, new CategoryAppTransformer(), ['key' => 'categoryapps'])->setStatusCode($this->status_codes['created']);
+        $response = $this->applyMeta($response);
+        return $response;
     }
 
     /**

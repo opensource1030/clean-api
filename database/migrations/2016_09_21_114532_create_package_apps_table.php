@@ -21,7 +21,7 @@ class CreatePackageAppsTable extends Migration
             function ($table) {
                 $table->increments('id');
                 $table->integer('packageId')->unsigned();
-                $table->integer('appsId')->unsigned();
+                $table->integer('appId')->unsigned();
 
                 $table->nullableTimestamps();
             }
@@ -31,7 +31,7 @@ class CreatePackageAppsTable extends Migration
             $this->tableName, 
             function($table) {
                 $table->foreign('packageId')->references('id')->on('packages')->onDelete('cascade');
-                $table->foreign('appsId')->references('id')->on('apps')->onDelete('cascade');
+                $table->foreign('appId')->references('id')->on('apps')->onDelete('cascade');
             }
         );
     }

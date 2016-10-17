@@ -44,7 +44,7 @@ class Package extends BaseDataStore
      */
     public function conditions()
     {
-        return $this->belongsToMany('WA\DataStore\Condition\Condition', 'package_conditions', 'packageId', 'conditionsId');
+        return $this->belongsToMany('WA\DataStore\Condition\Condition', 'package_conditions', 'packageId', 'conditionId');
     }
     
     /**
@@ -52,7 +52,7 @@ class Package extends BaseDataStore
      */
     public function services()
     {
-        return $this->belongsToMany('WA\DataStore\Service\Service', 'package_services', 'packageId', 'servicesId');
+        return $this->belongsToMany('WA\DataStore\Service\Service', 'package_services', 'packageId', 'serviceId');
     }
     
     /**
@@ -60,7 +60,7 @@ class Package extends BaseDataStore
      */
     public function devices()
     {
-        return $this->belongsToMany('WA\DataStore\Device\Device', 'package_devices', 'packageId', 'devicesId');
+        return $this->belongsToMany('WA\DataStore\Device\Device', 'package_devices', 'packageId', 'deviceId');
     }
 
     /**
@@ -68,6 +68,6 @@ class Package extends BaseDataStore
      */
     public function apps()
     {
-        return $this->belongsToMany('WA\DataStore\App\App', 'package_apps', 'packageId', 'appsId');
+        return $this->belongsToMany('WA\DataStore\App\App', 'package_apps', 'packageId', 'appId');
     }
 }
