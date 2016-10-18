@@ -32,6 +32,7 @@ class PackageTransformer extends TransformerAbstract
             'id' => (int) $package->id,
             'name' => $package->name,
             'addressId' => $package->addressId,
+            'companyId' => $package->companyId,
             'created_at' => $package->created_at,
             'updated_at' => $package->updated_at,
         ];

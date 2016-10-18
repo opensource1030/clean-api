@@ -7,7 +7,7 @@
  */
 class PackagesTableSeeder extends BaseTableSeeder
 {
-    protected $table = 'packages';
+    protected $table = "packages";
 
     /**
      * Run the database seeds.
@@ -19,8 +19,21 @@ class PackagesTableSeeder extends BaseTableSeeder
         $data = [
 
             [
-                'name' => 'Package1',
+                'name'     => "Package1",
+                'companyId' => 1
             ],
+            [
+                'name'     => "Package2",
+                'companyId' => 2
+            ],
+            [
+                'name'     => "Package3",
+                'companyId' => 3
+            ],
+            [
+                'name'     => "Package4",
+                'companyId' => 1
+            ]
         ];
 
         $this->loadTable($data);

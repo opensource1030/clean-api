@@ -3,6 +3,7 @@
 namespace WA\DataStore\Package;
 
 use WA\DataStore\BaseDataStore;
+use WA\DataStore\Package\PackageTransformer;
 
 /**
  * Class Package.
@@ -14,7 +15,8 @@ class Package extends BaseDataStore
     protected $fillable = [
             'name',
             'addressId',
-            'updated_at', ];
+            'companyId',
+            'updated_at'];
 
     /**
      * Get all the owners for the package.

@@ -62,18 +62,7 @@ $api->version('v1', function ($api) {
         }
     }
 
-    $api->group(['middleware' => $middleware], function ($api) {
-        $controller = new \WA\Http\Controllers\RelationshipsController();
-
-        // {model}/{id}/relationships/{include}
-        $api->get('{model}/{id}/relationships/{include}', function ($model, $id, $include) use ($controller) {
-            return $controller->includeRelationships($model, $id, $include);
-        });
-
-        // {model}/{id}/{include}
-        $api->get('{model}/{id}/{include}', function ($model, $id, $include) use ($controller) {
-            return $controller->includeInformationRelationships($model, $id, $include);
-        });
+    $api->group(['middleware' => $middleware ], function ($api) {
 
         // =Companies
         $companiesController = 'WA\Http\Controllers\CompaniesController';
@@ -132,11 +121,12 @@ $api->version('v1', function ($api) {
 
         //=Package
         $packageController = 'WA\Http\Controllers\PackagesController';
-        $api->get('packages', ['as' => 'api.package.index', 'uses' => $packageController.'@index']);
-        $api->get('packages/{id}', ['as' => 'api.package.show', 'uses' => $packageController.'@show']);
-        $api->post('packages', ['uses' => $packageController.'@create']);
-        $api->put('packages/{id}', ['uses' => $packageController.'@store']);
-        $api->delete('packages/{id}', ['uses' => $packageController.'@delete']);
+        $api->get('packages', ['as' => 'api.package.index', 'uses' => $packageController . '@index']);
+        $api->get('packages/forUser', ['as' => 'api.package.userpackages', 'uses' => $packageController . '@userPackages']);
+        $api->get('packages/{id}', ['as' => 'api.package.show', 'uses' => $packageController . '@show']);
+        $api->post('packages', ['uses' => $packageController . '@create']);
+        $api->put('packages/{id}', ['uses' => $packageController . '@store']);
+        $api->delete('packages/{id}', ['uses' => $packageController . '@delete']);
 
         //=Request
         $requestController = 'WA\Http\Controllers\RequestsController';
@@ -226,7 +216,7 @@ $api->version('v1', function ($api) {
         $api->put('conditions/{id}', ['uses' => $conditionsController.'@store']);
         $api->delete('conditions/{id}', ['uses' => $conditionsController.'@delete']);
 
-        //=Conditions
+        //=ConditionsFields
         $conditionFieldsController = 'WA\Http\Controllers\ConditionFieldsController';
         $api->get('conditionsfields', ['as' => 'api.conditionfields.index', 'uses' => $conditionFieldsController.'@index']);
         //$api->get('conditions/fields/{id}', ['as' => 'api.conditionfields.show', 'uses' => $conditionFieldsController . '@show']);
@@ -234,12 +224,24 @@ $api->version('v1', function ($api) {
         //$api->put('conditions/fields/{id}', ['uses' => $conditionFieldsController . '@store']);
         //$api->delete('conditions/fields/{id}', ['uses' => $conditionFieldsController . '@delete']);
 
-                //=Conditions
+        //=ConditionsOperator
         $conditionOpController = 'WA\Http\Controllers\ConditionOperatorsController';
         $api->get('conditionsoperators', ['as' => 'api.conditionoperators.index', 'uses' => $conditionOpController.'@index']);
         //$api->get('conditions/operators/{id}', ['as' => 'api.conditionoperators.show', 'uses' => $conditionOpController . '@show']);
         //$api->post('conditionsoperators', ['uses' => $conditionOpController . '@create']);
         //$api->put('conditions/operators/{id}', ['uses' => $conditionOpController . '@store']);
         //$api->delete('conditions/operators/{id}', ['uses' => $conditionOpController . '@delete']);
+
+        $controller = new \WA\Http\Controllers\RelationshipsController();
+
+        // {model}/{id}/relationships/{include}
+        $api->get('{model}/{id}/relationships/{include}', function ($model, $id, $include) use ($controller) {
+            return $controller->includeRelationships($model, $id, $include);
+        });
+
+        // {model}/{id}/{include}
+        $api->get('{model}/{id}/{include}', function ($model, $id, $include) use ($controller) {
+            return $controller->includeInformationRelationships($model, $id, $include);
+        });
     });
 });

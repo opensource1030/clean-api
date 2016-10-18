@@ -9,6 +9,9 @@ use WA\Repositories\Package\PackageInterface;
 use DB;
 use Illuminate\Support\Facades\Lang;
 
+use LucaDegasperi\OAuth2Server\Facades\Authorizer;
+use WA\DataStore\User\User;
+
 /**
  * Package resource.
  *
@@ -52,6 +55,60 @@ class PackagesController extends ApiController
         $response = $this->applyMeta($response);
 
         return $response;
+    }
+
+    public function userPackages()
+    {
+        // GET USER.
+        //$user = Authorizer::getResourceOwnerId();
+        $user = User::find(21);
+        // GET USER UDL VALUES
+        $udlValuesUser = $user->udlValues();
+
+
+
+
+
+        // GET PACKAGES WITH COMPANYID = USER->COMPANYID
+        $packages = Package::whereHas('conditions', function($q, $udlValuesUser) {
+                        $q->where([ ['name', '=', $udlValuesUser->name], ['value', '=', $udlValuesUser->value], ]);
+                    })->toSql();
+
+        dd($packages);
+
+
+
+
+
+        $packages = Packages::where('companyId', $user->companyId)
+                        ->get()
+                        ->join('packages_conditions');
+
+        
+
+        $company = $user->company();
+        $companyUdlValues = $company->udlValues();
+        $friends_votes = 
+            DB::table('friends')->where('friends.user_id','1')
+            ->join('votes', 'votes.user_id', '=', 'friends.friend_id');
+
+        $friends_comments = 
+            DB::table('friends')->where('friends.user_id','1')
+            ->join('comments', 'comments.user_id', '=', 'friends.friend_id');
+
+        $friends_status_updates = 
+            DB::table('status_updates')->where('status_updates.user_id','1')
+            ->join('friends', 'status_updates.user_id', '=', 'friends.friend_id');
+
+        $friends_events = 
+            $friends_votes
+            ->union($friends_comments)
+            ->union($friends_status_updates)
+            ->get();       
+
+        //$packages = Package::where('companyId', $user->companyId)->get();
+        $packages = Package::where('companyId', $user->companyId);
+        return $this->response()->withPaginator($packages, new PackageTransformer(), ['key' => 'packages']);
     }
 
     /**

@@ -19,7 +19,8 @@ class CreatePackages extends Migration
                 $table->increments('id');
                 $table->string('name');
                 $table->integer('addressId')->unsigned();
-
+                $table->integer('companyId')->unsigned();
+                
                 $table->nullableTimestamps();
             }
         );
@@ -30,6 +31,14 @@ class CreatePackages extends Migration
                 $table->foreign('packageId')->references('id')->on('packages');
             }
         );
+
+        Schema::table(
+            $this->tableName, 
+            function($table) {
+                $table->foreign('companyId')->references('id')->on('companies');
+            }
+        );
+
     }
 
     /**
@@ -42,7 +51,8 @@ class CreatePackages extends Migration
             function ($table) {
                 //$table->dropForeign('devicesId');
                 //$table->dropForeign('appsId');
-            });
+            }
+        );
 
         Schema::table(
             'orders',
