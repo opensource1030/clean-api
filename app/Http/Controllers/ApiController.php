@@ -8,29 +8,6 @@ use WA\Http\Requests\Parameters\Fields;
 use WA\Http\Requests\Parameters\Filters;
 use WA\Http\Requests\Parameters\Sorting;
 
-use WA\DataStore\Address\AddressTransformer;
-use WA\DataStore\Allocation\AllocationsTransformer;
-use WA\DataStore\App\AppTransformer;
-use WA\DataStore\Asset\AssetTransformer;
-use WA\DataStore\Carrier\CarrierTransformer;
-use WA\DataStore\Category\CategoryAppTransformer;
-use WA\DataStore\Company\CompanyTransformer;
-use WA\DataStore\Condition\ConditionTransformer;
-use WA\DataStore\Device\Device;
-use WA\DataStore\Device\DeviceTransformer;
-use WA\DataStore\DeviceType\DeviceTypeTransformer;
-use WA\DataStore\Image\ImageTransformer;
-use WA\DataStore\Location\LocationTransformer;
-use WA\DataStore\Modification\ModificationTransformer;
-use WA\DataStore\Notification\NotificationTransformer;
-use WA\DataStore\Order\OrderTransformer;
-use WA\DataStore\Package\PackageTransformer;
-use WA\DataStore\Preset\PresetTransformer;
-use WA\DataStore\Price\PriceTransformer;
-use WA\DataStore\Request\RequestTransformer;
-use WA\DataStore\Role\RoleTransformer;
-use WA\DataStore\Service\ServiceTransformer;
-
 use DB;
 use Illuminate\Support\Facades\Lang;
 use WA\Helpers\Traits\Criteria;
@@ -135,7 +112,7 @@ abstract class ApiController extends BaseController
         $class = "\\WA\\DataStore\\$model\\$model";
 
         if(class_exists($class)){
-            $results = $class::find($id)->{$includePlural}()->paginate(25);
+            $results = $class::find($id)->{$includePlural};
         } else {
             $error['errors'][$modelPlural] = Lang::get('messages.NotExistClass', ['class' => $model]);
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
@@ -162,14 +139,18 @@ abstract class ApiController extends BaseController
     public function includeInformationRelationships($modelPlural, $id, $includePlural)
     {
         $criteria = $this->getRequestCriteria();
-        $model = title_case(str_singular($modelPlural));
-        $class = "\\WA\\DataStore\\$model\\$model";
-        $arrayAttributesModel = \Schema::getColumnListing('prices');
+        $modelTC = title_case(str_singular($modelPlural));
+        $class = "\\WA\\DataStore\\$modelTC\\$modelTC";
+
+        $includeTC = title_case(str_singular($includePlural)); 
+        $transformer = "\\WA\\DataStore\\$includeTC\\$includeTC"."Transformer";
+        
+        $arrayAttributesModel = \Schema::getColumnListing($includePlural);
 
         if(class_exists($class)){
             $results = $class::find($id)->{$includePlural}()->paginate(25);
         } else {
-            $error['errors'][$modelPlural] = Lang::get('messages.NotExistClass', ['class' => $model]);
+            $error['errors'][$modelPlural] = Lang::get('messages.NotExistClass', ['class' => $modelTC]);
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
@@ -178,25 +159,9 @@ abstract class ApiController extends BaseController
             return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
         }
 
-        $response = $this->response()->withPaginator($results, new PriceTransformer(),['key' => 'prices']);
+        $response = $this->response()->withPaginator($results, new $transformer,['key' => $includePlural]);
         $response = $this->applyMeta($response);
         return $response;
-
-/*
-        $response['links']['self'] = '/'.$modelPlural.'/'.$id.'/relationships/'.$includePlural;
-        $response['links']['related'] = '/'.$modelPlural.'/'.$id.'/'.$includePlural;
-
-        $resAux = [];
-        foreach ( $results as $result ) {
-            $resultId = $result->id;
-            unset($result->id);
-            array_push($resAux, ['type' => $includePlural, 'id' => $resultId, 'attributes' => $result]);
-        }
-
-        $response['data'] = $resAux;
-
-        return response()->json($response);
-*/
     }
 
     /*
@@ -321,145 +286,3 @@ abstract class ApiController extends BaseController
         return true;
     }
 }
-
-
-/*        $model = title_case(str_singular($modelPlural));
-        $class = "\\WA\\DataStore\\$model\\$model";
-        
-        $criteria = $this->getRequestCriteria();
-
-        $eloquent = new \WA\Repositories\Device\EloquentDevice(new Device(), app()->make('WA\Repositories\JobStatus\JobStatusInterface'));
-        $eloquent->setCriteria($criteria);
-
-        if(class_exists($class)){
-            $results = $eloquent->byId($id)->{$includePlural}()->paginate(25);
-        } else {
-            $error['errors'][$modelPlural] = Lang::get('messages.NotExistClass', ['class' => $model]);
-            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
-        }
-
-        if($results == null){
-            $error['errors']['getIncludes'] = Lang::get('messages.NotExistInclude');
-            return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
-        }
-
-        $response = $this->response()->withPaginator($results, new PriceTransformer(),['key' => 'prices']);
-        $response = $this->applyMeta($response);
-        return $response;
-*/
-
-
-/*
-public function includeRelationships($modelPlural, $id, $includePlural)
-    {
-        $model = title_case(str_singular($modelPlural));
-        $class = "\\WA\\DataStore\\$model\\$model";
-
-        if(class_exists($class)){
-            $results = $class::find($id)->{$includePlural}()->paginate(25);
-        } else {
-            $error['errors'][$modelPlural] = Lang::get('messages.NotExistClass', ['class' => $model]);
-            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
-        }
-
-        if($results == null){
-            $error['errors']['getIncludes'] = Lang::get('messages.NotExistInclude');
-            return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
-        }
-
-        $response = $this->response()->withPaginator($results, new PriceTransformer(),['key' => 'prices']);
-        $response = $this->applyMeta($response);
-        return $response;
-
-
-
-        $response['links']['self'] = '/'.$modelPlural.'/'.$id.'/relationships/'.$includePlural;
-        $response['links']['related'] = '/'.$modelPlural.'/'.$id.'/'.$includePlural;
-
-        $resAux = [];
-        foreach ( $results as $result ) {
-            array_push($resAux, ['type' => $includePlural, 'id' => $result->id]);
-        }
-
-        $response['data'] = $resAux;
-
-        return response()->json($response);
-        $model = title_case(str_singular($modelPlural));
-        $class = "\\WA\\DataStore\\$model\\$model";
-
-        if(class_exists($class)){
-            $results = $class::find($id)->{$includePlural};
-        } else {
-            $error['errors'][$modelPlural] = Lang::get('messages.NotExistClass', ['class' => $model]);
-            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
-        }
-
-        if($results == null){
-            $error['errors']['getIncludes'] = Lang::get('messages.NotExistInclude');
-            return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
-        }
-
-        $response['links']['self'] = '/'.$modelPlural.'/'.$id.'/relationships/'.$includePlural;
-        $response['links']['related'] = '/'.$modelPlural.'/'.$id.'/'.$includePlural;
-
-        $resAux = [];
-        foreach ( $results as $result ) {
-            array_push($resAux, ['type' => $includePlural, 'id' => $result->id]);
-        }
-
-        $response['data'] = $resAux;
-
-        return response()->json($response);
-
-    }
-
-    public function includeInformationRelationships($modelPlural, $id, $includePlural)
-    {
-        $this->getRequestCriteria();
-        
-        $nameModel = title_case(str_singular($modelPlural));
-        $model = "\\WA\\DataStore\\$nameModel\\$nameModel";
-
-        //dd($this->criteria['filters']);
-
-        //$arrayAttributesModel = \Schema::getColumnListing('prices');
-
-        if(class_exists($model)){
-            $class = $model::find($id)->{$includePlural}()->paginate(25);
-        } else {
-            $error['errors'][$modelPlural] = Lang::get('messages.NotExistClass', ['class' => $model]);
-            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
-        }
-
-        //if($results == null){
-        //    $error['errors']['getIncludes'] = Lang::get('messages.NotExistInclude');
-        //    return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
-        //}
-
-        //$res = $this->applyCriteria($model, $this->criteria);
-        //dd($res);
-
-        $response = $this->response()->withPaginator($class, new PriceTransformer($this->criteria),['key' => 'prices']);
-        $response = $this->applyMeta($response);
-        return $response;
-
-
-        $response['links']['self'] = '/'.$modelPlural.'/'.$id.'/relationships/'.$includePlural;
-        $response['links']['related'] = '/'.$modelPlural.'/'.$id.'/'.$includePlural;
-
-        $resAux = [];
-        foreach ( $results as $result ) {
-            $resultId = $result->id;
-            unset($result->id);
-            array_push($resAux, ['type' => $includePlural, 'id' => $resultId, 'attributes' => $result]);
-        }
-
-        $response['data'] = $resAux;
-
-        return response()->json($response);
-
-    }
-
-        //$res = Criteria::filterCriteria($criteria, $class::find($id)->{$includePlural}(), $modelPlural, $arrayAttributesModel);
-        //dd($res);
-*/
