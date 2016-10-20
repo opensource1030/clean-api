@@ -45,61 +45,189 @@ class CreateConditionsTable extends Migration
 /* EXAMPLE
 
 {
-  "id": 1,
-  "profile": {
-    "name": {
-      "condition": "is_any",
-      "value": ""
+  "data": [
+    {
+      "type": "conditions",
+      "id": "1",
+      "attributes": {
+        "typeCond": "Employee Profile",
+        "name": "Name",
+        "condition": "",
+        "value": "",
+        "created_at": null,
+        "updated_at": null
+      },
+      "links": {
+        "self": "clean.api/conditions/1"
+      }
     },
-    "email": {
-      "condition": "is_any",
-      "value": ""
+    {
+      "type": "conditions",
+      "id": "2",
+      "attributes": {
+        "typeCond": "Employee Profile",
+        "name": "Email",
+        "condition": "",
+        "value": "",
+        "created_at": null,
+        "updated_at": null
+      },
+      "links": {
+        "self": "clean.api/conditions/2"
+      }
     },
-    "position": {
-      "condition": "contains",
-      "value": "Engineer"
+    {
+      "type": "conditions",
+      "id": "3",
+      "attributes": {
+        "typeCond": "Employee Profile",
+        "name": "Position",
+        "condition": "like",
+        "value": "Engineer",
+        "created_at": null,
+        "updated_at": null
+      },
+      "links": {
+        "self": "clean.api/conditions/3"
+      }
     },
-    "level": {
-      "condition": "is_greater_than",
-      "value": "3"
+    {
+      "type": "conditions",
+      "id": "4",
+      "attributes": {
+        "typeCond": "Employee Profile",
+        "name": "Level",
+        "condition": "gt",
+        "value": "3",
+        "created_at": null,
+        "updated_at": null
+      },
+      "links": {
+        "self": "clean.api/conditions/4"
+      }
     },
-    "division": {
-      "condition": "contains",
-      "value": "Sales"
+    {
+      "type": "conditions",
+      "id": "5",
+      "attributes": {
+        "typeCond": "Employee Profile",
+        "name": "Division",
+        "condition": "like",
+        "value": "Sales",
+        "created_at": null,
+        "updated_at": null
+      },
+      "links": {
+        "self": "clean.api/conditions/5"
+      }
     },
-    "costcenter": {
-      "condition": "is_any",
-      "value": ""
+    {
+      "type": "conditions",
+      "id": "6",
+      "attributes": {
+        "typeCond": "Employee Profile",
+        "name": "Cost Center",
+        "condition": "",
+        "value": "",
+        "created_at": null,
+        "updated_at": null
+      },
+      "links": {
+        "self": "clean.api/conditions/6"
+      }
     },
-    "budget": {
-      "condition": "is_less_than",
-      "value": "600"
+    {
+      "type": "conditions",
+      "id": "7",
+      "attributes": {
+        "typeCond": "Employee Profile",
+        "name": "Budget",
+        "condition": "lt",
+        "value": "600",
+        "created_at": null,
+        "updated_at": null
+      },
+      "links": {
+        "self": "clean.api/conditions/7"
+      }
+    },
+    {
+      "type": "conditions",
+      "id": "8",
+      "attributes": {
+        "typeCond": "Location",
+        "name": "Country",
+        "condition": "contains",
+        "value": "USA",
+        "created_at": null,
+        "updated_at": null
+      },
+      "links": {
+        "self": "clean.api/conditions/8"
+      }
+    },
+    {
+      "type": "conditions",
+      "id": "9",
+      "attributes": {
+        "typeCond": "Employee Profile",
+        "name": "Country",
+        "condition": "contains",
+        "value": "Canada",
+        "created_at": null,
+        "updated_at": null
+      },
+      "links": {
+        "self": "clean.api/conditions/9"
+      }
+    },
+    {
+      "type": "conditions",
+      "id": "10",
+      "attributes": {
+        "typeCond": "Employee Profile",
+        "name": "City",
+        "condition": "",
+        "value": "",
+        "created_at": null,
+        "updated_at": null
+      },
+      "links": {
+        "self": "clean.api/conditions/10"
+      }
+    },
+    {
+      "type": "conditions",
+      "id": "11",
+      "attributes": {
+        "typeCond": "Employee Profile",
+        "name": "Address",
+        "condition": "",
+        "value": "",
+        "created_at": null,
+        "updated_at": null
+      },
+      "links": {
+        "self": "clean.api/conditions/11"
+      }
+    }
+  ],
+  "meta": {
+    "sort": "",
+    "filter": [],
+    "fields": [],
+    "pagination": {
+      "total": 11,
+      "count": 11,
+      "per_page": 25,
+      "current_page": 1,
+      "total_pages": 1
     }
   },
-  "location": {
-    "items": {
-      "countryA": {
-        "condition": "contains",
-        "value": "USA"
-      },
-      "countryB": {
-        "condition": "contains",
-        "value": "Canada"
-      },
-      "city": {
-        "condition": "is_any",
-        "value": ""
-      },
-      "address": {
-        "condition": "is_any",
-        "value": ""
-      }
-    },
-    "links": {
-      "self": {
-        "href": "condition/1"
-      }
-    }
+  "links": {
+    "self": "http://clean.api/conditions?page=1",
+    "first": "http://clean.api/conditions?page=1",
+    "last": "http://clean.api/conditions?page=1"
   }
 }
 */

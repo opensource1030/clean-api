@@ -20,6 +20,7 @@ class PackageApiTest extends TestCase
                     'id',
                     'attributes' => [
                         'name',
+                        'companyId',
                         'addressId',
                         'created_at' => [
                             'date',
@@ -120,6 +121,7 @@ class PackageApiTest extends TestCase
                     'id',
                     'attributes' => [
                         'name',
+                        'companyId',
                         'addressId',
                         'created_at' => [
                             'date',
@@ -187,6 +189,7 @@ class PackageApiTest extends TestCase
                     'id',
                     'attributes' => [
                         'name',
+                        'companyId',
                         'addressId',
                         'created_at' => [
                             'date',
@@ -257,6 +260,7 @@ class PackageApiTest extends TestCase
                     'id',
                     'attributes' => [
                         'name',
+                        'companyId',
                         'addressId',
                         'created_at' => [
                             'date',
@@ -340,6 +344,7 @@ class PackageApiTest extends TestCase
                     'id',
                     'attributes' => [
                         'name',
+                        'companyId',
                         'addressId',
                         'created_at' => [
                             'date',
@@ -392,6 +397,8 @@ class PackageApiTest extends TestCase
     {
         $package = factory(\WA\DataStore\Package\Package::class)->create();
 
+        $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
+
         $condition1 = factory(\WA\DataStore\Condition\Condition::class)->create()->id;
         $condition2 = factory(\WA\DataStore\Condition\Condition::class)->create()->id;
 
@@ -407,10 +414,11 @@ class PackageApiTest extends TestCase
 
         $this->json('POST', 'packages',
             [
-                'data' => [
-                    'type' => 'packages',
-                    'attributes' => [
-                        'name' => 'namePackage',
+                "data" => [
+                    "type" => "packages",
+                    "attributes" => [
+                        "name" => "namePackage",
+                        "companyId" => $companyId
                     ],
                     'relationships' => [
                         'conditions' => [
@@ -511,6 +519,7 @@ class PackageApiTest extends TestCase
     public function testCreatePackageReturnRelationshipNoExists()
     {
         $address = factory(WA\DataStore\Address\Address::class)->create()->id;
+        $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
 
         $package = $this->json('POST', 'packages',
         [
@@ -519,6 +528,7 @@ class PackageApiTest extends TestCase
                 'attributes' => [
                     'name' => 'namePackage',
                     'addressId' => $address,
+                    'companyId' => $companyId
                 ],
                 'relationships' => [
                     'IgnoreType' => [
@@ -541,6 +551,7 @@ class PackageApiTest extends TestCase
     public function testCreatePackageReturnRelationshipNoExistsData()
     {
         $address = factory(WA\DataStore\Address\Address::class)->create()->id;
+        $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
 
         $package = $this->json('POST', 'packages',
         [
@@ -549,6 +560,7 @@ class PackageApiTest extends TestCase
                 'attributes' => [
                     'name' => 'namePackage',
                     'addressId' => $address,
+                    'companyId' => $companyId
                 ],
                 'relationships' => [
                     'apps' => [
@@ -571,6 +583,7 @@ class PackageApiTest extends TestCase
     public function testCreatePackageReturnRelationshipNoAppsType()
     {
         $address = factory(WA\DataStore\Address\Address::class)->create()->id;
+        $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
 
         $package = $this->json('POST', 'packages',
         [
@@ -579,6 +592,7 @@ class PackageApiTest extends TestCase
                 'attributes' => [
                     'name' => 'namePackage',
                     'addressId' => $address,
+                    'companyId' => $companyId
                 ],
                 'relationships' => [
                     'apps' => [
@@ -601,6 +615,7 @@ class PackageApiTest extends TestCase
     public function testCreatePackageReturnRelationshipNoIdExists()
     {
         $address = factory(WA\DataStore\Address\Address::class)->create()->id;
+        $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
 
         $package = $this->json('POST', 'packages',
         [
@@ -609,6 +624,7 @@ class PackageApiTest extends TestCase
                 'attributes' => [
                     'name' => 'namePackage',
                     'addressId' => $address,
+                    'companyId' => $companyId
                 ],
                 'relationships' => [
                     'apps' => [

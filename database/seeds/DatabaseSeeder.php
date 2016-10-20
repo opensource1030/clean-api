@@ -49,6 +49,9 @@ class DatabaseSeeder extends Seeder
         //$this->call(ProvidersTableSeeder::class);
         $this->call(RequestsTableSeeder::class);
         $this->call(ServicesTableSeeder::class);
+        $this->call(UdlsTableSeeder::class);
+        $this->call(UserUdlsTableSeeder::class);
+        $this->call(UdlValuesTableSeeder::class);
         $this->call(UsersTableSeeder::class);
 
         switch (DB::getDriverName()) {

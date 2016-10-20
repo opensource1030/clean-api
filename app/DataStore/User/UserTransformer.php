@@ -11,6 +11,7 @@ use WA\DataStore\Company\CompanyTransformer;
 use WA\DataStore\Content\ContentTransformer;
 use WA\DataStore\Device\DeviceTransformer;
 use WA\DataStore\Role\RoleTransformer;
+use WA\DataStore\UdlValue\UdlValueTransformer;
 use WA\Helpers\Traits\Criteria;
 
 /**
@@ -27,6 +28,7 @@ class UserTransformer extends TransformerAbstract
         'roles',
         'allocations',
         'contents',
+        'udls'
     ];
 
     /**
@@ -115,4 +117,15 @@ class UserTransformer extends TransformerAbstract
     {
         return new ResourceCollection($user->contents, new ContentTransformer(), 'contents');
     }
+
+    /**
+     * @param User $user
+     *
+     * @return ResourceCollection Contents
+     */
+    public function includeUdls(User $user)
+    {
+        return new ResourceCollection($user->udlValues, new UdlValueTransformer(), 'udlvalues');
+    }
+
 }

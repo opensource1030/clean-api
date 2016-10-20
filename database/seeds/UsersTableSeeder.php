@@ -1,6 +1,5 @@
 <?php
 
-
 class UsersTableSeeder extends BaseTableSeeder
 {
     protected $table = 'users';
@@ -9,7 +8,70 @@ class UsersTableSeeder extends BaseTableSeeder
     {
         $this->deleteTable();
 
-        $data = [
+        $dataUserUdl1 = [
+            'identification' => uniqid('WA-'),
+            'uuid' => '123456789123',
+            'email' => 'data1@wirelessanalytics.com',
+            'supervisorEmail' => 'admin@siriondev.com',
+            'password' => bcrypt('user'),
+            'confirmation_code' => md5(uniqid(mt_rand(), true)),
+            'confirmed' => 1,
+            'firstName' => 'Sirion',
+            'lastName' => 'Developers',
+            'username' => 'sirion',
+            'defaultLang' => 'en',
+            'supervisorId' => 4,
+            'notify' => 0,
+            'approverId' => 3,
+            'defaultLocationId' => 'location',
+            'companyId' => 1
+        ];
+
+        $this->loadTable($dataUserUdl1);
+
+        $dataUserUdl2 = [
+            'identification' => uniqid('WA-'),
+            'uuid' => '123456789456',
+            'email' => 'data2@wirelessanalytics.com',
+            'supervisorEmail' => 'admin@siriondev.com',
+            'password' => bcrypt('user'),
+            'confirmation_code' => md5(uniqid(mt_rand(), true)),
+            'confirmed' => 1,
+            'firstName' => 'FirstName2',
+            'lastName' => 'LastName2',
+            'username' => 'Username2',
+            'defaultLang' => 'en',
+            'supervisorId' => 4,
+            'notify' => 0,
+            'approverId' => 3,
+            'defaultLocationId' => 'location',
+            'companyId' => 2
+        ];
+
+        $this->loadTable($dataUserUdl2);
+
+        $dataUserUdl3 = [
+            'identification' => uniqid('WA-'),
+            'uuid' => '123456789789',
+            'email' => 'data3@wirelessanalytics.com',
+            'supervisorEmail' => 'admin@siriondev.com',
+            'password' => bcrypt('user'),
+            'confirmation_code' => md5(uniqid(mt_rand(), true)),
+            'confirmed' => 1,
+            'firstName' => 'FirstName3',
+            'lastName' => 'LastName3',
+            'username' => 'Username3',
+            'defaultLang' => 'en',
+            'supervisorId' => 4,
+            'notify' => 0,
+            'approverId' => 3,
+            'defaultLocationId' => 'location',
+            'companyId' => 3
+        ];
+
+        $this->loadTable($dataUserUdl3);
+
+        $dataUserLogin = [
             'identification' => uniqid('WA-'),
             'uuid' => '123456789',
             'email' => 'dev@wirelessanalytics.com',
@@ -25,11 +87,11 @@ class UsersTableSeeder extends BaseTableSeeder
             'notify' => 0,
             'approverId' => 3,
             'defaultLocationId' => 'location',
-            'companyId' => 1,
+            'companyId' => 5
         ];
 
-        $this->loadTable($data);
+        $this->loadTable($dataUserLogin);
 
-        factory(\WA\DataStore\User\User::class, 40)->create();
+        factory(\WA\DataStore\User\User::class, 20)->create();
     }
 }

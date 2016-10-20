@@ -6,6 +6,7 @@ use League\Fractal\Resource\Collection as ResourceCollection;
 use League\Fractal\TransformerAbstract;
 use WA\DataStore\Allocation\AllocationTransformer;
 use WA\DataStore\Content\ContentTransformer;
+use WA\DataStore\Udl\UdlTransformer;
 use WA\Helpers\Traits\Criteria;
 
 /**
@@ -18,6 +19,7 @@ class CompanyTransformer extends TransformerAbstract
     protected $availableIncludes = [
         'allocations',
         'contents',
+        'udls'
     ];
 
     /**
@@ -74,5 +76,15 @@ class CompanyTransformer extends TransformerAbstract
         }
 
         return new ResourceCollection($contents, new ContentTransformer(), 'contents');
+    }
+
+    /**
+     * @param Company $company
+     *
+     * @return ResourceCollection Contents
+     */
+    public function includeUdls(Company $company)
+    {
+        return new ResourceCollection($company->udls, new UdlTransformer(), 'udls');
     }
 }

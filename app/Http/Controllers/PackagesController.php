@@ -7,7 +7,11 @@ use WA\DataStore\Package\Package;
 use WA\DataStore\Package\PackageTransformer;
 use WA\Repositories\Package\PackageInterface;
 use DB;
+
+use Log;
+
 use Illuminate\Support\Facades\Lang;
+use WA\DataStore\Condition\Condition;
 
 use LucaDegasperi\OAuth2Server\Facades\Authorizer;
 use WA\DataStore\User\User;
@@ -65,50 +69,79 @@ class PackagesController extends ApiController
         // GET USER UDL VALUES
         $udlValuesUser = $user->udlValues();
 
-
-
-
-
-        // GET PACKAGES WITH COMPANYID = USER->COMPANYID
-        $packages = Package::whereHas('conditions', function($q, $udlValuesUser) {
-                        $q->where([ ['name', '=', $udlValuesUser->name], ['value', '=', $udlValuesUser->value], ]);
-                    })->toSql();
-
-        dd($packages);
-
-
-
-
-
-        $packages = Packages::where('companyId', $user->companyId)
-                        ->get()
-                        ->join('packages_conditions');
-
+        $info = array(
+            ['field' => 'Name', 'value' => 'nojodas'],
+            ['field' => 'Email', 'value' => $user->email]
+        );
         
+        $packages_1 = Package::where('companyId', 1);
+        $packages_2 = Package::where('companyId', 1)
+                             ->get();
+        $packages_1->where(function($query) use ($info, $packages_2) {
 
-        $company = $user->company();
-        $companyUdlValues = $company->udlValues();
-        $friends_votes = 
-            DB::table('friends')->where('friends.user_id','1')
-            ->join('votes', 'votes.user_id', '=', 'friends.friend_id');
+            
+            foreach( $packages_2 as $key => $package )
+            {
+                /*
+                $conditions = $package->conditions();
+                foreach ($conditions as $cond => $condition) {
+                    
+                }
+                */
+                $ok = true;
+                foreach ($info as $i) 
+                {
+                    
+                    
+                    $condition = Condition::where('conditions.name', $i['field'])
+                                ->join('package_conditions', 'package_conditions.conditionsId', '=', 'conditions.id')
+                                ->join('packages', 'packages.id', '=', 'package_conditions.packageId')
+                                ->where('packages.id', $package->id)
+                                ->first();
 
-        $friends_comments = 
-            DB::table('friends')->where('friends.user_id','1')
-            ->join('comments', 'comments.user_id', '=', 'friends.friend_id');
+                    Log::debug('Condition: ' .$condition->id);
 
-        $friends_status_updates = 
-            DB::table('status_updates')->where('status_updates.user_id','1')
-            ->join('friends', 'status_updates.user_id', '=', 'friends.friend_id');
+                    if( $condition )
+                    {
+                        if( $condition->value != $i['value'])
+                        {
+                            Log::debug('Condition Value: ' .$condition->value);
 
-        $friends_events = 
-            $friends_votes
-            ->union($friends_comments)
-            ->union($friends_status_updates)
-            ->get();       
+                            $ok = false;
 
-        //$packages = Package::where('companyId', $user->companyId)->get();
-        $packages = Package::where('companyId', $user->companyId);
-        return $this->response()->withPaginator($packages, new PackageTransformer(), ['key' => 'packages']);
+                        }
+                    }
+
+                    if(!$ok)
+                    {
+                        break;
+                    }
+
+                }
+                if($ok){
+                    Log::debug('Package: ' .$package->id);
+
+
+                    $query = $query->orWhere('id', $package->id);
+                }
+                
+
+              
+            }
+
+        });
+
+        Log::debug('------------------------------');
+        Log::debug(print_r($packages_1->toSql(),true));
+        Log::debug('-------------Package resultado-----------------');
+        Log::debug(print_r($packages_1->get(),true));
+
+        dd($packages_1);
+
+        // select * from Packages where (companyId = X) and (id = 1 || id = 4 || id = 10);
+
+
+
     }
 
     /**
@@ -295,7 +328,7 @@ class PackagesController extends ApiController
         } catch (\Exception $e) {
             DB::rollBack();
             $error['errors']['packages'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Package', 'option' => 'created', 'include' => '']);
-            //$error['errors']['Message'] = $e->getMessage();
+            $error['errors']['Message'] = $e->getMessage();
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 

@@ -24,15 +24,15 @@ class PackagesTableSeeder extends BaseTableSeeder
             ],
             [
                 'name'     => "Package2",
-                'companyId' => 2
+                'companyId' => 1
             ],
             [
                 'name'     => "Package3",
-                'companyId' => 3
+                'companyId' => 1
             ],
             [
                 'name'     => "Package4",
-                'companyId' => 1
+                'companyId' => 2
             ]
         ];
 

@@ -3,7 +3,10 @@
 
 $factory->define(WA\DataStore\Package\Package::class, function ($faker) {
     return [
-        'name' => $faker->sentence,
+        'name'=> $faker->sentence,
+        'companyId' => function () {
+            return factory(WA\DataStore\Company\Company::class)->create()->id;
+        },
         'addressId' => function () {
             return factory(WA\DataStore\Address\Address::class)->create()->id;
         },

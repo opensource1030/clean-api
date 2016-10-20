@@ -31,59 +31,77 @@ class ConditionsTableSeeder extends BaseTableSeeder
                 'value' => '',
             ],
             [
-                'typeCond' => 'Employee Profile',
-                'name' => 'Position',
-                'condition' => 'like',
-                'value' => 'Engineer',
+                'typeCond'  => "Employee Profile",
+                'name'      => "Position",
+                'condition' => "like",
+                'value'     => "Position5"
             ],
             [
-                'typeCond' => 'Employee Profile',
-                'name' => 'Level',
-                'condition' => 'gt',
-                'value' => '3',
+                'typeCond'  => "Employee Profile",
+                'name'      => "Level",
+                'condition' => "like",
+                'value'     => "Level2"
             ],
             [
-                'typeCond' => 'Employee Profile',
-                'name' => 'Division',
-                'condition' => 'like',
-                'value' => 'Sales',
+                'typeCond'  => "Employee Profile",
+                'name'      => "Division",
+                'condition' => "like",
+                'value'     => "Division7"
             ],
             [
-                'typeCond' => 'Employee Profile',
-                'name' => 'Cost Center',
-                'condition' => '',
-                'value' => '',
+                'typeCond'  => "Employee Profile",
+                'name'      => "Cost Center",
+                'condition' => "like",
+                'value'     => "Cost Center9"
             ],
             [
-                'typeCond' => 'Employee Profile',
-                'name' => 'Budget',
-                'condition' => 'lt',
-                'value' => '600',
+                'typeCond'  => "Employee Profile",
+                'name'      => "Budget",
+                'condition' => "",
+                'value'     => ""
             ],
             [
-                'typeCond' => 'Location',
-                'name' => 'Country',
-                'condition' => 'contains',
-                'value' => 'USA',
+                'typeCond'  => "Location",
+                'name'      => "Country",
+                'condition' => "",
+                'value'     => ""
             ],
             [
-                'typeCond' => 'Employee Profile',
-                'name' => 'Country',
-                'condition' => 'contains',
-                'value' => 'Canada',
+                'typeCond'  => "Employee Profile",
+                'name'      => "Country",
+                'condition' => "",
+                'value'     => ""
             ],
             [
-                'typeCond' => 'Employee Profile',
-                'name' => 'City',
-                'condition' => '',
-                'value' => '',
+                'typeCond'  => "Employee Profile",
+                'name'      => "City",
+                'condition' => "",
+                'value'     => ""
             ],
             [
-                'typeCond' => 'Employee Profile',
-                'name' => 'Address',
-                'condition' => '',
-                'value' => '',
+                'typeCond'  => "Employee Profile",
+                'name'      => "Address",
+                'condition' => "",
+                'value'     => ""
             ],
+            [
+                'typeCond'  => "Employee Profile",
+                'name'      => "Cost Center",
+                'condition' => "like",
+                'value'     => "Cost Center1"
+            ],
+            [
+                'typeCond'  => "Employee Profile",
+                'name'      => "Cost Center",
+                'condition' => "like",
+                'value'     => "Cost Center5"
+            ],
+            [
+                'typeCond'  => "Employee Profile",
+                'name'      => "Cost Center",
+                'condition' => "like",
+                'value'     => "Cost Center3"
+            ]
         ];
 
         $this->loadTable($data);
