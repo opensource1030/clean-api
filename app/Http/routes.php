@@ -122,7 +122,7 @@ $api->version('v1', function ($api) {
         //=Package
         $packageController = 'WA\Http\Controllers\PackagesController';
         $api->get('packages', ['as' => 'api.package.index', 'uses' => $packageController . '@index']);
-        $api->get('packages/forUser', ['as' => 'api.package.userpackages', 'uses' => $packageController . '@userPackages']);
+        $api->get('packages/forUser/{id}', ['as' => 'api.package.userpackages', 'uses' => $packageController . '@userPackages']);
         $api->get('packages/{id}', ['as' => 'api.package.show', 'uses' => $packageController . '@show']);
         $api->post('packages', ['uses' => $packageController . '@create']);
         $api->put('packages/{id}', ['uses' => $packageController . '@store']);

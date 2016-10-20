@@ -15,6 +15,9 @@ use WA\DataStore\Condition\Condition;
 
 use LucaDegasperi\OAuth2Server\Facades\Authorizer;
 use WA\DataStore\User\User;
+use WA\DataStore\User\UserTransformer;
+use \Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 
 /**
  * Package resource.
@@ -61,86 +64,103 @@ class PackagesController extends ApiController
         return $response;
     }
 
-    public function userPackages()
+    public function userPackages($id)
     {
         // GET USER.
-        //$user = Authorizer::getResourceOwnerId();
-        $user = User::find(21);
-        // GET USER UDL VALUES
-        $udlValuesUser = $user->udlValues();
+        $user = Authorizer::getResourceOwnerId();
+        $user = User::find($id);
+        $udlValues = $user->UdlValues;
 
-        $info = array(
-            ['field' => 'Name', 'value' => 'nojodas'],
-            ['field' => 'Email', 'value' => $user->email]
-        );
+        $info = array();
+        $auxName = ["value" => $user->username, "name" => "name", "label" => "Name"];
+        array_push($info, $auxName);
+        $auxEmail = ["value" => $user->email, "name" => "email", "label" => "Email"];
+        array_push($info, $auxEmail);
+        $auxBudget = ["value" => "", "name" => "budget", "label" => "Budget"];
+        array_push($info, $auxBudget);
+
+        foreach ($udlValues as $uv) {
+            $aux = ["value" => $uv->name, "name" => $uv->udl->name, "label" => $uv->udl->label];
+            array_push($info, $aux);
+        }
         
         $packages_1 = Package::where('companyId', 1);
-        $packages_2 = Package::where('companyId', 1)
-                             ->get();
-        $packages_1->where(function($query) use ($info, $packages_2) {
-
-            
+        $packages_2 = Package::where('companyId', 1)->get();
+        $packages_1->where(function($query) use ($info, $packages_2) 
+        {
             foreach( $packages_2 as $key => $package )
             {
-                /*
-                $conditions = $package->conditions();
-                foreach ($conditions as $cond => $condition) {
-                    
-                }
-                */
+                $conditions = $package->conditions;
                 $ok = true;
-                foreach ($info as $i) 
+
+                if($conditions <> null)
                 {
-                    
-                    
-                    $condition = Condition::where('conditions.name', $i['field'])
-                                ->join('package_conditions', 'package_conditions.conditionsId', '=', 'conditions.id')
-                                ->join('packages', 'packages.id', '=', 'package_conditions.packageId')
-                                ->where('packages.id', $package->id)
-                                ->first();
-
-                    Log::debug('Condition: ' .$condition->id);
-
-                    if( $condition )
+                    foreach ($conditions as $condition)
                     {
-                        if( $condition->value != $i['value'])
+                        $name = $condition->name;
+                        $cond = $condition->condition;
+                        $value = $condition->value;
+                        
+                        //var_dump("LABEL: ".$name);
+                        //var_dump("COND: ".$cond);
+                        //var_dump("VALUE: ".$value);
+
+                        foreach ($info as $i) 
                         {
-                            Log::debug('Condition Value: ' .$condition->value);
+                            //var_dump("VALUE: ".$i['value']);
+                            //var_dump("NAME: ".$i['name']);
+                            //var_dump("LABEL: ".$i['label']);
 
-                            $ok = false;
-
+                            if( $name == $i['label'])
+                            {
+                                switch ($cond) {
+                                    case "like":
+                                        $ok = $ok && strpos($i['value'], $value) !== false;
+                                        break;
+                                    case "gt":
+                                        $ok = $ok && ($i['value'] > $value) ? true : false;
+                                        break;
+                                    case "lt":
+                                        $ok = $ok && ($i['value'] < $value) ? true : false;
+                                        break;
+                                    case "gte":
+                                        $ok = $ok && ($i['value'] >= $value) ? true : false;
+                                        break;
+                                    case "lte":
+                                        $ok = $ok && ($i['value'] <= $value) ? true : false;
+                                        break;
+                                    case "ne":
+                                        $ok = $ok && ($i['value'] <> $value) ? true : false;
+                                        break;
+                                    case "eq":
+                                        $ok = $ok && ($i['value'] == $value) ? true : false;
+                                        break;
+                                    default:
+                                        $ok = $ok && true;
+                                }
+                            }
                         }
                     }
+                }                
 
-                    if(!$ok)
-                    {
-                        break;
-                    }
-
-                }
-                if($ok){
-                    Log::debug('Package: ' .$package->id);
-
-
+                if($ok)
+                {
+                    var_dump($package->id);
                     $query = $query->orWhere('id', $package->id);
                 }
-                
-
-              
             }
-
+        //})->get();
         });
 
-        Log::debug('------------------------------');
-        Log::debug(print_r($packages_1->toSql(),true));
-        Log::debug('-------------Package resultado-----------------');
-        Log::debug(print_r($packages_1->get(),true));
-
-        dd($packages_1);
+        dd($packages_1->toSql());
 
         // select * from Packages where (companyId = X) and (id = 1 || id = 4 || id = 10);
 
+        //$packages = $packages_1->byPage();
 
+        //$collection = new Collection($packages_1);
+
+        //return $this->response()->collection($collection, new PackageTransformer(), ['key' => 'packages'])->setStatusCode($this->status_codes['created']);
 
     }
 
