@@ -2,7 +2,7 @@
 
 class LocationsTableSeeder extends BaseTableSeeder
 {
-    protected $table = 'udls';
+    protected $table = 'locations';
 
     public function run()
     {
@@ -10,16 +10,16 @@ class LocationsTableSeeder extends BaseTableSeeder
 
         $data = [
             [
-                'name' = "",
-                'fullName' = "",
-                'iso2' = "",
-                'iso3' = "",
-                'region' = "",
-                'currency' = "",
-                'numCode' = "",
-                'callingCode' = "",
-                'lang' = "",
-                'currencyIso' = "",
+                'name' => "",
+                'fullName' => "",
+                'iso2' => "",
+                'iso3' => "",
+                'region' => "",
+                'currency' => "",
+                'numCode' => "",
+                'callingCode' => "",
+                'lang' => "",
+                'currencyIso' => "",
             ]
 	    ];
 

@@ -194,6 +194,50 @@ class PackageConditionsTableSeeder extends BaseTableSeeder
                 'packageId'     => 4,
                 'conditionId'      => 11
             ],
+            [
+                'packageId'     => 5,
+                'conditionsId'      => 1
+            ],
+            [
+                'packageId'     => 5,
+                'conditionsId'      => 2
+            ],
+            [
+                'packageId'     => 5,
+                'conditionsId'      => 3
+            ],
+            [
+                'packageId'     => 5,
+                'conditionsId'      => 5
+            ],
+            [
+                'packageId'     => 5,
+                'conditionsId'      => 5
+            ],
+            [
+                'packageId'     => 5,
+                'conditionsId'      => 6
+            ],
+            [
+                'packageId'     => 5,
+                'conditionsId'      => 7
+            ],
+            [
+                'packageId'     => 5,
+                'conditionsId'      => 8
+            ],
+            [
+                'packageId'     => 5,
+                'conditionsId'      => 9
+            ],
+            [
+                'packageId'     => 5,
+                'conditionsId'      => 10
+            ],
+            [
+                'packageId'     => 5,
+                'conditionsId'      => 11
+            ]
         ];
 
         $this->loadTable($data);

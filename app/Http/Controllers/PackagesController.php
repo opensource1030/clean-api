@@ -64,13 +64,14 @@ class PackagesController extends ApiController
         return $response;
     }
 
-    public function userPackages($id)
+    public function userPackages($id, Request $request)
     {
         // GET USER.
         $user = Authorizer::getResourceOwnerId();
         $user = User::find($id);
         $udlValues = $user->UdlValues;
 
+        // Retrieve the user information that will be compared.
         $info = array();
         $auxName = ["value" => $user->username, "name" => "name", "label" => "Name"];
         array_push($info, $auxName);
@@ -83,57 +84,48 @@ class PackagesController extends ApiController
             $aux = ["value" => $uv->name, "name" => $uv->udl->name, "label" => $uv->udl->label];
             array_push($info, $aux);
         }
-        
-        $packages_1 = Package::where('companyId', 1);
-        $packages_2 = Package::where('companyId', 1)->get();
-        $packages_1->where(function($query) use ($info, $packages_2) 
+
+        // Retrieve all the packages that have the same companyId as the user.
+        $packages = Package::where('companyId', $user->companyId);
+        $packagesAux = $packages->get();
+
+        $packages->where(function($query) use ($info, $packagesAux)
         {
-            foreach( $packages_2 as $key => $package )
+            foreach( $packagesAux as $key => $package )
             {
                 $conditions = $package->conditions;
                 $ok = true;
 
-                if($conditions <> null)
+                if( $conditions <> null )
                 {
-                    foreach ($conditions as $condition)
+                    foreach( $conditions as $condition )
                     {
-                        $name = $condition->name;
-                        $cond = $condition->condition;
-                        $value = $condition->value;
-                        
-                        //var_dump("LABEL: ".$name);
-                        //var_dump("COND: ".$cond);
-                        //var_dump("VALUE: ".$value);
-
                         foreach ($info as $i) 
                         {
-                            //var_dump("VALUE: ".$i['value']);
-                            //var_dump("NAME: ".$i['name']);
-                            //var_dump("LABEL: ".$i['label']);
-
-                            if( $name == $i['label'])
+                            if( $condition->name == $i['label'] && $ok)
                             {
-                                switch ($cond) {
+                                switch ( $condition->condition )
+                                {
                                     case "like":
-                                        $ok = $ok && strpos($i['value'], $value) !== false;
+                                        $ok = $ok && strpos($i['value'], $condition->value) !== false;
                                         break;
                                     case "gt":
-                                        $ok = $ok && ($i['value'] > $value) ? true : false;
+                                        $ok = $ok && ($i['value'] > $condition->value) ? true : false;
                                         break;
                                     case "lt":
-                                        $ok = $ok && ($i['value'] < $value) ? true : false;
+                                        $ok = $ok && ($i['value'] < $condition->value) ? true : false;
                                         break;
                                     case "gte":
-                                        $ok = $ok && ($i['value'] >= $value) ? true : false;
+                                        $ok = $ok && ($i['value'] >= $condition->value) ? true : false;
                                         break;
                                     case "lte":
-                                        $ok = $ok && ($i['value'] <= $value) ? true : false;
+                                        $ok = $ok && ($i['value'] <= $condition->value) ? true : false;
                                         break;
                                     case "ne":
-                                        $ok = $ok && ($i['value'] <> $value) ? true : false;
+                                        $ok = $ok && ($i['value'] <> $condition->value) ? true : false;
                                         break;
                                     case "eq":
-                                        $ok = $ok && ($i['value'] == $value) ? true : false;
+                                        $ok = $ok && ($i['value'] == $condition->value) ? true : false;
                                         break;
                                     default:
                                         $ok = $ok && true;
@@ -145,23 +137,17 @@ class PackagesController extends ApiController
 
                 if($ok)
                 {
-                    var_dump($package->id);
                     $query = $query->orWhere('id', $package->id);
                 }
             }
-        //})->get();
         });
 
-        dd($packages_1->toSql());
+        if(!$this->includesAreCorrect($request, new PackageTransformer())){
+            $error['errors']['getincludes'] = Lang::get('messages.NotExistInclude');
+            return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
+        }
 
-        // select * from Packages where (companyId = X) and (id = 1 || id = 4 || id = 10);
-
-        //$packages = $packages_1->byPage();
-
-        //$collection = new Collection($packages_1);
-
-        //return $this->response()->collection($collection, new PackageTransformer(), ['key' => 'packages'])->setStatusCode($this->status_codes['created']);
-
+        return $this->response()->withPaginator($packages->paginate(25), new PackageTransformer(), ['key' => 'packages'])->setStatusCode($this->status_codes['created']);
     }
 
     /**

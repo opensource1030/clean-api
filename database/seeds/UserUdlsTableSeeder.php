@@ -39,7 +39,7 @@ class UserUdlsTableSeeder extends BaseTableSeeder
             ],
             [
                 'userId' => 22,
-                'udlValueId' => 31
+                'udlValueId' => 39
             ],
             [
                 'userId' => 23,
@@ -55,7 +55,7 @@ class UserUdlsTableSeeder extends BaseTableSeeder
             ],
             [
                 'userId' => 23,
-                'udlValueId' => 35
+                'udlValueId' => 39
             ],
 	    ];
 
