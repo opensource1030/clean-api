@@ -12,6 +12,8 @@ use DB;
 use Illuminate\Support\Facades\Lang;
 use WA\Helpers\Traits\Criteria;
 
+use WA\DataStore\Relationship\RelationshipTransformer;
+
 /**
  * Extensible API controller
  *
@@ -106,15 +108,27 @@ abstract class ApiController extends BaseController
         return $response;
     }
 
-    public function includeRelationships($modelPlural, $id, $includePlural){
-
-        $model = title_case(str_singular($modelPlural));
-        $class = "\\WA\\DataStore\\$model\\$model";
-
-        if(class_exists($class)){
-            $results = $class::find($id)->{$includePlural};
+    public function includeRelationships($modelPlural, $id, $includePlural)
+    {        
+        $criteria = $this->getRequestCriteria();
+        $plural = str_plural($modelPlural);
+        if( $plural == $modelPlural){
+            $model = title_case(str_singular($modelPlural));    
         } else {
-            $error['errors'][$modelPlural] = Lang::get('messages.NotExistClass', ['class' => $model]);
+            $error['errors'][$modelPlural] = Lang::get('messages.NotExistClass', ['class' => $modelPlural]);
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+        }        
+
+        try {
+            $class = "\\WA\\DataStore\\$model\\$model";
+            if(class_exists($class)) {
+                $results = $class::find($id)->{$includePlural}()->paginate(25);    
+            } else {
+                $error['errors'][$modelPlural] = Lang::get('messages.NotExistClass', ['class' => $model]);
+                return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+            }            
+        } catch (\Exception $e) {
+            $error['errors'][$modelPlural] = Lang::get('messages.NotExistClass', ['class' => $includePlural]);
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
@@ -123,34 +137,32 @@ abstract class ApiController extends BaseController
             return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
         }
 
-        $response['links']['self'] = '/'.$modelPlural.'/'.$id.'/relationships/'.$includePlural;
-        $response['links']['related'] = '/'.$modelPlural.'/'.$id.'/'.$includePlural;
-
-        $resAux = [];
-        foreach ( $results as $result ) {
-            array_push($resAux, ['type' => $includePlural, 'id' => $result->id]);
-        }
-
-        $response['data'] = $resAux;
-
-        return response()->json($response);
+        $response = $this->response()->withPaginator($results, new RelationshipTransformer(),['key' => $includePlural]);
+        $response = $this->applyMeta($response);
+        return $response;
     }
 
     public function includeInformationRelationships($modelPlural, $id, $includePlural)
     {
         $criteria = $this->getRequestCriteria();
-        $modelTC = title_case(str_singular($modelPlural));
-        $class = "\\WA\\DataStore\\$modelTC\\$modelTC";
-
-        $includeTC = title_case(str_singular($includePlural)); 
-        $transformer = "\\WA\\DataStore\\$includeTC\\$includeTC"."Transformer";
-        
-        $arrayAttributesModel = \Schema::getColumnListing($includePlural);
-
-        if(class_exists($class)){
-            $results = $class::find($id)->{$includePlural}()->paginate(25);
+        $plural = str_plural($modelPlural);
+        if($plural == $modelPlural){
+            $model = title_case(str_singular($modelPlural));    
         } else {
-            $error['errors'][$modelPlural] = Lang::get('messages.NotExistClass', ['class' => $modelTC]);
+            $error['errors'][$modelPlural] = Lang::get('messages.NotExistClass', ['class' => $modelPlural]);
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+        }
+
+        try {
+            $class = "\\WA\\DataStore\\$model\\$model";
+            if(class_exists($class)) {
+                $results = $class::find($id)->{$includePlural}()->paginate(25);    
+            } else {
+                $error['errors'][$modelPlural] = Lang::get('messages.NotExistClass', ['class' => $model]);
+                return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+            }            
+        } catch (\Exception $e) {
+            $error['errors'][$modelPlural] = Lang::get('messages.NotExistClass', ['class' => $includePlural]);
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
@@ -158,6 +170,9 @@ abstract class ApiController extends BaseController
             $error['errors']['getIncludes'] = Lang::get('messages.NotExistInclude');
             return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
         }
+
+        $includeTC = title_case(str_singular($includePlural)); 
+        $transformer = "\\WA\\DataStore\\$includeTC\\$includeTC"."Transformer";
 
         $response = $this->response()->withPaginator($results, new $transformer,['key' => $includePlural]);
         $response = $this->applyMeta($response);
@@ -221,68 +236,60 @@ abstract class ApiController extends BaseController
 
     protected function includesAreCorrect($req, $class){
 
+        // Look at if the include parameter exists
         if ($req->has('include')) {
+            // Explode the includes.
             $includes = explode(",", $req->input('include'));
         } else {
             return true;
         }
-        
-        $avaIncludes = $class->getAvailableIncludes();
 
-        for ($i = 0; $i < count($includes); $i++) {
-            $exists = false;
-            for ($j = 0; $j < count($avaIncludes); $j++) {
-                if($avaIncludes[$j] == $includes[$i]){
+        $exists = true;
+        foreach ( $includes as $include )
+        {
+            $exists = $exists && $this->includesAreCorrectInf($include, $class);    
+            
+            if(!$exists){
+                break;
+            }
+        } 
+
+        return $exists;
+    }
+
+    private function includesAreCorrectInf ($include, $class) {
+
+        $includesAvailable = $class->getAvailableIncludes();
+
+        $exists = false;
+        $includesAux = explode(".", $include);
+        
+        if( count($includesAux) == 1 ) 
+        {
+            foreach ($includesAvailable as $aic) {
+                if ($aic == $includesAux[0]){
                     $exists = true;
                 }
             }
 
-            if(!$exists){
+            if (!$exists){
                 return false;
+            } else {
+                return true;
             }
-        }
 
-        return true;
-    }
-
-    protected function includesAreCorrectAux($req, $class){
-
-        if ($req->has('include')) {
-            $includes = explode(",", $req->input('include'));
         } else {
-            return true;
+            $includes = substr($include, strlen($includesAux[0]) + 1);
+
+            $var = title_case(str_singular($includesAux[0]));
+            $transformer = "\\WA\\DataStore\\$var\\$var"."Transformer";
+            $newTransformer = new $transformer();
+           
+            return $this->includesAreCorrectInf($includes, $newTransformer );
         }
-
-        $avaIncludes = $class->getAvailableIncludes();
-        var_dump($avaIncludes);
-
-        for ($i = 0; $i < count($includes); $i++) {
-            $exists = false;
-            $includesAux = explode(".", $includes[$i]);
-
-            for ($j = 0; $j < count($avaIncludes); $j++) {
-                if($avaIncludes[$j] == $includesAux[0]){
-                    if(count($includesAux) > 1){
-                        var_dump($includesAux[1]);
-                        $transformer = $class = "\\WA\\DataStore\\$includesAux[0]\\$includesAux[0]"."Transformer";
-                        $avaIncludesAux = $transformer->getAvailableIncludes();
-
-                        var_dump($avaIncludesAux);
-                        for($k = 0; count($avaIncludesAux); $k++){
-                            var_dump($k);
-                            //if($avaIncludesAux[$k] == $includesAux[1]){ $exists = true; }
-                        }
-                    } else {
-                        $exists = true;
-                    }
-                }
-            }
-
-            if(!$exists){
-                return false;
-            }
-        }
-
-        return true;
     }
 }
+
+/* TEST DEVICES includesAreCorrect.
+clean.api/devices?include=assets,assets.users,assets.users.assets,assets.users.devices,assets.users.devices.assets,assets.users.devices.carriers,assets.users.devices.companies,assets.users.devices.modifications,assets.users.devices.images,assets.users.devices.prices,assets,assets.users,assets.users.contents,assets.users.allocations,assets.users.roles,assets.devices,assets.devices.assets,assets.devices.carriers,assets.devices.carriers,assets.devices.companies,assets.devices.modifications,assets.devices.images,assets.devices.prices,assets.carriers,assets.carriers.images,assets.companies,carriers,carriers.images,companies,modifications,images,prices,assets,assets.devices,assets.devices.assets,assets.devices.carriers,assets.devices.carriers,assets.devices.companies,assets.devices.modifications,assets.devices.images,assets.devices.prices,assets.carriers,assets.carriers.images,assets.companies,carriers,carriers.images,companies,modifications,images,prices,assets,assets.carriers,assets.carriers.images,assets.companies,carriers,carriers.images,companies,modifications,images,prices
+*/
