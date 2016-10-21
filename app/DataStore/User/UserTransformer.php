@@ -24,7 +24,7 @@ class UserTransformer extends TransformerAbstract
     protected $availableIncludes = [
         'assets',
         'devices',
-        'company',
+        'companies',
         'roles',
         'allocations',
         'contents'
@@ -76,9 +76,9 @@ class UserTransformer extends TransformerAbstract
      *
      * @return ResourceItem Company
      */
-    public function includeCompany(User $user)
+    public function includeCompanies(User $user)
     {
-        return new ResourceItem($user->company, new CompanyTransformer(), 'company');
+        return new ResourceItem($user->companies, new CompanyTransformer(), 'companies');
     }
 
     /**
