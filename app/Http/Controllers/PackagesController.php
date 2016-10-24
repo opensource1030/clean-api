@@ -64,11 +64,17 @@ class PackagesController extends ApiController
         return $response;
     }
 
-    public function userPackages($id, Request $request)
+    public function userPackages(Request $request)
     {
+<<<<<<< 3bda9c5b6a6dc60f6002841f80f8a87479d955fa
         // GET USER.
         $user = Authorizer::getResourceOwnerId();
         $user = User::find($id);
+=======
+        // Retrieve the current user.
+        $id = Authorizer::getResourceOwnerId();
+        $user = User::find(21);
+>>>>>>> CP-1558 #Some minor changes
         $udlValues = $user->UdlValues;
 
         // Retrieve the user information that will be compared.
@@ -85,6 +91,17 @@ class PackagesController extends ApiController
             array_push($info, $aux);
         }
 
+        $auxBudget = ["value" => "", "name" => "budget", "label" => "Budget"];
+        array_push($info, $auxBudget);
+        $auxCountry1 = ["value" => "", "name" => "country", "label" => "Country"];
+        array_push($info, $auxCountry1);
+        $auxCountry2 = ["value" => "", "name" => "country", "label" => "Country"];
+        array_push($info, $auxCountry2);
+        $auxCity = ["value" => "", "name" => "city", "label" => "City"];
+        array_push($info, $auxCity);
+        $auxAddress = ["value" => "", "name" => "address", "label" => "Address"];
+        array_push($info, $auxAddress);
+
         // Retrieve all the packages that have the same companyId as the user.
         $packages = Package::where('companyId', $user->companyId);
         $packagesAux = $packages->get();
@@ -95,7 +112,7 @@ class PackagesController extends ApiController
             {
                 $conditions = $package->conditions;
                 $ok = true;
-
+    
                 if( $conditions <> null )
                 {
                     foreach( $conditions as $condition )
@@ -104,32 +121,65 @@ class PackagesController extends ApiController
                         {
                             if( $condition->name == $i['label'] && $ok)
                             {
-                                switch ( $condition->condition )
-                                {
-                                    case "like":
-                                        $ok = $ok && strpos($i['value'], $condition->value) !== false;
-                                        break;
-                                    case "gt":
-                                        $ok = $ok && ($i['value'] > $condition->value) ? true : false;
-                                        break;
-                                    case "lt":
-                                        $ok = $ok && ($i['value'] < $condition->value) ? true : false;
-                                        break;
-                                    case "gte":
-                                        $ok = $ok && ($i['value'] >= $condition->value) ? true : false;
-                                        break;
-                                    case "lte":
-                                        $ok = $ok && ($i['value'] <= $condition->value) ? true : false;
-                                        break;
-                                    case "ne":
-                                        $ok = $ok && ($i['value'] <> $condition->value) ? true : false;
-                                        break;
-                                    case "eq":
-                                        $ok = $ok && ($i['value'] == $condition->value) ? true : false;
-                                        break;
-                                    default:
-                                        $ok = $ok && true;
-                                }
+                                // @TODO: Check if the user company is from any of the countries conditions values.
+                                /*
+                                if( $condition->name = 'country' ){
+                                    
+                                    switch ( $condition->condition )
+                                    {
+                                        case "like":
+                                            $ok = $ok || strpos($i['value'], $condition->value) !== false;
+                                            break;
+                                        case "gt":
+                                            $ok = $ok || ($i['value'] > $condition->value) ? true : false;
+                                            break;
+                                        case "lt":
+                                            $ok = $ok || ($i['value'] < $condition->value) ? true : false;
+                                            break;
+                                        case "gte":
+                                            $ok = $ok || ($i['value'] >= $condition->value) ? true : false;
+                                            break;
+                                        case "lte":
+                                            $ok = $ok || ($i['value'] <= $condition->value) ? true : false;
+                                            break;
+                                        case "ne":
+                                            $ok = $ok || ($i['value'] <> $condition->value) ? true : false;
+                                            break;
+                                        case "eq":
+                                            $ok = $ok || ($i['value'] == $condition->value) ? true : false;
+                                            break;
+                                        default:
+                                            $ok = $ok || true;
+                                    }
+                                } else {
+                                */
+                                    switch ( $condition->condition )
+                                    {
+                                        case "like":
+                                            $ok = $ok && strpos($i['value'], $condition->value) !== false;
+                                            break;
+                                        case "gt":
+                                            $ok = $ok && ($i['value'] > $condition->value) ? true : false;
+                                            break;
+                                        case "lt":
+                                            $ok = $ok && ($i['value'] < $condition->value) ? true : false;
+                                            break;
+                                        case "gte":
+                                            $ok = $ok && ($i['value'] >= $condition->value) ? true : false;
+                                            break;
+                                        case "lte":
+                                            $ok = $ok && ($i['value'] <= $condition->value) ? true : false;
+                                            break;
+                                        case "ne":
+                                            $ok = $ok && ($i['value'] <> $condition->value) ? true : false;
+                                            break;
+                                        case "eq":
+                                            $ok = $ok && ($i['value'] == $condition->value) ? true : false;
+                                            break;
+                                        default:
+                                            $ok = $ok && true;
+                                    }    
+                                //}
                             }
                         }
                     }

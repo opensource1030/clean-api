@@ -122,7 +122,7 @@ $api->version('v1', function ($api) {
         //=Package
         $packageController = 'WA\Http\Controllers\PackagesController';
         $api->get('packages', ['as' => 'api.package.index', 'uses' => $packageController . '@index']);
-        $api->get('packages/forUser/{id}', ['as' => 'api.package.userpackages', 'uses' => $packageController . '@userPackages']);
+        $api->get('packages/forUser', ['as' => 'api.package.userpackages', 'uses' => $packageController . '@userPackages']);
         $api->get('packages/{id}', ['as' => 'api.package.show', 'uses' => $packageController . '@show']);
         $api->post('packages', ['uses' => $packageController . '@create']);
         $api->put('packages/{id}', ['uses' => $packageController . '@store']);
@@ -221,16 +221,16 @@ $api->version('v1', function ($api) {
         $api->get('conditionsfields', ['as' => 'api.conditionfields.index', 'uses' => $conditionFieldsController.'@index']);
         //$api->get('conditions/fields/{id}', ['as' => 'api.conditionfields.show', 'uses' => $conditionFieldsController . '@show']);
         //$api->post('conditionsfields', ['uses' => $conditionFieldsController . '@create']);
-        //$api->put('conditions/fields/{id}', ['uses' => $conditionFieldsController . '@store']);
-        //$api->delete('conditions/fields/{id}', ['uses' => $conditionFieldsController . '@delete']);
+        //$api->put('conditionsfields/{id}', ['uses' => $conditionFieldsController . '@store']);
+        //$api->delete('conditionsfields/{id}', ['uses' => $conditionFieldsController . '@delete']);
 
         //=ConditionsOperator
         $conditionOpController = 'WA\Http\Controllers\ConditionOperatorsController';
         $api->get('conditionsoperators', ['as' => 'api.conditionoperators.index', 'uses' => $conditionOpController.'@index']);
         //$api->get('conditions/operators/{id}', ['as' => 'api.conditionoperators.show', 'uses' => $conditionOpController . '@show']);
         //$api->post('conditionsoperators', ['uses' => $conditionOpController . '@create']);
-        //$api->put('conditions/operators/{id}', ['uses' => $conditionOpController . '@store']);
-        //$api->delete('conditions/operators/{id}', ['uses' => $conditionOpController . '@delete']);
+        //$api->put('conditionsoperators/{id}', ['uses' => $conditionOpController . '@store']);
+        //$api->delete('conditionsoperators/{id}', ['uses' => $conditionOpController . '@delete']);
 
         $controller = new \WA\Http\Controllers\RelationshipsController();
 
