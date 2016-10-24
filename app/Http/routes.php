@@ -72,10 +72,11 @@ $api->version('v1', function ($api) {
         $api->put('companies/{id}', ['uses' => $companiesController.'@store']);
         $api->delete('companies/{id}', ['uses' => $companiesController.'@deleteCompany']);
 
-        // =Employees
-        $employeesController = 'WA\Http\Controllers\UsersController';
-        $api->get('users', ['as' => 'api.employees.index', 'uses' => $employeesController.'@index']);
-        $api->get('users/{id}', ['as' => 'api.employees.show', 'uses' => $employeesController.'@show']);
+        // =Users
+        $usersController = 'WA\Http\Controllers\UsersController';
+        $api->get('users', ['as' => 'api.users.index', 'uses' => $usersController . '@index']);
+        $api->get('users/number', ['as' => 'api.users.number', 'uses' => $usersController . '@numberUsers']);
+        $api->get('users/{id}', ['as' => 'api.users.show', 'uses' => $usersController . '@show']);
 
         // =Assets
         $assetsController = 'WA\Http\Controllers\AssetsController';
