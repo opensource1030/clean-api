@@ -3,13 +3,15 @@
 namespace WA\Http\Controllers;
 
 use Cartalyst\DataGrid\Laravel\Facades\DataGrid;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Lang;
 use Response;
 use View;
+use WA\DataStore\User\User;
 use WA\DataStore\User\UserTransformer;
 use WA\Helpers\Traits\SetLimits;
 use WA\Repositories\User\UserInterface;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 use WA\DataStore\User\User;
 
