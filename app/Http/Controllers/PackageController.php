@@ -76,7 +76,7 @@ class PackageController extends ApiController
 
         $packTransformer = new PackageTransformer($criteria);
 
-        if(!$this->includesAreCorrect($request, $packTransformer)){
+        if (!$this->includesAreCorrect($request, $packTransformer)) {
             $error['errors']['getIncludes'] = Lang::get('messages.NotExistInclude');
             return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
         }

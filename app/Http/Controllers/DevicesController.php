@@ -28,7 +28,7 @@ class DevicesController extends ApiController
      *
      * @param DeviceInterface $device
      */
-    public function __construct(DeviceInterface $device) 
+    public function __construct(DeviceInterface $device)
     {
         $this->device = $device;
     }
@@ -59,7 +59,7 @@ class DevicesController extends ApiController
             return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
         }
       
-        $response = $this->response()->withPaginator($device, $devTransformer,['key' => 'devices']);
+        $response = $this->response()->withPaginator($device, $devTransformer, ['key' => 'devices']);
         $response = $this->applyMeta($response);
         return $response;
     }
@@ -71,7 +71,7 @@ class DevicesController extends ApiController
      *
      * @Get("/{id}")
      */
-    public function show($id, Request $request) 
+    public function show($id, Request $request)
     {
         $criteria = $this->getRequestCriteria();
         $this->device->setCriteria($criteria);
@@ -84,13 +84,13 @@ class DevicesController extends ApiController
 
         $devTransformer = new DeviceTransformer($criteria);
 
-        if(!$this->includesAreCorrect($request, $devTransformer)){
+        if (!$this->includesAreCorrect($request, $devTransformer)) {
             $error['errors']['getIncludes'] = Lang::get('messages.NotExistInclude');
             return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
         }
 
-        $response = $this->response()->item($device, $devTransformer,
-            ['key' => 'devices'])->setStatusCode($this->status_codes['created']);
+        $response = $this->response()->item($device, $devTransformer, ['key' => 'devices'])
+            ->setStatusCode($this->status_codes['created']);
         $response = $this->applyMeta($response);
         return $response;
     }
@@ -313,7 +313,7 @@ class DevicesController extends ApiController
      *
      * @return \Dingo\Api\Http\Response
      */
-    public function create(Request $request) 
+    public function create(Request $request)
     {
         $success = true;
         $dataImages = $dataAssets = $dataModifications = $dataCarriers = $dataCompanies = array();
@@ -467,7 +467,7 @@ class DevicesController extends ApiController
      *
      * @param $id
      */
-    public function delete($id) 
+    public function delete($id)
     {
         $device = Device::find($id);
         if ($device <> null) {

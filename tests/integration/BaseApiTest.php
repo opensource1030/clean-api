@@ -200,8 +200,7 @@ class BaseApiTest extends TestCase
         $deviceId = factory(\WA\DataStore\Device\Device::class)->create()->id;
 
         $res = $this->json('GET', 'devices/'.$deviceId.'/relationships/prices')
-            ->seeJsonStructure(
-            [
+            ->seeJsonStructure([
                 'total',
                 'per_page',
                 'current_page',
@@ -211,8 +210,7 @@ class BaseApiTest extends TestCase
                 'from',
                 'to',
                 'data'
-            ]
-        );
+            ]);
 
         $idNotExists = $deviceId + 10;
 

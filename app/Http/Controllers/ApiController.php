@@ -119,7 +119,7 @@ abstract class ApiController extends BaseController
             // NOT EXISTS MODEL ( SINGULAR INPUT )
             $error['errors'][$modelPlural] = Lang::get('messages.NotExistClass', ['class' => $modelPlural]);
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
-        }        
+        }
 
         try {
             $class = "\\WA\\DataStore\\$model\\$model";
@@ -137,13 +137,13 @@ abstract class ApiController extends BaseController
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
-        if($results == null){
+        if ($results == null) {
             // NOT EXISTS INCLUDE ( NO DATA )
             $error['errors']['getIncludes'] = Lang::get('messages.NotExistInclude');
             return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
         }
 
-        $response = $this->response()->withPaginator($results, new RelationshipTransformer(),['key' => $includePlural]);
+        $response = $this->response()->withPaginator($results, new RelationshipTransformer(), ['key' => $includePlural]);
         $response = $this->applyMeta($response);
         return $response;
     }
@@ -163,13 +163,13 @@ abstract class ApiController extends BaseController
 
         try {
             $class = "\\WA\\DataStore\\$model\\$model";
-            if(class_exists($class)) {
-                $results = $class::find($id)->{$includePlural}()->paginate(25);    
+            if (class_exists($class)) {
+                $results = $class::find($id)->{$includePlural}()->paginate(25);
             } else {
                 // NOT EXISTS MODEL ( NOT IN DATASTORE )
                 $error['errors'][$modelPlural] = Lang::get('messages.NotExistClass', ['class' => $model]);
                 return response()->json($error)->setStatusCode($this->status_codes['notexists']);
-            }            
+            }
         } catch (\Exception $e) {
             // NOT EXISTS INCLUDE ( NOT IN DATASTORE )
             //$error['errors']['Message'] = $e->getMessage();
@@ -257,8 +257,7 @@ abstract class ApiController extends BaseController
         }
 
         $exists = true;
-        foreach ( $includes as $include )
-        {
+        foreach ($includes as $include) {
             $exists = $exists && $this->includesAreCorrectInf($include, $class);
             
             if(!$exists){
@@ -269,17 +268,17 @@ abstract class ApiController extends BaseController
         return $exists;
     }
 
-    private function includesAreCorrectInf ($include, $class) {
+    private function includesAreCorrectInf($include, $class)
+    {
 
         $includesAvailable = $class->getAvailableIncludes();
 
         $exists = false;
         $includesAux = explode(".", $include);
         
-        if( count($includesAux) == 1 ) 
-        {
+        if (count($includesAux) == 1) {
             foreach ($includesAvailable as $aic) {
-                if ($aic == $includesAux[0]){
+                if ($aic == $includesAux[0]) {
                     $exists = true;
                 }
             }
@@ -297,7 +296,7 @@ abstract class ApiController extends BaseController
             $transformer = "\\WA\\DataStore\\$var\\$var"."Transformer";
             $newTransformer = new $transformer();
            
-            return $this->includesAreCorrectInf($includes, $newTransformer );
+            return $this->includesAreCorrectInf($includes, $newTransformer);
         }
     }
 }
