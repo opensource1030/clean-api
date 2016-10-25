@@ -109,11 +109,11 @@ abstract class ApiController extends BaseController
     }
 
     public function includeRelationships($modelPlural, $id, $includePlural)
-    {        
+    {
         $criteria = $this->getRequestCriteria();
         $plural = str_plural($modelPlural);
 
-        if( $plural == $modelPlural ){
+        if ($plural == $modelPlural) {
             $model = title_case(str_singular($modelPlural));    
         } else {
             // NOT EXISTS MODEL ( SINGULAR INPUT )
@@ -123,13 +123,13 @@ abstract class ApiController extends BaseController
 
         try {
             $class = "\\WA\\DataStore\\$model\\$model";
-            if( class_exists($class) && !($class::find($id) == null) ) {
-                $results = $class::find($id)->{$includePlural}()->paginate(25);    
+            if (class_exists($class) && !($class::find($id) == null)) {
+                $results = $class::find($id)->{$includePlural}()->paginate(25);
             } else {
                 // NOT EXISTS MODEL ( NOT IN DATASTORE )
                 $error['errors'][$modelPlural] = Lang::get('messages.NotExistClass', ['class' => $model]);
                 return response()->json($error)->setStatusCode($this->status_codes['notexists']);
-            }            
+            }
         } catch (\Exception $e) {
             // NOT EXISTS INCLUDE ( NOT IN DATASTORE )
             //$error['errors']['Message'] = $e->getMessage();
@@ -153,7 +153,7 @@ abstract class ApiController extends BaseController
         $criteria = $this->getRequestCriteria();
         $plural = str_plural($modelPlural);
 
-        if($plural == $modelPlural){
+        if ($plural == $modelPlural) {
             $model = title_case(str_singular($modelPlural));    
         } else {
             // NOT EXISTS MODEL ( SINGULAR INPUT )
@@ -177,7 +177,7 @@ abstract class ApiController extends BaseController
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
-        if($results == null){
+        if ($results == null) {
             // NOT EXISTS INCLUDE ( NO DATA )
             $error['errors']['getIncludes'] = Lang::get('messages.NotExistInclude');
             return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
@@ -259,12 +259,12 @@ abstract class ApiController extends BaseController
         $exists = true;
         foreach ( $includes as $include )
         {
-            $exists = $exists && $this->includesAreCorrectInf($include, $class);    
+            $exists = $exists && $this->includesAreCorrectInf($include, $class);
             
             if(!$exists){
                 break;
             }
-        } 
+        }
 
         return $exists;
     }
@@ -284,7 +284,7 @@ abstract class ApiController extends BaseController
                 }
             }
 
-            if (!$exists){
+            if (!$exists) {
                 return false;
             } else {
                 return true;

@@ -65,15 +65,15 @@ $api->version('v1', function ($api) {
 
     $api->group(['middleware' => $middleware ], function ($api) {
 
-        // model/{id}/Relationships/{any}
-        $api->get('{model}/{id}/relationships/{include}', function ($model, $id, $include) {
-            $controller = new class() extends \WA\Http\Controllers\ApiController{};
+        $controller = new class() extends \WA\Http\Controllers\ApiController{};
+
+        // {model}/{id}/relationships/{include}
+        $api->get('{model}/{id}/relationships/{include}', function ($controller, $model, $id, $include) {
             return $controller->includeRelationships($model, $id, $include);
         });
 
-        // model/{id}/Relationships/{any}
-        $api->get('{model}/{id}/{include}', function ($model, $id, $include) {
-            $controller = new class() extends \WA\Http\Controllers\ApiController{};
+        // {model}/{id}/{include}
+        $api->get('{model}/{id}/{include}', function ($controller, $model, $id, $include) {            
             return $controller->includeInformationRelationships($model, $id, $include);
         });
 
@@ -249,7 +249,3 @@ $api->version('v1', function ($api) {
         //$api->delete('conditions/operators/{id}', ['uses' => $conditionOpController . '@delete']);
     });
 });
-
-
-//$api->get('images/{id}', ['as' => 'api.image.info', 'uses' => $imageController . '@info']);
-//$api->get('images/{id}/file/{size}', ['as' => 'api.image.show', 'uses' => $imageController . '@show']);

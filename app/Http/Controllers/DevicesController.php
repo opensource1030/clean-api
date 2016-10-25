@@ -46,7 +46,7 @@ class DevicesController extends ApiController
      * })
      */
 
-    public function index(Request $request) 
+    public function index(Request $request)
     {
         $criteria = $this->getRequestCriteria();
         $this->device->setCriteria($criteria);
@@ -54,7 +54,7 @@ class DevicesController extends ApiController
 
         $devTransformer = new DeviceTransformer($criteria);
 
-        if(!$this->includesAreCorrect($request, $devTransformer)){
+        if (!$this->includesAreCorrect($request, $devTransformer)) {
             $error['errors']['getincludes'] = Lang::get('messages.NotExistInclude');
             return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
         }
@@ -126,7 +126,7 @@ class DevicesController extends ApiController
      * @param $id
      * @return \Dingo\Api\Http\Response
      */
-    public function store($id, Request $request) 
+    public function store($id, Request $request)
     {
         $success = true;
         $dataImages = $dataAssets = $dataModifications = $dataCarriers = $dataCompanies = array();

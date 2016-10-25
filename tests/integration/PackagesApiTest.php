@@ -315,7 +315,7 @@ class PackageApiTest extends TestCase
                                     'related'
                                 ],
                                 'data' => [
-                                    0 => [  
+                                    0 => [
                                         'type',
                                         'id'
                                     ]
