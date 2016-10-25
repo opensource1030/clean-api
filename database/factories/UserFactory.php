@@ -9,6 +9,7 @@
 $factory->define(WA\DataStore\User\User::class, function (Faker\Generator $faker) {
 
 
+
     return [
         'identification' => uniqid('WA-'),
         'uuid' => $faker->uuid,
@@ -30,9 +31,6 @@ $factory->define(WA\DataStore\User\User::class, function (Faker\Generator $faker
             return factory(\WA\DataStore\Location\Location::class)->create()->id;
         },
 
-        'companyId' => function () {
-            return factory(WA\DataStore\Company\Company::class)->create()->id;
-        },
-
+        'companyId' => 1
     ];
 });

@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder
         $this->call(AssetsTableSeeder::class);
         $this->call(CarrierImagesTableSeeder::class);
         $this->call(CarriersTableSeeder::class);
+        $this->call(CompaniesTableSeeder::class);
         $this->call(CompanyDomainsTableSeeder::class);
         $this->call(CompanySaml2TableSeeder::class);
         $this->call(ConditionFieldsTableSeeder::class);

@@ -18,7 +18,6 @@ use WA\Helpers\Traits\Criteria;
  */
 class UserTransformer extends TransformerAbstract
 {
-
     use Criteria;
 
     protected $availableIncludes = [
@@ -102,7 +101,7 @@ class UserTransformer extends TransformerAbstract
         $filters = $this->criteria['filters']->get();
 
         if (in_array("[allocations.billMonth]=[company.currentBillMonth]", $filters)) {
-            $allocations->where('billMonth', $user->company->currentBillMonth);
+            $allocations->where('billMonth', $user->companies->currentBillMonth);
         }
 
         return new ResourceCollection($allocations->get(), new AllocationTransformer(), 'allocations');
@@ -117,5 +116,4 @@ class UserTransformer extends TransformerAbstract
     {
         return new ResourceCollection($user->contents, new ContentTransformer(), 'contents');
     }
-
 }
