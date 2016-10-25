@@ -20,5 +20,4 @@ class RelationshipTransformer extends TransformerAbstract
             'id'               => $class->id
         ];
     }
-
 }

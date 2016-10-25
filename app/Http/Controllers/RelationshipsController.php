@@ -21,7 +21,7 @@ class RelationshipsController extends ApiController
         $plural = str_plural($modelPlural);
 
         if ($plural == $modelPlural) {
-            $model = title_case(str_singular($modelPlural));    
+            $model = title_case(str_singular($modelPlural));
         } else {
             // NOT EXISTS MODEL ( SINGULAR INPUT )
             $error['errors'][$modelPlural] = Lang::get('messages.NotExistClass', ['class' => $modelPlural]);
@@ -61,7 +61,7 @@ class RelationshipsController extends ApiController
         $plural = str_plural($modelPlural);
 
         if ($plural == $modelPlural) {
-            $model = title_case(str_singular($modelPlural));    
+            $model = title_case(str_singular($modelPlural));
         } else {
             // NOT EXISTS MODEL ( SINGULAR INPUT )
             $error['errors'][$modelPlural] = Lang::get('messages.NotExistClass', ['class' => $modelPlural]);
