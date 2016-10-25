@@ -97,5 +97,4 @@ class RelationshipsController extends ApiController
         $response = $this->applyMeta($response);
         return $response;
     }
-    
 }
