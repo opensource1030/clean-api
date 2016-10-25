@@ -68,12 +68,12 @@ $api->version('v1', function ($api) {
         $controller = new class() extends \WA\Http\Controllers\ApiController{};
 
         // {model}/{id}/relationships/{include}
-        $api->get('{model}/{id}/relationships/{include}', function ($controller, $model, $id, $include) {
+        $api->get('{model}/{id}/relationships/{include}', function ($model, $id, $include) use ($controller) {
             return $controller->includeRelationships($model, $id, $include);
         });
 
         // {model}/{id}/{include}
-        $api->get('{model}/{id}/{include}', function ($controller, $model, $id, $include) {            
+        $api->get('{model}/{id}/{include}', function ($model, $id, $include) use ($controller) {
             return $controller->includeInformationRelationships($model, $id, $include);
         });
 
