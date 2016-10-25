@@ -1,10 +1,15 @@
 <?php
 
+use Laravel\Lumen\Testing\DatabaseMigrations;
+
 use Laravel\Lumen\Testing\DatabaseTransactions;
 use WA\Http\Controllers\ApiController;
+use WA\DataStore\Device\Device;
 
 class BaseApiTest extends TestCase
 {
+    use DatabaseMigrations;
+
     public function testCanCallHome()
     {
         $this->json('GET', '/')
@@ -15,8 +20,8 @@ class BaseApiTest extends TestCase
             ]);
     }
 
-    public function testStatusCodes(){
-
+    public function testStatusCodes()
+    {
         $baseController = new class() extends ApiController{};
         $this->assertSame($baseController->status_codes['ok'], 200);
         $this->assertSame($baseController->status_codes['created'], 201);

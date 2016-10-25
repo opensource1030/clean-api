@@ -8,27 +8,11 @@ use WA\Http\Requests\Parameters\Fields;
 use WA\Http\Requests\Parameters\Filters;
 use WA\Http\Requests\Parameters\Sorting;
 
-use WA\DataStore\Address\AddressTransformer;
-use WA\DataStore\Allocation\AllocationsTransformer;
-use WA\DataStore\App\AppTransformer;
-use WA\DataStore\Asset\AssetTransformer;
-use WA\DataStore\Carrier\CarrierTransformer;
-use WA\DataStore\Category\CategoryAppTransformer;
-use WA\DataStore\Company\CompanyTransformer;
-use WA\DataStore\Condition\ConditionTransformer;
-use WA\DataStore\Device\DeviceTransformer;
-use WA\DataStore\DeviceType\DeviceTypeTransformer;
-use WA\DataStore\Image\ImageTransformer;
-use WA\DataStore\Location\LocationTransformer;
-use WA\DataStore\Modification\ModificationTransformer;
-use WA\DataStore\Notification\NotificationTransformer;
-use WA\DataStore\Order\OrderTransformer;
-use WA\DataStore\Package\PackageTransformer;
-use WA\DataStore\Preset\PresetTransformer;
-use WA\DataStore\Price\PriceTransformer;
-use WA\DataStore\Request\RequestTransformer;
-use WA\DataStore\Role\RoleTransformer;
-use WA\DataStore\Service\ServiceTransformer;
+use DB;
+use Illuminate\Support\Facades\Lang;
+use WA\Helpers\Traits\Criteria;
+
+use WA\DataStore\Relationship\RelationshipTransformer;
 
 /**
  * Extensible API controller
@@ -124,8 +108,6 @@ abstract class ApiController extends BaseController
         return $response;
     }
 
-
-
     /*
      *      Checks if a JSON param has "data", "type" and "attributes" keys and "type" is equal to $type.
      *
@@ -181,98 +163,65 @@ abstract class ApiController extends BaseController
         return $array;
     }
 
+    /*
+     *      Gets all the includes and verifies if they are in the includesAvailable variable.
+     *
+     *      @url: includesAreCorrect.
+                        clean.api/devices?include=assets,assets.users,assets.users.assets,assets.users.devices,assets.users.devices.assets,assets.users.devices.carriers,assets.users.devices.companies,assets.users.devices.modifications,assets.users.devices.images,assets.users.devices.prices,assets,assets.users,assets.users.contents,assets.users.allocations,assets.users.roles,assets.devices,assets.devices.assets,assets.devices.carriers,assets.devices.carriers,assets.devices.companies,assets.devices.modifications,assets.devices.images,assets.devices.prices,assets.carriers,assets.carriers.images,assets.companies,carriers,carriers.images,companies,modifications,images,prices,assets,assets.devices,assets.devices.assets,assets.devices.carriers,assets.devices.carriers,assets.devices.companies,assets.devices.modifications,assets.devices.images,assets.devices.prices,assets.carriers,assets.carriers.images,assets.companies,carriers,carriers.images,companies,modifications,images,prices,assets,assets.carriers,assets.carriers.images,assets.companies,carriers,carriers.images,companies,modifications,images,prices
+     *
+     *      @return: true o false.
+     */
     protected function includesAreCorrect($req, $class){
 
+        // Look at if the include parameter exists
         if ($req->has('include')) {
+            // Explode the includes.
             $includes = explode(",", $req->input('include'));
         } else {
             return true;
         }
 
-        $avaIncludes = $class->getAvailableIncludes();
+        $exists = true;
+        foreach ($includes as $include) {
+            $exists = $exists && $this->includesAreCorrectInf($include, $class);
+            
+            if(!$exists){
+                break;
+            }
+        }
 
-        for ($i = 0; $i < count($includes); $i++) {
-            $exists = false;
-            for ($j = 0; $j < count($avaIncludes); $j++) {
-                if($avaIncludes[$j] == $includes[$i]){
+        return $exists;
+    }
+
+    private function includesAreCorrectInf($include, $class)
+    {
+
+        $includesAvailable = $class->getAvailableIncludes();
+
+        $exists = false;
+        $includesAux = explode(".", $include);
+        
+        if (count($includesAux) == 1) {
+            foreach ($includesAvailable as $aic) {
+                if ($aic == $includesAux[0]) {
                     $exists = true;
                 }
             }
 
-            if(!$exists){
+            if (!$exists) {
                 return false;
+            } else {
+                return true;
             }
-        }
 
-        return true;
-    }
-
-    protected function includesAreCorrectAux($req, $class){
-
-        if ($req->has('include')) {
-            $includes = explode(",", $req->input('include'));
         } else {
-            return true;
-        }
+            $includes = substr($include, strlen($includesAux[0]) + 1);
 
-        var_dump($includes);
-
-        $avaIncludes = $class->getAvailableIncludes();
-        var_dump($avaIncludes);
-
-        for ($i = 0; $i < count($includes); $i++) {
-            $exists = false;
-            $includesAux = explode(".", $includes[$i]);
-
-            for ($j = 0; $j < count($avaIncludes); $j++) {
-                if($avaIncludes[$j] == $includesAux[0]){
-                    if(count($includesAux) > 1){
-                        var_dump($includesAux[1]);
-                        $transformer = $this->returnTransformer($includesAux[0]);
-                        $avaIncludesAux = $transformer->getAvailableIncludes();
-
-                        var_dump($avaIncludesAux);
-                        for($k = 0; count($avaIncludesAux); $k++){
-                            var_dump($k);
-                            //if($avaIncludesAux[$k] == $includesAux[1]){ $exists = true; }
-                        }
-                    } else {
-                        $exists = true;
-                    }
-                }
-            }
-
-            if(!$exists){
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    private function returnTransformer($value){
-        switch($value){
-            case 'address' : return new AddressTransformer();
-            case 'allocation' : return new AllocationTransformer();
-            case 'apps' : return new AppTransformer();
-            case 'assets' : return new AssetTransformer();
-            case 'carriers' : return new CarrierTransformer();
-            case 'categoryapps' : return new CategoryAppTransformer();
-            case 'companies' : return new CompanyTransformer();
-            case 'conditions' : return new ConditionTransformer();
-            case 'devices' : return new DeviceTransformer();
-            case 'devicetypes' : return new DeviceTypeTransformer();
-            case 'images' : return new ImageTransformer();
-            case 'modifications' : return new ModificationTransformer();
-            case 'notifications' : return new NotificationTransformer();
-            case 'orders' : return new OrderTransformer();
-            case 'packages' : return new PackageTransformer();
-            case 'presets' : return new PresetTransformer();
-            case 'prices' : return new PriceTransformer();
-            case 'request' : return new RequestTransformer();
-            case 'role' : return new RoleTransformer();
-            case 'services' : return new ServiceTransformer();
-            default : return null;
+            $var = title_case(str_singular($includesAux[0]));
+            $transformer = "\\WA\\DataStore\\$var\\$var"."Transformer";
+            $newTransformer = new $transformer();
+           
+            return $this->includesAreCorrectInf($includes, $newTransformer);
         }
     }
 }

@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Lang;
  *
  * @Resource("Price", uri="/Price")
  */
-class PriceController extends ApiController
+class PricesController extends ApiController
 {
     /**
      * @var PriceInterface
@@ -72,111 +72,6 @@ class PriceController extends ApiController
         }
 
         return $this->response()->item($price, new PriceTransformer(), ['key' => 'prices'])->setStatusCode($this->status_codes['created']);
-    }
-
-    /**
-     * Show a single Price
-     *
-     * Get a payload of a single Price
-     *
-     * @Get("/{id}")
-     */
-    public function showDevice($id)
-    {
-
-        $filter = new Filters([
-            "deviceId" => ["eq" => $id]
-        ]);
-
-        $this->price->setFilters($filter);
-
-        $prices = $this->price->byPage();
-
-        $response = $this->response()->withPaginator($prices, new PriceTransformer(), ['key' => 'prices']);
-    }
-
-    /**
-     * Show a single Price
-     *
-     * Get a payload of a single Price
-     *
-     * @Get("/{id}")
-     */
-    public function showCapacity($id)
-    {
-
-        $filter = new Filters([
-            "capacityId" => ["eq" => $id]
-        ]);
-
-        $this->price->setFilters($filter);
-
-        $prices = $this->price->byPage();
-
-        $response = $this->response()->withPaginator($prices, new PriceTransformer(), ['key' => 'prices']);
-    }
-
-    /**
-     * Show a single Price
-     *
-     * Get a payload of a single Price
-     *
-     * @Get("/{id}")
-     */
-    public function showStyle($id)
-    {
-
-        $filter = new Filters([
-            "styleId" => ["eq" => $id]
-        ]);
-
-        $this->price->setFilters($filter);
-
-        $prices = $this->price->byPage();
-
-        $response = $this->response()->withPaginator($prices, new PriceTransformer(), ['key' => 'prices']);
-    }
-
-    /**
-     * Show a single Price
-     *
-     * Get a payload of a single Price
-     *
-     * @Get("/{id}")
-     */
-    public function showCarrier($id)
-    {
-
-        $filter = new Filters([
-            "carrierId" => ["eq" => $id]
-        ]);
-
-        $this->price->setFilters($filter);
-
-        $prices = $this->price->byPage();
-
-        $response = $this->response()->withPaginator($prices, new PriceTransformer(), ['key' => 'prices']);
-    }
-
-    /**
-     * Show a single Price
-     *
-     * Get a payload of a single Price
-     *
-     * @Get("/{id}")
-     */
-    public function showCompany($id)
-    {
-
-        $filter = new Filters([
-            "companyId" => ["eq" => $id]
-        ]);
-
-        $this->price->setFilters($filter);
-
-        $prices = $this->price->byPage();
-
-        $response = $this->response()->withPaginator($prices, new PriceTransformer(), ['key' => 'prices']);
     }
 
     /**

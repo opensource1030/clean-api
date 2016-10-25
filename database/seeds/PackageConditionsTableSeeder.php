@@ -23,47 +23,47 @@ class PackageConditionsTableSeeder extends BaseTableSeeder
 
             [
                 'packageId'     => 1,
-                'conditionsId'      => 1
+                'conditionId'      => 1
             ],
             [
                 'packageId'     => 1,
-                'conditionsId'      => 2
+                'conditionId'      => 2
             ],
             [
                 'packageId'     => 1,
-                'conditionsId'      => 3
+                'conditionId'      => 3
             ],
             [
                 'packageId'     => 1,
-                'conditionsId'      => 4
+                'conditionId'      => 4
             ],
             [
                 'packageId'     => 1,
-                'conditionsId'      => 5
+                'conditionId'      => 5
             ],
             [
                 'packageId'     => 1,
-                'conditionsId'      => 6
+                'conditionId'      => 6
             ],
             [
                 'packageId'     => 1,
-                'conditionsId'      => 7
+                'conditionId'      => 7
             ],
             [
                 'packageId'     => 1,
-                'conditionsId'      => 8
+                'conditionId'      => 8
             ],
             [
                 'packageId'     => 1,
-                'conditionsId'      => 9
+                'conditionId'      => 9
             ],
             [
                 'packageId'     => 1,
-                'conditionsId'      => 10
+                'conditionId'      => 10
             ],
             [
                 'packageId'     => 1,
-                'conditionsId'      => 11
+                'conditionId'      => 11
             ]
         ];
 

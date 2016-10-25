@@ -28,8 +28,8 @@ class DevicesController extends ApiController
      *
      * @param DeviceInterface $device
      */
-    public function __construct(DeviceInterface $device) {
-
+    public function __construct(DeviceInterface $device)
+    {
         $this->device = $device;
     }
 
@@ -46,19 +46,20 @@ class DevicesController extends ApiController
      * })
      */
 
-    public function index(Request $request) {
-
+    public function index(Request $request)
+    {
         $criteria = $this->getRequestCriteria();
         $this->device->setCriteria($criteria);
         $device = $this->device->byPage();
 
-        if(!$this->includesAreCorrect($request, new DeviceTransformer())){
+        $devTransformer = new DeviceTransformer($criteria);
+
+        if (!$this->includesAreCorrect($request, $devTransformer)) {
             $error['errors']['getincludes'] = Lang::get('messages.NotExistInclude');
             return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
         }
       
-        $response = $this->response()->withPaginator($device, new DeviceTransformer(),['key' => 'devices']);
-
+        $response = $this->response()->withPaginator($device, $devTransformer, ['key' => 'devices']);
         $response = $this->applyMeta($response);
         return $response;
     }
@@ -70,8 +71,8 @@ class DevicesController extends ApiController
      *
      * @Get("/{id}")
      */
-    public function show($id, Request $request) {
-
+    public function show($id, Request $request)
+    {
         $criteria = $this->getRequestCriteria();
         $this->device->setCriteria($criteria);
 
@@ -81,18 +82,21 @@ class DevicesController extends ApiController
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
-        if(!$this->includesAreCorrect($request, new DeviceTransformer())){
+        $devTransformer = new DeviceTransformer($criteria);
+
+        if (!$this->includesAreCorrect($request, $devTransformer)) {
             $error['errors']['getIncludes'] = Lang::get('messages.NotExistInclude');
             return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
         }
 
-        return $this->response()->item($device, new DeviceTransformer(),
-            ['key' => 'devices'])->setStatusCode($this->status_codes['created']);
+        $response = $this->response()->item($device, $devTransformer, ['key' => 'devices'])
+            ->setStatusCode($this->status_codes['created']);
+        $response = $this->applyMeta($response);
+        return $response;
     }
 
     public function datatable()
     {
-
         $this->setLimits();
 
         $devices = $this->model->getDataTable();
@@ -122,8 +126,8 @@ class DevicesController extends ApiController
      * @param $id
      * @return \Dingo\Api\Http\Response
      */
-    public function store($id, Request $request) {
-
+    public function store($id, Request $request)
+    {
         $success = true;
         $dataImages = $dataAssets = $dataModifications = $dataCarriers = $dataCompanies = array();
 
@@ -309,8 +313,8 @@ class DevicesController extends ApiController
      *
      * @return \Dingo\Api\Http\Response
      */
-    public function create(Request $request) {
-
+    public function create(Request $request)
+    {
         $success = true;
         $dataImages = $dataAssets = $dataModifications = $dataCarriers = $dataCompanies = array();
 
@@ -463,8 +467,8 @@ class DevicesController extends ApiController
      *
      * @param $id
      */
-    public function delete($id) {
-
+    public function delete($id)
+    {
         $device = Device::find($id);
         if ($device <> null) {
             $this->device->deleteById($id);
@@ -533,7 +537,6 @@ class DevicesController extends ApiController
      */
     private function deleteRepeat($data)
     {
-
         $dataAux = array();
 
         for ($j = 0; $j < count($data); $j++) {
@@ -608,7 +611,6 @@ class DevicesController extends ApiController
      */
     private function checkIfPriceRowIsCorrect($price, $modifications, $carriers, $companies)
     {
-
         $modInterface = app()->make('WA\Repositories\Modification\ModificationInterface');
 
         $existsCapacity = false;

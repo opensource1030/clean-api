@@ -23,19 +23,19 @@ class PackageDevicesTableSeeder extends BaseTableSeeder
 
             [
                 'packageId'     => 1,
-                'devicesId'      => 1
+                'deviceId'      => 1
             ],
             [
                 'packageId'     => 1,
-                'devicesId'      => 2
+                'deviceId'      => 2
             ],
             [
                 'packageId'     => 1,
-                'devicesId'      => 3
+                'deviceId'      => 3
             ],
             [
                 'packageId'     => 1,
-                'devicesId'      => 4
+                'deviceId'      => 4
             ]
         ];
 

@@ -21,7 +21,7 @@ class CreatePackageServicesTable extends Migration
             function ($table) {
                 $table->increments('id');
                 $table->integer('packageId')->unsigned();
-                $table->integer('servicesId')->unsigned();
+                $table->integer('serviceId')->unsigned();
 
                 $table->nullableTimestamps();
             }
@@ -31,7 +31,7 @@ class CreatePackageServicesTable extends Migration
             $this->tableName, 
             function($table) {
                 $table->foreign('packageId')->references('id')->on('packages')->onDelete('cascade');
-                $table->foreign('servicesId')->references('id')->on('services')->onDelete('cascade');
+                $table->foreign('serviceId')->references('id')->on('services')->onDelete('cascade');
             }
         );
     }

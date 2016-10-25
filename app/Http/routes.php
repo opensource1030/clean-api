@@ -65,6 +65,18 @@ $api->version('v1', function ($api) {
 
     $api->group(['middleware' => $middleware ], function ($api) {
 
+        $controller = new \WA\Http\Controllers\RelationshipsController();
+
+        // {model}/{id}/relationships/{include}
+        $api->get('{model}/{id}/relationships/{include}', function ($model, $id, $include) use ($controller) {
+            return $controller->includeRelationships($model, $id, $include);
+        });
+
+        // {model}/{id}/{include}
+        $api->get('{model}/{id}/{include}', function ($model, $id, $include) use ($controller) {
+            return $controller->includeInformationRelationships($model, $id, $include);
+        });
+
         // =Companies
         $companiesController = 'WA\Http\Controllers\CompaniesController';
         $api->get('companies', ['as' => 'api.company.index', 'uses' => $companiesController . '@index']);
@@ -109,7 +121,7 @@ $api->version('v1', function ($api) {
         $api->delete('contents/{id}', ['uses' => $contentsController. '@deleteContent']);
 
         //=App
-        $appController = 'WA\Http\Controllers\AppController';
+        $appController = 'WA\Http\Controllers\AppsController';
         $api->get('apps', ['as' => 'api.app.index', 'uses' => $appController . '@index']);
         $api->get('apps/{id}', ['as' => 'api.app.show', 'uses' => $appController . '@show']);
         $api->post('apps', ['uses' => $appController . '@create']);
@@ -117,7 +129,7 @@ $api->version('v1', function ($api) {
         $api->delete('apps/{id}', ['uses' => $appController . '@delete']);
 
         //=Order
-        $orderController = 'WA\Http\Controllers\OrderController';
+        $orderController = 'WA\Http\Controllers\OrdersController';
         $api->get('orders', ['as' => 'api.order.index', 'uses' => $orderController . '@index']);
         $api->get('orders/{id}', ['as' => 'api.order.show', 'uses' => $orderController . '@show']);
         $api->post('orders', ['uses' => $orderController . '@create']);
@@ -125,7 +137,7 @@ $api->version('v1', function ($api) {
         $api->delete('orders/{id}', ['uses' => $orderController . '@delete']);
 
         //=Package
-        $packageController = 'WA\Http\Controllers\PackageController';
+        $packageController = 'WA\Http\Controllers\PackagesController';
         $api->get('packages', ['as' => 'api.package.index', 'uses' => $packageController . '@index']);
         $api->get('packages/{id}', ['as' => 'api.package.show', 'uses' => $packageController . '@show']);
         $api->post('packages', ['uses' => $packageController . '@create']);
@@ -133,7 +145,7 @@ $api->version('v1', function ($api) {
         $api->delete('packages/{id}', ['uses' => $packageController . '@delete']);
 
         //=Request
-        $requestController = 'WA\Http\Controllers\RequestController';
+        $requestController = 'WA\Http\Controllers\RequestsController';
         $api->get('requests', ['as' => 'api.request.index', 'uses' => $requestController . '@index']);
         $api->get('requests/{id}', ['as' => 'api.request.show', 'uses' => $requestController . '@show']);
         $api->post('requests', ['uses' => $requestController . '@create']);
@@ -141,7 +153,7 @@ $api->version('v1', function ($api) {
         $api->delete('requests/{id}', ['uses' => $requestController . '@delete']);
 
         //=Service
-        $serviceController = 'WA\Http\Controllers\ServiceController';
+        $serviceController = 'WA\Http\Controllers\ServicesController';
         $api->get('services', ['as' => 'api.service.index', 'uses' => $serviceController . '@index']);
         $api->get('services/{id}', ['as' => 'api.service.show', 'uses' => $serviceController . '@show']);
         $api->post('services', ['uses' => $serviceController . '@create']);
@@ -149,7 +161,7 @@ $api->version('v1', function ($api) {
         $api->delete('services/{id}', ['uses' => $serviceController . '@delete']);
 
         //=Modification
-        $modificationController = 'WA\Http\Controllers\ModificationController';
+        $modificationController = 'WA\Http\Controllers\ModificationsController';
         $api->get('modifications', ['as' => 'api.modification.index', 'uses' => $modificationController . '@index']);
         $api->get('modifications/{id}', ['as' => 'api.modification.show', 'uses' => $modificationController . '@show']);
         $api->post('modifications', ['uses' => $modificationController . '@create']);
@@ -157,7 +169,7 @@ $api->version('v1', function ($api) {
         $api->delete('modifications/{id}', ['uses' => $modificationController . '@delete']);
 
         //=Carrier
-        $carrierController = 'WA\Http\Controllers\CarrierController';
+        $carrierController = 'WA\Http\Controllers\CarriersController';
         $api->get('carriers', ['as' => 'api.carrier.index', 'uses' => $carrierController . '@index']);
         $api->get('carriers/{id}', ['as' => 'api.carrier.show', 'uses' => $carrierController . '@show']);
         $api->post('carriers', ['uses' => $carrierController . '@create']);
@@ -165,20 +177,15 @@ $api->version('v1', function ($api) {
         $api->delete('carriers/{id}', ['uses' => $carrierController . '@delete']);
 
         //=Price
-        $priceController = 'WA\Http\Controllers\PriceController';
+        $priceController = 'WA\Http\Controllers\PricesController';
         $api->get('prices', ['as' => 'api.price.index', 'uses' => $priceController . '@index']);
         $api->get('prices/{id}', ['as' => 'api.price.show', 'uses' => $priceController . '@show']);
-        $api->get('prices/device/{id}', ['as' => 'api.price.show', 'uses' => $priceController . '@showDevice']);
-        $api->get('prices/capacity/{id}', ['as' => 'api.price.show', 'uses' => $priceController . '@showCapacity']);
-        $api->get('prices/style/{id}', ['as' => 'api.price.show', 'uses' => $priceController . '@showStyle']);
-        $api->get('prices/carrier/{id}', ['as' => 'api.price.show', 'uses' => $priceController . '@showCarrier']);
-        $api->get('prices/company/{id}', ['as' => 'api.price.show', 'uses' => $priceController . '@showCompany']);
         $api->post('prices', ['uses' => $priceController . '@create']);
         $api->put('prices/{id}', ['uses' => $priceController . '@store']);
         $api->delete('prices/{id}', ['uses' => $priceController . '@delete']);
 
         //=Image
-        $imageController = 'WA\Http\Controllers\ImageController';
+        $imageController = 'WA\Http\Controllers\ImagesController';
         $api->get('images', ['as' => 'api.image.index', 'uses' => $imageController . '@index']);
         $api->get('images/{id}', ['as' => 'api.image.show', 'uses' => $imageController . '@show']);
         $api->get('images/info/{id}', ['as' => 'api.image.info', 'uses' => $imageController . '@info']);
@@ -194,7 +201,7 @@ $api->version('v1', function ($api) {
         $api->delete('address/{id}', ['uses' => $addressController . '@delete']);
 
         //=DeviceType
-        $devicesTypeController = 'WA\Http\Controllers\DevicesTypeController';
+        $devicesTypeController = 'WA\Http\Controllers\DeviceTypesController';
         $api->get('devicetypes', ['as' => 'api.devicetype.index', 'uses' => $devicesTypeController . '@index']);
         $api->get('devicetypes/{id}', ['as' => 'api.devicetype.show', 'uses' => $devicesTypeController . '@show']);
         $api->post('devicetypes', ['uses' => $devicesTypeController . '@create']);
@@ -202,7 +209,7 @@ $api->version('v1', function ($api) {
         $api->delete('devicetypes/{id}', ['uses' => $devicesTypeController . '@delete']);
         
         //=CategoryDevices
-        $presetController = 'WA\Http\Controllers\PresetController';
+        $presetController = 'WA\Http\Controllers\PresetsController';
         $api->get('presets', ['as' => 'api.presets.index', 'uses' => $presetController . '@index']);
         $api->get('presets/{id}', ['as' => 'api.presets.show', 'uses' => $presetController . '@show']);
         $api->post('presets', ['uses' => $presetController . '@create']);

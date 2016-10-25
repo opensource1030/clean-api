@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Lang;
  *
  * @Resource("app", uri="/apps")
  */
-class AppController extends ApiController
+class AppsController extends ApiController
 {
     /**
      * @var AppInterface

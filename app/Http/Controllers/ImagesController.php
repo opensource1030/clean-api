@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Lang;
  *
  * @Resource("Image", uri="/image")
  */
-class ImageController extends ApiController
+class ImagesController extends ApiController
 {
     /**
      * @var ImageInterface

@@ -112,7 +112,7 @@ class Device extends MutableDataStore
      */
     public function packages()
     {
-        return $this->belongsToMany('WA\DataStore\Package\Package', 'package_devices', 'packageId', 'devicesId');
+        return $this->belongsToMany('WA\DataStore\Package\Package', 'package_devices', 'packageId', 'deviceId');
     }
 
     /**

@@ -23,7 +23,7 @@ class CreatePackageConditionsTable extends Migration
             function ($table) {
                 $table->increments('id');
                 $table->integer('packageId')->unsigned();
-                $table->integer('conditionsId')->unsigned();
+                $table->integer('conditionId')->unsigned();
 
                 $table->nullableTimestamps();
             }
@@ -33,7 +33,7 @@ class CreatePackageConditionsTable extends Migration
             $this->tableName, 
             function($table) {
                 $table->foreign('packageId')->references('id')->on('packages')->onDelete('cascade');
-                $table->foreign('conditionsId')->references('id')->on('conditions')->onDelete('cascade');
+                $table->foreign('conditionId')->references('id')->on('conditions')->onDelete('cascade');
             }
         );
     }

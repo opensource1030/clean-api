@@ -9,11 +9,15 @@ use League\Fractal\Resource\Collection as ResourceCollection;
 use WA\DataStore\App\AppTransformer;
 use WA\DataStore\Image\ImageTransformer;
 
+use WA\Helpers\Traits\Criteria;
+
 /**
  * Class CarrierTransformer.
  */
 class CategoryAppTransformer extends TransformerAbstract
 {
+    use Criteria;
+
     protected $availableIncludes = [
         'apps', 'images'
     ];
@@ -39,7 +43,8 @@ class CategoryAppTransformer extends TransformerAbstract
      */
     public function includeApps(CategoryApp $categoryApp)
     {
-        return new ResourceCollection($categoryApp->apps, new AppTransformer(),'apps');
+        $apps = $this->applyCriteria($categoryApp->apps(), $this->criteria);
+        return new ResourceCollection($apps->get(), new AppTransformer(), 'apps');
     }
 
     /**
@@ -49,6 +54,7 @@ class CategoryAppTransformer extends TransformerAbstract
      */
     public function includeImages(CategoryApp $categoryApp)
     {
-        return new ResourceCollection($categoryApp->images, new ImageTransformer(),'images');
+        $images = $this->applyCriteria($categoryApp->images(), $this->criteria);
+        return new ResourceCollection($images->get(), new ImageTransformer(), 'images');
     }
 }
