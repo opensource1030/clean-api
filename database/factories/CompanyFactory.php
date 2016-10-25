@@ -2,7 +2,7 @@
 
 $factory->define(WA\DataStore\Company\Company::class, function (\Faker\Generator $faker) {
 
-	$bill_months = ['2016-05-01', '2016-06-01', '2016-07-01', '2016-08-01'];
+    $bill_months = ['2016-05-01', '2016-06-01', '2016-07-01', '2016-08-01'];
 
     return [
         'name' => $company_name = $faker->company,
