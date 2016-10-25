@@ -108,89 +108,6 @@ abstract class ApiController extends BaseController
         return $response;
     }
 
-    public function includeRelationships($modelPlural, $id, $includePlural)
-    {
-        $criteria = $this->getRequestCriteria();
-        $plural = str_plural($modelPlural);
-
-        if ($plural == $modelPlural) {
-            $model = title_case(str_singular($modelPlural));    
-        } else {
-            // NOT EXISTS MODEL ( SINGULAR INPUT )
-            $error['errors'][$modelPlural] = Lang::get('messages.NotExistClass', ['class' => $modelPlural]);
-            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
-        }
-
-        try {
-            $class = "\\WA\\DataStore\\$model\\$model";
-            if (class_exists($class) && !($class::find($id) == null)) {
-                $results = $class::find($id)->{$includePlural}()->paginate(25);
-            } else {
-                // NOT EXISTS MODEL ( NOT IN DATASTORE )
-                $error['errors'][$modelPlural] = Lang::get('messages.NotExistClass', ['class' => $model]);
-                return response()->json($error)->setStatusCode($this->status_codes['notexists']);
-            }
-        } catch (\Exception $e) {
-            // NOT EXISTS INCLUDE ( NOT IN DATASTORE )
-            //$error['errors']['Message'] = $e->getMessage();
-            $error['errors'][$modelPlural] = Lang::get('messages.NotExistClass', ['class' => $includePlural]);
-            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
-        }
-
-        if ($results == null) {
-            // NOT EXISTS INCLUDE ( NO DATA )
-            $error['errors']['getIncludes'] = Lang::get('messages.NotExistInclude');
-            return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
-        }
-
-        $response = $this->response()->withPaginator($results, new RelationshipTransformer(), ['key' => $includePlural]);
-        $response = $this->applyMeta($response);
-        return $response;
-    }
-
-    public function includeInformationRelationships($modelPlural, $id, $includePlural)
-    {
-        $criteria = $this->getRequestCriteria();
-        $plural = str_plural($modelPlural);
-
-        if ($plural == $modelPlural) {
-            $model = title_case(str_singular($modelPlural));    
-        } else {
-            // NOT EXISTS MODEL ( SINGULAR INPUT )
-            $error['errors'][$modelPlural] = Lang::get('messages.NotExistClass', ['class' => $modelPlural]);
-            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
-        }
-
-        try {
-            $class = "\\WA\\DataStore\\$model\\$model";
-            if (class_exists($class)) {
-                $results = $class::find($id)->{$includePlural}()->paginate(25);
-            } else {
-                // NOT EXISTS MODEL ( NOT IN DATASTORE )
-                $error['errors'][$modelPlural] = Lang::get('messages.NotExistClass', ['class' => $model]);
-                return response()->json($error)->setStatusCode($this->status_codes['notexists']);
-            }
-        } catch (\Exception $e) {
-            // NOT EXISTS INCLUDE ( NOT IN DATASTORE )
-            //$error['errors']['Message'] = $e->getMessage();
-            $error['errors'][$modelPlural] = Lang::get('messages.NotExistClass', ['class' => $includePlural]);
-            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
-        }
-
-        if ($results == null) {
-            // NOT EXISTS INCLUDE ( NO DATA )
-            $error['errors']['getIncludes'] = Lang::get('messages.NotExistInclude');
-            return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
-        }
-
-        $includeTC = title_case(str_singular($includePlural)); 
-        $transformer = "\\WA\\DataStore\\$includeTC\\$includeTC"."Transformer";
-
-        $response = $this->response()->withPaginator($results, new $transformer,['key' => $includePlural]);
-        $response = $this->applyMeta($response);
-        return $response;
-    }
-
     /*
      *      Checks if a JSON param has "data", "type" and "attributes" keys and "type" is equal to $type.
      *
@@ -246,6 +163,14 @@ abstract class ApiController extends BaseController
         return $array;
     }
 
+    /*
+     *      Gets all the includes and verifies if they are in the includesAvailable variable.
+     *
+     *      @url: includesAreCorrect.
+                        clean.api/devices?include=assets,assets.users,assets.users.assets,assets.users.devices,assets.users.devices.assets,assets.users.devices.carriers,assets.users.devices.companies,assets.users.devices.modifications,assets.users.devices.images,assets.users.devices.prices,assets,assets.users,assets.users.contents,assets.users.allocations,assets.users.roles,assets.devices,assets.devices.assets,assets.devices.carriers,assets.devices.carriers,assets.devices.companies,assets.devices.modifications,assets.devices.images,assets.devices.prices,assets.carriers,assets.carriers.images,assets.companies,carriers,carriers.images,companies,modifications,images,prices,assets,assets.devices,assets.devices.assets,assets.devices.carriers,assets.devices.carriers,assets.devices.companies,assets.devices.modifications,assets.devices.images,assets.devices.prices,assets.carriers,assets.carriers.images,assets.companies,carriers,carriers.images,companies,modifications,images,prices,assets,assets.carriers,assets.carriers.images,assets.companies,carriers,carriers.images,companies,modifications,images,prices
+     *
+     *      @return: true o false.
+     */
     protected function includesAreCorrect($req, $class){
 
         // Look at if the include parameter exists
@@ -300,7 +225,3 @@ abstract class ApiController extends BaseController
         }
     }
 }
-
-/* TEST DEVICES includesAreCorrect.
-clean.api/devices?include=assets,assets.users,assets.users.assets,assets.users.devices,assets.users.devices.assets,assets.users.devices.carriers,assets.users.devices.companies,assets.users.devices.modifications,assets.users.devices.images,assets.users.devices.prices,assets,assets.users,assets.users.contents,assets.users.allocations,assets.users.roles,assets.devices,assets.devices.assets,assets.devices.carriers,assets.devices.carriers,assets.devices.companies,assets.devices.modifications,assets.devices.images,assets.devices.prices,assets.carriers,assets.carriers.images,assets.companies,carriers,carriers.images,companies,modifications,images,prices,assets,assets.devices,assets.devices.assets,assets.devices.carriers,assets.devices.carriers,assets.devices.companies,assets.devices.modifications,assets.devices.images,assets.devices.prices,assets.carriers,assets.carriers.images,assets.companies,carriers,carriers.images,companies,modifications,images,prices,assets,assets.carriers,assets.carriers.images,assets.companies,carriers,carriers.images,companies,modifications,images,prices
-*/

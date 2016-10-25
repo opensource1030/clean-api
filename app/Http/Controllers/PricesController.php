@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Lang;
  *
  * @Resource("Price", uri="/Price")
  */
-class PriceController extends ApiController
+class PricesController extends ApiController
 {
     /**
      * @var PriceInterface

@@ -6,7 +6,7 @@ use WA\DataStore\Category\CategoryApps;
 use WA\DataStore\App\App;
 use WA\DataStore\Image\Image;
 
-use WA\Http\Controllers\CategoryAppController;
+use WA\Http\Controllers\CategoryAppsController;
 
 class CategoryAppsApiTest extends TestCase
 {

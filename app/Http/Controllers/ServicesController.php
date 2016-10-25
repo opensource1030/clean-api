@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Lang;
  *
  * @Resource("Service", uri="/services")
  */
-class ServiceController extends ApiController
+class ServicesController extends ApiController
 {
     /**
      * @var ServiceInterface

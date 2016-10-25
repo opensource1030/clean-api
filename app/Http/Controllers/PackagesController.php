@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Lang;
  *
  * @Resource("Package", uri="/Package")
  */
-class PackageController extends ApiController
+class PackagesController extends ApiController
 {
     /**
      * @var PackageInterface

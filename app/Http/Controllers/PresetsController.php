@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Lang;
  *
  * @Resource("preset", uri="/preset")
  */
-class PresetController extends ApiController
+class PresetsController extends ApiController
 {
     /**
      * @var PresetInterface

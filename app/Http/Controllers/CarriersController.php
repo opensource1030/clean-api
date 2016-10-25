@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Lang;
  *
  * @Resource("carrier", uri="/carriers")
  */
-class CarrierController extends ApiController
+class CarriersController extends ApiController
 {
     /**
      * @var CarrierInterface

@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Lang;
  *
  * @Resource("DeviceType", uri="/DeviceType")
  */
-class DevicesTypeController extends ApiController
+class DeviceTypesController extends ApiController
 {
     /**
      * @var DeviceTypeInterface

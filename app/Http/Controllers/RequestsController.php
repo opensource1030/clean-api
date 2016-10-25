@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Lang;
  *
  * @Resource("Request", uri="/Request")
  */
-class RequestController extends ApiController
+class RequestsController extends ApiController
 {
     /**
      * @var RequestInterface

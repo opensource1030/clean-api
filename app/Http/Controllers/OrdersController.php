@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Lang;
  *
  * @Resource("Order", uri="/Order")
  */
-class OrderController extends ApiController
+class OrdersController extends ApiController
 {
     /**
      * @var OrderInterface

@@ -6,7 +6,7 @@ use WA\DataStore\Category\Preset;
 use WA\DataStore\Device\Device;
 use WA\DataStore\Image\Image;
 
-use WA\Http\Controllers\PresetController;
+use WA\Http\Controllers\PresetsController;
 
 class PresetsApiTest extends TestCase
 {

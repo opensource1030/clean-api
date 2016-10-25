@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Lang;
  *
  * @Resource("Modification", uri="/Modification")
  */
-class ModificationController extends ApiController
+class ModificationsController extends ApiController
 {
     /**
      * @var modificationInterface

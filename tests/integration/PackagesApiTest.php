@@ -7,7 +7,7 @@ use WA\DataStore\App\App;
 use WA\DataStore\Service\Service;
 use WA\DataStore\Condition\Condition;
 
-use WA\Http\Controllers\PackageController;
+use WA\Http\Controllers\PackagesController;
 
 class PackageApiTest extends TestCase
 {
