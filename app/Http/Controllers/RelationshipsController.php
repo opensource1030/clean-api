@@ -90,11 +90,12 @@ class RelationshipsController extends ApiController
             return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
         }
 
-        $includeTC = title_case(str_singular($includePlural)); 
+        $includeTC = title_case(str_singular($includePlural));
         $transformer = "\\WA\\DataStore\\$includeTC\\$includeTC"."Transformer";
 
-        $response = $this->response()->withPaginator($results, new $transformer,['key' => $includePlural]);
+        $response = $this->response()->withPaginator($results, new $transformer, ['key' => $includePlural]);
         $response = $this->applyMeta($response);
         return $response;
     }
+    
 }
