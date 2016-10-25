@@ -72,13 +72,9 @@ $factory->define(\WA\DataStore\Allocation\Allocation::class, function (\Faker\Ge
         //Last Upgrade
         'last_upgrade' => "N/A",
 
-        'userId' => function () {
-            return factory(\WA\DataStore\User\User::class)->create()->id;
-        },
+        'userId' => 1,
 
-        'companyId' => function () {
-            return factory(WA\DataStore\Company\Company::class)->create()->id;
-        },
+        'companyId' => 1,
 
     ];
 });
