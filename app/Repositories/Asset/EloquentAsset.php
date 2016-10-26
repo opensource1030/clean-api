@@ -20,7 +20,6 @@ class EloquentAsset extends AbstractRepository implements AssetInterface
      */
     protected $model;
 
-
     /**
      * @var \WA\Repositories\User\UserInterface
      */
@@ -52,7 +51,6 @@ class EloquentAsset extends AbstractRepository implements AssetInterface
         $this->jobStatus = $jobStatus;
         $this->user = $user;
         $this->carrier = $carrier;
-
     }
 
     /**
@@ -60,7 +58,7 @@ class EloquentAsset extends AbstractRepository implements AssetInterface
      *
      * @param string $identifier
      *
-     * @return Object object of asset information
+     * @return object object of asset information
      */
     public function byIdentification($identifier)
     {
@@ -101,7 +99,7 @@ class EloquentAsset extends AbstractRepository implements AssetInterface
      * @param $limit
      * @param $all
      *
-     * @return Object object of device information
+     * @return object object of device information
      */
     public function byDevice($device, $page = 1, $limit = 10, $all = true)
     {
@@ -119,7 +117,7 @@ class EloquentAsset extends AbstractRepository implements AssetInterface
      *
      * @param bool $all loads all by default, or returns a random unassigned one
      *
-     * @return Object object of unassigned devices
+     * @return object object of unassigned devices
      */
     public function byUnassigned($all = true)
     {
@@ -212,7 +210,7 @@ class EloquentAsset extends AbstractRepository implements AssetInterface
      * @param bool   $paginate
      * @param int    $perPage
      *
-     * @return Object of asset information
+     * @return object of asset information
      */
     public function bySearch($query, $paginate = true, $perPage = 25)
     {
@@ -283,7 +281,7 @@ class EloquentAsset extends AbstractRepository implements AssetInterface
     }
 
     /**
-     * Update the users attached to an asset based on changes made in EV
+     * Update the users attached to an asset based on changes made in EV.
      *
      * @param $old_value
      * @param $new_value
@@ -294,61 +292,50 @@ class EloquentAsset extends AbstractRepository implements AssetInterface
     public function updateAssetOwner($old_value, $new_value, $identification)
     {
         $asset = $this->byIdentification($identification);
-        if(!$asset)
-        {
+        if (!$asset) {
             return false;
         }
         $assetId = $asset['id'];
 
         $oldEmp = $this->user->byIdentification($old_value);
-        if(!empty($oldEmp))
-        {
+        if (!empty($oldEmp)) {
             $oldEmpId = $oldEmp['id'];
             $this->detachByUser($oldEmpId, $assetId);
-
         }
 
         $newEmp = $this->user->byIdentification($new_value);
-        if(!empty($newEmp))
-        {
+        if (!empty($newEmp)) {
             $newEmp->assets()->sync([$asset->id]);
         }
 
         return true;
     }
 
-
     /**
-     * Update the carrier Id based on changes made in EV
+     * Update the carrier Id based on changes made in EV.
      *
      * @param $identification
      * @param $newValue
+     *
      * @return bool
      */
     public function updateCarrierId($identification, $newValue)
     {
         $asset = $this->byIdentification($identification);
 
-        if(! $asset)
-        {
+        if (!$asset) {
             return false;
         }
-        $carrierId = !empty ($this->carrier->getIdByPresentation($newValue)) ? $this->carrier->getIdByPresentation($newValue) : null ;
-        if(isset($carrierId))
-        {
+        $carrierId = !empty($this->carrier->getIdByPresentation($newValue)) ? $this->carrier->getIdByPresentation($newValue) : null;
+        if (isset($carrierId)) {
             $asset['carrierId'] = $carrierId;
             try {
                 $asset->save();
             } catch (\PDOException $e) {
                 \Log::error('Could not update the asset'.$e->getMessage());
             }
-
         }
 
         return true;
-
     }
-
-
-
 }

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace WA\DataStore\Price;
 
 use WA\DataStore\MutableDataStore;
@@ -17,11 +16,13 @@ use WA\DataStore\MutableDataStore;
  * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\Asset\Asset[] $assets
  * @property int $deviceTypeId
  * @property-read \WA\DataStore\DeviceType $deviceType
+ *
  * @method static \Illuminate\Database\Query\Builder|\WA\DataStore\Device\Device whereId($value)
  * @method static \Illuminate\Database\Query\Builder|\WA\DataStore\Device\Device whereIdentification($value)
  * @method static \Illuminate\Database\Query\Builder|\WA\DataStore\Device\Device whereDeviceTypeId($value)
  * @method static \Illuminate\Database\Query\Builder|\WA\DataStore\Device\Device whereCreatedAt($value)
  * @method static \Illuminate\Database\Query\Builder|\WA\DataStore\Device\Device whereUpdatedAt($value)
+ *
  * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\Attribute[] $attributes
  * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\User\User[] $users
  * @property-read \WA\DataStore\Carrier\Carrier $carrier
@@ -45,7 +46,7 @@ class Price extends MutableDataStore
         'capacityId',
         'styleId',
         'carrierId',
-        'companyId'
+        'companyId',
     ];
 
     /**

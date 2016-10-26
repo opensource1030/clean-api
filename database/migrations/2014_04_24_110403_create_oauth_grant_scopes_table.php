@@ -10,7 +10,6 @@
  */
 
 use Illuminate\Database\Migrations\Migration;
-
 use Illuminate\Support\Facades\Schema;
 
 /**
@@ -22,12 +21,10 @@ class CreateOauthGrantScopesTable extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
-        Schema::create('oauth_grant_scopes', function ( $table) {
+        Schema::create('oauth_grant_scopes', function ($table) {
             $table->increments('id');
             $table->string('grant_id', 40);
             $table->string('scope_id', 40);
@@ -49,12 +46,10 @@ class CreateOauthGrantScopesTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
     public function down()
     {
-        Schema::table('oauth_grant_scopes', function ( $table) {
+        Schema::table('oauth_grant_scopes', function ($table) {
             $table->dropForeign('oauth_grant_scopes_grant_id_foreign');
             $table->dropForeign('oauth_grant_scopes_scope_id_foreign');
         });

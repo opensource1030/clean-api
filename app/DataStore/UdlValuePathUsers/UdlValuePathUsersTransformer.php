@@ -19,7 +19,7 @@ class UdlValuePathUsersTransformer extends TransformerAbstract
         return [
             'id' => $udlValuePathUsers->id,
             'creatorId' => $udlValuePathUsers->creatorId,
-            'userEmail'=> $udlValuePathUsers->userEmail,
+            'userEmail' => $udlValuePathUsers->userEmail,
             'userFirstName' => $udlValuePathUsers->userFirstName,
             'userLastName' => $udlValuePathUsers->userLastName,
             'udlValuePathId' => $udlValuePathUsers->udlValuePathId,

@@ -5,23 +5,22 @@ namespace WA\Repositories\Service;
 use WA\Repositories\RepositoryInterface;
 
 /**
- * Interface ServiceInterface
- *
- * @package WA\Repositories\Service
+ * Interface ServiceInterface.
  */
 interface ServiceInterface extends RepositoryInterface
 {
     /**
      * Get Array of all Services.
      *
-     * @return Array of Service
+     * @return array of Service
      */
     public function getAllService();
 
     /**
-     * Create Service
+     * Create Service.
      *
      * @param array $data
+     *
      * @return bool|static
      */
     public function create(array $data);
@@ -44,5 +43,4 @@ interface ServiceInterface extends RepositoryInterface
      * @return bool
      */
     public function delete($id, $soft = true);
-
 }

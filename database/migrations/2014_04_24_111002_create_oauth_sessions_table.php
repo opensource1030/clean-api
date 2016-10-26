@@ -10,7 +10,6 @@
  */
 
 use Illuminate\Database\Migrations\Migration;
-
 use Illuminate\Support\Facades\Schema;
 
 /**
@@ -22,12 +21,10 @@ class CreateOauthSessionsTable extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
-        Schema::create('oauth_sessions', function ( $table) {
+        Schema::create('oauth_sessions', function ($table) {
             $table->increments('id');
             $table->string('client_id', 40);
             $table->enum('owner_type', ['client', 'user'])->default('user');
@@ -46,12 +43,10 @@ class CreateOauthSessionsTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
     public function down()
     {
-        Schema::table('oauth_sessions', function ( $table) {
+        Schema::table('oauth_sessions', function ($table) {
             $table->dropForeign('oauth_sessions_client_id_foreign');
         });
         Schema::drop('oauth_sessions');

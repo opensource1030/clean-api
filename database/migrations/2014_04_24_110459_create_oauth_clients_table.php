@@ -10,7 +10,6 @@
  */
 
 use Illuminate\Database\Migrations\Migration;
-
 use Illuminate\Support\Facades\Schema;
 
 /**
@@ -22,12 +21,10 @@ class CreateOauthClientsTable extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
-        Schema::create('oauth_clients', function ( $table) {
+        Schema::create('oauth_clients', function ($table) {
             $table->string('id', 40)->primary();
             $table->string('secret', 40);
             $table->string('name');
@@ -39,8 +36,6 @@ class CreateOauthClientsTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
     public function down()
     {

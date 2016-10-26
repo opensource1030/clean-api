@@ -8,17 +8,15 @@ class CreateApps extends Migration
     use \WA\Database\Command\TablesRelationsAndIndexes;
 
     protected $tableName = 'apps';
-    
+
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
         Schema::create(
             $this->tableName,
-            function ( $table) {
+            function ($table) {
                 $table->increments('id');
                 $table->string('type');
                 $table->string('image');
@@ -31,8 +29,6 @@ class CreateApps extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
     public function down()
     {

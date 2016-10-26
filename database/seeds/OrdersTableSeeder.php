@@ -2,18 +2,15 @@
 
 /**
  * OrdersTableSeeder - Insert info into database.
- *  
+ *
  * @author   Agustí Dosaiguas
  */
-
 class OrdersTableSeeder extends BaseTableSeeder
 {
-    protected $table = "orders";
+    protected $table = 'orders';
 
     /**
      * Run the database seeds.
-     *
-     * @return void
      */
     public function run()
     {
@@ -22,32 +19,32 @@ class OrdersTableSeeder extends BaseTableSeeder
         $data = [
 
             [
-                'status'        => "Denied",
-                'userId'        => 1,
-                'packageId'     => 1,
-                'deviceId'      => 1,
-                'serviceId'     => 1,
+                'status' => 'Denied',
+                'userId' => 1,
+                'packageId' => 1,
+                'deviceId' => 1,
+                'serviceId' => 1,
             ],
             [
-                'status'        => "Accepted",
-                'userId'        => 2,
-                'packageId'     => 2,
-                'deviceId'      => 2,
-                'serviceId'     => 2,
+                'status' => 'Accepted',
+                'userId' => 2,
+                'packageId' => 2,
+                'deviceId' => 2,
+                'serviceId' => 2,
             ],
             [
-                'status'        => "Pending",
-                'userId'        => 3,
-                'packageId'     => 3,
-                'deviceId'      => 3,
-                'serviceId'     => 3,
+                'status' => 'Pending',
+                'userId' => 3,
+                'packageId' => 3,
+                'deviceId' => 3,
+                'serviceId' => 3,
             ],
             [
-                'status'        => "Accepted",
-                'userId'        => 4,
-                'packageId'     => 4,
-                'deviceId'      => 4,
-                'serviceId'     => 4,
+                'status' => 'Accepted',
+                'userId' => 4,
+                'packageId' => 4,
+                'deviceId' => 4,
+                'serviceId' => 4,
             ],
         ];
 

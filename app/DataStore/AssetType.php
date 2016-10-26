@@ -1,6 +1,5 @@
 <?php
 
-
 namespace WA\DataStore;
 
 /**
@@ -11,11 +10,13 @@ namespace WA\DataStore;
  * @property string $description
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
+ *
  * @method static \Illuminate\Database\Query\Builder|\WA\DataStore\AssetType whereId($value)
  * @method static \Illuminate\Database\Query\Builder|\WA\DataStore\AssetType whereName($value)
  * @method static \Illuminate\Database\Query\Builder|\WA\DataStore\AssetType whereDescription($value)
  * @method static \Illuminate\Database\Query\Builder|\WA\DataStore\AssetType whereCreatedAt($value)
  * @method static \Illuminate\Database\Query\Builder|\WA\DataStore\AssetType whereUpdatedAt($value)
+ *
  * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\Asset\Asset[] $assets
  * @mixin \Eloquent
  */

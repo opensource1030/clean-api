@@ -1,10 +1,7 @@
 <?php
 
-
 namespace WA\Services\Form\Company;
 
-use Excel;
-use Log;
 use Schema;
 use DB;
 use WA\DataLoader\DataParserInterface;
@@ -61,7 +58,7 @@ class CensusForm extends AbstractForm
      */
     public function hasMapping($companyId)
     {
-        $censusMapping = (bool)$this->company->getDataHeader($companyId, 'census');
+        $censusMapping = (bool) $this->company->getDataHeader($companyId, 'census');
 
         if (!$censusMapping) {
             $this->notify('error', 'No census data mapping. Create one now');
@@ -71,11 +68,11 @@ class CensusForm extends AbstractForm
     }
 
     /**
-     * Create a new census
+     * Create a new census.
      *
-     * @param                    array $input
-     * @param CensusInterface          $census | null
-     * @param JobStatusInterface       $status | null
+     * @param array              $input
+     * @param CensusInterface    $census | null
+     * @param JobStatusInterface $status | null
      *
      * @return int of the census if it's successful
      */
@@ -94,15 +91,15 @@ class CensusForm extends AbstractForm
             'companyId' => $input['companyId'],
             'statusId' => $statusId,
             'rawFileLineCount' => $file_count,
-            'file' => $input['file']
+            'file' => $input['file'],
         ]);
 
-        return (int)$newCensus['id'];
+        return (int) $newCensus['id'];
     }
 
     /**
      * Save the new file to the database
-     * via various updates
+     * via various updates.
      *
      * @param array $input
      *
@@ -115,14 +112,14 @@ class CensusForm extends AbstractForm
         $file = isset($input['file']) ? $input['file'] : null;
 
         if (is_null($file) || is_null($mapping)) {
-            $error_msg = "No file or mapping not found, cannot continue";
+            $error_msg = 'No file or mapping not found, cannot continue';
             $this->notify('error', $error_msg);
 
             return false;
         }
 
         if (!$this->census->setUp($file, $version_id)) {
-            $error_msg = "Could not doing all the prepping to load the file, try later";
+            $error_msg = 'Could not doing all the prepping to load the file, try later';
             $this->notify('error', $error_msg);
 
             return false;
@@ -132,10 +129,10 @@ class CensusForm extends AbstractForm
     }
 
     /**
-     * @param            int   $companyId
+     * @param int              $companyId
      * @param DataMapForm|null $dataMap
      *
-     * @return Object
+     * @return object
      */
     public function getMapping($companyId, DataMapForm $dataMap = null)
     {
@@ -144,7 +141,6 @@ class CensusForm extends AbstractForm
         return $dataMap->getMappingById($companyId);
     }
 
-
     /**
      * Load the needed file, based on this parser.
      *
@@ -152,7 +148,7 @@ class CensusForm extends AbstractForm
      * @param array $columns
      * @param int   $take
      *
-     * @return Object of loaded file
+     * @return object of loaded file
      */
     protected function loadFile($filePath, array $columns, $take = 0)
     {
@@ -171,7 +167,7 @@ class CensusForm extends AbstractForm
             return $read->get($columns);
         }
 
-        return (!(bool)$take) ? $read->all() : $read->take($take);
+        return (!(bool) $take) ? $read->all() : $read->take($take);
     }
 
     public function getDepartmentPathId($companyId)
@@ -181,7 +177,7 @@ class CensusForm extends AbstractForm
     }
 
     /**
-     * Get a single census
+     * Get a single census.
      *
      * @param int             $id
      * @param CensusInterface $census
@@ -193,9 +189,8 @@ class CensusForm extends AbstractForm
         return $census->byId($id);
     }
 
-
     /**
-     * Get the rules that will be run
+     * Get the rules that will be run.
      *
      * @param $companyId
      *
@@ -207,7 +202,7 @@ class CensusForm extends AbstractForm
     }
 
     /**
-     * Run all the census process, based on defined rules
+     * Run all the census process, based on defined rules.
      *
      * @param $companyId
      * @param $censusId
@@ -220,11 +215,11 @@ class CensusForm extends AbstractForm
     }
 
     /**
-     * Get the summary of the job tha will be done before it's processed
+     * Get the summary of the job tha will be done before it's processed.
      *
-     * @param                      int $companyId
-     * @param                      int $censusId
-     * @param CensusInterface|null     $census
+     * @param int                  $companyId
+     * @param int                  $censusId
+     * @param CensusInterface|null $census
      *
      * @return array of summaries
      */
@@ -241,14 +236,11 @@ class CensusForm extends AbstractForm
         // Get a summaries of any errors that might be in the files
         $summaries['preProcess'] = ['employeesCount' => $this->company->getUsersCount($companyId)];
 
-
         return $summaries;
-
     }
 
-
     /**
-     * Get the table name used to save the CSV
+     * Get the table name used to save the CSV.
      *
      * @param $companyId
      *
@@ -265,7 +257,6 @@ class CensusForm extends AbstractForm
         return $table;
     }
 
-
     /**
      * @param $companyId
      *
@@ -275,7 +266,6 @@ class CensusForm extends AbstractForm
     {
         return $this->company->byId($companyId)->name;
     }
-
 
     /**
      * @param $id

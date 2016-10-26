@@ -7,16 +7,16 @@ class AddressApiTest extends TestCase
     use DatabaseMigrations;
 
     /**
-     * A basic functional test for Address
+     * A basic functional test for Address.
      */
-    public function testGetAddress() {       
-        
+    public function testGetAddress()
+    {
         factory(\WA\DataStore\Address\Address::class, 40)->create();
 
         $this->json('GET', 'address')
             ->seeJsonStructure([
                 'data' => [
-                    0 => [  
+                    0 => [
                         'type',
                         'id',
                         'attributes' => [
@@ -28,18 +28,18 @@ class AddressApiTest extends TestCase
                             'created_at' => [
                                 'date',
                                 'timezone_type',
-                                'timezone'
+                                'timezone',
                             ],
                             'updated_at' => [
                                 'date',
                                 'timezone_type',
-                                'timezone'
-                            ]
+                                'timezone',
+                            ],
                         ],
                         'links' => [
-                            'self'
-                        ]
-                    ]
+                            'self',
+                        ],
+                    ],
                 ],
                 'meta' => [
                     'pagination' => [
@@ -47,17 +47,17 @@ class AddressApiTest extends TestCase
                         'count',
                         'per_page',
                         'current_page',
-                        'total_pages'
-                    ]
+                        'total_pages',
+                    ],
                 ],
                 'links' => [
-                    'self'
-                ]
+                    'self',
+                ],
             ]);
     }
 
-    public function testGetAddressById() {
-
+    public function testGetAddressById()
+    {
         $address = factory(\WA\DataStore\Address\Address::class)->create();
 
         $res = $this->json('GET', 'address/'.$address->id)
@@ -67,37 +67,37 @@ class AddressApiTest extends TestCase
                 'city' => $address->city,
                 'state' => $address->state,
                 'country' => $address->country,
-                'postalCode' => "$address->postalCode"
+                'postalCode' => "$address->postalCode",
             ]);
     }
 
-    public function testCreateAddress() {
-
+    public function testCreateAddress()
+    {
         $this->json('POST', 'address',
             [
                 'data' => [
                     'type' => 'address',
                     'attributes' => [
                         'address' => 'addressAddress',
-                        'city'=> 'addressCity',
-                        'state'=> 'addressState',
-                        'country'=> 'addressCountry',
-                        'postalCode'=> 'addressPostalCode',
-                    ]
-                ]
+                        'city' => 'addressCity',
+                        'state' => 'addressState',
+                        'country' => 'addressCountry',
+                        'postalCode' => 'addressPostalCode',
+                    ],
+                ],
             ])
             ->seeJson([
                 'type' => 'address',
                 'address' => 'addressAddress',
-                'city'=> 'addressCity',
-                'state'=> 'addressState',
-                'country'=> 'addressCountry',
-                'postalCode'=> 'addressPostalCode'
+                'city' => 'addressCity',
+                'state' => 'addressState',
+                'country' => 'addressCountry',
+                'postalCode' => 'addressPostalCode',
             ]);
     }
 
-    public function testUpdateAddress() {
-
+    public function testUpdateAddress()
+    {
         $address1 = factory(\WA\DataStore\Address\Address::class)->create();
         $address2 = factory(\WA\DataStore\Address\Address::class)->create();
 
@@ -107,7 +107,7 @@ class AddressApiTest extends TestCase
         $this->assertNotEquals($address1->state, $address2->state);
         $this->assertNotEquals($address1->country, $address2->country);
         $this->assertNotEquals($address1->postalCode, $address2->postalCode);
-        
+
         $this->json('GET', 'address/'.$address1->id)
             ->seeJson([
                 'type' => 'address',
@@ -115,44 +115,44 @@ class AddressApiTest extends TestCase
                 'city' => $address1->city,
                 'state' => $address1->state,
                 'country' => $address1->country,
-                'postalCode' => "$address1->postalCode"
+                'postalCode' => "$address1->postalCode",
             ]);
 
-        $this->json('PUT', 'address/'.$address1->id, 
+        $this->json('PUT', 'address/'.$address1->id,
             [
                 'data' => [
                     'type' => 'address',
                     'attributes' => [
                         'address' => $address2->address,
-                        'city'=> $address2->city,
-                        'state'=> $address2->state,
-                        'country'=> $address2->country,
-                        'postalCode'=> $address2->postalCode,
-                    ]
-                ]
+                        'city' => $address2->city,
+                        'state' => $address2->state,
+                        'country' => $address2->country,
+                        'postalCode' => $address2->postalCode,
+                    ],
+                ],
             ])
             ->seeJson([
                 //'type' => 'address',
                 'id' => $address1->id,
                 'address' => $address2->address,
-                'city'=> $address2->city,
-                'state'=> $address2->state,
-                'country'=> $address2->country,
-                'postalCode'=> $address2->postalCode,
+                'city' => $address2->city,
+                'state' => $address2->state,
+                'country' => $address2->country,
+                'postalCode' => $address2->postalCode,
             ]);
     }
 
-    public function testDeleteAddressIfExists() {
-
+    public function testDeleteAddressIfExists()
+    {
         $address = factory(\WA\DataStore\Address\Address::class)->create();
         $responseDel = $this->call('DELETE', 'address/'.$address->id);
         $this->assertEquals(200, $responseDel->status());
         $responseGet = $this->call('GET', 'address/'.$address->id);
-        $this->assertEquals(404, $responseGet->status());        
+        $this->assertEquals(404, $responseGet->status());
     }
 
-    public function testDeleteAddressIfNoExists() {
-
+    public function testDeleteAddressIfNoExists()
+    {
         $responseDel = $this->call('DELETE', 'address/1');
         $this->assertEquals(404, $responseDel->status());
     }

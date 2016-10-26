@@ -7,13 +7,10 @@ class CreateSystemRulesTable extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
-        Schema::create('system_rules', function ( $table) {
-
+        Schema::create('system_rules', function ($table) {
             $table->increments('id');
             $table->string('name');
             $table->string('type');
@@ -24,8 +21,6 @@ class CreateSystemRulesTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
     public function down()
     {

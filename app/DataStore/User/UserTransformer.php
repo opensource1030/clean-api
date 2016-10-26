@@ -26,7 +26,7 @@ class UserTransformer extends TransformerAbstract
         'companies',
         'roles',
         'allocations',
-        'contents'
+        'contents',
     ];
 
     /**
@@ -37,13 +37,13 @@ class UserTransformer extends TransformerAbstract
     public function transform(User $user)
     {
         return [
-            'id'               => $user->id,
-            'identification'   => $user->identification,
-            'email'            => $user->email,
-            'username'         => $user->username,
+            'id' => $user->id,
+            'identification' => $user->identification,
+            'email' => $user->email,
+            'username' => $user->username,
             'supervisor_email' => $user->supervisorEmail,
-            'first_name'       => $user->firstName,
-            'last_name'        => $user->lastName,
+            'first_name' => $user->firstName,
+            'last_name' => $user->lastName,
         ];
     }
 
@@ -56,7 +56,6 @@ class UserTransformer extends TransformerAbstract
     {
         return new ResourceCollection($user->assets, new AssetTransformer(), 'assets');
     }
-
 
     /**
      * @param User $user
@@ -100,7 +99,7 @@ class UserTransformer extends TransformerAbstract
         $allocations = $this->applyCriteria($user->allocations(), $this->criteria);
         $filters = $this->criteria['filters']->get();
 
-        if (in_array("[allocations.billMonth]=[company.currentBillMonth]", $filters)) {
+        if (in_array('[allocations.billMonth]=[company.currentBillMonth]', $filters)) {
             $allocations->where('billMonth', $user->companies->currentBillMonth);
         }
 

@@ -4,40 +4,35 @@ use Laravel\Lumen\Testing\DatabaseMigrations;
 
 class ContentsApiTest extends TestCase
 {
-    use DatabaseMigrations;     
+    use DatabaseMigrations;
 
-    /**
-     * A basic functional test for contents
-     *
-     *
-     */
-
+ /**
+  * A basic functional test for contents.
+  */
  public function testGetContents()
-   {
-       $contents = factory(\WA\DataStore\Content\Content::class)->create();
-       
-       $this->get('/contents')
+ {
+     $contents = factory(\WA\DataStore\Content\Content::class)->create();
+
+     $this->get('/contents')
            ->seeJsonStructure([
                'data' => [
-                   0 => [ 'type','id',
+                   0 => ['type', 'id',
                        'attributes' => [
-                           'content', 'active', 'owner_type', 'owner_id'
+                           'content', 'active', 'owner_type', 'owner_id',
                        ],
-                       'links'
-                   ]
+                       'links',
+                   ],
 
-               ]
+               ],
 
            ]);
-   }
+ }
 
- public function testGetContentById()
+    public function testGetContentById()
     {
-
         $contents = factory(\WA\DataStore\Content\Content::class)->create();
-             
 
-        $this->get('/contents/'. $contents->id)
+        $this->get('/contents/'.$contents->id)
             ->seeJson([
                 'type' => 'contents',
                 'content' => $contents->content,
@@ -47,7 +42,6 @@ class ContentsApiTest extends TestCase
 
             ]);
     }
-
 
     public function testCreateContents()
     {
@@ -84,7 +78,6 @@ class ContentsApiTest extends TestCase
                 'owner_type' => $contents->owner_type,
                 'owner_id' => $contents->owner_id,
             ]);
-
     }
 
     public function testDeleteContents()
@@ -94,8 +87,5 @@ class ContentsApiTest extends TestCase
         //$response = $this->call('GET', '/contents/'.$contents->id);
         $response = $this->call('DELETE', '/contents/'.$contents->id);
         $this->assertEquals(204, $response->status());
-
     }
-
-
 }

@@ -7,25 +7,25 @@ use WA\Repositories\AbstractRepository;
 class EloquentPreset extends AbstractRepository implements PresetInterface
 {
     /**
-     * Update preset
+     * Update preset.
      *
      * @param array $data
+     *
      * @return bool
      */
     public function update(array $data)
     {
         $preset = $this->model->find($data['id']);
 
-        if(!$preset)
-        {
+        if (!$preset) {
             return 'notExist';
         }
 
-        if(isset($data['name'])){
-            $preset->name =  $data['name'];            
+        if (isset($data['name'])) {
+            $preset->name = $data['name'];
         }
 
-        if(!$preset->save()) {
+        if (!$preset->save()) {
             return 'notSaved';
         }
 
@@ -35,29 +35,31 @@ class EloquentPreset extends AbstractRepository implements PresetInterface
     /**
      * Get an array of all the available preset.
      *
-     * @return Array of preset
+     * @return array of preset
      */
     public function getAllPresets()
     {
-        $preset =  $this->model->all();
+        $preset = $this->model->all();
+
         return $preset;
     }
 
     /**
-     * Create a new preset
+     * Create a new preset.
      *
      * @param array $data
+     *
      * @return bool|static
      */
     public function create(array $data)
     {
         $presetData = [
-            "name" =>  isset($data['name']) ? $data['name'] : null,
+            'name' => isset($data['name']) ? $data['name'] : null,
         ];
 
         $preset = $this->model->create($presetData);
 
-        if(!$preset) {
+        if (!$preset) {
             return false;
         }
 

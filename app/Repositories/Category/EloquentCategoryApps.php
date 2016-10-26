@@ -7,25 +7,25 @@ use WA\Repositories\AbstractRepository;
 class EloquentCategoryApps extends AbstractRepository implements CategoryAppsInterface
 {
     /**
-     * Update category
+     * Update category.
      *
      * @param array $data
+     *
      * @return bool
      */
     public function update(array $data)
     {
         $category = $this->model->find($data['id']);
 
-        if(!$category)
-        {
+        if (!$category) {
             return 'notExist';
         }
 
-        if(isset($data['name'])){
-            $category->name =  $data['name'];            
+        if (isset($data['name'])) {
+            $category->name = $data['name'];
         }
 
-        if(!$category->save()) {
+        if (!$category->save()) {
             return 'notSaved';
         }
 
@@ -35,29 +35,31 @@ class EloquentCategoryApps extends AbstractRepository implements CategoryAppsInt
     /**
      * Get an array of all the available category.
      *
-     * @return Array of category
+     * @return array of category
      */
     public function getAllCategories()
     {
-        $category =  $this->model->all();
+        $category = $this->model->all();
+
         return $category;
     }
 
     /**
-     * Create a new category
+     * Create a new category.
      *
      * @param array $data
+     *
      * @return bool|static
      */
     public function create(array $data)
     {
         $categoryData = [
-            "name" =>  isset($data['name']) ? $data['name'] : null,
+            'name' => isset($data['name']) ? $data['name'] : null,
         ];
 
         $category = $this->model->create($categoryData);
 
-        if(!$category) {
+        if (!$category) {
             return false;
         }
 

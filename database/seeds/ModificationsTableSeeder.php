@@ -2,18 +2,15 @@
 
 /**
  * capacitiesTableSeeder - Insert info into database.
- *  
+ *
  * @author   Agustí Dosaiguas
  */
-
 class ModificationsTableSeeder extends BaseTableSeeder
 {
-    protected $table = "modifications";
+    protected $table = 'modifications';
 
     /**
      * Run the database seeds.
-     *
-     * @return void
      */
     public function run()
     {
@@ -22,29 +19,29 @@ class ModificationsTableSeeder extends BaseTableSeeder
         $data = [
 
             [
-                'modType'     => 'capacity',
-                'value'      => '16Gb'
+                'modType' => 'capacity',
+                'value' => '16Gb',
             ],
             [
-                'modType'     => 'style',
-                'value'      => 'White'
+                'modType' => 'style',
+                'value' => 'White',
             ],
             [
-                'modType'     => 'capacity',
-                'value'      => '8Gb'
+                'modType' => 'capacity',
+                'value' => '8Gb',
             ],
             [
-                'modType'     => 'capacity',
-                'value'      => '128Gb'
+                'modType' => 'capacity',
+                'value' => '128Gb',
             ],
             [
-                'modType'     => 'style',
-                'value'      => 'Gold'
+                'modType' => 'style',
+                'value' => 'Gold',
             ],
             [
-                'modType'     => 'style',
-                'value'      => 'Space Grey'
-            ]
+                'modType' => 'style',
+                'value' => 'Space Grey',
+            ],
         ];
 
         $this->loadTable($data);

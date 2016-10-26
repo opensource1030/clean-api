@@ -3,16 +3,13 @@
 namespace WA\DataStore\Image;
 
 use WA\DataStore\BaseDataStore;
-use WA\DataStore\Image\ImageTransformer;
 
 /**
- * Class Image
- *
- * @package WA\DataStore\Image
+ * Class Image.
  */
 class Image extends BaseDataStore
 {
-    protected  $table = 'images';
+    protected $table = 'images';
 
     protected $fillable = [
                 'originalName',
@@ -21,10 +18,10 @@ class Image extends BaseDataStore
                 'extension',
                 'size',
                 'url',
-                'update_at'];
+                'update_at', ];
 
     /**
-     * Get all the owners for the Image
+     * Get all the owners for the Image.
      *
      * @return \Illuminate\Database\Eloquent\Relations\MorphTo
      */
@@ -34,7 +31,7 @@ class Image extends BaseDataStore
     }
 
     /**
-     * Get the transformer instance
+     * Get the transformer instance.
      *
      * @return ImageTransformer
      */

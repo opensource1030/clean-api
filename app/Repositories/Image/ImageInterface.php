@@ -5,23 +5,22 @@ namespace WA\Repositories\Image;
 use WA\Repositories\RepositoryInterface;
 
 /**
- * Interface ImageInterface
- *
- * @package WA\Repositories\Image
+ * Interface ImageInterface.
  */
 interface ImageInterface extends RepositoryInterface
 {
     /**
      * Get Array of all Images.
      *
-     * @return Array of Image
+     * @return array of Image
      */
     public function getAllImage();
 
     /**
-     * Create Image
+     * Create Image.
      *
      * @param array $data
+     *
      * @return bool|static
      */
     public function create(array $data);
@@ -44,5 +43,4 @@ interface ImageInterface extends RepositoryInterface
      * @return bool
      */
     public function delete($id, $soft = true);
-
 }

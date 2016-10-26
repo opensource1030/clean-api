@@ -5,11 +5,9 @@ namespace WA\Auth;
 interface CDIAuthInterface
 {
     /**
-     * Check if the logged in user can access CDI related functions
+     * Check if the logged in user can access CDI related functions.
      *
-     * @return boolean
+     * @return bool
      */
     public function getCDIAuthorization();
 }
-
-

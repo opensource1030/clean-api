@@ -1,6 +1,5 @@
 <?php
 
-
 namespace WA\DataStore;
 
 use WA\DataStore\Traits\BelongsToCarrier;
@@ -20,6 +19,7 @@ use WA\DataStore\Traits\BelongsToJobStatus;
  * @property string $deviceOS
  * @property string $description
  * @property-read \WA\DataStore\Carrier\Carrier $carriers
+ *
  * @method static \Illuminate\Database\Query\Builder|\WA\DataStore\CarrierDevice whereId($value)
  * @method static \Illuminate\Database\Query\Builder|\WA\DataStore\CarrierDevice whereCarrierId($value)
  * @method static \Illuminate\Database\Query\Builder|\WA\DataStore\CarrierDevice whereMake($value)
@@ -29,11 +29,13 @@ use WA\DataStore\Traits\BelongsToJobStatus;
  * @method static \Illuminate\Database\Query\Builder|\WA\DataStore\CarrierDevice whereClass($value)
  * @method static \Illuminate\Database\Query\Builder|\WA\DataStore\CarrierDevice whereDeviceOS($value)
  * @method static \Illuminate\Database\Query\Builder|\WA\DataStore\CarrierDevice whereDescription($value)
+ *
  * @property int $statusId
  * @property int $deviceTypeId
  * @property-read \WA\DataStore\DeviceType $deviceType
  * @property-read \WA\DataStore\JobStatus $jobstatus
  * @property-read \WA\DataStore\Carrier\Carrier $carrier
+ *
  * @method static \Illuminate\Database\Query\Builder|\WA\DataStore\CarrierDevice whereJobStatusId($value)
  * @method static \Illuminate\Database\Query\Builder|\WA\DataStore\CarrierDevice whereDeviceTypeId($value)
  * @mixin \Eloquent
@@ -43,24 +45,15 @@ class CarrierDevice extends MutableDataStore
     public $timestamps = false;
     protected $table = 'carrier_devices';
     protected $fillable = [
-        'carrierId'
-        ,
-        'make'
-        ,
-        'model'
-        ,
-        'makeModel'
-        ,
-        'WA_alias'
-        ,
-        'class'
-        ,
-        'deviceOS'
-        ,
-        'description'
-        ,
-        'deviceTypeId'
-        ,
+        'carrierId',
+        'make',
+        'model',
+        'makeModel',
+        'WA_alias',
+        'class',
+        'deviceOS',
+        'description',
+        'deviceTypeId',
         'statusId',
     ];
 

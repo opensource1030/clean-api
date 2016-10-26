@@ -4,16 +4,15 @@ namespace WA\Repositories\User;
 
 use WA\Repositories\RepositoryInterface;
 
-
 interface UserInterface extends RepositoryInterface
 {
     /**
      * Create a new User.
      *
-     * @param array        $data
-     * @param array        $udlValues
+     * @param array $data
+     * @param array $udlValues
      *
-     * @return Object object of the employee | false
+     * @return object object of the employee | false
      */
     public function create(
         array $data,
@@ -35,7 +34,7 @@ interface UserInterface extends RepositoryInterface
      *
      * @param string $email
      *
-     * @return Object of employee information
+     * @return object of employee information
      */
     public function bySupervisorEmail($email);
 
@@ -44,7 +43,7 @@ interface UserInterface extends RepositoryInterface
      *
      * @param string $email of employee
      *
-     * @return Object of employee information
+     * @return object of employee information
      */
     public function getSupervisor($email = null);
 
@@ -54,7 +53,7 @@ interface UserInterface extends RepositoryInterface
      * @param string $companyName
      * @param string $department
      *
-     * @return Object object of validator
+     * @return object object of validator
      */
     public function getValidators($companyName = null, $department = null);
 
@@ -68,7 +67,7 @@ interface UserInterface extends RepositoryInterface
     public function byLastName($lastName);
 
     /**
-     * Get an employee by their company identifier
+     * Get an employee by their company identifier.
      *
      * @param int $companyIdentifier
      *
@@ -77,7 +76,7 @@ interface UserInterface extends RepositoryInterface
     public function byCompanyIdentifier($companyIdentifier);
 
     /**
-     * Get users by their company  id
+     * Get users by their company  id.
      *
      * @param int $companyId
      *
@@ -85,9 +84,8 @@ interface UserInterface extends RepositoryInterface
      */
     public function byCompanyId($companyId);
 
-
     /**
-     * Get users by their identification (generated CLEAN ID)
+     * Get users by their identification (generated CLEAN ID).
      *
      * @param string $identification
      *
@@ -138,7 +136,7 @@ interface UserInterface extends RepositoryInterface
      *
      * @param string $userEmail
      *
-     * @return Object of employee information
+     * @return object of employee information
      */
     public function byEmail($userEmail);
 
@@ -147,14 +145,14 @@ interface UserInterface extends RepositoryInterface
      *
      * @param string $token
      *
-     * @return Object of employee information
+     * @return object of employee information
      */
     public function byToken($token);
 
     /**
      * Get the transformer used by this model.
      *
-     * @return Object
+     * @return object
      */
     public function getTransformer();
 
@@ -163,13 +161,12 @@ interface UserInterface extends RepositoryInterface
      *
      * @param $name
      *
-     * @return Object of employee
+     * @return object of employee
      */
     public function byUsernameOrEmail($name);
 
-
     /**
-     * Get an employee by company ID Or Email
+     * Get an employee by company ID Or Email.
      *
      * @param array $data
      *
@@ -189,7 +186,7 @@ interface UserInterface extends RepositoryInterface
      *
      * @param $userId
      *
-     * @return Object
+     * @return object
      */
     public function getUdls($userId);
 
@@ -210,22 +207,21 @@ interface UserInterface extends RepositoryInterface
      */
     public function getMappableFields();
 
-
     /**
-     * Get supervisor information by companyId
+     * Get supervisor information by companyId.
      *
      * @param int $companyId of company selected
      *
-     * @return Array of employee information
+     * @return array of employee information
      */
     public function getAllSupervisors($companyId = null);
 
     /**
-     * Get validator information by companyId
+     * Get validator information by companyId.
      *
      * @param int $companyId of company selected
      *
-     * @return Array of employee validator information
+     * @return array of employee validator information
      */
     public function getAllValidators($companyId = null);
 
@@ -237,7 +233,7 @@ interface UserInterface extends RepositoryInterface
     public function getMaxExternalId();
 
     /**
-     * Get the external Id of the employee
+     * Get the external Id of the employee.
      *
      * @param $identifier
      *
@@ -246,24 +242,27 @@ interface UserInterface extends RepositoryInterface
     public function getExternalId($identifier);
 
     /**
-     * Update External Id based on Identifier
+     * Update External Id based on Identifier.
      *
      * @param $identification
      * @param $externalId
+     *
      * @return mixed
      */
     public function updateExternalId($identification, $externalId);
 
     /**
-     * Get identification values of users with missing external Ids
+     * Get identification values of users with missing external Ids.
+     *
      * @return array
      */
     public function getMissingExternalIds();
 
     /**
-     * Get the Roles assigned to a user by user Id
+     * Get the Roles assigned to a user by user Id.
      *
      * @param int
+     *
      * @return mixed
      */
     public function getRoles($id);

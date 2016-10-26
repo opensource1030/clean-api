@@ -8,9 +8,8 @@
 |
 */
 
-$factory->define(\WA\DataStore\Price\Price::class, 
+$factory->define(\WA\DataStore\Price\Price::class,
     function (\Faker\Generator $faker) {
-
         $device = factory(\WA\DataStore\Device\Device::class)->create();
         $capacity = factory(\WA\DataStore\Modification\Modification::class)->create(
             ['modType' => 'capacity']

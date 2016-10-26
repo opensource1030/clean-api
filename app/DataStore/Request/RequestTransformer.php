@@ -2,17 +2,13 @@
 
 namespace WA\DataStore\Request;
 
-use League\Fractal\Resource\Collection as ResourceCollection;
-use League\Fractal\Resource\Item as ResourceItem;
 use League\Fractal\TransformerAbstract;
 
 /**
- * Class RequestTransformer
- *
+ * Class RequestTransformer.
  */
 class RequestTransformer extends TransformerAbstract
 {
-
     /**
      * @param Request $Request
      *
@@ -22,7 +18,7 @@ class RequestTransformer extends TransformerAbstract
     {
         return [
 
-            'id' => (int)$request->id,
+            'id' => (int) $request->id,
             'name' => $request->name,
             'description' => $request->description,
             'type' => $request->type,

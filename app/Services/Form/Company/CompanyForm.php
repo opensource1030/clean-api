@@ -5,16 +5,13 @@ namespace WA\Services\Form\Company;
 use WA\Repositories\Company\CompanyInterface;
 use WA\Repositories\UdlValue\UdlValueInterface;
 use WA\Services\Form\AbstractForm;
-use WA\Services\Form\Company\CompanyFormValidator;
 use WA\Helpers\Traits\SetLimits;
-
 
 /**
  * Class CompanyForm.
  */
 class CompanyForm extends AbstractForm
 {
-
     use SetLimits;
 
     protected $company;
@@ -27,16 +24,15 @@ class CompanyForm extends AbstractForm
     protected $validator;
 
     /**
-     * @param CompanyInterface  $company
-     * @param UdlValueInterface $udlValue
+     * @param CompanyInterface     $company
+     * @param UdlValueInterface    $udlValue
      * @param CompanyFormValidator $validator
      */
     public function __construct(
         CompanyInterface $company,
         UdlValueInterface $udlValue,
         CompanyFormValidator $validator
-    )
-    {
+    ) {
         $this->company = $company;
         $this->udlValue = $udlValue;
         $this->validator = $validator;
@@ -45,7 +41,7 @@ class CompanyForm extends AbstractForm
     /**
      * @param $id
      *
-     * @return Object
+     * @return object
      */
     public function getCompanyById($id)
     {
@@ -70,7 +66,7 @@ class CompanyForm extends AbstractForm
      * @param int    $companyId
      * @param string $udlName
      *
-     * @return Object of UDL Information
+     * @return object of UDL Information
      */
     public function getUdlByName($companyId, $udlName)
     {
@@ -110,39 +106,41 @@ class CompanyForm extends AbstractForm
      *
      * @param $name
      *
-     * @return Object of Company
+     * @return object of Company
      */
     public function getCompanyByName($name)
     {
-       $company = $this->company->byName($name);
+        $company = $this->company->byName($name);
+
         return $company;
     }
-
 
     /**
      * @param array $input
      *
-     * @return bool|Object of company data
+     * @return bool|object of company data
      */
     public function create(array $input)
     {
-
-        if($company=$this->company->byName($input['name'])){
+        if ($company = $this->company->byName($input['name'])) {
             $this->notify('info', 'A company by this name already exists, please see the details below');
+
             return $company;
         }
 
-        if(!$this->valid($input)){
+        if (!$this->valid($input)) {
             $this->errors = $this->validator->errors();
             $this->notify('error', 'There was some issue with the data, please verify');
+
             return false;
         }
 
         //Carriers BAN cannot be null
         if (isset($input['carrierId']) && count($input['carrierId']) >= 1) {
-            for ($x = 0; $x < count($input['carrierId']); $x++) {
+            for ($x = 0; $x < count($input['carrierId']); ++$x) {
                 if (!empty($input['carrierId'][$x]) && empty($input['carrierBAN'][$x])) {
-                        $this->notify('error', 'BillingAccountNumber cannot be null for Carriers. Please try again');
+                    $this->notify('error', 'BillingAccountNumber cannot be null for Carriers. Please try again');
+
                     return false;
                 }
             }
@@ -150,34 +148,37 @@ class CompanyForm extends AbstractForm
 
         $company = $this->company->create($input);
 
-        if(!$company){
+        if (!$company) {
             $this->notify('error', 'There was an issue creating this Company. Please try again later');
+
             return false;
         }
 
         $this->notify('success', 'Company Created Successfully');
+
         return true;
     }
 
-
     /**
-     * Delete a Company By Id
-     * @param int $id   Company Id
+     * Delete a Company By Id.
+     *
+     * @param int $id Company Id
      *
      * @return bool
      */
-    public function delete($id){
+    public function delete($id)
+    {
         $company = $this->company->byId($id);
 
         $this->setLimits();
-        if(!$this->company->delete($id)){
+        if (!$this->company->delete($id)) {
             $this->notify('error', 'Could not delete this Company, please try again');
+
             return false;
         }
         $this->notify('success', " Company $company->name Deleted");
 
         return $this->company->delete($id);
-
     }
 
     /**
@@ -189,6 +190,7 @@ class CompanyForm extends AbstractForm
     {
         if (!$this->valid($input)) {
             $this->notify('error', 'There are some issues with the data, please verify');
+
             return false;
         }
 
@@ -207,6 +209,7 @@ class CompanyForm extends AbstractForm
 
     /**
      * @param $id
+     *
      * @return mixed
      */
     public function getCompanyPools($id)
@@ -216,14 +219,11 @@ class CompanyForm extends AbstractForm
 
     /**
      * @param $id
+     *
      * @return mixed
      */
     public function getCompanyCarriers($id)
     {
         return $this->company->getCompanySpecific($id);
     }
-
-
-
-
 }

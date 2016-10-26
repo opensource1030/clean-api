@@ -22,5 +22,4 @@ class FilterParameterTest extends TestCase
         $filters = new Filters(['[name]=123']);
         $this->assertEquals([0 => ['eq' => '[name]=123']], $filters->filtering());
     }
-
 }

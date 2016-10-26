@@ -3,33 +3,27 @@
 
 use Illuminate\Database\Migrations\Migration;
 
-class CreateUdlPathsTable extends Migration {
-
-	/**
-	 * Run the migrations.
-	 *
-	 * @return void
-	 */
-	public function up()
-	{
-		Schema::create('udl_value_paths', function( $table)
-		{
-			$table->increments('id');
+class CreateUdlPathsTable extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up()
+    {
+        Schema::create('udl_value_paths', function ($table) {
+            $table->increments('id');
             $table->string('udlPath');
             $table->integer('udlId');
             $table->integer('externalId');
-			$table->timestamps();
-		});
-	}
+            $table->timestamps();
+        });
+    }
 
-	/**
-	 * Reverse the migrations.
-	 *
-	 * @return void
-	 */
-	public function down()
-	{
-		Schema::drop('udl_value_paths');
-	}
-
+    /**
+     * Reverse the migrations.
+     */
+    public function down()
+    {
+        Schema::drop('udl_value_paths');
+    }
 }

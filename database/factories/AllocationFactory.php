@@ -1,12 +1,10 @@
 <?php
 
 $factory->define(\WA\DataStore\Allocation\Allocation::class, function (\Faker\Generator $faker) {
-
-    $carriers = ["ATT", "Verizon", "T-Mobile", "Sprint"];
+    $carriers = ['ATT', 'Verizon', 'T-Mobile', 'Sprint'];
     $currencies = ['USD'];
     $handsets = ['Apple iPhone 6 16GB Space Gray', 'Samsung Galaxy S4 - Black', 'Google Nexus 6 Xt1103'];
     $bill_months = ['2016-05-01', '2016-06-01', '2016-07-01', '2016-08-01'];
-
 
     return [
 
@@ -16,7 +14,6 @@ $factory->define(\WA\DataStore\Allocation\Allocation::class, function (\Faker\Ge
         'carrier' => $carriers[array_rand($carriers)],
         'currency' => $currencies[array_rand($currencies)],
         'handsetModel' => $handsets[array_rand($handsets)],
-
 
         'totalAllocatedCharge' => $faker->biasedNumberBetween(20, 150),
         'preAllocatedAmountDue' => $faker->biasedNumberBetween(20, 150),
@@ -70,7 +67,7 @@ $factory->define(\WA\DataStore\Allocation\Allocation::class, function (\Faker\Ge
         'fees' => $faker->biasedNumberBetween(5, 15),
 
         //Last Upgrade
-        'last_upgrade' => "N/A",
+        'last_upgrade' => 'N/A',
 
         'userId' => 1,
 

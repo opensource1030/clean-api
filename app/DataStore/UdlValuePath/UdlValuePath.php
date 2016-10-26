@@ -1,6 +1,5 @@
 <?php
 
-
 namespace WA\DataStore\UdlValuePath;
 
 use WA\DataStore\BaseDataStore;
@@ -18,7 +17,7 @@ use WA\DataStore\BaseDataStore;
 class UdlValuePath extends BaseDataStore
 {
     protected $table = 'udl_value_paths';
-    protected $fillable = ['udlPath', 'udlId','externalId'];
+    protected $fillable = ['udlPath', 'udlId', 'externalId'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany

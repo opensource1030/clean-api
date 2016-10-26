@@ -2,13 +2,10 @@
 
 namespace WA\DataStore\Modification;
 
-use League\Fractal\Resource\Collection as ResourceCollection;
-use League\Fractal\Resource\Item as ResourceItem;
 use League\Fractal\TransformerAbstract;
 
 /**
- * Class OrderTransformer
- *
+ * Class OrderTransformer.
  */
 class ModificationTransformer extends TransformerAbstract
 {
@@ -20,7 +17,7 @@ class ModificationTransformer extends TransformerAbstract
     public function transform(Modification $modification)
     {
         return [
-            'id' => (int)$modification->id,
+            'id' => (int) $modification->id,
             'modType' => $modification->modType,
             'value' => $modification->value,
             'created_at' => $modification->created_at,

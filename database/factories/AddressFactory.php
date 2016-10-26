@@ -1,7 +1,6 @@
 <?php
 
 $factory->define(WA\DataStore\Address\Address::class, function ($faker) {
-
     return [
         'address' => $faker->sentence,
         'city' => $faker->sentence,

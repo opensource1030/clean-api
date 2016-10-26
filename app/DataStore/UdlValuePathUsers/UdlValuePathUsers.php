@@ -15,11 +15,10 @@ use WA\DataStore\BaseDataStore;
  * @property string $userLastName
  * @property string $userUserId
  */
-
 class UdlValuePathUsers extends BaseDataStore
 {
     protected $table = 'udl_value_paths_creators_users';
-    protected $fillable = ['udlValuePathId', 'creatorId','userEmail', 'userFirstName', 'userLastName', 'userUserId' ];
+    protected $fillable = ['udlValuePathId', 'creatorId', 'userEmail', 'userFirstName', 'userLastName', 'userUserId'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
@@ -28,6 +27,4 @@ class UdlValuePathUsers extends BaseDataStore
     {
         return $this->hasMany('WA\DataStore\User\User', 'creatorId');
     }
-
-
 }

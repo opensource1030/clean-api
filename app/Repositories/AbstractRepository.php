@@ -33,7 +33,6 @@ abstract class AbstractRepository implements RepositoryInterface
      */
     protected $filterCriteria = null;
 
-
     /**
      * AbstractRepository constructor.
      *
@@ -45,10 +44,10 @@ abstract class AbstractRepository implements RepositoryInterface
     }
 
     /**
-     * Get paginated resource
+     * Get paginated resource.
      *
-     * @param int $perPage
-     * @param bool $api false|true
+     * @param int  $perPage
+     * @param bool $api      false|true
      * @param bool $paginate
      *
      * @return mixed Object as Collection of object information, | Paginator Collection if pagination is true (default)
@@ -70,7 +69,7 @@ abstract class AbstractRepository implements RepositoryInterface
      *
      * $param int $id
      *
-     * @return Object object of model information
+     * @return object object of model information
      */
     public function byId($id)
     {
@@ -83,7 +82,6 @@ abstract class AbstractRepository implements RepositoryInterface
         } catch (ModelNotFoundException $e) {
             return null;
         }
-
     }
 
     /**
@@ -109,8 +107,9 @@ abstract class AbstractRepository implements RepositoryInterface
     /**
      * Delete from the repo by the ID.
      *
-     * @param int $id
+     * @param int  $id
      * @param bool $force completely remove for the DB instead of marking it as "deleted"
+     *
      * @return int
      */
     public function deleteById($id, $force = false)
@@ -128,7 +127,7 @@ abstract class AbstractRepository implements RepositoryInterface
      *
      * @param array $data to be updated
      *
-     * @return Object object of updated repo
+     * @return object object of updated repo
      */
     public function update(array $data)
     {

@@ -1,16 +1,12 @@
 <?php
 
-
 namespace WA\DataStore\Allocation;
 
-use WA\DataStore\Allocation\AllocationTransformer;
 use WA\DataStore\BaseDataStore;
 
-
 /**
- * Class Allocations
+ * Class Allocations.
  *
- * @package WA\DataStore
  * @property-read \WA\DataStore\Company\Company $companies
  * @property-read \WA\DataStore\User\User $users
  * @mixin \Eloquent
@@ -22,7 +18,6 @@ class Allocation extends BaseDataStore
     public $timestamps = false;
 
     protected $fillable = ['userId', 'companyId', 'billMonth', 'mobileNumber', 'carrier', 'currency', 'handsetModel', 'totalAllocatedCharge', 'preAllocatedAmountDue', ' therAdjustments', 'preAdjustedAccessCharge', 'adjustedAccessCost', 'bBCost', 'pDACost', 'iPhoneCost', ' eaturesCost', 'dataCardCost', 'lDCanadaCost', 'uSAddOnPlanCost', 'uSLDAddOnPlanCost', 'uSDataRoamingCost', 'nightAndWeekendAddOnCost', 'minuteAddOnCost', 'servicePlanCharges', 'directConnectCost', 'textMessagingCost', 'dataCost', 'intlRoamingCost', 'intlLongDistanceCost', 'directoryAssistanceCost', 'callForwardingCost', 'airtimeCost', 'usageCharges', 'equipmentCost', 'otherDiscountChargesCost', 'taxes', 'thirdPartyCost', 'otherCharges', 'waFees', 'lineFees', 'mobilityFees', 'fees', 'last_upgrade'];
-
 
     public function companies()
     {
@@ -43,6 +38,4 @@ class Allocation extends BaseDataStore
     {
         return new AllocationTransformer();
     }
-
-
 }

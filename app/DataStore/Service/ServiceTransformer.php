@@ -2,13 +2,10 @@
 
 namespace WA\DataStore\Service;
 
-use League\Fractal\Resource\Collection as ResourceCollection;
-use League\Fractal\Resource\Item as ResourceItem;
 use League\Fractal\TransformerAbstract;
 
 /**
- * Class ServiceTransformer
- *
+ * Class ServiceTransformer.
  */
 class ServiceTransformer extends TransformerAbstract
 {
@@ -21,7 +18,7 @@ class ServiceTransformer extends TransformerAbstract
     {
         return [
 
-            'id' => (int)$service->id,
+            'id' => (int) $service->id,
             'title' => $service->title,
             'planCode' => $service->planCode,
             'cost' => $service->cost,
@@ -33,7 +30,7 @@ class ServiceTransformer extends TransformerAbstract
             'internationalData' => $service->internationalData,
             'internationalMessages' => $service->internationalMessages,
             'created_at' => $service->created_at,
-            'updated_at' => $service->updated_at
+            'updated_at' => $service->updated_at,
         ];
     }
 }

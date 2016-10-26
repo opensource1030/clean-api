@@ -1,10 +1,8 @@
 <?php
 
-
 namespace WA\DataStore\DeviceType;
 
 use WA\DataStore\Traits\BelongsToJobStatus;
-use WA\DataStore\Traits\FindIfProspectClient;
 use WA\DataStore\MutableDataStore;
 
 /**
@@ -17,15 +15,19 @@ use WA\DataStore\MutableDataStore;
  * @property string $deviceOS
  * @property string $description
  * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\DeviceType[] $devices
+ *
  * @method static \Illuminate\Database\Query\Builder|\WA\DataStore\DeviceType whereId($value)
  * @method static \Illuminate\Database\Query\Builder|\WA\DataStore\DeviceType whereMake($value)
  * @method static \Illuminate\Database\Query\Builder|\WA\DataStore\DeviceType whereModel($value)
  * @method static \Illuminate\Database\Query\Builder|\WA\DataStore\DeviceType whereClass($value)
  * @method static \Illuminate\Database\Query\Builder|\WA\DataStore\DeviceType whereDeviceOS($value)
  * @method static \Illuminate\Database\Query\Builder|\WA\DataStore\DeviceType whereDescription($value)
+ *
  * @property int $statusId
  * @property-read \WA\DataStore\ $jobstatus
+ *
  * @method static \Illuminate\Database\Query\Builder|\WA\DataStore\DeviceType whereJobStatusId($value)
+ *
  * @property-read \WA\DataStore\CarrierDevice $carrierDevice
  * @mixin \Eloquent
  */
@@ -67,7 +69,7 @@ class DeviceType extends MutableDataStore
     }
 
     /**
-     * Get the transformer instance
+     * Get the transformer instance.
      *
      * @return ImageTransformer
      */

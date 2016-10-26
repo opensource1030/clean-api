@@ -2,13 +2,10 @@
 
 namespace WA\DataStore\Condition;
 
-use League\Fractal\Resource\Collection as ResourceCollection;
-use League\Fractal\Resource\Item as ResourceItem;
 use League\Fractal\TransformerAbstract;
 
 /**
- * Class ConditionTransformer
- *
+ * Class ConditionTransformer.
  */
 class ConditionFieldTransformer extends TransformerAbstract
 {
@@ -21,9 +18,9 @@ class ConditionFieldTransformer extends TransformerAbstract
     {
         return [
 
-            'id' => (int)$conditionField->id,
+            'id' => (int) $conditionField->id,
             'typeField' => $conditionField->typeField,
-            'field' => $conditionField->field
+            'field' => $conditionField->field,
         ];
     }
 }

@@ -10,21 +10,19 @@ class CreateCarrierDevicesTable extends Migration
     protected $tableName = 'carrier_devices';
 
     protected $foreignColumns = [
-        'statusId'  => 'nullable',
-        'carrierId'    => 'nullable',
-        'deviceTypeId' => 'nullable'
+        'statusId' => 'nullable',
+        'carrierId' => 'nullable',
+        'deviceTypeId' => 'nullable',
     ];
 
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
         Schema::create(
             $this->tableName,
-            function ( $table) {
+            function ($table) {
                 $table->increments('id');
                 $table->string('make')->nullable();
                 $table->string('model')->nullable();
@@ -38,12 +36,11 @@ class CreateCarrierDevicesTable extends Migration
                 $table->integer('statusId')->unsigned()->nullable();
                 $table->integer('carrierId')->unsigned()->nullable();
                 $table->integer('deviceTypeId')->unsigned()->nullable();
-
             });
 
         Schema::table(
-            $this->tableName, 
-            function($table) {
+            $this->tableName,
+            function ($table) {
                 // ¿¿ $table->foreign('statusId')->references('id')->on('companies'); ??
                 $table->foreign('carrierId')->references('id')->on('carriers');
                 $table->foreign('deviceTypeId')->references('id')->on('device_types');
@@ -53,21 +50,19 @@ class CreateCarrierDevicesTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
     public function down()
     {
         Schema::table(
-            $this->tableName, 
-            function ( $table) {
+            $this->tableName,
+            function ($table) {
                 //$table->dropForeign('carrierId');
                 //$table->dropForeign('deviceTypeId');
-        });
+            });
 
         /*
         Schema::table(
-            $this->tableName, 
+            $this->tableName,
             function ( $table) {
                 // //$table->dropForeign('statusId');
         });
@@ -75,5 +70,4 @@ class CreateCarrierDevicesTable extends Migration
 
         $this->forceDropTable($this->tableName);
     }
-
 }

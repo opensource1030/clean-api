@@ -10,7 +10,6 @@
  */
 
 use Illuminate\Database\Migrations\Migration;
-
 use Illuminate\Support\Facades\Schema;
 
 /**
@@ -22,12 +21,10 @@ class CreateOauthAuthCodeScopesTable extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
-        Schema::create('oauth_auth_code_scopes', function ( $table) {
+        Schema::create('oauth_auth_code_scopes', function ($table) {
             $table->increments('id');
             $table->string('auth_code_id', 40);
             $table->string('scope_id', 40);
@@ -49,12 +46,10 @@ class CreateOauthAuthCodeScopesTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
     public function down()
     {
-        Schema::table('oauth_auth_code_scopes', function ( $table) {
+        Schema::table('oauth_auth_code_scopes', function ($table) {
             $table->dropForeign('oauth_auth_code_scopes_auth_code_id_foreign');
             $table->dropForeign('oauth_auth_code_scopes_scope_id_foreign');
         });

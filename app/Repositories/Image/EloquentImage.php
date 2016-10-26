@@ -5,16 +5,15 @@ namespace WA\Repositories\Image;
 use WA\Repositories\AbstractRepository;
 
 /**
- * Class EloquentImage
- *
- * @package WA\Repositories\Image
+ * Class EloquentImage.
  */
 class EloquentImage extends AbstractRepository implements ImageInterface
 {
     /**
-     * Update Image
+     * Update Image.
      *
      * @param array $data
+     *
      * @return bool
      */
     public function update(array $data)
@@ -25,11 +24,12 @@ class EloquentImage extends AbstractRepository implements ImageInterface
     /**
      * Get an array of all the available Image.
      *
-     * @return Array of Image
+     * @return array of Image
      */
     public function getAllImage()
     {
-        $image =  $this->model->all();
+        $image = $this->model->all();
+
         return $image;
     }
 

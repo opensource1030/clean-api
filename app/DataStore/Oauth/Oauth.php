@@ -5,7 +5,7 @@ namespace WA\DataStore\Oauth;
 use WA\DataStore\BaseDataStore;
 
 /**
- * WA\DataStore\Company\CompanySaml2
+ * WA\DataStore\Company\CompanySaml2.
  *
  * @mixin \Eloquent
  */

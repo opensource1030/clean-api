@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-
 use WA\Database\Command\TablesRelationsAndIndexes;
 
 class CreateCompaniesTable extends Migration
@@ -12,14 +11,12 @@ class CreateCompaniesTable extends Migration
 
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
         Schema::create(
             $this->tableName,
-            function ( $table) {
+            function ($table) {
                 $table->increments('id');
 
                 $table->string('name');
@@ -34,8 +31,8 @@ class CreateCompaniesTable extends Migration
         );
 
         Schema::table(
-            'users', 
-            function( $table) {
+            'users',
+            function ($table) {
                 $table->foreign('companyId')->references('id')->on('companies');
             }
         );
@@ -43,44 +40,42 @@ class CreateCompaniesTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
     public function down()
     {
         Schema::table(
-            'users', 
-            function ( $table) {
+            'users',
+            function ($table) {
                 //$table->dropForeign('companyId');
-        });
-        
+            });
+
         /*
         Schema::table(
-            'companies_devices', 
+            'companies_devices',
             function ($table) {
                 //$table->dropForeign('companyId');
         });
 
         Schema::table(
-            'companies_carriers', 
+            'companies_carriers',
             function ($table) {
                 //$table->dropForeign('companyId');
         });
 
         Schema::table(
-            'company_domains', 
+            'company_domains',
             function ( $table) {
             //$table->dropForeign('companyId');
         });
 
         Schema::table(
-            'allocations', 
+            'allocations',
             function ( $table) {
             //$table->dropForeign('companyId');
         });
 
         Schema::table(
-            'company_saml2', 
+            'company_saml2',
             function ( $table) {
             //$table->dropForeign('companyId');
         });

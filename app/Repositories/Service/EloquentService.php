@@ -5,59 +5,57 @@ namespace WA\Repositories\Service;
 use WA\Repositories\AbstractRepository;
 
 /**
- * Class EloquentService
- *
- * @package WA\Repositories\Service
+ * Class EloquentService.
  */
 class EloquentService extends AbstractRepository implements ServiceInterface
 {
     /**
-     * Update Service
+     * Update Service.
      *
      * @param array $data
+     *
      * @return bool
      */
     public function update(array $data)
     {
         $service = $this->model->find($data['id']);
 
-        if(!$service)
-        {
+        if (!$service) {
             return 'notExist';
         }
-        
-        if(isset($data['title'])){
+
+        if (isset($data['title'])) {
             $service->title = $data['title'];
         }
-        if(isset($data['planCode'])){
+        if (isset($data['planCode'])) {
             $service->planCode = $data['planCode'];
         }
-        if(isset($data['cost'])){
+        if (isset($data['cost'])) {
             $service->cost = $data['cost'];
         }
-        if(isset($data['description'])){
+        if (isset($data['description'])) {
             $service->description = $data['description'];
         }
-        if(isset($data['domesticMinutes'])){
+        if (isset($data['domesticMinutes'])) {
             $service->domesticMinutes = $data['domesticMinutes'];
         }
-        if(isset($data['domesticData'])){
+        if (isset($data['domesticData'])) {
             $service->domesticData = $data['domesticData'];
         }
-        if(isset($data['domesticMessages'])){
+        if (isset($data['domesticMessages'])) {
             $service->domesticMessages = $data['domesticMessages'];
         }
-        if(isset($data['internationalMinutes'])){
+        if (isset($data['internationalMinutes'])) {
             $service->internationalMinutes = $data['internationalMinutes'];
         }
-        if(isset($data['internationalData'])){
+        if (isset($data['internationalData'])) {
             $service->internationalData = $data['internationalData'];
         }
-        if(isset($data['internationalMessages'])){
+        if (isset($data['internationalMessages'])) {
             $service->internationalMessages = $data['internationalMessages'];
         }
-        
-        if(!$service->save()) {
+
+        if (!$service->save()) {
             return 'notSaved';
         }
 
@@ -67,39 +65,40 @@ class EloquentService extends AbstractRepository implements ServiceInterface
     /**
      * Get an array of all the available service.
      *
-     * @return Array of Service
+     * @return array of Service
      */
     public function getAllservice()
     {
-        $service =  $this->model->all();
+        $service = $this->model->all();
+
         return $service;
     }
 
     /**
-     * Create a new Service
+     * Create a new Service.
      *
      * @param array $data
+     *
      * @return bool|static
      */
-    
     public function create(array $data)
     {
         $serviceData = [
-            "title" =>  isset($data['title']) ? $data['title'] : null ,
-            "planCode" => isset($data['planCode']) ? $data['planCode'] : 0,
-            "cost" =>  isset($data['cost']) ? $data['cost'] : 0,
-            "description" => isset($data['description']) ? $data['description'] : null,
-            "domesticMinutes" => isset($data['domesticMinutes']) ? $data['domesticMinutes'] : 0,
-            "domesticData" =>  isset($data['domesticData']) ? $data['domesticData'] : 0,
-            "domesticMessages" => isset($data['domesticMessages']) ? $data['domesticMessages'] : 0,
-            "internationalMinutes" =>  isset($data['internationalMinutes']) ? $data['internationalMinutes'] : 0,
-            "internationalData" => isset($data['internationalData']) ? $data['internationalData'] : 0,
-            "internationalMessages" => isset($data['internationalMessages']) ? $data['internationalMessages'] : 0,
+            'title' => isset($data['title']) ? $data['title'] : null,
+            'planCode' => isset($data['planCode']) ? $data['planCode'] : 0,
+            'cost' => isset($data['cost']) ? $data['cost'] : 0,
+            'description' => isset($data['description']) ? $data['description'] : null,
+            'domesticMinutes' => isset($data['domesticMinutes']) ? $data['domesticMinutes'] : 0,
+            'domesticData' => isset($data['domesticData']) ? $data['domesticData'] : 0,
+            'domesticMessages' => isset($data['domesticMessages']) ? $data['domesticMessages'] : 0,
+            'internationalMinutes' => isset($data['internationalMinutes']) ? $data['internationalMinutes'] : 0,
+            'internationalData' => isset($data['internationalData']) ? $data['internationalData'] : 0,
+            'internationalMessages' => isset($data['internationalMessages']) ? $data['internationalMessages'] : 0,
         ];
 
         $service = $this->model->create($serviceData);
 
-        if(!$service) {
+        if (!$service) {
             return false;
         }
 

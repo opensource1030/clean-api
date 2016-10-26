@@ -11,5 +11,4 @@ class PagesTableSeeder extends BaseTableSeeder
 
         factory(\WA\DataStore\Page\Page::class, 5)->create();
     }
-
 }

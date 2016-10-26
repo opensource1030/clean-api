@@ -5,23 +5,22 @@ namespace WA\Repositories\Condition;
 use WA\Repositories\RepositoryInterface;
 
 /**
- * Interface ConditionInterface
- *
- * @package WA\Repositories\Condition
+ * Interface ConditionInterface.
  */
 interface ConditionInterface extends RepositoryInterface
 {
     /**
      * Get Array of all Conditions.
      *
-     * @return Array of Condition
+     * @return array of Condition
      */
     public function getAllCondition();
 
     /**
-     * Create Condition
+     * Create Condition.
      *
      * @param array $data
+     *
      * @return bool|static
      */
     public function create(array $data);
@@ -44,5 +43,4 @@ interface ConditionInterface extends RepositoryInterface
      * @return bool
      */
     public function delete($id, $soft = true);
-
 }

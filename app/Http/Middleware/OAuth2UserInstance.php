@@ -3,7 +3,6 @@
 namespace WA\Http\Middleware;
 
 use Closure;
-use Illuminate\Contracts\Routing\ResponseFactory as Response;
 use LucaDegasperi\OAuth2Server\Authorizer;
 use WA\Repositories\User\UserInterface;
 
@@ -14,17 +13,16 @@ class OAuth2UserInstance
      */
     protected $user;
 
-
     /**
      * @var Authorizer
      */
     protected $authorizer;
 
-
     /**
      * AuthToken constructor.
+     *
      * @param UserInterface $user
-     * @param Authorizer $authorizer
+     * @param Authorizer    $authorizer
      */
     public function __construct(UserInterface $user, Authorizer $authorizer)
     {
@@ -36,7 +34,7 @@ class OAuth2UserInstance
      * Handle an incoming request.
      *
      * @param \Illuminate\Http\Request $request
-     * @param \Closure $next
+     * @param \Closure                 $next
      *
      * @return mixed
      */
@@ -48,6 +46,7 @@ class OAuth2UserInstance
                 $request->setUserResolver(function () {
                     return $this->user->byId($this->authorizer->getResourceOwnerId());
                 });
+
                 return $next($request);
             } else {
                 abort(401, 'Invalid Access Credentials');

@@ -7,7 +7,7 @@ interface RoleInterface
     /**
      * Get an array of all the available roles.
      *
-     * @return Array of roles
+     * @return array of roles
      */
     public function getAllRoles();
 
@@ -16,7 +16,7 @@ interface RoleInterface
      *
      * @param int $id
      *
-     * @return Object of the permissions information
+     * @return object of the permissions information
      */
     public function getPermissions($id);
 }

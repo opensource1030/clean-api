@@ -2,10 +2,8 @@
 
 namespace WA\DataStore;
 
-use WA\DataStore\BaseDataStore;
-
 /**
- * Class UserNotification
+ * Class UserNotification.
  *
  * @property-read \WA\DataStore\User\User $users
  * @mixin \Eloquent
@@ -21,5 +19,4 @@ class UserNotifications extends BaseDataStore
     {
         return $this->belongsTo('WA\DataStore\User\User', 'userId');
     }
-
 }

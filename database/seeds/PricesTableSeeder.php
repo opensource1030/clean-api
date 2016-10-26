@@ -2,18 +2,15 @@
 
 /**
  * PricesTableSeeder - Insert info into database.
- *  
+ *
  * @author   Agustí Dosaiguas
  */
-
 class PricesTableSeeder extends BaseTableSeeder
 {
-    protected $table = "prices";
+    protected $table = 'prices';
 
     /**
      * Run the database seeds.
-     *
-     * @return void
      */
     public function run()
     {
@@ -30,7 +27,7 @@ class PricesTableSeeder extends BaseTableSeeder
                 'priceRetail' => 100,
                 'price1' => 100,
                 'price2' => 100,
-                'priceOwn' => 100
+                'priceOwn' => 100,
             ],
             [
                 'deviceId' => 1,
@@ -41,7 +38,7 @@ class PricesTableSeeder extends BaseTableSeeder
                 'priceRetail' => 200,
                 'price1' => 200,
                 'price2' => 200,
-                'priceOwn' => 200
+                'priceOwn' => 200,
             ],
             [
                 'deviceId' => 1,
@@ -52,7 +49,7 @@ class PricesTableSeeder extends BaseTableSeeder
                 'priceRetail' => 300,
                 'price1' => 300,
                 'price2' => 300,
-                'priceOwn' => 300
+                'priceOwn' => 300,
             ],
             [
                 'deviceId' => 1,
@@ -63,7 +60,7 @@ class PricesTableSeeder extends BaseTableSeeder
                 'priceRetail' => 100,
                 'price1' => 100,
                 'price2' => 100,
-                'priceOwn' => 100
+                'priceOwn' => 100,
             ],
             [
                 'deviceId' => 1,
@@ -74,7 +71,7 @@ class PricesTableSeeder extends BaseTableSeeder
                 'priceRetail' => 200,
                 'price1' => 200,
                 'price2' => 200,
-                'priceOwn' => 200
+                'priceOwn' => 200,
             ],
             [
                 'deviceId' => 1,
@@ -85,7 +82,7 @@ class PricesTableSeeder extends BaseTableSeeder
                 'priceRetail' => 300,
                 'price1' => 300,
                 'price2' => 300,
-                'priceOwn' => 300
+                'priceOwn' => 300,
             ],
             [
                 'deviceId' => 1,
@@ -96,7 +93,7 @@ class PricesTableSeeder extends BaseTableSeeder
                 'priceRetail' => 100,
                 'price1' => 100,
                 'price2' => 100,
-                'priceOwn' => 100
+                'priceOwn' => 100,
             ],
             [
                 'deviceId' => 1,
@@ -107,7 +104,7 @@ class PricesTableSeeder extends BaseTableSeeder
                 'priceRetail' => 200,
                 'price1' => 200,
                 'price2' => 200,
-                'priceOwn' => 200
+                'priceOwn' => 200,
             ],
             [
                 'deviceId' => 1,
@@ -118,7 +115,7 @@ class PricesTableSeeder extends BaseTableSeeder
                 'priceRetail' => 300,
                 'price1' => 300,
                 'price2' => 300,
-                'priceOwn' => 300
+                'priceOwn' => 300,
             ],
             [
                 'deviceId' => 1,
@@ -129,7 +126,7 @@ class PricesTableSeeder extends BaseTableSeeder
                 'priceRetail' => 100,
                 'price1' => 100,
                 'price2' => 100,
-                'priceOwn' => 100
+                'priceOwn' => 100,
             ],
             [
                 'deviceId' => 1,
@@ -140,7 +137,7 @@ class PricesTableSeeder extends BaseTableSeeder
                 'priceRetail' => 200,
                 'price1' => 200,
                 'price2' => 200,
-                'priceOwn' => 200
+                'priceOwn' => 200,
             ],
             [
                 'deviceId' => 1,
@@ -151,7 +148,7 @@ class PricesTableSeeder extends BaseTableSeeder
                 'priceRetail' => 300,
                 'price1' => 300,
                 'price2' => 300,
-                'priceOwn' => 300
+                'priceOwn' => 300,
             ],
             [
                 'deviceId' => 1,
@@ -162,7 +159,7 @@ class PricesTableSeeder extends BaseTableSeeder
                 'priceRetail' => 100,
                 'price1' => 100,
                 'price2' => 100,
-                'priceOwn' => 100
+                'priceOwn' => 100,
             ],
             [
                 'deviceId' => 1,
@@ -173,7 +170,7 @@ class PricesTableSeeder extends BaseTableSeeder
                 'priceRetail' => 200,
                 'price1' => 200,
                 'price2' => 200,
-                'priceOwn' => 200
+                'priceOwn' => 200,
             ],
             [
                 'deviceId' => 1,
@@ -184,7 +181,7 @@ class PricesTableSeeder extends BaseTableSeeder
                 'priceRetail' => 300,
                 'price1' => 300,
                 'price2' => 300,
-                'priceOwn' => 300
+                'priceOwn' => 300,
             ],
             [
                 'deviceId' => 1,
@@ -195,7 +192,7 @@ class PricesTableSeeder extends BaseTableSeeder
                 'priceRetail' => 100,
                 'price1' => 100,
                 'price2' => 100,
-                'priceOwn' => 100
+                'priceOwn' => 100,
             ],
             [
                 'deviceId' => 1,
@@ -206,7 +203,7 @@ class PricesTableSeeder extends BaseTableSeeder
                 'priceRetail' => 200,
                 'price1' => 200,
                 'price2' => 200,
-                'priceOwn' => 200
+                'priceOwn' => 200,
             ],
             [
                 'deviceId' => 1,
@@ -217,7 +214,7 @@ class PricesTableSeeder extends BaseTableSeeder
                 'priceRetail' => 300,
                 'price1' => 300,
                 'price2' => 300,
-                'priceOwn' => 300
+                'priceOwn' => 300,
             ],
             [
                 'deviceId' => 1,
@@ -228,7 +225,7 @@ class PricesTableSeeder extends BaseTableSeeder
                 'priceRetail' => 100,
                 'price1' => 100,
                 'price2' => 100,
-                'priceOwn' => 100
+                'priceOwn' => 100,
             ],
             [
                 'deviceId' => 1,
@@ -239,7 +236,7 @@ class PricesTableSeeder extends BaseTableSeeder
                 'priceRetail' => 200,
                 'price1' => 200,
                 'price2' => 200,
-                'priceOwn' => 200
+                'priceOwn' => 200,
             ],
             [
                 'deviceId' => 1,
@@ -250,7 +247,7 @@ class PricesTableSeeder extends BaseTableSeeder
                 'priceRetail' => 300,
                 'price1' => 300,
                 'price2' => 300,
-                'priceOwn' => 300
+                'priceOwn' => 300,
             ],
             [
                 'deviceId' => 1,
@@ -261,7 +258,7 @@ class PricesTableSeeder extends BaseTableSeeder
                 'priceRetail' => 100,
                 'price1' => 100,
                 'price2' => 100,
-                'priceOwn' => 100
+                'priceOwn' => 100,
             ],
             [
                 'deviceId' => 1,
@@ -272,7 +269,7 @@ class PricesTableSeeder extends BaseTableSeeder
                 'priceRetail' => 200,
                 'price1' => 200,
                 'price2' => 200,
-                'priceOwn' => 200
+                'priceOwn' => 200,
             ],
             [
                 'deviceId' => 1,
@@ -283,7 +280,7 @@ class PricesTableSeeder extends BaseTableSeeder
                 'priceRetail' => 300,
                 'price1' => 300,
                 'price2' => 300,
-                'priceOwn' => 300
+                'priceOwn' => 300,
             ],
             [
                 'deviceId' => 1,
@@ -294,7 +291,7 @@ class PricesTableSeeder extends BaseTableSeeder
                 'priceRetail' => 100,
                 'price1' => 100,
                 'price2' => 100,
-                'priceOwn' => 100
+                'priceOwn' => 100,
             ],
             [
                 'deviceId' => 1,
@@ -305,7 +302,7 @@ class PricesTableSeeder extends BaseTableSeeder
                 'priceRetail' => 200,
                 'price1' => 200,
                 'price2' => 200,
-                'priceOwn' => 200
+                'priceOwn' => 200,
             ],
             [
                 'deviceId' => 1,
@@ -316,8 +313,8 @@ class PricesTableSeeder extends BaseTableSeeder
                 'priceRetail' => 300,
                 'price1' => 300,
                 'price2' => 300,
-                'priceOwn' => 300
-            ]
+                'priceOwn' => 300,
+            ],
         ];
 
         $dataDevice2 = [
@@ -329,8 +326,8 @@ class PricesTableSeeder extends BaseTableSeeder
                 'companyId' => 1,
                 'priceRetail' => 100,
                 'price1' => 100,
-                'price2' =>  100,
-                'priceOwn' => 100
+                'price2' => 100,
+                'priceOwn' => 100,
             ],
             [
                 'deviceId' => 2,
@@ -340,8 +337,8 @@ class PricesTableSeeder extends BaseTableSeeder
                 'companyId' => 4,
                 'priceRetail' => 200,
                 'price1' => 200,
-                'price2' =>  200,
-                'priceOwn' => 200
+                'price2' => 200,
+                'priceOwn' => 200,
             ],
             [
                 'deviceId' => 2,
@@ -351,8 +348,8 @@ class PricesTableSeeder extends BaseTableSeeder
                 'companyId' => 5,
                 'priceRetail' => 300,
                 'price1' => 300,
-                'price2' =>  300,
-                'priceOwn' => 300
+                'price2' => 300,
+                'priceOwn' => 300,
             ],
             [
                 'deviceId' => 2,
@@ -362,8 +359,8 @@ class PricesTableSeeder extends BaseTableSeeder
                 'companyId' => 1,
                 'priceRetail' => 100,
                 'price1' => 100,
-                'price2' =>  100,
-                'priceOwn' => 100
+                'price2' => 100,
+                'priceOwn' => 100,
             ],
             [
                 'deviceId' => 2,
@@ -373,8 +370,8 @@ class PricesTableSeeder extends BaseTableSeeder
                 'companyId' => 4,
                 'priceRetail' => 200,
                 'price1' => 200,
-                'price2' =>  200,
-                'priceOwn' => 200
+                'price2' => 200,
+                'priceOwn' => 200,
             ],
             [
                 'deviceId' => 2,
@@ -384,8 +381,8 @@ class PricesTableSeeder extends BaseTableSeeder
                 'companyId' => 5,
                 'priceRetail' => 300,
                 'price1' => 300,
-                'price2' =>  300,
-                'priceOwn' => 300
+                'price2' => 300,
+                'priceOwn' => 300,
             ],
             [
                 'deviceId' => 2,
@@ -395,8 +392,8 @@ class PricesTableSeeder extends BaseTableSeeder
                 'companyId' => 1,
                 'priceRetail' => 100,
                 'price1' => 100,
-                'price2' =>  100,
-                'priceOwn' => 100
+                'price2' => 100,
+                'priceOwn' => 100,
             ],
             [
                 'deviceId' => 2,
@@ -406,8 +403,8 @@ class PricesTableSeeder extends BaseTableSeeder
                 'companyId' => 4,
                 'priceRetail' => 200,
                 'price1' => 200,
-                'price2' =>  200,
-                'priceOwn' => 200
+                'price2' => 200,
+                'priceOwn' => 200,
             ],
             [
                 'deviceId' => 2,
@@ -417,8 +414,8 @@ class PricesTableSeeder extends BaseTableSeeder
                 'companyId' => 5,
                 'priceRetail' => 300,
                 'price1' => 300,
-                'price2' =>  300,
-                'priceOwn' => 300
+                'price2' => 300,
+                'priceOwn' => 300,
             ],
             [
                 'deviceId' => 2,
@@ -428,8 +425,8 @@ class PricesTableSeeder extends BaseTableSeeder
                 'companyId' => 1,
                 'priceRetail' => 100,
                 'price1' => 100,
-                'price2' =>  100,
-                'priceOwn' => 100
+                'price2' => 100,
+                'priceOwn' => 100,
             ],
             [
                 'deviceId' => 2,
@@ -439,8 +436,8 @@ class PricesTableSeeder extends BaseTableSeeder
                 'companyId' => 4,
                 'priceRetail' => 200,
                 'price1' => 200,
-                'price2' =>  200,
-                'priceOwn' => 200
+                'price2' => 200,
+                'priceOwn' => 200,
             ],
             [
                 'deviceId' => 2,
@@ -450,8 +447,8 @@ class PricesTableSeeder extends BaseTableSeeder
                 'companyId' => 5,
                 'priceRetail' => 300,
                 'price1' => 300,
-                'price2' =>  300,
-                'priceOwn' => 300
+                'price2' => 300,
+                'priceOwn' => 300,
             ],
             [
                 'deviceId' => 2,
@@ -461,8 +458,8 @@ class PricesTableSeeder extends BaseTableSeeder
                 'companyId' => 1,
                 'priceRetail' => 100,
                 'price1' => 100,
-                'price2' =>  100,
-                'priceOwn' => 100
+                'price2' => 100,
+                'priceOwn' => 100,
             ],
             [
                 'deviceId' => 2,
@@ -472,8 +469,8 @@ class PricesTableSeeder extends BaseTableSeeder
                 'companyId' => 4,
                 'priceRetail' => 200,
                 'price1' => 200,
-                'price2' =>  200,
-                'priceOwn' => 200
+                'price2' => 200,
+                'priceOwn' => 200,
             ],
             [
                 'deviceId' => 2,
@@ -483,8 +480,8 @@ class PricesTableSeeder extends BaseTableSeeder
                 'companyId' => 5,
                 'priceRetail' => 300,
                 'price1' => 300,
-                'price2' =>  300,
-                'priceOwn' => 300
+                'price2' => 300,
+                'priceOwn' => 300,
             ],
             [
                 'deviceId' => 2,
@@ -494,8 +491,8 @@ class PricesTableSeeder extends BaseTableSeeder
                 'companyId' => 1,
                 'priceRetail' => 100,
                 'price1' => 100,
-                'price2' =>  100,
-                'priceOwn' => 100
+                'price2' => 100,
+                'priceOwn' => 100,
             ],
             [
                 'deviceId' => 2,
@@ -505,8 +502,8 @@ class PricesTableSeeder extends BaseTableSeeder
                 'companyId' => 4,
                 'priceRetail' => 200,
                 'price1' => 200,
-                'price2' =>  200,
-                'priceOwn' => 200
+                'price2' => 200,
+                'priceOwn' => 200,
             ],
             [
                 'deviceId' => 2,
@@ -516,8 +513,8 @@ class PricesTableSeeder extends BaseTableSeeder
                 'companyId' => 5,
                 'priceRetail' => 300,
                 'price1' => 300,
-                'price2' =>  300,
-                'priceOwn' => 300
+                'price2' => 300,
+                'priceOwn' => 300,
             ],
             [
                 'deviceId' => 2,
@@ -527,8 +524,8 @@ class PricesTableSeeder extends BaseTableSeeder
                 'companyId' => 1,
                 'priceRetail' => 100,
                 'price1' => 100,
-                'price2' =>  100,
-                'priceOwn' => 100
+                'price2' => 100,
+                'priceOwn' => 100,
             ],
             [
                 'deviceId' => 2,
@@ -538,8 +535,8 @@ class PricesTableSeeder extends BaseTableSeeder
                 'companyId' => 4,
                 'priceRetail' => 200,
                 'price1' => 200,
-                'price2' =>  200,
-                'priceOwn' => 200
+                'price2' => 200,
+                'priceOwn' => 200,
             ],
             [
                 'deviceId' => 2,
@@ -549,8 +546,8 @@ class PricesTableSeeder extends BaseTableSeeder
                 'companyId' => 5,
                 'priceRetail' => 300,
                 'price1' => 300,
-                'price2' =>  300,
-                'priceOwn' => 300
+                'price2' => 300,
+                'priceOwn' => 300,
             ],
             [
                 'deviceId' => 2,
@@ -560,8 +557,8 @@ class PricesTableSeeder extends BaseTableSeeder
                 'companyId' => 1,
                 'priceRetail' => 100,
                 'price1' => 100,
-                'price2' =>  100,
-                'priceOwn' => 100
+                'price2' => 100,
+                'priceOwn' => 100,
             ],
             [
                 'deviceId' => 2,
@@ -571,8 +568,8 @@ class PricesTableSeeder extends BaseTableSeeder
                 'companyId' => 4,
                 'priceRetail' => 200,
                 'price1' => 200,
-                'price2' =>  200,
-                'priceOwn' => 200
+                'price2' => 200,
+                'priceOwn' => 200,
             ],
             [
                 'deviceId' => 2,
@@ -582,8 +579,8 @@ class PricesTableSeeder extends BaseTableSeeder
                 'companyId' => 5,
                 'priceRetail' => 300,
                 'price1' => 300,
-                'price2' =>  300,
-                'priceOwn' => 300
+                'price2' => 300,
+                'priceOwn' => 300,
             ],
             [
                 'deviceId' => 2,
@@ -593,8 +590,8 @@ class PricesTableSeeder extends BaseTableSeeder
                 'companyId' => 1,
                 'priceRetail' => 100,
                 'price1' => 100,
-                'price2' =>  100,
-                'priceOwn' => 100
+                'price2' => 100,
+                'priceOwn' => 100,
             ],
             [
                 'deviceId' => 2,
@@ -604,8 +601,8 @@ class PricesTableSeeder extends BaseTableSeeder
                 'companyId' => 4,
                 'priceRetail' => 200,
                 'price1' => 200,
-                'price2' =>  200,
-                'priceOwn' => 200
+                'price2' => 200,
+                'priceOwn' => 200,
             ],
             [
                 'deviceId' => 2,
@@ -616,7 +613,7 @@ class PricesTableSeeder extends BaseTableSeeder
                 'priceRetail' => 300,
                 'price1' => 300,
                 'price2' => 300,
-                'priceOwn' => 300
+                'priceOwn' => 300,
             ],
             [
                 'deviceId' => 2,
@@ -626,8 +623,8 @@ class PricesTableSeeder extends BaseTableSeeder
                 'companyId' => 1,
                 'priceRetail' => 100,
                 'price1' => 100,
-                'price2' =>  100,
-                'priceOwn' => 100
+                'price2' => 100,
+                'priceOwn' => 100,
             ],
             [
                 'deviceId' => 2,
@@ -637,8 +634,8 @@ class PricesTableSeeder extends BaseTableSeeder
                 'companyId' => 4,
                 'priceRetail' => 200,
                 'price1' => 200,
-                'price2' =>  200,
-                'priceOwn' => 200
+                'price2' => 200,
+                'priceOwn' => 200,
             ],
             [
                 'deviceId' => 2,
@@ -648,8 +645,8 @@ class PricesTableSeeder extends BaseTableSeeder
                 'companyId' => 5,
                 'priceRetail' => 300,
                 'price1' => 300,
-                'price2' =>  300,
-                'priceOwn' => 300
+                'price2' => 300,
+                'priceOwn' => 300,
             ],
             [
                 'deviceId' => 2,
@@ -659,8 +656,8 @@ class PricesTableSeeder extends BaseTableSeeder
                 'companyId' => 1,
                 'priceRetail' => 100,
                 'price1' => 100,
-                'price2' =>  100,
-                'priceOwn' => 100
+                'price2' => 100,
+                'priceOwn' => 100,
             ],
             [
                 'deviceId' => 2,
@@ -670,8 +667,8 @@ class PricesTableSeeder extends BaseTableSeeder
                 'companyId' => 4,
                 'priceRetail' => 200,
                 'price1' => 200,
-                'price2' =>  200,
-                'priceOwn' => 200
+                'price2' => 200,
+                'priceOwn' => 200,
             ],
             [
                 'deviceId' => 2,
@@ -681,8 +678,8 @@ class PricesTableSeeder extends BaseTableSeeder
                 'companyId' => 5,
                 'priceRetail' => 300,
                 'price1' => 300,
-                'price2' =>  300,
-                'priceOwn' => 300
+                'price2' => 300,
+                'priceOwn' => 300,
             ],
             [
                 'deviceId' => 2,
@@ -692,8 +689,8 @@ class PricesTableSeeder extends BaseTableSeeder
                 'companyId' => 1,
                 'priceRetail' => 100,
                 'price1' => 100,
-                'price2' =>  100,
-                'priceOwn' => 100
+                'price2' => 100,
+                'priceOwn' => 100,
             ],
             [
                 'deviceId' => 2,
@@ -703,8 +700,8 @@ class PricesTableSeeder extends BaseTableSeeder
                 'companyId' => 4,
                 'priceRetail' => 200,
                 'price1' => 200,
-                'price2' =>  200,
-                'priceOwn' => 200
+                'price2' => 200,
+                'priceOwn' => 200,
             ],
             [
                 'deviceId' => 2,
@@ -715,8 +712,8 @@ class PricesTableSeeder extends BaseTableSeeder
                 'priceRetail' => 300,
                 'price1' => 300,
                 'price2' => 300,
-                'priceOwn' => 300
-            ]
+                'priceOwn' => 300,
+            ],
         ];
 
         $dataDevice3 = [
@@ -729,7 +726,7 @@ class PricesTableSeeder extends BaseTableSeeder
                 'priceRetail' => 100,
                 'price1' => 100,
                 'price2' => 100,
-                'priceOwn' => 100
+                'priceOwn' => 100,
             ],
             [
                 'deviceId' => 3,
@@ -740,7 +737,7 @@ class PricesTableSeeder extends BaseTableSeeder
                 'priceRetail' => 200,
                 'price1' => 200,
                 'price2' => 200,
-                'priceOwn' => 200
+                'priceOwn' => 200,
             ],
             [
                 'deviceId' => 3,
@@ -751,7 +748,7 @@ class PricesTableSeeder extends BaseTableSeeder
                 'priceRetail' => 300,
                 'price1' => 300,
                 'price2' => 300,
-                'priceOwn' => 300
+                'priceOwn' => 300,
             ],
             [
                 'deviceId' => 3,
@@ -762,7 +759,7 @@ class PricesTableSeeder extends BaseTableSeeder
                 'priceRetail' => 100,
                 'price1' => 100,
                 'price2' => 100,
-                'priceOwn' => 100
+                'priceOwn' => 100,
             ],
             [
                 'deviceId' => 3,
@@ -773,7 +770,7 @@ class PricesTableSeeder extends BaseTableSeeder
                 'priceRetail' => 200,
                 'price1' => 200,
                 'price2' => 200,
-                'priceOwn' => 200
+                'priceOwn' => 200,
             ],
             [
                 'deviceId' => 3,
@@ -784,7 +781,7 @@ class PricesTableSeeder extends BaseTableSeeder
                 'priceRetail' => 300,
                 'price1' => 300,
                 'price2' => 300,
-                'priceOwn' => 300
+                'priceOwn' => 300,
             ],
             [
                 'deviceId' => 3,
@@ -795,7 +792,7 @@ class PricesTableSeeder extends BaseTableSeeder
                 'priceRetail' => 100,
                 'price1' => 100,
                 'price2' => 100,
-                'priceOwn' => 100
+                'priceOwn' => 100,
             ],
             [
                 'deviceId' => 3,
@@ -806,7 +803,7 @@ class PricesTableSeeder extends BaseTableSeeder
                 'priceRetail' => 200,
                 'price1' => 200,
                 'price2' => 200,
-                'priceOwn' => 200
+                'priceOwn' => 200,
             ],
             [
                 'deviceId' => 3,
@@ -817,7 +814,7 @@ class PricesTableSeeder extends BaseTableSeeder
                 'priceRetail' => 300,
                 'price1' => 300,
                 'price2' => 300,
-                'priceOwn' => 300
+                'priceOwn' => 300,
             ],
             [
                 'deviceId' => 3,
@@ -828,7 +825,7 @@ class PricesTableSeeder extends BaseTableSeeder
                 'priceRetail' => 100,
                 'price1' => 100,
                 'price2' => 100,
-                'priceOwn' => 100
+                'priceOwn' => 100,
             ],
             [
                 'deviceId' => 3,
@@ -839,7 +836,7 @@ class PricesTableSeeder extends BaseTableSeeder
                 'priceRetail' => 200,
                 'price1' => 200,
                 'price2' => 200,
-                'priceOwn' => 200
+                'priceOwn' => 200,
             ],
             [
                 'deviceId' => 3,
@@ -850,7 +847,7 @@ class PricesTableSeeder extends BaseTableSeeder
                 'priceRetail' => 300,
                 'price1' => 300,
                 'price2' => 300,
-                'priceOwn' => 300
+                'priceOwn' => 300,
             ],
             [
                 'deviceId' => 3,
@@ -861,7 +858,7 @@ class PricesTableSeeder extends BaseTableSeeder
                 'priceRetail' => 100,
                 'price1' => 100,
                 'price2' => 100,
-                'priceOwn' => 100
+                'priceOwn' => 100,
             ],
             [
                 'deviceId' => 3,
@@ -872,7 +869,7 @@ class PricesTableSeeder extends BaseTableSeeder
                 'priceRetail' => 200,
                 'price1' => 200,
                 'price2' => 200,
-                'priceOwn' => 200
+                'priceOwn' => 200,
             ],
             [
                 'deviceId' => 3,
@@ -883,7 +880,7 @@ class PricesTableSeeder extends BaseTableSeeder
                 'priceRetail' => 300,
                 'price1' => 300,
                 'price2' => 300,
-                'priceOwn' => 300
+                'priceOwn' => 300,
             ],
             [
                 'deviceId' => 3,
@@ -894,7 +891,7 @@ class PricesTableSeeder extends BaseTableSeeder
                 'priceRetail' => 100,
                 'price1' => 100,
                 'price2' => 100,
-                'priceOwn' => 100
+                'priceOwn' => 100,
             ],
             [
                 'deviceId' => 3,
@@ -905,7 +902,7 @@ class PricesTableSeeder extends BaseTableSeeder
                 'priceRetail' => 200,
                 'price1' => 200,
                 'price2' => 200,
-                'priceOwn' => 200
+                'priceOwn' => 200,
             ],
             [
                 'deviceId' => 3,
@@ -916,7 +913,7 @@ class PricesTableSeeder extends BaseTableSeeder
                 'priceRetail' => 300,
                 'price1' => 300,
                 'price2' => 300,
-                'priceOwn' => 300
+                'priceOwn' => 300,
             ],
             [
                 'deviceId' => 3,
@@ -927,7 +924,7 @@ class PricesTableSeeder extends BaseTableSeeder
                 'priceRetail' => 100,
                 'price1' => 100,
                 'price2' => 100,
-                'priceOwn' => 100
+                'priceOwn' => 100,
             ],
             [
                 'deviceId' => 3,
@@ -938,7 +935,7 @@ class PricesTableSeeder extends BaseTableSeeder
                 'priceRetail' => 200,
                 'price1' => 200,
                 'price2' => 200,
-                'priceOwn' => 200
+                'priceOwn' => 200,
             ],
             [
                 'deviceId' => 3,
@@ -949,7 +946,7 @@ class PricesTableSeeder extends BaseTableSeeder
                 'priceRetail' => 300,
                 'price1' => 300,
                 'price2' => 300,
-                'priceOwn' => 300
+                'priceOwn' => 300,
             ],
             [
                 'deviceId' => 3,
@@ -960,7 +957,7 @@ class PricesTableSeeder extends BaseTableSeeder
                 'priceRetail' => 100,
                 'price1' => 100,
                 'price2' => 100,
-                'priceOwn' => 100
+                'priceOwn' => 100,
             ],
             [
                 'deviceId' => 3,
@@ -971,7 +968,7 @@ class PricesTableSeeder extends BaseTableSeeder
                 'priceRetail' => 200,
                 'price1' => 200,
                 'price2' => 200,
-                'priceOwn' => 200
+                'priceOwn' => 200,
             ],
             [
                 'deviceId' => 3,
@@ -982,7 +979,7 @@ class PricesTableSeeder extends BaseTableSeeder
                 'priceRetail' => 300,
                 'price1' => 300,
                 'price2' => 300,
-                'priceOwn' => 300
+                'priceOwn' => 300,
             ],
             [
                 'deviceId' => 3,
@@ -993,7 +990,7 @@ class PricesTableSeeder extends BaseTableSeeder
                 'priceRetail' => 100,
                 'price1' => 100,
                 'price2' => 100,
-                'priceOwn' => 100
+                'priceOwn' => 100,
             ],
             [
                 'deviceId' => 3,
@@ -1004,7 +1001,7 @@ class PricesTableSeeder extends BaseTableSeeder
                 'priceRetail' => 200,
                 'price1' => 200,
                 'price2' => 200,
-                'priceOwn' => 200
+                'priceOwn' => 200,
             ],
             [
                 'deviceId' => 3,
@@ -1015,8 +1012,8 @@ class PricesTableSeeder extends BaseTableSeeder
                 'priceRetail' => 300,
                 'price1' => 300,
                 'price2' => 300,
-                'priceOwn' => 300
-            ]
+                'priceOwn' => 300,
+            ],
         ];
 
         $this->loadTable($dataDevice1);

@@ -5,23 +5,22 @@ namespace WA\Repositories\Modification;
 use WA\Repositories\RepositoryInterface;
 
 /**
- * Interface OrderInterface
- *
- * @package WA\Repositories\Order
+ * Interface OrderInterface.
  */
 interface ModificationInterface extends RepositoryInterface
 {
     /**
      * Get Array of all Modifications.
      *
-     * @return Array of Order
+     * @return array of Order
      */
     public function getAllModification();
 
     /**
-     * Create Modification
+     * Create Modification.
      *
      * @param array $data
+     *
      * @return bool|static
      */
     public function create(array $data);
@@ -44,5 +43,4 @@ interface ModificationInterface extends RepositoryInterface
      * @return bool
      */
     public function delete($id, $soft = true);
-
 }

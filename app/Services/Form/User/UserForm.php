@@ -78,16 +78,15 @@ class UserForm extends AbstractForm
     protected $allocations;
 
     /**
-     * @param UserInterface     $user
-     * @param UserFormValidator $validator
-     * @param HelpDeskApi           $helpDeskApi
-     * @param HelpDeskInterface     $helpDesk
-     * @param UdlInterface          $udl *
-     * @param Session               $session
-     * @param CompanyInterface      $company
-     * @param RoleInterface         $role
-     * @param AllocationInterface  $allocations
-     *
+     * @param UserInterface       $user
+     * @param UserFormValidator   $validator
+     * @param HelpDeskApi         $helpDeskApi
+     * @param HelpDeskInterface   $helpDesk
+     * @param UdlInterface        $udl         *
+     * @param Session             $session
+     * @param CompanyInterface    $company
+     * @param RoleInterface       $role
+     * @param AllocationInterface $allocations
      */
     public function __construct(
         UserInterface $user,
@@ -101,7 +100,7 @@ class UserForm extends AbstractForm
         AllocationInterface $allocations
 
     ) {
-//        $this->validator = $validator;
+        //        $this->validator = $validator;
         $this->user = $user;
 //        $this->helpDeskApi = $helpDeskApi;
 //        $this->helpDesk = $helpDesk;
@@ -117,7 +116,7 @@ class UserForm extends AbstractForm
     /**
      * @param array $input
      *
-     * @return bool|Object of employee data
+     * @return bool|object of employee data
      */
     public function create(array $input)
     {
@@ -129,7 +128,7 @@ class UserForm extends AbstractForm
 
         $input = array_merge($input, ['identification' => $identification]);
 
-        if (!(bool)$input['companyId']) {
+        if (!(bool) $input['companyId']) {
             $this->notify('error', 'You must select a company to continue');
 
             return false;
@@ -152,7 +151,7 @@ class UserForm extends AbstractForm
         }
 
         $udl_value_set = 0;
-//
+
 //        if (!(bool)$this->currentCompany->isCensus) {
 //            //
 //            foreach (array_flatten($input['udls']) as $val) {
@@ -160,10 +159,10 @@ class UserForm extends AbstractForm
 //                    $udl_value_set += 1;
 //                }
 //            }
-//
+
 //            if ($udl_value_set <= 1) {
 //                $this->notify('error', 'You must select Department Information to continue');
-//
+
 //                return false;
 //            }
 //        }
@@ -190,7 +189,7 @@ class UserForm extends AbstractForm
             $this->notify('error', 'Something strange happened, could not created User. try again later');
 
             return false;
-        };
+        }
 
         if (!$user) {
             $this->notify('error', 'There was an issue creating this employee');
@@ -216,13 +215,12 @@ class UserForm extends AbstractForm
         return $this->validator->with($input)->passes();
     }
 
-
     /**
      * Get an User by Email.
      *
      * @param $email
      *
-     * @return Object of User
+     * @return object of User
      */
     public function getUserByEmail($email)
     {
@@ -249,7 +247,7 @@ class UserForm extends AbstractForm
             $helper = $helper ?: app()->make('WA\Http\Controllers\Admin\HelperController');
             $input['identification'] = $helper->generateIds($input['companyId']);
 
-            if(empty($input['companyUserIdentifier'])){
+            if (empty($input['companyUserIdentifier'])) {
                 $input['companyUserIdentifier'] = $input['identification'];
             }
         }
@@ -306,7 +304,7 @@ class UserForm extends AbstractForm
         // the identification is the EV ID
         $lastName = $data['input']['lastName'];
         $firstName = $data['input']['firstName'];
-        $name = $lastName . ', ' . $firstName;
+        $name = $lastName.', '.$firstName;
         $data['input']['approverId'] = empty($data['input']['approverId']) ? 0 : $data['input']['approverId'];
 
         $userInfo = array(
@@ -335,7 +333,7 @@ class UserForm extends AbstractForm
 XML;
 
         if (!$response = $this->helpDeskApi->updateUser($xmlString, $userInfo)) {
-            Log::error($xmlString . ' >> ' . $response);
+            Log::error($xmlString.' >> '.$response);
 
             return false;
         }
@@ -346,7 +344,7 @@ XML;
     /**
      * @param $id
      *
-     * @return Object
+     * @return object
      */
     public function edit($id)
     {
@@ -366,7 +364,7 @@ XML;
     /**
      * @param null $companyId
      *
-     * @return Object
+     * @return object
      *
      * @throws \Exception
      */
@@ -375,23 +373,23 @@ XML;
 //        if ($this->currentCompany == null) {
 //            throw new \Exception('No Company is set, please select a company');
 //        }
-//
+
 //        $companyId = $companyId ?: $this->currentCompany->id;
-//
+
 //        return $sups = $this->helpDesk->getSupervisors($companyId);
-//
+
 ////        return $sups = $this->user->getAllSupervisors($companyId);
 //    }
 
     /**
      * @param null $companyId
      *
-     * @return Object
+     * @return object
      */
 //    public function getValidator($companyId = null)
 //    {
 //        $companyId = $companyId ?: $this->currentCompany->id;
-//
+
 //        return $this->helpDesk->getValidators($companyId);
 ////        return $this->user->getAllValidators($companyId);
 //    }
@@ -399,7 +397,7 @@ XML;
     /**
      * @param $id
      *
-     * @return Object
+     * @return object
      */
     public function show($id)
     {
@@ -453,7 +451,7 @@ XML;
      * @return int of the department path ID
      */
     public function getDepartmentPathId(
-        array $udls = [],
+        array $udls,
         $creatorId,
         array $userInfo,
         $externalId = false,
@@ -505,7 +503,7 @@ XML;
 XML;
 
         if (!$response = $this->helpDeskApi->updateUser($xmlString)) {
-            Log::error($xmlString . ' >> ' . $response);
+            Log::error($xmlString.' >> '.$response);
 
             return false;
         }
@@ -535,15 +533,12 @@ XML;
         return $this->user->delete($id);
     }
 
-
     public function getUserPermissions($id)
     {
         $permissions = [];
         $roles = $this->user->getRoles($id);
-        if(!empty ($roles))
-        {
-            foreach($roles as $role)
-            {
+        if (!empty($roles)) {
+            foreach ($roles as $role) {
                 $permissions[] = $this->role->getPermissions($role->id);
             }
         }
@@ -552,7 +547,7 @@ XML;
     }
 
     /**
-     * Get all available roles
+     * Get all available roles.
      *
      * @return array
      */
@@ -562,9 +557,10 @@ XML;
     }
 
     /**
-     * Get User roles by Id
+     * Get User roles by Id.
      *
      * @param $id
+     *
      * @return mixed
      */
     public function getUserRoles($id)
@@ -573,28 +569,31 @@ XML;
     }
 
     /**
-         * Get email domains available for a company
-         *
-         * @param $companyId
-         * @return array
+     * Get email domains available for a company.
+     *
+     * @param $companyId
+     *
+     * @return array
      */
     public function getEmailDomains($companyId)
     {
         $email_domains = $this->company->getDomains($companyId);
+
         return $email_domains;
     }
 
     /**
-     * Get current charges of user for current billing month
+     * Get current charges of user for current billing month.
      *
      * @param $id
+     *
      * @return mixed
      */
     public function getCurrentCharges($id)
     {
         $user = $this->user->byId($id);
         $email = $user->email;
-        if(!empty($email)) {
+        if (!empty($email)) {
             return $this->allocations->getCurrentCharges($email);
         }
 

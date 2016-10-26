@@ -3,24 +3,21 @@
 namespace WA\DataStore\Package;
 
 use WA\DataStore\BaseDataStore;
-use WA\DataStore\Package\PackageTransformer;
 
 /**
- * Class Package
- *
- * @package WA\DataStore\Package
+ * Class Package.
  */
 class Package extends BaseDataStore
 {
-    protected  $table = 'packages';
+    protected $table = 'packages';
 
     protected $fillable = [
             'name',
             'addressId',
-            'updated_at'];
+            'updated_at', ];
 
     /**
-     * Get all the owners for the package
+     * Get all the owners for the package.
      *
      * @return \Illuminate\Database\Eloquent\Relations\MorphTo
      */
@@ -30,7 +27,7 @@ class Package extends BaseDataStore
     }
 
     /**
-     * Get the transformer instance
+     * Get the transformer instance.
      *
      * @return PackageTransformer
      */
@@ -46,7 +43,7 @@ class Package extends BaseDataStore
     {
         return $this->belongsToMany('WA\DataStore\Condition\Condition', 'package_conditions', 'packageId', 'conditionId');
     }
-    
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
@@ -54,7 +51,7 @@ class Package extends BaseDataStore
     {
         return $this->belongsToMany('WA\DataStore\Service\Service', 'package_services', 'packageId', 'serviceId');
     }
-    
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */

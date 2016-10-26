@@ -7,12 +7,10 @@ class UdlValuePathsCreatorsUsersTable extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
-        Schema::create('udl_value_paths_creators_users', function ( $table) {
+        Schema::create('udl_value_paths_creators_users', function ($table) {
             $table->increments('id');
             $table->integer('udlValuePathId');
             $table->integer('creatorId');
@@ -26,8 +24,6 @@ class UdlValuePathsCreatorsUsersTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
     public function down()
     {

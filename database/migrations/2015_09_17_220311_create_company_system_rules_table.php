@@ -7,24 +7,18 @@ class CreateCompanySystemRulesTable extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
-        Schema::create('company_rules', function ( $table) {
-
+        Schema::create('company_rules', function ($table) {
             $table->integer('companyId')->unsigned();
             $table->integer('ruleId')->unsigned();
             $table->integer('priority')->unsigned();
-
         });
     }
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
     public function down()
     {

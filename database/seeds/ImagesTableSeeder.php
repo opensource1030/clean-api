@@ -2,18 +2,15 @@
 
 /**
  * ImagesTableSeeder - Insert info into database.
- *  
+ *
  * @author   Agustí Dosaiguas
  */
-
 class ImagesTableSeeder extends BaseTableSeeder
 {
-    protected $table = "images";
+    protected $table = 'images';
 
     /**
      * Run the database seeds.
-     *
-     * @return void
      */
     public function run()
     {
@@ -27,7 +24,7 @@ class ImagesTableSeeder extends BaseTableSeeder
                 'mimeType' => 'image/png',
                 'extension' => 'png',
                 'size' => 235417,
-                'url' => 'phpFmndT1.png'
+                'url' => 'phpFmndT1.png',
             ],
             [
                 'originalName' => 'iphone7.jpg',
@@ -35,7 +32,7 @@ class ImagesTableSeeder extends BaseTableSeeder
                 'mimeType' => 'image/jpeg',
                 'extension' => 'jpg',
                 'size' => 78965,
-                'url' => 'phps1pu40.jpg'
+                'url' => 'phps1pu40.jpg',
             ],
             [
                 'originalName' => 'samsunggalaxy.png',
@@ -43,7 +40,7 @@ class ImagesTableSeeder extends BaseTableSeeder
                 'mimeType' => 'image/png',
                 'extension' => 'png',
                 'size' => 86709,
-                'url' => 'phpQ3MhPB.png'
+                'url' => 'phpQ3MhPB.png',
             ],
             [
                 'originalName' => 'huaweip8lite.jpg',
@@ -51,7 +48,7 @@ class ImagesTableSeeder extends BaseTableSeeder
                 'mimeType' => 'image/jpeg',
                 'extension' => 'jpg',
                 'size' => 45663,
-                'url' => 'phputBFCS.jpg'
+                'url' => 'phputBFCS.jpg',
             ],
             [
                 'originalName' => 'verizon.jpg',
@@ -59,7 +56,7 @@ class ImagesTableSeeder extends BaseTableSeeder
                 'mimeType' => 'image/jpeg',
                 'extension' => 'jpg',
                 'size' => 5099,
-                'url' => 'phpiicQ3z.jpg'
+                'url' => 'phpiicQ3z.jpg',
             ],
             [
                 'originalName' => 'att.png',
@@ -67,7 +64,7 @@ class ImagesTableSeeder extends BaseTableSeeder
                 'mimeType' => 'image/png',
                 'extension' => 'png',
                 'size' => 101996,
-                'url' => 'phprwT8UU.png'
+                'url' => 'phprwT8UU.png',
             ],
             [
                 'originalName' => 'rogers.png',
@@ -75,7 +72,7 @@ class ImagesTableSeeder extends BaseTableSeeder
                 'mimeType' => 'image/png',
                 'extension' => 'png',
                 'size' => 88361,
-                'url' => 'phpjf9GTX.png'
+                'url' => 'phpjf9GTX.png',
             ],
             [
                 'originalName' => 'BellCanada.bmp',
@@ -83,8 +80,8 @@ class ImagesTableSeeder extends BaseTableSeeder
                 'mimeType' => 'image/bmp',
                 'extension' => 'bmp',
                 'size' => 160054,
-                'url' => 'phpjNUU8x.bmp'
-            ]
+                'url' => 'phpjNUU8x.bmp',
+            ],
         ];
 
         copy('./database/seeds/imagesseeder/phpFmndT1.png', './storage/app/public/phpFmndT1.png');

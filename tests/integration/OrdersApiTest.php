@@ -7,7 +7,7 @@ class OrdersApiTest extends TestCase
     use DatabaseMigrations;
 
     /**
-     * A basic functional test for services
+     * A basic functional test for services.
      *
      * @AD: Some changes and a little modification in OrderController@index - Comment ApplyMeta()
      */
@@ -19,7 +19,7 @@ class OrdersApiTest extends TestCase
 
         $res->seeJsonStructure([
                 'data' => [
-                    0 => [ 'type','id',
+                    0 => ['type', 'id',
                         'attributes' => [
                             'status',
                             'userId',
@@ -29,9 +29,9 @@ class OrdersApiTest extends TestCase
                             'created_at',
                             'updated_at',
                         ],
-                        'links'
-                    ]
-                ]
+                        'links',
+                    ],
+                ],
             ]);
     }
 
@@ -43,15 +43,15 @@ class OrdersApiTest extends TestCase
             ->seeJson([
                 'type' => 'orders',
                 'status' => $order->status,
-                'userId'=> $order->userId,
-                'packageId'=> $order->packageId,
-                'deviceId'=> $order->deviceId,
-                'serviceId'=> $order->serviceId,
+                'userId' => $order->userId,
+                'packageId' => $order->packageId,
+                'deviceId' => $order->deviceId,
+                'serviceId' => $order->serviceId,
             ]);
     }
 
-    public function testGetOrderByIdIfNoExists() {
-
+    public function testGetOrderByIdIfNoExists()
+    {
         $orderId = factory(\WA\DataStore\Order\Order::class)->create()->id;
         $orderId = $orderId + 10;
 
@@ -72,18 +72,18 @@ class OrdersApiTest extends TestCase
                     'type' => 'orders',
                     'attributes' => [
                         'status' => 'OrderStatus',
-                        'userId'=> $user->id,
-                        'packageId'=> $package->id,
+                        'userId' => $user->id,
+                        'packageId' => $package->id,
                         'deviceId' => $device->id,
                         'serviceId' => $service->id,
-                    ]
-                ]
+                    ],
+                ],
             ])
             ->seeJson([
                 'type' => 'orders',
                 'status' => 'OrderStatus',
-                'userId'=> $user->id,
-                'packageId'=> $package->id,
+                'userId' => $user->id,
+                'packageId' => $package->id,
                 'deviceId' => $device->id,
                 'serviceId' => $service->id,
             ]);
@@ -101,40 +101,42 @@ class OrdersApiTest extends TestCase
         $this->assertNotEquals($order1->deviceId, $order2->deviceId);
         $this->assertNotEquals($order1->serviceId, $order2->serviceId);
 
-        $this->put('/orders/'.$order1->id, 
+        $this->put('/orders/'.$order1->id,
             [
                 'data' => [
                     'type' => 'orders',
                     'attributes' => [
                         'status' => $order2->status,
-                        'userId'=> $order2->userId,
-                        'packageId'=> $order2->packageId,
+                        'userId' => $order2->userId,
+                        'packageId' => $order2->packageId,
                         'deviceId' => $order2->deviceId,
                         'serviceId' => $order2->serviceId,
-                    ]
-                ]
+                    ],
+                ],
             ])
             ->seeJson([
                 'type' => 'orders',
                 'id' => "$order1->id",
                 'status' => $order2->status,
-                'userId'=> $order2->userId,
-                'packageId'=> $order2->packageId,
+                'userId' => $order2->userId,
+                'packageId' => $order2->packageId,
                 'deviceId' => $order2->deviceId,
                 'serviceId' => $order2->serviceId,
             ]);
     }
 
-    public function testDeleteOrderIfExists() {
+    public function testDeleteOrderIfExists()
+    {
         // CREATE & DELETE
         $order = factory(\WA\DataStore\Order\Order::class)->create();
         $responseDel = $this->call('DELETE', '/orders/'.$order->id);
         $this->assertEquals(200, $responseDel->status());
         $responseGet = $this->call('GET', '/orders/'.$order->id);
-        $this->assertEquals(404, $responseGet->status());        
+        $this->assertEquals(404, $responseGet->status());
     }
 
-    public function testDeleteOrderIfNoExists(){
+    public function testDeleteOrderIfNoExists()
+    {
         // DELETE NO EXISTING.
         $responseDel = $this->call('DELETE', '/orders/1');
         $this->assertEquals(404, $responseDel->status());

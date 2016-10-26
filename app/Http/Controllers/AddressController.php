@@ -3,11 +3,9 @@
 namespace WA\Http\Controllers;
 
 use Illuminate\Http\Request;
-
 use WA\DataStore\Address\Address;
 use WA\DataStore\Address\AddressTransformer;
 use WA\Repositories\Address\AddressInterface;
-
 use Illuminate\Support\Facades\Lang;
 
 /**
@@ -23,7 +21,7 @@ class AddressController extends ApiController
     protected $address;
 
     /**
-     * Address Controller constructor
+     * Address Controller constructor.
      *
      * @param AddressInterface $address
      */
@@ -33,10 +31,9 @@ class AddressController extends ApiController
     }
 
     /**
-     * Show all Address
+     * Show all Address.
      *
      * Get a payload of all Address
-     *
      */
     public function index()
     {
@@ -46,11 +43,12 @@ class AddressController extends ApiController
 
         $response = $this->response()->withPaginator($address, new AddressTransformer(), ['key' => 'address']);
         $response = $this->applyMeta($response);
+
         return $response;
     }
 
     /**
-     * Show a single Address
+     * Show a single Address.
      *
      * Get a payload of a single Address
      *
@@ -62,8 +60,9 @@ class AddressController extends ApiController
         $this->address->setCriteria($criteria);
         $address = Address::find($id);
 
-        if($address == null){
-            $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'Address']);   
+        if ($address == null) {
+            $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'Address']);
+
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
@@ -71,34 +70,34 @@ class AddressController extends ApiController
     }
 
     /**
-     * Update contents of an Address
+     * Update contents of an Address.
      *
      * @param $id
+     *
      * @return \Dingo\Api\Http\Response
      */
     public function store($id, Request $request)
     {
         if ($this->isJsonCorrect($request, 'address')) {
             try {
-                
                 $data = $request->all()['data']['attributes'];
                 $data['id'] = $id;
                 $address = $this->address->update($data);
 
-                if($address == 'notExist') {
+                if ($address == 'notExist') {
                     $error['errors']['address'] = Lang::get('messages.NotExistClass', ['class' => 'Address']);
                     //$error['errors']['Message'] = $e->getMessage();
                     return response()->json($error)->setStatusCode($this->status_codes['notexists']);
                 }
 
-                if($address == 'notSaved') {
+                if ($address == 'notSaved') {
                     $error['errors']['address'] = Lang::get('messages.NotSavedClass', ['class' => 'Address']);
                     //$error['errors']['Message'] = $e->getMessage();
                     return response()->json($error)->setStatusCode($this->status_codes['conflict']);
                 }
 
                 return $this->response()->item($address, new AddressTransformer(), ['key' => 'address'])->setStatusCode($this->status_codes['created']);
-            } catch (\Exception $e){
+            } catch (\Exception $e) {
                 $error['errors']['address'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Address', 'option' => 'updated', 'include' => '']);
                 //$error['errors']['addressMessage'] = $e->getMessage();
             }
@@ -110,7 +109,7 @@ class AddressController extends ApiController
     }
 
     /**
-     * Create a new Address
+     * Create a new Address.
      *
      * @return \Dingo\Api\Http\Response
      */
@@ -118,12 +117,11 @@ class AddressController extends ApiController
     {
         if ($this->isJsonCorrect($request, 'address')) {
             try {
-
                 $data = $request->all()['data']['attributes'];
                 $address = $this->address->create($data);
 
                 return $this->response()->item($address, new AddressTransformer(), ['key' => 'address'])->setStatusCode($this->status_codes['created']);
-            } catch (\Exception $e){
+            } catch (\Exception $e) {
                 $error['errors']['address'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Address', 'option' => 'created', 'include' => '']);
                 //$error['errors']['Message'] = $e->getMessage();
             }
@@ -135,25 +133,27 @@ class AddressController extends ApiController
     }
 
     /**
-     * Delete a Address
+     * Delete a Address.
      *
      * @param $id
      */
     public function delete($id)
     {
         $address = Address::find($id);
-        if ($address <> null) {
+        if ($address != null) {
             $this->address->deleteById($id);
         } else {
-            $error['errors']['delete'] = Lang::get('messages.NotExistClass', ['class' => 'Address']);   
+            $error['errors']['delete'] = Lang::get('messages.NotExistClass', ['class' => 'Address']);
+
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
-        
-        $address = Address::find($id);        
-        if($address == null){
-            return array("success" => true);
+
+        $address = Address::find($id);
+        if ($address == null) {
+            return array('success' => true);
         } else {
-            $error['errors']['delete'] = Lang::get('messages.NotDeletedClass', ['class' => 'Address']);   
+            $error['errors']['delete'] = Lang::get('messages.NotDeletedClass', ['class' => 'Address']);
+
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
     }

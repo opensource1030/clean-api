@@ -17,7 +17,7 @@ class RelationshipTransformer extends TransformerAbstract
     public function transform($class)
     {
         return [
-            'id'               => $class->id
+            'id' => $class->id,
         ];
     }
 }

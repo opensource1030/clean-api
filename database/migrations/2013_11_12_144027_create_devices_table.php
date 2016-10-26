@@ -13,13 +13,11 @@ class CreateDevicesTable extends Migration
         'deviceTypeId',
         'statusId' => 'nullable',
         'carrierId' => 'nullable',
-        'syncId'   => 'nullable'
+        'syncId' => 'nullable',
     ];
 
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
@@ -39,10 +37,10 @@ class CreateDevicesTable extends Migration
 
                 $table->nullableTimestamps();
             });
-        
+
         Schema::table(
-            $this->tableName, 
-            function($table) {
+            $this->tableName,
+            function ($table) {
                 //¿¿ $table->foreign('statusId')->references('id')->on('companies'); ??
                 $table->foreign('carrierId')->references('id')->on('carriers');
             }
@@ -51,45 +49,43 @@ class CreateDevicesTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
     public function down()
     {
         Schema::table(
-            $this->tableName, 
+            $this->tableName,
             function ($table) {
                 //$table->dropForeign('carrierId');
-        });
+            });
 
         /*
         Schema::table(
-            $this->tableName, 
+            $this->tableName,
             function ($table) {
                 //$table->dropForeign('deviceTypeId');
                 //$table->dropForeign('syncId');
         });
 
         Schema::table(
-            'device_users', 
+            'device_users',
             function ($table) {
                 //$table->dropForeign('deviceId');
         });
 
         Schema::table(
-            'asset_devices', 
+            'asset_devices',
             function ($table) {
                 //$table->dropForeign('deviceId');
         });
 
         Schema::table(
-            'employee_devices', 
+            'employee_devices',
             function ($table) {
                 //$table->dropForeign('deviceId');
         });
 
         Schema::table(
-            'companies_devices', 
+            'companies_devices',
             function ($table) {
                 //$table->dropForeign('deviceId');
         });

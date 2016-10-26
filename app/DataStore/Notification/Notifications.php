@@ -2,19 +2,16 @@
 
 namespace WA\DataStore\Notification;
 
-use Illuminate\Database\Eloquent\SoftDeletes as SoftDeletingTrait;
-use WA\DataStore\BaseDataStore;
 use WA\DataStore\MutableDataStore;
 
 /**
- * WA\DataStore\Notification\Notifications
+ * WA\DataStore\Notification\Notifications.
  *
  * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\User\User[] $users
  * @mixin \Eloquent
  */
 class Notifications extends MutableDataStore
 {
-
     protected $table = 'notifications';
 
     protected $fillable = [
@@ -35,5 +32,4 @@ class Notifications extends MutableDataStore
     {
         return $this->belongsToMany('WA\DataStore\User\User', 'employee_assets', 'assetId', 'userId');
     }
-
 }

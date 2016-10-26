@@ -5,45 +5,42 @@ namespace WA\Repositories\Content;
 use WA\Repositories\AbstractRepository;
 
 /**
- * Class EloquentContent
- *
- * @package WA\Repositories\Content
+ * Class EloquentContent.
  */
 class EloquentContent extends AbstractRepository implements ContentInterface
 {
-
     /**
-     * Update content
+     * Update content.
      *
      * @param array $data
+     *
      * @return bool
      */
     public function update(array $data)
     {
         $content = $this->model->find($data['id']);
 
-        if(!$content)
-        {
+        if (!$content) {
             return false;
         }
 
         $content->active = isset($data['active']) ? $data['active'] : 0;
         $content->content = isset($data['content']) ? $data['content'] : null;
         $content->owner_type = isset($data['owner_type']) ? $data['owner_type'] : null;
-        $content->owner_id = isset($data['owner_id']) ? $data['owner_id'] : 0 ;
+        $content->owner_id = isset($data['owner_id']) ? $data['owner_id'] : 0;
 
-        if(!$content->save()) {
+        if (!$content->save()) {
             return false;
         }
 
         return $content;
-
     }
 
     /**
-     * Get the company Id tied to the content
+     * Get the company Id tied to the content.
      *
      * @param $id
+     *
      * @return mixed
      */
     public function getCompanyId($id)
@@ -54,33 +51,34 @@ class EloquentContent extends AbstractRepository implements ContentInterface
     /**
      * Get an array of all the available content.
      *
-     * @return Array of contents
+     * @return array of contents
      */
     public function getAllContents()
     {
-        $contents =  $this->model->all();
+        $contents = $this->model->all();
+
         return $contents;
     }
 
     /**
-     * Create new content
+     * Create new content.
      *
      * @param array $data
+     *
      * @return bool|static
      */
     public function create(array $data)
     {
-
         $contentData = [
-        "active" => !empty($data['active']) ? 1 : 0,
-        "content" => isset($data['content']) ? $data['content'] : null,
-        "owner_type" => isset($data['owner_type']) ? $data['owner_type'] : null,
-        "owner_id" => isset($data['owner_id']) ? $data['owner_id'] : 0,
+        'active' => !empty($data['active']) ? 1 : 0,
+        'content' => isset($data['content']) ? $data['content'] : null,
+        'owner_type' => isset($data['owner_type']) ? $data['owner_type'] : null,
+        'owner_id' => isset($data['owner_id']) ? $data['owner_id'] : 0,
         ];
 
         $content = $this->model->create($contentData);
 
-        if(!$content) {
+        if (!$content) {
             return false;
         }
 
@@ -109,7 +107,7 @@ class EloquentContent extends AbstractRepository implements ContentInterface
     }
 
     /**
-     * Return Default Contents
+     * Return Default Contents.
      *
      * @return mixed
      */

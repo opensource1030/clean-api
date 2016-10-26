@@ -3,16 +3,12 @@
 namespace WA\Services\Form\User;
 
 use Illuminate\Session\SessionManager as Session;
-use Log;
 use Mail;
 use WA\DataStore\Company\Company;
 use WA\DataStore\User\User;
-use WA\Helpers\Traits\SetLimits;
-use WA\Http\Controllers\Admin\HelperController;
 use WA\Repositories\Company\CompanyInterface;
 use WA\Repositories\User\UserInterface;
 use WA\Repositories\HelpDesk\HelpDeskInterface;
-use WA\Repositories\Udl\UdlInterface;
 use WA\Services\Form\AbstractForm;
 use WA\Services\Soap\HelpDeskEasyVista as HelpDeskApi;
 
@@ -51,7 +47,6 @@ class CompanyUserForm extends AbstractForm
      */
     protected $company;
 
-
     public function __construct(
         UserInterface $user,
         CompanyUserFormValidator $validator,
@@ -66,27 +61,26 @@ class CompanyUserForm extends AbstractForm
     /**
      * @param array $input
      *
-     * @return bool|Object of employee data
+     * @return bool|object of employee data
      */
     public function create(array $input)
     {
         if (!$this->isValidCompanyDomain($input['email'])) {
             $this->notify('error',
                 'The email address you have entered is not a valid domain for your organization. Please enter your company-standard email address and try again.');
+
             return false;
         }
 
         $email = isset($input['email']) ? $input['email'] : null;
-        if(!empty($email))
-        {
+        if (!empty($email)) {
             $user = $this->user->byEmail($email);
-            if(!empty($user))
-            {
+            if (!empty($user)) {
                 $this->notify('error', 'There is an existing employee with the given email. Please try another email address.');
+
                 return false;
             }
         }
-
 
         $user = $this->user->create($input, []);
 
@@ -94,7 +88,7 @@ class CompanyUserForm extends AbstractForm
             $this->notify('error', 'Something strange happened, could not created User. try again later');
 
             return false;
-        };
+        }
 
         if (!$user) {
             $this->notify('error', 'There was an issue creating this employee');
@@ -109,7 +103,7 @@ class CompanyUserForm extends AbstractForm
     }
 
     /**
-     * Gets the company ID by the email
+     * Gets the company ID by the email.
      *
      * @param string $email
      *
@@ -121,7 +115,7 @@ class CompanyUserForm extends AbstractForm
     }
 
     /**
-     * Check if this is a valid company domain
+     * Check if this is a valid company domain.
      *
      * @param string $email
      *
@@ -131,35 +125,35 @@ class CompanyUserForm extends AbstractForm
     {
         $companyId = $this->company->getIdByUserEmail($email);
 
-        return (bool)$companyId;
+        return (bool) $companyId;
     }
 
     /**
-     * Send the confirmation email for login info
+     * Send the confirmation email for login info.
      *
-     * @param User $user
-     * @param array    $optional []
+     * @param User  $user
+     * @param array $optional []
      *
      * @return bool
      */
     public function sendLoginDetails(User $user, $optional = [])
     {
         $redirect_base = route('login');
-        $redirectPath = ((bool)$optional['legacyDestination']) ? $optional['legacyDestination'] : $redirect_base;
+        $redirectPath = ((bool) $optional['legacyDestination']) ? $optional['legacyDestination'] : $redirect_base;
 //        $appName = ((bool)$optional['isLegacy']) ? "CLEAN Platform" : "CLEAN Platform";
-        $appName = "Wireless Analytics";
+        $appName = 'Wireless Analytics';
 
         $data = [
             'email' => $user->email,
-            'password' => isset($optional['password']) ? $optional['password'] : "",
+            'password' => isset($optional['password']) ? $optional['password'] : '',
             'companyName' => ucfirst($this->company->byId($user->companyId)->name),
             'redirectPath' => $redirectPath,
-            'appName' => $appName
+            'appName' => $appName,
         ];
 
         $mail = Mail::send('emails.employee.welcome', $data, function ($m) use ($user, $appName) {
             $m->from(env('MAIL_FROM_ADDRESS'), 'Wireless Analytics');
-            $m->to($user->email)->subject('Welcome to ' . $appName . ' !');
+            $m->to($user->email)->subject('Welcome to '.$appName.' !');
         });
 
         return true;
@@ -170,7 +164,7 @@ class CompanyUserForm extends AbstractForm
      *
      * @param $email
      *
-     * @return Object of User
+     * @return object of User
      */
     public function getUserByEmail($email)
     {
@@ -180,7 +174,7 @@ class CompanyUserForm extends AbstractForm
     }
 
     /**
-     * Get the company by it's id
+     * Get the company by it's id.
      *
      * @param int $id
      *

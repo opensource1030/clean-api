@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
 class CreateCategoryappsAppTable extends Migration
@@ -11,8 +10,6 @@ class CreateCategoryappsAppTable extends Migration
 
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
@@ -28,8 +25,8 @@ class CreateCategoryappsAppTable extends Migration
         );
 
         Schema::table(
-            $this->tableName, 
-            function($table) {
+            $this->tableName,
+            function ($table) {
                 $table->foreign('categoryappId')->references('id')->on('categoryapps')->onDelete('cascade');
                 $table->foreign('appId')->references('id')->on('apps')->onDelete('cascade');
             }
@@ -38,8 +35,6 @@ class CreateCategoryappsAppTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
     public function down()
     {

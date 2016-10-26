@@ -10,7 +10,6 @@
  */
 
 use Illuminate\Database\Migrations\Migration;
-
 use Illuminate\Support\Facades\Schema;
 
 /**
@@ -22,12 +21,10 @@ class CreateOauthClientEndpointsTable extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
-        Schema::create('oauth_client_endpoints', function ( $table) {
+        Schema::create('oauth_client_endpoints', function ($table) {
             $table->increments('id');
             $table->string('client_id', 40);
             $table->string('redirect_uri');
@@ -45,12 +42,10 @@ class CreateOauthClientEndpointsTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
     public function down()
     {
-        Schema::table('oauth_client_endpoints', function ( $table) {
+        Schema::table('oauth_client_endpoints', function ($table) {
             $table->dropForeign('oauth_client_endpoints_client_id_foreign');
         });
 

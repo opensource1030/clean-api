@@ -11,7 +11,7 @@ interface UdlValuePathUsersInterface extends RepositoryInterface
      *
      * @param string $udlValuePathId
      *
-     * @return Object object of the udlValuePathUsers information
+     * @return object object of the udlValuePathUsers information
      */
     public function byUdlPathId($udlValuePathId);
 
@@ -20,7 +20,7 @@ interface UdlValuePathUsersInterface extends RepositoryInterface
      *
      * @param int $creatorId
      *
-     * @return Object object of the udlValuePathUsers information
+     * @return object object of the udlValuePathUsers information
      */
     public function byCreatorId($creatorId);
 }

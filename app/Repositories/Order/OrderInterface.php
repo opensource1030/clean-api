@@ -5,23 +5,22 @@ namespace WA\Repositories\Order;
 use WA\Repositories\RepositoryInterface;
 
 /**
- * Interface OrderInterface
- *
- * @package WA\Repositories\Order
+ * Interface OrderInterface.
  */
 interface OrderInterface extends RepositoryInterface
 {
     /**
      * Get Array of all Orders.
      *
-     * @return Array of Order
+     * @return array of Order
      */
     public function getAllOrder();
 
     /**
-     * Create Order
+     * Create Order.
      *
      * @param array $data
+     *
      * @return bool|static
      */
     public function create(array $data);
@@ -44,5 +43,4 @@ interface OrderInterface extends RepositoryInterface
      * @return bool
      */
     public function delete($id, $soft = true);
-
 }

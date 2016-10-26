@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
 class CreatePackageServicesTable extends Migration
@@ -11,8 +10,6 @@ class CreatePackageServicesTable extends Migration
 
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
@@ -28,8 +25,8 @@ class CreatePackageServicesTable extends Migration
         );
 
         Schema::table(
-            $this->tableName, 
-            function($table) {
+            $this->tableName,
+            function ($table) {
                 $table->foreign('packageId')->references('id')->on('packages')->onDelete('cascade');
                 $table->foreign('serviceId')->references('id')->on('services')->onDelete('cascade');
             }
@@ -38,8 +35,6 @@ class CreatePackageServicesTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
     public function down()
     {

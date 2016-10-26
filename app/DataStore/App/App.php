@@ -3,25 +3,22 @@
 namespace WA\DataStore\App;
 
 use WA\DataStore\BaseDataStore;
-use WA\DataStore\App\AppTransformer;
 
 /**
- * Class App
- *
- * @package WA\DataStore\App
+ * Class App.
  */
 class App extends BaseDataStore
 {
-    protected  $table = 'apps';
+    protected $table = 'apps';
 
     protected $fillable = [
             'type',
             'image',
             'description',
-            'updated_at'];
+            'updated_at', ];
 
     /**
-     * Get all the owners for the app
+     * Get all the owners for the app.
      *
      * @return \Illuminate\Database\Eloquent\Relations\MorphTo
      */
@@ -31,7 +28,7 @@ class App extends BaseDataStore
     }
 
     /**
-     * Get the transformer instance
+     * Get the transformer instance.
      *
      * @return AppTransformer
      */

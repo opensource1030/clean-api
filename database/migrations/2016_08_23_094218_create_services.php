@@ -10,14 +10,12 @@ class CreateServices extends Migration
     protected $tableName = 'services';
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
         Schema::create(
             $this->tableName,
-            function ( $table) {
+            function ($table) {
                 $table->increments('id');
                 $table->string('title');
                 $table->integer('planCode');
@@ -37,31 +35,29 @@ class CreateServices extends Migration
         );
 
         Schema::table(
-            $this->tableName, 
-            function($table) {
+            $this->tableName,
+            function ($table) {
                 //$table->foreign('companyId')->references('id')->on('companies');
             }
         );
         Schema::table(
-            'orders', 
-            function($table) {
+            'orders',
+            function ($table) {
                 $table->foreign('serviceId')->references('id')->on('services');
             }
-        );        
+        );
     }
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
     public function down()
     {
         Schema::table(
-            $this->tableName, 
-            function ( $table) {
+            $this->tableName,
+            function ($table) {
                 //$table->dropForeign('companyId');
-        });
+            });
 
         $this->forceDropTable($this->tableName);
     }

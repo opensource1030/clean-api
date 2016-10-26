@@ -1,6 +1,5 @@
 <?php
 
-
 namespace WA\Providers;
 
 use Illuminate\Support\ServiceProvider;
@@ -20,7 +19,6 @@ class RepositoriesServiceProviders extends ServiceProvider
      */
     public function register()
     {
-
         $this->registerApp();
         $this->registerAsset();
         $this->registerDevice();
@@ -61,6 +59,5 @@ class RepositoriesServiceProviders extends ServiceProvider
         $this->registerCondition();
         $this->registerConditionField();
         $this->registerConditionOperator();
-
     }
 }

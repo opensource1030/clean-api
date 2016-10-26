@@ -8,11 +8,9 @@ class CreateOrders extends Migration
     use \WA\Database\Command\TablesRelationsAndIndexes;
 
     protected $tableName = 'orders';
-    
+
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
@@ -31,8 +29,8 @@ class CreateOrders extends Migration
         );
 
         Schema::table(
-            $this->tableName, 
-            function($table) {
+            $this->tableName,
+            function ($table) {
                 $table->foreign('userId')->references('id')->on('users');
                 $table->foreign('deviceId')->references('id')->on('devices');
             }
@@ -41,17 +39,15 @@ class CreateOrders extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
     public function down()
     {
         Schema::table(
-            $this->tableName, 
-            function ( $table) {
+            $this->tableName,
+            function ($table) {
                 //$table->dropForeign('userId');
                 //$table->dropForeign('packageId');
-        });
+            });
 
         $this->forceDropTable($this->tableName);
     }

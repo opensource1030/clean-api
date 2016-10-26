@@ -2,25 +2,17 @@
 
 namespace WA\Repositories\Allocation;
 
-
 use WA\Repositories\RepositoryInterface;
 
-
 /**
- * Interface AllocationInterface
- *
+ * Interface AllocationInterface.
  */
 interface AllocationInterface extends RepositoryInterface
 {
-
-
-
     /**
- * Get Allocations Transformer
- *
- * @return mixed
- */
+     * Get Allocations Transformer.
+     *
+     * @return mixed
+     */
     public function getTransformer();
-
-
 }

@@ -3,26 +3,22 @@
 namespace WA\DataStore\Package;
 
 use League\Fractal\Resource\Collection as ResourceCollection;
-use League\Fractal\Resource\Item as ResourceItem;
 use League\Fractal\TransformerAbstract;
-
 use WA\DataStore\App\AppTransformer;
 use WA\DataStore\Condition\ConditionTransformer;
 use WA\DataStore\Service\ServiceTransformer;
 use WA\DataStore\Device\DeviceTransformer;
-
 use WA\Helpers\Traits\Criteria;
 
 /**
- * Class PackageTransformer
- *
+ * Class PackageTransformer.
  */
 class PackageTransformer extends TransformerAbstract
 {
     use Criteria;
 
     protected $availableIncludes = [
-        'conditions', 'services', 'devices', 'apps'
+        'conditions', 'services', 'devices', 'apps',
     ];
 
     /**
@@ -33,7 +29,7 @@ class PackageTransformer extends TransformerAbstract
     public function transform(Package $package)
     {
         return [
-            'id' => (int)$package->id,
+            'id' => (int) $package->id,
             'name' => $package->name,
             'addressId' => $package->addressId,
             'created_at' => $package->created_at,
@@ -49,6 +45,7 @@ class PackageTransformer extends TransformerAbstract
     public function includeConditions(Package $package)
     {
         $conditions = $this->applyCriteria($package->conditions(), $this->criteria);
+
         return new ResourceCollection($conditions->get(), new ConditionTransformer(), 'conditions');
     }
 
@@ -60,6 +57,7 @@ class PackageTransformer extends TransformerAbstract
     public function includeServices(Package $package)
     {
         $services = $this->applyCriteria($package->services(), $this->criteria);
+
         return new ResourceCollection($services->get(), new ServiceTransformer(), 'services');
     }
 
@@ -71,6 +69,7 @@ class PackageTransformer extends TransformerAbstract
     public function includeDevices(Package $package)
     {
         $devices = $this->applyCriteria($package->devices(), $this->criteria);
+
         return new ResourceCollection($devices->get(), new DeviceTransformer(), 'devices');
     }
 
@@ -82,6 +81,7 @@ class PackageTransformer extends TransformerAbstract
     public function includeApps(Package $package)
     {
         $apps = $this->applyCriteria($package->apps(), $this->criteria);
+
         return new ResourceCollection($apps->get(), new AppTransformer(), 'apps');
     }
 }

@@ -6,23 +6,20 @@ use Laravel\Lumen\Testing\DatabaseMigrations;
 class ServicesApiTest extends TestCase
 {
     //use DatabaseTransactions;
-    use DatabaseMigrations;     
+    use DatabaseMigrations;
 
     /**
-     * A basic functional test for services
-     *
-     *
+     * A basic functional test for services.
      */
-
     public function testGetServices()
-    {   
+    {
         factory(\WA\DataStore\Service\Service::class, 40)->create();
 
         $res = $this->get('services');
 
         $res->seeJsonStructure([
             'data' => [
-                0 => [  
+                0 => [
                     'type',
                     'id',
                     'attributes' => [
@@ -39,18 +36,18 @@ class ServicesApiTest extends TestCase
                         'created_at' => [
                             'date',
                             'timezone_type',
-                            'timezone'
+                            'timezone',
                         ],
                         'updated_at' => [
                             'date',
                             'timezone_type',
-                            'timezone'
-                        ]
+                            'timezone',
+                        ],
                     ],
                     'links' => [
-                        'self'
-                    ]
-                ]
+                        'self',
+                    ],
+                ],
             ],
             'meta' => [
                 'pagination' => [
@@ -58,15 +55,15 @@ class ServicesApiTest extends TestCase
                     'count',
                     'per_page',
                     'current_page',
-                    'total_pages'
-                ]
+                    'total_pages',
+                ],
             ],
             'links' => [
                 'self',
                 'first',
                 'next',
-                'last'
-            ]
+                'last',
+            ],
         ]);
     }
 
@@ -77,16 +74,16 @@ class ServicesApiTest extends TestCase
         $res = $this->get('services/'.$service->id)
             ->seeJson([
                 'type' => 'services',
-                'title'=> $service->title,
-                'planCode'=> "$service->planCode",
-                'cost'=> "$service->cost",
-                'description'=> $service->description,
-                'domesticMinutes'=> "$service->domesticMinutes",
-                'domesticData'=> "$service->domesticData",
-                'domesticMessages'=> "$service->domesticMessages",
-                'internationalMinutes'=> "$service->internationalMinutes",
-                'internationalData'=> "$service->internationalData",
-                'internationalMessages'=> "$service->internationalMessages",
+                'title' => $service->title,
+                'planCode' => "$service->planCode",
+                'cost' => "$service->cost",
+                'description' => $service->description,
+                'domesticMinutes' => "$service->domesticMinutes",
+                'domesticData' => "$service->domesticData",
+                'domesticMessages' => "$service->domesticMessages",
+                'internationalMinutes' => "$service->internationalMinutes",
+                'internationalData' => "$service->internationalData",
+                'internationalMessages' => "$service->internationalMessages",
             ]);
     }
 
@@ -98,30 +95,30 @@ class ServicesApiTest extends TestCase
                     'type' => 'services',
                     'attributes' => [
                         'title' => 'Service Test',
-                        'planCode' => "11111",
-                        'cost' => "22",
+                        'planCode' => '11111',
+                        'cost' => '22',
                         'description' => 'Test Service',
-                        'domesticMinutes' => "111",
-                        'domesticData' => "222",
-                        'domesticMessages' => "333",
-                        'internationalMinutes' => "444",
-                        'internationalData' => "555",
-                        'internationalMessages' => "666"
-                    ]
-                ]
+                        'domesticMinutes' => '111',
+                        'domesticData' => '222',
+                        'domesticMessages' => '333',
+                        'internationalMinutes' => '444',
+                        'internationalData' => '555',
+                        'internationalMessages' => '666',
+                    ],
+                ],
             ])
             ->seeJson([
                 'type' => 'services',
                 'title' => 'Service Test',
-                'planCode' => "11111",
-                'cost' => "22",
+                'planCode' => '11111',
+                'cost' => '22',
                 'description' => 'Test Service',
-                'domesticMinutes' => "111",
-                'domesticData' => "222",
-                'domesticMessages' => "333",
-                'internationalMinutes' => "444",
-                'internationalData' => "555",
-                'internationalMessages' => "666",
+                'domesticMinutes' => '111',
+                'domesticData' => '222',
+                'domesticMessages' => '333',
+                'internationalMinutes' => '444',
+                'internationalData' => '555',
+                'internationalMessages' => '666',
             ]);
     }
 
@@ -145,50 +142,51 @@ class ServicesApiTest extends TestCase
         $this->assertNotEquals($service->internationalData, $serviceAux->internationalData);
         $this->assertNotEquals($service->internationalMessages, $serviceAux->internationalMessages);
 
-
         $this->put('/services/'.$serviceAux->id,
             [
                 'data' => [
                     'type' => 'services',
                     'attributes' => [
-                        'title'=> "$service->title",
-                        'planCode'=> "$service->planCode",
-                        'cost'=> "$service->cost",
-                        'description'=> $service->description,
-                        'domesticMinutes'=> "$service->domesticMinutes",
-                        'domesticData'=> "$service->domesticData",
-                        'domesticMessages'=> "$service->domesticMessages",
-                        'internationalMinutes'=> "$service->internationalMinutes",
-                        'internationalData'=> "$service->internationalData",
-                        'internationalMessages'=> "$service->internationalMessages",
-                    ]
-                ]                
+                        'title' => "$service->title",
+                        'planCode' => "$service->planCode",
+                        'cost' => "$service->cost",
+                        'description' => $service->description,
+                        'domesticMinutes' => "$service->domesticMinutes",
+                        'domesticData' => "$service->domesticData",
+                        'domesticMessages' => "$service->domesticMessages",
+                        'internationalMinutes' => "$service->internationalMinutes",
+                        'internationalData' => "$service->internationalData",
+                        'internationalMessages' => "$service->internationalMessages",
+                    ],
+                ],
             ])
             ->seeJson([
                 'type' => 'services',
-                'title'=> 'title1',
-                'planCode'=> "11111",
-                'cost'=> "30",
-                'description'=> "desc1",
-                'domesticMinutes'=> "100",
-                'domesticData'=> "100",
-                'domesticMessages'=> "100",
-                'internationalMinutes'=> "100",
-                'internationalData'=> "100",
-                'internationalMessages'=> "100",
+                'title' => 'title1',
+                'planCode' => '11111',
+                'cost' => '30',
+                'description' => 'desc1',
+                'domesticMinutes' => '100',
+                'domesticData' => '100',
+                'domesticMessages' => '100',
+                'internationalMinutes' => '100',
+                'internationalData' => '100',
+                'internationalMessages' => '100',
             ]);
     }
 
-    public function testDeleteServiceIfExists() {
+    public function testDeleteServiceIfExists()
+    {
         // CREATE & DELETE
         $service = factory(\WA\DataStore\Service\Service::class)->create();
         $responseDel = $this->call('DELETE', '/services/'.$service->id);
         $this->assertEquals(200, $responseDel->status());
         $responseGet = $this->call('GET', '/services/'.$service->id);
-        $this->assertEquals(409, $responseGet->status());        
+        $this->assertEquals(409, $responseGet->status());
     }
 
-    public function testDeleteServiceIfNoExists(){
+    public function testDeleteServiceIfNoExists()
+    {
         // DELETE NO EXISTING.
         $responseDel = $this->call('DELETE', '/services/1');
         $this->assertEquals(404, $responseDel->status());

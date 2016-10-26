@@ -2,13 +2,10 @@
 
 namespace WA\DataStore\App;
 
-use League\Fractal\Resource\Collection as ResourceCollection;
-use League\Fractal\Resource\Item as ResourceItem;
 use League\Fractal\TransformerAbstract;
 
 /**
- * Class AppTransformer
- *
+ * Class AppTransformer.
  */
 class AppTransformer extends TransformerAbstract
 {
@@ -21,12 +18,12 @@ class AppTransformer extends TransformerAbstract
     {
         return [
 
-            'id' => (int)$app->id,
+            'id' => (int) $app->id,
             'type' => $app->type,
             'image' => $app->image,
             'description' => $app->description,
             'created_at' => $app->created_at,
-            'updated_at' => $app->updated_at
+            'updated_at' => $app->updated_at,
         ];
     }
 }

@@ -1,24 +1,21 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
 class CreateCustomRequests extends Migration
 {
     use \WA\Database\Command\TablesRelationsAndIndexes;
-    
+
     protected $tableName = 'custom_requests';
 
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
         Schema::create(
             $this->tableName,
-            function ( $table) {
+            function ($table) {
                 $table->increments('id');
                 $table->integer('userId')->unsigned();
                 $table->string('subject');
@@ -28,8 +25,8 @@ class CreateCustomRequests extends Migration
         );
 
         Schema::table(
-            $this->tableName, 
-            function($table) {
+            $this->tableName,
+            function ($table) {
                 $table->foreign('userId')->references('id')->on('users');
             }
         );
@@ -37,16 +34,14 @@ class CreateCustomRequests extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
     public function down()
     {
         Schema::table(
-            $this->tableName, 
-            function ( $table) {
+            $this->tableName,
+            function ($table) {
                 //$table->dropForeign('userId');
-        });
+            });
 
         $this->forceDropTable($this->tableName);
     }

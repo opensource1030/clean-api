@@ -3,13 +3,10 @@
 namespace WA\Http\Controllers;
 
 use Request;
-
 use WA\DataStore\Image\Image;
 use WA\DataStore\Image\ImageTransformer;
 use WA\Repositories\Image\ImageInterface;
-
 use Illuminate\Support\Facades\Storage;
-
 use Illuminate\Support\Facades\Lang;
 
 /**
@@ -25,51 +22,52 @@ class ImagesController extends ApiController
     protected $image;
 
     /**
-     * Image Controller constructor
+     * Image Controller constructor.
      *
      * @param ImageInterface $image
      */
-    public function __construct(ImageInterface $image) {
-
+    public function __construct(ImageInterface $image)
+    {
         $this->image = $image;
     }
 
     /**
-     * Show all Images
+     * Show all Images.
      *
      * Get a payload of all Image
-     *
      */
-    public function index() {
-
+    public function index()
+    {
         $criteria = $this->getRequestCriteria();
         $this->image->setCriteria($criteria);
         $image = $this->image->byPage();
 
         $response = $this->response()->withPaginator($image, new ImageTransformer(), ['key' => 'images']);
         $response = $this->applyMeta($response);
+
         return $response;
     }
 
     /**
-     * Show a single Image
+     * Show a single Image.
      *
      * Get a payload of a single Image
      *
      * @Get("/{id}")
      */
-    public function show($id) {
-
+    public function show($id)
+    {
         $criteria = $this->getRequestCriteria();
         $this->image->setCriteria($criteria);
         $image = Image::find($id);
 
-        if($image == null){
-            $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'Image']);   
+        if ($image == null) {
+            $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'Image']);
+
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
-        $path = $image->filename . '.' . $image->extension;
+        $path = $image->filename.'.'.$image->extension;
 
         $value = Storage::get($path);
 
@@ -77,30 +75,31 @@ class ImagesController extends ApiController
     }
 
     /**
-     * Show a single Image Information
+     * Show a single Image Information.
      *
      * Get a payload of a single Image information
      *
      * @Get("/{id}")
      */
-    public function info($id) {
-
+    public function info($id)
+    {
         $image = Image::find($id);
-        if($image == null){
+        if ($image == null) {
             $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'Image']);
+
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
-        return $this->response()->item($image, new ImageTransformer(),['key' => 'images'])->setStatusCode($this->status_codes['created']);
+        return $this->response()->item($image, new ImageTransformer(), ['key' => 'images'])->setStatusCode($this->status_codes['created']);
     }
-   
+
     /**
-     * Create a new Image
+     * Create a new Image.
      *
      * @return \Dingo\Api\Http\Response
      */
-    public function create() {
-
+    public function create()
+    {
         try {
             $file = Request::file('filename');
 
@@ -109,9 +108,9 @@ class ImagesController extends ApiController
             $imageFile['mimeType'] = $file->getClientMimeType();
             $extension = $imageFile['extension'] = $file->getClientOriginalExtension();
             $imageFile['size'] = $file->getClientSize();
-            $imageFile['url'] = $filename . '.' . $extension;
+            $imageFile['url'] = $filename.'.'.$extension;
 
-            $value = Storage::put($filename . '.' . $extension, file_get_contents($file));
+            $value = Storage::put($filename.'.'.$extension, file_get_contents($file));
 
             if ($value) {
                 $image = $this->image->create($imageFile);
@@ -121,6 +120,7 @@ class ImagesController extends ApiController
         } catch (\Exception $e) {
             $error['errors']['image'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Image', 'option' => 'created', 'include' => '']);
             $error['errors']['Message'] = $e->getMessage();
+
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
@@ -129,26 +129,28 @@ class ImagesController extends ApiController
     }
 
     /**
-     * Delete an Image
+     * Delete an Image.
      *
      * @param $id
      */
-    public function delete($id) {
-
+    public function delete($id)
+    {
         $image = Image::find($id);
-        if ($image <> null) {
+        if ($image != null) {
             $this->image->deleteById($id);
-            Storage::delete($path = $image->filename . '.' . $image->extension);
+            Storage::delete($path = $image->filename.'.'.$image->extension);
         } else {
-            $error['errors']['delete'] = Lang::get('messages.NotExistClass', ['class' => 'Image']);   
+            $error['errors']['delete'] = Lang::get('messages.NotExistClass', ['class' => 'Image']);
+
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
-        
-        $image = Image::find($id);        
-        if($image == null){
-            return array("success" => true);
+
+        $image = Image::find($id);
+        if ($image == null) {
+            return array('success' => true);
         } else {
-            $error['errors']['delete'] = Lang::get('messages.NotDeletedClass', ['class' => 'Image']);   
+            $error['errors']['delete'] = Lang::get('messages.NotDeletedClass', ['class' => 'Image']);
+
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
     }

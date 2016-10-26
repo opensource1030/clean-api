@@ -3,7 +3,6 @@
 namespace WA\Auth;
 
 use League\OAuth2\Server\Grant\PasswordGrant as PassGrant;
-
 use League\OAuth2\Server\Entity\AccessTokenEntity;
 use League\OAuth2\Server\Entity\ClientEntity;
 use League\OAuth2\Server\Entity\RefreshTokenEntity;
@@ -13,12 +12,12 @@ use League\OAuth2\Server\Exception;
 use League\OAuth2\Server\Util\SecureKey;
 
 /**
- * Password grant class
+ * Password grant class.
  */
 class PasswordGrant extends PassGrant
 {
     /**
-     * Complete the password grant
+     * Complete the password grant.
      *
      * @return array
      *
@@ -116,6 +115,7 @@ class PasswordGrant extends PassGrant
 
         $response = $this->server->getTokenType()->generateResponse();
         $response['user_id'] = $userId;
+
         return $response;
     }
 }

@@ -27,14 +27,14 @@ class AssetTransformer extends TransformerAbstract
     public function transform(Asset $asset)
     {
         return [
-            'id' => (int)$asset->id,
+            'id' => (int) $asset->id,
             'identification' => $asset->identification,
             'active' => $asset->active,
             'statusId' => $asset->statusId,
             'typeId' => $asset->typeId,
             'externalId' => $asset->externalId,
             'carrierId' => $asset->carrierId,
-            'syncId' => $asset->syncId
+            'syncId' => $asset->syncId,
         ];
     }
 
@@ -57,5 +57,4 @@ class AssetTransformer extends TransformerAbstract
     {
         return new ResourceCollection($asset->devices, new DeviceTransformer(), 'devices');
     }
-
 }

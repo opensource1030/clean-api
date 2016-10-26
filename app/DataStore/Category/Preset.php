@@ -9,7 +9,7 @@ class Preset extends BaseDataStore
     protected $table = 'presets';
 
     protected $fillable = [
-            'name'
+            'name',
             ];
 
     /**

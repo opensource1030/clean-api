@@ -2,7 +2,6 @@
 
 namespace WA\Repositories\Device;
 
-use WA\Repositories\CountableInterface;
 use WA\Repositories\RepositoryInterface;
 
 interface DeviceInterface extends RepositoryInterface
@@ -67,7 +66,7 @@ interface DeviceInterface extends RepositoryInterface
      *
      * @param $id
      *
-     * @return Object object of company
+     * @return object object of company
      */
     public function byCompany($id);
 
@@ -90,7 +89,7 @@ interface DeviceInterface extends RepositoryInterface
      *
      * @param array $data to be updated
      *
-     * @return Object object of updated repo
+     * @return object object of updated repo
      */
     public function update(array $data);
 }

@@ -3,21 +3,18 @@
 
 use Illuminate\Database\Migrations\Migration;
 
-class CreateLocationsTable extends Migration {
-
+class CreateLocationsTable extends Migration
+{
     use \WA\Database\Command\TablesRelationsAndIndexes;
 
     protected $tableName = 'locations';
 
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
-        Schema::create($this->tableName, function ( $table) {
-
+        Schema::create($this->tableName, function ($table) {
             $table->increments('id');
             $table->string('name');
             $table->string('fullName');
@@ -29,18 +26,14 @@ class CreateLocationsTable extends Migration {
             $table->string('callingCode')->nullable();
             $table->string('lang')->nullable();
             $table->string('currencyIso', 50)->nullable();
-
         });
     }
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
     public function down()
     {
         Schema::drop($this->tableName);
     }
-
 }

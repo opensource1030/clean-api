@@ -9,7 +9,7 @@ interface AttributeInterface
      *
      * @param $name
      *
-     * @return Object object
+     * @return object object
      */
     public function byName($name);
 

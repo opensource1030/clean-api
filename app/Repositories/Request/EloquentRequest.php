@@ -5,69 +5,68 @@ namespace WA\Repositories\Request;
 use WA\Repositories\AbstractRepository;
 
 /**
- * Class EloquentRequest
- *
- * @package WA\Repositories\Request
+ * Class EloquentRequest.
  */
 class EloquentRequest extends AbstractRepository implements RequestInterface
 {
     /**
-     * Update Request
+     * Update Request.
      *
      * @param array $data
+     *
      * @return bool
      */
     public function update(array $data)
     {
         $request = $this->model->find($data['id']);
 
-        if(!$request)
-        {
+        if (!$request) {
             return false;
         }
 
-        if(isset($data['name'])){
+        if (isset($data['name'])) {
             $request->name = $data['name'];
         }
-        if(isset($data['description'])){
+        if (isset($data['description'])) {
             $request->description = $data['description'];
         }
 
-        if(!$request->save()) {
+        if (!$request->save()) {
             return false;
         }
 
         return $request;
-
     }
 
     /**
      * Get an array of all the available Request.
      *
-     * @return Array of request
+     * @return array of request
      */
     public function getAllRequest()
     {
-        $request =  $this->model->all();
+        $request = $this->model->all();
+
         return $request;
     }
 
     /**
-     * Create a new Request
+     * Create a new Request.
      *
      * @param array $data
+     *
      * @return bool|static
      */
     public function create(array $data)
     {
         $requestData = [
-            "name" =>  isset($data['name']) ? $data['name'] : null ,
-            "description" => isset($data['description']) ? $data['description'] : null,
+            'name' => isset($data['name']) ? $data['name'] : null,
+            'description' => isset($data['description']) ? $data['description'] : null,
         ];
 
         $request = $this->model->create($requestData);
 
-        if(!$request) {
+        if (!$request) {
             return false;
         }
 

@@ -3,16 +3,13 @@
 namespace WA\DataStore\Service;
 
 use WA\DataStore\BaseDataStore;
-use WA\DataStore\Service\ServiceTransformer;
 
 /**
- * Class Service
- *
- * @package WA\DataStore\Service
+ * Class Service.
  */
 class Service extends BaseDataStore
 {
-    protected  $table = 'services';
+    protected $table = 'services';
 
     protected $fillable = [
             'title',
@@ -25,21 +22,20 @@ class Service extends BaseDataStore
             'internationalMinutes',
             'internationalData',
             'internationalMessages',
-            'updated_at'];
-
+            'updated_at', ];
 
     /**
-     * Get all the owners for the service
+     * Get all the owners for the service.
      *
      * @return \Illuminate\Database\Eloquent\Relations\MorphTo
      */
     public function owner()
     {
-         return $this->morphTo();
+        return $this->morphTo();
     }
 
     /**
-     * Get the transformer instance
+     * Get the transformer instance.
      *
      * @return ServiceTransformer
      */

@@ -6,9 +6,7 @@ use WA\Repositories\AbstractRepository;
 use WA\Services\Form\User\UserForm;
 
 abstract class UserDecorator extends AbstractRepository implements UserInterface
-
 {
-
     protected $nextUser;
 
     public function __construct(UserInterface $nextUser)
@@ -21,7 +19,6 @@ abstract class UserDecorator extends AbstractRepository implements UserInterface
     {
         $this->nextUser->setCriteria($criteria);
     }
-
 
     /**
      * Get paginated users.
@@ -85,7 +82,6 @@ abstract class UserDecorator extends AbstractRepository implements UserInterface
         return $this->nextUser->byId($id);
     }
 
-
     /**
      * @param $companyId
      *
@@ -96,16 +92,15 @@ abstract class UserDecorator extends AbstractRepository implements UserInterface
         $this->nextUser->byCompanyIdentifier($companyId);
     }
 
-
     /**
      * Create a new User.
      *
-     * @param array $data
-     * @param array $udlValues
-     * @param bool $pushToExternalService |true
+     * @param array    $data
+     * @param array    $udlValues
+     * @param bool     $pushToExternalService |true
      * @param UserForm $userForm
      *
-     * @return Object object of the employee | false
+     * @return object object of the employee | false
      */
     public function create(
         array $data,
@@ -153,15 +148,14 @@ abstract class UserDecorator extends AbstractRepository implements UserInterface
     }
 
     /**
-     * Get supervisor information by companyId
+     * Get supervisor information by companyId.
      *
      * @param int $companyId of company selected
      *
-     * @return Array of employee supervisor information
+     * @return array of employee supervisor information
      */
     public function getAllSupervisors($companyId = null)
     {
-
         $this->nextUser->getAllSupervisors($companyId);
     }
 
@@ -170,7 +164,7 @@ abstract class UserDecorator extends AbstractRepository implements UserInterface
      *
      * @param string $userEmail
      *
-     * @return Object of employee information
+     * @return object of employee information
      */
     public function byEmail($userEmail)
     {

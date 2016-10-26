@@ -47,7 +47,7 @@ interface AuthInterface
     /**
      * Resets a password of a user. The $input['token'] will tell which user.
      *
-     * @param array $input Array containing 'token', 'password' and 'password_confirmation' keys.
+     * @param array $input Array containing 'token', 'password' and 'password_confirmation' keys
      *
      * @return bool Success
      */
@@ -58,11 +58,10 @@ interface AuthInterface
      */
     public function loggedIn();
 
-
     /**
-     * Get the User if exists
+     * Get the User if exists.
      *
-     * @return Object of user
+     * @return object of user
      */
     public function user();
 }

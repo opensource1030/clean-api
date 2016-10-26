@@ -11,8 +11,6 @@ class CreateJobstatusesTable extends Migration
 
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
@@ -23,17 +21,14 @@ class CreateJobstatusesTable extends Migration
                 $table->string('name');
                 $table->string('type');
                 $table->string('description')->nullable();
-        });
+            });
     }
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
     public function down()
     {
         $this->forceDropTable($this->tableName);
     }
-
 }

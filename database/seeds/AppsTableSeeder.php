@@ -2,18 +2,15 @@
 
 /**
  * AppsTableSeeder - Insert info into database.
- *  
+ *
  * @author   Agustí Dosaiguas
  */
-
 class AppsTableSeeder extends BaseTableSeeder
 {
-    protected $table = "apps";
+    protected $table = 'apps';
 
     /**
      * Run the database seeds.
-     *
-     * @return void
      */
     public function run()
     {
@@ -22,24 +19,24 @@ class AppsTableSeeder extends BaseTableSeeder
         $data = [
 
             [
-                'type'     => "marketing",
-                'image'      => "imagegoogle",
-                'description'      => "imagegoogleapp"
+                'type' => 'marketing',
+                'image' => 'imagegoogle',
+                'description' => 'imagegoogleapp',
             ],
             [
-                'type'     => "games",
-                'image'      => "ageofempires",
-                'description'      => "ageofempiresgameapp"
+                'type' => 'games',
+                'image' => 'ageofempires',
+                'description' => 'ageofempiresgameapp',
             ],
             [
-                'type'     => "comercial",
-                'image'      => "imagecomercial",
-                'description'      => "imagecomercialapp"
+                'type' => 'comercial',
+                'image' => 'imagecomercial',
+                'description' => 'imagecomercialapp',
             ],
             [
-                'type'     => "marketing",
-                'image'      => "imageseosem",
-                'description'      => "imageseosemapp"
+                'type' => 'marketing',
+                'image' => 'imageseosem',
+                'description' => 'imageseosemapp',
             ],
         ];
 

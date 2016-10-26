@@ -5,31 +5,29 @@ namespace WA\Repositories\Condition;
 use WA\Repositories\AbstractRepository;
 
 /**
- * Class EloquentConditionField
- *
- * @package WA\Repositories\ConditionField
+ * Class EloquentConditionField.
  */
 class EloquentConditionField extends AbstractRepository implements ConditionFieldInterface
 {
     /**
-     * Update ConditionField
+     * Update ConditionField.
      *
      * @param array $data
+     *
      * @return bool
      */
     public function update(array $data)
     {
         $conditionField = $this->model->find($data['id']);
 
-        if(!$conditionField)
-        {
+        if (!$conditionField) {
             return 'notExist';
         }
 
         $conditionField->typeField = isset($data['typeField']) ? $data['typeField'] : null;
         $conditionField->field = isset($data['field']) ? $data['field'] : null;
 
-        if(!$Condition->save()) {
+        if (!$Condition->save()) {
             return 'notSaved';
         }
 
@@ -37,9 +35,10 @@ class EloquentConditionField extends AbstractRepository implements ConditionFiel
     }
 
     /**
-     * Get the conditionField Id tied to the Condition
+     * Get the conditionField Id tied to the Condition.
      *
      * @param $id
+     *
      * @return mixed
      */
     public function getConditionFieldId($id)
@@ -50,30 +49,32 @@ class EloquentConditionField extends AbstractRepository implements ConditionFiel
     /**
      * Get an array of all the available ConditionField.
      *
-     * @return Array of conditionField
+     * @return array of conditionField
      */
     public function getAllConditionField()
     {
-        $conditionField =  $this->model->all();
+        $conditionField = $this->model->all();
+
         return $conditionField;
     }
 
     /**
-     * Create new ConditionField
+     * Create new ConditionField.
      *
      * @param array $data
+     *
      * @return bool|static
      */
     public function create(array $data)
     {
         $conditionFieldData = [
-        "typeField" => !empty($data['typeField']) ? $data['typeField'] : null,
-        "field" => isset($data['field']) ? $data['field'] : null,
+        'typeField' => !empty($data['typeField']) ? $data['typeField'] : null,
+        'field' => isset($data['field']) ? $data['field'] : null,
         ];
 
         $conditionField = $this->model->create($conditionFieldData);
 
-        if(!$conditionField) {
+        if (!$conditionField) {
             return false;
         }
 

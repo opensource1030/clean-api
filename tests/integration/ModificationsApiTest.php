@@ -5,30 +5,27 @@ use WA\DataStore\Modification\Modification;
 
 class ModificationsApiTest extends TestCase
 {
-    use DatabaseMigrations;     
-     
+    use DatabaseMigrations;
 
     /**
-     * A basic functional test for modifications
-     *
-     *
+     * A basic functional test for modifications.
      */
     public function testGetModifications()
-    {       
+    {
         $modification = factory(\WA\DataStore\Modification\Modification::class)->create();
 
         $res = $this->json('GET', 'modifications');
 
         $res->seeJsonStructure([
                 'data' => [
-                    0 => [ 'type','id',
+                    0 => ['type', 'id',
                         'attributes' => [
                             'modType',
                             'value',
                         ],
-                        'links'
-                    ]
-                ]
+                        'links',
+                    ],
+                ],
             ]);
     }
 
@@ -39,8 +36,8 @@ class ModificationsApiTest extends TestCase
         $res = $this->json('GET', 'modifications/'.$modification->id)
             ->seeJson([
                 'type' => 'modifications',
-                'modType'=> $modification->modType,
-                'value'=> $modification->value,
+                'modType' => $modification->modType,
+                'value' => $modification->value,
             ]);
     }
 
@@ -48,13 +45,13 @@ class ModificationsApiTest extends TestCase
     {
         $this->post('/modifications',
             [
-                "data" => [
-                    "type" => 'modifications',
-                    "attributes" => [
+                'data' => [
+                    'type' => 'modifications',
+                    'attributes' => [
                         'modType' => 'Modification Type',
                         'value' => 'Modification Value',
-                    ]
-                ]                
+                    ],
+                ],
             ])
             ->seeJson([
                 'type' => 'modifications',
@@ -68,25 +65,26 @@ class ModificationsApiTest extends TestCase
     {
         $modification = factory(\WA\DataStore\Modification\Modification::class)->create();
 
-        $this->put('/modifications/'.$modification->id, 
+        $this->put('/modifications/'.$modification->id,
             [
-                "data" => [
-                    "type" => 'modifications',
-                    "attributes" => [
+                'data' => [
+                    'type' => 'modifications',
+                    'attributes' => [
                         'modType' => 'Modification Type Edit',
                         'value' => 'Modification Value Edit',
-                    ]
-                ]                
+                    ],
+                ],
             ])
             ->seeJson([
                 'type' => 'modifications',
-                'modType'=> 'Modification Type Edit',
-                'value'=> 'Modification Value Edit',
+                'modType' => 'Modification Type Edit',
+                'value' => 'Modification Value Edit',
 
             ]);
     }
 
-    public function testDeleteModificationIfExists() {
+    public function testDeleteModificationIfExists()
+    {
 
         // CREATE & DELETE
         $modification = factory(\WA\DataStore\Modification\Modification::class)->create();
@@ -96,11 +94,11 @@ class ModificationsApiTest extends TestCase
         $this->assertEquals(404, $responseGet->status());
     }
 
-    public function testDeleteModificationIfNoExists(){
+    public function testDeleteModificationIfNoExists()
+    {
 
         // DELETE NO EXISTING.
         $responseDel = $this->call('DELETE', '/modifications/1');
         $this->assertEquals(404, $responseDel->status());
     }
-
 }

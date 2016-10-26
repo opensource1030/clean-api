@@ -2,11 +2,7 @@
 
 namespace WA\DataStore\Price;
 
-use Dingo\Api\Transformer\FractalTransformer as DingoFractalTransformer;
-use Illuminate\Pagination\Paginator as IlluminatePaginator;
-use League\Fractal\Resource\Collection as ResourceCollection;
 use League\Fractal\TransformerAbstract;
-
 
 /**
  * Class DeviceTransformer.
@@ -21,7 +17,7 @@ class PriceTransformer extends TransformerAbstract
     public function transform(Price $price)
     {
         return [
-            'id' => (int)$price->id,
+            'id' => (int) $price->id,
             'priceRetail' => $price->priceRetail,
             'price1' => $price->price1,
             'price2' => $price->price2,
@@ -32,7 +28,7 @@ class PriceTransformer extends TransformerAbstract
             'carrierId' => $price->carrierId,
             'companyId' => $price->companyId,
             'created_at' => $price->created_at,
-            'updated_at' => $price->updated_at
+            'updated_at' => $price->updated_at,
         ];
     }
 }

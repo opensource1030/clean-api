@@ -13,7 +13,7 @@ class UserCacheDecorator extends UserDecorator
     protected $cache;
 
     /**
-     * @param UserInterface $nextUser
+     * @param UserInterface  $nextUser
      * @param CacheInterface $cache
      */
     public function __construct(UserInterface $nextUser, CacheInterface $cache)
@@ -31,16 +31,16 @@ class UserCacheDecorator extends UserDecorator
     /**
      * Try to get pagination from cache.
      *
-     * @param int $page
-     * @param int $limit
+     * @param int  $page
+     * @param int  $limit
      * @param bool $all
      *
      * @return mixed
      */
     public function byPage($page = 1, $limit = 10, $all = false)
     {
-        $key = md5('page' . $page . '.' . $limit);
-//
+        $key = md5('page'.$page.'.'.$limit);
+
 //        if ($this->cache->has($key)) {
 //            return $this->cache->get($key);
 //        }
@@ -100,7 +100,7 @@ class UserCacheDecorator extends UserDecorator
      *
      * @param string $email
      *
-     * @return Object of employee information
+     * @return object of employee information
      */
     public function bySupervisorEmail($email)
     {
@@ -121,7 +121,7 @@ class UserCacheDecorator extends UserDecorator
      *
      * @param string $userEmail
      *
-     * @return Object of employee information
+     * @return object of employee information
      */
     public function byEmail($userEmail)
     {
@@ -137,13 +137,12 @@ class UserCacheDecorator extends UserDecorator
         return $user;
     }
 
-
     /**
      * Get employee supervisor information by supervisor email.
      *
      * @param string $email of employee
      *
-     * @return Object of employee information
+     * @return object of employee information
      */
     public function getSupervisor($email = null)
     {
@@ -159,7 +158,6 @@ class UserCacheDecorator extends UserDecorator
         return $user;
     }
 
-
     /**
      * Generate a cache key.
      *
@@ -172,16 +170,16 @@ class UserCacheDecorator extends UserDecorator
         $slug,
         $name
     ) {
-        return md5($slug . '.' . $name);
+        return md5($slug.'.'.$name);
     }
 
     /**
      * Get users by search term.
      *
      * @param string $query
-     * @param int $page
-     * @param int $limit
-     * @param bool $paginate
+     * @param int    $page
+     * @param int    $limit
+     * @param bool   $paginate
      */
     public function bySearch($query, $page = 1, $limit = 10, $paginate = true)
     {
@@ -194,7 +192,7 @@ class UserCacheDecorator extends UserDecorator
      * @param string $companyName
      * @param string $department
      *
-     * @return Object object of validator
+     * @return object object of validator
      */
     public function getValidators($companyName = null, $department = null)
     {
@@ -202,14 +200,14 @@ class UserCacheDecorator extends UserDecorator
     }
 
     /**
-     * Get supervisor information by companyId
+     * Get supervisor information by companyId.
      *
      * @param int $companyId of company selected
-     * @return Array of employee supervisor information
+     *
+     * @return array of employee supervisor information
      */
     public function getAllSupervisors($companyId = null)
     {
-
         if (is_null($companyId)) {
             return null;
         }
@@ -224,21 +222,17 @@ class UserCacheDecorator extends UserDecorator
         $this->cache->put($key, $supervisors);
 
         return $supervisors;
-
-
     }
 
     /**
-     * Get an employee information by API Token
+     * Get an employee information by API Token.
      *
      * @param string $token
      *
-     * @return Object of employee information
+     * @return object of employee information
      */
     public function byToken($token)
     {
-
-
         $key = $this->makeKey('apiToken', $token);
 
         if ($this->cache->has($key)) {
@@ -249,14 +243,12 @@ class UserCacheDecorator extends UserDecorator
         $this->cache->put($key, $user);
 
         return $user;
-
-
     }
 
     /**
-     * Get the transformer used by this model
+     * Get the transformer used by this model.
      *
-     * @return Object
+     * @return object
      */
     public function getTransformer()
     {
@@ -264,14 +256,14 @@ class UserCacheDecorator extends UserDecorator
     }
 
     /**
-     * Get employee by name or email
+     * Get employee by name or email.
      *
      * @param $name
-     * @return Object of employee
+     *
+     * @return object of employee
      */
     public function byUsernameOrEmail($name)
     {
-
         $key = $this->makeKey('name', $name);
 
         if ($this->cache->has($key)) {
@@ -285,7 +277,7 @@ class UserCacheDecorator extends UserDecorator
     }
 
     /**
-     * get the model being used on the object
+     * get the model being used on the object.
      *
      * @return mixed
      */
@@ -295,15 +287,14 @@ class UserCacheDecorator extends UserDecorator
     }
 
     /**
-     * Get Udls values for employee
+     * Get Udls values for employee.
      *
      * @param $userId
-     * @return Object
+     *
+     * @return object
      */
     public function getUdls($userId)
     {
-
-
         $key = $this->makeKey('employeeudls', $userId);
 
         if ($this->cache->has($key)) {
@@ -314,14 +305,14 @@ class UserCacheDecorator extends UserDecorator
         $this->cache->put($key, $user);
 
         return $user;
-
     }
 
     /**
-     * Delete an Users
+     * Delete an Users.
      *
-     * @param int $id
+     * @param int  $id
      * @param bool $soft true soft deletes
+     *
      * @return bool
      */
     public function delete($id, $soft = true)
@@ -329,9 +320,8 @@ class UserCacheDecorator extends UserDecorator
         return $this->nextUser->delete($id, $soft = true);
     }
 
-
     /**
-     * Get the list of internal tables that an external system can map to
+     * Get the list of internal tables that an external system can map to.
      *
      * @return array
      */
@@ -341,10 +331,11 @@ class UserCacheDecorator extends UserDecorator
     }
 
     /**
-     * Get validator information by companyId
+     * Get validator information by companyId.
      *
      * @param int $companyId of company selected
-     * @return Array of employee validator information
+     *
+     * @return array of employee validator information
      */
     public function getAllValidators($companyId = null)
     {
@@ -358,14 +349,14 @@ class UserCacheDecorator extends UserDecorator
         $this->cache->put($key, $user);
 
         return $user;
-
     }
 
     /**
-     * Delete from the repo by the ID
+     * Delete from the repo by the ID.
      *
-     * @param int $id
+     * @param int  $id
      * @param bool $force completely remove for the DB instead of marking it as "deleted"
+     *
      * @return bool of the effect of the creation
      */
     public function deleteById($id, $force = false)
@@ -386,12 +377,12 @@ class UserCacheDecorator extends UserDecorator
     /**
      * Create a new User.
      *
-     * @param array $data
-     * @param array $udlValues
-     * @param bool $pushToExternalService |true
+     * @param array    $data
+     * @param array    $udlValues
+     * @param bool     $pushToExternalService |true
      * @param UserForm $userForm
      *
-     * @return Object object of the employee | false
+     * @return object object of the employee | false
      */
     public function create(
         array $data,
@@ -417,7 +408,6 @@ class UserCacheDecorator extends UserDecorator
         return $this->nextUser->hasAsset($userId, $assetId);
     }
 
-
     /**
      * Check if employee has device attached.
      *
@@ -431,7 +421,6 @@ class UserCacheDecorator extends UserDecorator
         return $this->nextUser->hasDevice($userId, $deviceId);
     }
 
-
     /**
      * @param int $companyIdentifier
      *
@@ -443,7 +432,7 @@ class UserCacheDecorator extends UserDecorator
     }
 
     /**
-     * Get users by their company  id
+     * Get users by their company  id.
      *
      * @param int $companyId
      *
@@ -479,7 +468,7 @@ class UserCacheDecorator extends UserDecorator
     }
 
     /**
-     * Get an employee by company ID Or Email
+     * Get an employee by company ID Or Email.
      *
      * @param array $data
      *
@@ -491,7 +480,7 @@ class UserCacheDecorator extends UserDecorator
     }
 
     /**
-     * Get users by their identification (generated CLEAN ID)
+     * Get users by their identification (generated CLEAN ID).
      *
      * @param string $identification
      *
@@ -500,7 +489,6 @@ class UserCacheDecorator extends UserDecorator
     public function byIdentification($identification)
     {
         return $this->nextUser->byIdentification($identification);
-
     }
 
     /**
@@ -514,7 +502,7 @@ class UserCacheDecorator extends UserDecorator
     }
 
     /**
-     * Get the external Id of the employee
+     * Get the external Id of the employee.
      *
      * @param $identifier
      *
@@ -526,10 +514,11 @@ class UserCacheDecorator extends UserDecorator
     }
 
     /**
-     * Update External Id based on Identifier
+     * Update External Id based on Identifier.
      *
      * @param $identification
      * @param $externalId
+     *
      * @return mixed
      */
     public function updateExternalId($identification, $externalId)
@@ -538,7 +527,7 @@ class UserCacheDecorator extends UserDecorator
     }
 
     /**
-     * Get identification values of users with missing external Ids
+     * Get identification values of users with missing external Ids.
      *
      * @return array
      */
@@ -548,9 +537,10 @@ class UserCacheDecorator extends UserDecorator
     }
 
     /**
-     * Get the Roles assigned to a user by user Id
+     * Get the Roles assigned to a user by user Id.
      *
      * @param int
+     *
      * @return mixed
      */
     public function getRoles($id)

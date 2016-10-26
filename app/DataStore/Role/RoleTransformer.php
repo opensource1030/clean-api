@@ -1,9 +1,8 @@
-<?php namespace WA\DataStore\Role;
+<?php
 
-use League\Fractal\Resource\Collection as ResourceCollection;
-use League\Fractal\Resource\Item as ResourceItem;
+namespace WA\DataStore\Role;
+
 use League\Fractal\TransformerAbstract;
-
 
 /**
  * Class RoleTransformer.
@@ -22,10 +21,8 @@ class RoleTransformer extends TransformerAbstract
     public function transform(Role $role)
     {
         return [
-            'id' => (int)$role->id,
-            'name' => $role->display_name
+            'id' => (int) $role->id,
+            'name' => $role->display_name,
         ];
     }
-
-
 }

@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
 class CreateContentsTable extends Migration
@@ -11,12 +10,10 @@ class CreateContentsTable extends Migration
 
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
-        Schema::create($this->tableName, function( $table){
+        Schema::create($this->tableName, function ($table) {
             $table->increments('id');
             $table->text('content');
             $table->boolean('active')->default(0);
@@ -28,8 +25,6 @@ class CreateContentsTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
     public function down()
     {

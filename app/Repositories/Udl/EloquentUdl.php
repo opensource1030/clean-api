@@ -31,7 +31,7 @@ class EloquentUdl implements UdlInterface
      *
      * @param int $id
      *
-     * @return Object object of the UDL information
+     * @return object object of the UDL information
      */
     public function byId($id)
     {
@@ -43,7 +43,7 @@ class EloquentUdl implements UdlInterface
      *
      * @param string $name
      *
-     * @return Object of the UDL information
+     * @return object of the UDL information
      */
     public function byLabel($name)
     {
@@ -55,7 +55,7 @@ class EloquentUdl implements UdlInterface
      *
      * @param int $id
      *
-     * @return Object object information of the UDL Values
+     * @return object object information of the UDL Values
      */
     public function byUDLValue($id)
     {
@@ -112,16 +112,15 @@ class EloquentUdl implements UdlInterface
      * Get the UDL information by the name.
      *
      * @param string $name
-     * @param int $companyId
+     * @param int    $companyId
      *
-     * @return Object of the UDL information
+     * @return object of the UDL information
      */
     public function byName($name, $companyId = null)
     {
         $udl = $this->model->where('name', $name);
 
-        if(isset($companyId))
-        {
+        if (isset($companyId)) {
             $udl->where('companyId', $companyId);
         }
 
@@ -175,7 +174,7 @@ class EloquentUdl implements UdlInterface
     /**
      * @param $udlId
      *
-     * @return Object of UDL Values
+     * @return object of UDL Values
      */
     protected function getValueOfUDL($udlId)
     {

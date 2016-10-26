@@ -17,6 +17,6 @@ class CompanyUserFormValidator extends AbstractLaravelValidator
     protected $rules = [
         'email' => 'required|email',
     ];
-    
+
     // verify that the email is in of the acceptable domains
 }

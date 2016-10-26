@@ -21,7 +21,7 @@ class EloquentUdlValue implements UdlValueInterface
      *
      * @param int $udlValueId
      *
-     * @return Object object of the udl information
+     * @return object object of the udl information
      */
     public function byId($udlValueId)
     {
@@ -38,7 +38,7 @@ class EloquentUdlValue implements UdlValueInterface
      * @param int    $companyId
      * @param int    $externalId
      *
-     * @return Object object of the udl information
+     * @return object object of the udl information
      */
     public function byNameOrCreate($name, $udlId, $companyId, $externalId = 0)
     {
@@ -50,7 +50,7 @@ class EloquentUdlValue implements UdlValueInterface
                     'name' => $name,
                     'udlId' => $udlId,
                     'companyId' => $companyId,
-                    'externalId' => $externalId
+                    'externalId' => $externalId,
                 ]
             );
         }
@@ -64,7 +64,7 @@ class EloquentUdlValue implements UdlValueInterface
      * @param string $name
      * @param int    $companyId
      *
-     * @return Object object of the udl information
+     * @return object object of the udl information
      */
     public function byName($name, $companyId = null)
     {
@@ -94,7 +94,7 @@ class EloquentUdlValue implements UdlValueInterface
      *
      * @param int $udlId
      *
-     * @return Object of udl values
+     * @return object of udl values
      */
     public function byUdlId($udlId)
     {

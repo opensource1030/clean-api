@@ -63,11 +63,11 @@ class EloquentSyncJob extends AbstractRepository implements SyncJobInterface
      *
      * @param string $name
      * @param string $status of the sync
-     * @param int $limit
+     * @param int    $limit
      *
-     * @return Object object of sync
+     * @return object object of sync
      */
-    public function byName($name, $status = null, $limit)
+    public function byName($name, $status, $limit)
     {
         $response =
             $this->model->where('name', $name);

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace WA\DataStore;
 
 /**
@@ -8,6 +7,7 @@ namespace WA\DataStore;
  *
  * @property int $id
  * @property string $name
+ *
  * @method static \Illuminate\Database\Query\Builder|\WA\DataStore\Attribute whereId($value)
  * @method static \Illuminate\Database\Query\Builder|\WA\DataStore\Attribute whereName($value)
  * @mixin \Eloquent

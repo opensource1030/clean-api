@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
 class CreatePricesTable extends Migration
@@ -8,11 +7,9 @@ class CreatePricesTable extends Migration
     use \WA\Database\Command\TablesRelationsAndIndexes;
 
     protected $tableName = 'prices';
-    
+
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
@@ -35,8 +32,8 @@ class CreatePricesTable extends Migration
         );
 
         Schema::table(
-            $this->tableName, 
-            function($table) {
+            $this->tableName,
+            function ($table) {
                 $table->foreign('deviceId')->references('id')->on('devices')->onDelete('cascade');
                 $table->foreign('capacityId')->references('id')->on('modifications')->onDelete('cascade');
                 $table->foreign('styleId')->references('id')->on('modifications')->onDelete('cascade');
@@ -48,20 +45,18 @@ class CreatePricesTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
     public function down()
     {
         Schema::table(
-            $this->tableName, 
-            function ( $table) {
+            $this->tableName,
+            function ($table) {
                 //$table->dropForeign('deviceId');
                 //$table->dropForeign('styleId');
                 //$table->dropForeign('capacityId');
                 //$table->dropForeign('carrierId');
                 //$table->dropForeign('providerId');
-        });
+            });
 
         $this->forceDropTable($this->tableName);
     }

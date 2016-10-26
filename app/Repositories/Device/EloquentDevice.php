@@ -23,7 +23,7 @@ class EloquentDevice extends AbstractRepository implements DeviceInterface
     protected $status;
 
     /**
-     * @param Model $model
+     * @param Model           $model
      * @param StatusInterface $status
      */
     public function __construct(Model $model, StatusInterface $status)
@@ -38,7 +38,7 @@ class EloquentDevice extends AbstractRepository implements DeviceInterface
      *
      * @param $userId (using CompanyID for now)
      *
-     * @return Object object of device information by the employee
+     * @return object object of device information by the employee
      */
     public function byUser($userId)
     {
@@ -59,7 +59,7 @@ class EloquentDevice extends AbstractRepository implements DeviceInterface
      *
      * @param $identification
      *
-     * @return Object object of device information
+     * @return object object of device information
      */
     public function byIdentification($identification)
     {
@@ -73,7 +73,7 @@ class EloquentDevice extends AbstractRepository implements DeviceInterface
      *
      * @param bool $all
      *
-     * @return Object object of device information, for unassigned
+     * @return object object of device information, for unassigned
      */
     public function byUnassigned($all = true)
     {
@@ -91,7 +91,7 @@ class EloquentDevice extends AbstractRepository implements DeviceInterface
     /**
      * Sync an asset to devices.
      *
-     * @param int $id of the device
+     * @param int   $id  of the device
      * @param array $ids of the assets to sync device with
      *
      * @return bool
@@ -116,7 +116,7 @@ class EloquentDevice extends AbstractRepository implements DeviceInterface
     /**
      * Sync an asset to devices.
      *
-     * @param int $id of the device
+     * @param int   $id  of the device
      * @param array $ids of the assets to sync device with
      *
      * @return bool
@@ -141,7 +141,7 @@ class EloquentDevice extends AbstractRepository implements DeviceInterface
     /**
      * Sync an asset to devices.
      *
-     * @param int $id of the device
+     * @param int   $id  of the device
      * @param array $ids of the assets to sync device with
      *
      * @return bool
@@ -166,7 +166,7 @@ class EloquentDevice extends AbstractRepository implements DeviceInterface
     /**
      * Sync an asset to devices.
      *
-     * @param int $id of the device
+     * @param int   $id  of the device
      * @param array $ids of the assets to sync device with
      *
      * @return bool
@@ -199,7 +199,7 @@ class EloquentDevice extends AbstractRepository implements DeviceInterface
     {
         $model = $this->model;
 
-        if ((bool)count($exclude)) {
+        if ((bool) count($exclude)) {
             $model->whereNotIn('identification', $exclude);
         }
 
@@ -239,7 +239,7 @@ class EloquentDevice extends AbstractRepository implements DeviceInterface
             $model->where($created_column_name, $lastUpdated);
         }
 
-        return (int)$model->count();
+        return (int) $model->count();
     }
 
     /**
@@ -251,28 +251,28 @@ class EloquentDevice extends AbstractRepository implements DeviceInterface
     {
         $externalIdColumnName = 'externalId';
 
-        return (int)$this->model->max($externalIdColumnName);
+        return (int) $this->model->max($externalIdColumnName);
     }
 
     public function getDataTable()
     {
-
         $query = $this->model->join('device_types', 'devices.deviceTypeId', '=', 'device_types.id');
+
         return $query;
     }
 
     /**
-     * Update Device
+     * Update Device.
      *
      * @param array $data
+     *
      * @return bool
      */
     public function update(array $data)
     {
         $device = $this->model->find($data['id']);
 
-        if(!$device)
-        {
+        if (!$device) {
             return 'notExist';
         }
 
@@ -284,11 +284,10 @@ class EloquentDevice extends AbstractRepository implements DeviceInterface
         $device->identification = isset($data['identification']) ? $data['identification'] : $device->identification;
         $device->syncId = isset($data['syncId']) ? $data['syncId'] : $device->syncId;
 
-        if(!$device->save()) {
+        if (!$device->save()) {
             return 'notSaved';
         }
 
         return $device;
     }
-
 }

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace WA\DataStore;
 
 use Illuminate\Database\Eloquent\Model as BaseModel;
@@ -113,10 +112,10 @@ class BaseDataStore extends BaseModel
     /**
      * @return array
      */
-    public function getTableColumns() {
-        return \Cache::remember($this->getTable() . '-columns', 5, function() {
+    public function getTableColumns()
+    {
+        return \Cache::remember($this->getTable().'-columns', 5, function () {
             return $this->getConnection()->getSchemaBuilder()->getColumnListing($this->getTable());
         });
-
     }
 }

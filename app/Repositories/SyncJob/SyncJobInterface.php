@@ -11,7 +11,7 @@ interface SyncJobInterface extends RepositoryInterface
      *
      * @param $name
      *
-     * @return Object object of the sync |
+     * @return object object of the sync |
      */
     public function statusIdByName($name);
 
@@ -28,11 +28,11 @@ interface SyncJobInterface extends RepositoryInterface
     /**
      * Get all syncs by the sync name.
      *
-     * @param        string $name
-     * @param string        $status of the sync
-     * @param       int     $limit
+     * @param string $name
+     * @param string $status of the sync
+     * @param int    $limit
      *
-     * @return Object object of sync
+     * @return object object of sync
      */
-    public function byName($name, $status = null, $limit);
+    public function byName($name, $status, $limit);
 }

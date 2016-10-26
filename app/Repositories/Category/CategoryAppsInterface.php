@@ -5,23 +5,22 @@ namespace WA\Repositories\Category;
 use WA\Repositories\RepositoryInterface;
 
 /**
- * Interface CategoryDeviceInterface
- *
- * @package WA\Repositories\Category
+ * Interface CategoryDeviceInterface.
  */
 interface CategoryAppsInterface extends RepositoryInterface
 {
     /**
      * Get Array of all Categories.
      *
-     * @return Array of Category
+     * @return array of Category
      */
     public function getAllCategories();
 
     /**
-     * Create Category
+     * Create Category.
      *
      * @param array $data
+     *
      * @return bool|static
      */
     public function create(array $data);
@@ -44,5 +43,4 @@ interface CategoryAppsInterface extends RepositoryInterface
      * @return bool
      */
     public function delete($id, $soft = true);
-
 }

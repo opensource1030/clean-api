@@ -27,7 +27,7 @@ interface AssetInterface extends RepositoryInterface, CountableInterface
      * @param $limit
      * @param $all
      *
-     * @return Object object of the asset information
+     * @return object object of the asset information
      */
     public function byUser($user, $page = 1, $limit = 10, $all = true);
 
@@ -39,7 +39,7 @@ interface AssetInterface extends RepositoryInterface, CountableInterface
      * @param $limit
      * @param $all
      *
-     * @return Object object of device information
+     * @return object object of device information
      */
     public function byDevice($device, $page = 1, $limit = 10, $all = true);
 
@@ -48,7 +48,7 @@ interface AssetInterface extends RepositoryInterface, CountableInterface
      *
      * @param bool $all loads all by default, or returns a random unassigned one
      *
-     * @return Object object of unassigned devices
+     * @return object object of unassigned devices
      */
     public function byUnassigned($all = true);
 
@@ -87,7 +87,7 @@ interface AssetInterface extends RepositoryInterface, CountableInterface
      * @param bool   $paginate
      * @param int    $perPage
      *
-     * @return Object of asset information
+     * @return object of asset information
      */
     public function bySearch($query, $paginate = true, $perPage = 25);
 
@@ -110,7 +110,6 @@ interface AssetInterface extends RepositoryInterface, CountableInterface
      * @return mixed
      */
     public function updateAttribute($attributeName, $value, $model, $dataOriginationName = 'wa-sys');
-
 
     /**
      * Get the API transformer used on this data store.

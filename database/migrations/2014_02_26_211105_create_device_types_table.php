@@ -1,28 +1,27 @@
-<?php 
+<?php
+
 
 use Illuminate\Database\Migrations\Migration;
 use WA\Database\Command\TablesRelationsAndIndexes;
 
-class CreateDeviceTypesTable extends Migration {
-
+class CreateDeviceTypesTable extends Migration
+{
     use TablesRelationsAndIndexes;
 
     protected $tableName = 'device_types';
 
     protected $foreignColumns = [
-        'statusId' => "nullable",
+        'statusId' => 'nullable',
     ];
 
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
         Schema::create(
             $this->tableName,
-            function ( $table) {
+            function ($table) {
                 $table->increments('id');
                 $table->string('make');
                 $table->string('model');
@@ -34,15 +33,15 @@ class CreateDeviceTypesTable extends Migration {
             });
 
         Schema::table(
-            $this->tableName, 
-            function( $table) {
+            $this->tableName,
+            function ($table) {
                 // ¿¿ $table->foreign('statusId')->references('id')->on('companies'); ??
             }
         );
 
         Schema::table(
-            'devices', 
-            function( $table) {
+            'devices',
+            function ($table) {
                 $table->foreign('deviceTypeId')->references('id')->on('device_types');
             }
         );
@@ -50,26 +49,24 @@ class CreateDeviceTypesTable extends Migration {
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
     public function down()
     {
         Schema::table(
-            'devices', 
-            function ( $table) {
+            'devices',
+            function ($table) {
                 //$table->dropForeign('deviceTypeId');
-        });
+            });
 
         /*
         Schema::table(
-            $this->tableName, 
+            $this->tableName,
             function ( $table) {
                 // //$table->dropForeign('statusId');
         });
 
         Schema::table(
-            'carrier_devices', 
+            'carrier_devices',
             function ($table) {
                 //$table->dropForeign('deviceTypeId');
         });
@@ -77,5 +74,4 @@ class CreateDeviceTypesTable extends Migration {
 
         $this->forceDropTable($this->tableName);
     }
-
 }

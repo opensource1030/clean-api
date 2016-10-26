@@ -8,21 +8,19 @@ class CreateAttributablesTable extends Migration
     use TablesRelationsAndIndexes;
 
     protected $tableName = 'attributables';
- 
+
     protected $foreignColumns = [
-        'dataOriginationId' => 'nullable'
+        'dataOriginationId' => 'nullable',
     ];
 
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
         Schema::create(
             $this->tableName,
-            function ( $table) {
+            function ($table) {
                 $table->increments('id');
                 $table->string('value')->nullable();
                 $table->string('attributable_type');
@@ -30,11 +28,11 @@ class CreateAttributablesTable extends Migration
                 $table->integer('attributable_id');
                 $table->index(['attribute_id', 'attributable_id']);
                 $table->integer('dataOriginationId')->unsigned()->nullable();
-        });
+            });
 
         Schema::table(
-            $this->tableName, 
-            function( $table) {
+            $this->tableName,
+            function ($table) {
                 // ¿¿ $table->foreign('dataOriginationId')->references('id')->on('companies'); ??
             }
         );
@@ -42,17 +40,15 @@ class CreateAttributablesTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
     public function down()
     {
         Schema::table(
-            $this->tableName, 
-            function ( $table) {
+            $this->tableName,
+            function ($table) {
                 ////$table->dropForeign('dataOriginationId');
-        });
-        
+            });
+
         $this->forceDropTable($this->tableName);
     }
 }

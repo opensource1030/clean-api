@@ -20,7 +20,7 @@ interface CarrierInterface extends RepositoryInterface
      *
      * @param $id
      *
-     * @return Object object of company
+     * @return object object of company
      */
     public function byCompany($id);
 

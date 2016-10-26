@@ -6,31 +6,29 @@ class UsersApiTest extends TestCase
 {
     use DatabaseMigrations;
 
-    /**
-     * A basic functional test for user endpoints
-     *
-     *
-     */
+     /**
+      * A basic functional test for user endpoints.
+      */
      public function testGetUsers()
-    {
-        $user = factory(\WA\DataStore\User\User::class)->create();
+     {
+         $user = factory(\WA\DataStore\User\User::class)->create();
 
-        $this->get('/users')
+         $this->get('/users')
             ->seeJsonStructure([
                 'data' => [
-                    0 => [ 'type','id',
+                    0 => ['type', 'id',
                         'attributes' => [
-                            'identification', 'email', 'username', 'supervisor_email', 'first_name', 'last_name'
+                            'identification', 'email', 'username', 'supervisor_email', 'first_name', 'last_name',
                         ],
-                        'links'
-                    ]
+                        'links',
+                    ],
 
-                ]
+                ],
 
             ]);
-    }
+     }
 
-   public function testGetUserById()
+    public function testGetUserById()
     {
         $user = factory(\WA\DataStore\User\User::class)->create();
 
@@ -45,6 +43,4 @@ class UsersApiTest extends TestCase
                 'last_name' => $user->lastName,
             ]);
     }
-
-
 }

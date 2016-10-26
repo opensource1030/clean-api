@@ -16,19 +16,17 @@ class CreateUsersTable extends Migration
         'supervisorId' => 'nullable',
         'externalId' => 'nullable',
         'approverId' => 'nullable',
-        'defaultLocationId' => 'nullable'
+        'defaultLocationId' => 'nullable',
     ];
 
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
         Schema::create(
             $this->tableName,
-            function ( $table) {
+            function ($table) {
                 $table->increments('id');
                 $table->string('uuid');
                 $table->string('identification')->unique();
@@ -67,8 +65,8 @@ class CreateUsersTable extends Migration
         );
 
         Schema::table(
-            $this->tableName, 
-            function($table) {
+            $this->tableName,
+            function ($table) {
                 // ¿¿ $table->foreign('supervisorId')->references('id')->on('companies'); ??
                 // ¿¿ $table->foreign('externalId')->references('id')->on('companies'); ??
                 // ¿¿ $table->foreign('approverId')->references('id')->on('companies'); ??
@@ -78,23 +76,23 @@ class CreateUsersTable extends Migration
 
         // Creates password reminders table
         Schema::create(
-            $this->tableNamePassword, 
+            $this->tableNamePassword,
             function ($table) {
                 $table->string('email');
                 $table->string('token');
                 $table->timestamp('created_at');
-        });
+            });
 
         Schema::table(
-            'user_assets', 
-            function($table) {
+            'user_assets',
+            function ($table) {
                 $table->foreign('userId')->references('id')->on('users');
             }
         );
 
         Schema::table(
-            'device_users', 
-            function($table) {
+            'device_users',
+            function ($table) {
                 $table->foreign('userId')->references('id')->on('users');
             }
         );
@@ -102,26 +100,24 @@ class CreateUsersTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
     public function down()
     {
         Schema::table(
-            'user_assets', 
-            function ( $table) {
+            'user_assets',
+            function ($table) {
                 //$table->dropForeign('userId');
-        });
+            });
 
         Schema::table(
-            'device_users', 
-            function ( $table) {
+            'device_users',
+            function ($table) {
                 //$table->dropForeign('userId');
-        });
+            });
 
         /*
         Schema::table(
-            $this->tableName, 
+            $this->tableName,
             function ($table) {
             //$table->dropForeign('companyId');
             //$table->dropForeign('syncId');
@@ -130,22 +126,22 @@ class CreateUsersTable extends Migration
             // //$table->dropForeign('approverId');
             // //$table->dropForeign('defaultLocationId');
         });
-                
+
         Schema::table(
-            'employee_devices', 
+            'employee_devices',
             function ( $table) {
                 //$table->dropForeign('userId');
         });
 
         Schema::table(
-            'allocations', 
+            'allocations',
             function ( $table) {
                 //$table->dropForeign('userId');
         });
         */
 
         $this->forceDropTable($this->tableName);
-        
+
         Schema::drop('password_reminders');
     }
 }

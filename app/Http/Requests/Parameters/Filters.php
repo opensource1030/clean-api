@@ -3,9 +3,7 @@
 namespace WA\Http\Requests\Parameters;
 
 /**
- * Class Filters
- *
- * @package WA\Http\Requests\Parameters
+ * Class Filters.
  */
 class Filters
 {
@@ -14,7 +12,6 @@ class Filters
      */
     protected $filters = [];
 
-
     /**
      * Filters constructor.
      *
@@ -22,14 +19,13 @@ class Filters
      */
     public function __construct($filters = [])
     {
-
         if (empty($filters)) {
             return $this;
         }
 
         foreach ($filters as $field => $criteria) {
             if (is_string($criteria)) {
-                $op = "eq";
+                $op = 'eq';
                 $val = $criteria;
             } else {
                 $op = key($criteria);
@@ -40,7 +36,7 @@ class Filters
     }
 
     /**
-     * Return a string representation of the filters, suitable for meta data
+     * Return a string representation of the filters, suitable for meta data.
      *
      * @return string
      */
@@ -50,12 +46,13 @@ class Filters
         foreach ($this->filters as $field => $criteria) {
             $op = key($criteria);
             $val = current($criteria);
-            if ($op == "eq") {
+            if ($op == 'eq') {
                 $get[] = "[$field]=$val";
             } else {
                 $get[] = "[$field][$op]=$val";
             }
         }
+
         return $get;
     }
 
@@ -75,7 +72,6 @@ class Filters
         return array_keys($this->filters);
     }
 
-
     /**
      * @param $field
      * @param $op
@@ -89,7 +85,6 @@ class Filters
 
         $this->filters[$field][$op] = $value;
     }
-
 
     /**
      * @return bool

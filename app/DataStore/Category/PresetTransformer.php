@@ -4,10 +4,8 @@ namespace WA\DataStore\Category;
 
 use League\Fractal\TransformerAbstract;
 use League\Fractal\Resource\Collection as ResourceCollection;
-
 use WA\DataStore\Device\DeviceTransformer;
 use WA\DataStore\Image\ImageTransformer;
-
 use WA\Helpers\Traits\Criteria;
 
 /**
@@ -18,7 +16,7 @@ class PresetTransformer extends TransformerAbstract
     use Criteria;
 
     protected $availableIncludes = [
-        'devices', 'images'
+        'devices', 'images',
     ];
     /**
      * @param Preset $preset
@@ -31,7 +29,7 @@ class PresetTransformer extends TransformerAbstract
             'id' => $preset->id,
             'name' => $preset->name,
             'created_at' => $preset->created_at,
-            'updated_at' => $preset->updated_at
+            'updated_at' => $preset->updated_at,
         ];
     }
 
@@ -43,6 +41,7 @@ class PresetTransformer extends TransformerAbstract
     public function includeDevices(Preset $preset)
     {
         $devices = $this->applyCriteria($preset->devices(), $this->criteria);
+
         return new ResourceCollection($devices->get(), new DeviceTransformer(), 'devices');
     }
 
@@ -54,6 +53,7 @@ class PresetTransformer extends TransformerAbstract
     public function includeImages(Preset $preset)
     {
         $images = $this->applyCriteria($preset->images(), $this->criteria);
+
         return new ResourceCollection($images->get(), new ImageTransformer(), 'images');
     }
 }

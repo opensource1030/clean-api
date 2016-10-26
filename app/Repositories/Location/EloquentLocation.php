@@ -6,10 +6,8 @@ use WA\Repositories\AbstractRepository;
 
 class EloquentLocation extends AbstractRepository implements LocationInterface
 {
-
-
     /**
-     * Get location details by name
+     * Get location details by name.
      *
      * @param $name
      *

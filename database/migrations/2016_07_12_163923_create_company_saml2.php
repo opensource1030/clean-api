@@ -2,12 +2,9 @@
 
 /**
  * company_saml2 - Table of the Companies with saml2_settings configuration.
- *  
+ *
  * @author   Agustí Dosaiguas
  */
-
-
-
 use Illuminate\Database\Migrations\Migration;
 
 class CreateCompanySaml2 extends Migration
@@ -15,23 +12,20 @@ class CreateCompanySaml2 extends Migration
     use \WA\Database\Command\TablesRelationsAndIndexes;
 
     protected $tableName = 'company_saml2';
-    
-    
+
     protected $foreignColumns = [
         'companyId',
     ];
 
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
         // config/saml2_settings.
         Schema::create(
             $this->tableName,
-            function ( $table) {
+            function ($table) {
                 $table->increments('id');
                 $table->string('entityId');
                 $table->string('singleSignOnServiceUrl');
@@ -45,8 +39,8 @@ class CreateCompanySaml2 extends Migration
             }
         );
         Schema::table(
-            $this->tableName, 
-            function( $table) {
+            $this->tableName,
+            function ($table) {
                 $table->foreign('companyId')->references('id')->on('companies');
             }
         );
@@ -54,16 +48,14 @@ class CreateCompanySaml2 extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
     public function down()
     {
         Schema::table(
-            $this->tableName, 
-            function ( $table) {
+            $this->tableName,
+            function ($table) {
                 //$table->dropForeign('companyId');
-        });
+            });
 
         $this->forceDropTable($this->tableName);
     }

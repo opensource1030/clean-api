@@ -5,23 +5,22 @@ namespace WA\Repositories\Category;
 use WA\Repositories\RepositoryInterface;
 
 /**
- * Interface PresetInterface
- *
- * @package WA\Repositories\Category
+ * Interface PresetInterface.
  */
 interface PresetInterface extends RepositoryInterface
 {
     /**
      * Get Array of all Presets.
      *
-     * @return Array of Preset
+     * @return array of Preset
      */
     public function getAllPresets();
 
     /**
-     * Create Preset
+     * Create Preset.
      *
      * @param array $data
+     *
      * @return bool|static
      */
     public function create(array $data);
@@ -44,5 +43,4 @@ interface PresetInterface extends RepositoryInterface
      * @return bool
      */
     public function delete($id, $soft = true);
-
 }

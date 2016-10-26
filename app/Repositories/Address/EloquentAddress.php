@@ -5,81 +5,80 @@ namespace WA\Repositories\Address;
 use WA\Repositories\AbstractRepository;
 
 /**
- * Class EloquentAddress
- *
- * @package WA\Repositories\Address
+ * Class EloquentAddress.
  */
 class EloquentAddress extends AbstractRepository implements AddressInterface
 {
     /**
-     * Update Address
+     * Update Address.
      *
      * @param array $data
+     *
      * @return bool
      */
     public function update(array $data)
     {
         $address = $this->model->find($data['id']);
 
-        if(!$address)
-        {
+        if (!$address) {
             return 'notExist';
         }
 
-        if(isset($data['address'])){
-            $address->address =  $data['address'];            
+        if (isset($data['address'])) {
+            $address->address = $data['address'];
         }
-        if(isset($data['city'])){
-            $address->city =  $data['city'];            
+        if (isset($data['city'])) {
+            $address->city = $data['city'];
         }
-        if(isset($data['state'])){
-            $address->state =  $data['state'];            
+        if (isset($data['state'])) {
+            $address->state = $data['state'];
         }
-        if(isset($data['country'])){
-            $address->country =  $data['country'];            
+        if (isset($data['country'])) {
+            $address->country = $data['country'];
         }
-        if(isset($data['postalCode'])){
-            $address->postalCode =  $data['postalCode'];            
+        if (isset($data['postalCode'])) {
+            $address->postalCode = $data['postalCode'];
         }
 
-        if(!$address->save()) {
+        if (!$address->save()) {
             return 'notSaved';
         }
 
         return $address;
-
     }
 
     /**
      * Get an array of all the available Address.
      *
-     * @return Array of Address
+     * @return array of Address
      */
     public function getAllAddress()
     {
-        $address =  $this->model->all();
+        $address = $this->model->all();
+
         return $address;
     }
 
     /**
-     * Create a new Address
+     * Create a new Address.
      *
      * @param array $data
+     *
      * @return bool|static
      */
     public function create(array $data)
     {
         $addressData = [
-            "address" =>  isset($data['address']) ? $data['address'] : '' ,
-            "city" => isset($data['city']) ? $data['city'] : '',
-            "state" => isset($data['state']) ? $data['state'] : '',
-            "country" => isset($data['country']) ? $data['country'] : '',
-            "postalCode" => isset($data['postalCode']) ? $data['postalCode'] : '',
+            'address' => isset($data['address']) ? $data['address'] : '',
+            'city' => isset($data['city']) ? $data['city'] : '',
+            'state' => isset($data['state']) ? $data['state'] : '',
+            'country' => isset($data['country']) ? $data['country'] : '',
+            'postalCode' => isset($data['postalCode']) ? $data['postalCode'] : '',
         ];
 
         $address = $this->model->create($addressData);
 
-        if(!$address) {
+        if (!$address) {
             return false;
         }
 

@@ -7,11 +7,9 @@ class CreateProvidersTable extends Migration
     use \WA\Database\Command\TablesRelationsAndIndexes;
 
     protected $tableName = 'providers';
-    
+
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
@@ -28,8 +26,6 @@ class CreateProvidersTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
     public function down()
     {

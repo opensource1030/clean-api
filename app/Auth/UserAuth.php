@@ -5,7 +5,6 @@ namespace WA\Auth;
 use Auth;
 use Illuminate\Support\Facades\Session;
 
-
 class UserAuth implements \WA\Auth\UserAuthInterface
 {
     protected $user;
@@ -19,9 +18,9 @@ class UserAuth implements \WA\Auth\UserAuthInterface
     }
 
     /**
-     * Check if the logged in user can add users to the system
+     * Check if the logged in user can add users to the system.
      *
-     * @return boolean
+     * @return bool
      */
     public function canAddUsers()
     {
@@ -29,9 +28,9 @@ class UserAuth implements \WA\Auth\UserAuthInterface
     }
 
     /**
-     * Check if the logged in user can edit other users in the system
+     * Check if the logged in user can edit other users in the system.
      *
-     * @return boolean
+     * @return bool
      */
     public function canEditUsers()
     {

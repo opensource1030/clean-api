@@ -28,6 +28,7 @@ use WA\DataStore\MutableDataStore;
  * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\Attribute[] $attributes
  * @property-read \WA\DataStore\Carrier\Carrier $carrier
  * @property-read \Illuminate\Database\Eloquent\Collection|\$related[] $morphedByMany
+ *
  * @method static \Illuminate\Database\Query\Builder|\\WA\DataStore\Asset\Asset whereId($value)
  * @method static \Illuminate\Database\Query\Builder|\WA\DataStore\Asset\Asset whereIdentification($value)
  * @method static \Illuminate\Database\Query\Builder|\WA\DataStore\Asset\Asset whereIsActive($value)
@@ -100,8 +101,6 @@ class Asset extends MutableDataStore
         return $this->belongsTo('WA\DataStore\JobStatus', 'statusId');
     }
 
-
-
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
@@ -168,7 +167,4 @@ class Asset extends MutableDataStore
             }
         )->isEmpty();
     }
-
-
-
 }

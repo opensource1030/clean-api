@@ -1,8 +1,7 @@
 <?php
 
 $factory->define(\WA\DataStore\Carrier\Carrier::class, function ($faker) {
-
-    $carriers = ["ATT", "Verizon", "T-Mobile", "Sprint"];
+    $carriers = ['ATT', 'Verizon', 'T-Mobile', 'Sprint'];
 
     return [
         'presentation' => $name = $carriers[array_rand($carriers)],
@@ -16,4 +15,3 @@ $factory->define(\WA\DataStore\Carrier\Carrier::class, function ($faker) {
         'updated_at' => $faker->dateTime,
     ];
 });
-

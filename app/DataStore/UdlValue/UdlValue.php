@@ -24,7 +24,7 @@ use WA\DataStore\BaseDataStore;
 class UdlValue extends BaseDataStore
 {
     protected $table = 'udl_values';
-    protected $fillable = ['name', 'udlId', 'companyId','externalId'];
+    protected $fillable = ['name', 'udlId', 'companyId', 'externalId'];
     protected $parentColumn = 'parentId';
 
     /**

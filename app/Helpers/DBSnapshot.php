@@ -29,9 +29,9 @@ class DBSnapshot
 
             $fileName = $tableName.'_'.date('Ymd').'.csv';
 
-            $fieldTerminator = ",";
-            if ($tableName == "raw_data_maps") {
-                $fieldTerminator = "|";
+            $fieldTerminator = ',';
+            if ($tableName == 'raw_data_maps') {
+                $fieldTerminator = '|';
             }
 
             $tmpPath = DIRECTORY_SEPARATOR.'tmp'.DIRECTORY_SEPARATOR.$fileName;

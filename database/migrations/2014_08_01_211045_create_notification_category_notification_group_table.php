@@ -1,15 +1,13 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-
 use WA\Database\Command\TablesRelationsAndIndexes;
 
 class CreateNotificationCategoryNotificationGroupTable extends Migration
 {
-
     use TablesRelationsAndIndexes;
 
-    protected $tableName = "notifications_categories_in_groups";
+    protected $tableName = 'notifications_categories_in_groups';
 
     protected $foreignColumns = [
         'category_id',
@@ -18,20 +16,18 @@ class CreateNotificationCategoryNotificationGroupTable extends Migration
 
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
-        Schema::create($this->tableName, function ( $table) {
+        Schema::create($this->tableName, function ($table) {
             $table->increments('id');
             $table->integer('category_id')->unsigned()->nullable();
             $table->integer('group_id')->unsigned()->nullable();
         });
 
         Schema::table(
-            $this->tableName, 
-            function($table) {
+            $this->tableName,
+            function ($table) {
                 // ¿¿ $table->foreign('category_id')->references('id')->on('companies'); ??
                 // ¿¿ $table->foreign('group_id')->references('id')->on('companies'); ??
             }
@@ -40,17 +36,15 @@ class CreateNotificationCategoryNotificationGroupTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
     public function down()
     {
         Schema::table(
-            $this->tableName, 
+            $this->tableName,
             function ($table) {
-            ////$table->dropForeign('category_id');
+                ////$table->dropForeign('category_id');
             ////$table->dropForeign('group_id');
-        });
+            });
         $this->forceDropTable($this->tableName);
     }
 }

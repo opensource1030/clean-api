@@ -1,11 +1,10 @@
 <?php
 
 namespace WA\Http\Controllers\Auth;
-use WA\Http\Controllers\ApiController;
 
+use WA\Http\Controllers\ApiController;
 use LucaDegasperi\OAuth2Server\Authorizer;
 use WA\Repositories\User\UserInterface;
-
 use Cache;
 
 /**
@@ -13,7 +12,6 @@ use Cache;
  */
 class AuthController extends ApiController
 {
-
     /**
      * @var UserInterface
      */
@@ -21,23 +19,23 @@ class AuthController extends ApiController
 
     /**
      * AuthTokenController constructor.
+     *
      * @param UserInterface $user
      */
     public function __construct(UserInterface $user)
     {
         $this->user = $user;
-
     }
 
     /**
      * @param Authorizer $authorizer
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function accessToken(Authorizer $authorizer)
     {
-        try {   
+        try {
             return response()->json($authorizer->issueAccessToken());
-        
         } catch (UnsupportedGrantTypeException $ugte) {
             // GRANT_TŶPE (Invalid)
             // GRANT_TYPE (Not Found)
@@ -46,8 +44,8 @@ class AuthController extends ApiController
             $error['errors']['errorType'] = $ugte->errorType;
             $error['errors']['parameter'] = $ugte->parameter;
             $error['errors']['messageUnsupportedGrantType'] = $ugte->getMessage();
-            return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
 
+            return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
         } catch (InvalidRequestException $ire) {
             // CLIENT_ID (Not Found)
             // CLIENT_SECRET (Not Found)
@@ -56,8 +54,8 @@ class AuthController extends ApiController
             $error['errors']['errorType'] = $ire->errorType;
             $error['errors']['parameter'] = $ire->parameter;
             $error['errors']['messageInvalidRequest'] = $ire->getMessage();
-            return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
 
+            return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
         } catch (InvalidClientException $ice) {
             // CLIENT_ID (Invalid)
             // CLIENT_SECRET (Invalid)
@@ -65,33 +63,33 @@ class AuthController extends ApiController
 
             $error['errors']['errorType'] = $ice->errorType;
             $error['errors']['messageInvalidClient'] = $ice->getMessage();
-            return response()->json($error)->setStatusCode($this->status_codes['unauthorized']);
 
+            return response()->json($error)->setStatusCode($this->status_codes['unauthorized']);
         } catch (InvalidCredentialsException $icre) {
             // PASSWORD (No Valid)
             // ERROR 401
 
             $error['errors']['errorType'] = $icre->errorType;
             $error['errors']['messageInvalidCredentials'] = $icre->getMessage();
-            return response()->json($error)->setStatusCode($this->status_codes['unauthorized']);
 
-        } catch (\Exception $e){
+            return response()->json($error)->setStatusCode($this->status_codes['unauthorized']);
+        } catch (\Exception $e) {
             // ERROR 500
 
-            if(isset($e->errorType) && $e->errorType <> null) {
-                $error['errors']['errorType'] = $e->errorType;    
+            if (isset($e->errorType) && $e->errorType != null) {
+                $error['errors']['errorType'] = $e->errorType;
             } else {
-                $error['errors']['errorType'] = "Unknown Error";
+                $error['errors']['errorType'] = 'Unknown Error';
             }
 
-            if(isset($e->httpStatusCode) && $e->httpStatusCode <> null) {
-                $httpStatusCode = $e->httpStatusCode;    
+            if (isset($e->httpStatusCode) && $e->httpStatusCode != null) {
+                $httpStatusCode = $e->httpStatusCode;
             } else {
                 $httpStatusCode = 500;
             }
 
-
             $error['errors']['message'] = $e->getMessage();
+
             return response()->json($error)->setStatusCode($httpStatusCode);
         }
     }
@@ -99,6 +97,7 @@ class AuthController extends ApiController
     /**
      * @param $username
      * @param $password
+     *
      * @return bool
      */
     public function passwordGrantVerify($username, $password)

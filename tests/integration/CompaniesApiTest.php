@@ -1,7 +1,6 @@
 <?php
 
 use Laravel\Lumen\Testing\DatabaseMigrations;
-
 use WA\DataStore\Company\Company;
 
 class CompaniesTest extends TestCase
@@ -9,7 +8,7 @@ class CompaniesTest extends TestCase
     use DatabaseMigrations;
 
     /**
-     * A basic functional test for Company
+     * A basic functional test for Company.
      */
     public function testGetCompanies()
     {
@@ -18,16 +17,16 @@ class CompaniesTest extends TestCase
         $this->json('GET', 'companies')
             ->seeJsonStructure([
                 'data' => [
-                    0 => [ 
+                    0 => [
                         'type',
                         'id',
                         'attributes' => [
                             'name',
-                            'label'
+                            'label',
                         ],
-                        'links'
-                    ]
-                ]
+                        'links',
+                    ],
+                ],
             ]);
     }
 
@@ -38,12 +37,9 @@ class CompaniesTest extends TestCase
         $this->json('GET', 'companies/'.$company->id)
             ->seeJson([
                 'type' => 'companies',
-                'id' => "$company->id" ,
+                'id' => "$company->id",
                 'name' => $company->name,
                 'label' => $company->label,
             ]);
-
     }
-
-
 }

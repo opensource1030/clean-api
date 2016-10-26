@@ -18,16 +18,15 @@ class CDIAuth implements CDIAuthInterface
     }
 
     /**
-     * Check if the logged in user can access CDI related functions
+     * Check if the logged in user can access CDI related functions.
      *
-     * @return boolean
+     * @return bool
      */
     public function getCDIAuthorization()
     {
-       $cdi_permissions = ['cdi_process'];
-        foreach($cdi_permissions as $permission){
-            if(!$this->user->can($permission))
-            {
+        $cdi_permissions = ['cdi_process'];
+        foreach ($cdi_permissions as $permission) {
+            if (!$this->user->can($permission)) {
                 return false;
             }
         }

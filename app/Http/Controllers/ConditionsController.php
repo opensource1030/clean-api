@@ -3,11 +3,9 @@
 namespace WA\Http\Controllers;
 
 use Illuminate\Http\Request;
-
 use WA\DataStore\Condition\Condition;
 use WA\DataStore\Condition\ConditionTransformer;
 use WA\Repositories\Condition\ConditionInterface;
-
 use Illuminate\Support\Facades\Lang;
 
 /**
@@ -23,20 +21,19 @@ class ConditionsController extends ApiController
     protected $condition;
 
     /**
-     * Condition Controller constructor
+     * Condition Controller constructor.
      *
      * @param ConditionInterface $condition
      */
     public function __construct(ConditionInterface $condition)
-    {        
+    {
         $this->condition = $condition;
     }
 
     /**
-     * Show all Condition
+     * Show all Condition.
      *
      * Get a payload of all Condition
-     *
      */
     public function index()
     {
@@ -46,11 +43,12 @@ class ConditionsController extends ApiController
 
         $response = $this->response()->withPaginator($conditions, new ConditionTransformer(), ['key' => 'conditions']);
         $response = $this->applyMeta($response);
+
         return $response;
     }
 
     /**
-     * Show a single Condition
+     * Show a single Condition.
      *
      * Get a payload of a single Condition
      *
@@ -62,43 +60,44 @@ class ConditionsController extends ApiController
         $this->condition->setCriteria($criteria);
         $condition = Condition::find($id);
 
-        if($condition == null){
-            $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'Condition']);   
+        if ($condition == null) {
+            $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'Condition']);
+
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
-        return $this->response()->item($condition, new ConditionTransformer(),['key' => 'conditions'])->setStatusCode($this->status_codes['created']);
+        return $this->response()->item($condition, new ConditionTransformer(), ['key' => 'conditions'])->setStatusCode($this->status_codes['created']);
     }
 
     /**
-     * Update contents of a Condition
+     * Update contents of a Condition.
      *
      * @param $id
+     *
      * @return \Dingo\Api\Http\Response
      */
     public function store($id, Request $request)
     {
-        if($this->isJsonCorrect($request, 'conditions')){
+        if ($this->isJsonCorrect($request, 'conditions')) {
             try {
-
                 $data = $request->all()['data']['attributes'];
                 $data['id'] = $id;
                 $condition = $this->condition->update($data);
 
-                if($condition == 'notExist') {
+                if ($condition == 'notExist') {
                     $error['errors']['condition'] = Lang::get('messages.NotExistClass', ['class' => 'Condition']);
                     //$error['errors']['Message'] = $e->getMessage();
                     return response()->json($error)->setStatusCode($this->status_codes['notexists']);
                 }
 
-                if($condition == 'notSaved') {
+                if ($condition == 'notSaved') {
                     $error['errors']['condition'] = Lang::get('messages.NotSavedClass', ['class' => 'Condition']);
                     //$error['errors']['Message'] = $e->getMessage();
                     return response()->json($error)->setStatusCode($this->status_codes['conflict']);
                 }
 
                 return $this->response()->item($condition, new ConditionTransformer(), ['key' => 'conditions'])->setStatusCode($this->status_codes['created']);
-            } catch (\Exception $e){
+            } catch (\Exception $e) {
                 $error['errors']['conditions'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Condition', 'option' => 'updated', 'include' => '']);
                 //$error['errors']['Message'] = $e->getMessage();
             }
@@ -110,20 +109,19 @@ class ConditionsController extends ApiController
     }
 
     /**
-     * Create a new Condition
+     * Create a new Condition.
      *
      * @return \Dingo\Api\Http\Response
      */
     public function create(Request $request)
     {
-        if($this->isJsonCorrect($request, 'conditions')){
+        if ($this->isJsonCorrect($request, 'conditions')) {
             try {
-
                 $data = $request->all()['data']['attributes'];
                 $condition = $this->condition->create($data);
 
                 return $this->response()->item($condition, new ConditionTransformer(), ['key' => 'conditions'])->setStatusCode($this->status_codes['created']);
-            } catch (\Exception $e){
+            } catch (\Exception $e) {
                 $error['errors']['conditions'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Condition', 'option' => 'created', 'include' => '']);
                 //$error['errors']['Message'] = $e->getMessage();
             }
@@ -135,25 +133,27 @@ class ConditionsController extends ApiController
     }
 
     /**
-     * Delete an Condition
+     * Delete an Condition.
      *
      * @param $id
      */
     public function delete($id)
     {
         $condition = Condition::find($id);
-        if($condition <> null){
+        if ($condition != null) {
             $this->condition->deleteById($id);
         } else {
             $error['errors']['delete'] = Lang::get('messages.NotExistClass', ['class' => 'Condition']);
+
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
         $condition = Condition::find($id);
-        if($condition == null){
-            return array("success" => true);
+        if ($condition == null) {
+            return array('success' => true);
         } else {
             $error['errors']['delete'] = Lang::get('messages.NotDeletedClass', ['class' => 'Condition']);
+
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
     }

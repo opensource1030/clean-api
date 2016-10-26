@@ -4,11 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 
 class CreateCleanRevisionsTable extends Migration
 {
-
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
@@ -31,12 +28,9 @@ class CreateCleanRevisionsTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
     public function down()
     {
         Schema::drop('revisions');
     }
-
 }

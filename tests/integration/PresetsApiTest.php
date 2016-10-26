@@ -1,26 +1,21 @@
 <?php
 
 use Laravel\Lumen\Testing\DatabaseMigrations;
-
-use WA\DataStore\Category\Preset;
-use WA\DataStore\Device\Device;
 use WA\DataStore\Image\Image;
-
-use WA\Http\Controllers\PresetsController;
 
 class PresetsApiTest extends TestCase
 {
     use DatabaseMigrations;
 
-    public function testGetPresets() {
-
+    public function testGetPresets()
+    {
         factory(\WA\DataStore\Category\Preset::class, 40)->create();
 
         $res = $this->json('GET', 'presets');
 
         $res->seeJsonStructure([
             'data' => [
-                0 => [  
+                0 => [
                     'type',
                     'id',
                     'attributes' => [
@@ -28,18 +23,18 @@ class PresetsApiTest extends TestCase
                         'created_at' => [
                             'date',
                             'timezone_type',
-                            'timezone'
+                            'timezone',
                         ],
                         'updated_at' => [
                             'date',
                             'timezone_type',
-                            'timezone'
-                        ]
+                            'timezone',
+                        ],
                     ],
                     'links' => [
-                        'self'
-                    ]
-                ]
+                        'self',
+                    ],
+                ],
             ],
             'meta' => [
                 'sort',
@@ -50,26 +45,26 @@ class PresetsApiTest extends TestCase
                     'count',
                     'per_page',
                     'current_page',
-                    'total_pages'
-                ]
+                    'total_pages',
+                ],
             ],
             'links' => [
                 'self',
                 'first',
                 'next',
-                'last'
-            ]
+                'last',
+            ],
         ]);
     }
 
-    public function testGetPresetByIdIfExists() {
-      
+    public function testGetPresetByIdIfExists()
+    {
         $preset = factory(\WA\DataStore\Category\Preset::class)->create();
 
         $res = $this->json('GET', 'presets/'.$preset->id)
             ->seeJson([
                 'type' => 'presets',
-                'name'=> $preset->name
+                'name' => $preset->name,
             ]);
 
         $res->seeJsonStructure([
@@ -81,23 +76,23 @@ class PresetsApiTest extends TestCase
                     'created_at' => [
                         'date',
                         'timezone_type',
-                        'timezone'
+                        'timezone',
                     ],
                     'updated_at' => [
                         'date',
                         'timezone_type',
-                        'timezone'
-                    ]
+                        'timezone',
+                    ],
                 ],
                 'links' => [
-                    'self'
-                ]
-            ]
+                    'self',
+                ],
+            ],
         ]);
     }
 
-    public function testGetPresetByIdIfNoExists() {
-
+    public function testGetPresetByIdIfNoExists()
+    {
         $presetId = factory(\WA\DataStore\Category\Preset::class)->create()->id;
         $presetId = $presetId + 10;
 
@@ -105,8 +100,8 @@ class PresetsApiTest extends TestCase
         $this->assertEquals(404, $response->status());
     }
 
-    public function testGetPresetByIdandIncludesDevices(){
-
+    public function testGetPresetByIdandIncludesDevices()
+    {
         $preset = factory(\WA\DataStore\Category\Preset::class)->create();
 
         $device = factory(\WA\DataStore\Device\Device::class)->create()->id;
@@ -123,31 +118,31 @@ class PresetsApiTest extends TestCase
                         'created_at' => [
                             'date',
                             'timezone_type',
-                            'timezone'
+                            'timezone',
                         ],
                         'updated_at' => [
                             'date',
                             'timezone_type',
-                            'timezone'
-                        ]
+                            'timezone',
+                        ],
                     ],
                     'links' => [
-                        'self'
+                        'self',
                     ],
                     'relationships' => [
                         'devices' => [
                             'links' => [
                                 'self',
-                                'related'
+                                'related',
                             ],
                             'data' => [
-                                0 => [  
+                                0 => [
                                     'type',
-                                    'id'
-                                ]
-                            ]
-                        ]
-                    ]
+                                    'id',
+                                ],
+                            ],
+                        ],
+                    ],
                 ],
                 'included' => [
                     0 => [
@@ -160,11 +155,11 @@ class PresetsApiTest extends TestCase
                             'deviceOS',
                             'description',
                             'statusId',
-                            'image'
+                            'image',
                         ],
                         'links' => [
-                            'self'
-                        ]
+                            'self',
+                        ],
                     ],
                     1 => [
                         'type',
@@ -175,32 +170,32 @@ class PresetsApiTest extends TestCase
                             'statusId',
                             'externalId',
                             'identification',
-                            'syncId'
+                            'syncId',
                         ],
                         'links' => [
-                            'self'
+                            'self',
                         ],
                         'relationships' => [
                             'devicetypes' => [
                                 'links' => [
                                     'self',
-                                    'related'
+                                    'related',
                                 ],
                                 'data' => [
                                     0 => [
                                         'type',
-                                        'id'
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
+                                        'id',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
             ]);
     }
 
-    public function testGetPresetByIdandIncludesImages(){
-
+    public function testGetPresetByIdandIncludesImages()
+    {
         $preset = factory(\WA\DataStore\Category\Preset::class)->create();
 
         $image1 = factory(\WA\DataStore\Image\Image::class)->create()->id;
@@ -208,7 +203,7 @@ class PresetsApiTest extends TestCase
 
         $dataImages = array($image1, $image2);
 
-        $preset->images()->sync($dataImages);    
+        $preset->images()->sync($dataImages);
 
         $this->json('GET', 'presets/'.$preset->id.'?include=images')
             ->seeJsonStructure([
@@ -220,31 +215,31 @@ class PresetsApiTest extends TestCase
                         'created_at' => [
                             'date',
                             'timezone_type',
-                            'timezone'
+                            'timezone',
                         ],
                         'updated_at' => [
                             'date',
                             'timezone_type',
-                            'timezone'
-                        ]
+                            'timezone',
+                        ],
                     ],
                     'links' => [
-                        'self'
+                        'self',
                     ],
                     'relationships' => [
                         'images' => [
                             'links' => [
                                 'self',
-                                'related'
+                                'related',
                             ],
                             'data' => [
-                                0 => [  
+                                0 => [
                                     'type',
-                                    'id'
-                                ]
-                            ]
-                        ]
-                    ]
+                                    'id',
+                                ],
+                            ],
+                        ],
+                    ],
                 ],
                 'included' => [
                     0 => [
@@ -256,18 +251,18 @@ class PresetsApiTest extends TestCase
                             'mimeType',
                             'extension',
                             'size',
-                            'url'
+                            'url',
                         ],
                         'links' => [
-                            'self'
-                        ]
-                    ]
-                ]
+                            'self',
+                        ],
+                    ],
+                ],
             ]);
     }
 
-    public function testCreatePreset() {
-
+    public function testCreatePreset()
+    {
         $preset = factory(\WA\DataStore\Category\Preset::class)->create();
 
         $device1 = factory(\WA\DataStore\Device\Device::class)->create()->id;
@@ -278,233 +273,238 @@ class PresetsApiTest extends TestCase
 
         $this->json('POST', 'presets',
             [
-                "data" => [
-                    "type" => "presets",
-                    "attributes" => [
-                        "name" => "namePreset"
+                'data' => [
+                    'type' => 'presets',
+                    'attributes' => [
+                        'name' => 'namePreset',
                     ],
-                    "relationships" => [
-                        "devices" => [
-                            "data" => [
-                                [ "type" => "devices", "id" => $device1 ],
-                                [ "type" => "devices", "id" => $device2 ]
-                            ]
+                    'relationships' => [
+                        'devices' => [
+                            'data' => [
+                                ['type' => 'devices', 'id' => $device1],
+                                ['type' => 'devices', 'id' => $device2],
+                            ],
                         ],
-                        "images" => [
-                            "data" => [
-                                [ "type" => "images", "id" => $image1 ],
-                                [ "type" => "images", "id" => $image2 ]
-                            ]
-                        ]
-                    ]
-                ]
+                        'images' => [
+                            'data' => [
+                                ['type' => 'images', 'id' => $image1],
+                                ['type' => 'images', 'id' => $image2],
+                            ],
+                        ],
+                    ],
+                ],
             ]
             )->seeJson(
             [
                 'type' => 'presets',
-                'name' => 'namePreset'
+                'name' => 'namePreset',
             ]);
     }
 
-    public function testCreatePresetReturnNoValidData() {
+    public function testCreatePresetReturnNoValidData()
+    {
         // 'data' no valid.
         $this->json('POST', 'presets',
             [
                 'NoValid' => [
-                    ]
+                    ],
             ]
             )->seeJson(
             [
                 'errors' => [
-                    'json' => 'JSON is Invalid'
-                ]
+                    'json' => 'JSON is Invalid',
+                ],
             ]
         );
     }
 
-    public function testCreatePresetReturnNoValidType() {
+    public function testCreatePresetReturnNoValidType()
+    {
         // 'type' no valid.
         $this->json('POST', 'presets',
             [
-                "data" => [
-                    "NoValid"=> "presets",
-                    "attributes"=> [
-                        "name"=> "namePreset"
-                    ]
-                ]
-                
+                'data' => [
+                    'NoValid' => 'presets',
+                    'attributes' => [
+                        'name' => 'namePreset',
+                    ],
+                ],
+
             ]
             )->seeJson(
             [
                 'errors' => [
-                    'json' => 'JSON is Invalid'
-                ]
+                    'json' => 'JSON is Invalid',
+                ],
             ]
         );
     }
 
-    public function testCreatePresetReturnNoValidAttributes() {
+    public function testCreatePresetReturnNoValidAttributes()
+    {
         // 'attributes' no valid.
         $this->json('POST', 'presets',
             [
-                "data" => [
-                    "type"=> "presets",
-                    "NoValid"=> [
-                        "name"=> "namePreset"
-                    ]
-                ]
+                'data' => [
+                    'type' => 'presets',
+                    'NoValid' => [
+                        'name' => 'namePreset',
+                    ],
+                ],
             ]
             )->seeJson(
             [
                 'errors' => [
-                    'json' => 'JSON is Invalid'
-                ]
+                    'json' => 'JSON is Invalid',
+                ],
             ]
         );
     }
 
-    public function testCreatePresetReturnRelationshipNoExists() {
-
+    public function testCreatePresetReturnRelationshipNoExists()
+    {
         $this->json('POST', 'presets',
         [
             'data' => [
                 'type' => 'presets',
                 'attributes' => [
-                    'name' => 'namePreset'
+                    'name' => 'namePreset',
                 ],
                 'relationships' => [
                     'IgnoreType' => [
                         'data' => [
-                            [ 'type' => 'devices', 'id' => '1' ],
-                            [ 'type' => 'devices', 'id' => '2' ]
-                        ]
-                    ]
-                ]
-            ]
+                            ['type' => 'devices', 'id' => '1'],
+                            ['type' => 'devices', 'id' => '2'],
+                        ],
+                    ],
+                ],
+            ],
         ]
         )->seeJson(
         [
             'type' => 'presets',
-            'name' => 'namePreset'
+            'name' => 'namePreset',
         ]);
     }
 
-    public function testCreatePresetReturnRelationshipNoExistsData() {
-
+    public function testCreatePresetReturnRelationshipNoExistsData()
+    {
         $this->json('POST', 'presets',
         [
             'data' => [
                 'type' => 'presets',
                 'attributes' => [
-                    'name' => 'namePreset'
+                    'name' => 'namePreset',
                 ],
                 'relationships' => [
                     'devices' => [
                         'IgnoreData' => [
-                            [ 'type' => 'devices', 'id' => '1' ],
-                            [ 'type' => 'devices', 'id' => '2' ]
-                        ]
-                    ]
-                ]
-            ]
+                            ['type' => 'devices', 'id' => '1'],
+                            ['type' => 'devices', 'id' => '2'],
+                        ],
+                    ],
+                ],
+            ],
         ]
         )->seeJson(
         [
             'type' => 'presets',
-            'name' => 'namePreset'
+            'name' => 'namePreset',
         ]);
     }
 
-    public function testCreatePresetReturnRelationshipNoAppsType() {
-
+    public function testCreatePresetReturnRelationshipNoAppsType()
+    {
         $this->json('POST', 'presets',
         [
             'data' => [
                 'type' => 'presets',
                 'attributes' => [
-                    'name' => 'namePreset'
+                    'name' => 'namePreset',
                 ],
                 'relationships' => [
                     'apps' => [
                         'data' => [
-                            [ 'type' => 'NoDevices', 'id' => '1' ],
-                            [ 'type' => 'NoDevices', 'id' => '2' ]
-                        ]
-                    ]
-                ]
-            ]
+                            ['type' => 'NoDevices', 'id' => '1'],
+                            ['type' => 'NoDevices', 'id' => '2'],
+                        ],
+                    ],
+                ],
+            ],
         ]
         )->seeJson(
         [
             'type' => 'presets',
-            'name' => 'namePreset'
+            'name' => 'namePreset',
         ]);
     }
 
-    public function testCreatePresetReturnRelationshipNoIdExists() {
-
+    public function testCreatePresetReturnRelationshipNoIdExists()
+    {
         $this->json('POST', 'presets',
         [
             'data' => [
                 'type' => 'presets',
                 'attributes' => [
-                    'name' => 'namePreset'
+                    'name' => 'namePreset',
                 ],
                 'relationships' => [
                     'apps' => [
                         'data' => [
-                            [ 'type' => 'devices', 'aa' => '1' ],
-                            [ 'type' => 'devices', 'aa' => '2' ]
-                        ]
-                    ]
-                ]
-            ]
+                            ['type' => 'devices', 'aa' => '1'],
+                            ['type' => 'devices', 'aa' => '2'],
+                        ],
+                    ],
+                ],
+            ],
         ]
         )->seeJson(
         [
             'type' => 'presets',
-            'name' => 'namePreset'
+            'name' => 'namePreset',
         ]);
     }
 
-    public function testUpdatePreset() {
-
+    public function testUpdatePreset()
+    {
         $preset = factory(\WA\DataStore\Category\Preset::class)->create(
-            [ 'name' => 'namePreset1']
+            ['name' => 'namePreset1']
         );
         $presetAux = factory(\WA\DataStore\Category\Preset::class)->create(
-            [ 'name' => 'namePreset2']
+            ['name' => 'namePreset2']
         );
 
         $this->assertNotEquals($preset->id, $presetAux->id);
         $this->assertNotEquals($preset->name, $presetAux->name);
 
-        $this->json('PUT', 'presets/'.$preset->id, 
+        $this->json('PUT', 'presets/'.$preset->id,
             [
                 'data' => [
                     'type' => 'presets',
                     'attributes' => [
-                        'name' => $presetAux->name
-                    ]
-                ]
+                        'name' => $presetAux->name,
+                    ],
+                ],
             ])
             ->seeJson(
             [
                 'type' => 'presets',
-                'name' => $presetAux->name
+                'name' => $presetAux->name,
             ]);
     }
 
-    public function testDeletePresetIfExists() {
+    public function testDeletePresetIfExists()
+    {
         // CREATE & DELETE
         $preset = factory(\WA\DataStore\Category\Preset::class)->create();
         $responseDel = $this->call('DELETE', 'presets/'.$preset->id);
         $this->assertEquals(200, $responseDel->status());
         $responseGet = $this->call('GET', 'presets/'.$preset->id);
-        $this->assertEquals(404, $responseGet->status());        
+        $this->assertEquals(404, $responseGet->status());
     }
 
-    public function testDeletePresetIfNoExists(){
+    public function testDeletePresetIfNoExists()
+    {
         // DELETE NO EXISTING.
         $responseDel = $this->call('DELETE', 'presets/1');
         $this->assertEquals(404, $responseDel->status());

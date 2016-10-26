@@ -2,21 +2,16 @@
 
 use Illuminate\Database\Migrations\Migration;
 
-
 class CreateUdlValuesTable extends Migration
 {
-
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
-
     {
         Schema::create(
             'udl_values',
-            function ( $table) {
+            function ($table) {
                 $table->increments('id');
                 $table->string('name');
                 $table->integer('udlId', false, true)->nullable();
@@ -30,12 +25,9 @@ class CreateUdlValuesTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
     public function down()
     {
         Schema::drop('udl_values');
     }
-
 }

@@ -11,7 +11,7 @@ interface CarrierDetailInterface
      * @param string $billMonth as YYYY-MM-DD
      * @param int    $carrierId
      *
-     * @return Object object of carrier details
+     * @return object object of carrier details
      */
     public function byCompany($companyId, $carrierId, $billMonth);
 }

@@ -2,14 +2,11 @@
 
 use Laravel\Lumen\Testing\DatabaseMigrations;
 
-use Laravel\Lumen\Testing\DatabaseTransactions;
-use WA\Http\Controllers\RelationshipsController;
-
 class RelationshipsTest extends TestCase
 {
     use DatabaseMigrations;
 
-	public function testIncludeRelationships()
+    public function testIncludeRelationships()
     {
         $device = factory(\WA\DataStore\Device\Device::class)->create();
 
@@ -24,9 +21,9 @@ class RelationshipsTest extends TestCase
                         'id',
                         'attributes' => [],
                         'links' => [
-                            'self'
-                        ]
-                    ]
+                            'self',
+                        ],
+                    ],
                 ],
                 'meta' => [
                     'sort',
@@ -37,14 +34,14 @@ class RelationshipsTest extends TestCase
                         'count',
                         'per_page',
                         'current_page',
-                        'total_pages'
-                    ]
+                        'total_pages',
+                    ],
                 ],
                 'links' => [
                     'self',
                     'first',
-                    'last'
-                ]
+                    'last',
+                ],
             ]);
     }
 
@@ -58,15 +55,15 @@ class RelationshipsTest extends TestCase
         $this->json('GET', 'notexists/'.$device->id.'/relationships/prices')
             ->seeJson([
                 'errors' => [
-                    'notexists' => 'the Notexist selected doesn\'t exists'
-                ]
+                    'notexists' => 'the Notexist selected doesn\'t exists',
+                ],
             ]);
 
         $this->json('GET', 'devices/'.$device->id.'/relationships/notexists')
             ->seeJson([
                 'errors' => [
-                    'devices' => 'the notexists selected doesn\'t exists'
-                ]
+                    'devices' => 'the notexists selected doesn\'t exists',
+                ],
             ]);
 
         $deviceId = factory(\WA\DataStore\Device\Device::class)->create()->id;
@@ -81,7 +78,7 @@ class RelationshipsTest extends TestCase
                 'prev_page_url',
                 'from',
                 'to',
-                'data'
+                'data',
             ]);
 
         $idNotExists = $deviceId + 10;
@@ -89,8 +86,8 @@ class RelationshipsTest extends TestCase
         $this->json('GET', 'devices/'.$idNotExists.'/relationships/prices')
             ->seeJson([
                 'errors' => [
-                    'devices' => 'the Device selected doesn\'t exists'
-                ]
+                    'devices' => 'the Device selected doesn\'t exists',
+                ],
             ]);
     }
 
@@ -120,18 +117,18 @@ class RelationshipsTest extends TestCase
                             'created_at' => [
                                 'date',
                                 'timezone_type',
-                                'timezone'
+                                'timezone',
                             ],
                             'updated_at' => [
                                 'date',
                                 'timezone_type',
-                                'timezone'
-                            ]
+                                'timezone',
+                            ],
                         ],
                         'links' => [
-                            'self'
-                        ]
-                    ]
+                            'self',
+                        ],
+                    ],
                 ],
                 'meta' => [
                     'sort',
@@ -142,14 +139,14 @@ class RelationshipsTest extends TestCase
                         'count',
                         'per_page',
                         'current_page',
-                        'total_pages'
-                    ]
+                        'total_pages',
+                    ],
                 ],
                 'links' => [
                     'self',
                     'first',
-                    'last'
-                ]
+                    'last',
+                ],
             ]);
     }
 
@@ -163,15 +160,15 @@ class RelationshipsTest extends TestCase
         $this->json('GET', 'notexists/'.$device->id.'/prices')
             ->seeJson([
                 'errors' => [
-                    'notexists' => 'the Notexist selected doesn\'t exists'
-                ]
+                    'notexists' => 'the Notexist selected doesn\'t exists',
+                ],
             ]);
 
         $this->json('GET', 'devices/'.$device->id.'/notexists')
             ->seeJson([
                 'errors' => [
-                    'devices' => 'the notexists selected doesn\'t exists'
-                ]
+                    'devices' => 'the notexists selected doesn\'t exists',
+                ],
             ]);
 
         $deviceId = factory(\WA\DataStore\Device\Device::class)->create()->id;
@@ -186,7 +183,7 @@ class RelationshipsTest extends TestCase
                 'prev_page_url',
                 'from',
                 'to',
-                'data'
+                'data',
             ]);
 
         $idNotExists = $deviceId + 10;
@@ -194,9 +191,8 @@ class RelationshipsTest extends TestCase
         $this->json('GET', 'devices/'.$idNotExists.'/relationships/prices')
             ->seeJson([
                 'errors' => [
-                    'devices' => 'the Device selected doesn\'t exists'
-                ]
+                    'devices' => 'the Device selected doesn\'t exists',
+                ],
             ]);
     }
-
 }

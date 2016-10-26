@@ -2,7 +2,6 @@
 
 namespace WA\DataStore\User;
 
-use Baum\Node;
 use Illuminate\Auth\Authenticatable as IllumnateAuthenticableTrait;
 use Illuminate\Auth\Passwords\CanResetPassword as IlluminateCanResetPasswordTrait;
 use Illuminate\Contracts\Auth\Authenticatable as IllumincateAuthenticatableContract;
@@ -11,7 +10,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Venturecraft\Revisionable\RevisionableTrait as RevisionableTrait;
 use WA\DataStore\BaseDataStore;
 use Zizaco\Entrust\Traits\EntrustUserTrait as EntrustUserTrait;
-
 
 /**
  * Class User.
@@ -29,12 +27,12 @@ use Zizaco\Entrust\Traits\EntrustUserTrait as EntrustUserTrait;
  */
 class User extends BaseDataStore implements IlluminateCanResetPasswordContract, IllumincateAuthenticatableContract
 {
-//    use SoftDeletes;
+    //    use SoftDeletes;
 //    use RevisionableTrait;
 //    use EntrustUserTrait {
 //        EntrustUserTrait::boot insteadof RevisionableTrait;
 //    }
-//
+
     use IlluminateCanResetPasswordTrait, IllumnateAuthenticableTrait;
 
     public $timestamps = true;
@@ -160,7 +158,6 @@ class User extends BaseDataStore implements IlluminateCanResetPasswordContract, 
         return $this->belongsTo('WA\DataStore\Company\Company', 'companyId');
     }
 
-
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
@@ -168,7 +165,6 @@ class User extends BaseDataStore implements IlluminateCanResetPasswordContract, 
     {
         return $this->belongsToMany('WA\DataStore\Device\Device', 'user_devices', 'userId', 'deviceId');
     }
-
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -194,7 +190,6 @@ class User extends BaseDataStore implements IlluminateCanResetPasswordContract, 
         return $this->belongsToMany('WA\DataStore\Role\Role', 'role_user', 'user_id', 'role_id');
     }
 
-
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
@@ -203,16 +198,15 @@ class User extends BaseDataStore implements IlluminateCanResetPasswordContract, 
         return $this->hasMany('WA\DataStore\Allocation\Allocation', 'userId');
     }
 
-     /**
-     * Get all the employee related static contents
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
-     */
+   /**
+    * Get all the employee related static contents.
+    *
+    * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+    */
    public function contents()
    {
        return $this->morphMany('WA\DataStore\Content\Content', 'owner');
    }
-
 
     /**
      * @param $id
@@ -227,6 +221,4 @@ class User extends BaseDataStore implements IlluminateCanResetPasswordContract, 
             }
         )->isEmpty();
     }
-
-
 }

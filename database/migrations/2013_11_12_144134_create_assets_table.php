@@ -10,22 +10,20 @@ class CreateAssetsTable extends Migration
     protected $tableName = 'assets';
 
     protected $foreignColumns = [
-        'typeId'    => 'nullable',
+        'typeId' => 'nullable',
         'carrierId' => 'nullable',
-        'statusId'  => 'nullable',
-        'syncId'    => 'nullable'
+        'statusId' => 'nullable',
+        'syncId' => 'nullable',
     ];
 
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
         Schema::create(
             $this->tableName,
-            function ( $table) {
+            function ($table) {
                 $table->increments('id');
                 $table->string('identification');
                 $table->boolean('active')->default(1);
@@ -40,8 +38,8 @@ class CreateAssetsTable extends Migration
             });
 
         Schema::table(
-            $this->tableName, 
-            function( $table) {
+            $this->tableName,
+            function ($table) {
                 //¿¿ $table->foreign('typeId')->references('id')->on('companies'); ??
                 $table->foreign('carrierId')->references('id')->on('carriers');
                 //¿¿ $table->foreign('statusId')->references('id')->on('companies'); ??
@@ -51,20 +49,18 @@ class CreateAssetsTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
     public function down()
     {
         Schema::table(
-            $this->tableName, 
-            function ( $table) {
+            $this->tableName,
+            function ($table) {
                 //$table->dropForeign('carrierId');
-        });
+            });
 
         /*
         Schema::table(
-            $this->tableName, 
+            $this->tableName,
             function ( $table) {
                 //$table->dropForeign('syncId');
                 ////$table->dropForeign('typeId');
@@ -72,18 +68,18 @@ class CreateAssetsTable extends Migration
         });
 
         Schema::table(
-            'user_assets', 
+            'user_assets',
             function ( $table) {
                 //$table->dropForeign('assetId');
         });
 
         Schema::table(
-            'asset_devices', 
+            'asset_devices',
             function ( $table) {
                 //$table->dropForeign('assetId');
         });
         */
-        
+
         $this->forceDropTable($this->tableName);
     }
 }

@@ -2,10 +2,7 @@
 
 namespace WA\Http\Controllers;
 
-use DB;
 use Illuminate\Support\Facades\Lang;
-use WA\Helpers\Traits\Criteria;
-
 use WA\DataStore\Relationship\RelationshipTransformer;
 
 /**
@@ -25,6 +22,7 @@ class RelationshipsController extends ApiController
         } else {
             // NOT EXISTS MODEL ( SINGULAR INPUT )
             $error['errors'][$modelPlural] = Lang::get('messages.NotExistClass', ['class' => $modelPlural]);
+
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
@@ -35,23 +33,27 @@ class RelationshipsController extends ApiController
             } else {
                 // NOT EXISTS MODEL ( NOT IN DATASTORE )
                 $error['errors'][$modelPlural] = Lang::get('messages.NotExistClass', ['class' => $model]);
+
                 return response()->json($error)->setStatusCode($this->status_codes['notexists']);
             }
         } catch (\Exception $e) {
             // NOT EXISTS INCLUDE ( NOT IN DATASTORE )
             //$error['errors']['Message'] = $e->getMessage();
             $error['errors'][$modelPlural] = Lang::get('messages.NotExistClass', ['class' => $includePlural]);
+
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
         if ($results == null) {
             // NOT EXISTS INCLUDE ( NO DATA )
             $error['errors']['getIncludes'] = Lang::get('messages.NotExistInclude');
+
             return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
         }
 
         $response = $this->response()->withPaginator($results, new RelationshipTransformer(), ['key' => $includePlural]);
         $response = $this->applyMeta($response);
+
         return $response;
     }
 
@@ -65,6 +67,7 @@ class RelationshipsController extends ApiController
         } else {
             // NOT EXISTS MODEL ( SINGULAR INPUT )
             $error['errors'][$modelPlural] = Lang::get('messages.NotExistClass', ['class' => $modelPlural]);
+
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
@@ -75,26 +78,30 @@ class RelationshipsController extends ApiController
             } else {
                 // NOT EXISTS MODEL ( NOT IN DATASTORE )
                 $error['errors'][$modelPlural] = Lang::get('messages.NotExistClass', ['class' => $model]);
+
                 return response()->json($error)->setStatusCode($this->status_codes['notexists']);
             }
         } catch (\Exception $e) {
             // NOT EXISTS INCLUDE ( NOT IN DATASTORE )
             //$error['errors']['Message'] = $e->getMessage();
             $error['errors'][$modelPlural] = Lang::get('messages.NotExistClass', ['class' => $includePlural]);
+
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
         if ($results == null) {
             // NOT EXISTS INCLUDE ( NO DATA )
             $error['errors']['getIncludes'] = Lang::get('messages.NotExistInclude');
+
             return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
         }
 
         $includeTC = title_case(str_singular($includePlural));
-        $transformer = "\\WA\\DataStore\\$includeTC\\$includeTC"."Transformer";
+        $transformer = "\\WA\\DataStore\\$includeTC\\$includeTC".'Transformer';
 
-        $response = $this->response()->withPaginator($results, new $transformer, ['key' => $includePlural]);
+        $response = $this->response()->withPaginator($results, new $transformer(), ['key' => $includePlural]);
         $response = $this->applyMeta($response);
+
         return $response;
     }
 }

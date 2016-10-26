@@ -2,12 +2,8 @@
 
 namespace WA\DataStore\Device;
 
-use Dingo\Api\Transformer\FractalTransformer as DingoFractalTransformer;
-use Illuminate\Pagination\Paginator as IlluminatePaginator;
 use League\Fractal\Resource\Collection as ResourceCollection;
-use League\Fractal\Resource\Item as ResourceItem;
 use League\Fractal\TransformerAbstract;
-
 use WA\DataStore\Asset\AssetTransformer;
 use WA\DataStore\Carrier\CarrierTransformer;
 use WA\DataStore\DeviceType\DeviceTypeTransformer;
@@ -15,7 +11,6 @@ use WA\DataStore\Company\CompanyTransformer;
 use WA\DataStore\Modification\ModificationTransformer;
 use WA\DataStore\Image\ImageTransformer;
 use WA\DataStore\Price\PriceTransformer;
-
 use WA\Helpers\Traits\Criteria;
 
 /**
@@ -26,11 +21,11 @@ class DeviceTransformer extends TransformerAbstract
     use Criteria;
 
     protected $availableIncludes = [
-        'assets', 'carriers', 'companies', 'modifications', 'images', 'prices'
+        'assets', 'carriers', 'companies', 'modifications', 'images', 'prices',
     ];
 
     protected $defaultIncludes = [
-        'devicetypes'
+        'devicetypes',
     ];
 
     /**
@@ -41,7 +36,7 @@ class DeviceTransformer extends TransformerAbstract
     public function transform(Device $device)
     {
         return [
-            'id' => (int)$device->id,
+            'id' => (int) $device->id,
             'identification' => $device->identification,
             'name' => $device->name,
             'properties' => $device->properties,
@@ -49,7 +44,7 @@ class DeviceTransformer extends TransformerAbstract
             'statusId' => $device->statusId,
             'syncId' => $device->syncId,
             'created_at' => $device->created_at,
-            'updated_at' => $device->updated_at
+            'updated_at' => $device->updated_at,
         ];
     }
 
@@ -61,6 +56,7 @@ class DeviceTransformer extends TransformerAbstract
     public function includeAssets(Device $device)
     {
         $assets = $this->applyCriteria($device->assets(), $this->criteria);
+
         return new ResourceCollection($assets->get(), new AssetTransformer(), 'assets');
     }
 
@@ -72,6 +68,7 @@ class DeviceTransformer extends TransformerAbstract
     public function includeCarriers(Device $device)
     {
         $carriers = $this->applyCriteria($device->carriers(), $this->criteria);
+
         return new ResourceCollection($carriers->get(), new CarrierTransformer(), 'carriers');
     }
 
@@ -83,6 +80,7 @@ class DeviceTransformer extends TransformerAbstract
     public function includeCompanies(Device $device)
     {
         $companies = $this->applyCriteria($device->companies(), $this->criteria);
+
         return new ResourceCollection($companies->get(), new CompanyTransformer(), 'companies');
     }
 
@@ -94,6 +92,7 @@ class DeviceTransformer extends TransformerAbstract
     public function includeModifications(Device $device)
     {
         $modifications = $this->applyCriteria($device->modifications(), $this->criteria);
+
         return new ResourceCollection($modifications->get(), new ModificationTransformer(), 'modifications');
     }
 
@@ -105,6 +104,7 @@ class DeviceTransformer extends TransformerAbstract
     public function includeImages(Device $device)
     {
         $images = $this->applyCriteria($device->images(), $this->criteria);
+
         return new ResourceCollection($images->get(), new ImageTransformer(), 'images');
     }
 
@@ -116,6 +116,7 @@ class DeviceTransformer extends TransformerAbstract
     public function includePrices(Device $device)
     {
         $prices = $this->applyCriteria($device->prices(), $this->criteria);
+
         return new ResourceCollection($prices->get(), new PriceTransformer(), 'prices');
     }
 
@@ -127,6 +128,7 @@ class DeviceTransformer extends TransformerAbstract
     public function includeDevicetypes(Device $device)
     {
         $devicetypes = $this->applyCriteria($device->devicetypes(), $this->criteria);
+
         return new ResourceCollection($devicetypes->get(), new DeviceTypeTransformer(), 'devicetypes');
     }
 }

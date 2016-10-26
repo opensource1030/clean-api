@@ -5,23 +5,22 @@ namespace WA\Repositories\Price;
 use WA\Repositories\RepositoryInterface;
 
 /**
- * Interface PriceInterface
- *
- * @package WA\Repositories\Price
+ * Interface PriceInterface.
  */
 interface PriceInterface extends RepositoryInterface
 {
     /**
      * Get Array of all Prices.
      *
-     * @return Array of Price
+     * @return array of Price
      */
     public function getAllPrice();
 
     /**
-     * Create Price
+     * Create Price.
      *
      * @param array $data
+     *
      * @return bool|static
      */
     public function create(array $data);
@@ -48,36 +47,35 @@ interface PriceInterface extends RepositoryInterface
     /**
      * Get Array of all Prices Devices.
      *
-     * @return Array of Prices
+     * @return array of Prices
      */
     public function getPriceDevices($id);
 
     /**
      * Get Array of all Prices Capacities.
      *
-     * @return Array of Prices
+     * @return array of Prices
      */
     public function getPriceCapacities($id);
 
     /**
      * Get Array of all Prices Styles.
      *
-     * @return Array of Prices
+     * @return array of Prices
      */
     public function getPriceStyles($id);
 
     /**
      * Get Array of all Prices Carriers.
      *
-     * @return Array of Prices
+     * @return array of Prices
      */
     public function getPriceCarriers($id);
 
     /**
      * Get Array of all Prices Companies.
      *
-     * @return Array of Prices
+     * @return array of Prices
      */
     public function getPriceCompanies($id);
-
 }

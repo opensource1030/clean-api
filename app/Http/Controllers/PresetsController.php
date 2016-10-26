@@ -3,13 +3,10 @@
 namespace WA\Http\Controllers;
 
 use Illuminate\Http\Request;
-
 use WA\DataStore\Category\Preset;
 use WA\DataStore\Category\PresetTransformer;
 use WA\Repositories\Category\PresetInterface;
-
 use DB;
-
 use Illuminate\Support\Facades\Lang;
 
 /**
@@ -25,7 +22,7 @@ class PresetsController extends ApiController
     protected $preset;
 
     /**
-     * Preset Controller constructor
+     * Preset Controller constructor.
      *
      * @param PresetInterface $preset
      */
@@ -35,10 +32,9 @@ class PresetsController extends ApiController
     }
 
     /**
-     * Show all Preset
+     * Show all Preset.
      *
      * Get a payload of all Preset
-     *
      */
     public function index(Request $request)
     {
@@ -46,18 +42,20 @@ class PresetsController extends ApiController
         $this->preset->setCriteria($criteria);
         $preset = $this->preset->byPage();
 
-        if(!$this->includesAreCorrect($request, new PresetTransformer())){
+        if (!$this->includesAreCorrect($request, new PresetTransformer())) {
             $error['errors']['getIncludes'] = Lang::get('messages.NotExistInclude');
+
             return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
         }
 
         $response = $this->response()->withPaginator($preset, new PresetTransformer(), ['key' => 'preset']);
         $response = $this->applyMeta($response);
+
         return $response;
     }
 
     /**
-     * Show a single Preset
+     * Show a single Preset.
      *
      * Get a payload of a single Preset
      *
@@ -65,19 +63,20 @@ class PresetsController extends ApiController
      */
     public function show($id, Request $request)
     {
-
         $criteria = $this->getRequestCriteria();
         $this->preset->setCriteria($criteria);
         $preset = Preset::find($id);
 
-        if($preset == null){
-            $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'Preset']);   
+        if ($preset == null) {
+            $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'Preset']);
+
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
-        if(!$this->includesAreCorrect($request, new PresetTransformer())){
-            $error['errors']['getincludes'] = Lang::get('messages.NotExistInclude');   
-            return response()->json($error)->setStatusCode($this->status_codes['badrequest']);            
+        if (!$this->includesAreCorrect($request, new PresetTransformer())) {
+            $error['errors']['getincludes'] = Lang::get('messages.NotExistInclude');
+
+            return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
         }
 
         return $this->response()->item($preset, new PresetTransformer(),
@@ -85,21 +84,22 @@ class PresetsController extends ApiController
     }
 
     /**
-     * Update contents of a Preset
+     * Update contents of a Preset.
      *
      * @param $id
+     *
      * @return \Dingo\Api\Http\Response
      */
     public function store($id, Request $request)
     {
-
         $success = true;
 
         /*
          * Checks if Json has data, data-type & data-attributes.
          */
-        if(!$this->isJsonCorrect($request, 'presets')){
+        if (!$this->isJsonCorrect($request, 'presets')) {
             $error['errors']['json'] = Lang::get('messages.InvalidJson');
+
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
@@ -110,20 +110,19 @@ class PresetsController extends ApiController
             $data['id'] = $id;
             $preset = $this->preset->update($data);
 
-            if($preset == 'notExist') {
+            if ($preset == 'notExist') {
                 DB::rollBack();
                 $error['errors']['preset'] = Lang::get('messages.NotExistClass', ['class' => 'Preset']);
                 //$error['errors']['Message'] = $e->getMessage();
                 return response()->json($error)->setStatusCode($this->status_codes['notexists']);
             }
 
-            if($preset == 'notSaved') {
+            if ($preset == 'notSaved') {
                 DB::rollBack();
                 $error['errors']['preset'] = Lang::get('messages.NotSavedClass', ['class' => 'Preset']);
                 //$error['errors']['Message'] = $e->getMessage();
                 return response()->json($error)->setStatusCode($this->status_codes['conflict']);
             }
-
         } catch (\Exception $e) {
             DB::rollBack();
             $error['errors']['preset'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Preset', 'option' => 'updated', 'include' => '']);
@@ -136,8 +135,8 @@ class PresetsController extends ApiController
                 if (isset($data['relationships']['images']['data'])) {
                     try {
                         $dataImages = $this->parseJsonToArray($data['relationships']['images']['data'], 'images');
-                        $preset->images()->sync($dataImages);    
-                    } catch (\Exception $e){
+                        $preset->images()->sync($dataImages);
+                    } catch (\Exception $e) {
                         $success = false;
                         $error['errors']['images'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Preset', 'option' => 'created', 'include' => 'Images']);
                         //$error['errors']['Message'] = $e->getMessage();
@@ -149,8 +148,8 @@ class PresetsController extends ApiController
                 if (isset($data['relationships']['devices']['data'])) {
                     try {
                         $dataDevices = $this->parseJsonToArray($data['relationships']['devices']['data'], 'devices');
-                        $preset->devices()->sync($dataDevices);    
-                    } catch (\Exception $e){
+                        $preset->devices()->sync($dataDevices);
+                    } catch (\Exception $e) {
                         $success = false;
                         $error['errors']['devices'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Preset', 'option' => 'created', 'include' => 'Devices']);
                         //$error['errors']['Message'] = $e->getMessage();
@@ -159,29 +158,31 @@ class PresetsController extends ApiController
             }
         }
 
-        if($success){
+        if ($success) {
             DB::commit();
+
             return $this->response()->item($preset, new PresetTransformer(), ['key' => 'presets'])->setStatusCode($this->status_codes['created']);
         } else {
             DB::rollBack();
+
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
     }
 
     /**
-     * Create a new Preset
+     * Create a new Preset.
      *
      * @return \Dingo\Api\Http\Response
      */
     public function create(Request $request)
     {
-
         $success = true;
         /*
          * Checks if Json has data, data-type & data-attributes.
          */
-        if(!$this->isJsonCorrect($request, 'presets')){
+        if (!$this->isJsonCorrect($request, 'presets')) {
             $error['errors']['json'] = Lang::get('messages.InvalidJson');
+
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
@@ -202,8 +203,8 @@ class PresetsController extends ApiController
                 if (isset($data['relationships']['images']['data'])) {
                     try {
                         $dataImages = $this->parseJsonToArray($data['relationships']['images']['data'], 'images');
-                        $preset->images()->sync($dataImages);    
-                    } catch (\Exception $e){
+                        $preset->images()->sync($dataImages);
+                    } catch (\Exception $e) {
                         $success = false;
                         $error['errors']['images'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Preset', 'option' => 'created', 'include' => 'Images']);
                         //$error['errors']['Message'] = $e->getMessage();
@@ -215,8 +216,8 @@ class PresetsController extends ApiController
                 if (isset($data['relationships']['devices']['data'])) {
                     try {
                         $dataDevices = $this->parseJsonToArray($data['relationships']['devices']['data'], 'devices');
-                        $preset->devices()->sync($dataDevices);    
-                    } catch (\Exception $e){
+                        $preset->devices()->sync($dataDevices);
+                    } catch (\Exception $e) {
                         $success = false;
                         $error['errors']['devices'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Preset', 'option' => 'created', 'include' => 'Devices']);
                         //$error['errors']['Message'] = $e->getMessage();
@@ -225,36 +226,39 @@ class PresetsController extends ApiController
             }
         }
 
-        if($success){
+        if ($success) {
             DB::commit();
+
             return $this->response()->item($preset, new PresetTransformer(), ['key' => 'presets'])->setStatusCode($this->status_codes['created']);
         } else {
             DB::rollBack();
+
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
     }
 
     /**
-     * Delete a Preset
+     * Delete a Preset.
      *
      * @param $id
      */
     public function delete($id)
     {
-
         $preset = Preset::find($id);
-        if ($preset <> null) {
+        if ($preset != null) {
             $this->preset->deleteById($id);
         } else {
-            $error['errors']['delete'] = Lang::get('messages.NotExistClass', ['class' => 'Preset']);   
+            $error['errors']['delete'] = Lang::get('messages.NotExistClass', ['class' => 'Preset']);
+
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
-        
-        $preset = Preset::find($id);        
-        if($preset == null){
-            return array("success" => true);
+
+        $preset = Preset::find($id);
+        if ($preset == null) {
+            return array('success' => true);
         } else {
-            $error['errors']['delete'] = Lang::get('messages.NotDeletedClass', ['class' => 'Preset']);   
+            $error['errors']['delete'] = Lang::get('messages.NotDeletedClass', ['class' => 'Preset']);
+
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
     }

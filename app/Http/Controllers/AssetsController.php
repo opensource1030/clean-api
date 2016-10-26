@@ -5,7 +5,6 @@ namespace WA\Http\Controllers;
 use WA\DataStore\Asset\Asset;
 use WA\DataStore\Asset\AssetTransformer;
 use WA\Repositories\Asset\AssetInterface;
-
 use Illuminate\Support\Facades\Lang;
 
 /**
@@ -27,7 +26,7 @@ class AssetsController extends ApiController
     }
 
     /**
-     * Show all Assets
+     * Show all Assets.
      *
      * Get a payload of all Assets
      *
@@ -46,6 +45,7 @@ class AssetsController extends ApiController
 
         $response = $this->response()->withPaginator($assets, new AssetTransformer(), ['key' => 'assets']);
         $response = $this->applyMeta($response);
+
         return $response;
     }
 
@@ -60,11 +60,12 @@ class AssetsController extends ApiController
         $this->asset->setCriteria($criteria);
         $asset = $this->asset->byId($id);
 
-        if($asset == null){
-            $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'Asset']);   
+        if ($asset == null) {
+            $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'Asset']);
+
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
-        
-        return $this->response()->item($asset, new AssetTransformer(),['key' => 'assets'])->setStatusCode($this->status_codes['created']);
+
+        return $this->response()->item($asset, new AssetTransformer(), ['key' => 'assets'])->setStatusCode($this->status_codes['created']);
     }
 }

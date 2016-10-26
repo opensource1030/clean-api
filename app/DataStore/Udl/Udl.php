@@ -1,6 +1,5 @@
 <?php
 
-
 namespace WA\DataStore\Udl;
 
 use WA\DataStore\BaseDataStore;

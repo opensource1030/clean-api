@@ -22,7 +22,7 @@ class EloquentUdlValuePathUsers extends AbstractRepository implements UdlValuePa
      *
      * @param string $udlValuePathId
      *
-     * @return Object object of the udlValuePathUsers information
+     * @return object object of the udlValuePathUsers information
      */
     public function byUdlPathId($udlValuePathId)
     {
@@ -36,7 +36,7 @@ class EloquentUdlValuePathUsers extends AbstractRepository implements UdlValuePa
      *
      * @param int $creatorId
      *
-     * @return Object object of the udlValuePathUsers information
+     * @return object object of the udlValuePathUsers information
      */
     public function byCreatorId($creatorId)
     {

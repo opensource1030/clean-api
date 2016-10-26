@@ -2,27 +2,24 @@
 
 /**
  * Saml2Controller - Extends Saml2C and modifies acs function.
- *  
+ *
  * @author   Agustí Dosaiguas
  */
 
 namespace WA\Http\Controllers\Auth;
 
 use Aacotroneo\Saml2\Http\Controllers\Saml2Controller as Saml2C;
-
 use Aacotroneo\Saml2\Events\Saml2LoginEvent;
 use WA\Auth\Saml2\Saml2Auth;
-use Illuminate\Routing\Controller;
 use Illuminate\Http\Request;
-
 use Event;
 
 class Saml2Controller extends Saml2C
 {
     /**
-     * @param Saml2Auth $saml2Auth injected.
+     * @param Saml2Auth $saml2Auth injected
      */
-    function __construct(Saml2Auth $saml2Auth)
+    public function __construct(Saml2Auth $saml2Auth)
     {
         $this->saml2Auth = $saml2Auth;
     }

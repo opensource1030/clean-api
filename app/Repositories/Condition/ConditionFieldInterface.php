@@ -5,9 +5,7 @@ namespace WA\Repositories\Condition;
 use WA\Repositories\RepositoryInterface;
 
 /**
- * Interface ContentInterface
- *
- * @package WA\Repositories\Condition
+ * Interface ContentInterface.
  */
 interface ConditionFieldInterface extends RepositoryInterface
 {
@@ -21,9 +19,10 @@ interface ConditionFieldInterface extends RepositoryInterface
     public function update(array $data);
 
     /**
-     * Get the company Id tied to ConditionField
+     * Get the company Id tied to ConditionField.
      *
      * @param $id
+     *
      * @return mixed
      */
     public function getConditionFieldId($id);
@@ -31,14 +30,15 @@ interface ConditionFieldInterface extends RepositoryInterface
     /**
      * Get an array of all the available ConditionField.
      *
-     * @return Array of ConditionFields
+     * @return array of ConditionFields
      */
     public function getAllConditionField();
 
     /**
-     * Create new ConditionField
+     * Create new ConditionField.
      *
      * @param array $data
+     *
      * @return bool|static
      */
     public function create(array $data);
@@ -52,5 +52,4 @@ interface ConditionFieldInterface extends RepositoryInterface
      * @return bool
      */
     public function delete($id, $soft = true);
-
 }

@@ -13,7 +13,7 @@ class Sorting
     protected $sort = [];
 
     /**
-     * Sorting constructor, accepts an input string
+     * Sorting constructor, accepts an input string.
      *
      * @param string $sort
      */
@@ -35,7 +35,7 @@ class Sorting
     }
 
     /**
-     * Return a string representation of the sort criteria, suitable for meta data
+     * Return a string representation of the sort criteria, suitable for meta data.
      *
      * @return string
      */
@@ -43,8 +43,9 @@ class Sorting
     {
         $get = [];
         foreach ($this->sort as $field => $direction) {
-            $get[] = ('desc' === $direction) ? '-' . $field : $field;
+            $get[] = ('desc' === $direction) ? '-'.$field : $field;
         }
+
         return implode(',', $get);
     }
 
@@ -54,7 +55,7 @@ class Sorting
      */
     public function addField($field, $direction)
     {
-        $this->sort[(string)$field] = (string)$direction;
+        $this->sort[(string) $field] = (string) $direction;
     }
 
     /**

@@ -1,11 +1,10 @@
 <?php
+
 namespace WA\Http\Controllers;
 
 use WA\DataStore\Allocation\AllocationTransformer;
 use WA\Repositories\Allocation\AllocationInterface;
 use WA\Repositories\User\UserInterface;
-
-use Illuminate\Support\Facades\Lang;
 
 /**
  * Allocations resource.
@@ -28,7 +27,7 @@ class AllocationsController extends ApiController
      * AllocationsController constructor.
      *
      * @param AllocationInterface $allocations
-     * @param UserInterface $user
+     * @param UserInterface       $user
      */
     public function __construct(AllocationInterface $allocations, UserInterface $user)
     {
@@ -37,7 +36,7 @@ class AllocationsController extends ApiController
     }
 
     /**
-     * Show all allocations
+     * Show all allocations.
      *
      * Get a payload of all allocations
      *
@@ -56,11 +55,12 @@ class AllocationsController extends ApiController
         $response = $this->response()->withPaginator($allocations, new AllocationTransformer(),
             ['key' => 'allocations']);
         $response = $this->applyMeta($response);
+
         return $response;
     }
 
     /**
-     * Show a single allocation
+     * Show a single allocation.
      *
      * Get a payload of a single allocation
      *
@@ -74,5 +74,4 @@ class AllocationsController extends ApiController
 
         return $this->response()->item($allocation, new AllocationTransformer(), ['key' => 'allocations']);
     }
-
 }

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace WA\DataStore\Carrier;
 
 use WA\DataStore\BaseDataStore;
@@ -16,10 +15,12 @@ use WA\DataStore\BaseDataStore;
  * @property int $dataSourceCount
  * @property int $rawDataFilesCount
  * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\Adjustable[] $adjustables
+ *
  * @method static \Illuminate\Database\Query\Builder|\WA\DataStore\Carrier\Carrier whereId($value)
  * @method static \Illuminate\Database\Query\Builder|\WA\DataStore\Carrier\Carrier whereName($value)
  * @method static \Illuminate\Database\Query\Builder|\WA\DataStore\Carrier\Carrier whereActive($value)
  * @method static \Illuminate\Database\Query\Builder|\WA\DataStore\Carrier\Carrier whereRawDataFilesCount($value)
+ *
  * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\User\User[] $users
  * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\Carrier\Carrier[] $companies
  * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\Asset\Asset[] $assets
@@ -37,7 +38,7 @@ class Carrier extends BaseDataStore
             'active',
             'locationId',
             'shortName',
-            'updated_at'];
+            'updated_at', ];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
@@ -70,7 +71,6 @@ class Carrier extends BaseDataStore
     {
         return $this->belongsToMany('WA\DataStore\Device\Device', 'device_carriers', 'deviceId', 'carrierId');
     }
-
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

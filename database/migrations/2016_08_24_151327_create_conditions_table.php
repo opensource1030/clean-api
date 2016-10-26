@@ -7,23 +7,21 @@ class CreateConditionsTable extends Migration
     use \WA\Database\Command\TablesRelationsAndIndexes;
 
     protected $tableName = 'conditions';
-    
+
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
         Schema::create(
             $this->tableName,
-            function ( $table) {
+            function ($table) {
                 $table->increments('id');
                 $table->string('typeCond');
                 $table->string('name');
                 $table->string('condition');
                 $table->string('value');
-        
+
                 $table->nullableTimestamps();
             }
         );
@@ -31,16 +29,14 @@ class CreateConditionsTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
     public function down()
     {
         Schema::table(
-            $this->tableName, 
-            function($table) {
+            $this->tableName,
+            function ($table) {
                 //$table->dropForeign('conditionsId');
-        });
+            });
 
         $this->forceDropTable($this->tableName);
     }

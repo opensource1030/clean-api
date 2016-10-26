@@ -2,18 +2,15 @@
 
 /**
  * ConditionOperatorsTableSeeder - Insert info into database.
- *  
+ *
  * @author   Agustí Dosaiguas
  */
-
 class ConditionOperatorsTableSeeder extends BaseTableSeeder
 {
-    protected $table = "condition_operators";
+    protected $table = 'condition_operators';
 
     /**
      * Run the database seeds.
-     *
-     * @return void
      */
     public function run()
     {
@@ -22,37 +19,37 @@ class ConditionOperatorsTableSeeder extends BaseTableSeeder
         $data = [
 
             [
-                'originalName'      => "contains",
-                'apiName'      => "like"
+                'originalName' => 'contains',
+                'apiName' => 'like',
             ],
             [
-                'originalName'      => "is greater than",
-                'apiName'      => "gt"
+                'originalName' => 'is greater than',
+                'apiName' => 'gt',
             ],
             [
-                'originalName'      => "is less than",
-                'apiName'      => "lt"
+                'originalName' => 'is less than',
+                'apiName' => 'lt',
             ],
             [
-                'originalName'      => "is greater or equal to",
-                'apiName'      => "gte"
+                'originalName' => 'is greater or equal to',
+                'apiName' => 'gte',
             ],
             [
-                'originalName'      => "is less or equal to",
-                'apiName'      => "lte"
+                'originalName' => 'is less or equal to',
+                'apiName' => 'lte',
             ],
             [
-                'originalName'      => "is not equal to",
-                'apiName'      => "ne"
+                'originalName' => 'is not equal to',
+                'apiName' => 'ne',
             ],
             [
-                'originalName'      => "is equal to",
-                'apiName'      => "eq"
+                'originalName' => 'is equal to',
+                'apiName' => 'eq',
             ],
             [
-                'originalName'      => "is any",
-                'apiName'      => ""
-            ]
+                'originalName' => 'is any',
+                'apiName' => '',
+            ],
         ];
 
         $this->loadTable($data);

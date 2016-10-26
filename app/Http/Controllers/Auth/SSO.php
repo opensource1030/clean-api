@@ -1,8 +1,8 @@
 <?php
 
 /**
- * SSO - Controller of Single Sign On
- *  
+ * SSO - Controller of Single Sign On.
+ *
  * @author   Agustí Dosaiguas
  */
 
@@ -11,10 +11,8 @@ namespace WA\Http\Controllers\Auth;
 use Cache;
 use Saml2;
 use Validator;
-
 use Webpatser\Uuid\Uuid;
 use Illuminate\Http\Request as Request;
-
 use WA\Http\Controllers\ApiController;
 use WA\Repositories\Company\CompanyInterface;
 use WA\Repositories\User\UserInterface;
@@ -43,29 +41,29 @@ class SSO extends ApiController
      *
      * @return response()->json
      */
-    public function loginRequest($email) 
+    public function loginRequest($email)
     {
         // email.
         $email = trim($email);
 
         $emailArray['email'] = $email;
-        $validator = Validator::make($emailArray, [ 
+        $validator = Validator::make($emailArray, [
             'email' => 'required|email',
         ]);
 
         // IF VALIDATOR OK => EMAIL OK!
-        if(!$validator->fails()){
+        if (!$validator->fails()) {
             // THIS EMAIL HAS COMPANY RELATED?
             $idCompany = $this->company->getIdByUserEmail($email);
 
-            // SSO COMPANY == NULL -> LOOK DATABASE USER.        
-            if($idCompany == 0){
+            // SSO COMPANY == NULL -> LOOK DATABASE USER.
+            if ($idCompany == 0) {
 
                 // LOOK DATABASE USER
                 $user = $this->user->byEmail($email);
-                
+
                 // EMPLOYEE == NULL
-                if($user == null){
+                if ($user == null) {
                     //echo 'REGISTER USER OPTION';
                     //URL : http://clean.local/api/doSSO/dev@algo.com
 
@@ -90,21 +88,22 @@ class SSO extends ApiController
                 // Facebook : http://clean.local/api/doSSO/dev@sharkninja.com
 
                 $urlArray['url'] = app('request')->get('redirectToUrl');
-                $validator = Validator::make($urlArray, [ 
-                    'url' => 'required|url'
+                $validator = Validator::make($urlArray, [
+                    'url' => 'required|url',
                 ]);
 
-                if($validator->fails()){
+                if ($validator->fails()) {
                     return response()
                         ->json(['error' => 'URL Not Found', 'message' => 'Url to redirect not found.'])
                         ->setStatusCode($this->status_codes['conflict']);
                 } else {
                     Cache::put('saml2_idcompany_'.$email, $idCompany, 15);
                     $uuid = Uuid::generate();
-                    
+
                     $redirectUrl = Saml2::login($urlArray['url'].'/'.$uuid);
                     $arrRU = array('redirectUrl' => $redirectUrl);
                     $arrD = array('data' => $arrRU);
+
                     return response()->json($arrD);
                 }
             }
@@ -116,7 +115,7 @@ class SSO extends ApiController
             return response()
                 ->json(['error' => 'Invalid Email', 'message' => 'Please, enter a valid Email Address.'])
                 ->setStatusCode($this->status_codes['conflict']);
-        }        
+        }
     }
 
     /**
@@ -124,7 +123,7 @@ class SSO extends ApiController
      *
      * @return response()->json
      */
-    public function loginUser($uuid) 
+    public function loginUser($uuid)
     {
         $laravelUser = Cache::get('saml2user_'.$uuid);
         if (!isset($laravelUser)) {

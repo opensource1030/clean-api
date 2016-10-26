@@ -3,11 +3,9 @@
 namespace WA\Http\Controllers;
 
 use Illuminate\Http\Request;
-
 use WA\DataStore\Condition\ConditionField;
 use WA\DataStore\Condition\ConditionFieldTransformer;
 use WA\Repositories\Condition\ConditionFieldInterface;
-
 use Illuminate\Support\Facades\Lang;
 
 /**
@@ -23,20 +21,19 @@ class ConditionFieldsController extends ApiController
     protected $conditionField;
 
     /**
-     * ConditionField Controller constructor
+     * ConditionField Controller constructor.
      *
      * @param ConditionFieldInterface $conditionField
      */
     public function __construct(ConditionFieldInterface $conditionField)
-    {        
+    {
         $this->conditionField = $conditionField;
     }
 
     /**
-     * Show all ConditionField
+     * Show all ConditionField.
      *
      * Get a payload of all ConditionField
-     *
      */
     public function index()
     {
@@ -46,11 +43,12 @@ class ConditionFieldsController extends ApiController
 
         $response = $this->response()->withPaginator($conditionFields, new ConditionFieldTransformer(), ['key' => 'conditionfields']);
         $response = $this->applyMeta($response);
+
         return $response;
     }
 
     /**
-     * Show a single ConditionField
+     * Show a single ConditionField.
      *
      * Get a payload of a single ConditionField
      *
@@ -62,43 +60,44 @@ class ConditionFieldsController extends ApiController
         $this->app->setCriteria($criteria);
         $conditionField = ConditionField::find($id);
 
-        if($conditionField == null){
-            $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'ConditionField']);   
+        if ($conditionField == null) {
+            $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'ConditionField']);
+
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
-        return $this->response()->item($conditionField, new ConditionFieldTransformer(),['key' => 'conditionfields'])->setStatusCode($this->status_codes['created']);
+        return $this->response()->item($conditionField, new ConditionFieldTransformer(), ['key' => 'conditionfields'])->setStatusCode($this->status_codes['created']);
     }
 
     /**
-     * Update contents of a ConditionField
+     * Update contents of a ConditionField.
      *
      * @param $id
+     *
      * @return \Dingo\Api\Http\Response
      */
     public function store($id, Request $request)
     {
-        if($this->isJsonCorrect($request, 'conditionFields')){
+        if ($this->isJsonCorrect($request, 'conditionFields')) {
             try {
-
                 $data = $request->all()['data']['attributes'];
                 $data['id'] = $id;
                 $conditionField = $this->conditionField->update($data);
 
-                if($conditionField == 'notExist') {
+                if ($conditionField == 'notExist') {
                     $error['errors']['conditionField'] = Lang::get('messages.NotExistClass', ['class' => 'ConditionField']);
                     //$error['errors']['Message'] = $e->getMessage();
                     return response()->json($error)->setStatusCode($this->status_codes['notexists']);
                 }
 
-                if($conditionField == 'notSaved') {
+                if ($conditionField == 'notSaved') {
                     $error['errors']['conditionField'] = Lang::get('messages.NotSavedClass', ['class' => 'ConditionField']);
                     //$error['errors']['Message'] = $e->getMessage();
                     return response()->json($error)->setStatusCode($this->status_codes['conflict']);
                 }
 
                 return $this->response()->item($conditionField, new ConditionFieldTransformer(), ['key' => 'conditionfields'])->setStatusCode($this->status_codes['created']);
-            } catch (\Exception $e){
+            } catch (\Exception $e) {
                 $error['errors']['conditionFields'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'ConditionField', 'option' => 'updated', 'include' => '']);
                 //$error['errors']['Message'] = $e->getMessage();
             }
@@ -110,20 +109,19 @@ class ConditionFieldsController extends ApiController
     }
 
     /**
-     * Create a new ConditionField
+     * Create a new ConditionField.
      *
      * @return \Dingo\Api\Http\Response
      */
     public function create(Request $request)
     {
-        if($this->isJsonCorrect($request, 'conditionFields')){
+        if ($this->isJsonCorrect($request, 'conditionFields')) {
             try {
-
                 $data = $request->all()['data']['attributes'];
                 $conditionField = $this->conditionField->create($data);
 
                 return $this->response()->item($conditionField, new ConditionFieldTransformer(), ['key' => 'conditionfields'])->setStatusCode($this->status_codes['created']);
-            } catch (\Exception $e){
+            } catch (\Exception $e) {
                 $error['errors']['conditionFields'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'ConditionField', 'option' => 'created', 'include' => '']);
                 //$error['errors']['Message'] = $e->getMessage();
             }
@@ -135,25 +133,27 @@ class ConditionFieldsController extends ApiController
     }
 
     /**
-     * Delete an ConditionField
+     * Delete an ConditionField.
      *
      * @param $id
      */
     public function delete($id)
     {
         $conditionField = ConditionField::find($id);
-        if($conditionField <> null){
+        if ($conditionField != null) {
             $this->conditionField->deleteById($id);
         } else {
-            $error['errors']['delete'] = Lang::get('messages.NotExistClass', ['class' => 'ConditionField']);   
+            $error['errors']['delete'] = Lang::get('messages.NotExistClass', ['class' => 'ConditionField']);
+
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
         $conditionField = ConditionField::find($id);
-        if($conditionField == null){
-            return array("success" => true);
+        if ($conditionField == null) {
+            return array('success' => true);
         } else {
-            $error['errors']['delete'] = Lang::get('messages.NotDeletedClass', ['class' => 'ConditionField']);   
+            $error['errors']['delete'] = Lang::get('messages.NotDeletedClass', ['class' => 'ConditionField']);
+
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
     }

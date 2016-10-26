@@ -38,7 +38,7 @@ class EloquentUsageDetail extends AbstractRepository implements UsageDetailInter
      * @param int $id
      * @param int $reportLineItemId
      *
-     * @return Object object of billing
+     * @return object object of billing
      */
     public function byBilling($id, $reportLineItemId)
     {

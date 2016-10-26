@@ -2,13 +2,10 @@
 
 namespace WA\DataStore\Image;
 
-use League\Fractal\Resource\Collection as ResourceCollection;
-use League\Fractal\Resource\Item as ResourceItem;
 use League\Fractal\TransformerAbstract;
 
 /**
- * Class ImageTransformer
- *
+ * Class ImageTransformer.
  */
 class ImageTransformer extends TransformerAbstract
 {
@@ -21,7 +18,7 @@ class ImageTransformer extends TransformerAbstract
     {
         return [
 
-            'id' => (int)$image->id,
+            'id' => (int) $image->id,
             'originalName' => $image->originalName,
             'filename' => $image->filename,
             'mimeType' => $image->mimeType,
@@ -29,7 +26,7 @@ class ImageTransformer extends TransformerAbstract
             'size' => $image->size,
             'url' => $image->url,
             'created_at' => $image->created_at,
-            'updated_at' => $image->updated_at
+            'updated_at' => $image->updated_at,
         ];
     }
 }

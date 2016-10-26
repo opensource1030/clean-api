@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
 class CreatePackageConditionsTable extends Migration
@@ -8,11 +7,9 @@ class CreatePackageConditionsTable extends Migration
     use \WA\Database\Command\TablesRelationsAndIndexes;
 
     protected $tableName = 'package_conditions';
-    
+
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
@@ -30,8 +27,8 @@ class CreatePackageConditionsTable extends Migration
         );
 
         Schema::table(
-            $this->tableName, 
-            function($table) {
+            $this->tableName,
+            function ($table) {
                 $table->foreign('packageId')->references('id')->on('packages')->onDelete('cascade');
                 $table->foreign('conditionId')->references('id')->on('conditions')->onDelete('cascade');
             }
@@ -40,8 +37,6 @@ class CreatePackageConditionsTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
     public function down()
     {

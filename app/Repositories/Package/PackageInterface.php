@@ -5,23 +5,22 @@ namespace WA\Repositories\Package;
 use WA\Repositories\RepositoryInterface;
 
 /**
- * Interface PackageInterface
- *
- * @package WA\Repositories\Package
+ * Interface PackageInterface.
  */
 interface PackageInterface extends RepositoryInterface
 {
     /**
      * Get Array of all Packages.
      *
-     * @return Array of Package
+     * @return array of Package
      */
     public function getAllPackage();
 
     /**
-     * Create Package
+     * Create Package.
      *
      * @param array $data
+     *
      * @return bool|static
      */
     public function create(array $data);
@@ -44,5 +43,4 @@ interface PackageInterface extends RepositoryInterface
      * @return bool
      */
     public function delete($id, $soft = true);
-
 }

@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
 class CreatePresetsDeviceTable extends Migration
@@ -11,8 +10,6 @@ class CreatePresetsDeviceTable extends Migration
 
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
@@ -28,8 +25,8 @@ class CreatePresetsDeviceTable extends Migration
         );
 
         Schema::table(
-            $this->tableName, 
-            function($table) {
+            $this->tableName,
+            function ($table) {
                 $table->foreign('presetId')->references('id')->on('presets')->onDelete('cascade');
                 $table->foreign('deviceId')->references('id')->on('devices')->onDelete('cascade');
             }
@@ -38,8 +35,6 @@ class CreatePresetsDeviceTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
     public function down()
     {

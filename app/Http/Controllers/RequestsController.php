@@ -1,11 +1,10 @@
 <?php
+
 namespace WA\Http\Controllers;
 
 use Illuminate\Http\Request;
 use WA\DataStore\Request\RequestTransformer;
 use WA\Repositories\Request\RequestInterface;
-
-use Illuminate\Support\Facades\Lang;
 
 /**
  * Request resource.
@@ -20,7 +19,7 @@ class RequestsController extends ApiController
     protected $request;
 
     /**
-     * Request Controller constructor
+     * Request Controller constructor.
      *
      * @param RequestInterface $Request
      */
@@ -30,10 +29,9 @@ class RequestsController extends ApiController
     }
 
     /**
-     * Show all Request
+     * Show all Request.
      *
      * Get a payload of all Request
-     *
      */
     public function index()
     {
@@ -44,11 +42,12 @@ class RequestsController extends ApiController
 
         $response = $this->response()->collection($request, new RequestTransformer(), ['key' => 'requests']);
         $response = $this->applyMeta($response);
+
         return $response;
     }
 
     /**
-     * Show a single Request
+     * Show a single Request.
      *
      * Get a payload of a single Request
      *
@@ -60,13 +59,15 @@ class RequestsController extends ApiController
         $this->request->setCriteria($criteria);
 
         $request = $this->request->byId($id);
+
         return $this->response()->item($request, new RequestTransformer(), ['key' => 'requests']);
     }
 
     /**
-     * Update contents of a Request
+     * Update contents of a Request.
      *
      * @param $id
+     *
      * @return \Dingo\Api\Http\Response
      */
     public function store($id, Request $request)
@@ -74,11 +75,12 @@ class RequestsController extends ApiController
         $data = $request->all();
         $data['id'] = $id;
         $request = $this->request->update($data);
+
         return $this->response()->item($request, new RequestTransformer(), ['key' => 'requests']);
     }
 
     /**
-     * Create a new Request
+     * Create a new Request.
      *
      * @return \Dingo\Api\Http\Response
      */
@@ -86,17 +88,17 @@ class RequestsController extends ApiController
     {
         $data = $request->all();
         $request = $this->request->create($data);
+
         return $this->response()->item($request, new RequestTransformer(), ['key' => 'requests']);
     }
 
     /**
-     * Delete a Request
+     * Delete a Request.
      *
      * @param $id
      */
     public function delete($id)
     {
         $this->request->deleteById($id);
-        
     }
 }

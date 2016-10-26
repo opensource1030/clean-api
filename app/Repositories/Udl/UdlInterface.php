@@ -9,7 +9,7 @@ interface UdlInterface
      *
      * @param int $id
      *
-     * @return Object object of the UDL information
+     * @return object object of the UDL information
      */
     public function byId($id);
 
@@ -18,7 +18,7 @@ interface UdlInterface
      *
      * @param string $name
      *
-     * @return Object of the UDL information
+     * @return object of the UDL information
      */
     public function byLabel($name);
 
@@ -26,8 +26,9 @@ interface UdlInterface
      * Get the UDL information by the name.
      *
      * @param string $name
-     * @param int $companyId | null strongly suggested to include this as many company have the same UDL names
-     * @return Object of the UDL information
+     * @param int    $companyId | null strongly suggested to include this as many company have the same UDL names
+     *
+     * @return object of the UDL information
      */
     public function byName($name, $companyId = null);
 
@@ -36,7 +37,7 @@ interface UdlInterface
      *
      * @param int $id
      *
-     * @return Object object information of the UDL Values
+     * @return object object information of the UDL Values
      */
     public function byUDLValue($id);
 

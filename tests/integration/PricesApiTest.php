@@ -6,23 +6,20 @@ use Laravel\Lumen\Testing\DatabaseMigrations;
 class PricesApiTest extends TestCase
 {
     //use DatabaseTransactions;
-    use DatabaseMigrations;     
+    use DatabaseMigrations;
 
     /**
-     * A basic functional test for Prices
-     *
-     *
+     * A basic functional test for Prices.
      */
-
-    public function testGetPrices() {
-
+    public function testGetPrices()
+    {
         factory(\WA\DataStore\Price\Price::class, 40)->create();
 
         $res = $this->get('prices');
 
         $res->seeJsonStructure([
             'data' => [
-                0 => [  
+                0 => [
                     'type',
                     'id',
                     'attributes' => [
@@ -38,18 +35,18 @@ class PricesApiTest extends TestCase
                         'created_at' => [
                             'date',
                             'timezone_type',
-                            'timezone'
+                            'timezone',
                         ],
                         'updated_at' => [
                             'date',
                             'timezone_type',
-                            'timezone'
-                        ]
+                            'timezone',
+                        ],
                     ],
                     'links' => [
-                        'self'
-                    ]
-                ]
+                        'self',
+                    ],
+                ],
             ],
             'meta' => [
                 'pagination' => [
@@ -57,20 +54,20 @@ class PricesApiTest extends TestCase
                     'count',
                     'per_page',
                     'current_page',
-                    'total_pages'
-                ]
+                    'total_pages',
+                ],
             ],
             'links' => [
                 'self',
                 'first',
                 'next',
-                'last'
-            ]
+                'last',
+            ],
         ]);
     }
 
-    public function testGetPriceById() {
-
+    public function testGetPriceById()
+    {
         $price = factory(\WA\DataStore\Price\Price::class)->create();
 
         $res = $this->get('prices/'.$price->id)
@@ -89,8 +86,8 @@ class PricesApiTest extends TestCase
             ]);
     }
 
-    public function testCreatePrice() {
-
+    public function testCreatePrice()
+    {
         $device = factory(\WA\DataStore\Device\Device::class)->create();
         $capacity = factory(\WA\DataStore\Modification\Modification::class)->create(
             ['modType' => 'capacity']
@@ -115,8 +112,8 @@ class PricesApiTest extends TestCase
                         'price1' => 400,
                         'price2' => 500,
                         'priceOwn' => 600,
-                    ]
-                ]
+                    ],
+                ],
             ])
             ->seeJson([
                 'type' => 'prices',
@@ -193,7 +190,6 @@ class PricesApiTest extends TestCase
         $this->assertNotEquals($price->price2, $priceAux->price2);
         $this->assertNotEquals($price->priceOwn, $priceAux->priceOwn);
 
-
         $this->put('/prices/'.$priceAux->id,
             [
                 'data' => [
@@ -208,8 +204,8 @@ class PricesApiTest extends TestCase
                         'price1' => $price->price1,
                         'price2' => $price->price2,
                         'priceOwn' => $price->priceOwn,
-                    ]
-                ]                
+                    ],
+                ],
             ])
             ->seeJson([
                 'type' => 'prices',
@@ -225,16 +221,18 @@ class PricesApiTest extends TestCase
             ]);
     }
 
-    public function testDeletePriceIfExists() {
+    public function testDeletePriceIfExists()
+    {
         // CREATE & DELETE
         $price = factory(\WA\DataStore\Price\Price::class)->create();
         $responseDel = $this->call('DELETE', '/prices/'.$price->id);
         $this->assertEquals(200, $responseDel->status());
         $responseGet = $this->call('GET', '/prices/'.$price->id);
-        $this->assertEquals(404, $responseGet->status());        
+        $this->assertEquals(404, $responseGet->status());
     }
 
-    public function testDeletepriceIfNoExists(){
+    public function testDeletepriceIfNoExists()
+    {
         // DELETE NO EXISTING.
         $responseDel = $this->call('DELETE', '/prices/1');
         $this->assertEquals(404, $responseDel->status());

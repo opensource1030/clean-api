@@ -11,7 +11,6 @@ use Redirect;
 use Alert;
 use Cartalyst\DataGrid\Laravel\Facades\DataGrid;
 
-
 /**
  * Class PagesController.
  */
@@ -22,7 +21,7 @@ class PagesStaticController extends AuthorizedController
     protected $company;
 
     /**
-     * PagesController constructor
+     * PagesController constructor.
      *
      * @param CompanyInterface $company
      */
@@ -46,65 +45,65 @@ class PagesStaticController extends AuthorizedController
     }
 
     /**
-     * Edit the static content for pages in the app
+     * Edit the static content for pages in the app.
      *
      * @param $id
+     *
      * @return bool
      */
     public function edit($id)
     {
         try {
-            $pages = $this->api->get('pages/'. $id);
+            $pages = $this->api->get('pages/'.$id);
             $companies = $this->company->getAll(false);
 
             return view('pages.content.edit')->with('pages', $pages)->with('companies', $companies);
-
         } catch (Dingo\Api\Exception\InternalHttpException $e) {
+            Log::error('Something failed with the response, : '.$e->getResponse());
 
-            Log::error('Something failed with the response, : ' . $e->getResponse());
             return false;
         }
     }
 
     /**
-     * Update static content for pages in the app
+     * Update static content for pages in the app.
      *
      * @param $id
+     *
      * @return $this
+     *
      * @throws Symfony\Component\HttpKernel\Exception\ConflictHttpException
      */
     public function update($id)
     {
-
         try {
             $data = [
                 'id' => $id,
                 'title' => trim(Input::get('title')),
                 'section' => trim(Input::get('section')),
-                'content' =>  Input::get('content'),
+                'content' => Input::get('content'),
                 'role_id' => !empty(Input::get('role_id')) ? Input::get('role_id') : null,
-                'active' =>  (int)((bool)Input::get('isActive')),
-                'companyId' => (int)Input::get('company'),
+                'active' => (int) ((bool) Input::get('isActive')),
+                'companyId' => (int) Input::get('company'),
             ];
 
             $page = $this->api->post('pages', $data);
 
             if (!$page) {
                 Alert::error('Invalid content provided.');
-            }else{
+            } else {
                 Alert::success('Pages Content updated.');
             }
-            return Redirect::back()->withInput();
 
+            return Redirect::back()->withInput();
         } catch (Symfony\Component\HttpKernel\Exception\ConflictHttpException $e) {
             throw new Symfony\Component\HttpKernel\Exception\ConflictHttpException('We got a conflict!');
         }
-
     }
 
     /**
      * Handles the datatables, this needs to be in a specific format to make it compatible
-     * with the DataTable
+     * with the DataTable.
      *
      * Returns all pages.
      *
@@ -126,15 +125,11 @@ class PagesStaticController extends AuthorizedController
 
         $settings = array(
             'max_results' => 10,
-            'sort'        => 'id',
+            'sort' => 'id',
 
         );
         $response = DataGrid::make($pages, $columns, $settings);
 
-            return $response;
+        return $response;
     }
-
-
-
-
 }

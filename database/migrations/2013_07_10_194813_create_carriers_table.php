@@ -11,8 +11,6 @@ class CreateCarriersTable extends Migration
 
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
@@ -33,38 +31,35 @@ class CreateCarriersTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
     public function down()
     {
         /*
         Schema::table(
-            'devices', 
+            'devices',
             function ($table) {
                 //$table->dropForeign('carrierId');
         });
 
         Schema::table(
-            'assets', 
+            'assets',
             function ($table) {
                 //$table->dropForeign('carrierId');
         });
 
         Schema::table(
-            'carrier_devices', 
+            'carrier_devices',
             function ($table) {
                 //$table->dropForeign('carrierId');
         });
 
         Schema::table(
-            'companies_carriers', 
+            'companies_carriers',
             function ($table) {
                 //$table->dropForeign('carrierId');
         });
         */
-        
+
         $this->forceDropTable($this->tableName);
     }
-
 }

@@ -2,7 +2,6 @@
 
 namespace WA\Services\Form;
 
-
 /**
  * Class AbstractForm.
  */

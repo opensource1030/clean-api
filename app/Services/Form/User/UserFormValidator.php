@@ -12,7 +12,7 @@ class UserFormValidator extends AbstractLaravelValidator
     /**
      * Validation rules.
      *
-     * @var Array
+     * @var array
      */
     protected $rules = [
 //    'password' => 'required|min:6',
@@ -30,7 +30,7 @@ class UserFormValidator extends AbstractLaravelValidator
     /**
      * Custom validation messages.
      *
-     * @var Array
+     * @var array
      */
     protected $message = [
         'departmentId' => 'A default department is required',

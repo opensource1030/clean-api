@@ -3,9 +3,7 @@
 namespace WA\Http\Requests\Parameters;
 
 /**
- * Class Fields
- *
- * @package WA\Http\Requests\Parameters
+ * Class Fields.
  */
 class Fields
 {
@@ -37,7 +35,7 @@ class Fields
      */
     public function addField($type, $fieldName)
     {
-        $this->fields[(string)$type][] = (string)$fieldName;
+        $this->fields[(string) $type][] = (string) $fieldName;
     }
 
     /**

@@ -2,20 +2,16 @@
 
 use Illuminate\Database\Migrations\Migration;
 
-
 class CreateDepartmentsTable extends Migration
 {
-
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
         Schema::create(
             'departments',
-            function ( $table) {
+            function ($table) {
                 $table->increments('id');
 
                 $table->integer('companyId', false, true);
@@ -31,15 +27,11 @@ class CreateDepartmentsTable extends Migration
         );
     }
 
-
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
     public function down()
     {
         Schema::drop('departments');
     }
-
 }

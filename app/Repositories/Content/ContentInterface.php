@@ -5,9 +5,7 @@ namespace WA\Repositories\Content;
 use WA\Repositories\RepositoryInterface;
 
 /**
- * Interface ContentInterface
- *
- * @package WA\Repositories\Content
+ * Interface ContentInterface.
  */
 interface ContentInterface extends RepositoryInterface
 {
@@ -21,9 +19,10 @@ interface ContentInterface extends RepositoryInterface
     public function update(array $data);
 
     /**
-     * Get the company Id tied to content
+     * Get the company Id tied to content.
      *
      * @param $id
+     *
      * @return mixed
      */
     public function getCompanyId($id);
@@ -31,14 +30,15 @@ interface ContentInterface extends RepositoryInterface
     /**
      * Get an array of all the available content.
      *
-     * @return Array of contents
+     * @return array of contents
      */
     public function getAllContents();
 
     /**
-     * Create new content
+     * Create new content.
      *
      * @param array $data
+     *
      * @return bool|static
      */
     public function create(array $data);
@@ -54,10 +54,9 @@ interface ContentInterface extends RepositoryInterface
     public function delete($id, $soft = true);
 
     /**
-     * Return Default Contents
+     * Return Default Contents.
      *
      * @return mixed
      */
     public function getDefaultContent();
-
 }

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace WA\Providers;
 
 use Illuminate\Support\ServiceProvider;
@@ -12,7 +11,6 @@ use Dingo\Api\Auth\Provider\OAuth2;
  */
 class OAuthServiceProvider extends ServiceProvider
 {
-
     public function boot()
     {
         $this->app[Auth::class]->extend('oauth', function ($app) {
@@ -37,8 +35,5 @@ class OAuthServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
     }
-
-
 }

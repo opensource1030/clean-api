@@ -11,14 +11,12 @@ class CreateConditionFieldsTable extends Migration
 
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
         Schema::create(
             $this->tableName,
-            function ( $table) {
+            function ($table) {
                 $table->increments('id');
                 $table->string('typeField');
                 $table->string('field');
@@ -28,8 +26,6 @@ class CreateConditionFieldsTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
     public function down()
     {

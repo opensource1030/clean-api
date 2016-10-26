@@ -3,8 +3,8 @@
 use Illuminate\Database\Migrations\Migration;
 use WA\Database\Command\TablesRelationsAndIndexes;
 
-class CreateCompaniesDevicesTable extends Migration {
-
+class CreateCompaniesDevicesTable extends Migration
+{
     use TablesRelationsAndIndexes;
 
     protected $tableName = 'companies_devices';
@@ -16,23 +16,20 @@ class CreateCompaniesDevicesTable extends Migration {
 
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
-
         Schema::create(
-            $this->tableName, 
+            $this->tableName,
             function ($table) {
                 $table->increments('id');
                 $table->integer('companyId')->unsigned();
                 $table->integer('deviceId')->unsigned();
-        });
+            });
 
         Schema::table(
-            $this->tableName, 
-            function($table) {
+            $this->tableName,
+            function ($table) {
                 $table->foreign('companyId')->references('id')->on('companies');
                 $table->foreign('deviceId')->references('id')->on('devices');
             }
@@ -41,17 +38,15 @@ class CreateCompaniesDevicesTable extends Migration {
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
     public function down()
     {
         Schema::table(
-            $this->tableName, 
-            function ( $table) {
+            $this->tableName,
+            function ($table) {
                 //$table->dropForeign('companyId');
                 //$table->dropForeign('deviceId');
-        });
+            });
 
         $this->forceDropTable($this->tableName);
     }

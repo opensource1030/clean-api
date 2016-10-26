@@ -13,12 +13,11 @@ use WA\Helpers\Traits\Criteria;
  */
 class CompanyTransformer extends TransformerAbstract
 {
-
     use Criteria;
 
     protected $availableIncludes = [
         'allocations',
-        'contents'
+        'contents',
     ];
 
     /**
@@ -29,18 +28,17 @@ class CompanyTransformer extends TransformerAbstract
     public function transform(Company $company)
     {
         return [
-            'id'               => (int)$company->id,
-            'name'             => $company->name,
-            'label'            => $company->label,
-            'active'           => $company->active,
-            'udlpath'          => $company->udlpath,
-            'isCensus'         => $company->isCensus,
-            'udlPathRule'      => $company->udlPathRule,
-            'assetPath'        => $company->assetPath,
+            'id' => (int) $company->id,
+            'name' => $company->name,
+            'label' => $company->label,
+            'active' => $company->active,
+            'udlpath' => $company->udlpath,
+            'isCensus' => $company->isCensus,
+            'udlPathRule' => $company->udlPathRule,
+            'assetPath' => $company->assetPath,
             'currentBillMonth' => $company->currentBillMonth,
         ];
     }
-
 
     /**
      * @param Company $company
@@ -52,9 +50,10 @@ class CompanyTransformer extends TransformerAbstract
         $allocations = $this->applyCriteria($company->allocations(), $this->criteria);
         $filters = $this->criteria['filters']->get();
 
-        if (in_array("[allocations.billMonth]=[company.currentBillMonth]", $filters)) {
+        if (in_array('[allocations.billMonth]=[company.currentBillMonth]', $filters)) {
             $allocations->where('billMonth', $company->currentBillMonth);
         }
+
         return new ResourceCollection($company->allocations, new AllocationTransformer(), 'allocations');
     }
 
@@ -67,12 +66,11 @@ class CompanyTransformer extends TransformerAbstract
     {
         $contents = $company->contents;
 
-        if(count($contents) < 1)
-        {
+        if (count($contents) < 1) {
             //Return the default contents
             $contentInterface = app()->make('WA\Repositories\Content\ContentInterface');
             $defaultContents = $contentInterface->getDefaultContent();
-            $contents = !empty($defaultContents) ? $defaultContents : $contents ;
+            $contents = !empty($defaultContents) ? $defaultContents : $contents;
         }
 
         return new ResourceCollection($contents, new ContentTransformer(), 'contents');

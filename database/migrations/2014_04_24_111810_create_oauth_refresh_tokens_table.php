@@ -10,7 +10,6 @@
  */
 
 use Illuminate\Database\Migrations\Migration;
-
 use Illuminate\Support\Facades\Schema;
 
 /**
@@ -22,12 +21,10 @@ class CreateOauthRefreshTokensTable extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
-        Schema::create('oauth_refresh_tokens', function ( $table) {
+        Schema::create('oauth_refresh_tokens', function ($table) {
             $table->string('id', 40)->unique();
             $table->string('access_token_id', 40)->primary();
             $table->integer('expire_time');
@@ -42,12 +39,10 @@ class CreateOauthRefreshTokensTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
     public function down()
     {
-        Schema::table('oauth_refresh_tokens', function ( $table) {
+        Schema::table('oauth_refresh_tokens', function ($table) {
             $table->dropForeign('oauth_refresh_tokens_access_token_id_foreign');
         });
 

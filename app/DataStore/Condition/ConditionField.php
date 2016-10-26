@@ -6,23 +6,21 @@ use WA\DataStore\BaseDataStore;
 use WA\DataStore\Order\OrderTransformer;
 
 /**
- * Class Order
- *
- * @package WA\DataStore\Order
+ * Class Order.
  */
 class ConditionField extends BaseDataStore
 {
-    protected  $table = 'condition_fields';
+    protected $table = 'condition_fields';
 
     protected $fillable = [
             'typeField',
-            'field'
+            'field',
         ];
 
     public $timestamps = false;
 
     /**
-     * Get all the owners for the order
+     * Get all the owners for the order.
      *
      * @return \Illuminate\Database\Eloquent\Relations\MorphTo
      */
@@ -32,7 +30,7 @@ class ConditionField extends BaseDataStore
     }
 
     /**
-     * Get the transformer instance
+     * Get the transformer instance.
      *
      * @return OrderTransformer
      */

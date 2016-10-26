@@ -30,7 +30,7 @@ class EloquentBillingDetail extends AbstractRepository implements BillingDetailI
      * @param $assetId
      * @param $billMonth
      *
-     * @return Object object of the details
+     * @return object object of the details
      */
     public function byAssetId($assetId, $billMonth = null)
     {
@@ -63,7 +63,7 @@ class EloquentBillingDetail extends AbstractRepository implements BillingDetailI
      *
      * @param $billingId
      *
-     * @return Object object of billing information
+     * @return object object of billing information
      */
     public function byBilling($billingId)
     {

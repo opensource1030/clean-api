@@ -5,23 +5,22 @@ namespace WA\Repositories\App;
 use WA\Repositories\RepositoryInterface;
 
 /**
- * Interface AppInterface
- *
- * @package WA\Repositories\App
+ * Interface AppInterface.
  */
 interface AppInterface extends RepositoryInterface
 {
     /**
      * Get Array of all Apps.
      *
-     * @return Array of App
+     * @return array of App
      */
     public function getAllApp();
 
     /**
-     * Create App
+     * Create App.
      *
      * @param array $data
+     *
      * @return bool|static
      */
     public function create(array $data);
@@ -44,5 +43,4 @@ interface AppInterface extends RepositoryInterface
      * @return bool
      */
     public function delete($id, $soft = true);
-
 }

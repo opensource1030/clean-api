@@ -92,7 +92,7 @@ class Helper
             return number_format($number, $places, $decimal, $thousands);
         }
 
-        return $info['currency_symbol'] . ' ' . number_format($number, $places, $decimal, $thousands);
+        return $info['currency_symbol'].' '.number_format($number, $places, $decimal, $thousands);
     }
 
     /**
@@ -113,23 +113,22 @@ class Helper
             $nextThree = substr($numbers_only, -7, 3);
             $lastFour = substr($numbers_only, -4, 4);
 
-            $numbers_only = '+' . $countryCode . ' (' . $areaCode . ') ' . $nextThree . '-' . $lastFour;
+            $numbers_only = '+'.$countryCode.' ('.$areaCode.') '.$nextThree.'-'.$lastFour;
         } elseif (strlen($numbers_only) == 10) {
             $areaCode = substr($numbers_only, 0, 3);
             $nextThree = substr($numbers_only, 3, 3);
             $lastFour = substr($numbers_only, 6, 4);
 
-            $numbers_only = '(' . $areaCode . ') ' . $nextThree . '-' . $lastFour;
+            $numbers_only = '('.$areaCode.') '.$nextThree.'-'.$lastFour;
         } elseif (strlen($numbers_only) == 7) {
             $nextThree = substr($numbers_only, 0, 3);
             $lastFour = substr($numbers_only, 3, 4);
 
-            $numbers_only = $nextThree . '-' . $lastFour;
+            $numbers_only = $nextThree.'-'.$lastFour;
         }
 
         return $numbers_only;
     }
-
 
     /**
      * Take a number in a variety of formats and return a proper E164 number.
@@ -143,24 +142,24 @@ class Helper
         $NumberStack['number'] = $dialedNumber;
         if (preg_match('/^1([1-9][0-9]{8,})$/', $NumberStack['number'], $m)) {
             $NumberStack['E164'] = $m[1];
-            $NumberStack['E164'] = '1' . $NumberStack['E164'];
+            $NumberStack['E164'] = '1'.$NumberStack['E164'];
             $NumberStack['numberCorrected'] = $NumberStack['E164'];
         } elseif (preg_match("/^\*1([1-9][0-9]{8,})$/", $NumberStack['number'], $m)) {
             $NumberStack['E164'] = $m[1];
-            $NumberStack['E164'] = '1' . $NumberStack['E164'];
+            $NumberStack['E164'] = '1'.$NumberStack['E164'];
             $NumberStack['numberCorrected'] = $NumberStack['E164'];
         } elseif (preg_match("/^\+([1-9][0-9]{8,})$/", $NumberStack['number'], $m)) {
             $NumberStack['E164'] = $m[1];
             $NumberStack['numberCorrected'] = $NumberStack['E164'];
         } elseif (preg_match('/^([1-9][0-9]{8,})$/', $NumberStack['number'], $m)) {
             $NumberStack['E164'] = $m[1];
-            $NumberStack['E164'] = '1' . $NumberStack['E164'];
+            $NumberStack['E164'] = '1'.$NumberStack['E164'];
             $NumberStack['numberCorrected'] = $NumberStack['E164'];
         } elseif (preg_match('/^011([1-9][0-9]{8,})$/', $NumberStack['number'], $m)) {
             $NumberStack['E164'] = $m[1];
             $NumberStack['numberCorrected'] = $NumberStack['E164'];
         } elseif (preg_match('/^0([1-9][0-9][0-9]{2,15})$/', $NumberStack['number'], $m)) {
-            $NumberStack['E164'] = '44' . $m[1];
+            $NumberStack['E164'] = '44'.$m[1];
             $NumberStack['numberCorrected'] = $NumberStack['E164'];
         } elseif (preg_match('/^00([1-9][0-9]{8,})$/', $NumberStack['number'], $m)) {
             $NumberStack['E164'] = $m[1];
@@ -171,7 +170,6 @@ class Helper
 
         return $NumberStack['numberCorrected'];
     }
-
 
     /**
      * Look for the first string position in an array of strings.
@@ -234,7 +232,7 @@ class Helper
     {
         $length = strlen($needle);
 
-        return (substr($haystack, 0, $length) === $needle);
+        return substr($haystack, 0, $length) === $needle;
     }
 
     /**
@@ -250,7 +248,7 @@ class Helper
             return true;
         }
 
-        return (substr($haystack, -$length) === $needle);
+        return substr($haystack, -$length) === $needle;
     }
 
     /**
@@ -299,25 +297,25 @@ class Helper
     {
         $version_prefix = 'v';
 
-        if (!file_exists(app_path() . '/../.version')) {
+        if (!file_exists(app_path().'/../.version')) {
             return;
         }
 
-        $version = file_get_contents(app_path() . '/../.version');
+        $version = file_get_contents(app_path().'/../.version');
 
-        return $version_prefix . trim($version);
+        return $version_prefix.trim($version);
     }
 
     public static function getVersion()
     {
         $version_prefix = 'v';
 
-        if (!file_exists(app_path() . '/../.version')) {
+        if (!file_exists(app_path().'/../.version')) {
             return;
         }
 
-        $version = file_get_contents(app_path() . '/../.version');
-        $v = $version_prefix . trim($version);
+        $version = file_get_contents(app_path().'/../.version');
+        $v = $version_prefix.trim($version);
 
         return str_replace('v4.0.0-', '', $v);
     }

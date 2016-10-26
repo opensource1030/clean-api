@@ -11,7 +11,7 @@ class EloquentDeviceType extends AbstractRepository implements DeviceTypeInterfa
      *
      * @param $model
      *
-     * @return Object object of device type
+     * @return object object of device type
      */
     public function byModel($model)
     {
@@ -24,7 +24,7 @@ class EloquentDeviceType extends AbstractRepository implements DeviceTypeInterfa
      * @param string $model
      * @param array  $data
      *
-     * @return Object object of device type
+     * @return object object of device type
      */
     public function byModelOrCreate($model, array $data)
     {
@@ -38,71 +38,72 @@ class EloquentDeviceType extends AbstractRepository implements DeviceTypeInterfa
     }
 
     /**
-     * Update DeviceType
+     * Update DeviceType.
      *
      * @param array $data
+     *
      * @return bool
      */
     public function update(array $data)
     {
         $deviceType = $this->model->find($data['id']);
 
-        if(!$deviceType)
-        {
+        if (!$deviceType) {
             return 'notExist';
         }
 
-        if(isset($data['make'])){
-            $deviceType->make =  $data['make'];            
+        if (isset($data['make'])) {
+            $deviceType->make = $data['make'];
         }
-        if(isset($data['model'])){
-            $deviceType->model =  $data['model'];            
+        if (isset($data['model'])) {
+            $deviceType->model = $data['model'];
         }
-        if(isset($data['class'])){
-            $deviceType->class =  $data['class'];            
+        if (isset($data['class'])) {
+            $deviceType->class = $data['class'];
         }
-        if(isset($data['deviceOS'])){
-            $deviceType->deviceOS =  $data['deviceOS'];            
+        if (isset($data['deviceOS'])) {
+            $deviceType->deviceOS = $data['deviceOS'];
         }
-        if(isset($data['description'])){
-            $deviceType->description =  $data['description'];            
+        if (isset($data['description'])) {
+            $deviceType->description = $data['description'];
         }
-        if(isset($data['statusId'])){
-            $deviceType->statusId =  $data['statusId'];            
+        if (isset($data['statusId'])) {
+            $deviceType->statusId = $data['statusId'];
         }
-        if(isset($data['image'])){
-            $deviceType->image =  $data['image'];            
+        if (isset($data['image'])) {
+            $deviceType->image = $data['image'];
         }
 
-        if(!$deviceType->save()) {
+        if (!$deviceType->save()) {
             return 'notSaved';
         }
 
         return $deviceType;
-
     }
 
     /**
      * Get an array of all the available DeviceType.
      *
-     * @return Array of DeviceType
+     * @return array of DeviceType
      */
     public function getAllDeviceType()
     {
-        $deviceType =  $this->model->all();
+        $deviceType = $this->model->all();
+
         return $deviceType;
     }
 
     /**
-     * Create a new DeviceType
+     * Create a new DeviceType.
      *
      * @param array $data
+     *
      * @return bool|static
      */
     public function create(array $data)
     {
         $deviceTypeData = [
-            'make' =>  isset($data['make']) ? $data['make'] : null ,
+            'make' => isset($data['make']) ? $data['make'] : null,
             'model' => isset($data['model']) ? $data['model'] : null,
             'class' => isset($data['class']) ? $data['class'] : null,
             'deviceOS' => isset($data['deviceOS']) ? $data['deviceOS'] : null,
@@ -119,7 +120,7 @@ class EloquentDeviceType extends AbstractRepository implements DeviceTypeInterfa
         //var_dump($deviceType);
         //die;
 
-        if(!$deviceType) {
+        if (!$deviceType) {
             return false;
         }
 

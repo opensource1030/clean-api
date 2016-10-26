@@ -5,9 +5,7 @@ namespace WA\Repositories\Company;
 use WA\Repositories\RepositoryInterface;
 
 /**
- * Interface CompanyInterface
- *
- * @package WA\Repositories\Company
+ * Interface CompanyInterface.
  */
 interface CompanyInterface extends RepositoryInterface
 {
@@ -16,14 +14,14 @@ interface CompanyInterface extends RepositoryInterface
      *
      * @param $name
      *
-     * @return Object of the company information
+     * @return object of the company information
      */
     public function byName($name);
 
     /**
      * Creates new employee for a company.
      *
-     * @param int $id of the company
+     * @param int   $id   of the company
      * @param array $user
      *
      * @return bool true successful | false
@@ -31,15 +29,14 @@ interface CompanyInterface extends RepositoryInterface
     public function addUser($id, array $user);
 
     /**
-     * Get the total amount of employee
+     * Get the total amount of employee.
      *
-     * @param int $id of the company
+     * @param int  $id   of the company
      * @param bool $sync with external system (EasyVista in our case)
      *
      * @return int count of employee
      */
     public function getUsersCount($id, $sync = true);
-
 
     /**
      * Update an employee for a company.
@@ -50,13 +47,10 @@ interface CompanyInterface extends RepositoryInterface
      */
     public function updateUser(array $user);
 
-
-
-
     /**
      * Creates UDLs for a company.
      *
-     * @param int $id of company
+     * @param int   $id   of company
      * @param array $udls
      *
      * return bool
@@ -68,7 +62,7 @@ interface CompanyInterface extends RepositoryInterface
      *
      * @param $id
      *
-     * @return Object object of account information
+     * @return object object of account information
      */
     public function getAccountSummariesById($id);
 
@@ -102,7 +96,6 @@ interface CompanyInterface extends RepositoryInterface
      */
     public function getActive($isActive = 1);
 
-
     /**
      * Get a company's account details.
      *
@@ -120,15 +113,15 @@ interface CompanyInterface extends RepositoryInterface
     /**
      * Given some UDL, it gets the matching path ID.
      *
-     * @param int $id company id
-     * @param array $udls the values to match
-     * @param bool $externalId should return the externalId instead | false
-     * @param int $creatorId current user id
-     * @param array $userInfo Information on user being created/edited
+     * @param int   $id         company id
+     * @param array $udls       the values to match
+     * @param bool  $externalId should return the externalId instead | false
+     * @param int   $creatorId  current user id
+     * @param array $userInfo   Information on user being created/edited
      *
      * @return int ID value if there is a match | null id there is no match found
      */
-    public function getUdlValuePathId($id, array $udls, $externalId = false, $creatorId, array $userInfo);
+    public function getUdlValuePathId($id, array $udls, $externalId, $creatorId, array $userInfo);
 
     /**
      * Get the list of internal UDL tables that an external system can map to by companyId.
@@ -140,9 +133,9 @@ interface CompanyInterface extends RepositoryInterface
     public function getMappableUdlFields($companyId);
 
     /**
-     * Get a company census process rules
+     * Get a company census process rules.
      *
-     * @param int $companyId
+     * @param int    $companyId
      * @param string $type
      *
      * @return array
@@ -150,7 +143,7 @@ interface CompanyInterface extends RepositoryInterface
     public function getCensusRules($companyId, $type);
 
     /**
-     * Get live/demo status of a company
+     * Get live/demo status of a company.
      *
      * @param $id
      */
@@ -161,7 +154,7 @@ interface CompanyInterface extends RepositoryInterface
      *
      * @param array $data
      *
-     * @return Object object of the company | false
+     * @return object object of the company | false
      */
     public function create(
         array $data
@@ -170,7 +163,7 @@ interface CompanyInterface extends RepositoryInterface
     /**
      * Delete a Company.
      *
-     * @param int $id
+     * @param int  $id
      * @param bool $soft true soft deletes
      *
      * @return bool
@@ -187,7 +180,7 @@ interface CompanyInterface extends RepositoryInterface
     public function update(array $data);
 
     /**
-     * Get Pool Bases by Company Id
+     * Get Pool Bases by Company Id.
      *
      * @param $id
      *
@@ -196,7 +189,7 @@ interface CompanyInterface extends RepositoryInterface
     public function getPools($id);
 
     /**
-     * Get Company Specific Carriers
+     * Get Company Specific Carriers.
      *
      * @param $id
      *
@@ -204,10 +197,9 @@ interface CompanyInterface extends RepositoryInterface
      */
     public function getCompanySpecific($id);
 
-
     /**
      * Gets the Id of a company by the email
-     * (does a best guess based on the allowed domain, returns a 0 is no matcH)
+     * (does a best guess based on the allowed domain, returns a 0 is no matcH).
      *
      * @param string $email
      *
@@ -217,7 +209,7 @@ interface CompanyInterface extends RepositoryInterface
 
     /**
      * Get company domains by the ID
-     * if no id is defined it gets all
+     * if no id is defined it gets all.
      *
      * @param int|null $companyId
      *

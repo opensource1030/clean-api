@@ -5,23 +5,22 @@ namespace WA\Repositories\Request;
 use WA\Repositories\RepositoryInterface;
 
 /**
- * Interface RequestInterface
- *
- * @package WA\Repositories\Request
+ * Interface RequestInterface.
  */
 interface RequestInterface extends RepositoryInterface
 {
     /**
      * Get Array of all Requests.
      *
-     * @return Array of Request
+     * @return array of Request
      */
     public function getAllRequest();
 
     /**
-     * Create Request
+     * Create Request.
      *
      * @param array $data
+     *
      * @return bool|static
      */
     public function create(array $data);
@@ -44,5 +43,4 @@ interface RequestInterface extends RepositoryInterface
      * @return bool
      */
     public function delete($id, $soft = true);
-
 }

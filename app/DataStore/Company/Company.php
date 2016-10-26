@@ -87,7 +87,6 @@ class Company extends BaseDataStore
         return $this->hasMany('WA\DataStore\UdlValue\UdlValue', 'companyId');
     }
 
-
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
@@ -104,14 +103,15 @@ class Company extends BaseDataStore
         return $this->hasMany('WA\DataStore\Allocation\Allocation', 'companyId');
     }
 
-   /**
-     * Get all contents that belong to a company
+    /**
+     * Get all contents that belong to a company.
      *
      * @return \Illuminate\Database\Eloquent\Relations\MorphMany
      */
     public function contents()
     {
         $contents = $this->morphMany('WA\DataStore\Content\Content', 'owner');
+
         return $contents;
     }
 
@@ -157,16 +157,15 @@ class Company extends BaseDataStore
     {
         $file = $file ?: new Filesystem();
 
-
         if (!$this->active) {
-            $this->name = "zz_Prospect"; // Look in folder for prospect clients
-            $newDirectoryPath = $this->rawDataDirectoryPath . DIRECTORY_SEPARATOR .
-                $this->name . DIRECTORY_SEPARATOR .
-                'Data' . DIRECTORY_SEPARATOR;
+            $this->name = 'zz_Prospect'; // Look in folder for prospect clients
+            $newDirectoryPath = $this->rawDataDirectoryPath.DIRECTORY_SEPARATOR.
+                $this->name.DIRECTORY_SEPARATOR.
+                'Data'.DIRECTORY_SEPARATOR;
         } else {
-            $newDirectoryPath = $this->rawDataDirectoryPath . DIRECTORY_SEPARATOR .
-                preg_replace('/[^A-Za-z0-9+]/', '', studly_case($this->name)) . DIRECTORY_SEPARATOR .
-                'Data' . DIRECTORY_SEPARATOR;
+            $newDirectoryPath = $this->rawDataDirectoryPath.DIRECTORY_SEPARATOR.
+                preg_replace('/[^A-Za-z0-9+]/', '', studly_case($this->name)).DIRECTORY_SEPARATOR.
+                'Data'.DIRECTORY_SEPARATOR;
         }
 
         foreach ($determinant as $d) {
@@ -176,7 +175,7 @@ class Company extends BaseDataStore
                 $d = studly_case($d);
             }
 
-            $newDirectoryPath .= $d . DIRECTORY_SEPARATOR;
+            $newDirectoryPath .= $d.DIRECTORY_SEPARATOR;
         }
 
         if ($file->isDirectory($newDirectoryPath)) {
@@ -188,8 +187,8 @@ class Company extends BaseDataStore
 
             return $newDirectoryPath;
         } catch (\Exception $e) {
-            Log::error('The File could not be created' . $e->getMessage());
-            throw new \Exception('Cannot create the directory ' . $newDirectoryPath);
+            Log::error('The File could not be created'.$e->getMessage());
+            throw new \Exception('Cannot create the directory '.$newDirectoryPath);
         }
     }
 
@@ -208,7 +207,7 @@ class Company extends BaseDataStore
         $file = $file ?: new Filesystem();
 
         if (!$file->isDirectory($directoryPath)) {
-            Log::error('The file path: ' . $directoryPath . 'does not exist');
+            Log::error('The file path: '.$directoryPath.'does not exist');
             Alert::error(
                 'Data directory does not exist.  Please check that it matches the correct schema of [Compnay]\Data\[Carrier]\Data\[YYYY_MM]'
             );
@@ -234,7 +233,6 @@ class Company extends BaseDataStore
         return $fileList;
     }
 
-
     /**
      * @param $number
      *
@@ -247,7 +245,6 @@ class Company extends BaseDataStore
 
         return $stamp->format('Y_m');
     }
-
 
     public function employeesCount()
     {
@@ -266,7 +263,6 @@ class Company extends BaseDataStore
 
         $related = $this->getRelation('employeesCount');
 
-        return ($related) ? (int)$related->total : 0;
+        return ($related) ? (int) $related->total : 0;
     }
-
 }

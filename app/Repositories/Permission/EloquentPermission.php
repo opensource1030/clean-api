@@ -5,16 +5,13 @@ namespace WA\Repositories\Permission;
 use WA\Repositories\AbstractRepository;
 use WA\Repositories\Role\RoleInterface;
 
-
 class EloquentPermission extends AbstractRepository implements PermissionsInterface
 {
-
     protected $role;
 
     public function __construct(
       RoleInterface $role
-    )
-     {
+    ) {
         $this->role = $role;
     }
 
@@ -23,12 +20,12 @@ class EloquentPermission extends AbstractRepository implements PermissionsInterf
      *
      * @param int $id
      *
-     * @return Object of the permissions information
+     * @return object of the permissions information
      */
     public function byRole($id)
     {
         $role = $this->role->byId($id);
+
         return $role->permissions;
     }
-
 }

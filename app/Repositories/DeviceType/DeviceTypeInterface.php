@@ -11,7 +11,7 @@ interface DeviceTypeInterface extends RepositoryInterface
      *
      * @param string $name
      *
-     * @return Object object of device type
+     * @return object object of device type
      */
     public function byModel($name);
 
@@ -21,21 +21,22 @@ interface DeviceTypeInterface extends RepositoryInterface
      * @param string $name
      * @param array  $data
      *
-     * @return Object object of device type
+     * @return object object of device type
      */
     public function byModelOrCreate($name, array $data);
 
     /**
      * Get Array of all DeviceTypes.
      *
-     * @return Array of DeviceType
+     * @return array of DeviceType
      */
     public function getAllDeviceType();
 
     /**
-     * Create DeviceType
+     * Create DeviceType.
      *
      * @param array $data
+     *
      * @return bool|static
      */
     public function create(array $data);

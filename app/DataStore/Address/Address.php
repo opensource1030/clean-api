@@ -3,16 +3,13 @@
 namespace WA\DataStore\Address;
 
 use WA\DataStore\BaseDataStore;
-use WA\DataStore\Address\AddressTransformer;
 
 /**
- * Class Address
- *
- * @package WA\DataStore\Address
+ * Class Address.
  */
 class Address extends BaseDataStore
 {
-    protected  $table = 'address';
+    protected $table = 'address';
 
     protected $fillable = [
             'address',
@@ -20,10 +17,10 @@ class Address extends BaseDataStore
             'state',
             'country',
             'postalCode',
-            'updated_at'];
+            'updated_at', ];
 
     /**
-     * Get all the owners for the address
+     * Get all the owners for the address.
      *
      * @return \Illuminate\Database\Eloquent\Relations\MorphTo
      */
@@ -33,7 +30,7 @@ class Address extends BaseDataStore
     }
 
     /**
-     * Get the transformer instance
+     * Get the transformer instance.
      *
      * @return AddressTransformer
      */

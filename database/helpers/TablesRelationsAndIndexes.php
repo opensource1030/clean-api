@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace WA\Database\Command;
 
@@ -8,15 +8,15 @@ use Schema;
 
 trait TablesRelationsAndIndexes
 {
-
     /**
      * Forces a table to drop independent of constraints
-     * (should really only be used in a mass migration context)
+     * (should really only be used in a mass migration context).
+     *
      * @param $tableName
      */
     public function forceDropTable($tableName)
     {
-        switch(DB::getDriverName()) {
+        switch (DB::getDriverName()) {
             case 'mysql':
                 DB::statement('SET FOREIGN_KEY_CHECKS=0');
                 break;
@@ -27,7 +27,7 @@ trait TablesRelationsAndIndexes
 
         Schema::dropIfExists($tableName);
 
-        switch(DB::getDriverName()) {
+        switch (DB::getDriverName()) {
             case 'mysql':
                 DB::statement('SET FOREIGN_KEY_CHECKS=1');
                 break;
@@ -38,15 +38,14 @@ trait TablesRelationsAndIndexes
     }
 
     /**
-     * Add foreign keys to columns, keys are automatically indexed
+     * Add foreign keys to columns, keys are automatically indexed.
      *
      * @param $table
-     * @param array $relationships
+     * @param array  $relationships
      * @param string $idColumn
      */
-    protected function  addForeign($table, array $relationships, $idColumn = 'id')
+    protected function addForeign($table, array $relationships, $idColumn = 'id')
     {
-
         if (!Schema::hasTable($table)) {
             exit("Table $table does not exist, cannot continue!");
         }
@@ -54,7 +53,6 @@ trait TablesRelationsAndIndexes
         Schema::table(
             $table,
             function (Blueprint $t) use ($relationships, $idColumn, $table) {
-
                 foreach ($relationships as $key => $refTable) {
                     $t->foreign($key)
                         ->references($idColumn)
@@ -63,28 +61,24 @@ trait TablesRelationsAndIndexes
                         ->onUpdate('cascade');
 
                     $this->addIndex($table, $key);
-            }
-
+                }
             }
         );
-
     }
 
     /**
-     * Add indexes to columns
+     * Add indexes to columns.
      *
      * @param $table
      * @param string | array $columns
      */
     protected function addIndex($table, $columns)
     {
-
         if (!is_array($columns)) {
             $key[] = $columns;
         } else {
             $key = $columns;
         }
-
 
         Schema::table(
             $table,
@@ -94,24 +88,25 @@ trait TablesRelationsAndIndexes
                 }
             }
         );
-
     }
 
     /**
-     * Add a compound index to a table
+     * Add a compound index to a table.
      *
      * @param $table
      * @param $columns
+     *
      * @return bool
      */
-    protected function addCompoundIndex($table, $columns) {
+    protected function addCompoundIndex($table, $columns)
+    {
         if (!is_array($columns)) {
             return false;
         }
         Schema::table(
             $table,
             function (Blueprint $t) use ($columns) {
-                    $t->index($columns);
+                $t->index($columns);
             }
         );
     }
@@ -120,61 +115,52 @@ trait TablesRelationsAndIndexes
      * @param $table
      * @param $columns
      */
-    protected function addUnique($table, $columns) {
+    protected function addUnique($table, $columns)
+    {
         Schema::table(
             $table,
             function (Blueprint $t) use ($columns) {
-                $t->unique( $columns );
+                $t->unique($columns);
             }
         );
     }
 
     /**
-     * Drop all indexes on table, automatically removes added indexes
+     * Drop all indexes on table, automatically removes added indexes.
      *
      * @param $table
-     * @param  array $relationships
+     * @param array $relationships
      */
     protected function dropForeignKeys($table, array $relationships)
     {
         if (!Schema::hasTable($table)) {
-            echo "";
+            echo '';
             exit("Table $table does not exist, cannot continue! \\n");
         }
 
         $tableName = snake_case($table);
 
-
         Schema::table(
             $table,
             function (Blueprint $t) use ($relationships, $tableName) {
-
                 foreach ($relationships as $column => $opt) {
-
-                    if ($opt === "nullable") {
+                    if ($opt === 'nullable') {
                         $columnName = strtolower($column);
-
                     } else {
                         $columnName = strtolower($opt);
-
-                }
-                    $foreignKey = $tableName . '_' . $columnName . '_' . 'foreign';
-                    $indexName = $tableName . '_' . $columnName . '_' . 'index';
+                    }
+                    $foreignKey = $tableName.'_'.$columnName.'_'.'foreign';
+                    $indexName = $tableName.'_'.$columnName.'_'.'index';
 
                     $t->dropForeign($foreignKey);
                     $t->dropIndex($indexName);
-
-            }
-
-
+                }
             }
         );
-
-
     }
 
     /**
-     * Drop all foreign keys on tables
+     * Drop all foreign keys on tables.
      *
      * @param $tableName
      * @param string | array $indexes
@@ -190,34 +176,25 @@ trait TablesRelationsAndIndexes
         Schema::table(
             $tableName,
             function (Blueprint $t) use ($keys, $tableName) {
-
                 foreach ($keys as $column => $opt) {
-
-                    if ($opt === "nullable") {
+                    if ($opt === 'nullable') {
                         $columnName = strtolower($column);
-
                     } else {
                         $columnName = strtolower($opt);
-
-                }
-                    $index = $tableName . '_' . $columnName . '_' . 'index';
+                    }
+                    $index = $tableName.'_'.$columnName.'_'.'index';
 
                     $t->dropIndex($index);
-            }
-
-
+                }
             }
         );
-
     }
 
     /**
-     * Includes foreign keys relationships to this table
+     * Includes foreign keys relationships to this table.
      */
     protected function includeForeign(Blueprint $table, $keys)
     {
-
-
         if (!is_array($keys)) {
             $foreign[] = $keys;
         } else {
@@ -225,15 +202,11 @@ trait TablesRelationsAndIndexes
         }
 
         foreach ($foreign as $column => $opt) {
-
-            if ($opt === "nullable") {
+            if ($opt === 'nullable') {
                 $table->integer($column, false, true)->nullable();
             } else {
                 $table->integer($opt, false, true);
-
             }
-
         }
     }
-
 }

@@ -5,73 +5,72 @@ namespace WA\Repositories\App;
 use WA\Repositories\AbstractRepository;
 
 /**
- * Class EloquentApp
- *
- * @package WA\Repositories\App
+ * Class EloquentApp.
  */
 class EloquentApp extends AbstractRepository implements AppInterface
 {
     /**
-     * Update App
+     * Update App.
      *
      * @param array $data
+     *
      * @return bool
      */
     public function update(array $data)
     {
         $app = $this->model->find($data['id']);
 
-        if(!$app)
-        {
+        if (!$app) {
             return 'notExist';
         }
 
-        if(isset($data['type'])){
-            $app->type =  $data['type'];            
+        if (isset($data['type'])) {
+            $app->type = $data['type'];
         }
-        if(isset($data['image'])){
-            $app->image =  $data['image'];            
+        if (isset($data['image'])) {
+            $app->image = $data['image'];
         }
-        if(isset($data['description'])){
-            $app->description =  $data['description'];            
+        if (isset($data['description'])) {
+            $app->description = $data['description'];
         }
 
-        if(!$app->save()) {
+        if (!$app->save()) {
             return 'notSaved';
         }
 
         return $app;
-
     }
 
     /**
      * Get an array of all the available App.
      *
-     * @return Array of App
+     * @return array of App
      */
     public function getAllApp()
     {
-        $app =  $this->model->all();
+        $app = $this->model->all();
+
         return $app;
     }
 
     /**
-     * Create a new app
+     * Create a new app.
      *
      * @param array $data
+     *
      * @return bool|static
      */
     public function create(array $data)
     {
         $appData = [
-            "type" =>  isset($data['type']) ? $data['type'] : null ,
-            "image" => isset($data['image']) ? $data['image'] : null,
-            "description" => isset($data['description']) ? $data['description'] : null,
+            'type' => isset($data['type']) ? $data['type'] : null,
+            'image' => isset($data['image']) ? $data['image'] : null,
+            'description' => isset($data['description']) ? $data['description'] : null,
         ];
 
         $app = $this->model->create($appData);
 
-        if(!$app) {
+        if (!$app) {
             return false;
         }
 

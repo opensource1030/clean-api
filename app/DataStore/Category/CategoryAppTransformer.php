@@ -3,12 +3,9 @@
 namespace WA\DataStore\Category;
 
 use League\Fractal\TransformerAbstract;
-
 use League\Fractal\Resource\Collection as ResourceCollection;
-
 use WA\DataStore\App\AppTransformer;
 use WA\DataStore\Image\ImageTransformer;
-
 use WA\Helpers\Traits\Criteria;
 
 /**
@@ -19,7 +16,7 @@ class CategoryAppTransformer extends TransformerAbstract
     use Criteria;
 
     protected $availableIncludes = [
-        'apps', 'images'
+        'apps', 'images',
     ];
     /**
      * @param CategoryApps $categoryApps
@@ -32,7 +29,7 @@ class CategoryAppTransformer extends TransformerAbstract
             'id' => $categoryApp->id,
             'name' => $categoryApp->name,
             'created_at' => $categoryApp->created_at,
-            'updated_at' => $categoryApp->updated_at
+            'updated_at' => $categoryApp->updated_at,
         ];
     }
 
@@ -44,6 +41,7 @@ class CategoryAppTransformer extends TransformerAbstract
     public function includeApps(CategoryApp $categoryApp)
     {
         $apps = $this->applyCriteria($categoryApp->apps(), $this->criteria);
+
         return new ResourceCollection($apps->get(), new AppTransformer(), 'apps');
     }
 
@@ -55,6 +53,7 @@ class CategoryAppTransformer extends TransformerAbstract
     public function includeImages(CategoryApp $categoryApp)
     {
         $images = $this->applyCriteria($categoryApp->images(), $this->criteria);
+
         return new ResourceCollection($images->get(), new ImageTransformer(), 'images');
     }
 }

@@ -4,11 +4,9 @@ namespace WA\Http\Controllers;
 
 use DB;
 use Illuminate\Http\Request;
-use Validator;
 use WA\DataStore\Device\Device;
 use WA\DataStore\Device\DeviceTransformer;
 use WA\Repositories\Device\DeviceInterface;
-
 use Illuminate\Support\Facades\Lang;
 
 /**
@@ -24,7 +22,7 @@ class DevicesController extends ApiController
     protected $device;
 
     /**
-     * Package Controller constructor
+     * Package Controller constructor.
      *
      * @param DeviceInterface $device
      */
@@ -34,7 +32,7 @@ class DevicesController extends ApiController
     }
 
     /**
-     * Show all devices
+     * Show all devices.
      *
      * Get a payload of all devices
      *
@@ -45,7 +43,6 @@ class DevicesController extends ApiController
      *      @Parameter("access_token", required=true, description="Access token for authentication")
      * })
      */
-
     public function index(Request $request)
     {
         $criteria = $this->getRequestCriteria();
@@ -56,16 +53,18 @@ class DevicesController extends ApiController
 
         if (!$this->includesAreCorrect($request, $devTransformer)) {
             $error['errors']['getincludes'] = Lang::get('messages.NotExistInclude');
+
             return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
         }
-      
+
         $response = $this->response()->withPaginator($device, $devTransformer, ['key' => 'devices']);
         $response = $this->applyMeta($response);
+
         return $response;
     }
 
     /**
-     * Show a single users
+     * Show a single users.
      *
      * Get a payload of a single devices by it's ID
      *
@@ -77,8 +76,9 @@ class DevicesController extends ApiController
         $this->device->setCriteria($criteria);
 
         $device = Device::find($id);
-        if($device == null){
-            $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'Device']);   
+        if ($device == null) {
+            $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'Device']);
+
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
@@ -86,12 +86,14 @@ class DevicesController extends ApiController
 
         if (!$this->includesAreCorrect($request, $devTransformer)) {
             $error['errors']['getIncludes'] = Lang::get('messages.NotExistInclude');
+
             return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
         }
 
         $response = $this->response()->item($device, $devTransformer, ['key' => 'devices'])
             ->setStatusCode($this->status_codes['created']);
         $response = $this->applyMeta($response);
+
         return $response;
     }
 
@@ -101,16 +103,16 @@ class DevicesController extends ApiController
 
         $devices = $this->model->getDataTable();
         $columns = [
-            'devices.id'             => 'id',
+            'devices.id' => 'id',
             'devices.identification' => 'identification',
-            'device_types.make'      => 'make',
-            'device_types.model'     => 'model',
-            'device_types.class'     => 'class',
+            'device_types.make' => 'make',
+            'device_types.model' => 'model',
+            'device_types.class' => 'class',
         ];
 
         $options = [
             'throttle' => $this->defaultQueryParams['_perPage'],
-            'method'   => $this->defaultQueryParams['_method'],
+            'method' => $this->defaultQueryParams['_method'],
         ];
 
         $this->setLimits();
@@ -121,9 +123,10 @@ class DevicesController extends ApiController
     }
 
     /**
-     * Update contents of a device
+     * Update contents of a device.
      *
      * @param $id
+     *
      * @return \Dingo\Api\Http\Response
      */
     public function store($id, Request $request)
@@ -134,8 +137,9 @@ class DevicesController extends ApiController
         /*
          * Checks if Json has data, data-type & data-attributes.
          */
-        if(!$this->isJsonCorrect($request, 'devices')){
+        if (!$this->isJsonCorrect($request, 'devices')) {
             $error['errors']['json'] = Lang::get('messages.InvalidJson');
+
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         } else {
             $data = $request->all()['data'];
@@ -153,20 +157,19 @@ class DevicesController extends ApiController
             $data['id'] = $id;
             $device = $this->device->update($data);
 
-            if($device == 'notExist') {
+            if ($device == 'notExist') {
                 DB::rollBack();
                 $error['errors']['device'] = Lang::get('messages.NotExistClass', ['class' => 'Device']);
                 //$error['errors']['Message'] = $e->getMessage();
                 return response()->json($error)->setStatusCode($this->status_codes['notexists']);
             }
 
-            if($device == 'notSaved') {
+            if ($device == 'notSaved') {
                 DB::rollBack();
                 $error['errors']['device'] = Lang::get('messages.NotSavedClass', ['class' => 'Device']);
                 //$error['errors']['Message'] = $e->getMessage();
                 return response()->json($error)->setStatusCode($this->status_codes['conflict']);
             }
-
         } catch (\Exception $e) {
             DB::rollBack();
             $error['errors']['devices'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Device', 'option' => 'updated', 'include' => '']);
@@ -178,15 +181,14 @@ class DevicesController extends ApiController
          * Check if Json has relationships to continue or if not and commit + return.
          */
         if (isset($data['relationships'])) {
-
             $dataRelationships = $data['relationships'];
 
             if (isset($dataRelationships['images'])) {
                 if (isset($dataRelationships['images']['data'])) {
                     $dataImages = $this->parseJsonToArray($dataRelationships['images']['data'], 'images');
                     try {
-                        $device->images()->sync($dataImages);    
-                    } catch (\Exception $e){
+                        $device->images()->sync($dataImages);
+                    } catch (\Exception $e) {
                         $error['errors']['images'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Device', 'option' => 'updated', 'include' => 'Images']);
                         //$error['errors']['Message'] = $e->getMessage();
                     }
@@ -197,8 +199,8 @@ class DevicesController extends ApiController
                 if (isset($dataRelationships['assets']['data'])) {
                     $dataAssets = $this->parseJsonToArray($dataRelationships['assets']['data'], 'assets');
                     try {
-                        $device->assets()->sync($dataAssets);    
-                    } catch (\Exception $e){
+                        $device->assets()->sync($dataAssets);
+                    } catch (\Exception $e) {
                         $error['errors']['assets'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Device', 'option' => 'updated', 'include' => 'Assets']);
                         //$error['errors']['Message'] = $e->getMessage();
                     }
@@ -261,10 +263,10 @@ class DevicesController extends ApiController
                                 if ($check['bool']) {
                                     $price['deviceId'] = $device->id;
 
-                                    if(isset($price['id'])){
-                                        if($price['id'] == 0){
+                                    if (isset($price['id'])) {
+                                        if ($price['id'] == 0) {
                                             $priceInterface->create($price);
-                                        } else if ($price['id'] > 0 ){
+                                        } elseif ($price['id'] > 0) {
                                             $priceInterface->update($price);
                                         } else {
                                             $success = false;
@@ -274,9 +276,8 @@ class DevicesController extends ApiController
                                         $success = false;
                                         $error['errors']['prices'] = 'the Price has no id';
                                     }
-                                            
-                                    $priceInterface->create($price);
 
+                                    $priceInterface->create($price);
                                 } else {
                                     $success = false;
                                     $error['errors']['prices'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Device', 'option' => 'updated', 'include' => 'Prices']);
@@ -299,17 +300,19 @@ class DevicesController extends ApiController
             }
         }
 
-        if($success){
+        if ($success) {
             DB::commit();
+
             return $this->response()->item($device, new DeviceTransformer(), ['key' => 'devices'])->setStatusCode($this->status_codes['created']);
         } else {
             DB::rollBack();
+
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
     }
 
     /**
-     * Create a new device
+     * Create a new device.
      *
      * @return \Dingo\Api\Http\Response
      */
@@ -321,8 +324,9 @@ class DevicesController extends ApiController
         /*
          * Checks if Json has data, data-type & data-attributes.
          */
-        if(!$this->isJsonCorrect($request, 'devices')){
+        if (!$this->isJsonCorrect($request, 'devices')) {
             $error['errors']['json'] = Lang::get('messages.InvalidJson');
+
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         } else {
             $data = $request->all()['data'];
@@ -348,15 +352,14 @@ class DevicesController extends ApiController
          * Check if Json has relationships to continue or if not and commit + return.
          */
         if (isset($data['relationships'])) {
-
             $dataRelationships = $data['relationships'];
 
             if (isset($dataRelationships['images'])) {
                 if (isset($dataRelationships['images']['data'])) {
                     $dataImages = $this->parseJsonToArray($dataRelationships['images']['data'], 'images');
                     try {
-                        $device->images()->sync($dataImages);    
-                    } catch (\Exception $e){
+                        $device->images()->sync($dataImages);
+                    } catch (\Exception $e) {
                         $error['errors']['images'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Device', 'option' => 'created', 'include' => 'Images']);
                         //$error['errors']['Message'] = $e->getMessage();
                     }
@@ -367,8 +370,8 @@ class DevicesController extends ApiController
                 if (isset($dataRelationships['assets']['data'])) {
                     $dataAssets = $this->parseJsonToArray($dataRelationships['assets']['data'], 'assets');
                     try {
-                        $device->assets()->sync($dataAssets);    
-                    } catch (\Exception $e){
+                        $device->assets()->sync($dataAssets);
+                    } catch (\Exception $e) {
                         $error['errors']['assets'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Device', 'option' => 'created', 'include' => 'Assets']);
                         //$error['errors']['Message'] = $e->getMessage();
                     }
@@ -453,35 +456,39 @@ class DevicesController extends ApiController
             }
         }
 
-        if($success){
+        if ($success) {
             DB::commit();
+
             return $this->response()->item($device, new DeviceTransformer(), ['key' => 'devices'])->setStatusCode($this->status_codes['created']);
         } else {
             DB::rollBack();
+
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
     }
 
     /**
-     * Delete a device
+     * Delete a device.
      *
      * @param $id
      */
     public function delete($id)
     {
         $device = Device::find($id);
-        if ($device <> null) {
+        if ($device != null) {
             $this->device->deleteById($id);
         } else {
-            $error['errors']['delete'] = Lang::get('messages.NotExistClass', ['class' => 'Device']);   
+            $error['errors']['delete'] = Lang::get('messages.NotExistClass', ['class' => 'Device']);
+
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
-        
-        $device = Device::find($id);        
-        if($device == null){
-            return array("success" => true);
+
+        $device = Device::find($id);
+        if ($device == null) {
+            return array('success' => true);
         } else {
-            $error['errors']['delete'] = Lang::get('messages.NotDeletedClass', ['class' => 'Device']);   
+            $error['errors']['delete'] = Lang::get('messages.NotDeletedClass', ['class' => 'Device']);
+
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
     }
@@ -495,7 +502,7 @@ class DevicesController extends ApiController
     /*
      *      Checks if an ARRAY has repeated rows and returns an ARRAY without them.
      *
-     *      @param: 
+     *      @param:
      *          "prices" : {
      *              "data" : [
      *                  {
@@ -539,27 +546,25 @@ class DevicesController extends ApiController
     {
         $dataAux = array();
 
-        for ($j = 0; $j < count($data); $j++) {
-
+        for ($j = 0; $j < count($data); ++$j) {
             if ($dataAux == null) {
                 array_push($dataAux, $data[$j]);
             } else {
                 $save = true;
 
-                for ($k = 0; $k < count($dataAux); $k++) {
-
+                for ($k = 0; $k < count($dataAux); ++$k) {
                     $esIgual = true;
 
-                    if ($dataAux[$k]['capacityId'] <> $data[$j]['capacityId']) {
+                    if ($dataAux[$k]['capacityId'] != $data[$j]['capacityId']) {
                         $esIgual = $esIgual && false;
                     }
-                    if ($dataAux[$k]['styleId'] <> $data[$j]['styleId']) {
+                    if ($dataAux[$k]['styleId'] != $data[$j]['styleId']) {
                         $esIgual = $esIgual && false;
                     }
-                    if ($dataAux[$k]['carrierId'] <> $data[$j]['carrierId']) {
+                    if ($dataAux[$k]['carrierId'] != $data[$j]['carrierId']) {
                         $esIgual = $esIgual && false;
                     }
-                    if ($dataAux[$k]['companyId'] <> $data[$j]['companyId']) {
+                    if ($dataAux[$k]['companyId'] != $data[$j]['companyId']) {
                         $esIgual = $esIgual && false;
                     }
 
@@ -576,13 +581,14 @@ class DevicesController extends ApiController
                 }
             }
         }
+
         return $dataAux;
     }
 
     /*
      *      Checks if an ARRAY param of Prices has information that is equal to the other information provided.
      *
-     *      @param: 
+     *      @param:
      *          array (size=9) (prices)
      *              'type' => string 'prices' (length=6)
      *              'capacityId' => int 1
@@ -615,9 +621,7 @@ class DevicesController extends ApiController
 
         $existsCapacity = false;
         if (isset($price['capacityId'])) {
-
             foreach ($modifications as $mod) {
-
                 $modification = $modInterface->byId($mod);
                 $reflectorResponse = new \ReflectionClass($modification);
                 $classResponse = $reflectorResponse->getProperty('attributes');
@@ -632,16 +636,13 @@ class DevicesController extends ApiController
             }
 
             if (!$existsCapacity) {
-                return array("bool" => false, "error" => "Capacity Not Found", "id" => $price['capacityId']);
+                return array('bool' => false, 'error' => 'Capacity Not Found', 'id' => $price['capacityId']);
             }
         }
 
-
         $existsStyle = false;
         if (isset($price['styleId'])) {
-
             foreach ($modifications as $mod) {
-
                 $modification = $modInterface->byId($mod);
                 $reflectorResponse = new \ReflectionClass($modification);
                 $classResponse = $reflectorResponse->getProperty('attributes');
@@ -656,13 +657,12 @@ class DevicesController extends ApiController
             }
 
             if (!$existsStyle) {
-                return array("bool" => false, "error" => "Style Not Found", "id" => $price['styleId']);
+                return array('bool' => false, 'error' => 'Style Not Found', 'id' => $price['styleId']);
             }
         }
 
         $existsCarrier = false;
         if (isset($price['carrierId'])) {
-
             foreach ($carriers as $as) {
                 if ($as == $price['carrierId']) {
                     $existsCarrier = true;
@@ -670,13 +670,12 @@ class DevicesController extends ApiController
             }
 
             if (!$existsCarrier) {
-                return array("bool" => false, "error" => "Carrier Not Found", "id" => $price['carrierId']);
+                return array('bool' => false, 'error' => 'Carrier Not Found', 'id' => $price['carrierId']);
             }
         }
 
         $existsCompany = false;
         if (isset($price['companyId'])) {
-
             foreach ($companies as $as) {
                 if ($as == $price['companyId']) {
                     $existsCompany = true;
@@ -684,10 +683,10 @@ class DevicesController extends ApiController
             }
 
             if (!$existsCompany) {
-                return array("bool" => false, "error" => "Company Not Found", "id" => $price['companyId']);
+                return array('bool' => false, 'error' => 'Company Not Found', 'id' => $price['companyId']);
             }
         }
 
-        return array("bool" => true, "error" => "No Error", "id" => 0);
+        return array('bool' => true, 'error' => 'No Error', 'id' => 0);
     }
 }

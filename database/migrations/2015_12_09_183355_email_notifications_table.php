@@ -7,16 +7,14 @@ class EmailNotificationsTable extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
-        Schema::create('email_notifications', function ( $table) {
+        Schema::create('email_notifications', function ($table) {
             $table->increments('id');
             $table->bigInteger('user_id')->index()->unsigned();
             $table->integer('category_id')->index()->unsigned();
-            $table->mediumText("data")->nullable();
+            $table->mediumText('data')->nullable();
             $table->tinyInteger('read')->default(0);
             $table->timestamp('sent_at');
             $table->timestamps();
@@ -25,8 +23,6 @@ class EmailNotificationsTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
     public function down()
     {

@@ -1,13 +1,11 @@
 <?php
 /**
- * OAuth 2.0 SSO grant
+ * OAuth 2.0 SSO grant.
  *
- * @package     WA\Auth
  * @author      Agustí Dosaiguas
- *
- *
  * @copyright   Copyright (c) Alex Bilbie
  * @license     http://mit-license.org/
+ *
  * @link        https://github.com/thephpleague/oauth2-server
  */
 
@@ -20,53 +18,47 @@ use League\OAuth2\Server\Entity\SessionEntity;
 use League\OAuth2\Server\Event;
 use League\OAuth2\Server\Exception;
 use League\OAuth2\Server\Util\SecureKey;
-
 use League\OAuth2\Server\Grant\AbstractGrant;
-
-use Log;
-use WA\DataStore\Employee\Employee;
 use Cache;
 use Session;
 
 /**
- * SSO grant class
+ * SSO grant class.
  */
 class SSOGrant extends AbstractGrant
 {
     /**
-     * Grant identifier
+     * Grant identifier.
      *
      * @var string
      */
     protected $identifier = 'sso';
 
     /**
-     * Response type
+     * Response type.
      *
      * @var string
      */
     protected $responseType;
 
     /**
-     * Callback to authenticate a user's name and password
+     * Callback to authenticate a user's name and password.
      *
      * @var callable
      */
     protected $callback;
 
     /**
-     * Access token expires in override
+     * Access token expires in override.
      *
      * @var int
      */
     protected $accessTokenTTL;
 
     /**
-     * Set the callback to verify a user's username and password
+     * Set the callback to verify a user's username and password.
      *
      * @param callable $callback The callback function
-     *
-     * @return void
      */
     public function setVerifyCredentialsCallback(callable $callback)
     {
@@ -74,7 +66,7 @@ class SSOGrant extends AbstractGrant
     }
 
     /**
-     * Return the callback function
+     * Return the callback function.
      *
      * @return callable
      *
@@ -90,7 +82,7 @@ class SSOGrant extends AbstractGrant
     }
 
     /**
-     * Complete the password grant
+     * Complete the password grant.
      *
      * @return array
      *
@@ -122,10 +114,10 @@ class SSOGrant extends AbstractGrant
             $this->server->getEventEmitter()->emit(new Event\ClientAuthenticationFailedEvent($this->server->getRequest()));
             throw new Exception\InvalidClientException();
         }
-        
+
         // Get the UUID from url.
         $uuid = app('request')->input('uuid');
-   
+
         // Check if user's username and password are correct
         // IF FAILS CHECK storage/framwork/cache permissions.
         $userId = call_user_func($this->getVerifyCredentialsCallback(), $uuid);
@@ -182,6 +174,7 @@ class SSOGrant extends AbstractGrant
 
         $response = $this->server->getTokenType()->generateResponse();
         $response['user_id'] = $userId;
+
         return $response;
     }
 }

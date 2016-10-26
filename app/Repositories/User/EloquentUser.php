@@ -15,12 +15,10 @@ use Webpatser\Uuid\Uuid;
 
 class EloquentUser extends AbstractRepository implements UserInterface
 {
-
     /**
      * @var \Illuminate\Database\Eloquent\Model
      */
     protected $model;
-
 
     /**
      * @var \WA\Repositories\UdlValue\UdlValueInterface
@@ -33,9 +31,9 @@ class EloquentUser extends AbstractRepository implements UserInterface
     protected $udl;
 
     /**
-     * @param Model $model
+     * @param Model             $model
      * @param UdlValueInterface $udlValue
-     * @param UdlInterface $udl
+     * @param UdlInterface      $udl
      */
     public function __construct(
         Model $model,
@@ -51,10 +49,10 @@ class EloquentUser extends AbstractRepository implements UserInterface
     /**
      * Get paginated user.
      *
-     * @param int $perPage
+     * @param int  $perPage
      * @param bool $paginate
      *
-     * @return Object as Collection of object information, | Paginator Collection if pagination is true (default)
+     * @return object as Collection of object information, | Paginator Collection if pagination is true (default)
      */
     public function byPage($paginate = true, $perPage = 25)
     {
@@ -66,7 +64,7 @@ class EloquentUser extends AbstractRepository implements UserInterface
             // manually run the queries
             $response = \DB::table($ownTable)
                 ->select(
-                    $ownTable . '.id',
+                    $ownTable.'.id',
                     'firstName',
                     'lastName',
                     'email',
@@ -74,7 +72,7 @@ class EloquentUser extends AbstractRepository implements UserInterface
                     'c.name as companyName',
                     'identification'
                 )
-                ->join('companies as c', 'c.id', '=', $ownTable . '.companyId')
+                ->join('companies as c', 'c.id', '=', $ownTable.'.companyId')
                 ->get();
 
             return $response;
@@ -87,9 +85,9 @@ class EloquentUser extends AbstractRepository implements UserInterface
      * Get the object by search.
      *
      * @param string $query
-     * @param int $page
-     * @param int $limit
-     * @param bool $paginate
+     * @param int    $page
+     * @param int    $limit
+     * @param bool   $paginate
      *
      * @return \StdClass
      */
@@ -135,17 +133,17 @@ class EloquentUser extends AbstractRepository implements UserInterface
     }
 
     /**
-     * @param int $id
+     * @param int  $id
      * @param bool $active
      *
-     * @return Object Object of employee information
+     * @return object Object of employee information
      */
     public function byId($id, $active = null)
     {
         $query = $this->applyCriteria($this->model);
 
         if (!empty($active)) {
-            $query = $query->where('isActive', (int)$active);
+            $query = $query->where('isActive', (int) $active);
         }
 
         $response = null;
@@ -181,14 +179,14 @@ class EloquentUser extends AbstractRepository implements UserInterface
         // manually run the queries
         $response = \DB::table($ownTable)
             ->select(
-                $ownTable . '.id',
+                $ownTable.'.id',
                 'firstName',
                 'lastName', 'email',
                 'supervisorEmail',
                 'c.name as companyName',
                 'identification'
             )
-            ->join('companies as c', 'c.id', '=', $ownTable . '.companyId')
+            ->join('companies as c', 'c.id', '=', $ownTable.'.companyId')
             ->where('companyId', $companyId)
             ->where('deleted_at', null)
             ->get();
@@ -238,7 +236,6 @@ class EloquentUser extends AbstractRepository implements UserInterface
         array $data,
         array $udlValues = []
     ) {
-
         $tmp_password = null;
 
         if (isset($data['udlValues'])) {
@@ -278,36 +275,36 @@ class EloquentUser extends AbstractRepository implements UserInterface
         }
 
         $userData = [
-            'supervisorEmail'       => $sup_email = isset($data['supervisorEmail']) ? strtolower($data['supervisorEmail']) : null,
-            'supervisorId'          => isset($data['supervisorId']) ? $data['supervisorId'] : null,
-            'firstName'             => isset($data['firstName']) ? $data['firstName'] : null,
-            'alternateFirstName'    => isset($data['alternateFirstName']) ? $data['alternateFirstName'] : null,
-            'lastName'              => isset($data['lastName']) ? $data['lastName'] : null,
-            'companyId'             => isset($data['companyId']) ? $data['companyId'] : 0,
-            'companyExternalId'     => isset($data['companyExternalId']) ? $data['companyExternalId'] : $this->getCompanyExternalId($data['companyId']),
+            'supervisorEmail' => $sup_email = isset($data['supervisorEmail']) ? strtolower($data['supervisorEmail']) : null,
+            'supervisorId' => isset($data['supervisorId']) ? $data['supervisorId'] : null,
+            'firstName' => isset($data['firstName']) ? $data['firstName'] : null,
+            'alternateFirstName' => isset($data['alternateFirstName']) ? $data['alternateFirstName'] : null,
+            'lastName' => isset($data['lastName']) ? $data['lastName'] : null,
+            'companyId' => isset($data['companyId']) ? $data['companyId'] : 0,
+            'companyExternalId' => isset($data['companyExternalId']) ? $data['companyExternalId'] : $this->getCompanyExternalId($data['companyId']),
             'companyUserIdentifier' => isset($data['companyUserIdentifier']) ?
                 $id = $data['companyUserIdentifier'] :
                 $id = $data['identification'],
-            'isActive'              => isset($data['isActive']) ? $data['isActive'] : 0,
-            'syncId'                => isset($data['syncId']) ? $data['syncId'] : null,
-            'defaultLocationId'     => isset($data['defaultLocationId']) ? $data['defaultLocationId'] : 236, //US
-            'defaultLang'           => isset($data['defaultLang']) ? $data['defaultLang'] : 'en',
-            'email'                 => strtolower(isset($data['email']) ? strtolower($data['email']) : null),
-            'alternateEmail'        => strtolower(isset($data['alternateEmail']) ? strtolower($data['alternateEmail']) : null),
-            'password'              => $pwd = isset($data['password']) ? bcrypt($data['password']) : $tmp_password,
+            'isActive' => isset($data['isActive']) ? $data['isActive'] : 0,
+            'syncId' => isset($data['syncId']) ? $data['syncId'] : null,
+            'defaultLocationId' => isset($data['defaultLocationId']) ? $data['defaultLocationId'] : 236, //US
+            'defaultLang' => isset($data['defaultLang']) ? $data['defaultLang'] : 'en',
+            'email' => strtolower(isset($data['email']) ? strtolower($data['email']) : null),
+            'alternateEmail' => strtolower(isset($data['alternateEmail']) ? strtolower($data['alternateEmail']) : null),
+            'password' => $pwd = isset($data['password']) ? bcrypt($data['password']) : $tmp_password,
             'password_confirmation' => $pwd,
-            'confirmed'             => isset($data['confirmed']) ? $data['confirmed'] : 0,
-            'username'              => isset($data['username']) ? $data['username'] : null,
-            'confirmation_code'     => md5(uniqid(mt_rand(), true)),
-            'identification'        => $data['identification'],
-            'notify'                => isset($data['notify']) ? $data['notify'] : 0,
-            'isSupervisor'          => isset($data['isSupervisor']) ? $data['isSupervisor'] : 0,
-            'isValidator'           => isset($data['isValidator']) ? $data['isValidator'] : 0,
-            'notes'                 => isset($data['notes']) ? $data['notes'] : '',
-            'level'                 => isset($data['level']) ? $data['level'] : '',
-            'evDepartmentId'        => (isset($data['evDepartmentId'])) ? $data['evDepartmentId'] : '',
-            'approverId'            => isset($data['approverId']) && isset($data['approverId']) ? $data['approverId'] : 0,
-            'externalSupervisorId'  => $this->getExternalSupervisorId($sup_email)
+            'confirmed' => isset($data['confirmed']) ? $data['confirmed'] : 0,
+            'username' => isset($data['username']) ? $data['username'] : null,
+            'confirmation_code' => md5(uniqid(mt_rand(), true)),
+            'identification' => $data['identification'],
+            'notify' => isset($data['notify']) ? $data['notify'] : 0,
+            'isSupervisor' => isset($data['isSupervisor']) ? $data['isSupervisor'] : 0,
+            'isValidator' => isset($data['isValidator']) ? $data['isValidator'] : 0,
+            'notes' => isset($data['notes']) ? $data['notes'] : '',
+            'level' => isset($data['level']) ? $data['level'] : '',
+            'evDepartmentId' => (isset($data['evDepartmentId'])) ? $data['evDepartmentId'] : '',
+            'approverId' => isset($data['approverId']) && isset($data['approverId']) ? $data['approverId'] : 0,
+            'externalSupervisorId' => $this->getExternalSupervisorId($sup_email),
 
         ];
 
@@ -322,10 +319,9 @@ class EloquentUser extends AbstractRepository implements UserInterface
                 $this->syncUDLValues($user, $udlValues);
             }*/
 
-
             if (!empty($data['user_roles']) && !is_null($user->id)) {
                 foreach ($data['user_roles'] as $role) {
-                    $user->roles()->attach($user->id, ['role_id' => (int)$role]);
+                    $user->roles()->attach($user->id, ['role_id' => (int) $role]);
                     $user->save();
                 }
             } else {
@@ -339,7 +335,6 @@ class EloquentUser extends AbstractRepository implements UserInterface
             if (!empty($data['udls']) && !is_null($user->id)) {
                 foreach ($data['udls'] as $udl) {
                     foreach ($udl as $udl_id => $udl_value) {
-
                         $udlValueId = $udl_value['value'];
                     }
 
@@ -347,14 +342,13 @@ class EloquentUser extends AbstractRepository implements UserInterface
                         continue;
                     }
 
-                    $user->udlValues()->attach($user->id, ['udlValueId' => (int)$udlValueId]);
+                    $user->udlValues()->attach($user->id, ['udlValueId' => (int) $udlValueId]);
                 }
             }
 
             return $user;
-
         } catch (\Exception $e) {
-            Log::error('[ ' . get_class() . " | " . $e->getLine() . ' ] | There was an issue: ' . $e->getMessage());
+            Log::error('[ '.get_class().' | '.$e->getLine().' ] | There was an issue: '.$e->getMessage());
         }
     }
 
@@ -378,11 +372,10 @@ class EloquentUser extends AbstractRepository implements UserInterface
      *
      * @param string $userEmail
      *
-     * @return Object of employee information
+     * @return object of employee information
      */
     public function byEmail($userEmail)
     {
-
         return
             $this->model->where('email', $userEmail)
                 ->first();
@@ -421,13 +414,11 @@ class EloquentUser extends AbstractRepository implements UserInterface
         array $data,
         array $udlValues = []
     ) {
-
         if (empty($udlValues) && (isset($data['udlValues']) && !empty($data['udlValues']))) {
             $udlValues = $this->compactUdlValues($data['udlValues'], $data['companyId']);
         }
 
         $user = $this->byCompanyIdOrEmail($data);
-
 
         if (!$user) {
             return false;
@@ -468,23 +459,21 @@ class EloquentUser extends AbstractRepository implements UserInterface
         $data['isValidator'] = $user->isValidator;
         $user->syncId = isset($data['syncId']) ? $data['syncId'] : $user->syncId;
 
-
         $data['approverId'] = 0;
 
         if (!$user->save()) {
             return false;
-        };
+        }
 
         /* if (!empty($udlValues)) {
              $this->syncUDLValues($user, $udlValues);
          }*/
 
-
         //Save User Roles
         $user->roles()->detach();
         if (!empty($data['user_roles']) && !is_null($user->id)) {
             foreach ($data['user_roles'] as $role) {
-                $user->roles()->attach($user->id, ['role_id' => (int)$role]);
+                $user->roles()->attach($user->id, ['role_id' => (int) $role]);
                 $user->save();
             }
         }
@@ -494,7 +483,6 @@ class EloquentUser extends AbstractRepository implements UserInterface
         if (!empty($data['udls']) && !is_null($user->id)) {
             foreach ($data['udls'] as $udl) {
                 foreach ($udl as $udl_id => $udl_value) {
-
                     $udlValueId = $udl_value['value'];
                 }
 
@@ -502,7 +490,7 @@ class EloquentUser extends AbstractRepository implements UserInterface
                     continue;
                 }
 
-                $user->udlValues()->attach($user->id, ['udlValueId' => (int)$udlValueId]);
+                $user->udlValues()->attach($user->id, ['udlValueId' => (int) $udlValueId]);
             }
         }
 
@@ -511,7 +499,7 @@ class EloquentUser extends AbstractRepository implements UserInterface
 
     /**
      * For every employee, attach their respective UDL values.
-     * this expects an array of the key -> value: udl Name = udlValue pairing
+     * this expects an array of the key -> value: udl Name = udlValue pairing.
      *
      * @param Model $user
      * @param array $values [(string) udl => (string) udlValue]
@@ -521,18 +509,13 @@ class EloquentUser extends AbstractRepository implements UserInterface
     protected function syncUDLValues(Model $user, array $values)
     {
         foreach ($values as $udl => $value) {
-
             $base_udl_value = null;
             $udl_id = null;
 
-
             if (!is_array($value)) {
-
                 $udl_id = !is_null($udl_val = $this->udl->byName($udl)) ? $udl_val->id : null;
                 $base_udl_value = $value;
-
             } else {
-
                 foreach ($value as $udl_id_init => $base_udl_value_init) {
                     $udl_id = $udl_id_init;
                     $base_udl_value = $base_udl_value_init['value'];
@@ -546,14 +529,11 @@ class EloquentUser extends AbstractRepository implements UserInterface
             $udl_value = $this->udlValue->byNameOrCreate($base_udl_value, $udl_id, $user['companyId']);
 
             if (isset($udl_value['id'])) {
-
                 $udlValues[] = $udl_value['id'];
-
             } else {
-                Log::info("The UDL: " . $udl_value . "was not found");
+                Log::info('The UDL: '.$udl_value.'was not found');
                 continue;
             }
-
         }
 
         if (!empty($udlValues)) {
@@ -563,13 +543,12 @@ class EloquentUser extends AbstractRepository implements UserInterface
         return true;
     }
 
-
     /**
      * Get employee information by supervisor email.
      *
      * @param string $email
      *
-     * @return Object of employee information | null
+     * @return object of employee information | null
      */
     public function bySupervisorEmail($email)
     {
@@ -604,14 +583,11 @@ class EloquentUser extends AbstractRepository implements UserInterface
             }
 
             return true;
-
         } catch (\Exception $e) {
-
-            Log::error("There was an issue assigning employee:  $user->email  to $supervisor->email  <<>>" . $e->getMessage());
+            Log::error("There was an issue assigning employee:  $user->email  to $supervisor->email  <<>>".$e->getMessage());
 
             return;
         }
-
     }
 
     /**
@@ -619,7 +595,7 @@ class EloquentUser extends AbstractRepository implements UserInterface
      *
      * @param string $email of employee
      *
-     * @return Object of employee information
+     * @return object of employee information
      */
     public function getSupervisor($email = null)
     {
@@ -644,7 +620,7 @@ class EloquentUser extends AbstractRepository implements UserInterface
      * @param string $companyName
      * @param string $department
      *
-     * @return Object object of validator
+     * @return object object of validator
      */
     public function getValidators($companyName = null, $department = null)
     {
@@ -667,7 +643,7 @@ class EloquentUser extends AbstractRepository implements UserInterface
     /**
      * Get the transformer used by this model.
      *
-     * @return Object
+     * @return object
      */
     public function getTransformer()
     {
@@ -679,7 +655,7 @@ class EloquentUser extends AbstractRepository implements UserInterface
      *
      * @param $name
      *
-     * @return Object of employee
+     * @return object of employee
      */
     public function byUsernameOrEmail($name)
     {
@@ -698,7 +674,7 @@ class EloquentUser extends AbstractRepository implements UserInterface
      *
      * @param string $token
      *
-     * @return Object of employee information
+     * @return object of employee information
      */
     public function byToken($token)
     {
@@ -722,7 +698,7 @@ class EloquentUser extends AbstractRepository implements UserInterface
     /**
      * Delete an Users.
      *
-     * @param int $id
+     * @param int  $id
      * @param bool $soft true soft deletes
      *
      * @return bool
@@ -748,30 +724,28 @@ class EloquentUser extends AbstractRepository implements UserInterface
     public function getMappableFields()
     {
         return [
-            'Main Email'             => 'email',
-            'Alternate Email'        => 'alternateEmail',
+            'Main Email' => 'email',
+            'Alternate Email' => 'alternateEmail',
 //            'User Name' => 'username',
-            'First Name'             => 'firstName',
-            'Alternate First Name'   => 'alternateFirstName',
-            'Last Name'              => 'lastName',
-            'Supervisor Email'       => 'supervisorEmail',
+            'First Name' => 'firstName',
+            'Alternate First Name' => 'alternateFirstName',
+            'Last Name' => 'lastName',
+            'Supervisor Email' => 'supervisorEmail',
             'Company Identification' => 'companyUserIdentifier',
-            'Location'               => 'defaultLocationId',
-            'Notes'                  => 'notes',
+            'Location' => 'defaultLocationId',
+            'Notes' => 'notes',
         ];
     }
 
-
     /**
-     * Get supervisor information by companyId
+     * Get supervisor information by companyId.
      *
      * @param int $companyId of company selected
      *
-     * @return Array of employee supervisor information
+     * @return array of employee supervisor information
      */
     public function getAllSupervisors($companyId = null)
     {
-
         if (is_null($companyId)) {
             return null;
         }
@@ -782,15 +756,14 @@ class EloquentUser extends AbstractRepository implements UserInterface
     }
 
     /**
-     * Get validator information by companyId
+     * Get validator information by companyId.
      *
      * @param int $companyId of company selected
      *
-     * @return Array of employee validator information
+     * @return array of employee validator information
      */
     public function getAllValidators($companyId = null)
     {
-
         if (is_null($companyId)) {
             return null;
         }
@@ -801,7 +774,7 @@ class EloquentUser extends AbstractRepository implements UserInterface
     }
 
     /**
-     * Gets the external Id of a company (uses this as a last resort if the ID is not provided in the load)
+     * Gets the external Id of a company (uses this as a last resort if the ID is not provided in the load).
      *
      * @param                  $companyId
      * @param CompanyInterface $company
@@ -822,7 +795,7 @@ class EloquentUser extends AbstractRepository implements UserInterface
     }
 
     /**
-     * If a supervisor Id is not provided, get it
+     * If a supervisor Id is not provided, get it.
      *
      * @param $supervisorEmail
      *
@@ -840,7 +813,7 @@ class EloquentUser extends AbstractRepository implements UserInterface
     }
 
     /**
-     * Get users by their identification (generated CLEAN ID)
+     * Get users by their identification (generated CLEAN ID).
      *
      * @param string $identification
      *
@@ -853,12 +826,11 @@ class EloquentUser extends AbstractRepository implements UserInterface
                 ->first();
     }
 
-
     /**
-     * Compact UDL values into a format suitable to easily gettting the UDL/Value/Paths
+     * Compact UDL values into a format suitable to easily gettting the UDL/Value/Paths.
      *
      * @param array $udlValues
-     * @param int $companyId
+     * @param int   $companyId
      *
      * @return array
      */
@@ -870,7 +842,7 @@ class EloquentUser extends AbstractRepository implements UserInterface
             $udlId = $this->udl->byName($key, $companyId)['id'];
 
             $compactValues[] = [
-                $udlId => ['value' => $value]
+                $udlId => ['value' => $value],
             ];
         }
 
@@ -878,7 +850,7 @@ class EloquentUser extends AbstractRepository implements UserInterface
     }
 
     /**
-     * Get the departmental name
+     * Get the departmental name.
      *
      * @param                            $externalDepartmentPathId
      * @param UdlValuePathInterface|null $udlValuePath
@@ -893,7 +865,7 @@ class EloquentUser extends AbstractRepository implements UserInterface
     }
 
     /**
-     * Get an employee by company ID Or Email
+     * Get an employee by company ID Or Email.
      *
      * @param array $data
      *
@@ -924,11 +896,11 @@ class EloquentUser extends AbstractRepository implements UserInterface
     {
         $externalIdColumnName = 'externalId';
 
-        return (int)$this->model->max($externalIdColumnName);
+        return (int) $this->model->max($externalIdColumnName);
     }
 
     /**
-     * Get the external Id of the employee
+     * Get the external Id of the employee.
      *
      * @param $identifier
      *
@@ -940,7 +912,7 @@ class EloquentUser extends AbstractRepository implements UserInterface
     }
 
     /**
-     * Update External Id based on Identifier
+     * Update External Id based on Identifier.
      *
      * @param $identification
      * @param $externalId
@@ -949,14 +921,13 @@ class EloquentUser extends AbstractRepository implements UserInterface
      */
     public function updateExternalId($identification, $externalId)
     {
-
         return
             $this->model->where('identification', $identification)
                 ->update(['externalId' => $externalId]);
     }
 
     /**
-     * Get identification values of users with missing external Ids
+     * Get identification values of users with missing external Ids.
      *
      * @return array
      */
@@ -964,13 +935,13 @@ class EloquentUser extends AbstractRepository implements UserInterface
     {
         return $this->model
             ->where('externalId', null)
-            ->where('companyId', '<>', 9)# Hard exclude WA users for now.
+            ->where('companyId', '<>', 9)// Hard exclude WA users for now.
             ->where('confirmed', 1)
             ->get()->toArray();
     }
 
     /**
-     * Get the Roles assigned to a user by user Id
+     * Get the Roles assigned to a user by user Id.
      *
      * @param int
      *

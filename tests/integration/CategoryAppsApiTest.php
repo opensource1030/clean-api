@@ -1,25 +1,21 @@
 <?php
 
 use Laravel\Lumen\Testing\DatabaseMigrations;
-
 use WA\DataStore\Category\CategoryApps;
-use WA\DataStore\App\App;
 use WA\DataStore\Image\Image;
-
-use WA\Http\Controllers\CategoryAppsController;
 
 class CategoryAppsApiTest extends TestCase
 {
     use DatabaseMigrations;
 
-    public function testGetCategoryApps() {
-
+    public function testGetCategoryApps()
+    {
         factory(\WA\DataStore\Category\CategoryApp::class, 40)->create();
 
         $res = $this->json('GET', 'categoryapps')
             ->seeJsonStructure([
                 'data' => [
-                    0 => [  
+                    0 => [
                         'type',
                         'id',
                         'attributes' => [
@@ -27,18 +23,18 @@ class CategoryAppsApiTest extends TestCase
                             'created_at' => [
                                 'date',
                                 'timezone_type',
-                                'timezone'
+                                'timezone',
                             ],
                             'updated_at' => [
                                 'date',
                                 'timezone_type',
-                                'timezone'
-                            ]
+                                'timezone',
+                            ],
                         ],
                         'links' => [
-                            'self'
-                        ]
-                    ]
+                            'self',
+                        ],
+                    ],
                 ],
                 'meta' => [
                     'sort',
@@ -49,26 +45,26 @@ class CategoryAppsApiTest extends TestCase
                         'count',
                         'per_page',
                         'current_page',
-                        'total_pages'
-                    ]
+                        'total_pages',
+                    ],
                 ],
                 'links' => [
                     'self',
                     'first',
                     'next',
-                    'last'
-                ]
+                    'last',
+                ],
             ]);
     }
 
-    public function testGetCategoryAppByIdIfExists() {
-      
+    public function testGetCategoryAppByIdIfExists()
+    {
         $categoryApp = factory(\WA\DataStore\Category\CategoryApp::class)->create();
 
         $res = $this->json('GET', 'categoryapps/'.$categoryApp->id)
             ->seeJson([
                 'type' => 'categoryapps',
-                'name'=> $categoryApp->name
+                'name' => $categoryApp->name,
             ]);
 
         $res->seeJsonStructure([
@@ -80,23 +76,23 @@ class CategoryAppsApiTest extends TestCase
                     'created_at' => [
                         'date',
                         'timezone_type',
-                        'timezone'
+                        'timezone',
                     ],
                     'updated_at' => [
                         'date',
                         'timezone_type',
-                        'timezone'
-                    ]
+                        'timezone',
+                    ],
                 ],
                 'links' => [
-                    'self'
-                ]
-            ]
+                    'self',
+                ],
+            ],
         ]);
     }
 
-    public function testGetCategoryAppByIdIfNoExists() {
-
+    public function testGetCategoryAppByIdIfNoExists()
+    {
         $categoryAppId = factory(\WA\DataStore\Category\CategoryApp::class)->create()->id;
         $categoryAppId = $categoryAppId + 10;
 
@@ -104,8 +100,8 @@ class CategoryAppsApiTest extends TestCase
         $this->assertEquals(404, $response->status());
     }
 
-    public function testGetCategoryAppByIdandIncludesApps(){
-
+    public function testGetCategoryAppByIdandIncludesApps()
+    {
         $categoryApp = factory(\WA\DataStore\Category\CategoryApp::class)->create();
 
         $app1 = factory(\WA\DataStore\App\App::class)->create()->id;
@@ -113,7 +109,7 @@ class CategoryAppsApiTest extends TestCase
 
         $dataApps = array($app1, $app2);
 
-        $categoryApp->apps()->sync($dataApps);    
+        $categoryApp->apps()->sync($dataApps);
 
         $this->json('GET', 'categoryapps/'.$categoryApp->id.'?include=apps')
             ->seeJsonStructure([
@@ -125,31 +121,31 @@ class CategoryAppsApiTest extends TestCase
                         'created_at' => [
                             'date',
                             'timezone_type',
-                            'timezone'
+                            'timezone',
                         ],
                         'updated_at' => [
                             'date',
                             'timezone_type',
-                            'timezone'
-                        ]
+                            'timezone',
+                        ],
                     ],
                     'links' => [
-                        'self'
+                        'self',
                     ],
                     'relationships' => [
                         'apps' => [
                             'links' => [
                                 'self',
-                                'related'
+                                'related',
                             ],
                             'data' => [
-                                0 => [  
+                                0 => [
                                     'type',
-                                    'id'
-                                ]
-                            ]
-                        ]
-                    ]
+                                    'id',
+                                ],
+                            ],
+                        ],
+                    ],
                 ],
                 'included' => [
                     0 => [
@@ -161,16 +157,16 @@ class CategoryAppsApiTest extends TestCase
                             'description',
                         ],
                         'links' => [
-                            'self'
-                        ]
-                    ]
+                            'self',
+                        ],
+                    ],
 
-                ]
+                ],
             ]);
     }
 
-    public function testGetCategoryAppByIdandIncludesImages(){
-
+    public function testGetCategoryAppByIdandIncludesImages()
+    {
         $categoryApp = factory(\WA\DataStore\Category\CategoryApp::class)->create();
 
         $image1 = factory(\WA\DataStore\Image\Image::class)->create()->id;
@@ -190,31 +186,31 @@ class CategoryAppsApiTest extends TestCase
                         'created_at' => [
                             'date',
                             'timezone_type',
-                            'timezone'
+                            'timezone',
                         ],
                         'updated_at' => [
                             'date',
                             'timezone_type',
-                            'timezone'
-                        ]
+                            'timezone',
+                        ],
                     ],
                     'links' => [
-                        'self'
+                        'self',
                     ],
                     'relationships' => [
                         'images' => [
                             'links' => [
                                 'self',
-                                'related'
+                                'related',
                             ],
                             'data' => [
-                                0 => [  
+                                0 => [
                                     'type',
-                                    'id'
-                                ]
-                            ]
-                        ]
-                    ]
+                                    'id',
+                                ],
+                            ],
+                        ],
+                    ],
                 ],
                 'included' => [
                     0 => [
@@ -226,19 +222,19 @@ class CategoryAppsApiTest extends TestCase
                             'mimeType',
                             'extension',
                             'size',
-                            'url'
+                            'url',
                         ],
                         'links' => [
-                            'self'
-                        ]
-                    ]
+                            'self',
+                        ],
+                    ],
 
-                ]
+                ],
             ]);
     }
 
-    public function testCreateCategoryApp() {
-
+    public function testCreateCategoryApp()
+    {
         $categoryApp = factory(\WA\DataStore\Category\CategoryApp::class)->create();
 
         $app1 = factory(\WA\DataStore\App\App::class)->create()->id;
@@ -249,233 +245,238 @@ class CategoryAppsApiTest extends TestCase
 
         $this->json('POST', 'categoryapps',
             [
-                "data" => [
-                    "type" => 'categoryapps',
-                    "attributes" => [
-                        "name" => "nameCategoryApp"
+                'data' => [
+                    'type' => 'categoryapps',
+                    'attributes' => [
+                        'name' => 'nameCategoryApp',
                     ],
-                    "relationships" => [
-                        "apps" => [
-                            "data" => [
-                                [ "type" => "apps", "id" => $app1 ],
-                                [ "type" => "apps", "id" => $app2 ]
-                            ]
+                    'relationships' => [
+                        'apps' => [
+                            'data' => [
+                                ['type' => 'apps', 'id' => $app1],
+                                ['type' => 'apps', 'id' => $app2],
+                            ],
                         ],
-                        "images" => [
-                            "data" => [
-                                [ "type" => "images", "id" => $image1 ],
-                                [ "type" => "images", "id" => $image2 ]
-                            ]
-                        ]
-                    ]
-                ]
+                        'images' => [
+                            'data' => [
+                                ['type' => 'images', 'id' => $image1],
+                                ['type' => 'images', 'id' => $image2],
+                            ],
+                        ],
+                    ],
+                ],
             ]
             )->seeJson(
             [
                 'type' => 'categoryapps',
-                'name' => 'nameCategoryApp'
+                'name' => 'nameCategoryApp',
             ]);
     }
 
-    public function testCreateCategoryAppReturnNoValidData() {
+    public function testCreateCategoryAppReturnNoValidData()
+    {
         // 'data' no valid.
         $this->json('POST', 'categoryapps',
             [
                 'NoValid' => [
-                    ]
+                    ],
             ]
             )->seeJson(
             [
                 'errors' => [
-                    'json' => 'JSON is Invalid'
-                ]
+                    'json' => 'JSON is Invalid',
+                ],
             ]
         );
     }
 
-    public function testCreateCategoryAppReturnNoValidType() {
+    public function testCreateCategoryAppReturnNoValidType()
+    {
         // 'type' no valid.
         $this->json('POST', 'categoryapps',
             [
-                "data" => [
-                    "NoValid"=> 'categoryapps',
-                    "attributes"=> [
-                        "name"=> "nameCategoryApp"
-                    ]
-                ]
-                
+                'data' => [
+                    'NoValid' => 'categoryapps',
+                    'attributes' => [
+                        'name' => 'nameCategoryApp',
+                    ],
+                ],
+
             ]
             )->seeJson(
             [
                 'errors' => [
-                    'json' => 'JSON is Invalid'
-                ]
+                    'json' => 'JSON is Invalid',
+                ],
             ]
         );
     }
 
-    public function testCreateCategoryAppReturnNoValidAttributes() {
+    public function testCreateCategoryAppReturnNoValidAttributes()
+    {
         // 'attributes' no valid.
         $this->json('POST', 'categoryapps',
             [
-                "data" => [
-                    "type"=> 'categoryapps',
-                    "NoValid"=> [
-                        "name"=> "nameCategoryApp"
-                    ]
-                ]
+                'data' => [
+                    'type' => 'categoryapps',
+                    'NoValid' => [
+                        'name' => 'nameCategoryApp',
+                    ],
+                ],
             ]
             )->seeJson(
             [
                 'errors' => [
-                    'json' => 'JSON is Invalid'
-                ]
+                    'json' => 'JSON is Invalid',
+                ],
             ]
         );
     }
 
-    public function testCreateCategoryAppReturnRelationshipNoExists() {
-
+    public function testCreateCategoryAppReturnRelationshipNoExists()
+    {
         $this->json('POST', 'categoryapps',
         [
             'data' => [
                 'type' => 'categoryapps',
                 'attributes' => [
-                    'name' => 'nameCategoryApp'
+                    'name' => 'nameCategoryApp',
                 ],
                 'relationships' => [
                     'IgnoreType' => [
                         'data' => [
-                            [ 'type' => 'apps', 'id' => '1' ],
-                            [ 'type' => 'apps', 'id' => '2' ]
-                        ]
-                    ]
-                ]
-            ]
+                            ['type' => 'apps', 'id' => '1'],
+                            ['type' => 'apps', 'id' => '2'],
+                        ],
+                    ],
+                ],
+            ],
         ]
         )->seeJson(
         [
             'type' => 'categoryapps',
-            'name' => 'nameCategoryApp'
+            'name' => 'nameCategoryApp',
         ]);
     }
 
-    public function testCreateCategoryAppReturnRelationshipNoExistsData() {
-
+    public function testCreateCategoryAppReturnRelationshipNoExistsData()
+    {
         $this->json('POST', 'categoryapps',
         [
             'data' => [
                 'type' => 'categoryapps',
                 'attributes' => [
-                    'name' => 'nameCategoryApp'
+                    'name' => 'nameCategoryApp',
                 ],
                 'relationships' => [
                     'apps' => [
                         'IgnoreData' => [
-                            [ 'type' => 'apps', 'id' => '1' ],
-                            [ 'type' => 'apps', 'id' => '2' ]
-                        ]
-                    ]
-                ]
-            ]
+                            ['type' => 'apps', 'id' => '1'],
+                            ['type' => 'apps', 'id' => '2'],
+                        ],
+                    ],
+                ],
+            ],
         ]
         )->seeJson(
         [
             'type' => 'categoryapps',
-            'name' => 'nameCategoryApp'
+            'name' => 'nameCategoryApp',
         ]);
     }
 
-    public function testCreateCategoryAppReturnRelationshipNoAppsType() {
-
+    public function testCreateCategoryAppReturnRelationshipNoAppsType()
+    {
         $this->json('POST', 'categoryapps',
         [
             'data' => [
                 'type' => 'categoryapps',
                 'attributes' => [
-                    'name' => 'nameCategoryApp'
+                    'name' => 'nameCategoryApp',
                 ],
                 'relationships' => [
                     'apps' => [
                         'data' => [
-                            [ 'type' => 'NoApps', 'id' => '1' ],
-                            [ 'type' => 'NoApps', 'id' => '2' ]
-                        ]
-                    ]
-                ]
-            ]
+                            ['type' => 'NoApps', 'id' => '1'],
+                            ['type' => 'NoApps', 'id' => '2'],
+                        ],
+                    ],
+                ],
+            ],
         ]
         )->seeJson(
         [
             'type' => 'categoryapps',
-            'name' => 'nameCategoryApp'
+            'name' => 'nameCategoryApp',
         ]);
     }
 
-    public function testCreateCategoryAppReturnRelationshipNoIdExists() {
-
+    public function testCreateCategoryAppReturnRelationshipNoIdExists()
+    {
         $this->json('POST', 'categoryapps',
         [
             'data' => [
                 'type' => 'categoryapps',
                 'attributes' => [
-                    'name' => 'nameCategoryApp'
+                    'name' => 'nameCategoryApp',
                 ],
                 'relationships' => [
                     'apps' => [
                         'data' => [
-                            [ 'type' => 'apps', 'aa' => '1' ],
-                            [ 'type' => 'apps', 'aa' => '2' ]
-                        ]
-                    ]
-                ]
-            ]
+                            ['type' => 'apps', 'aa' => '1'],
+                            ['type' => 'apps', 'aa' => '2'],
+                        ],
+                    ],
+                ],
+            ],
         ]
         )->seeJson(
         [
             'type' => 'categoryapps',
-            'name' => 'nameCategoryApp'
+            'name' => 'nameCategoryApp',
         ]);
     }
 
-    public function testUpdateCategoryApp() {
-
+    public function testUpdateCategoryApp()
+    {
         $categoryApp = factory(\WA\DataStore\Category\CategoryApp::class)->create(
-            [ 'name' => 'nameCategoryApp1']
+            ['name' => 'nameCategoryApp1']
         );
         $categoryAppAux = factory(\WA\DataStore\Category\CategoryApp::class)->create(
-            [ 'name' => 'nameCategoryApp2']
+            ['name' => 'nameCategoryApp2']
         );
 
         $this->assertNotEquals($categoryApp->id, $categoryAppAux->id);
         $this->assertNotEquals($categoryApp->name, $categoryAppAux->name);
 
-        $this->json('PUT', 'categoryapps/'.$categoryApp->id, 
+        $this->json('PUT', 'categoryapps/'.$categoryApp->id,
             [
                 'data' => [
                     'type' => 'categoryapps',
                     'attributes' => [
-                        'name' => $categoryAppAux->name
-                    ]
-                ]
+                        'name' => $categoryAppAux->name,
+                    ],
+                ],
             ])
             ->seeJson(
             [
                 'type' => 'categoryapps',
-                'name' => $categoryAppAux->name
+                'name' => $categoryAppAux->name,
             ]);
     }
 
-    public function testDeleteCategoryAppIfExists() {
+    public function testDeleteCategoryAppIfExists()
+    {
         // CREATE & DELETE
         $categoryApp = factory(\WA\DataStore\Category\CategoryApp::class)->create();
         $responseDel = $this->call('DELETE', 'categoryapps/'.$categoryApp->id);
         $this->assertEquals(200, $responseDel->status());
         $responseGet = $this->call('GET', 'categoryapps/'.$categoryApp->id);
-        $this->assertEquals(404, $responseGet->status());        
+        $this->assertEquals(404, $responseGet->status());
     }
 
-    public function testDeleteCategoryAppIfNoExists(){
+    public function testDeleteCategoryAppIfNoExists()
+    {
         // DELETE NO EXISTING.
         $responseDel = $this->call('DELETE', 'categoryapps/1');
         $this->assertEquals(404, $responseDel->status());

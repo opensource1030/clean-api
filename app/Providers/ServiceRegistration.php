@@ -39,7 +39,6 @@ use WA\DataStore\UdlValuePath\UdlValuePath;
 use WA\DataStore\UdlValuePathUsers\UdlValuePathUsers;
 use WA\DataStore\User\User;
 use WA\DataStore\UserNotifications;
-
 use WA\Repositories\Address\EloquentAddress;
 use WA\Repositories\Allocation\EloquentAllocation;
 use WA\Repositories\App\EloquentApp;
@@ -78,7 +77,6 @@ use WA\Repositories\UdlValuePath\EloquentUdlValuePath;
 use WA\Repositories\UdlValuePathUsers\EloquentUdlValuePathUsers;
 use WA\Repositories\User\EloquentUser;
 use WA\Repositories\User\UserCacheDecorator;
-
 use WA\Services\Cache\Cache;
 
 /**
@@ -235,7 +233,6 @@ trait ServiceRegistration
      */
     public function registerUdlValuePath()
     {
-
         app()->bind(
             'WA\Repositories\UdlValuePath\UdlValuePathInterface',
             function () {
@@ -290,7 +287,7 @@ trait ServiceRegistration
                     app()->make('WA\Repositories\Udl\UdlInterface')
                 );
                 //return $user
-                //
+
                 return new UserCacheDecorator(
                     $user,
                     new Cache(app()['cache'], 'users', 10)
@@ -350,7 +347,6 @@ trait ServiceRegistration
             });
     }
 
-
     /**
      * @param
      */
@@ -360,7 +356,6 @@ trait ServiceRegistration
             return new EloquentLocation(new Location());
         });
     }
-
 
     /**
      * @param

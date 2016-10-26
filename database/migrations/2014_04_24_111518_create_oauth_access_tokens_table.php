@@ -10,7 +10,6 @@
  */
 
 use Illuminate\Database\Migrations\Migration;
-
 use Illuminate\Support\Facades\Schema;
 
 /**
@@ -22,12 +21,10 @@ class CreateOauthAccessTokensTable extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
-        Schema::create('oauth_access_tokens', function ( $table) {
+        Schema::create('oauth_access_tokens', function ($table) {
             $table->string('id', 40)->primary();
             $table->integer('session_id')->unsigned();
             $table->integer('expire_time');
@@ -45,12 +42,10 @@ class CreateOauthAccessTokensTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
     public function down()
     {
-        Schema::table('oauth_access_tokens', function ( $table) {
+        Schema::table('oauth_access_tokens', function ($table) {
             $table->dropForeign('oauth_access_tokens_session_id_foreign');
         });
         Schema::drop('oauth_access_tokens');

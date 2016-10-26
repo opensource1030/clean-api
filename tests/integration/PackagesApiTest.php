@@ -1,27 +1,21 @@
 <?php
 
 use Laravel\Lumen\Testing\DatabaseMigrations;
-
-use WA\DataStore\Device\Device;
-use WA\DataStore\App\App;
-use WA\DataStore\Service\Service;
 use WA\DataStore\Condition\Condition;
-
-use WA\Http\Controllers\PackagesController;
 
 class PackageApiTest extends TestCase
 {
     use DatabaseMigrations;
 
-    public function testGetPackages() {
-
+    public function testGetPackages()
+    {
         factory(\WA\DataStore\Package\Package::class, 40)->create();
 
         $res = $this->json('GET', 'packages');
 
         $res->seeJsonStructure([
             'data' => [
-                0 => [  
+                0 => [
                     'type',
                     'id',
                     'attributes' => [
@@ -30,18 +24,18 @@ class PackageApiTest extends TestCase
                         'created_at' => [
                             'date',
                             'timezone_type',
-                            'timezone'
+                            'timezone',
                         ],
                         'updated_at' => [
                             'date',
                             'timezone_type',
-                            'timezone'
-                        ]
+                            'timezone',
+                        ],
                     ],
                     'links' => [
-                        'self'
-                    ]
-                ]
+                        'self',
+                    ],
+                ],
             ],
             'meta' => [
                 'sort',
@@ -52,26 +46,26 @@ class PackageApiTest extends TestCase
                     'count',
                     'per_page',
                     'current_page',
-                    'total_pages'
-                ]
+                    'total_pages',
+                ],
             ],
             'links' => [
                 'self',
                 'first',
                 'next',
-                'last'
-            ]
+                'last',
+            ],
         ]);
     }
 
-    public function testGetPackageByIdIfExists() {
-      
+    public function testGetPackageByIdIfExists()
+    {
         $package = factory(\WA\DataStore\Package\Package::class)->create();
 
         $res = $this->json('GET', 'packages/'.$package->id)
             ->seeJson([
                 'type' => 'packages',
-                'name'=> $package->name
+                'name' => $package->name,
             ]);
 
         $res->seeJsonStructure([
@@ -84,23 +78,23 @@ class PackageApiTest extends TestCase
                     'created_at' => [
                         'date',
                         'timezone_type',
-                        'timezone'
+                        'timezone',
                     ],
                     'updated_at' => [
                         'date',
                         'timezone_type',
-                        'timezone'
-                    ]
+                        'timezone',
+                    ],
                 ],
                 'links' => [
-                    'self'
-                ]
-            ]
+                    'self',
+                ],
+            ],
         ]);
     }
 
-    public function testGetPackageByIdIfNoExists() {
-
+    public function testGetPackageByIdIfNoExists()
+    {
         $packageId = factory(\WA\DataStore\Package\Package::class)->create()->id;
         $packageId = $packageId + 10;
 
@@ -108,8 +102,8 @@ class PackageApiTest extends TestCase
         $this->assertEquals(404, $response->status());
     }
 
-    public function testGetDeviceByIdandIncludesConditions(){
-
+    public function testGetDeviceByIdandIncludesConditions()
+    {
         $package = factory(\WA\DataStore\Package\Package::class)->create();
 
         $condition1 = factory(\WA\DataStore\Condition\Condition::class)->create()->id;
@@ -117,7 +111,7 @@ class PackageApiTest extends TestCase
 
         $dataConditions = array($condition1, $condition2);
 
-        $package->conditions()->sync($dataConditions);    
+        $package->conditions()->sync($dataConditions);
 
         $this->json('GET', 'packages/'.$package->id.'?include=conditions')
             ->seeJsonStructure([
@@ -130,31 +124,31 @@ class PackageApiTest extends TestCase
                         'created_at' => [
                             'date',
                             'timezone_type',
-                            'timezone'
+                            'timezone',
                         ],
                         'updated_at' => [
                             'date',
                             'timezone_type',
-                            'timezone'
-                        ]
+                            'timezone',
+                        ],
                     ],
                     'links' => [
-                        'self'
+                        'self',
                     ],
                     'relationships' => [
                         'conditions' => [
                             'links' => [
                                 'self',
-                                'related'
+                                'related',
                             ],
                             'data' => [
-                                0 => [  
+                                0 => [
                                     'type',
-                                    'id'
-                                ]
-                            ]
-                        ]
-                    ]
+                                    'id',
+                                ],
+                            ],
+                        ],
+                    ],
                 ],
                 'included' => [
                     0 => [
@@ -164,19 +158,19 @@ class PackageApiTest extends TestCase
                             'typeCond',
                             'name',
                             'condition',
-                            'value'
+                            'value',
                         ],
                         'links' => [
-                            'self'
-                        ]
-                    ]
+                            'self',
+                        ],
+                    ],
 
-                ]
+                ],
             ]);
     }
 
-    public function testGetPackageByIdandIncludesServices(){
-
+    public function testGetPackageByIdandIncludesServices()
+    {
         $package = factory(\WA\DataStore\Package\Package::class)->create();
 
         $service1 = factory(\WA\DataStore\Service\Service::class)->create()->id;
@@ -197,31 +191,31 @@ class PackageApiTest extends TestCase
                         'created_at' => [
                             'date',
                             'timezone_type',
-                            'timezone'
+                            'timezone',
                         ],
                         'updated_at' => [
                             'date',
                             'timezone_type',
-                            'timezone'
-                        ]
+                            'timezone',
+                        ],
                     ],
                     'links' => [
-                        'self'
+                        'self',
                     ],
                     'relationships' => [
                         'services' => [
                             'links' => [
                                 'self',
-                                'related'
+                                'related',
                             ],
                             'data' => [
-                                0 => [  
+                                0 => [
                                     'type',
-                                    'id'
-                                ]
-                            ]
-                        ]
-                    ]
+                                    'id',
+                                ],
+                            ],
+                        ],
+                    ],
                 ],
                 'included' => [
                     0 => [
@@ -237,19 +231,19 @@ class PackageApiTest extends TestCase
                             'domesticMessages',
                             'internationalMinutes',
                             'internationalData',
-                            'internationalMessages'
+                            'internationalMessages',
                         ],
                         'links' => [
-                            'self'
-                        ]
-                    ]
+                            'self',
+                        ],
+                    ],
 
-                ]
+                ],
             ]);
     }
 
-    public function testGetPackageByIdandIncludesDevices(){
-
+    public function testGetPackageByIdandIncludesDevices()
+    {
         $package = factory(\WA\DataStore\Package\Package::class)->create();
 
         $device = factory(\WA\DataStore\Device\Device::class)->create()->id;
@@ -267,31 +261,31 @@ class PackageApiTest extends TestCase
                         'created_at' => [
                             'date',
                             'timezone_type',
-                            'timezone'
+                            'timezone',
                         ],
                         'updated_at' => [
                             'date',
                             'timezone_type',
-                            'timezone'
-                        ]
+                            'timezone',
+                        ],
                     ],
                     'links' => [
-                        'self'
+                        'self',
                     ],
                     'relationships' => [
                         'devices' => [
                             'links' => [
                                 'self',
-                                'related'
+                                'related',
                             ],
                             'data' => [
-                                0 => [  
+                                0 => [
                                     'type',
-                                    'id'
-                                ]
-                            ]
-                        ]
-                    ]
+                                    'id',
+                                ],
+                            ],
+                        ],
+                    ],
                 ],
                 'included' => [
                     1 => [
@@ -303,33 +297,33 @@ class PackageApiTest extends TestCase
                             'statusId',
                             'externalId',
                             'identification',
-                            'syncId'
+                            'syncId',
                         ],
                         'links' => [
-                            'self'
+                            'self',
                         ],
                         'relationships' => [
                             'devicetypes' => [
                                 'links' => [
                                     'self',
-                                    'related'
+                                    'related',
                                 ],
                                 'data' => [
                                     0 => [
                                         'type',
-                                        'id'
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]
+                                        'id',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
 
-                ]
+                ],
             ]);
     }
 
-    public function testGetPackageByIdandIncludesApps(){
-
+    public function testGetPackageByIdandIncludesApps()
+    {
         $package = factory(\WA\DataStore\Package\Package::class)->create();
 
         $app1 = factory(\WA\DataStore\App\App::class)->create()->id;
@@ -337,7 +331,7 @@ class PackageApiTest extends TestCase
 
         $dataApps = array($app1, $app2);
 
-        $package->apps()->sync($dataApps);    
+        $package->apps()->sync($dataApps);
 
         $this->json('GET', 'packages/'.$package->id.'?include=apps')
             ->seeJsonStructure([
@@ -350,31 +344,31 @@ class PackageApiTest extends TestCase
                         'created_at' => [
                             'date',
                             'timezone_type',
-                            'timezone'
+                            'timezone',
                         ],
                         'updated_at' => [
                             'date',
                             'timezone_type',
-                            'timezone'
-                        ]
+                            'timezone',
+                        ],
                     ],
                     'links' => [
-                        'self'
+                        'self',
                     ],
                     'relationships' => [
                         'apps' => [
                             'links' => [
                                 'self',
-                                'related'
+                                'related',
                             ],
                             'data' => [
-                                0 => [  
+                                0 => [
                                     'type',
-                                    'id'
-                                ]
-                            ]
-                        ]
-                    ]
+                                    'id',
+                                ],
+                            ],
+                        ],
+                    ],
                 ],
                 'included' => [
                     0 => [
@@ -383,136 +377,139 @@ class PackageApiTest extends TestCase
                         'attributes' => [
                             'type',
                             'image',
-                            'description'
+                            'description',
                         ],
                         'links' => [
-                            'self'
-                        ]
-                    ]
+                            'self',
+                        ],
+                    ],
 
-                ]
-            ]);       
+                ],
+            ]);
     }
 
-    public function testCreatePackage() {
-
+    public function testCreatePackage()
+    {
         $package = factory(\WA\DataStore\Package\Package::class)->create();
 
         $condition1 = factory(\WA\DataStore\Condition\Condition::class)->create()->id;
         $condition2 = factory(\WA\DataStore\Condition\Condition::class)->create()->id;
-        
+
         $service1 = factory(\WA\DataStore\Service\Service::class)->create()->id;
         $service2 = factory(\WA\DataStore\Service\Service::class)->create()->id;
-        
+
         $device1 = factory(\WA\DataStore\Device\Device::class)->create()->id;
         $device2 = factory(\WA\DataStore\Device\Device::class)->create()->id;
         $device3 = factory(\WA\DataStore\Device\Device::class)->create()->id;
-        
+
         $app1 = factory(\WA\DataStore\App\App::class)->create()->id;
         $app2 = factory(\WA\DataStore\App\App::class)->create()->id;
-        
+
         $this->json('POST', 'packages',
             [
-                "data" => [
-                    "type" => "packages",
-                    "attributes" => [
-                        "name" => "namePackage"
+                'data' => [
+                    'type' => 'packages',
+                    'attributes' => [
+                        'name' => 'namePackage',
                     ],
-                    "relationships" => [
-                        "conditions" => [
-                            "data" => [
-                                [ "type" => "conditions", "id" => $condition1 ],
-                                [ "type" => "conditions", "id" => $condition2 ]
-                            ]
+                    'relationships' => [
+                        'conditions' => [
+                            'data' => [
+                                ['type' => 'conditions', 'id' => $condition1],
+                                ['type' => 'conditions', 'id' => $condition2],
+                            ],
                         ],
-                        "services" => [
-                            "data" => [
-                                [ "type" => "services", "id" => $service1 ],
-                                [ "type" => "services", "id" => $service2 ]
-                            ]
+                        'services' => [
+                            'data' => [
+                                ['type' => 'services', 'id' => $service1],
+                                ['type' => 'services', 'id' => $service2],
+                            ],
                         ],
-                        "devices" => [
-                            "data" => [
-                                [ "type" => "devices", "id" => $device1 ],
-                                [ "type" => "devices", "id" => $device2 ],
-                                [ "type" => "devices", "id" => $device3 ]
-                            ]
+                        'devices' => [
+                            'data' => [
+                                ['type' => 'devices', 'id' => $device1],
+                                ['type' => 'devices', 'id' => $device2],
+                                ['type' => 'devices', 'id' => $device3],
+                            ],
                         ],
-                        "apps" => [
-                            "data" => [
-                                [ "type" => "apps", "id" => $app1 ],
-                                [ "type" => "apps", "id" => $app2 ]
-                            ]
-                        ]
-                    ]
-                ]
+                        'apps' => [
+                            'data' => [
+                                ['type' => 'apps', 'id' => $app1],
+                                ['type' => 'apps', 'id' => $app2],
+                            ],
+                        ],
+                    ],
+                ],
             ]
             )->seeJson(
             [
                 'type' => 'packages',
-                'name' => 'namePackage'
+                'name' => 'namePackage',
             ]);
     }
 
-    public function testCreatePackageReturnNoValidData() {
+    public function testCreatePackageReturnNoValidData()
+    {
         // 'data' no valid.
         $package = $this->json('POST', 'packages',
             [
                 'NoValid' => [
-                    ]
+                    ],
             ]
             )->seeJson(
             [
                 'errors' => [
-                    'json' => 'JSON is Invalid'
-                ]
+                    'json' => 'JSON is Invalid',
+                ],
             ]
         );
     }
 
-    public function testCreatePackageReturnNoValidType() {
+    public function testCreatePackageReturnNoValidType()
+    {
         // 'type' no valid.
         $package = $this->json('POST', 'packages',
             [
-                "data" => [
-                    "NoValid"=> "packages",
-                    "attributes"=> [
-                        "name"=> "namePackage"
-                    ]
-                ]
-                
+                'data' => [
+                    'NoValid' => 'packages',
+                    'attributes' => [
+                        'name' => 'namePackage',
+                    ],
+                ],
+
             ]
             )->seeJson(
             [
                 'errors' => [
-                    'json' => 'JSON is Invalid'
-                ]
+                    'json' => 'JSON is Invalid',
+                ],
             ]
         );
     }
 
-    public function testCreatePackageReturnNoValidAttributes() {
+    public function testCreatePackageReturnNoValidAttributes()
+    {
         // 'attributes' no valid.
         $package = $this->json('POST', 'packages',
             [
-                "data" => [
-                    "type"=> "packages",
-                    "NoValid"=> [
-                        "name"=> "namePackage"
-                    ]
-                ]
+                'data' => [
+                    'type' => 'packages',
+                    'NoValid' => [
+                        'name' => 'namePackage',
+                    ],
+                ],
             ]
             )->seeJson(
             [
                 'errors' => [
-                    'json' => 'JSON is Invalid'
-                ]
+                    'json' => 'JSON is Invalid',
+                ],
             ]
         );
     }
 
-    public function testCreatePackageReturnRelationshipNoExists() {
-
+    public function testCreatePackageReturnRelationshipNoExists()
+    {
         $address = factory(WA\DataStore\Address\Address::class)->create()->id;
 
         $package = $this->json('POST', 'packages',
@@ -521,28 +518,28 @@ class PackageApiTest extends TestCase
                 'type' => 'packages',
                 'attributes' => [
                     'name' => 'namePackage',
-                    'addressId' => $address
+                    'addressId' => $address,
                 ],
                 'relationships' => [
                     'IgnoreType' => [
                         'data' => [
-                            [ 'type' => 'apps', 'id' => '1' ],
-                            [ 'type' => 'apps', 'id' => '2' ]
-                        ]
-                    ]
-                ]
-            ]
+                            ['type' => 'apps', 'id' => '1'],
+                            ['type' => 'apps', 'id' => '2'],
+                        ],
+                    ],
+                ],
+            ],
         ]
         )->seeJson(
         [
             'type' => 'packages',
             'name' => 'namePackage',
-            'addressId' => $address
+            'addressId' => $address,
         ]);
     }
 
-    public function testCreatePackageReturnRelationshipNoExistsData() {
-
+    public function testCreatePackageReturnRelationshipNoExistsData()
+    {
         $address = factory(WA\DataStore\Address\Address::class)->create()->id;
 
         $package = $this->json('POST', 'packages',
@@ -551,28 +548,28 @@ class PackageApiTest extends TestCase
                 'type' => 'packages',
                 'attributes' => [
                     'name' => 'namePackage',
-                    'addressId' => $address
+                    'addressId' => $address,
                 ],
                 'relationships' => [
                     'apps' => [
                         'IgnoreData' => [
-                            [ 'type' => 'apps', 'id' => '1' ],
-                            [ 'type' => 'apps', 'id' => '2' ]
-                        ]
-                    ]
-                ]
-            ]
+                            ['type' => 'apps', 'id' => '1'],
+                            ['type' => 'apps', 'id' => '2'],
+                        ],
+                    ],
+                ],
+            ],
         ]
         )->seeJson(
         [
             'type' => 'packages',
             'name' => 'namePackage',
-            'addressId' => $address
+            'addressId' => $address,
         ]);
     }
 
-    public function testCreatePackageReturnRelationshipNoAppsType() {
-
+    public function testCreatePackageReturnRelationshipNoAppsType()
+    {
         $address = factory(WA\DataStore\Address\Address::class)->create()->id;
 
         $package = $this->json('POST', 'packages',
@@ -581,28 +578,28 @@ class PackageApiTest extends TestCase
                 'type' => 'packages',
                 'attributes' => [
                     'name' => 'namePackage',
-                    'addressId' => $address
+                    'addressId' => $address,
                 ],
                 'relationships' => [
                     'apps' => [
                         'data' => [
-                            [ 'type' => 'NoApps', 'id' => '1' ],
-                            [ 'type' => 'NoApps', 'id' => '2' ]
-                        ]
-                    ]
-                ]
-            ]
+                            ['type' => 'NoApps', 'id' => '1'],
+                            ['type' => 'NoApps', 'id' => '2'],
+                        ],
+                    ],
+                ],
+            ],
         ]
         )->seeJson(
         [
             'type' => 'packages',
             'name' => 'namePackage',
-            'addressId' => $address
+            'addressId' => $address,
         ]);
     }
 
-    public function testCreatePackageReturnRelationshipNoIdExists() {
-
+    public function testCreatePackageReturnRelationshipNoIdExists()
+    {
         $address = factory(WA\DataStore\Address\Address::class)->create()->id;
 
         $package = $this->json('POST', 'packages',
@@ -611,67 +608,69 @@ class PackageApiTest extends TestCase
                 'type' => 'packages',
                 'attributes' => [
                     'name' => 'namePackage',
-                    'addressId' => $address
+                    'addressId' => $address,
                 ],
                 'relationships' => [
                     'apps' => [
                         'data' => [
-                            [ 'type' => 'apps', 'aa' => '1' ],
-                            [ 'type' => 'apps', 'aa' => '2' ]
-                        ]
-                    ]
-                ]
-            ]
+                            ['type' => 'apps', 'aa' => '1'],
+                            ['type' => 'apps', 'aa' => '2'],
+                        ],
+                    ],
+                ],
+            ],
         ]
         )->seeJson(
         [
             'type' => 'packages',
             'name' => 'namePackage',
-            'addressId' => $address
+            'addressId' => $address,
         ]);
     }
 
-    public function testUpdatePackage() {
-
+    public function testUpdatePackage()
+    {
         $package = factory(\WA\DataStore\Package\Package::class)->create(
-            [ 'name' => 'namePackage1']
+            ['name' => 'namePackage1']
         );
         $packageAux = factory(\WA\DataStore\Package\Package::class)->create(
-            [ 'name' => 'namePackage2']
+            ['name' => 'namePackage2']
         );
 
         $this->assertNotEquals($package->id, $packageAux->id);
         $this->assertNotEquals($package->name, $packageAux->name);
         $this->assertNotEquals($package->addressId, $packageAux->addressId);
 
-        $this->put('/packages/'.$package->id, 
+        $this->put('/packages/'.$package->id,
             [
                 'data' => [
                     'type' => 'packages',
                     'attributes' => [
                         'name' => $packageAux->name,
-                        'addressId' => $packageAux->addressId
-                    ]
-                ]
+                        'addressId' => $packageAux->addressId,
+                    ],
+                ],
             ])
             ->seeJson(
             [
                 'type' => 'packages',
                 'name' => $packageAux->name,
-                'addressId' => $packageAux->addressId
+                'addressId' => $packageAux->addressId,
             ]);
     }
 
-    public function testDeletePackageIfExists() {
+    public function testDeletePackageIfExists()
+    {
         // CREATE & DELETE
         $package = factory(\WA\DataStore\Package\Package::class)->create();
         $responseDel = $this->call('DELETE', '/packages/'.$package->id);
         $this->assertEquals(200, $responseDel->status());
         $responseGet = $this->call('GET', '/packages/'.$package->id);
-        $this->assertEquals(404, $responseGet->status());        
+        $this->assertEquals(404, $responseGet->status());
     }
 
-    public function testDeletePackageIfNoExists(){
+    public function testDeletePackageIfNoExists()
+    {
         // DELETE NO EXISTING.
         $responseDel = $this->call('DELETE', '/packages/1');
         $this->assertEquals(404, $responseDel->status());

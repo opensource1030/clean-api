@@ -3,11 +3,9 @@
 namespace WA\Http\Controllers;
 
 use Illuminate\Http\Request;
-
 use WA\DataStore\Order\Order;
 use WA\DataStore\Order\OrderTransformer;
 use WA\Repositories\Order\OrderInterface;
-
 use Illuminate\Support\Facades\Lang;
 
 /**
@@ -23,7 +21,7 @@ class OrdersController extends ApiController
     protected $order;
 
     /**
-     * Order Controller constructor
+     * Order Controller constructor.
      *
      * @param OrderInterface $Order
      */
@@ -33,10 +31,9 @@ class OrdersController extends ApiController
     }
 
     /**
-     * Show all Order
+     * Show all Order.
      *
      * Get a payload of all Order
-     *
      */
     public function index()
     {
@@ -46,11 +43,12 @@ class OrdersController extends ApiController
 
         $response = $this->response()->withPaginator($order, new OrderTransformer(), ['key' => 'orders']);
         $response = $this->applyMeta($response);
+
         return $response;
     }
 
     /**
-     * Show a single Order
+     * Show a single Order.
      *
      * Get a payload of a single Order
      *
@@ -62,43 +60,44 @@ class OrdersController extends ApiController
         $this->order->setCriteria($criteria);
         $order = Order::find($id);
 
-        if($order == null){
-            $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'Order']);   
+        if ($order == null) {
+            $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'Order']);
+
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
-        return $this->response()->item($order, new OrderTransformer(),['key' => 'orders'])->setStatusCode($this->status_codes['created']);
+        return $this->response()->item($order, new OrderTransformer(), ['key' => 'orders'])->setStatusCode($this->status_codes['created']);
     }
 
     /**
-     * Update contents of a Order
+     * Update contents of a Order.
      *
      * @param $id
+     *
      * @return \Dingo\Api\Http\Response
      */
     public function store($id, Request $request)
     {
         if ($this->isJsonCorrect($request, 'orders')) {
             try {
-
                 $data = $request->all()['data']['attributes'];
                 $data['id'] = $id;
                 $order = $this->order->update($data);
 
-                if($order == 'notExist') {
+                if ($order == 'notExist') {
                     $error['errors']['order'] = Lang::get('messages.NotExistClass', ['class' => 'Order']);
                     //$error['errors']['Message'] = $e->getMessage();
                     return response()->json($error)->setStatusCode($this->status_codes['notexists']);
                 }
 
-                if($order == 'notSaved') {
+                if ($order == 'notSaved') {
                     $error['errors']['order'] = Lang::get('messages.NotSavedClass', ['class' => 'Order']);
                     //$error['errors']['Message'] = $e->getMessage();
                     return response()->json($error)->setStatusCode($this->status_codes['conflict']);
                 }
 
                 return $this->response()->item($order, new OrderTransformer(), ['key' => 'orders'])->setStatusCode($this->status_codes['created']);
-            } catch (\Exception $e){
+            } catch (\Exception $e) {
                 $error['errors']['orders'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Order', 'option' => 'updated', 'include' => '']);
                 //$error['errors']['Message'] = $e->getMessage();
             }
@@ -110,7 +109,7 @@ class OrdersController extends ApiController
     }
 
     /**
-     * Create a new Order
+     * Create a new Order.
      *
      * @return \Dingo\Api\Http\Response
      */
@@ -118,12 +117,11 @@ class OrdersController extends ApiController
     {
         if ($this->isJsonCorrect($request, 'orders')) {
             try {
-
                 $data = $request->all()['data']['attributes'];
                 $order = $this->order->create($data);
 
                 return $this->response()->item($order, new OrderTransformer(), ['key' => 'orders'])->setStatusCode($this->status_codes['created']);
-            } catch (\Exception $e){
+            } catch (\Exception $e) {
                 $error['errors']['orders'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Order', 'option' => 'created', 'include' => '']);
                 //$error['errors']['Message'] = $e->getMessage();
             }
@@ -135,25 +133,27 @@ class OrdersController extends ApiController
     }
 
     /**
-     * Delete a Order
+     * Delete a Order.
      *
      * @param $id
      */
     public function delete($id)
     {
         $order = Order::find($id);
-        if ($order <> null) {
+        if ($order != null) {
             $this->order->deleteById($id);
         } else {
-            $error['errors']['delete'] = Lang::get('messages.NotExistClass', ['class' => 'Order']);   
+            $error['errors']['delete'] = Lang::get('messages.NotExistClass', ['class' => 'Order']);
+
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
-                
-        $order = Order::find($id);        
-        if($order == null){
-            return array("success" => true);
+
+        $order = Order::find($id);
+        if ($order == null) {
+            return array('success' => true);
         } else {
-            $error['errors']['delete'] = Lang::get('messages.NotDeletedClass', ['class' => 'Order']);   
+            $error['errors']['delete'] = Lang::get('messages.NotDeletedClass', ['class' => 'Order']);
+
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
     }

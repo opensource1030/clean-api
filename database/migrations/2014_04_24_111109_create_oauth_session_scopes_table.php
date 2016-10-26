@@ -10,7 +10,6 @@
  */
 
 use Illuminate\Database\Migrations\Migration;
-
 use Illuminate\Support\Facades\Schema;
 
 /**
@@ -22,12 +21,10 @@ class CreateOauthSessionScopesTable extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
-        Schema::create('oauth_session_scopes', function ( $table) {
+        Schema::create('oauth_session_scopes', function ($table) {
             $table->increments('id');
             $table->integer('session_id')->unsigned();
             $table->string('scope_id', 40);
@@ -49,12 +46,10 @@ class CreateOauthSessionScopesTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
     public function down()
     {
-        Schema::table('oauth_session_scopes', function ( $table) {
+        Schema::table('oauth_session_scopes', function ($table) {
             $table->dropForeign('oauth_session_scopes_session_id_foreign');
             $table->dropForeign('oauth_session_scopes_scope_id_foreign');
         });

@@ -16,23 +16,20 @@ class CreateDeviceUserTable extends Migration
 
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
         Schema::create(
             $this->tableName,
-            function ( $table) {
+            function ($table) {
                 $table->increments('id');
                 $table->integer('userId')->unsigned();
                 $table->integer('deviceId')->unsigned();
-
-        });
+            });
 
         Schema::table(
-            $this->tableName, 
-            function($table) {
+            $this->tableName,
+            function ($table) {
                 $table->foreign('deviceId')->references('id')->on('devices');
             }
         );
@@ -40,19 +37,17 @@ class CreateDeviceUserTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
     public function down()
     {
         Schema::table(
-            $this->tableName, 
-            function ( $table) {
+            $this->tableName,
+            function ($table) {
                 //$table->dropForeign('deviceId');
-        });
+            });
         /*
         Schema::table(
-            $this->tableName, 
+            $this->tableName,
             function ( $table) {
                 //$table->dropForeign('userId');
         });
@@ -60,5 +55,4 @@ class CreateDeviceUserTable extends Migration
 
         $this->forceDropTable($this->tableName);
     }
-
 }

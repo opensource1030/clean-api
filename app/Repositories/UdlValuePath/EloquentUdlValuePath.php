@@ -23,7 +23,7 @@ class EloquentUdlValuePath extends AbstractRepository implements UdlValuePathInt
      *
      * @param string $udlValuePath
      *
-     * @return Object object of the udl information
+     * @return object object of the udl information
      */
     public function byUdlPath($udlValuePath)
     {
@@ -37,7 +37,7 @@ class EloquentUdlValuePath extends AbstractRepository implements UdlValuePathInt
      *
      * @param int $udlValuePathId
      *
-     * @return Object object of the udl information
+     * @return object object of the udl information
      */
     public function byUdlId($udlValuePathId)
     {
@@ -48,7 +48,7 @@ class EloquentUdlValuePath extends AbstractRepository implements UdlValuePathInt
 
     public function byExternalId($externalId)
     {
-      $response = $this->model->where('externalId', $externalId);
+        $response = $this->model->where('externalId', $externalId);
 
         return $response->first();
     }
@@ -60,8 +60,6 @@ class EloquentUdlValuePath extends AbstractRepository implements UdlValuePathInt
      */
     public function getMaxExternalId()
     {
-
         return  $this->model->select(DB::raw(' MAX(CONVERT(externalId, SIGNED INTEGER)) as externalId'))->get('externalId');
     }
-
 }

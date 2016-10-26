@@ -2,18 +2,15 @@
 
 /**
  * AppsTableSeeder - Insert info into database.
- *  
+ *
  * @author   Agustí Dosaiguas
  */
-
 class AddressTableSeeder extends BaseTableSeeder
 {
-    protected $table = "address";
+    protected $table = 'address';
 
     /**
      * Run the database seeds.
-     *
-     * @return void
      */
     public function run()
     {
@@ -26,28 +23,28 @@ class AddressTableSeeder extends BaseTableSeeder
                 'city' => 'city1',
                 'state' => 'state1',
                 'country' => 'country1',
-                'postalCode' => 'postalCode1'
+                'postalCode' => 'postalCode1',
             ],
             [
                 'address' => 'address2',
                 'city' => 'city2',
                 'state' => 'state2',
                 'country' => 'country2',
-                'postalCode' => 'postalCode2'
+                'postalCode' => 'postalCode2',
             ],
             [
                 'address' => 'address3',
                 'city' => 'city3',
                 'state' => 'state3',
                 'country' => 'country3',
-                'postalCode' => 'postalCode3'
+                'postalCode' => 'postalCode3',
             ],
             [
                 'address' => 'address4',
                 'city' => 'city4',
                 'state' => 'state4',
                 'country' => 'country4',
-                'postalCode' => 'postalCode4'
+                'postalCode' => 'postalCode4',
             ],
         ];
 

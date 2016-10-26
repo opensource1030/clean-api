@@ -2,9 +2,8 @@
 
 
 $factory->define(WA\DataStore\Package\Package::class, function ($faker) {
-
     return [
-        'name'=> $faker->sentence,
+        'name' => $faker->sentence,
         'addressId' => function () {
             return factory(WA\DataStore\Address\Address::class)->create()->id;
         },

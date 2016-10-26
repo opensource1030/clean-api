@@ -11,19 +11,17 @@ class CreateAllocationsTable extends Migration
 
     protected $foreignColumns = [
         'userId',
-        'companyId'
+        'companyId',
     ];
 
     /**
-     * Run the migrations.asset_devices
-     *
-     * @return void
+     * Run the migrations.asset_devices.
      */
     public function up()
     {
         Schema::create(
-            $this->tableName, 
-            function( $table){
+            $this->tableName,
+            function ($table) {
                 $table->increments('id');
                 $table->integer('userId')->unsigned();
                 $table->integer('companyId')->unsigned();
@@ -87,11 +85,11 @@ class CreateAllocationsTable extends Migration
 
                 //last upgrade date
                 $table->string('last_upgrade');
-        });
+            });
 
         Schema::table(
-            $this->tableName, 
-            function($table) {
+            $this->tableName,
+            function ($table) {
                 $table->foreign('userId')->references('id')->on('users');
                 $table->foreign('companyId')->references('id')->on('companies');
             }
@@ -100,17 +98,15 @@ class CreateAllocationsTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
     public function down()
     {
         Schema::table(
-            $this->tableName, 
-            function ( $table) {
+            $this->tableName,
+            function ($table) {
                 //$table->dropForeign('userId');
                 //$table->dropForeign('companyId');
-        });
+            });
 
         $this->forceDropTable($this->tableName);
     }

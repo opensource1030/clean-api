@@ -7,19 +7,14 @@ class CreateUserNotificationsTable extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-
-
     protected $tableName = 'user_notifications';
 
     public function up()
     {
         Schema::create(
             $this->tableName,
-            function ( $table)
-            {
+            function ($table) {
                 $table->increments('id');
                 $table->integer('categoryId')->unsigned();
                 $table->integer('userId')->unsigned();
@@ -28,11 +23,8 @@ class CreateUserNotificationsTable extends Migration
             });
     }
 
-
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
     public function down()
     {

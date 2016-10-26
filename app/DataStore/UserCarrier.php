@@ -1,6 +1,5 @@
 <?php
 
-
 namespace WA\DataStore;
 
 use WA\DataStore\Traits\BelongsToCarrier;
@@ -29,10 +28,8 @@ class UserCarrier extends BaseDataStore
     protected $tableName = 'user_carrier';
 
     protected $fillable = [
-        'carrierId'
-        ,
-        'userId'
-        ,
+        'carrierId',
+        'userId',
         'userName',
     ];
 

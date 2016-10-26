@@ -12,7 +12,7 @@ interface BillingDetailInterface extends RepositoryInterface
      * @param $assetId
      * @param $billMonth
      *
-     * @return Object object of the details
+     * @return object object of the details
      */
     public function byAssetId($assetId, $billMonth = null);
 
@@ -31,7 +31,7 @@ interface BillingDetailInterface extends RepositoryInterface
      *
      * @param $billingId
      *
-     * @return Object object of billing information
+     * @return object object of billing information
      */
     public function byBilling($billingId);
 }

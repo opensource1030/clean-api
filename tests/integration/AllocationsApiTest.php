@@ -1,7 +1,6 @@
 <?php
 
 use Laravel\Lumen\Testing\DatabaseMigrations;
-
 use WA\DataStore\Allocation\Allocation;
 
 class AllocationsApiTest extends TestCase
@@ -9,21 +8,19 @@ class AllocationsApiTest extends TestCase
     use DatabaseMigrations;
 
     /**
-     * A basic functional test for Allocations
+     * A basic functional test for Allocations.
      *
      * @AD: last_update field needs to be revised in table and Allocation.
      */
-
     public function testGetAllocations()
     {
-
         factory(\WA\DataStore\Allocation\Allocation::class, 40)->create();
 
         $this->json('GET', '/allocations/')
             ->seeJsonStructure(
             [
                 'data' => [
-                    0 => [ 
+                    0 => [
                         'type',
                         'id',
                         'attributes' => [
@@ -37,26 +34,25 @@ class AllocationsApiTest extends TestCase
                             'usage_charge',
                             'other_charge',
                             'fees',
-                            'last_upgrade'
+                            'last_upgrade',
 
                         ],
                         'links' => [
-                            'self'
-                        ]
-                    ]
-                ]
+                            'self',
+                        ],
+                    ],
+                ],
             ]);
     }
 
     public function testGetAllocationById()
     {
-
         $allocation = factory(\WA\DataStore\Allocation\Allocation::class)->create();
 
-        $this->json('GET', '/allocations/'. $allocation->id)
+        $this->json('GET', '/allocations/'.$allocation->id)
             ->seeJson([
                 'type' => 'allocations',
-                'bill_month'=> $allocation->billMonth,
+                'bill_month' => $allocation->billMonth,
                 'carrier' => $allocation->carrier,
                 'currency' => $allocation->currency,
                 'device' => $allocation->handsetModel,

@@ -72,7 +72,7 @@ class Auth implements AuthInterface
     /**
      * Resets a password of a employee. The $input['token'] will tell which employee.
      *
-     * @param array $input Array containing 'token', 'password' and 'password_confirmation' keys.
+     * @param array $input Array containing 'token', 'password' and 'password_confirmation' keys
      *
      * @return bool Success
      */
@@ -93,14 +93,12 @@ class Auth implements AuthInterface
     }
 
     /**
-     * Get the User if exists
+     * Get the User if exists.
      *
-     * @return Object of user
+     * @return object of user
      */
     public function user()
     {
         return IlluminateAuth::user();
     }
-
-
 }

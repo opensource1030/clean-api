@@ -9,7 +9,7 @@ class CategoryApp extends BaseDataStore
     protected $table = 'categoryapps';
 
     protected $fillable = [
-            'name'
+            'name',
             ];
 
     /**

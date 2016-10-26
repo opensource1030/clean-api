@@ -6,6 +6,7 @@
  * Date: 4/16/2015
  * Time: 8:15 PM.
  */
+
 namespace WA\DataStore\User;
 
 use WA\DataStore\BaseDataStore;
@@ -18,6 +19,4 @@ use WA\DataStore\BaseDataStore;
 class PasswordResets extends BaseDataStore
 {
     protected $table = 'password_resets';
-
-
 }

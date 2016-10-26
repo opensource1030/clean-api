@@ -5,23 +5,22 @@ namespace WA\Repositories\Address;
 use WA\Repositories\RepositoryInterface;
 
 /**
- * Interface AddressInterface
- *
- * @package WA\Repositories\Address
+ * Interface AddressInterface.
  */
 interface AddressInterface extends RepositoryInterface
 {
     /**
      * Get Array of all Addresss.
      *
-     * @return Array of Address
+     * @return array of Address
      */
     public function getAllAddress();
 
     /**
-     * Create Address
+     * Create Address.
      *
      * @param array $data
+     *
      * @return bool|static
      */
     public function create(array $data);
@@ -44,5 +43,4 @@ interface AddressInterface extends RepositoryInterface
      * @return bool
      */
     public function delete($id, $soft = true);
-
 }

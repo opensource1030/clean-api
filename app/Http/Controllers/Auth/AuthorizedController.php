@@ -24,7 +24,6 @@ class AuthorizedController extends BaseController
      */
     protected $currentCompany;
 
-
     /**
      * AuthorizedController constructor.
      */
@@ -35,5 +34,4 @@ class AuthorizedController extends BaseController
         $this->user = Auth::user();
         */
     }
-
 }

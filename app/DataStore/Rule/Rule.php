@@ -2,7 +2,6 @@
 
 namespace WA\DataStore\Rule;
 
-
 use WA\DataStore\BaseDataStore;
 
 class Rule extends BaseDataStore
@@ -11,7 +10,6 @@ class Rule extends BaseDataStore
 
     public function companies()
     {
-        return $this->belongsToMany('WA\DataStore\Company\Company','company_rules','ruleId','companyId');
+        return $this->belongsToMany('WA\DataStore\Company\Company', 'company_rules', 'ruleId', 'companyId');
     }
-
 }

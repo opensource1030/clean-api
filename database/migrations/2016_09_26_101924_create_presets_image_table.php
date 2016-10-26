@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
 class CreatePresetsImageTable extends Migration
@@ -11,8 +10,6 @@ class CreatePresetsImageTable extends Migration
 
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
@@ -28,8 +25,8 @@ class CreatePresetsImageTable extends Migration
         );
 
         Schema::table(
-            $this->tableName, 
-            function($table) {
+            $this->tableName,
+            function ($table) {
                 $table->foreign('presetId')->references('id')->on('presets')->onDelete('cascade');
                 $table->foreign('imageId')->references('id')->on('images')->onDelete('cascade');
             }
@@ -38,8 +35,6 @@ class CreatePresetsImageTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
     public function down()
     {

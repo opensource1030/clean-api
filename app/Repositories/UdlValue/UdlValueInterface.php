@@ -19,7 +19,7 @@ interface UdlValueInterface
      * @param string $name
      * @param int    $companyId null
      *
-     * @return Object object of the udl information
+     * @return object object of the udl information
      */
     public function byName($name, $companyId = null);
 
@@ -28,7 +28,7 @@ interface UdlValueInterface
      *
      * @param int $udlValueId
      *
-     * @return Object object of the udl information
+     * @return object object of the udl information
      */
     public function byId($udlValueId);
 
@@ -40,7 +40,7 @@ interface UdlValueInterface
      * @param int    $companyId
      * @param int    $externalId \ 0
      *
-     * @return Object object of the udl information
+     * @return object object of the udl information
      */
     public function byNameOrCreate($name, $udlId, $companyId, $externalId = 99999999);
 

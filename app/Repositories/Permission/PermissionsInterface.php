@@ -9,7 +9,7 @@ interface PermissionsInterface
      *
      * @param int $id
      *
-     * @return Object of the permissions information
+     * @return object of the permissions information
      */
     public function byRole($id);
 }

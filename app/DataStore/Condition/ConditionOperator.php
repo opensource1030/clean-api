@@ -6,33 +6,31 @@ use WA\DataStore\BaseDataStore;
 use WA\DataStore\Order\OrderTransformer;
 
 /**
- * Class Order
- *
- * @package WA\DataStore\Order
+ * Class Order.
  */
 class ConditionOperator extends BaseDataStore
 {
-    protected  $table = 'condition_operators';
+    protected $table = 'condition_operators';
 
     protected $fillable = [
             'originalName',
-            'apiName'
+            'apiName',
         ];
 
     public $timestamps = false;
 
-    /**
-     * Get all the owners for the order
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\MorphTo
-     */
+  /**
+   * Get all the owners for the order.
+   *
+   * @return \Illuminate\Database\Eloquent\Relations\MorphTo
+   */
   public function owner()
   {
       return $this->morphTo();
   }
 
     /**
-     * Get the transformer instance
+     * Get the transformer instance.
      *
      * @return OrderTransformer
      */

@@ -5,35 +5,33 @@ namespace WA\Repositories\Package;
 use WA\Repositories\AbstractRepository;
 
 /**
- * Class EloquentPackage
- *
- * @package WA\Repositories\Package
+ * Class EloquentPackage.
  */
 class EloquentPackage extends AbstractRepository implements PackageInterface
 {
     /**
-     * Update Package
+     * Update Package.
      *
      * @param array $data
+     *
      * @return bool
      */
     public function update(array $data)
     {
         $package = $this->model->find($data['id']);
 
-        if(!$package)
-        {
+        if (!$package) {
             return 'notExist';
         }
 
-        if(isset($data['name'])){
+        if (isset($data['name'])) {
             $package->name = $data['name'];
         }
-        if(isset($data['addressId'])){
+        if (isset($data['addressId'])) {
             $package->addressId = $data['addressId'];
         }
-        
-        if(!$package->save()) {
+
+        if (!$package->save()) {
             return 'notSaved';
         }
 
@@ -43,30 +41,32 @@ class EloquentPackage extends AbstractRepository implements PackageInterface
     /**
      * Get an array of all the available package.
      *
-     * @return Array of Package
+     * @return array of Package
      */
     public function getAllPackage()
     {
-        $package =  $this->model->all();
+        $package = $this->model->all();
+
         return $package;
     }
 
     /**
-     * Create a new Package
+     * Create a new Package.
      *
      * @param array $data
+     *
      * @return bool|static
      */
     public function create(array $data)
     {
         $packageData = [
-            "name" =>  isset($data['name']) ? $data['name'] : '',
-            "addressId" =>  isset($data['addressId']) ? $data['addressId'] : 0
+            'name' => isset($data['name']) ? $data['name'] : '',
+            'addressId' => isset($data['addressId']) ? $data['addressId'] : 0,
         ];
 
         $package = $this->model->create($packageData);
 
-        if(!$package) {
+        if (!$package) {
             return false;
         }
 

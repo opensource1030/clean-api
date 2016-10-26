@@ -12,7 +12,7 @@ class CensusFormValidator extends AbstractLaravelValidator
     /**
      * Validation rules.
      *
-     * @var Array
+     * @var array
      */
     protected $rules = [
         'file' => 'required|mimes:xlsx,csv,xls',
@@ -22,7 +22,7 @@ class CensusFormValidator extends AbstractLaravelValidator
     /**
      * Custom validation messages.
      *
-     * @var Array
+     * @var array
      */
     protected $messages = [
         'companyId.required' => 'You must select a company to continue',

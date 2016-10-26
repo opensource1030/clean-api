@@ -32,11 +32,13 @@ trait BelongsToJobStatus
         return $this->save();
     }
 
-    public function isStatus($statusName) {
+    public function isStatus($statusName)
+    {
         $statusId = JobStatus::whereName($statusName)->first()->id;
         if ($this->statusId == $statusId) {
             return true;
         }
+
         return false;
     }
 }

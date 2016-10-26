@@ -1,6 +1,5 @@
 <?php
 
-
 namespace WA\DataStore;
 
 use WA\DataStore\Traits\BelongsToCarrier;

@@ -2,18 +2,15 @@
 
 /**
  * CarrierImagesTableSeeder - Insert info into database.
- *  
+ *
  * @author   Agustí Dosaiguas
  */
-
 class CarrierImagesTableSeeder extends BaseTableSeeder
 {
-    protected $table = "carrier_images";
+    protected $table = 'carrier_images';
 
     /**
      * Run the database seeds.
-     *
-     * @return void
      */
     public function run()
     {
@@ -22,21 +19,21 @@ class CarrierImagesTableSeeder extends BaseTableSeeder
         $data = [
 
             [
-                'carrierId'     => 1,
-                'imageId'      => 5
+                'carrierId' => 1,
+                'imageId' => 5,
             ],
             [
-                'carrierId'     => 2,
-                'imageId'      => 6
+                'carrierId' => 2,
+                'imageId' => 6,
             ],
             [
-                'carrierId'     => 5,
-                'imageId'      => 7
+                'carrierId' => 5,
+                'imageId' => 7,
             ],
             [
-                'carrierId'     => 11,
-                'imageId'      => 8
-            ]   
+                'carrierId' => 11,
+                'imageId' => 8,
+            ],
         ];
 
         $this->loadTable($data);

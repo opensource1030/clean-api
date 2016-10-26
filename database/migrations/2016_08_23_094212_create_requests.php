@@ -10,14 +10,12 @@ class CreateRequests extends Migration
     protected $tableName = 'requests';
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
         Schema::create(
             $this->tableName,
-            function ( $table) {
+            function ($table) {
                 $table->increments('id');
                 $table->string('name');
                 $table->string('description');
@@ -30,8 +28,6 @@ class CreateRequests extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
     public function down()
     {

@@ -6,12 +6,10 @@ class DatabaseSeeder extends Seeder
 {
     /**
      * Run the database seeds.
-     *
-     * @return void
      */
     public function run()
     {
-        switch(DB::getDriverName()) {
+        switch (DB::getDriverName()) {
             case 'mysql':
                 DB::statement('SET FOREIGN_KEY_CHECKS=0');
                 break;
@@ -52,8 +50,8 @@ class DatabaseSeeder extends Seeder
         $this->call(RequestsTableSeeder::class);
         $this->call(ServicesTableSeeder::class);
         $this->call(UsersTableSeeder::class);
-        
-        switch(DB::getDriverName()) {
+
+        switch (DB::getDriverName()) {
             case 'mysql':
                 DB::statement('SET FOREIGN_KEY_CHECKS=1');
                 break;

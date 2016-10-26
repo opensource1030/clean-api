@@ -2,7 +2,7 @@
 
 /**
  * Saml2Auth - Extends Saml2A and modifies login function.
- *  
+ *
  * @author   Agustí Dosaiguas
  */
 
@@ -22,11 +22,11 @@ class Saml2Auth extends Saml2A
      * Initiate a saml2 login flow. It will redirect! Before calling this, check if user is
      * authenticated (here in saml2). That would be true when the assertion was received this request.
      */
-    function login($returnTo = null)
+    public function login($returnTo = null)
     {
         $auth = $this->auth;
         $parameters = array();
-        
+
         $forceAuthn = false;
         $isPassive = false;
         $stay = true;  //If $stay is True, it return a string with the SLO URL + LogoutRequest + parameters
@@ -37,9 +37,9 @@ class Saml2Auth extends Saml2A
 
     /**
      * Process a Saml response (assertion consumer service)
-     * When errors are encountered, it returns an array with proper description
-     */    
-    function acs()
+     * When errors are encountered, it returns an array with proper description.
+     */
+    public function acs()
     {
         $auth = $this->auth;
 
@@ -69,5 +69,5 @@ class Saml2Auth extends Saml2A
         }
 
         return null;
-    }    
+    }
 }

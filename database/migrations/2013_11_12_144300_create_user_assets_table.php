@@ -16,14 +16,12 @@ class CreateUserAssetsTable extends Migration
 
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
         Schema::create(
             $this->tableName,
-            function ( $table) {
+            function ($table) {
                 $table->increments('id');
                 $table->integer('userId')->unsigned();
                 $table->integer('assetId')->unsigned();
@@ -33,8 +31,8 @@ class CreateUserAssetsTable extends Migration
         );
 
         Schema::table(
-            $this->tableName, 
-            function($table) {
+            $this->tableName,
+            function ($table) {
                 $table->foreign('assetId')->references('id')->on('assets');
             }
         );
@@ -42,26 +40,23 @@ class CreateUserAssetsTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
     public function down()
     {
         Schema::table(
-            $this->tableName, 
-            function ( $table) {
+            $this->tableName,
+            function ($table) {
                 //$table->dropForeign('assetId');
-        });
+            });
 
         /*
         Schema::table(
-            $this->tableName, 
+            $this->tableName,
             function ( $table) {
                 //$table->dropForeign('userId');
         });
         */
-        
+
         $this->forceDropTable($this->tableName);
     }
-
 }

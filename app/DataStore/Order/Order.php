@@ -3,16 +3,13 @@
 namespace WA\DataStore\Order;
 
 use WA\DataStore\BaseDataStore;
-use WA\DataStore\Order\OrderTransformer;
 
 /**
- * Class Order
- *
- * @package WA\DataStore\Order
+ * Class Order.
  */
 class Order extends BaseDataStore
 {
-    protected  $table = 'orders';
+    protected $table = 'orders';
 
     protected $fillable = [
             'status',
@@ -20,21 +17,20 @@ class Order extends BaseDataStore
             'packageId',
             'deviceId',
             'serviceId',
-            'updated_at'];
+            'updated_at', ];
 
-
-    /**
-     * Get all the owners for the order
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\MorphTo
-     */
+  /**
+   * Get all the owners for the order.
+   *
+   * @return \Illuminate\Database\Eloquent\Relations\MorphTo
+   */
   public function owner()
   {
       return $this->morphTo();
   }
 
     /**
-     * Get the transformer instance
+     * Get the transformer instance.
      *
      * @return OrderTransformer
      */
@@ -42,5 +38,4 @@ class Order extends BaseDataStore
     {
         return new OrderTransformer();
     }
-
 }

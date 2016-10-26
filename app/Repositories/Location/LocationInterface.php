@@ -7,7 +7,7 @@ use WA\Repositories\RepositoryInterface;
 interface LocationInterface extends RepositoryInterface
 {
     /**
-     * Get location details by name
+     * Get location details by name.
      *
      * @param $name
      *

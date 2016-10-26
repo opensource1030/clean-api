@@ -4,9 +4,8 @@
 use Illuminate\Database\Migrations\Migration;
 use WA\Database\Command\TablesRelationsAndIndexes;
 
-
-class CreateCompaniesCarriersTable extends Migration {
-
+class CreateCompaniesCarriersTable extends Migration
+{
     use TablesRelationsAndIndexes;
 
     protected $tableName = 'companies_carriers';
@@ -18,14 +17,12 @@ class CreateCompaniesCarriersTable extends Migration {
 
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
         Schema::create(
             $this->tableName,
-            function ( $table) {
+            function ($table) {
                 $table->increments('id');
                 $table->string('billingAccountNumber');
                 $table->string('parentAccountNumber')->nullable();
@@ -36,11 +33,11 @@ class CreateCompaniesCarriersTable extends Migration {
                 $table->integer('companyId')->unsigned();
 
                 $table->nullableTimestamps();
-        });
+            });
 
         Schema::table(
-            $this->tableName, 
-            function($table) {
+            $this->tableName,
+            function ($table) {
                 $table->foreign('carrierId')->references('id')->on('carriers');
                 $table->foreign('companyId')->references('id')->on('companies');
             }
@@ -49,19 +46,16 @@ class CreateCompaniesCarriersTable extends Migration {
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
     public function down()
     {
         Schema::table(
-            $this->tableName, 
-            function ( $table) {
+            $this->tableName,
+            function ($table) {
                 //$table->dropForeign('carrierId');
                 //$table->dropForeign('companyId');
-        });
+            });
 
         $this->forceDropTable($this->tableName);
     }
-
 }

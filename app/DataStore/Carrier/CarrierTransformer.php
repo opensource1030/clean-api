@@ -3,11 +3,8 @@
 namespace WA\DataStore\Carrier;
 
 use League\Fractal\TransformerAbstract;
-
 use League\Fractal\Resource\Collection as ResourceCollection;
-
 use WA\DataStore\Image\ImageTransformer;
-
 use WA\Helpers\Traits\Criteria;
 
 /**
@@ -18,7 +15,7 @@ class CarrierTransformer extends TransformerAbstract
     use Criteria;
 
     protected $availableIncludes = [
-        'images'
+        'images',
     ];
     /**
      * @param Carrier $carrier
@@ -35,7 +32,7 @@ class CarrierTransformer extends TransformerAbstract
             'locationId' => $carrier->locationId,
             'shortName' => $carrier->shortName,
             'created_at' => $carrier->created_at,
-            'updated_at' => $carrier->updated_at
+            'updated_at' => $carrier->updated_at,
         ];
     }
 
@@ -47,6 +44,7 @@ class CarrierTransformer extends TransformerAbstract
     public function includeImages(Carrier $carrier)
     {
         $images = $this->applyCriteria($carrier->images(), $this->criteria);
+
         return new ResourceCollection($images->get(), new ImageTransformer(), 'images');
     }
 }

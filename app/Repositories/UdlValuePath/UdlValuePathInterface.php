@@ -11,7 +11,7 @@ interface UdlValuePathInterface extends RepositoryInterface
      *
      * @param string $udlValuePath
      *
-     * @return Object object of the udl information
+     * @return object object of the udl information
      */
     public function byUdlPath($udlValuePath);
 
@@ -25,7 +25,7 @@ interface UdlValuePathInterface extends RepositoryInterface
     public function byUdlId($udlValuePathId);
 
     /**
-     * Get the Path Name by the External ID
+     * Get the Path Name by the External ID.
      *
      * @param int $externalId
      *
@@ -39,6 +39,4 @@ interface UdlValuePathInterface extends RepositoryInterface
      * @return int
      */
     public function getMaxExternalId();
-
-
 }
