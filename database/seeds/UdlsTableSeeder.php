@@ -1,5 +1,7 @@
 <?php
 
+namespace WA\database\seeds;
+
 class UdlsTableSeeder extends BaseTableSeeder
 {
     protected $table = 'udls';
@@ -81,8 +83,8 @@ class UdlsTableSeeder extends BaseTableSeeder
                 'label' => 'Cost Center',
                 'legacyUdlField' => null
             ]
-	    ];
+        ];
 
-	    $this->loadTable($data);
+        $this->loadTable($data);
     }
 }

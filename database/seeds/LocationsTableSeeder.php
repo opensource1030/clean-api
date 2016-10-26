@@ -1,5 +1,7 @@
 <?php
 
+namespace WA\database\seeds;
+
 class LocationsTableSeeder extends BaseTableSeeder
 {
     protected $table = 'locations';
@@ -19,10 +21,10 @@ class LocationsTableSeeder extends BaseTableSeeder
                 'numCode' => "",
                 'callingCode' => "",
                 'lang' => "",
-                'currencyIso' => "",
+                'currencyIso' => ""
             ]
-	    ];
+        ];
 
-	    $this->loadTable($data);
+        $this->loadTable($data);
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+namespace WA\database\seeds;
+
 class UdlValuesTableSeeder extends BaseTableSeeder
 {
     protected $table = 'udl_values';
@@ -489,8 +491,8 @@ class UdlValuesTableSeeder extends BaseTableSeeder
                 'udlId' => 12,
                 'name' => 'Cost Center10'
             ]
-	    ];
+        ];
 
-	    $this->loadTable($data);
+        $this->loadTable($data);
     }
 }

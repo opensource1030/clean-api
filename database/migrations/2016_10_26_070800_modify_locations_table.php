@@ -16,7 +16,7 @@ class ModifyLocationsTable extends Migration
      */
     public function up()
     {
-        Schema::table($this->tableName, function($table){
+        Schema::table($this->tableName, function ($table) {
             $table->string('country')->default('');
             $table->string('city')->default('');
             $table->string('zipCode')->default('');

@@ -33,8 +33,8 @@ class CreatePackages extends Migration
         );
 
         Schema::table(
-            $this->tableName, 
-            function($table) {
+            $this->tableName,
+            function ($table) {
                 $table->foreign('companyId')->references('id')->on('companies');
             }
         );
@@ -47,7 +47,7 @@ class CreatePackages extends Migration
     public function down()
     {
         Schema::table(
-            $this->tableName,
+            $this->tableName, 
             function ($table) {
                 //$table->dropForeign('devicesId');
                 //$table->dropForeign('appsId');
@@ -55,7 +55,7 @@ class CreatePackages extends Migration
         );
 
         Schema::table(
-            'orders',
+            'orders', 
             function ($table) {
                 //$table->dropForeign('packageId');
             }

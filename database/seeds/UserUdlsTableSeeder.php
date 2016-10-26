@@ -1,5 +1,7 @@
 <?php
 
+namespace WA\database\seeds;
+
 class UserUdlsTableSeeder extends BaseTableSeeder
 {
     protected $table = 'employee_udls';
@@ -57,8 +59,8 @@ class UserUdlsTableSeeder extends BaseTableSeeder
                 'userId' => 23,
                 'udlValueId' => 39
             ],
-	    ];
+        ];
 
-	    $this->loadTable($data);
+        $this->loadTable($data);
     }
 }
