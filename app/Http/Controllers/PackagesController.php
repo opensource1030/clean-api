@@ -3,13 +3,17 @@
 namespace WA\Http\Controllers;
 
 use DB;
+
 use Illuminate\Http\Request;
+use \Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Lang;
 use LucaDegasperi\OAuth2Server\Facades\Authorizer;
 use WA\DataStore\Condition\Condition;
 use WA\DataStore\Package\Package;
 use WA\DataStore\Package\PackageTransformer;
 use WA\DataStore\User\User;
+use WA\DataStore\User\UserTransformer;
 use WA\Repositories\Package\PackageInterface;
 
 /**
@@ -59,8 +63,40 @@ class PackagesController extends ApiController
 
     public function userPackages(Request $request)
     {
+<<<<<<< e8b7bbba4c54a94574713c40c8cb770e6f997d31
         $user = $this->retrieveUserInfoFromAuthorizer();
         $info = $this->retrieveInfoFromUser($user);
+=======
+        // Retrieve the current user.
+        $id = Authorizer::getResourceOwnerId();
+        $user = User::find(21);
+        $udlValues = $user->UdlValues;
+
+        // Retrieve the user information that will be compared.
+        $info = array();
+        $auxName = ["value" => $user->username, "name" => "name", "label" => "Name"];
+        array_push($info, $auxName);
+        $auxEmail = ["value" => $user->email, "name" => "email", "label" => "Email"];
+        array_push($info, $auxEmail);
+        $auxBudget = ["value" => "", "name" => "budget", "label" => "Budget"];
+        array_push($info, $auxBudget);
+
+        foreach ($udlValues as $uv) {
+            $aux = ["value" => $uv->name, "name" => $uv->udl->name, "label" => $uv->udl->label];
+            array_push($info, $aux);
+        }
+
+        $auxBudget = ["value" => "", "name" => "budget", "label" => "Budget"];
+        array_push($info, $auxBudget);
+        $auxCountry1 = ["value" => "", "name" => "country", "label" => "Country"];
+        array_push($info, $auxCountry1);
+        $auxCountry2 = ["value" => "", "name" => "country", "label" => "Country"];
+        array_push($info, $auxCountry2);
+        $auxCity = ["value" => "", "name" => "city", "label" => "City"];
+        array_push($info, $auxCity);
+        $auxAddress = ["value" => "", "name" => "address", "label" => "Address"];
+        array_push($info, $auxAddress);
+>>>>>>> CP-1558 #Packages - User : Nitpick Issues 5.0
 
         // Retrieve all the packages that have the same companyId as the user.
         $packages = Package::where('companyId', $user->companyId);
@@ -68,15 +104,24 @@ class PackagesController extends ApiController
 
         $packages->where(function ($query) use ($info, $packagesAux) {
 
+<<<<<<< e8b7bbba4c54a94574713c40c8cb770e6f997d31
             foreach ($packagesAux as $package) {
                 $conditions = $package->conditions;
                 $ok = true;
 
                 if ($conditions != null) {
+=======
+            foreach ($packagesAux as $key => $package) {
+                $conditions = $package->conditions;
+                $ok = true;
+
+                if ($conditions <> null) {
+>>>>>>> CP-1558 #Packages - User : Nitpick Issues 5.0
                     foreach ($conditions as $condition) {
                         foreach ($info as $i) {
                             if ($condition->name == $i['label'] && $ok) {
                                 switch ($condition->condition) {
+<<<<<<< e8b7bbba4c54a94574713c40c8cb770e6f997d31
                                     case 'like':
                                         $ok = $ok && strpos($i['value'], $condition->value) !== false;
                                         break;
@@ -96,6 +141,27 @@ class PackagesController extends ApiController
                                         $ok = $ok && ($i['value'] != $condition->value) ? true : false;
                                         break;
                                     case 'eq':
+=======
+                                    case "like":
+                                        $ok = $ok && strpos($i['value'], $condition->value) !== false;
+                                        break;
+                                    case "gt":
+                                        $ok = $ok && ($i['value'] > $condition->value) ? true : false;
+                                        break;
+                                    case "lt":
+                                        $ok = $ok && ($i['value'] < $condition->value) ? true : false;
+                                        break;
+                                    case "gte":
+                                        $ok = $ok && ($i['value'] >= $condition->value) ? true : false;
+                                        break;
+                                    case "lte":
+                                        $ok = $ok && ($i['value'] <= $condition->value) ? true : false;
+                                        break;
+                                    case "ne":
+                                        $ok = $ok && ($i['value'] <> $condition->value) ? true : false;
+                                        break;
+                                    case "eq":
+>>>>>>> CP-1558 #Packages - User : Nitpick Issues 5.0
                                         $ok = $ok && ($i['value'] == $condition->value) ? true : false;
                                         break;
                                     default:
@@ -112,13 +178,18 @@ class PackagesController extends ApiController
             }
         });
 
+<<<<<<< e8b7bbba4c54a94574713c40c8cb770e6f997d31
         $packageTransformer = new PackageTransformer();
 
         if (!$this->includesAreCorrect($request, $packageTransformer)) {
+=======
+        if (!$this->includesAreCorrect($request, new PackageTransformer())) {
+>>>>>>> CP-1558 #Packages - User : Nitpick Issues 5.0
             $error['errors']['getincludes'] = Lang::get('messages.NotExistInclude');
             return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
         }
 
+<<<<<<< e8b7bbba4c54a94574713c40c8cb770e6f997d31
         return $this->response()->withPaginator($packages->paginate(25), $packageTransformer, ['key' => 'packages'])->setStatusCode($this->status_codes['created']);
     }
 
@@ -159,6 +230,9 @@ class PackagesController extends ApiController
         array_push($info, $auxAddress);
 
         return $info;
+=======
+        return $this->response()->withPaginator($packages->paginate(25), new PackageTransformer(), ['key' => 'packages'])->setStatusCode($this->status_codes['created']);
+>>>>>>> CP-1558 #Packages - User : Nitpick Issues 5.0
     }
 
     /**
@@ -174,9 +248,15 @@ class PackagesController extends ApiController
         $this->package->setCriteria($criteria);
 
         $package = Package::find($id);
+<<<<<<< e8b7bbba4c54a94574713c40c8cb770e6f997d31
         if ($package == null) {
             $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'Package']);
 
+=======
+
+        if($package == null){
+            $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'Package']);   
+>>>>>>> CP-1558 #Packages - User : Nitpick Issues 5.0
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
@@ -445,4 +525,8 @@ class PackagesController extends ApiController
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
     }
+<<<<<<< e8b7bbba4c54a94574713c40c8cb770e6f997d31
+=======
+
+>>>>>>> CP-1558 #Packages - User : Nitpick Issues 5.0
 }
