@@ -436,11 +436,11 @@ class PackagesController extends ApiController
             $this->package->deleteById($id);
         } else {
             $error['errors']['delete'] = Lang::get('messages.NotExistClass', ['class' => 'Package']);
-
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
         $package = Package::find($id);
+
         if ($package == null) {
             return array('success' => true);
         } else {
