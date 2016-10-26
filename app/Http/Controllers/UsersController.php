@@ -90,8 +90,7 @@ class UsersController extends ApiController
         $usersAux = $users->get();
 
         $users->where(function ($query) use ($conditions, $usersAux) {
-            foreach( $usersAux as $user )
-            {
+            foreach ($usersAux as $user) {
                 $info = $this->retrieveInformationofUser($user);
                 $ok = true;
     
