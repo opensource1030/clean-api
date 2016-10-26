@@ -107,13 +107,9 @@ class PackagesController extends ApiController
                 $ok = true;
 
                 if ($conditions <> null) {
-
                     foreach ($conditions as $condition) {
-
                         foreach ($info as $i) {
-
                             if ($condition->name == $i['label'] && $ok) {
-                                
                                 switch ($condition->condition) {
                                     case "like":
                                         $ok = $ok && strpos($i['value'], $condition->value) !== false;
@@ -144,8 +140,7 @@ class PackagesController extends ApiController
                     }
                 }
 
-                if($ok)
-                {
+                if ($ok) {
                     $query = $query->orWhere('id', $package->id);
                 }
             }
