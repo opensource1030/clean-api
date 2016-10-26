@@ -107,16 +107,15 @@ class PackagesController extends ApiController
                 $conditions = $package->conditions;
                 $ok = true;
 
-                if( $conditions <> null )
-                {
-                    foreach( $conditions as $condition )
-                    {
-                        foreach ($info as $i) 
-                        {
-                            if( $condition->name == $i['label'] && $ok)
-                            {
-                                switch ( $condition->condition )
-                                {
+                if ($conditions <> null) {
+
+                    foreach ($conditions as $condition) {
+
+                        foreach ($info as $i) {
+
+                            if ($condition->name == $i['label'] && $ok) {
+                                
+                                switch ($condition->condition) {
                                     case "like":
                                         $ok = $ok && strpos($i['value'], $condition->value) !== false;
                                         break;
