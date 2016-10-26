@@ -66,15 +66,9 @@ class PackagesController extends ApiController
 
     public function userPackages(Request $request)
     {
-<<<<<<< 3bda9c5b6a6dc60f6002841f80f8a87479d955fa
         // GET USER.
         $user = Authorizer::getResourceOwnerId();
         $user = User::find($id);
-=======
-        // Retrieve the current user.
-        $id = Authorizer::getResourceOwnerId();
-        $user = User::find(21);
->>>>>>> CP-1558 #Some minor changes
         $udlValues = $user->UdlValues;
 
         // Retrieve the user information that will be compared.
