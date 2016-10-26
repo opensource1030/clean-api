@@ -10,7 +10,6 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Lang;
 
 use LucaDegasperi\OAuth2Server\Facades\Authorizer;
-
 use WA\DataStore\Condition\Condition;
 use WA\DataStore\Package\Package;
 use WA\DataStore\Package\PackageTransformer;
