@@ -89,23 +89,17 @@ class UsersController extends ApiController
         $users = User::where('companyId', $package->companyId);
         $usersAux = $users->get();
 
-        $users->where(function($query) use ($conditions, $usersAux)
-        {
+        $users->where(function ($query) use ($conditions, $usersAux) {
             foreach( $usersAux as $user )
             {
                 $info = $this->retrieveInformationofUser($user);
                 $ok = true;
     
-                if( $conditions <> null )
-                {
-                    foreach( $conditions as $condition )
-                    {
-                        foreach ($info as $i) 
-                        {
-                            if( $condition->name == $i['label'] && $ok)
-                            {
-                                switch ( $condition->condition )
-                                {
+                if ($conditions <> null) {
+                    foreach ($conditions as $condition) {
+                        foreach ($info as $i) {
+                            if ($condition->name == $i['label'] && $ok) {
+                                switch ($condition->condition) {
                                     case "like":
                                         $ok = $ok && strpos($i['value'], $condition->value) !== false;
                                         break;
