@@ -103,7 +103,6 @@ class PackagesController extends ApiController
         $packages->where(function ($query) use ($info, $packagesAux) {
 
             foreach ($packagesAux as $key => $package) {
-
                 $conditions = $package->conditions;
                 $ok = true;
 
