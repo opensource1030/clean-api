@@ -57,7 +57,6 @@ class UsersController extends ApiController
 
         $response = $this->response()->withPaginator($users, new UserTransformer(), ['key' => 'users']);
         $response = $this->applyMeta($response);
-
         return $response;
     }
 
@@ -122,20 +121,19 @@ class UsersController extends ApiController
                                         break;
                                     default:
                                         $ok = $ok && true;
-                                }                                
+                                }
                             }
                         }
                     }
-                }                
+                }
 
-                if($ok)
-                {
+                if ($ok) {
                     $query = $query->orWhere('id', $user->id);
                 }
             }
         });
 
-        if(!$this->includesAreCorrect($request, new PackageTransformer())){
+        if (!$this->includesAreCorrect($request, new PackageTransformer())) {
             $error['errors']['getincludes'] = Lang::get('messages.NotExistInclude');
             return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
         }
@@ -174,7 +172,6 @@ class UsersController extends ApiController
         array_push($info, $auxAddress);
 
         return $info;
-
     }
 
     public function getLoggedInUser(Request $request)

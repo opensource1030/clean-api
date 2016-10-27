@@ -8,13 +8,15 @@ use Illuminate\Http\Request;
 use \Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Lang;
+
 use LucaDegasperi\OAuth2Server\Facades\Authorizer;
+
 use WA\DataStore\Condition\Condition;
 use WA\DataStore\Package\Package;
 use WA\DataStore\Package\PackageTransformer;
+use WA\Repositories\Package\PackageInterface;
 use WA\DataStore\User\User;
 use WA\DataStore\User\UserTransformer;
-use WA\Repositories\Package\PackageInterface;
 
 /**
  * Package resource.
@@ -71,7 +73,6 @@ class PackagesController extends ApiController
         $packagesAux = $packages->get();
 
         $packages->where(function ($query) use ($info, $packagesAux) {
-
             foreach ($packagesAux as $package) {
                 $conditions = $package->conditions;
                 $ok = true;
@@ -179,8 +180,8 @@ class PackagesController extends ApiController
 
         $package = Package::find($id);
 
-        if($package == null){
-            $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'Package']);   
+        if ($package == null) {
+            $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'Package']);
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
@@ -211,8 +212,8 @@ class PackagesController extends ApiController
         $dataConditions = $dataServices = $dataDevices = $dataApps = array();
 
         /*
-         * Checks if Json has data, data-type & data-attributes.
-         */
+                     * Checks if Json has data, data-type & data-attributes.
+        */
         if (!$this->isJsonCorrect($request, 'packages')) {
             $error['errors']['json'] = Lang::get('messages.InvalidJson');
 
@@ -222,8 +223,8 @@ class PackagesController extends ApiController
         DB::beginTransaction();
 
         /*
-         * Now we can create the Package.
-         */
+                     * Now we can create the Package.
+        */
         try {
             $data = $request->all()['data']['attributes'];
             $data['id'] = $id;
@@ -251,8 +252,8 @@ class PackagesController extends ApiController
         }
 
         /*
-         * Check if Json has relationships to continue or if not and commit + return.
-         */
+                     * Check if Json has relationships to continue or if not and commit + return.
+        */
         if (isset($data['relationships'])) {
             $dataRelationships = $data['relationships'];
 
@@ -329,8 +330,8 @@ class PackagesController extends ApiController
         $dataConditions = $dataServices = $dataDevices = $dataApps = $dataDelivery = array();
 
         /*
-         * Checks if Json has data, data-type & data-attributes.
-         */
+                     * Checks if Json has data, data-type & data-attributes.
+        */
         if (!$this->isJsonCorrect($request, 'packages')) {
             $error['errors']['json'] = Lang::get('messages.InvalidJson');
 
@@ -342,8 +343,8 @@ class PackagesController extends ApiController
         DB::beginTransaction();
 
         /*
-         * Now we can create the Package.
-         */
+                     * Now we can create the Package.
+        */
         try {
             $package = $this->package->create($data);
         } catch (\Exception $e) {
@@ -355,8 +356,8 @@ class PackagesController extends ApiController
         }
 
         /*
-         * Check if Json has relationships to continue or if not and commit + return.
-         */
+                     * Check if Json has relationships to continue or if not and commit + return.
+        */
         if (isset($data['relationships'])) {
             $dataRelationships = $data['relationships'];
 
