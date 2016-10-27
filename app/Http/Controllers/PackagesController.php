@@ -7,17 +7,10 @@ use WA\DataStore\Package\Package;
 use WA\DataStore\Package\PackageTransformer;
 use WA\Repositories\Package\PackageInterface;
 use DB;
-
-use Log;
-
 use Illuminate\Support\Facades\Lang;
 use WA\DataStore\Condition\Condition;
-
 use LucaDegasperi\OAuth2Server\Facades\Authorizer;
 use WA\DataStore\User\User;
-use WA\DataStore\User\UserTransformer;
-use \Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Collection;
 
 /**
  * Package resource.
@@ -73,27 +66,27 @@ class PackagesController extends ApiController
 
         // Retrieve the user information that will be compared.
         $info = array();
-        $auxName = ["value" => $user->username, "name" => "name", "label" => "Name"];
+        $auxName = ['value' => $user->username, 'name' => 'name', 'label' => 'Name'];
         array_push($info, $auxName);
-        $auxEmail = ["value" => $user->email, "name" => "email", "label" => "Email"];
+        $auxEmail = ['value' => $user->email, 'name' => 'email', 'label' => 'Email'];
         array_push($info, $auxEmail);
-        $auxBudget = ["value" => "", "name" => "budget", "label" => "Budget"];
+        $auxBudget = ['value' => '', 'name' => 'budget', 'label' => 'Budget'];
         array_push($info, $auxBudget);
 
         foreach ($udlValues as $uv) {
-            $aux = ["value" => $uv->name, "name" => $uv->udl->name, "label" => $uv->udl->label];
+            $aux = ['value' => $uv->name, 'name' => $uv->udl->name, 'label' => $uv->udl->label];
             array_push($info, $aux);
         }
 
-        $auxBudget = ["value" => "", "name" => "budget", "label" => "Budget"];
+        $auxBudget = ['value' => '', 'name' => 'budget', 'label' => 'Budget'];
         array_push($info, $auxBudget);
-        $auxCountry1 = ["value" => "", "name" => "country", "label" => "Country"];
+        $auxCountry1 = ['value' => '', 'name' => 'country', 'label' => 'Country'];
         array_push($info, $auxCountry1);
-        $auxCountry2 = ["value" => "", "name" => "country", "label" => "Country"];
+        $auxCountry2 = ['value' => '', 'name' => 'country', 'label' => 'Country'];
         array_push($info, $auxCountry2);
-        $auxCity = ["value" => "", "name" => "city", "label" => "City"];
+        $auxCity = ['value' => '', 'name' => 'city', 'label' => 'City'];
         array_push($info, $auxCity);
-        $auxAddress = ["value" => "", "name" => "address", "label" => "Address"];
+        $auxAddress = ['value' => '', 'name' => 'address', 'label' => 'Address'];
         array_push($info, $auxAddress);
 
         // Retrieve all the packages that have the same companyId as the user.
@@ -101,35 +94,34 @@ class PackagesController extends ApiController
         $packagesAux = $packages->get();
 
         $packages->where(function ($query) use ($info, $packagesAux) {
-
             foreach ($packagesAux as $key => $package) {
                 $conditions = $package->conditions;
                 $ok = true;
 
-                if ($conditions <> null) {
+                if ($conditions != null) {
                     foreach ($conditions as $condition) {
                         foreach ($info as $i) {
                             if ($condition->name == $i['label'] && $ok) {
                                 switch ($condition->condition) {
-                                    case "like":
+                                    case 'like':
                                         $ok = $ok && strpos($i['value'], $condition->value) !== false;
                                         break;
-                                    case "gt":
+                                    case 'gt':
                                         $ok = $ok && ($i['value'] > $condition->value) ? true : false;
                                         break;
-                                    case "lt":
+                                    case 'lt':
                                         $ok = $ok && ($i['value'] < $condition->value) ? true : false;
                                         break;
-                                    case "gte":
+                                    case 'gte':
                                         $ok = $ok && ($i['value'] >= $condition->value) ? true : false;
                                         break;
-                                    case "lte":
+                                    case 'lte':
                                         $ok = $ok && ($i['value'] <= $condition->value) ? true : false;
                                         break;
-                                    case "ne":
-                                        $ok = $ok && ($i['value'] <> $condition->value) ? true : false;
+                                    case 'ne':
+                                        $ok = $ok && ($i['value'] != $condition->value) ? true : false;
                                         break;
-                                    case "eq":
+                                    case 'eq':
                                         $ok = $ok && ($i['value'] == $condition->value) ? true : false;
                                         break;
                                     default:
@@ -148,6 +140,7 @@ class PackagesController extends ApiController
 
         if (!$this->includesAreCorrect($request, new PackageTransformer())) {
             $error['errors']['getincludes'] = Lang::get('messages.NotExistInclude');
+
             return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
         }
 
@@ -339,6 +332,7 @@ class PackagesController extends ApiController
             DB::rollBack();
             $error['errors']['packages'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Package', 'option' => 'created', 'include' => '']);
             $error['errors']['Message'] = $e->getMessage();
+
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
