@@ -4,6 +4,9 @@ namespace WA\Repositories\Allocation;
 
 use WA\Repositories\AbstractRepository;
 
+use Log;
+use Carbon;
+
 class EloquentAllocation extends AbstractRepository implements AllocationInterface
 {
     /**
@@ -15,7 +18,7 @@ class EloquentAllocation extends AbstractRepository implements AllocationInterfa
      */
     public function getCurrentCharges($email)
     {
-        $start = date('Y-m-d 00:00:00', strtotime('first day of this month'));
+        $start =  date('Y-m-d 00:00:00', strtotime('first day of this month'));
 
         $charges = $this->model->where('User Email', $email)->where('Bill Month', $start)->get();
 

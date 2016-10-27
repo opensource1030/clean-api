@@ -62,7 +62,6 @@ class DeviceTypesController extends ApiController
 
         if ($deviceType == null) {
             $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'DeviceType']);
-
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
@@ -144,16 +143,14 @@ class DeviceTypesController extends ApiController
             $this->deviceType->deleteById($id);
         } else {
             $error['errors']['delete'] = Lang::get('messages.NotExistClass', ['class' => 'DeviceType']);
-
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
         $deviceType = DeviceType::find($id);
         if ($deviceType == null) {
-            return array('success' => true);
+            return array("success" => true);
         } else {
             $error['errors']['delete'] = Lang::get('messages.NotDeletedClass', ['class' => 'DeviceType']);
-
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
     }

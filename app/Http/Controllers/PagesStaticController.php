@@ -59,8 +59,7 @@ class PagesStaticController extends AuthorizedController
 
             return view('pages.content.edit')->with('pages', $pages)->with('companies', $companies);
         } catch (Dingo\Api\Exception\InternalHttpException $e) {
-            Log::error('Something failed with the response, : '.$e->getResponse());
-
+            Log::error('Something failed with the response, : ' . $e->getResponse());
             return false;
         }
     }

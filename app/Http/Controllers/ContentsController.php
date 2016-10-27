@@ -4,6 +4,7 @@ namespace WA\Http\Controllers;
 
 use WA\DataStore\Content\ContentTransformer;
 use WA\DataStore\Content\Content;
+use WA\Http\Controllers\Auth\AuthorizedController;
 use WA\Repositories\Content\ContentInterface;
 use Illuminate\Http\Request;
 
@@ -56,7 +57,6 @@ class ContentsController extends ApiController
 
         if (!isset($content)) {
             $error['errors']['put'] = 'Content selected does not exist';
-
             return response()->json($error)->setStatusCode(404);
         }
 
@@ -75,7 +75,6 @@ class ContentsController extends ApiController
         $content = Content::find($id);
         if (!isset($content)) {
             $error['errors']['put'] = 'Content selected does not exist';
-
             return response()->json($error)->setStatusCode(404);
         }
         $data = $request->all();
@@ -83,7 +82,6 @@ class ContentsController extends ApiController
         $content = $this->contents->update($data);
         if (!$content) {
             $error['errors']['put'] = 'Content could not be updated. Please check your data';
-
             return response()->json($error)->setStatusCode(403);
         }
 
@@ -101,7 +99,6 @@ class ContentsController extends ApiController
         $content = $this->contents->create($data);
         if (!$content) {
             $error['errors']['post'] = 'Content could not be created. Please check your data';
-
             return response()->json($error)->setStatusCode(403);
         }
 
@@ -120,7 +117,6 @@ class ContentsController extends ApiController
         $content = Content::find($id);
         if (!isset($content)) {
             $error['errors']['delete'] = 'Content selected does not exist';
-
             return response()->json($error)->setStatusCode(404);
         }
 

@@ -62,7 +62,6 @@ class AddressController extends ApiController
 
         if ($address == null) {
             $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'Address']);
-
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
@@ -144,16 +143,14 @@ class AddressController extends ApiController
             $this->address->deleteById($id);
         } else {
             $error['errors']['delete'] = Lang::get('messages.NotExistClass', ['class' => 'Address']);
-
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
-
+        
         $address = Address::find($id);
         if ($address == null) {
-            return array('success' => true);
+            return array("success" => true);
         } else {
             $error['errors']['delete'] = Lang::get('messages.NotDeletedClass', ['class' => 'Address']);
-
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
     }

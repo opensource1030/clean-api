@@ -6,7 +6,7 @@ use Illuminate\Support\ServiceProvider;
 
 /**
  * If the incoming request is an OPTIONS request
- * we will register a handler for the requested route.
+ * we will register a handler for the requested route
  */
 class CatchAllOptionsRequestsProvider extends ServiceProvider
 {

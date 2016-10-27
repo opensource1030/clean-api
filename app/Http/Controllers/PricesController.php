@@ -62,7 +62,6 @@ class PricesController extends ApiController
 
         if ($price == null) {
             $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'Price']);
-
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
@@ -137,16 +136,14 @@ class PricesController extends ApiController
             $this->price->deleteById($id);
         } else {
             $error['errors']['delete'] = Lang::get('messages.NotExistClass', ['class' => 'Price']);
-
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
         $price = Price::find($id);
         if ($price == null) {
-            return array('success' => true);
+            return array("success" => true);
         } else {
             $error['errors']['delete'] = Lang::get('messages.NotDeletedClass', ['class' => 'Price']);
-
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
     }

@@ -62,7 +62,6 @@ class ConditionsController extends ApiController
 
         if ($condition == null) {
             $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'Condition']);
-
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
@@ -144,7 +143,6 @@ class ConditionsController extends ApiController
             $this->condition->deleteById($id);
         } else {
             $error['errors']['delete'] = Lang::get('messages.NotExistClass', ['class' => 'Condition']);
-
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
@@ -153,7 +151,6 @@ class ConditionsController extends ApiController
             return array('success' => true);
         } else {
             $error['errors']['delete'] = Lang::get('messages.NotDeletedClass', ['class' => 'Condition']);
-
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
     }

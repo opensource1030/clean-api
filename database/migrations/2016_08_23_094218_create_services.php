@@ -1,11 +1,9 @@
 <?php
 
-
 use Illuminate\Database\Migrations\Migration;
 
-class CreateServices extends Migration
-{
-    use \WA\Database\Command\TablesRelationsAndIndexes;
+class CreateServices extends Migration {
+	use \WA\Database\Command\TablesRelationsAndIndexes;
 
     protected $tableName = 'services';
     /**
@@ -28,11 +26,11 @@ class CreateServices extends Migration
                 $table->integer('internationalData');
                 $table->integer('internationalMessages');
 
-                $table->nullableTimestamps();
+				$table->nullableTimestamps();
 
-                //$table->integer('companyId')->unsigned();
-            }
-        );
+				//$table->integer('companyId')->unsigned();
+			}
+		);
 
         Schema::table(
             $this->tableName,
@@ -59,28 +57,26 @@ class CreateServices extends Migration
                 //$table->dropForeign('companyId');
             });
 
-        $this->forceDropTable($this->tableName);
-    }
+		$this->forceDropTable($this->tableName);
+	}
 }
 
 /* EXAMPLE
 
 {
-    "id": 1,
-    "title": "Pooled Domestic Voice Plan",
-    "planCode": 55555,
-    "cost": 25,
-    "description": "Reduces the per minute rate for calls originating from outside the U.S.",
-    "domesticMinutes": 3000,
-    "domesticData": 3000,
-    "domesticMessages": 3000,
-    "internationalMinutes": 3000,
-    "internationalData": 3000,
-    "internationalMessages": 3000,
-    "links": {
-        "self": {
-            "href": "service/1"
-        }
-    }
+"id": 1,
+"title": "Pooled Domestic Voice Plan",
+"planCode": 55555,
+"cost": 25,
+"description": "Reduces the per minute rate for calls originating from outside the U.S.",
+"domesticMinutes": 3000,
+"domesticData": 3000,
+"domesticMessages": 3000,
+"internationalMinutes": 3000,
+"internationalData": 3000,
+"internationalMessages": 3000,
+"links": {
+"self": {
+"href": "service/1"
 }
 */

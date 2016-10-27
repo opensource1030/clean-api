@@ -8,6 +8,8 @@ use WA\Repositories\NotificationCategory\NotificationCategoryInterface;
 use WA\Repositories\UserNotifications\UserNotificationsInterface;
 use WA\Repositories\User\UserInterface;
 
+use Log;
+
 /**
  * Class EmailNotification.
  */

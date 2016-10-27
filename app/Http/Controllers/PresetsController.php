@@ -69,13 +69,11 @@ class PresetsController extends ApiController
 
         if ($preset == null) {
             $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'Preset']);
-
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
         if (!$this->includesAreCorrect($request, new PresetTransformer())) {
             $error['errors']['getincludes'] = Lang::get('messages.NotExistInclude');
-
             return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
         }
 
@@ -249,16 +247,14 @@ class PresetsController extends ApiController
             $this->preset->deleteById($id);
         } else {
             $error['errors']['delete'] = Lang::get('messages.NotExistClass', ['class' => 'Preset']);
-
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
         $preset = Preset::find($id);
         if ($preset == null) {
-            return array('success' => true);
+            return array("success" => true);
         } else {
             $error['errors']['delete'] = Lang::get('messages.NotDeletedClass', ['class' => 'Preset']);
-
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
     }

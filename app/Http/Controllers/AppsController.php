@@ -62,7 +62,6 @@ class AppsController extends ApiController
 
         if ($app == null) {
             $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'App']);
-
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
@@ -144,7 +143,6 @@ class AppsController extends ApiController
             $this->app->deleteById($id);
         } else {
             $error['errors']['delete'] = Lang::get('messages.NotExistClass', ['class' => 'App']);
-
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
@@ -153,7 +151,6 @@ class AppsController extends ApiController
             return array('success' => true);
         } else {
             $error['errors']['delete'] = Lang::get('messages.NotDeletedClass', ['class' => 'App']);
-
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
     }

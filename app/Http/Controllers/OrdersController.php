@@ -62,7 +62,6 @@ class OrdersController extends ApiController
 
         if ($order == null) {
             $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'Order']);
-
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
@@ -144,16 +143,14 @@ class OrdersController extends ApiController
             $this->order->deleteById($id);
         } else {
             $error['errors']['delete'] = Lang::get('messages.NotExistClass', ['class' => 'Order']);
-
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
         $order = Order::find($id);
         if ($order == null) {
-            return array('success' => true);
+            return array("success" => true);
         } else {
             $error['errors']['delete'] = Lang::get('messages.NotDeletedClass', ['class' => 'Order']);
-
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
     }

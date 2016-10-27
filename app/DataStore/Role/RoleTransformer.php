@@ -2,6 +2,8 @@
 
 namespace WA\DataStore\Role;
 
+use League\Fractal\Resource\Collection as ResourceCollection;
+use League\Fractal\Resource\Item as ResourceItem;
 use League\Fractal\TransformerAbstract;
 
 /**

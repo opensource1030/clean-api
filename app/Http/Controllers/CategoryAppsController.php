@@ -69,13 +69,11 @@ class CategoryAppsController extends ApiController
 
         if ($categoryApps == null) {
             $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'CategoryApps']);
-
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
         if (!$this->includesAreCorrect($request, new CategoryAppTransformer())) {
             $error['errors']['getincludes'] = Lang::get('messages.NotExistInclude');
-
             return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
         }
 
@@ -240,7 +238,6 @@ class CategoryAppsController extends ApiController
             $this->categoryApps->deleteById($id);
         } else {
             $error['errors']['delete'] = Lang::get('messages.NotExistClass', ['class' => 'CategoryApps']);
-
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
@@ -249,7 +246,6 @@ class CategoryAppsController extends ApiController
             return array('success' => true);
         } else {
             $error['errors']['delete'] = Lang::get('messages.NotDeletedClass', ['class' => 'CategoryApps']);
-
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
     }

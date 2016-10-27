@@ -95,17 +95,19 @@ class CompaniesStaticController extends BaseController
     public function store()
     {
         $data['name'] = trim(Input::get('name'));
-        $data['label'] = !empty(Input::get('label')) ? trim(Input::get('label')) : trim(Input::get('name'));
-        $data['shortName'] = !empty(Input::get('shortName')) ? Input::get('shortName') : '';
-        $data['rawDataDirectoryPath'] = !empty(Input::get('rawDataDirectoryPath')) ? Input::get('rawDataDirectoryPath') : '';
-        $data['active'] = (int) ((bool) Input::get('active'));
-        $data['isCensus'] = (int) ((bool) Input::get('isCensus'));
-        $data['carrierId'] = !empty(Input::get('carrierId')) ? Input::get('carrierId') : 0;
-        $data['carrierBAN'] = !empty(Input::get('carrierBAN')) ? Input::get('carrierBAN') : null;
-        $data['carrierPAN'] = !empty(Input::get('carrierPAN')) ? Input::get('carrierPAN') : null;
-        $data['poolGroupId'] = !empty(Input::get('poolGroupId')) ? Input::get('poolGroupId') : 0;
-        $data['poolBAN'] = !empty(Input::get('poolBAN')) ? Input::get('poolBAN') : null;
-        $data['baseCost'] = !empty(Input::get('baseCost')) ? Input::get('baseCost') : -1;
+        $data['label']= !empty(Input::get('label')) ? trim(Input::get('label')) : trim(Input::get('name'));
+        $data['shortName'] = !empty(Input::get('shortName')) ? Input::get('shortName') : "";
+        $data['rawDataDirectoryPath'] =  !empty(Input::get('rawDataDirectoryPath')) ? Input::get('rawDataDirectoryPath') : "";
+        $data['active'] =  (int)((bool)Input::get('active'));
+        $data['isCensus'] = (int)((bool)Input::get('isCensus'));
+        $data['carrierId'] =  !empty(Input::get('carrierId')) ? Input::get('carrierId') : 0;
+        $data['carrierBAN'] =  !empty(Input::get('carrierBAN')) ? Input::get('carrierBAN') : null;
+        $data['carrierPAN'] =  !empty(Input::get('carrierPAN')) ? Input::get('carrierPAN') : null;
+        $data['poolGroupId'] =  !empty(Input::get('poolGroupId')) ? Input::get('poolGroupId') : 0;
+        $data['poolBAN'] =  !empty(Input::get('poolBAN')) ? Input::get('poolBAN') : null;
+        $data['baseCost'] =  !empty(Input::get('baseCost')) ? Input::get('baseCost') : -1;
+
+
 
         if (!$this->companyForm->create($data)) {
             $this->data['error'] = $this->companyForm->errors();

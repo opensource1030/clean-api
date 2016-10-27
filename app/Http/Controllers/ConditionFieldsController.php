@@ -62,7 +62,6 @@ class ConditionFieldsController extends ApiController
 
         if ($conditionField == null) {
             $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'ConditionField']);
-
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
@@ -144,7 +143,6 @@ class ConditionFieldsController extends ApiController
             $this->conditionField->deleteById($id);
         } else {
             $error['errors']['delete'] = Lang::get('messages.NotExistClass', ['class' => 'ConditionField']);
-
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
@@ -153,7 +151,6 @@ class ConditionFieldsController extends ApiController
             return array('success' => true);
         } else {
             $error['errors']['delete'] = Lang::get('messages.NotDeletedClass', ['class' => 'ConditionField']);
-
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
     }

@@ -63,7 +63,6 @@ class ModificationsController extends ApiController
 
         if ($modification == null) {
             $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'Modification']);
-
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
@@ -145,16 +144,14 @@ class ModificationsController extends ApiController
             $this->modification->deleteById($id);
         } else {
             $error['errors']['delete'] = Lang::get('messages.NotExistClass', ['class' => 'Modification']);
-
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
         $modification = Modification::find($id);
         if ($modification == null) {
-            return array('success' => true);
+            return array("success" => true);
         } else {
             $error['errors']['delete'] = Lang::get('messages.NotDeletedClass', ['class' => 'Modification']);
-
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
     }

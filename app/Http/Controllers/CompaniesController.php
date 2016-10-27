@@ -73,7 +73,6 @@ class CompaniesController extends ApiController
 
         if ($company == null) {
             $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'Company']);
-
             return response()->json($error)->setStatusCode(409);
         }
 
@@ -137,7 +136,6 @@ class CompaniesController extends ApiController
         $company = Company::find($id);
         if (!isset($company)) {
             $error['errors']['delete'] = 'Company selected does not exist';
-
             return response()->json($error)->setStatusCode(404);
         }
 

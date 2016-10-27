@@ -70,7 +70,6 @@ class DevicesController extends ApiController
         $device = Device::find($id);
         if ($device == null) {
             $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'Device']);
-
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
@@ -127,8 +126,8 @@ class DevicesController extends ApiController
         $dataImages = $dataAssets = $dataModifications = $dataCarriers = $dataCompanies = array();
 
         /*
-                     * Checks if Json has data, data-type & data-attributes.
-        */
+         * Checks if Json has data, data-type & data-attributes.
+         */
         if (!$this->isJsonCorrect($request, 'devices')) {
             $error['errors']['json'] = Lang::get('messages.InvalidJson');
 
@@ -314,8 +313,8 @@ class DevicesController extends ApiController
         $dataImages = $dataAssets = $dataModifications = $dataCarriers = $dataCompanies = array();
 
         /*
-                     * Checks if Json has data, data-type & data-attributes.
-        */
+         * Checks if Json has data, data-type & data-attributes.
+         */
         if (!$this->isJsonCorrect($request, 'devices')) {
             $error['errors']['json'] = Lang::get('messages.InvalidJson');
 
@@ -329,8 +328,8 @@ class DevicesController extends ApiController
         DB::beginTransaction();
 
         /*
-                     * Now we can create the Device.
-        */
+         * Now we can create the Device.
+         */
         try {
             $device = $this->device->create($dataAttributes);
         } catch (\Exception $e) {
@@ -341,8 +340,8 @@ class DevicesController extends ApiController
         }
 
         /*
-                     * Check if Json has relationships to continue or if not and commit + return.
-        */
+         * Check if Json has relationships to continue or if not and commit + return.
+         */
         if (isset($data['relationships'])) {
             $dataRelationships = $data['relationships'];
 
@@ -450,11 +449,9 @@ class DevicesController extends ApiController
 
         if ($success) {
             DB::commit();
-
             return $this->response()->item($device, new DeviceTransformer(), ['key' => 'devices'])->setStatusCode($this->status_codes['created']);
         } else {
             DB::rollBack();
-
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
     }
@@ -471,16 +468,14 @@ class DevicesController extends ApiController
             $this->device->deleteById($id);
         } else {
             $error['errors']['delete'] = Lang::get('messages.NotExistClass', ['class' => 'Device']);
-
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
-
+        
         $device = Device::find($id);
         if ($device == null) {
-            return array('success' => true);
+            return array("success" => true);
         } else {
             $error['errors']['delete'] = Lang::get('messages.NotDeletedClass', ['class' => 'Device']);
-
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
     }
@@ -492,59 +487,59 @@ class DevicesController extends ApiController
     */
 
     /*
-             *      Checks if an ARRAY has repeated rows and returns an ARRAY without them.
-             *
-             *      @param:
-             *          "prices" : {
-             *              "data" : [
-             *                  {
-             *                      "type": "prices",
-             *                      "capacityId": 1,
-             *                      "styleId": 2,
-             *                      "carrierId": 1,
-             *                      "companyId": 1,
-             *                      "priceRetail": 100,
-             *                      "price1": 100,
-             *                      "price2": 100,
-             *                      "priceOwn": 100
-             *                  },
-             *                  {
-             *                      "type": "prices",
-             *                      "capacityId": 1,
-             *                      "styleId": 2,
-             *                      "carrierId": 1,
-             *                      "companyId": 1,
-             *                      "priceRetail": 100,
-             *                      "price1": 100,
-             *                      "price2": 100,
-             *                      "priceOwn": 100
-             *                  },
-             *                  ...
-             *      @return: array(
-             *                  {
-             *                      "type": "prices",
-             *                      "capacityId": 1,
-             *                      "styleId": 2,
-             *                      "carrierId": 1,
-             *                      "companyId": 1,
-             *                      "priceRetail": 100,
-             *                      "price1": 100,
-             *                      "price2": 100,
-             *                      "priceOwn": 100
-             *                  },
-             *                  ...
-    */
+     *      Checks if an ARRAY has repeated rows and returns an ARRAY without them.
+     *
+     *      @param:
+     *          "prices" : {
+     *              "data" : [
+     *                  {
+     *                      "type": "prices",
+     *                      "capacityId": 1,
+     *                      "styleId": 2,
+     *                      "carrierId": 1,
+     *                      "companyId": 1,
+     *                      "priceRetail": 100,
+     *                      "price1": 100,
+     *                      "price2": 100,
+     *                      "priceOwn": 100
+     *                  },
+     *                  {
+     *                      "type": "prices",
+     *                      "capacityId": 1,
+     *                      "styleId": 2,
+     *                      "carrierId": 1,
+     *                      "companyId": 1,
+     *                      "priceRetail": 100,
+     *                      "price1": 100,
+     *                      "price2": 100,
+     *                      "priceOwn": 100
+     *                  },
+     *                  ...
+     *      @return: array(
+     *                  {
+     *                      "type": "prices",
+     *                      "capacityId": 1,
+     *                      "styleId": 2,
+     *                      "carrierId": 1,
+     *                      "companyId": 1,
+     *                      "priceRetail": 100,
+     *                      "price1": 100,
+     *                      "price2": 100,
+     *                      "priceOwn": 100
+     *                  },
+     *                  ...
+     */
     private function deleteRepeat($data)
     {
         $dataAux = array();
 
-        for ($j = 0; $j < count($data); ++$j) {
+        for ($j = 0; $j < count($data); $j++) {
             if ($dataAux == null) {
                 array_push($dataAux, $data[$j]);
             } else {
                 $save = true;
 
-                for ($k = 0; $k < count($dataAux); ++$k) {
+                for ($k = 0; $k < count($dataAux); $k++) {
                     $esIgual = true;
 
                     if ($dataAux[$k]['capacityId'] != $data[$j]['capacityId']) {
@@ -578,35 +573,35 @@ class DevicesController extends ApiController
     }
 
     /*
-             *      Checks if an ARRAY param of Prices has information that is equal to the other information provided.
-             *
-             *      @param:
-             *          array (size=9) (prices)
-             *              'type' => string 'prices' (length=6)
-             *              'capacityId' => int 1
-             *              'styleId' => int 2
-             *              'carrierId' => int 1
-             *              'companyId' => int 1
-             *              'priceRetail' => int 100
-             *              'price1' => int 100
-             *              'price2' => int 100
-             *              'priceOwn' => int 100
-             *          array (size=3) (modifications)
-             *              0 => int 1
-             *              1 => int 2
-             *              2 => int 3
-             *          array (size=2) (carriers)
-             *              0 => int 1
-             *              1 => int 2
-             *          array (size=2) (companies)
-             *              0 => int 1
-             *              1 => int 2
-             *      @return:
-             *          array (size=3)
-             *              'bool' => boolean true
-             *              'error' => string 'No Error' (length=8)
-             *              'id' => int 0
-    */
+     *      Checks if an ARRAY param of Prices has information that is equal to the other information provided.
+     *
+     *      @param:
+     *          array (size=9) (prices)
+     *              'type' => string 'prices' (length=6)
+     *              'capacityId' => int 1
+     *              'styleId' => int 2
+     *              'carrierId' => int 1
+     *              'companyId' => int 1
+     *              'priceRetail' => int 100
+     *              'price1' => int 100
+     *              'price2' => int 100
+     *              'priceOwn' => int 100
+     *          array (size=3) (modifications)
+     *              0 => int 1
+     *              1 => int 2
+     *              2 => int 3
+     *          array (size=2) (carriers)
+     *              0 => int 1
+     *              1 => int 2
+     *          array (size=2) (companies)
+     *              0 => int 1
+     *              1 => int 2
+     *      @return:
+     *          array (size=3)
+     *              'bool' => boolean true
+     *              'error' => string 'No Error' (length=8)
+     *              'id' => int 0
+     */
     private function checkIfPriceRowIsCorrect($price, $modifications, $carriers, $companies)
     {
         $modInterface = app()->make('WA\Repositories\Modification\ModificationInterface');

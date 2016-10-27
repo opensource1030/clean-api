@@ -62,10 +62,9 @@ class AssetsController extends ApiController
 
         if ($asset == null) {
             $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'Asset']);
-
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
-
+        
         return $this->response()->item($asset, new AssetTransformer(), ['key' => 'assets'])->setStatusCode($this->status_codes['created']);
     }
 }

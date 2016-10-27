@@ -69,13 +69,11 @@ class CarriersController extends ApiController
 
         if ($carrier == null) {
             $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'Carrier']);
-
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
         if (!$this->includesAreCorrect($request, new CarrierTransformer())) {
             $error['errors']['getincludes'] = Lang::get('messages.NotExistInclude');
-
             return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
         }
 
@@ -96,7 +94,6 @@ class CarriersController extends ApiController
          */
         if (!$this->isJsonCorrect($request, 'carriers')) {
             $error['errors']['json'] = Lang::get('messages.InvalidJson');
-
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
@@ -144,7 +141,6 @@ class CarriersController extends ApiController
         }
 
         DB::commit();
-
         return $this->response()->item($carrier, new CarrierTransformer(), ['key' => 'carriers'])->setStatusCode($this->status_codes['created']);
     }
 
@@ -160,7 +156,6 @@ class CarriersController extends ApiController
          */
         if (!$this->isJsonCorrect($request, 'carriers')) {
             $error['errors']['json'] = Lang::get('messages.InvalidJson');
-
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
@@ -193,7 +188,6 @@ class CarriersController extends ApiController
         }
 
         DB::commit();
-
         return $this->response()->item($carrier, new CarrierTransformer(), ['key' => 'carriers'])->setStatusCode($this->status_codes['created']);
     }
 
@@ -209,16 +203,14 @@ class CarriersController extends ApiController
             $this->carrier->deleteById($id);
         } else {
             $error['errors']['delete'] = Lang::get('messages.NotExistClass', ['class' => 'Carrier']);
-
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
         $carrier = Carrier::find($id);
         if ($carrier == null) {
-            return array('success' => true);
+            return array("success" => true);
         } else {
             $error['errors']['delete'] = Lang::get('messages.NotDeletedClass', ['class' => 'Carrier']);
-
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
     }

@@ -144,16 +144,14 @@ class ServicesController extends ApiController
             $this->service->deleteById($id);
         } else {
             $error['errors']['delete'] = Lang::get('messages.NotExistClass', ['class' => 'Service']);
-
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
         $service = Service::find($id);
         if ($service == null) {
-            return array('success' => true);
+            return array("success" => true);
         } else {
             $error['errors']['delete'] = Lang::get('messages.NotDeletedClass', ['class' => 'Service']);
-
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
     }

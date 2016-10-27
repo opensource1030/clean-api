@@ -3,26 +3,29 @@
 namespace WA\DataStore\Service;
 
 use WA\DataStore\BaseDataStore;
+use WA\DataStore\Service\ServiceTransformer;
 
 /**
- * Class Service.
+ * Class Service
+ *
+ * @package WA\DataStore\Service
  */
 class Service extends BaseDataStore
 {
     protected $table = 'services';
 
     protected $fillable = [
-            'title',
-            'planCode',
-            'cost',
-            'description',
-            'domesticMinutes',
-            'domesticData',
-            'domesticMessages',
-            'internationalMinutes',
-            'internationalData',
-            'internationalMessages',
-            'updated_at', ];
+        'title',
+        'planCode',
+        'cost',
+        'description',
+        'domesticMinutes',
+        'domesticData',
+        'domesticMessages',
+        'internationalMinutes',
+        'internationalData',
+        'internationalMessages',
+        'updated_at'];
 
     /**
      * Get all the owners for the service.

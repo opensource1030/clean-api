@@ -63,7 +63,6 @@ class ImagesController extends ApiController
 
         if ($image == null) {
             $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'Image']);
-
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
@@ -141,16 +140,14 @@ class ImagesController extends ApiController
             Storage::delete($path = $image->filename.'.'.$image->extension);
         } else {
             $error['errors']['delete'] = Lang::get('messages.NotExistClass', ['class' => 'Image']);
-
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
         $image = Image::find($id);
         if ($image == null) {
-            return array('success' => true);
+            return array("success" => true);
         } else {
             $error['errors']['delete'] = Lang::get('messages.NotDeletedClass', ['class' => 'Image']);
-
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
     }

@@ -3,6 +3,7 @@
 namespace WA\DataStore;
 
 use Illuminate\Config\Repository;
+use WA\DataStore\Company;
 
 /**
  * WA\DataStore\MutableDataStore.

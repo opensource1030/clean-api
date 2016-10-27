@@ -9,9 +9,19 @@
 namespace WA\Events\Handlers\Saml2;
 
 use Illuminate\Contracts\Events\Dispatcher;
+use WA\DataStore\CarrierDestinationMap;
 use WA\Events\Handlers\BaseHandler;
+
+use Auth;
+use WA\Events\PodcastWasPurchased;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Aacotroneo\Saml2\Events\Saml2LoginEvent;
+
 use WA\DataStore\User\User;
+
 use Cache;
+
 use Carbon\Carbon;
 use WA\Services\Form\User\UserForm;
 
@@ -122,7 +132,7 @@ class MainHandler extends BaseHandler
                     'identification' => '',
                     'notify' => 0,
                     'apiToken' => null,
-                    'level' => 0,
+                    'level' => 0
                     );
 
                 return $user;
@@ -229,7 +239,7 @@ class MainHandler extends BaseHandler
                     'identification' => '',
                     'notify' => 0,
                     'apiToken' => null,
-                    'level' => 0,
+                    'level' => 0
                     );
     }
 
@@ -259,7 +269,7 @@ class MainHandler extends BaseHandler
 
         // FACEBOOK VERSION
         if ($idCompany == 21) {
-            return 'dariana.donnelly@example.com';
+            return "dariana.donnelly@example.com";
             //return $userData['attributes']['facebook_user'][0];
         }
 

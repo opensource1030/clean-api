@@ -1,7 +1,7 @@
 <?php
 
 /**
- * SSO - Controller of Single Sign On.
+ * SSO - Controller of Single Sign On
  *
  * @author   Agustí Dosaiguas
  */
@@ -89,7 +89,7 @@ class SSO extends ApiController
 
                 $urlArray['url'] = app('request')->get('redirectToUrl');
                 $validator = Validator::make($urlArray, [
-                    'url' => 'required|url',
+                    'url' => 'required|url'
                 ]);
 
                 if ($validator->fails()) {
