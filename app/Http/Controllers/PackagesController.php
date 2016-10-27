@@ -212,7 +212,7 @@ class PackagesController extends ApiController
         $dataConditions = $dataServices = $dataDevices = $dataApps = array();
 
         /*
-                     * Checks if Json has data, data-type & data-attributes.
+                                 * Checks if Json has data, data-type & data-attributes.
         */
         if (!$this->isJsonCorrect($request, 'packages')) {
             $error['errors']['json'] = Lang::get('messages.InvalidJson');
@@ -223,7 +223,7 @@ class PackagesController extends ApiController
         DB::beginTransaction();
 
         /*
-                     * Now we can create the Package.
+                                 * Now we can create the Package.
         */
         try {
             $data = $request->all()['data']['attributes'];
@@ -252,7 +252,7 @@ class PackagesController extends ApiController
         }
 
         /*
-                     * Check if Json has relationships to continue or if not and commit + return.
+                                 * Check if Json has relationships to continue or if not and commit + return.
         */
         if (isset($data['relationships'])) {
             $dataRelationships = $data['relationships'];
@@ -330,7 +330,7 @@ class PackagesController extends ApiController
         $dataConditions = $dataServices = $dataDevices = $dataApps = $dataDelivery = array();
 
         /*
-                     * Checks if Json has data, data-type & data-attributes.
+                                 * Checks if Json has data, data-type & data-attributes.
         */
         if (!$this->isJsonCorrect($request, 'packages')) {
             $error['errors']['json'] = Lang::get('messages.InvalidJson');
@@ -343,7 +343,7 @@ class PackagesController extends ApiController
         DB::beginTransaction();
 
         /*
-                     * Now we can create the Package.
+                                 * Now we can create the Package.
         */
         try {
             $package = $this->package->create($data);
@@ -356,7 +356,7 @@ class PackagesController extends ApiController
         }
 
         /*
-                     * Check if Json has relationships to continue or if not and commit + return.
+                                 * Check if Json has relationships to continue or if not and commit + return.
         */
         if (isset($data['relationships'])) {
             $dataRelationships = $data['relationships'];
