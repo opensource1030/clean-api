@@ -145,7 +145,7 @@ class OrdersController extends ApiController
             $error['errors']['delete'] = Lang::get('messages.NotExistClass', ['class' => 'Order']);
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
-
+                
         $order = Order::find($id);
         if ($order == null) {
             return array("success" => true);

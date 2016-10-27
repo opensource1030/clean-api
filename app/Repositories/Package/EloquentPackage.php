@@ -5,7 +5,9 @@ namespace WA\Repositories\Package;
 use WA\Repositories\AbstractRepository;
 
 /**
- * Class EloquentPackage.
+ * Class EloquentPackage
+ *
+ * @package WA\Repositories\Package
  */
 class EloquentPackage extends AbstractRepository implements PackageInterface
 {
@@ -41,7 +43,7 @@ class EloquentPackage extends AbstractRepository implements PackageInterface
     /**
      * Get an array of all the available package.
      *
-     * @return array of Package
+     * @return Array of Package
      */
     public function getAllPackage()
     {

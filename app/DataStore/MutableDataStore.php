@@ -6,7 +6,7 @@ use Illuminate\Config\Repository;
 use WA\DataStore\Company;
 
 /**
- * WA\DataStore\MutableDataStore.
+ * WA\DataStore\MutableDataStore
  *
  * @mixin \Eloquent
  */
@@ -23,8 +23,10 @@ class MutableDataStore extends BaseDataStore
     /**
      * Set the table associated with the model.
      *
-     * @param string     $table
-     * @param Repository $config | null
+     * @param  string $table
+     * @param  Repository $config | null
+     *
+     * @return void
      */
     public function setTable($table, Repository $config = null)
     {
@@ -35,7 +37,7 @@ class MutableDataStore extends BaseDataStore
         $this->table = $table;
 
         if ($data_loader_mode === 1) {
-            $this->table = $this->cloneTablePrefix.$this->table;
+            $this->table = $this->cloneTablePrefix . $this->table;
         }
     }
 }

@@ -69,11 +69,11 @@ class EloquentAddress extends AbstractRepository implements AddressInterface
     public function create(array $data)
     {
         $addressData = [
-            'address' => isset($data['address']) ? $data['address'] : '',
-            'city' => isset($data['city']) ? $data['city'] : '',
-            'state' => isset($data['state']) ? $data['state'] : '',
-            'country' => isset($data['country']) ? $data['country'] : '',
-            'postalCode' => isset($data['postalCode']) ? $data['postalCode'] : '',
+            "address" =>  isset($data['address']) ? $data['address'] : '' ,
+            "city" => isset($data['city']) ? $data['city'] : '',
+            "state" => isset($data['state']) ? $data['state'] : '',
+            "country" => isset($data['country']) ? $data['country'] : '',
+            "postalCode" => isset($data['postalCode']) ? $data['postalCode'] : '',
         ];
 
         $address = $this->model->create($addressData);

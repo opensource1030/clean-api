@@ -199,7 +199,7 @@ class CarriersController extends ApiController
     public function delete($id)
     {
         $carrier = Carrier::find($id);
-        if ($carrier != null) {
+        if ($carrier <> null) {
             $this->carrier->deleteById($id);
         } else {
             $error['errors']['delete'] = Lang::get('messages.NotExistClass', ['class' => 'Carrier']);

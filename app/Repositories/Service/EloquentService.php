@@ -6,6 +6,8 @@ use WA\Repositories\AbstractRepository;
 
 /**
  * Class EloquentService.
+ *
+ * @package WA\Repositories\Service
  */
 class EloquentService extends AbstractRepository implements ServiceInterface
 {
@@ -84,16 +86,16 @@ class EloquentService extends AbstractRepository implements ServiceInterface
     public function create(array $data)
     {
         $serviceData = [
-            'title' => isset($data['title']) ? $data['title'] : null,
-            'planCode' => isset($data['planCode']) ? $data['planCode'] : 0,
-            'cost' => isset($data['cost']) ? $data['cost'] : 0,
-            'description' => isset($data['description']) ? $data['description'] : null,
-            'domesticMinutes' => isset($data['domesticMinutes']) ? $data['domesticMinutes'] : 0,
-            'domesticData' => isset($data['domesticData']) ? $data['domesticData'] : 0,
-            'domesticMessages' => isset($data['domesticMessages']) ? $data['domesticMessages'] : 0,
-            'internationalMinutes' => isset($data['internationalMinutes']) ? $data['internationalMinutes'] : 0,
-            'internationalData' => isset($data['internationalData']) ? $data['internationalData'] : 0,
-            'internationalMessages' => isset($data['internationalMessages']) ? $data['internationalMessages'] : 0,
+            "title" =>  isset($data['title']) ? $data['title'] : null ,
+            "planCode" => isset($data['planCode']) ? $data['planCode'] : 0,
+            "cost" =>  isset($data['cost']) ? $data['cost'] : 0,
+            "description" => isset($data['description']) ? $data['description'] : null,
+            "domesticMinutes" => isset($data['domesticMinutes']) ? $data['domesticMinutes'] : 0,
+            "domesticData" =>  isset($data['domesticData']) ? $data['domesticData'] : 0,
+            "domesticMessages" => isset($data['domesticMessages']) ? $data['domesticMessages'] : 0,
+            "internationalMinutes" =>  isset($data['internationalMinutes']) ? $data['internationalMinutes'] : 0,
+            "internationalData" => isset($data['internationalData']) ? $data['internationalData'] : 0,
+            "internationalMessages" => isset($data['internationalMessages']) ? $data['internationalMessages'] : 0,
         ];
 
         $service = $this->model->create($serviceData);

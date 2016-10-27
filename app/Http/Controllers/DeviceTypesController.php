@@ -139,7 +139,7 @@ class DeviceTypesController extends ApiController
     public function delete($id)
     {
         $deviceType = DeviceType::find($id);
-        if ($deviceType != null) {
+        if ($deviceType <> null) {
             $this->deviceType->deleteById($id);
         } else {
             $error['errors']['delete'] = Lang::get('messages.NotExistClass', ['class' => 'DeviceType']);

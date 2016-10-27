@@ -23,8 +23,8 @@ class RoleTransformer extends TransformerAbstract
     public function transform(Role $role)
     {
         return [
-            'id' => (int) $role->id,
-            'name' => $role->display_name,
+            'id' => (int)$role->id,
+            'name' => $role->display_name
         ];
     }
 }

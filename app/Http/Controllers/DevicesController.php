@@ -94,16 +94,16 @@ class DevicesController extends ApiController
 
         $devices = $this->model->getDataTable();
         $columns = [
-            'devices.id' => 'id',
+            'devices.id'             => 'id',
             'devices.identification' => 'identification',
-            'device_types.make' => 'make',
-            'device_types.model' => 'model',
-            'device_types.class' => 'class',
+            'device_types.make'      => 'make',
+            'device_types.model'     => 'model',
+            'device_types.class'     => 'class',
         ];
 
         $options = [
             'throttle' => $this->defaultQueryParams['_perPage'],
-            'method' => $this->defaultQueryParams['_method'],
+            'method'   => $this->defaultQueryParams['_method'],
         ];
 
         $this->setLimits();
@@ -130,7 +130,6 @@ class DevicesController extends ApiController
          */
         if (!$this->isJsonCorrect($request, 'devices')) {
             $error['errors']['json'] = Lang::get('messages.InvalidJson');
-
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         } else {
             $data = $request->all()['data'];
@@ -267,7 +266,7 @@ class DevicesController extends ApiController
                                         $success = false;
                                         $error['errors']['prices'] = 'the Price has no id';
                                     }
-
+                                            
                                     $priceInterface->create($price);
                                 } else {
                                     $success = false;
@@ -293,11 +292,9 @@ class DevicesController extends ApiController
 
         if ($success) {
             DB::commit();
-
             return $this->response()->item($device, new DeviceTransformer(), ['key' => 'devices'])->setStatusCode($this->status_codes['created']);
         } else {
             DB::rollBack();
-
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
     }
@@ -317,7 +314,6 @@ class DevicesController extends ApiController
          */
         if (!$this->isJsonCorrect($request, 'devices')) {
             $error['errors']['json'] = Lang::get('messages.InvalidJson');
-
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         } else {
             $data = $request->all()['data'];
@@ -644,7 +640,7 @@ class DevicesController extends ApiController
             }
 
             if (!$existsStyle) {
-                return array('bool' => false, 'error' => 'Style Not Found', 'id' => $price['styleId']);
+                return array("bool" => false, "error" => "Style Not Found", "id" => $price['styleId']);
             }
         }
 
@@ -657,7 +653,7 @@ class DevicesController extends ApiController
             }
 
             if (!$existsCarrier) {
-                return array('bool' => false, 'error' => 'Carrier Not Found', 'id' => $price['carrierId']);
+                return array("bool" => false, "error" => "Carrier Not Found", "id" => $price['carrierId']);
             }
         }
 
@@ -670,10 +666,10 @@ class DevicesController extends ApiController
             }
 
             if (!$existsCompany) {
-                return array('bool' => false, 'error' => 'Company Not Found', 'id' => $price['companyId']);
+                return array("bool" => false, "error" => "Company Not Found", "id" => $price['companyId']);
             }
         }
 
-        return array('bool' => true, 'error' => 'No Error', 'id' => 0);
+        return array("bool" => true, "error" => "No Error", "id" => 0);
     }
 }

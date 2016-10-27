@@ -23,7 +23,7 @@ class EloquentCarrier extends AbstractRepository implements CarrierInterface
      *
      * @param $id
      *
-     * @return object object of company
+     * @return Object object of company
      */
     public function byCompany($id)
     {
@@ -88,7 +88,7 @@ class EloquentCarrier extends AbstractRepository implements CarrierInterface
         if (isset($data['shortName'])) {
             $carrier->shortName = $data['shortName'];
         }
-
+        
         if (!$carrier->save()) {
             return 'notSaved';
         }

@@ -15,7 +15,7 @@ use Log;
  */
 class EmailNotification implements NotificationInterface
 {
-    protected $email_template = 'emails.notifications.';
+    protected $email_template = "emails.notifications.";
 
     public function __construct(
         Mailer $mailer,
@@ -101,8 +101,7 @@ class EmailNotification implements NotificationInterface
                     return true;
                 }
             } catch (\Exception $e) {
-                //\Log::error('Sending email failed: ' . $e->getMessage());
-
+                Log::error("Sending email failed: " . $e->getMessage());
                 return false;
             }
         }

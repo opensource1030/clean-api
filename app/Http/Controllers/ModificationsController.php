@@ -146,7 +146,7 @@ class ModificationsController extends ApiController
             $error['errors']['delete'] = Lang::get('messages.NotExistClass', ['class' => 'Modification']);
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
-
+        
         $modification = Modification::find($id);
         if ($modification == null) {
             return array("success" => true);

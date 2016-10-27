@@ -58,7 +58,7 @@ class EloquentAsset extends AbstractRepository implements AssetInterface
      *
      * @param string $identifier
      *
-     * @return object object of asset information
+     * @return Object object of asset information
      */
     public function byIdentification($identifier)
     {
@@ -99,7 +99,7 @@ class EloquentAsset extends AbstractRepository implements AssetInterface
      * @param $limit
      * @param $all
      *
-     * @return object object of device information
+     * @return Object object of device information
      */
     public function byDevice($device, $page = 1, $limit = 10, $all = true)
     {

@@ -6,6 +6,8 @@ use WA\Repositories\AbstractRepository;
 
 /**
  * Class EloquentPrice.
+ *
+ * @package WA\Repositories\Price
  */
 class EloquentPrice extends AbstractRepository implements PriceInterface
 {
@@ -81,15 +83,15 @@ class EloquentPrice extends AbstractRepository implements PriceInterface
     public function create(array $data)
     {
         $priceData = [
-            'deviceId' => isset($data['deviceId']) ? $data['deviceId'] : 0,
-            'capacityId' => isset($data['capacityId']) ? $data['capacityId'] : 0,
-            'styleId' => isset($data['styleId']) ? $data['styleId'] : 0,
-            'carrierId' => isset($data['carrierId']) ? $data['carrierId'] : 0,
-            'companyId' => isset($data['companyId']) ? $data['companyId'] : 0,
-            'priceRetail' => isset($data['priceRetail']) ? $data['priceRetail'] : 0,
-            'price1' => isset($data['price1']) ? $data['price1'] : 0,
-            'price2' => isset($data['price2']) ? $data['price2'] : 0,
-            'priceOwn' => isset($data['priceOwn']) ? $data['priceOwn'] : 0,
+            "deviceId" => isset($data['deviceId']) ? $data['deviceId'] : 0,
+            "capacityId" => isset($data['capacityId']) ? $data['capacityId'] : 0,
+            "styleId" => isset($data['styleId']) ? $data['styleId'] : 0,
+            "carrierId" => isset($data['carrierId']) ? $data['carrierId'] : 0,
+            "companyId" => isset($data['companyId']) ? $data['companyId'] : 0,
+            "priceRetail" => isset($data['priceRetail']) ? $data['priceRetail'] : 0,
+            "price1" => isset($data['price1']) ? $data['price1'] : 0,
+            "price2" => isset($data['price2']) ? $data['price2'] : 0,
+            "priceOwn" => isset($data['priceOwn']) ? $data['priceOwn'] : 0
         ];
 
         $price = $this->model->create($priceData);
@@ -125,7 +127,7 @@ class EloquentPrice extends AbstractRepository implements PriceInterface
     /**
      * Get an array of all the available Price.
      *
-     * @return array of Price
+     * @return Array of Price
      */
     public function getPriceDevices($id)
     {
@@ -137,48 +139,44 @@ class EloquentPrice extends AbstractRepository implements PriceInterface
     /**
      * Get an array of all the available Price.
      *
-     * @return array of Price
+     * @return Array of Price
      */
     public function getPriceCapacities($id)
     {
         $prices = $this->model->all();
-
         return $prices;
     }
 
     /**
      * Get an array of all the available Price.
      *
-     * @return array of Price
+     * @return Array of Price
      */
     public function getPriceStyles($id)
     {
         $prices = $this->model->all();
-
         return $prices;
     }
 
     /**
      * Get an array of all the available Price.
      *
-     * @return array of Price
+     * @return Array of Price
      */
     public function getPriceCarriers($id)
     {
         $prices = $this->model->all();
-
         return $prices;
     }
 
     /**
      * Get an array of all the available Price.
      *
-     * @return array of Price
+     * @return Array of Price
      */
     public function getPriceCompanies($id)
     {
         $prices = $this->model->all();
-
         return $prices;
     }
 }

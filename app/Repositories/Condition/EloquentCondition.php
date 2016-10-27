@@ -66,10 +66,10 @@ class EloquentCondition extends AbstractRepository implements ConditionInterface
     public function create(array $data)
     {
         $conditionData = [
-            'typeCond' => isset($data['typeCond']) ? $data['typeCond'] : null,
-            'name' => isset($data['name']) ? $data['name'] : null,
-            'condition' => isset($data['condition']) ? $data['condition'] : null,
-            'value' => isset($data['value']) ? $data['value'] : null,
+            "typeCond" =>  isset($data['typeCond']) ? $data['typeCond'] : null ,
+            "name" => isset($data['name']) ? $data['name'] : null,
+            "condition" => isset($data['condition']) ? $data['condition'] : null,
+            "value" => isset($data['value']) ? $data['value'] : null,
         ];
 
         $condition = $this->model->create($conditionData);

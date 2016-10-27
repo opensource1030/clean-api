@@ -31,9 +31,9 @@ class EloquentUser extends AbstractRepository implements UserInterface
     protected $udl;
 
     /**
-     * @param Model             $model
+     * @param Model $model
      * @param UdlValueInterface $udlValue
-     * @param UdlInterface      $udl
+     * @param UdlInterface $udl
      */
     public function __construct(
         Model $model,
@@ -49,10 +49,10 @@ class EloquentUser extends AbstractRepository implements UserInterface
     /**
      * Get paginated user.
      *
-     * @param int  $perPage
+     * @param int $perPage
      * @param bool $paginate
      *
-     * @return object as Collection of object information, | Paginator Collection if pagination is true (default)
+     * @return Object as Collection of object information, | Paginator Collection if pagination is true (default)
      */
     public function byPage($paginate = true, $perPage = 25)
     {
@@ -133,10 +133,10 @@ class EloquentUser extends AbstractRepository implements UserInterface
     }
 
     /**
-     * @param int  $id
+     * @param int $id
      * @param bool $active
      *
-     * @return object Object of employee information
+     * @return Object Object of employee information
      */
     public function byId($id, $active = null)
     {
@@ -372,7 +372,7 @@ class EloquentUser extends AbstractRepository implements UserInterface
      *
      * @param string $userEmail
      *
-     * @return object of employee information
+     * @return Object of employee information
      */
     public function byEmail($userEmail)
     {
@@ -548,7 +548,7 @@ class EloquentUser extends AbstractRepository implements UserInterface
      *
      * @param string $email
      *
-     * @return object of employee information | null
+     * @return Object of employee information | null
      */
     public function bySupervisorEmail($email)
     {
@@ -595,7 +595,7 @@ class EloquentUser extends AbstractRepository implements UserInterface
      *
      * @param string $email of employee
      *
-     * @return object of employee information
+     * @return Object of employee information
      */
     public function getSupervisor($email = null)
     {
@@ -760,7 +760,7 @@ class EloquentUser extends AbstractRepository implements UserInterface
      *
      * @param int $companyId of company selected
      *
-     * @return array of employee validator information
+     * @return Array of employee validator information
      */
     public function getAllValidators($companyId = null)
     {
@@ -830,7 +830,7 @@ class EloquentUser extends AbstractRepository implements UserInterface
      * Compact UDL values into a format suitable to easily gettting the UDL/Value/Paths.
      *
      * @param array $udlValues
-     * @param int   $companyId
+     * @param int $companyId
      *
      * @return array
      */

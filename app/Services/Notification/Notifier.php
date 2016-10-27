@@ -6,7 +6,8 @@ use Log;
 use WA\Repositories\UserNotifications\UserNotificationsInterface;
 
 /**
- * Class Notifier.
+ * Class Notifier
+ * @package WA\Services\Notification
  */
 class Notifier
 {
@@ -35,7 +36,6 @@ class Notifier
             return true;
         } catch (\Exception $e) {
             Log::error('Process Notification failed: '.$e->getMessage());
-
             return false;
         }
     }
@@ -65,7 +65,6 @@ class Notifier
             return $class->notify($categoryId, $data);
         } catch (\Exception $e) {
             Log::error('Calling Notifying class failed: '.$e->getMessage());
-
             return false;
         }
     }

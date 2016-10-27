@@ -249,7 +249,7 @@ class PresetsController extends ApiController
             $error['errors']['delete'] = Lang::get('messages.NotExistClass', ['class' => 'Preset']);
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
-
+        
         $preset = Preset::find($id);
         if ($preset == null) {
             return array("success" => true);

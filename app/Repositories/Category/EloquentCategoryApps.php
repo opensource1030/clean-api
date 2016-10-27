@@ -35,12 +35,11 @@ class EloquentCategoryApps extends AbstractRepository implements CategoryAppsInt
     /**
      * Get an array of all the available category.
      *
-     * @return array of category
+     * @return Array of category
      */
     public function getAllCategories()
     {
         $category = $this->model->all();
-
         return $category;
     }
 
@@ -54,7 +53,7 @@ class EloquentCategoryApps extends AbstractRepository implements CategoryAppsInt
     public function create(array $data)
     {
         $categoryData = [
-            'name' => isset($data['name']) ? $data['name'] : null,
+            "name" =>  isset($data['name']) ? $data['name'] : null,
         ];
 
         $category = $this->model->create($categoryData);

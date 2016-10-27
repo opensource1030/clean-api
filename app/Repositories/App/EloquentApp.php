@@ -63,9 +63,9 @@ class EloquentApp extends AbstractRepository implements AppInterface
     public function create(array $data)
     {
         $appData = [
-            'type' => isset($data['type']) ? $data['type'] : null,
-            'image' => isset($data['image']) ? $data['image'] : null,
-            'description' => isset($data['description']) ? $data['description'] : null,
+            "type" =>  isset($data['type']) ? $data['type'] : null ,
+            "image" => isset($data['image']) ? $data['image'] : null,
+            "description" => isset($data['description']) ? $data['description'] : null,
         ];
 
         $app = $this->model->create($appData);

@@ -142,7 +142,7 @@ class ImagesController extends ApiController
             $error['errors']['delete'] = Lang::get('messages.NotExistClass', ['class' => 'Image']);
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
-
+        
         $image = Image::find($id);
         if ($image == null) {
             return array("success" => true);

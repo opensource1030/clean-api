@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Redirect;
 use View;
 use WA\Services\Form\Company\CompanyForm;
 use Illuminate\Session\SessionManager as Session;
+use WA\Repositories\PoolGroupRepositoryInterface;
 use WA\Repositories\CarrierRepositoryInterface;
 
 /**

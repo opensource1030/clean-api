@@ -37,9 +37,9 @@ abstract class ApiController extends BaseController
      * @var array
      */
     protected $criteria = [
-        'sort' => [],
+        'sort'    => [],
         'filters' => [],
-        'fields' => [],
+        'fields'  => []
     ];
 
     /**
@@ -132,7 +132,7 @@ abstract class ApiController extends BaseController
             if (!isset($data['type'])) {
                 return false;
             } else {
-                if ($data['type'] != $type) {
+                if ($data['type'] <> $type) {
                     return false;
                 }
             }
@@ -192,7 +192,7 @@ abstract class ApiController extends BaseController
         $exists = true;
         foreach ($includes as $include) {
             $exists = $exists && $this->includesAreCorrectInf($include, $class);
-
+            
             if (!$exists) {
                 break;
             }

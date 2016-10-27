@@ -11,7 +11,7 @@ class EloquentDeviceType extends AbstractRepository implements DeviceTypeInterfa
      *
      * @param $model
      *
-     * @return object object of device type
+     * @return Object object of device type
      */
     public function byModel($model)
     {

@@ -73,7 +73,6 @@ class MainHandler extends BaseHandler
             }
             Cache::put('saml2user_'.$uuid, $laravelUser, 15);
         }
-
         return true;
     }
 
@@ -258,9 +257,9 @@ class MainHandler extends BaseHandler
 
         // Get the User Data Info from the Saml2 User.
         return [
-        'id' => $user->getUserId(),
-        'attributes' => $user->getAttributes(),
-        'assertion' => $user->getRawSamlAssertion(),
+            'id' => $user->getUserId(),
+            'attributes' => $user->getAttributes(),
+            'assertion' => $user->getRawSamlAssertion()
         ];
     }
 

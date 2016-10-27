@@ -138,7 +138,8 @@ class PricesController extends ApiController
             $error['errors']['delete'] = Lang::get('messages.NotExistClass', ['class' => 'Price']);
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
-
+        
+        
         $price = Price::find($id);
         if ($price == null) {
             return array("success" => true);

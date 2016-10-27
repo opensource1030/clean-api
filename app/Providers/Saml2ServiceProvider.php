@@ -13,6 +13,8 @@ use Log;
 use Cache;
 use URL;
 use OneLogin_Saml2_Auth;
+use Illuminate\Support\ServiceProvider;
+use Session;
 use Illuminate\Support\Facades\Route;
 use Request;
 
@@ -84,7 +86,7 @@ class Saml2ServiceProvider extends Saml2SP
 
             if (stripos($pathInfo, 'doSSO') > 0) {
                 $parts = explode('/', $pathInfo);
-                $email = $parts[count($parts) - 1];
+                $email = $parts[count($parts)-1];
                 $idCompany = Cache::get('saml2_idcompany_'.$email);
             } else {
                 $idCompany = app('request')->get('idCompany');

@@ -25,12 +25,12 @@ $api->version('v1', function ($api) {
     $ssoAuth = 'WA\Http\Controllers\Auth\SSO';
     $api->get('doSSO/{email}', [
         'as' => 'dosso_login',
-        'uses' => $ssoAuth.'@loginRequest',
+        'uses' => $ssoAuth.'@loginRequest'
     ]);
 
     $api->get('doSSO/login/{uuid}', [
         'as' => 'dosso',
-        'uses' => $ssoAuth.'@loginUser',
+        'uses' => $ssoAuth.'@loginUser'
     ]);
 
     /*

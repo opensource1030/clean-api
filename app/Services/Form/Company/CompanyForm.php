@@ -24,8 +24,8 @@ class CompanyForm extends AbstractForm
     protected $validator;
 
     /**
-     * @param CompanyInterface     $company
-     * @param UdlValueInterface    $udlValue
+     * @param CompanyInterface  $company
+     * @param UdlValueInterface $udlValue
      * @param CompanyFormValidator $validator
      */
     public function __construct(
@@ -41,7 +41,7 @@ class CompanyForm extends AbstractForm
     /**
      * @param $id
      *
-     * @return object
+     * @return Object
      */
     public function getCompanyById($id)
     {
@@ -66,7 +66,7 @@ class CompanyForm extends AbstractForm
      * @param int    $companyId
      * @param string $udlName
      *
-     * @return object of UDL Information
+     * @return Object of UDL Information
      */
     public function getUdlByName($companyId, $udlName)
     {
@@ -111,7 +111,6 @@ class CompanyForm extends AbstractForm
     public function getCompanyByName($name)
     {
         $company = $this->company->byName($name);
-
         return $company;
     }
 
@@ -140,7 +139,6 @@ class CompanyForm extends AbstractForm
             for ($x = 0; $x < count($input['carrierId']); ++$x) {
                 if (!empty($input['carrierId'][$x]) && empty($input['carrierBAN'][$x])) {
                     $this->notify('error', 'BillingAccountNumber cannot be null for Carriers. Please try again');
-
                     return false;
                 }
             }
@@ -150,12 +148,10 @@ class CompanyForm extends AbstractForm
 
         if (!$company) {
             $this->notify('error', 'There was an issue creating this Company. Please try again later');
-
             return false;
         }
 
         $this->notify('success', 'Company Created Successfully');
-
         return true;
     }
 
@@ -173,7 +169,6 @@ class CompanyForm extends AbstractForm
         $this->setLimits();
         if (!$this->company->delete($id)) {
             $this->notify('error', 'Could not delete this Company, please try again');
-
             return false;
         }
         $this->notify('success', " Company $company->name Deleted");
@@ -190,7 +185,6 @@ class CompanyForm extends AbstractForm
     {
         if (!$this->valid($input)) {
             $this->notify('error', 'There are some issues with the data, please verify');
-
             return false;
         }
 

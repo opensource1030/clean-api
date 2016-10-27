@@ -47,7 +47,7 @@ class CategoryAppsController extends ApiController
 
             return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
         }
-
+      
         $response = $this->response()->withPaginator($categoryApps, new CategoryAppTransformer(), ['key' => 'categoryapps']);
         $response = $this->applyMeta($response);
 
@@ -234,16 +234,16 @@ class CategoryAppsController extends ApiController
     public function delete($id)
     {
         $categoryApps = CategoryApp::find($id);
-        if ($categoryApps != null) {
+        if ($categoryApps <> null) {
             $this->categoryApps->deleteById($id);
         } else {
             $error['errors']['delete'] = Lang::get('messages.NotExistClass', ['class' => 'CategoryApps']);
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
-
+        
         $categoryApps = CategoryApp::find($id);
         if ($categoryApps == null) {
-            return array('success' => true);
+            return array("success" => true);
         } else {
             $error['errors']['delete'] = Lang::get('messages.NotDeletedClass', ['class' => 'CategoryApps']);
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);

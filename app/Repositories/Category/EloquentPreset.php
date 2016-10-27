@@ -54,7 +54,7 @@ class EloquentPreset extends AbstractRepository implements PresetInterface
     public function create(array $data)
     {
         $presetData = [
-            'name' => isset($data['name']) ? $data['name'] : null,
+            "name" => isset($data['name']) ? $data['name'] : null,
         ];
 
         $preset = $this->model->create($presetData);

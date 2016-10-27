@@ -114,7 +114,7 @@ class BaseDataStore extends BaseModel
      */
     public function getTableColumns()
     {
-        return \Cache::remember($this->getTable().'-columns', 5, function () {
+        return \Cache::remember($this->getTable() . '-columns', 5, function () {
             return $this->getConnection()->getSchemaBuilder()->getColumnListing($this->getTable());
         });
     }

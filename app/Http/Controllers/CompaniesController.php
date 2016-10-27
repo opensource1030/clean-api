@@ -53,7 +53,7 @@ class CompaniesController extends ApiController
         $criteria = $this->getRequestCriteria();
         $this->company->setCriteria($criteria);
         $company = $this->company->byPage();
-
+      
         $response = $this->response()->withPaginator($company, new CompanyTransformer(), ['key' => 'companies']);
         $response = $this->applyMeta($response);
 
