@@ -60,9 +60,9 @@ class EloquentPackage extends AbstractRepository implements PackageInterface
     public function create(array $data)
     {
         $packageData = [
-            "name" =>  isset($data['name']) ? $data['name'] : '',
-            "addressId" =>  isset($data['addressId']) ? $data['addressId'] : 0,
-            "companyId" =>  isset($data['companyId']) ? $data['companyId'] : 0
+            'name' => isset($data['name']) ? $data['name'] : '',
+            'addressId' => isset($data['addressId']) ? $data['addressId'] : 0,
+            'companyId' => isset($data['companyId']) ? $data['companyId'] : 0,
         ];
 
         $package = $this->model->create($packageData);

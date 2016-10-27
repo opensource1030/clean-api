@@ -59,42 +59,17 @@ class PackagesController extends ApiController
 
     public function userPackages(Request $request)
     {
-        // GET USER.
-        $user = Authorizer::getResourceOwnerId();
-        $user = User::find($id);
-        $udlValues = $user->UdlValues;
-
-        // Retrieve the user information that will be compared.
-        $info = array();
-        $auxName = ['value' => $user->username, 'name' => 'name', 'label' => 'Name'];
-        array_push($info, $auxName);
-        $auxEmail = ['value' => $user->email, 'name' => 'email', 'label' => 'Email'];
-        array_push($info, $auxEmail);
-        $auxBudget = ['value' => '', 'name' => 'budget', 'label' => 'Budget'];
-        array_push($info, $auxBudget);
-
-        foreach ($udlValues as $uv) {
-            $aux = ['value' => $uv->name, 'name' => $uv->udl->name, 'label' => $uv->udl->label];
-            array_push($info, $aux);
-        }
-
-        $auxBudget = ['value' => '', 'name' => 'budget', 'label' => 'Budget'];
-        array_push($info, $auxBudget);
-        $auxCountry1 = ['value' => '', 'name' => 'country', 'label' => 'Country'];
-        array_push($info, $auxCountry1);
-        $auxCountry2 = ['value' => '', 'name' => 'country', 'label' => 'Country'];
-        array_push($info, $auxCountry2);
-        $auxCity = ['value' => '', 'name' => 'city', 'label' => 'City'];
-        array_push($info, $auxCity);
-        $auxAddress = ['value' => '', 'name' => 'address', 'label' => 'Address'];
-        array_push($info, $auxAddress);
+        $user = $this->retrieveUserInfoFromAuthorizer();
+        $info = $this->retrieveInfoFromUser($user);
 
         // Retrieve all the packages that have the same companyId as the user.
         $packages = Package::where('companyId', $user->companyId);
         $packagesAux = $packages->get();
 
         $packages->where(function ($query) use ($info, $packagesAux) {
-            foreach ($packagesAux as $key => $package) {
+
+            foreach ($packagesAux as $package) {
+
                 $conditions = $package->conditions;
                 $ok = true;
 
@@ -138,13 +113,53 @@ class PackagesController extends ApiController
             }
         });
 
-        if (!$this->includesAreCorrect($request, new PackageTransformer())) {
-            $error['errors']['getincludes'] = Lang::get('messages.NotExistInclude');
+        $packageTransformer = new PackageTransformer();
 
+        if (!$this->includesAreCorrect($request, $packageTransformer)) {
+            $error['errors']['getincludes'] = Lang::get('messages.NotExistInclude');
             return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
         }
 
-        return $this->response()->withPaginator($packages->paginate(25), new PackageTransformer(), ['key' => 'packages'])->setStatusCode($this->status_codes['created']);
+        return $this->response()->withPaginator($packages->paginate(25), $packageTransformer, ['key' => 'packages'])->setStatusCode($this->status_codes['created']);
+    }
+
+    private function retrieveUserInfoFromAuthorizer()
+    {
+        // Retrieve the current user.
+        $id = Authorizer::getResourceOwnerId();
+        return User::find($id);
+    }
+
+    private function retrieveInfoFromUser($user)
+    {
+        $udlValues = $user->UdlValues;
+
+        // Retrieve the user information that will be compared.
+        $info = array();
+        $auxName = ['value' => $user->username, 'name' => 'name', 'label' => 'Name'];
+        array_push($info, $auxName);
+        $auxEmail = ['value' => $user->email, 'name' => 'email', 'label' => 'Email'];
+        array_push($info, $auxEmail);
+        $auxBudget = ['value' => '', 'name' => 'budget', 'label' => 'Budget'];
+        array_push($info, $auxBudget);
+
+        foreach ($udlValues as $uv) {
+            $aux = ['value' => $uv->name, 'name' => $uv->udl->name, 'label' => $uv->udl->label];
+            array_push($info, $aux);
+        }
+
+        $auxBudget = ['value' => '', 'name' => 'budget', 'label' => 'Budget'];
+        array_push($info, $auxBudget);
+        $auxCountry1 = ['value' => '', 'name' => 'country', 'label' => 'Country'];
+        array_push($info, $auxCountry1);
+        $auxCountry2 = ['value' => '', 'name' => 'country', 'label' => 'Country'];
+        array_push($info, $auxCountry2);
+        $auxCity = ['value' => '', 'name' => 'city', 'label' => 'City'];
+        array_push($info, $auxCity);
+        $auxAddress = ['value' => '', 'name' => 'address', 'label' => 'Address'];
+        array_push($info, $auxAddress);
+
+        return $info;
     }
 
     /**
@@ -204,8 +219,8 @@ class PackagesController extends ApiController
         DB::beginTransaction();
 
         /*
-         * Now we can create the Package.
-         */
+        * Now we can create the Package.
+        */
         try {
             $data = $request->all()['data']['attributes'];
             $data['id'] = $id;

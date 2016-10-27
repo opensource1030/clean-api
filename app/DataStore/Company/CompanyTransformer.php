@@ -19,7 +19,7 @@ class CompanyTransformer extends TransformerAbstract
     protected $availableIncludes = [
         'allocations',
         'contents',
-        'udls'
+        'udls',
     ];
 
     /**

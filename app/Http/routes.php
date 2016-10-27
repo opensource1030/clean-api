@@ -62,7 +62,7 @@ $api->version('v1', function ($api) {
         }
     }
 
-    $api->group(['middleware' => $middleware ], function ($api) {
+    $api->group(['middleware' => $middleware], function ($api) {
 
         // =Companies
         $companiesController = 'WA\Http\Controllers\CompaniesController';
@@ -121,12 +121,12 @@ $api->version('v1', function ($api) {
 
         //=Package
         $packageController = 'WA\Http\Controllers\PackagesController';
-        $api->get('packages', ['as' => 'api.package.index', 'uses' => $packageController . '@index']);
-        $api->get('packages/forUser', ['as' => 'api.package.userpackages', 'uses' => $packageController . '@userPackages']);
-        $api->get('packages/{id}', ['as' => 'api.package.show', 'uses' => $packageController . '@show']);
-        $api->post('packages', ['uses' => $packageController . '@create']);
-        $api->put('packages/{id}', ['uses' => $packageController . '@store']);
-        $api->delete('packages/{id}', ['uses' => $packageController . '@delete']);
+        $api->get('packages', ['as' => 'api.package.index', 'uses' => $packageController.'@index']);
+        $api->get('packages/forUser', ['as' => 'api.package.userpackages', 'uses' => $packageController.'@userPackages']);
+        $api->get('packages/{id}', ['as' => 'api.package.show', 'uses' => $packageController.'@show']);
+        $api->post('packages', ['uses' => $packageController.'@create']);
+        $api->put('packages/{id}', ['uses' => $packageController.'@store']);
+        $api->delete('packages/{id}', ['uses' => $packageController.'@delete']);
 
         //=Request
         $requestController = 'WA\Http\Controllers\RequestsController';
@@ -218,16 +218,16 @@ $api->version('v1', function ($api) {
 
         //=ConditionsFields
         $conditionFieldsController = 'WA\Http\Controllers\ConditionFieldsController';
-        $api->get('conditionsfields', ['as' => 'api.conditionfields.index', 'uses' => $conditionFieldsController.'@index']);
-        //$api->get('conditions/fields/{id}', ['as' => 'api.conditionfields.show', 'uses' => $conditionFieldsController . '@show']);
+        $api->get('conditionsfields', ['as' => 'api.conditionfields.index', 'uses' => $conditionFieldsController . '@index']);
+        //$api->get('conditionsfields/{id}', ['as' => 'api.conditionfields.show', 'uses' => $conditionFieldsController . '@show']);
         //$api->post('conditionsfields', ['uses' => $conditionFieldsController . '@create']);
         //$api->put('conditionsfields/{id}', ['uses' => $conditionFieldsController . '@store']);
         //$api->delete('conditionsfields/{id}', ['uses' => $conditionFieldsController . '@delete']);
 
         //=ConditionsOperator
         $conditionOpController = 'WA\Http\Controllers\ConditionOperatorsController';
-        $api->get('conditionsoperators', ['as' => 'api.conditionoperators.index', 'uses' => $conditionOpController.'@index']);
-        //$api->get('conditions/operators/{id}', ['as' => 'api.conditionoperators.show', 'uses' => $conditionOpController . '@show']);
+        $api->get('conditionsoperators', ['as' => 'api.conditionoperators.index', 'uses' => $conditionOpController . '@index']);
+        //$api->get('conditionsoperators/{id}', ['as' => 'api.conditionoperators.show', 'uses' => $conditionOpController.'@show']);
         //$api->post('conditionsoperators', ['uses' => $conditionOpController . '@create']);
         //$api->put('conditionsoperators/{id}', ['uses' => $conditionOpController . '@store']);
         //$api->delete('conditionsoperators/{id}', ['uses' => $conditionOpController . '@delete']);

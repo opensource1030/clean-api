@@ -28,7 +28,7 @@ class UserTransformer extends TransformerAbstract
         'roles',
         'allocations',
         'contents',
-        'udls'
+        'udls',
     ];
 
     /**
@@ -127,5 +127,4 @@ class UserTransformer extends TransformerAbstract
     {
         return new ResourceCollection($user->udlValues, new UdlValueTransformer(), 'udlvalues');
     }
-
 }
