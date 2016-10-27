@@ -209,8 +209,8 @@ class PackagesController extends ApiController
         $dataConditions = $dataServices = $dataDevices = $dataApps = array();
 
         /*
-         * Checks if Json has data, data-type & data-attributes.
-         */
+                     * Checks if Json has data, data-type & data-attributes.
+        */
         if (!$this->isJsonCorrect($request, 'packages')) {
             $error['errors']['json'] = Lang::get('messages.InvalidJson');
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
@@ -219,8 +219,8 @@ class PackagesController extends ApiController
         DB::beginTransaction();
 
         /*
-         * Now we can create the Package.
-         */
+                     * Now we can create the Package.
+        */
         try {
             $data = $request->all()['data']['attributes'];
             $data['id'] = $id;
@@ -239,7 +239,6 @@ class PackagesController extends ApiController
                 //$error['errors']['Message'] = $e->getMessage();
                 return response()->json($error)->setStatusCode($this->status_codes['conflict']);
             }
-
         } catch (\Exception $e) {
             DB::rollBack();
             $success = false;
@@ -252,7 +251,6 @@ class PackagesController extends ApiController
          * Check if Json has relationships to continue or if not and commit + return.
          */
         if (isset($data['relationships'])) {
-
             $dataRelationships = $data['relationships'];
 
             if (isset($dataRelationships['conditions'])) {
@@ -338,8 +336,8 @@ class PackagesController extends ApiController
         DB::beginTransaction();
 
         /*
-         * Now we can create the Package.
-         */
+                     * Now we can create the Package.
+        */
         try {
             $package = $this->package->create($data);
         } catch (\Exception $e) {
@@ -350,8 +348,8 @@ class PackagesController extends ApiController
         }
 
         /*
-         * Check if Json has relationships to continue or if not and commit + return.
-         */
+                     * Check if Json has relationships to continue or if not and commit + return.
+        */
         if (isset($data['relationships'])) {
             $dataRelationships = $data['relationships'];
 
