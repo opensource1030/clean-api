@@ -69,7 +69,6 @@ class PackagesController extends ApiController
         $packages->where(function ($query) use ($info, $packagesAux) {
 
             foreach ($packagesAux as $package) {
-
                 $conditions = $package->conditions;
                 $ok = true;
 
@@ -219,8 +218,8 @@ class PackagesController extends ApiController
         DB::beginTransaction();
 
         /*
-        * Now we can create the Package.
-        */
+         * Now we can create the Package.
+         */
         try {
             $data = $request->all()['data']['attributes'];
             $data['id'] = $id;
