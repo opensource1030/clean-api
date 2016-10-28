@@ -3,6 +3,7 @@
 
 $factory->define(WA\DataStore\Service\Service::class, function ($faker) {
     return [
+        'status' => 'Enabled',
         'title' => $faker->sentence,
         'planCode' => $faker->numberBetween(11111, 99999),
         'cost' => $faker->numberBetween(1, 99),
@@ -13,6 +14,7 @@ $factory->define(WA\DataStore\Service\Service::class, function ($faker) {
         'internationalMinutes' => $faker->numberBetween(1, 299),
         'internationalData' => $faker->numberBetween(1, 299),
         'internationalMessages' => $faker->numberBetween(1, 299),
+        'carrierId' => 1,
         'created_at' => $faker->dateTime,
         'updated_at' => $faker->dateTime,
     ];

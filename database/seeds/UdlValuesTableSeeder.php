@@ -1,7 +1,5 @@
 <?php
 
-namespace WA\database\seeds;
-
 class UdlValuesTableSeeder extends BaseTableSeeder
 {
     protected $table = 'udl_values';

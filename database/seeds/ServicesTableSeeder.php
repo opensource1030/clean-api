@@ -19,6 +19,7 @@ class ServicesTableSeeder extends BaseTableSeeder
         $data = [
 
             [
+                'status' => 'Enabled',
                 'title' => 'Pooled Domestic Voice Plan',
                 'planCode' => 55555,
                 'cost' => 25,
@@ -29,8 +30,10 @@ class ServicesTableSeeder extends BaseTableSeeder
                 'internationalMinutes' => 300,
                 'internationalData' => 100,
                 'internationalMessages' => 100,
+                'carrierId' => 1,
             ],
             [
+                'status' => 'Enabled',
                 'title' => 'Pooled International Voice Plan',
                 'planCode' => 66666,
                 'cost' => 35,
@@ -41,8 +44,10 @@ class ServicesTableSeeder extends BaseTableSeeder
                 'internationalMinutes' => 3000,
                 'internationalData' => 1000,
                 'internationalMessages' => 1000,
+                'carrierId' => 2,
             ],
             [
+                'status' => 'Disabled',
                 'title' => 'Pooled Domestic Data Plan',
                 'planCode' => 77777,
                 'cost' => 15,
@@ -53,8 +58,10 @@ class ServicesTableSeeder extends BaseTableSeeder
                 'internationalMinutes' => 100,
                 'internationalData' => 300,
                 'internationalMessages' => 100,
+                'carrierId' => 3,
             ],
             [
+                'status' => 'Enabled',
                 'title' => 'Pooled International Data Plan',
                 'planCode' => 88888,
                 'cost' => 20,
@@ -65,6 +72,7 @@ class ServicesTableSeeder extends BaseTableSeeder
                 'internationalMinutes' => 1000,
                 'internationalData' => 3000,
                 'internationalMessages' => 1000,
+                'carrierId' => 1,
             ],
         ];
 

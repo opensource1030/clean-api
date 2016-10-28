@@ -23,6 +23,7 @@ class ServicesApiTest extends TestCase
                     'type',
                     'id',
                     'attributes' => [
+                        'status',
                         'title',
                         'planCode',
                         'cost',
@@ -33,6 +34,7 @@ class ServicesApiTest extends TestCase
                         'internationalMinutes',
                         'internationalData',
                         'internationalMessages',
+                        'carrierId',
                         'created_at' => [
                             'date',
                             'timezone_type',
@@ -73,6 +75,7 @@ class ServicesApiTest extends TestCase
 
         $res = $this->get('services/'.$service->id)
             ->seeJson([
+                'status' => 'Enabled',
                 'type' => 'services',
                 'title' => $service->title,
                 'planCode' => "$service->planCode",
@@ -84,6 +87,7 @@ class ServicesApiTest extends TestCase
                 'internationalMinutes' => "$service->internationalMinutes",
                 'internationalData' => "$service->internationalData",
                 'internationalMessages' => "$service->internationalMessages",
+                'carrierId' => "$service->carrierId",
             ]);
     }
 
@@ -94,6 +98,7 @@ class ServicesApiTest extends TestCase
                 'data' => [
                     'type' => 'services',
                     'attributes' => [
+                        'status' => 'Enabled',
                         'title' => 'Service Test',
                         'planCode' => '11111',
                         'cost' => '22',
@@ -104,10 +109,12 @@ class ServicesApiTest extends TestCase
                         'internationalMinutes' => '444',
                         'internationalData' => '555',
                         'internationalMessages' => '666',
+                        'carrierId' => "1",
                     ],
                 ],
             ])
             ->seeJson([
+                'status' => 'Enabled',
                 'type' => 'services',
                 'title' => 'Service Test',
                 'planCode' => '11111',
@@ -119,18 +126,20 @@ class ServicesApiTest extends TestCase
                 'internationalMinutes' => '444',
                 'internationalData' => '555',
                 'internationalMessages' => '666',
+                'carrierId' => "1",
             ]);
     }
 
     public function testUpdateService()
     {
         $service = factory(\WA\DataStore\Service\Service::class)->create(
-            ['title' => 'title1', 'planCode' => 11111, 'cost' => 30, 'description' => 'desc1', 'domesticMinutes' => 100, 'domesticData' => 100, 'domesticMessages' => 100, 'internationalMinutes' => 100, 'internationalData' => 100, 'internationalMessages' => 100]
+            ['status' => 'Enabled', 'title' => 'title1', 'planCode' => 11111, 'cost' => 30, 'description' => 'desc1', 'domesticMinutes' => 100, 'domesticData' => 100, 'domesticMessages' => 100, 'internationalMinutes' => 100, 'internationalData' => 100, 'internationalMessages' => 100, 'carrierId' => "1"]
         );
         $serviceAux = factory(\WA\DataStore\Service\Service::class)->create(
-            ['title' => 'title2', 'planCode' => 22222, 'cost' => 40, 'description' => 'desc2', 'domesticMinutes' => 200, 'domesticData' => 200, 'domesticMessages' => 200, 'internationalMinutes' => 200, 'internationalData' => 200, 'internationalMessages' => 200]
+            ['status' => 'Disabled', 'title' => 'title2', 'planCode' => 22222, 'cost' => 40, 'description' => 'desc2', 'domesticMinutes' => 200, 'domesticData' => 200, 'domesticMessages' => 200, 'internationalMinutes' => 200, 'internationalData' => 200, 'internationalMessages' => 200, 'carrierId' => "2"]
         );
 
+        $this->assertNotEquals($service->status, $serviceAux->status);
         $this->assertNotEquals($service->id, $serviceAux->id);
         $this->assertNotEquals($service->title, $serviceAux->title);
         $this->assertNotEquals($service->cost, $serviceAux->cost);
@@ -141,12 +150,14 @@ class ServicesApiTest extends TestCase
         $this->assertNotEquals($service->internationalMinutes, $serviceAux->internationalMinutes);
         $this->assertNotEquals($service->internationalData, $serviceAux->internationalData);
         $this->assertNotEquals($service->internationalMessages, $serviceAux->internationalMessages);
+        $this->assertNotEquals($service->carrierId, $serviceAux->carrierId);
 
         $this->put('/services/'.$serviceAux->id,
             [
                 'data' => [
                     'type' => 'services',
                     'attributes' => [
+                        'status' => $service->status,
                         'title' => "$service->title",
                         'planCode' => "$service->planCode",
                         'cost' => "$service->cost",
@@ -157,10 +168,12 @@ class ServicesApiTest extends TestCase
                         'internationalMinutes' => "$service->internationalMinutes",
                         'internationalData' => "$service->internationalData",
                         'internationalMessages' => "$service->internationalMessages",
+                        'carrierId' => "$service->carrierId",
                     ],
                 ],
             ])
             ->seeJson([
+                'status' => 'Enabled',
                 'type' => 'services',
                 'title' => 'title1',
                 'planCode' => '11111',
@@ -172,6 +185,7 @@ class ServicesApiTest extends TestCase
                 'internationalMinutes' => '100',
                 'internationalData' => '100',
                 'internationalMessages' => '100',
+                'carrierId' => "1",
             ]);
     }
 

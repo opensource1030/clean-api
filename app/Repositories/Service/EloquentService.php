@@ -26,6 +26,9 @@ class EloquentService extends AbstractRepository implements ServiceInterface
             return 'notExist';
         }
 
+        if (isset($data['status'])) {
+            $service->status = $data['status'];
+        }
         if (isset($data['title'])) {
             $service->title = $data['title'];
         }
@@ -56,6 +59,10 @@ class EloquentService extends AbstractRepository implements ServiceInterface
         if (isset($data['internationalMessages'])) {
             $service->internationalMessages = $data['internationalMessages'];
         }
+        if (isset($data['carrierId'])) {
+            $service->carrierId = $data['carrierId'];
+        }
+
 
         if (!$service->save()) {
             return 'notSaved';
@@ -86,6 +93,7 @@ class EloquentService extends AbstractRepository implements ServiceInterface
     public function create(array $data)
     {
         $serviceData = [
+            "status" =>  isset($data['status']) ? $data['status'] : null ,
             "title" =>  isset($data['title']) ? $data['title'] : null ,
             "planCode" => isset($data['planCode']) ? $data['planCode'] : 0,
             "cost" =>  isset($data['cost']) ? $data['cost'] : 0,
@@ -96,6 +104,7 @@ class EloquentService extends AbstractRepository implements ServiceInterface
             "internationalMinutes" =>  isset($data['internationalMinutes']) ? $data['internationalMinutes'] : 0,
             "internationalData" => isset($data['internationalData']) ? $data['internationalData'] : 0,
             "internationalMessages" => isset($data['internationalMessages']) ? $data['internationalMessages'] : 0,
+            "carrierId" =>  isset($data['carrierId']) ? $data['carrierId'] : null ,
         ];
 
         $service = $this->model->create($serviceData);

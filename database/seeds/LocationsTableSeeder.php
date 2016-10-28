@@ -1,7 +1,5 @@
 <?php
 
-namespace WA\database\seeds;
-
 class LocationsTableSeeder extends BaseTableSeeder
 {
     protected $table = 'locations';

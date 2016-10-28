@@ -15,6 +15,7 @@ class Service extends BaseDataStore
     protected $table = 'services';
 
     protected $fillable = [
+        'status',
         'title',
         'planCode',
         'cost',
@@ -25,6 +26,7 @@ class Service extends BaseDataStore
         'internationalMinutes',
         'internationalData',
         'internationalMessages',
+        'carrierId',
         'updated_at'];
 
     /**
@@ -53,5 +55,13 @@ class Service extends BaseDataStore
     public function packages()
     {
         return $this->belongsToMany('WA\DataStore\Package\Package', 'package_services', 'packageId', 'servicesId');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function carriers()
+    {
+        return $this->belongsTo('WA\DataStore\Carrier\Carrier', 'carrierId');
     }
 }
