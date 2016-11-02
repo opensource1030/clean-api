@@ -2,58 +2,29 @@
 
 namespace WA\DataStore\Category;
 
-use League\Fractal\TransformerAbstract;
-use League\Fractal\Resource\Collection as ResourceCollection;
-use WA\DataStore\App\AppTransformer;
-use WA\DataStore\Image\ImageTransformer;
-use WA\Helpers\Traits\Criteria;
+use WA\DataStore\FilterableTransformer;
 
 /**
  * Class CarrierTransformer.
  */
-class CategoryAppTransformer extends TransformerAbstract
+class CategoryAppTransformer extends FilterableTransformer
 {
-    use Criteria;
-
     protected $availableIncludes = [
-        'apps', 'images',
+        'apps',
+        'images',
     ];
+
     /**
-     * @param CategoryApps $categoryApps
-     *
+     * @param CategoryApp $categoryApp
      * @return array
      */
     public function transform(CategoryApp $categoryApp)
     {
         return [
-            'id' => $categoryApp->id,
-            'name' => $categoryApp->name,
+            'id'         => $categoryApp->id,
+            'name'       => $categoryApp->name,
             'created_at' => $categoryApp->created_at,
             'updated_at' => $categoryApp->updated_at,
         ];
-    }
-
-    /**
-     * @param CategoryApps $categoryApps
-     *
-     * @return ResourceCollection
-     */
-    public function includeApps(CategoryApp $categoryApp)
-    {
-        $apps = $this->applyCriteria($categoryApp->apps(), $this->criteria);
-
-        return new ResourceCollection($apps->get(), new AppTransformer(), 'apps');
-    }
-
-    /**
-     * @param CategoryApps $categoryApps
-     *
-     * @return ResourceCollection
-     */
-    public function includeImages(CategoryApp $categoryApp)
-    {
-        $images = $this->applyCriteria($categoryApp->images(), $this->criteria);
-
-        return new ResourceCollection($images->get(), new ImageTransformer(), 'images');
     }
 }

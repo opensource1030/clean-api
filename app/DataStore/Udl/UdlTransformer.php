@@ -2,12 +2,12 @@
 
 namespace WA\DataStore\Udl;
 
-use League\Fractal\TransformerAbstract;
+use WA\DataStore\FilterableTransformer;
 
 /**
  * Class UdlTransformer.
  */
-class UdlTransformer extends TransformerAbstract
+class UdlTransformer extends FilterableTransformer
 {
     /**
      * @param Udl $udl
@@ -17,10 +17,9 @@ class UdlTransformer extends TransformerAbstract
     public function transform(Udl $udl)
     {
         return [
-            'id' => $udl->id,
-            'name' => $udl->name,
+            'id'    => $udl->id,
+            'name'  => $udl->name,
             'label' => $udl->label,
-
             'sections' => $udl->udlValues,
         ];
     }

@@ -2,14 +2,12 @@
 
 namespace WA\DataStore\Role;
 
-use League\Fractal\Resource\Collection as ResourceCollection;
-use League\Fractal\Resource\Item as ResourceItem;
-use League\Fractal\TransformerAbstract;
+use WA\DataStore\FilterableTransformer;
 
 /**
  * Class RoleTransformer.
  */
-class RoleTransformer extends TransformerAbstract
+class RoleTransformer extends FilterableTransformer
 {
     protected $availableIncludes = [
         'permissions',
@@ -23,7 +21,7 @@ class RoleTransformer extends TransformerAbstract
     public function transform(Role $role)
     {
         return [
-            'id' => (int)$role->id,
+            'id'   => (int)$role->id,
             'name' => $role->display_name
         ];
     }
