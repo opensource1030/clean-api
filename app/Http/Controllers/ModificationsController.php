@@ -3,17 +3,17 @@
 namespace WA\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Lang;
 use WA\DataStore\Modification\Modification;
 use WA\DataStore\Modification\ModificationTransformer;
 use WA\Repositories\Modification\ModificationInterface;
-use Illuminate\Support\Facades\Lang;
 
 /**
  * Modification resource.
  *
  * @Resource("Modification", uri="/Modification")
  */
-class ModificationsController extends ApiController
+class ModificationsController extends FilteredApiController
 {
     /**
      * @var modificationInterface
@@ -21,52 +21,15 @@ class ModificationsController extends ApiController
     protected $modification;
 
     /**
-     * modification Controller constructor.
+     * ModificationsController constructor.
      *
-     * @param modificationInterface $modification
+     * @param ModificationInterface $modification
+     * @param Request $request
      */
-    public function __construct(ModificationInterface $modification)
+    public function __construct(ModificationInterface $modification, Request $request)
     {
+        parent::__construct($modification, $request);
         $this->modification = $modification;
-    }
-
-    /**
-     * Show all modification.
-     *
-     * Get a payload of all modification
-     */
-    public function index()
-    {
-        $criteria = $this->getRequestCriteria();
-        $this->modification->setCriteria($criteria);
-        $modification = $this->modification->byPage();
-
-        $response = $this->response()->withPaginator($modification, new ModificationTransformer(),
-            ['key' => 'modifications']);
-        $response = $this->applyMeta($response);
-
-        return $response;
-    }
-
-    /**
-     * Show a single modification.
-     *
-     * Get a payload of a single modification
-     *
-     * @Get("/{id}")
-     */
-    public function show($id)
-    {
-        $criteria = $this->getRequestCriteria();
-        $this->modification->setCriteria($criteria);
-        $modification = Modification::find($id);
-
-        if ($modification == null) {
-            $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'Modification']);
-            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
-        }
-
-        return $this->response()->item($modification, new ModificationTransformer(), ['key' => 'modifications'])->setStatusCode($this->status_codes['conflict']);
     }
 
     /**
@@ -96,9 +59,11 @@ class ModificationsController extends ApiController
                     return response()->json($error)->setStatusCode($this->status_codes['conflict']);
                 }
 
-                return $this->response()->item($modification, new ModificationTransformer(), ['key' => 'modifications'])->setStatusCode($this->status_codes['created']);
+                return $this->response()->item($modification, new ModificationTransformer(),
+                    ['key' => 'modifications'])->setStatusCode($this->status_codes['created']);
             } catch (\Exception $e) {
-                $error['errors']['modifications'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Modification', 'option' => 'updated', 'include' => '']);
+                $error['errors']['modifications'] = Lang::get('messages.NotOptionIncludeClass',
+                    ['class' => 'Modification', 'option' => 'updated', 'include' => '']);
                 //$error['errors']['Message'] = $e->getMessage();
             }
         } else {
@@ -120,9 +85,11 @@ class ModificationsController extends ApiController
                 $data = $request->all()['data']['attributes'];
                 $modification = $this->modification->create($data);
 
-                return $this->response()->item($modification, new ModificationTransformer(), ['key' => 'modifications'])->setStatusCode($this->status_codes['created']);
+                return $this->response()->item($modification, new ModificationTransformer(),
+                    ['key' => 'modifications'])->setStatusCode($this->status_codes['created']);
             } catch (\Exception $e) {
-                $error['errors']['modifications'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Modification', 'option' => 'created', 'include' => '']);
+                $error['errors']['modifications'] = Lang::get('messages.NotOptionIncludeClass',
+                    ['class' => 'Modification', 'option' => 'created', 'include' => '']);
                 //$error['errors']['Message'] = $e->getMessage();
             }
         } else {
@@ -146,7 +113,7 @@ class ModificationsController extends ApiController
             $error['errors']['delete'] = Lang::get('messages.NotExistClass', ['class' => 'Modification']);
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
-        
+
         $modification = Modification::find($id);
         if ($modification == null) {
             return array("success" => true);

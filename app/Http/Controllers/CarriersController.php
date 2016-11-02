@@ -2,19 +2,19 @@
 
 namespace WA\Http\Controllers;
 
+use DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Lang;
 use WA\DataStore\Carrier\Carrier;
 use WA\DataStore\Carrier\CarrierTransformer;
 use WA\Repositories\Carrier\CarrierInterface;
-use DB;
-use Illuminate\Support\Facades\Lang;
 
 /**
  * Carrier resource.
  *
  * @Resource("carrier", uri="/carriers")
  */
-class CarriersController extends ApiController
+class CarriersController extends FilteredApiController
 {
     /**
      * @var CarrierInterface
@@ -22,62 +22,15 @@ class CarriersController extends ApiController
     protected $carrier;
 
     /**
-     * Carrier Controller constructor.
+     * CarriersController constructor.
      *
-     * @param CarrierInterface $Carrier
+     * @param CarrierInterface $carrier
+     * @param Request $request
      */
-    public function __construct(CarrierInterface $carrier)
+    public function __construct(CarrierInterface $carrier, Request $request)
     {
+        parent::__construct($carrier, $request);
         $this->carrier = $carrier;
-    }
-
-    /**
-     * Show all Carrier.
-     *
-     * Get a payload of all Carrier
-     */
-    public function index(Request $request)
-    {
-        $criteria = $this->getRequestCriteria();
-        $this->carrier->setCriteria($criteria);
-        $carrier = $this->carrier->byPage();
-
-        if (!$this->includesAreCorrect($request, new CarrierTransformer())) {
-            $error['errors']['getincludes'] = Lang::get('messages.NotExistInclude');
-
-            return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
-        }
-
-        $response = $this->response()->withPaginator($carrier, new CarrierTransformer(), ['key' => 'carriers']);
-        $response = $this->applyMeta($response);
-
-        return $response;
-    }
-
-    /**
-     * Show a single Carrier.
-     *
-     * Get a payload of a single Carrier
-     *
-     * @Get("/{id}")
-     */
-    public function show($id, Request $request)
-    {
-        $criteria = $this->getRequestCriteria();
-        $this->carrier->setCriteria($criteria);
-        $carrier = $this->carrier->byId($id);
-
-        if ($carrier == null) {
-            $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'Carrier']);
-            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
-        }
-
-        if (!$this->includesAreCorrect($request, new CarrierTransformer())) {
-            $error['errors']['getincludes'] = Lang::get('messages.NotExistInclude');
-            return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
-        }
-
-        return $this->response()->item($carrier, new CarrierTransformer(), ['key' => 'carriers'])->setStatusCode($this->status_codes['created']);
     }
 
     /**
@@ -119,7 +72,8 @@ class CarriersController extends ApiController
             }
         } catch (\Exception $e) {
             DB::rollBack();
-            $error['errors']['carriers'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Carrier', 'option' => 'updated', 'include' => '']);
+            $error['errors']['carriers'] = Lang::get('messages.NotOptionIncludeClass',
+                ['class' => 'Carrier', 'option' => 'updated', 'include' => '']);
             //$error['errors']['carriersMessage'] = $e->getMessage();
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
@@ -132,7 +86,8 @@ class CarriersController extends ApiController
                         $carrier->images()->sync($dataImages);
                     } catch (\Exception $e) {
                         DB::rollBack();
-                        $error['errors']['images'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Carrier', 'option' => 'created', 'include' => 'Images']);
+                        $error['errors']['images'] = Lang::get('messages.NotOptionIncludeClass',
+                            ['class' => 'Carrier', 'option' => 'created', 'include' => 'Images']);
                         //$error['errors']['Message'] = $e->getMessage();
                         return response()->json($error)->setStatusCode($this->status_codes['conflict']);
                     }
@@ -141,7 +96,8 @@ class CarriersController extends ApiController
         }
 
         DB::commit();
-        return $this->response()->item($carrier, new CarrierTransformer(), ['key' => 'carriers'])->setStatusCode($this->status_codes['created']);
+        return $this->response()->item($carrier, new CarrierTransformer(),
+            ['key' => 'carriers'])->setStatusCode($this->status_codes['created']);
     }
 
     /**
@@ -166,7 +122,8 @@ class CarriersController extends ApiController
             $carrier = $this->carrier->create($data);
         } catch (\Exception $e) {
             DB::rollBack();
-            $error['errors']['carriers'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Carrier', 'option' => 'created', 'include' => '']);
+            $error['errors']['carriers'] = Lang::get('messages.NotOptionIncludeClass',
+                ['class' => 'Carrier', 'option' => 'created', 'include' => '']);
             //$error['errors']['Message'] = $e->getMessage();
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
@@ -179,7 +136,8 @@ class CarriersController extends ApiController
                         $carrier->images()->sync($dataImages);
                     } catch (\Exception $e) {
                         DB::rollBack();
-                        $error['errors']['images'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Carrier', 'option' => 'created', 'include' => 'Images']);
+                        $error['errors']['images'] = Lang::get('messages.NotOptionIncludeClass',
+                            ['class' => 'Carrier', 'option' => 'created', 'include' => 'Images']);
                         //$error['errors']['Message'] = $e->getMessage();
                         return response()->json($error)->setStatusCode($this->status_codes['conflict']);
                     }
@@ -188,7 +146,8 @@ class CarriersController extends ApiController
         }
 
         DB::commit();
-        return $this->response()->item($carrier, new CarrierTransformer(), ['key' => 'carriers'])->setStatusCode($this->status_codes['created']);
+        return $this->response()->item($carrier, new CarrierTransformer(),
+            ['key' => 'carriers'])->setStatusCode($this->status_codes['created']);
     }
 
     /**

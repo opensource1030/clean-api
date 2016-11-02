@@ -11,7 +11,7 @@ use WA\Repositories\Request\RequestInterface;
  *
  * @Resource("Request", uri="/Request")
  */
-class RequestsController extends ApiController
+class RequestsController extends FilteredApiController
 {
     /**
      * @var RequestInterface
@@ -19,48 +19,15 @@ class RequestsController extends ApiController
     protected $request;
 
     /**
-     * Request Controller constructor.
+     * RequestsController constructor.
      *
-     * @param RequestInterface $Request
+     * @param RequestInterface $request
+     * @param Request $httpRequest
      */
-    public function __construct(RequestInterface $request)
+    public function __construct(RequestInterface $request, Request $httpRequest)
     {
+        parent::__construct($request, $httpRequest);
         $this->request = $request;
-    }
-
-    /**
-     * Show all Request.
-     *
-     * Get a payload of all Request
-     */
-    public function index()
-    {
-        $criteria = $this->getRequestCriteria();
-        $this->request->setCriteria($criteria);
-
-        $request = $this->request->byPage();
-
-        $response = $this->response()->collection($request, new RequestTransformer(), ['key' => 'requests']);
-        $response = $this->applyMeta($response);
-
-        return $response;
-    }
-
-    /**
-     * Show a single Request.
-     *
-     * Get a payload of a single Request
-     *
-     * @Get("/{id}")
-     */
-    public function show($id)
-    {
-        $criteria = $this->getRequestCriteria();
-        $this->request->setCriteria($criteria);
-
-        $request = $this->request->byId($id);
-
-        return $this->response()->item($request, new RequestTransformer(), ['key' => 'requests']);
     }
 
     /**
