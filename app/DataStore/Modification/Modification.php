@@ -12,19 +12,20 @@ class Modification extends BaseDataStore
     protected $table = 'modifications';
 
     protected $fillable = [
-            'modType',
-            'value',
-            'updated_at', ];
+        'modType',
+        'value',
+        'updated_at',
+    ];
 
-  /**
-   * Get all the owners for the modifications.
-   *
-   * @return \Illuminate\Database\Eloquent\Relations\MorphTo
-   */
-  public function owner()
-  {
-      return $this->morphTo();
-  }
+    /**
+     * Get all the owners for the modifications.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphTo
+     */
+    public function owner()
+    {
+        return $this->morphTo();
+    }
 
     /**
      * Get the transformer instance.
@@ -33,7 +34,7 @@ class Modification extends BaseDataStore
      */
     public function getTransformer()
     {
-        return new OrderTransformer();
+        return new ModificationTransformer();
     }
 
     /**
