@@ -35,6 +35,6 @@ class Preset extends BaseDataStore
      */
     public function getTransformer()
     {
-        return new PresetsTransformer();
+        return new PresetTransformer();
     }
 }
