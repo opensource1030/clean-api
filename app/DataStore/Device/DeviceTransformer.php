@@ -2,6 +2,8 @@
 
 namespace WA\DataStore\Device;
 
+use League\Fractal\Resource\Collection as ResourceCollection;
+use WA\DataStore\DeviceType\DeviceTypeTransformer;
 use WA\DataStore\FilterableTransformer;
 
 /**
@@ -44,4 +46,16 @@ class DeviceTransformer extends FilterableTransformer
         ];
     }
 
+    /**
+     * Dynamic include override because of mixed case
+     *
+     * @param Device $device
+     * @return ResourceCollection
+     */
+    public function includeDevicetypes(Device $device)
+    {
+        $this->criteria = $this->getRequestCriteria();
+        $devicetypes = $this->applyCriteria($device->devicetypes(), $this->criteria);
+        return new ResourceCollection($devicetypes->get(), new DeviceTypeTransformer(), 'devicetypes');
+    }
 }
