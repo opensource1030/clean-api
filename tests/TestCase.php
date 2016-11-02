@@ -1,7 +1,7 @@
 <?php
 
 
-class TestCase extends Laravel\Lumen\Testing\TestCase
+abstract class TestCase extends Laravel\Lumen\Testing\TestCase
 {
     protected $baseUrl;
 
