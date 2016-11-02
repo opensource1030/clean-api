@@ -2,21 +2,18 @@
 
 namespace WA\Http\Controllers;
 
-use Cartalyst\DataGrid\Laravel\Facades\DataGrid;
-use Dingo\Api\Http\Response;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Lang;
 use WA\DataStore\Company\Company;
-//use Faker\Provider\hr_HR\Company;
 use WA\DataStore\Company\CompanyTransformer;
 use WA\Repositories\Carrier\CarrierInterface;
 use WA\Repositories\Company\CompanyInterface;
 use WA\Repositories\Udl\UdlInterface;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Lang;
 
 /**
  * Class CompaniesController.
  */
-class CompaniesController extends ApiController
+class CompaniesController extends FilteredApiController
 {
     /**
      * @var CompanyInterface
@@ -34,50 +31,25 @@ class CompaniesController extends ApiController
     protected $udl;
 
     /**
+     * CompaniesController constructor.
+     *
      * @param CompanyInterface $company
      * @param CarrierInterface $carrier
-     * @param UdlInterface     $udl
+     * @param UdlInterface $udl
+     * @param Request $request
      */
-    public function __construct(CompanyInterface $company, CarrierInterface $carrier, UdlInterface $udl)
-    {
+    public function __construct(
+        CompanyInterface $company,
+        CarrierInterface $carrier,
+        UdlInterface $udl,
+        Request $request
+    ) {
+        parent::__construct($company, $request);
         $this->company = $company;
         $this->carrier = $carrier;
         $this->udl = $udl;
     }
 
-    /**
-     * @return Response
-     */
-    public function index()
-    {
-        $criteria = $this->getRequestCriteria();
-        $this->company->setCriteria($criteria);
-        $company = $this->company->byPage();
-      
-        $response = $this->response()->withPaginator($company, new CompanyTransformer(), ['key' => 'companies']);
-        $response = $this->applyMeta($response);
-
-        return $response;
-    }
-
-    /**
-     * @param $id
-     *
-     * @return Response
-     */
-    public function show($id)
-    {
-        $criteria = $this->getRequestCriteria();
-        $this->company->setCriteria($criteria);
-        $company = $this->company->byId($id);
-
-        if ($company == null) {
-            $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'Company']);
-            return response()->json($error)->setStatusCode(409);
-        }
-
-        return $this->response()->item($company, new CompanyTransformer(), ['key' => 'companies']);
-    }
 
     /**
      * Create a new company.
@@ -148,32 +120,4 @@ class CompaniesController extends ApiController
         }
     }
 
-    /**
-     * Handles the datatables, this needs to be in a specific format to make it compatible
-     * with the DataTale
-     * ! overrides the default (dingo/api)
-     * Returns all companies.
-     *
-     * @return DataGrid
-     */
-    public function datatable()
-    {
-        $companies = $this->company->getAll(false);
-
-        $columns = [
-            'id',
-            'name',
-            'label',
-            'shortName',
-            'active',
-        ];
-
-        $options = [
-            'throttle' => $this->defaultQueryParams['_perPage'],
-        ];
-
-        $response = DataGrid::make($companies, $columns, $options);
-
-        return $response;
-    }
 }

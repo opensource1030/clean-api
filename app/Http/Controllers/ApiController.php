@@ -4,15 +4,6 @@ namespace WA\Http\Controllers;
 
 use Dingo\Api\Http\Response;
 use Dingo\Api\Routing\Helpers;
-use WA\Http\Requests\Parameters\Fields;
-use WA\Http\Requests\Parameters\Filters;
-use WA\Http\Requests\Parameters\Sorting;
-
-use DB;
-use Illuminate\Support\Facades\Lang;
-use WA\Helpers\Traits\Criteria;
-
-use WA\DataStore\Relationship\RelationshipTransformer;
 
 /**
  * Extensible API controller.
@@ -24,91 +15,23 @@ abstract class ApiController extends BaseController
     use Helpers;
 
     /**
-     * @var Filters
-     */
-    protected $filters = null;
-
-    /**
-     * @var Sorting
-     */
-    protected $sort = null;
-
-    /**
-     * @var array
-     */
-    protected $criteria = [
-        'sort'    => [],
-        'filters' => [],
-        'fields'  => []
-    ];
-
-    /**
      * @var status_codes
      */
     public $status_codes = [
-        'ok' => 200,            //
-        'created' => 201,       // Object created and return that object.
-        'accepted' => 202,      //
-        'createdCI' => 204,     //
-        'badrequest' => 400,    // Bad Request
+        'ok'           => 200,            //
+        'created'      => 201,       // Object created and return that object.
+        'accepted'     => 202,      //
+        'createdCI'    => 204,     //
+        'badrequest'   => 400,    // Bad Request
         'unauthorized' => 401,  // Unauthorized
-        'forbidden' => 403,     // Unsupported Request (Permissions).
-        'notexists' => 404,     // Get Put or Delete Not Exists Objects.
-        'conflict' => 409,       // Other Conflicts.
+        'forbidden'    => 403,     // Unsupported Request (Permissions).
+        'notexists'    => 404,     // Get Put or Delete Not Exists Objects.
+        'conflict'     => 409,       // Other Conflicts.
     ];
 
-    /**
-     * @return mixed
-     */
-    public function getRequestCriteria()
-    {
-        $filters = $this->getFilters();
-        $sort = $this->getSort();
-        $fields = $this->getFields();
-
-        $this->criteria['filters'] = $filters;
-        $this->criteria['sort'] = $sort;
-        $this->criteria['fields'] = $fields;
-
-        return $this->criteria;
-    }
-
-    /**
-     * @return Sorting
-     */
-    public function getSort()
-    {
-        $sort = new Sorting(\Request::get('sort', null));
-
-        return $sort;
-    }
-
-    /**
-     * @return Filters
-     */
-    public function getFilters()
-    {
-        $filters = new Filters((array) \Request::get('filter', null));
-
-        return $filters;
-    }
-
-    /**
-     * @return Fields
-     */
-    public function getFields()
-    {
-        $fields = new Fields(\Request::get('fields', null));
-
-        return $fields;
-    }
 
     public function applyMeta(Response $response)
     {
-        $response->addMeta('sort', $this->criteria['sort']->get());
-        $response->addMeta('filter', $this->criteria['filters']->get());
-        $response->addMeta('fields', $this->criteria['fields']->get());
-
         return $response;
     }
 
@@ -192,7 +115,7 @@ abstract class ApiController extends BaseController
         $exists = true;
         foreach ($includes as $include) {
             $exists = $exists && $this->includesAreCorrectInf($include, $class);
-            
+
             if (!$exists) {
                 break;
             }
@@ -224,7 +147,7 @@ abstract class ApiController extends BaseController
             $includes = substr($include, strlen($includesAux[0]) + 1);
 
             $var = title_case(str_singular($includesAux[0]));
-            $transformer = "\\WA\\DataStore\\$var\\$var".'Transformer';
+            $transformer = "\\WA\\DataStore\\$var\\$var" . 'Transformer';
             $newTransformer = new $transformer();
 
             return $this->includesAreCorrectInf($includes, $newTransformer);

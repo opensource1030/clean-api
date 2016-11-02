@@ -2,19 +2,19 @@
 
 namespace WA\Http\Controllers;
 
+use Illuminate\Support\Facades\Lang;
+use Illuminate\Support\Facades\Storage;
 use Request;
 use WA\DataStore\Image\Image;
 use WA\DataStore\Image\ImageTransformer;
 use WA\Repositories\Image\ImageInterface;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Lang;
 
 /**
  * Image resource.
  *
  * @Resource("Image", uri="/image")
  */
-class ImagesController extends ApiController
+class ImagesController extends FilteredApiController
 {
     /**
      * @var ImageInterface
@@ -22,30 +22,15 @@ class ImagesController extends ApiController
     protected $image;
 
     /**
-     * Image Controller constructor.
+     * ImagesController constructor.
      *
      * @param ImageInterface $image
+     * @param Request $request
      */
-    public function __construct(ImageInterface $image)
+    public function __construct(ImageInterface $image, Request $request)
     {
+        parent::__construct($image, $request);
         $this->image = $image;
-    }
-
-    /**
-     * Show all Images.
-     *
-     * Get a payload of all Image
-     */
-    public function index()
-    {
-        $criteria = $this->getRequestCriteria();
-        $this->image->setCriteria($criteria);
-        $image = $this->image->byPage();
-
-        $response = $this->response()->withPaginator($image, new ImageTransformer(), ['key' => 'images']);
-        $response = $this->applyMeta($response);
-
-        return $response;
     }
 
     /**
@@ -66,7 +51,7 @@ class ImagesController extends ApiController
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
-        $path = $image->filename.'.'.$image->extension;
+        $path = $image->filename . '.' . $image->extension;
 
         $value = Storage::get($path);
 
@@ -89,7 +74,8 @@ class ImagesController extends ApiController
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
-        return $this->response()->item($image, new ImageTransformer(), ['key' => 'images'])->setStatusCode($this->status_codes['created']);
+        return $this->response()->item($image, new ImageTransformer(),
+            ['key' => 'images'])->setStatusCode($this->status_codes['created']);
     }
 
     /**
@@ -107,9 +93,9 @@ class ImagesController extends ApiController
             $imageFile['mimeType'] = $file->getClientMimeType();
             $extension = $imageFile['extension'] = $file->getClientOriginalExtension();
             $imageFile['size'] = $file->getClientSize();
-            $imageFile['url'] = $filename.'.'.$extension;
+            $imageFile['url'] = $filename . '.' . $extension;
 
-            $value = Storage::put($filename.'.'.$extension, file_get_contents($file));
+            $value = Storage::put($filename . '.' . $extension, file_get_contents($file));
 
             if ($value) {
                 $image = $this->image->create($imageFile);
@@ -117,7 +103,8 @@ class ImagesController extends ApiController
                 Storage::delete($file);
             }
         } catch (\Exception $e) {
-            $error['errors']['image'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Image', 'option' => 'created', 'include' => '']);
+            $error['errors']['image'] = Lang::get('messages.NotOptionIncludeClass',
+                ['class' => 'Image', 'option' => 'created', 'include' => '']);
             $error['errors']['Message'] = $e->getMessage();
 
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
@@ -137,12 +124,12 @@ class ImagesController extends ApiController
         $image = Image::find($id);
         if ($image != null) {
             $this->image->deleteById($id);
-            Storage::delete($path = $image->filename.'.'.$image->extension);
+            Storage::delete($path = $image->filename . '.' . $image->extension);
         } else {
             $error['errors']['delete'] = Lang::get('messages.NotExistClass', ['class' => 'Image']);
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
-        
+
         $image = Image::find($id);
         if ($image == null) {
             return array("success" => true);

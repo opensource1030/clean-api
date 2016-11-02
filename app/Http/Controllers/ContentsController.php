@@ -2,13 +2,12 @@
 
 namespace WA\Http\Controllers;
 
-use WA\DataStore\Content\ContentTransformer;
-use WA\DataStore\Content\Content;
-use WA\Http\Controllers\Auth\AuthorizedController;
-use WA\Repositories\Content\ContentInterface;
 use Illuminate\Http\Request;
+use WA\DataStore\Content\Content;
+use WA\DataStore\Content\ContentTransformer;
+use WA\Repositories\Content\ContentInterface;
 
-class ContentsController extends ApiController
+class ContentsController extends FilteredApiController
 {
     /**
      * @var ContentInterface
@@ -16,51 +15,15 @@ class ContentsController extends ApiController
     protected $contents;
 
     /**
-     * Contents Controller constructor.
+     * ContentsController constructor.
      *
      * @param ContentInterface $contents
+     * @param Request $request
      */
-    public function __construct(ContentInterface $contents)
+    public function __construct(ContentInterface $contents, Request $request)
     {
+        parent::__construct($contents, $request);
         $this->contents = $contents;
-    }
-
-    /**
-     * Get a payload of all available content.
-     *
-     * @return \Dingo\Api\Http\Response
-     */
-    public function index()
-    {
-        $criteria = $this->getRequestCriteria();
-        $this->contents->setCriteria($criteria);
-        $contents = $this->contents->byPage();
-
-        $response = $this->response()->withPaginator($contents, new ContentTransformer(), ['key' => 'contents']);
-        $response = $this->applyMeta($response);
-
-        return $response;
-    }
-
-    /**
-     * Get a payload of content by single id.
-     *
-     * @param $id
-     *
-     * @return \Dingo\Api\Http\Response
-     */
-    public function show($id)
-    {
-        $criteria = $this->getRequestCriteria();
-        $this->contents->setCriteria($criteria);
-        $content = $this->contents->byId($id);
-
-        if (!isset($content)) {
-            $error['errors']['put'] = 'Content selected does not exist';
-            return response()->json($error)->setStatusCode(404);
-        }
-
-        return $this->response()->item($content, new ContentTransformer(), ['key' => 'contents']);
     }
 
     /**

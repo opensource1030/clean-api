@@ -3,17 +3,17 @@
 namespace WA\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Lang;
 use WA\DataStore\App\App;
 use WA\DataStore\App\AppTransformer;
 use WA\Repositories\App\AppInterface;
-use Illuminate\Support\Facades\Lang;
 
 /**
  * App resource.
  *
  * @Resource("app", uri="/apps")
  */
-class AppsController extends ApiController
+class AppsController extends FilteredApiController
 {
     /**
      * @var AppInterface
@@ -21,51 +21,15 @@ class AppsController extends ApiController
     protected $app;
 
     /**
-     * App Controller constructor.
+     * AppsController constructor.
      *
      * @param AppInterface $app
+     * @param Request $request
      */
-    public function __construct(AppInterface $app)
+    public function __construct(AppInterface $app, Request $request)
     {
+        parent::__construct($app, $request);
         $this->app = $app;
-    }
-
-    /**
-     * Show all App.
-     *
-     * Get a payload of all App
-     */
-    public function index()
-    {
-        $criteria = $this->getRequestCriteria();
-        $this->app->setCriteria($criteria);
-        $apps = $this->app->byPage();
-
-        $response = $this->response()->withPaginator($apps, new AppTransformer(), ['key' => 'apps']);
-        $response = $this->applyMeta($response);
-
-        return $response;
-    }
-
-    /**
-     * Show a single App.
-     *
-     * Get a payload of a single App
-     *
-     * @Get("/{id}")
-     */
-    public function show($id, Request $request)
-    {
-        $criteria = $this->getRequestCriteria();
-        $this->app->setCriteria($criteria);
-        $app = App::find($id);
-
-        if ($app == null) {
-            $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'App']);
-            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
-        }
-
-        return $this->response()->item($app, new AppTransformer(), ['key' => 'apps'])->setStatusCode($this->status_codes['created']);
     }
 
     /**
@@ -95,9 +59,11 @@ class AppsController extends ApiController
                     return response()->json($error)->setStatusCode($this->status_codes['conflict']);
                 }
 
-                return $this->response()->item($app, new AppTransformer(), ['key' => 'apps'])->setStatusCode($this->status_codes['created']);
+                return $this->response()->item($app, new AppTransformer(),
+                    ['key' => 'apps'])->setStatusCode($this->status_codes['created']);
             } catch (\Exception $e) {
-                $error['errors']['apps'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'App', 'option' => 'updated', 'include' => '']);
+                $error['errors']['apps'] = Lang::get('messages.NotOptionIncludeClass',
+                    ['class' => 'App', 'option' => 'updated', 'include' => '']);
                 //$error['errors']['Message'] = $e->getMessage();
             }
         } else {
@@ -119,9 +85,11 @@ class AppsController extends ApiController
                 $data = $request->all()['data']['attributes'];
                 $app = $this->app->create($data);
 
-                return $this->response()->item($app, new AppTransformer(), ['key' => 'apps'])->setStatusCode($this->status_codes['created']);
+                return $this->response()->item($app, new AppTransformer(),
+                    ['key' => 'apps'])->setStatusCode($this->status_codes['created']);
             } catch (\Exception $e) {
-                $error['errors']['apps'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'App', 'option' => 'created', 'include' => '']);
+                $error['errors']['apps'] = Lang::get('messages.NotOptionIncludeClass',
+                    ['class' => 'App', 'option' => 'created', 'include' => '']);
                 //$error['errors']['Message'] = $e->getMessage();
             }
         } else {

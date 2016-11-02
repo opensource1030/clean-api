@@ -3,16 +3,12 @@
 namespace WA\Http\Controllers;
 
 use Cartalyst\DataGrid\Laravel\Facades\DataGrid;
-
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Lang;
-
 use Response;
-
 use View;
 use WA\DataStore\User\User;
-use WA\DataStore\User\UserTransformer;
 use WA\Helpers\Traits\SetLimits;
 use WA\Repositories\User\UserInterface;
 
@@ -21,7 +17,7 @@ use WA\Repositories\User\UserInterface;
  *
  * @Resource("Users", uri="/users")
  */
-class UsersController extends ApiController
+class UsersController extends FilteredApiController
 {
     use SetLimits;
 
@@ -31,52 +27,19 @@ class UsersController extends ApiController
     protected $user;
 
     /**
+     * UsersController constructor.
+     *
      * @param UserInterface $user
+     * @param Request $request
      */
     public function __construct(
-        UserInterface $user
+        UserInterface $user,
+        Request $request
     ) {
+        parent::__construct($user, $request);
         $this->user = $user;
     }
 
-    /**
-     * Show all users.
-     *
-     * @Get("/")
-     * @Parameters({
-     *      @Parameter("page", description="The page of results to view.", default=1),
-     *      @Parameter("limit", description="The amount of results per page.", default=10),
-     *       @Parameter("access_token", required=true, description="Access token for authentication")
-     * })
-     */
-    public function index()
-    {
-        $criteria = $this->getRequestCriteria();
-        $this->user->setCriteria($criteria);
-
-        $users = $this->user->byPage();
-
-        $response = $this->response()->withPaginator($users, new UserTransformer(), ['key' => 'users']);
-        $response = $this->applyMeta($response);
-        return $response;
-    }
-
-    /**
-     * Show a single users.
-     *
-     * Get a payload of a single users
-     *
-     * @Get("/{id}")
-     */
-    public function show($id)
-    {
-        $criteria = $this->getRequestCriteria();
-        $this->user->setCriteria($criteria);
-
-        $user = $this->user->byId($id);
-
-        return $this->response()->item($user, new UserTransformer($criteria), ['key' => 'users']);
-    }
 
     public function numberUsers(Request $request)
     {
@@ -93,7 +56,7 @@ class UsersController extends ApiController
             foreach ($usersAux as $user) {
                 $info = $this->retrieveInformationofUser($user);
                 $ok = true;
-    
+
                 if ($conditions <> null) {
                     foreach ($conditions as $condition) {
                         foreach ($info as $i) {
@@ -139,7 +102,8 @@ class UsersController extends ApiController
             return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
         }
 
-        return $this->response()->withPaginator($packages->count(), new PackageTransformer(), ['key' => 'packages'])->setStatusCode($this->status_codes['created']);
+        return $this->response()->withPaginator($packages->count(), new PackageTransformer(),
+            ['key' => 'packages'])->setStatusCode($this->status_codes['created']);
     }
 
     private function retrieveInformationofUser(User $user)
@@ -181,46 +145,4 @@ class UsersController extends ApiController
         var_dump($user);
     }
 
-    /**
-     * Handles the datatables, this needs to be in a specific format to make it compatible
-     * with the DataTale
-     * ! overrides the default (dingo/api)
-     * Returns users based on company set.
-     *
-     * @return DataGrid
-     */
-    public function datatable()
-    {
-        $currentCompany = $this->session->get('clean.company');
-        $currentCompanyId = $currentCompany->id;
-
-        $this->setLimits();
-
-        if (!empty($currentCompanyId)) {
-            $users = $this->user->byCompanyId($currentCompanyId);
-        } else {
-            $users = $this->user->byPage(false);
-        }
-
-        $columns = [
-            'id',
-            'identification',
-            'firstName',
-            'lastName',
-            'email',
-            'supervisorEmail',
-            'companyName',
-        ];
-
-        $options = [
-            'throttle' => $this->defaultQueryParams['_perPage'],
-            'method' => $this->defaultQueryParams['_method'],
-        ];
-
-        $this->setLimits();
-
-        $response = DataGrid::make($users, $columns, $options);
-
-        return $response;
-    }
 }
