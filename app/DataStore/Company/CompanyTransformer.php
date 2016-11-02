@@ -3,18 +3,16 @@
 namespace WA\DataStore\Company;
 
 use League\Fractal\Resource\Collection as ResourceCollection;
-use League\Fractal\TransformerAbstract;
 use WA\DataStore\Allocation\AllocationTransformer;
 use WA\DataStore\Content\ContentTransformer;
+use WA\DataStore\FilterableTransformer;
 use WA\DataStore\Udl\UdlTransformer;
-use WA\Helpers\Traits\Criteria;
 
 /**
  * Class CompanyTransformer.
  */
-class CompanyTransformer extends TransformerAbstract
+class CompanyTransformer extends FilterableTransformer
 {
-    use Criteria;
 
     protected $availableIncludes = [
         'allocations',
@@ -30,14 +28,14 @@ class CompanyTransformer extends TransformerAbstract
     public function transform(Company $company)
     {
         return [
-            'id' => (int) $company->id,
-            'name' => $company->name,
-            'label' => $company->label,
-            'active' => $company->active,
-            'udlpath' => $company->udlpath,
-            'isCensus' => $company->isCensus,
-            'udlPathRule' => $company->udlPathRule,
-            'assetPath' => $company->assetPath,
+            'id'               => (int)$company->id,
+            'name'             => $company->name,
+            'label'            => $company->label,
+            'active'           => $company->active,
+            'udlpath'          => $company->udlpath,
+            'isCensus'         => $company->isCensus,
+            'udlPathRule'      => $company->udlPathRule,
+            'assetPath'        => $company->assetPath,
             'currentBillMonth' => $company->currentBillMonth,
         ];
     }

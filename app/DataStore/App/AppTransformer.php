@@ -2,12 +2,12 @@
 
 namespace WA\DataStore\App;
 
-use League\Fractal\TransformerAbstract;
+use WA\DataStore\FilterableTransformer;
 
 /**
  * Class AppTransformer.
  */
-class AppTransformer extends TransformerAbstract
+class AppTransformer extends FilterableTransformer
 {
     /**
      * @param App $app
@@ -18,12 +18,12 @@ class AppTransformer extends TransformerAbstract
     {
         return [
 
-            'id' => (int) $app->id,
-            'type' => $app->type,
-            'image' => $app->image,
+            'id'          => (int)$app->id,
+            'type'        => $app->type,
+            'image'       => $app->image,
             'description' => $app->description,
-            'created_at' => $app->created_at,
-            'updated_at' => $app->updated_at,
+            'created_at'  => $app->created_at,
+            'updated_at'  => $app->updated_at,
         ];
     }
 }

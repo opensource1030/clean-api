@@ -2,12 +2,12 @@
 
 namespace WA\DataStore\Content;
 
-use League\Fractal\TransformerAbstract;
+use WA\DataStore\FilterableTransformer;
 
 /**
  * Class ContentTransformer.
  */
-class ContentTransformer extends TransformerAbstract
+class ContentTransformer extends FilterableTransformer
 {
     /**
      * @param Content $content
@@ -18,7 +18,7 @@ class ContentTransformer extends TransformerAbstract
     {
         return [
 
-            'id' => (int) $content->id,
+            'id' => (int)$content->id,
 
             'content' => $content->content,
 

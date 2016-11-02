@@ -2,12 +2,12 @@
 
 namespace WA\DataStore\Modification;
 
-use League\Fractal\TransformerAbstract;
+use WA\DataStore\FilterableTransformer;
 
 /**
  * Class OrderTransformer.
  */
-class ModificationTransformer extends TransformerAbstract
+class ModificationTransformer extends FilterableTransformer
 {
     /**
      * @param Modification $modification
@@ -17,9 +17,9 @@ class ModificationTransformer extends TransformerAbstract
     public function transform(Modification $modification)
     {
         return [
-            'id' => (int) $modification->id,
-            'modType' => $modification->modType,
-            'value' => $modification->value,
+            'id'         => (int)$modification->id,
+            'modType'    => $modification->modType,
+            'value'      => $modification->value,
             'created_at' => $modification->created_at,
             'updated_at' => $modification->updated_at,
         ];

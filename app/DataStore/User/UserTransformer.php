@@ -3,23 +3,15 @@
 namespace WA\DataStore\User;
 
 use League\Fractal\Resource\Collection as ResourceCollection;
-use League\Fractal\Resource\Item as ResourceItem;
-use League\Fractal\TransformerAbstract;
 use WA\DataStore\Allocation\AllocationTransformer;
-use WA\DataStore\Asset\AssetTransformer;
-use WA\DataStore\Company\CompanyTransformer;
-use WA\DataStore\Content\ContentTransformer;
-use WA\DataStore\Device\DeviceTransformer;
-use WA\DataStore\Role\RoleTransformer;
+use WA\DataStore\FilterableTransformer;
 use WA\DataStore\UdlValue\UdlValueTransformer;
-use WA\Helpers\Traits\Criteria;
 
 /**
  * Class UserTransformer.
  */
-class UserTransformer extends TransformerAbstract
+class UserTransformer extends FilterableTransformer
 {
-    use Criteria;
 
     protected $availableIncludes = [
         'assets',
@@ -39,57 +31,16 @@ class UserTransformer extends TransformerAbstract
     public function transform(User $user)
     {
         return [
-            'id' => $user->id,
-            'identification' => $user->identification,
-            'email' => $user->email,
-            'username' => $user->username,
+            'id'               => $user->id,
+            'identification'   => $user->identification,
+            'email'            => $user->email,
+            'username'         => $user->username,
             'supervisor_email' => $user->supervisorEmail,
-            'first_name' => $user->firstName,
-            'last_name' => $user->lastName,
+            'first_name'       => $user->firstName,
+            'last_name'        => $user->lastName,
         ];
     }
 
-    /**
-     * @param User $user
-     *
-     * @return ResourceCollection
-     */
-    public function includeAssets(User $user)
-    {
-        return new ResourceCollection($user->assets, new AssetTransformer(), 'assets');
-    }
-
-    /**
-     * @param User $user
-     *
-     * @return ResourceCollection
-     */
-    public function includeDevices(User $user)
-    {
-        return new ResourceCollection($user->devices, new DeviceTransformer(), 'devices');
-    }
-
-    protected $currentBillMonth = null;
-
-    /**
-     * @param User $user
-     *
-     * @return ResourceItem Company
-     */
-    public function includeCompanies(User $user)
-    {
-        return new ResourceItem($user->companies, new CompanyTransformer(), 'companies');
-    }
-
-    /**
-     * @param User $user
-     *
-     * @return ResourceCollection Roles
-     */
-    public function includeRoles(User $user)
-    {
-        return new ResourceCollection($user->roles, new RoleTransformer(), 'roles');
-    }
 
     /**
      * @param User $user
@@ -98,6 +49,7 @@ class UserTransformer extends TransformerAbstract
      */
     public function includeAllocations(User $user)
     {
+        $this->criteria = $this->getRequestCriteria();
         $allocations = $this->applyCriteria($user->allocations(), $this->criteria);
         $filters = $this->criteria['filters']->get();
 
@@ -106,16 +58,6 @@ class UserTransformer extends TransformerAbstract
         }
 
         return new ResourceCollection($allocations->get(), new AllocationTransformer(), 'allocations');
-    }
-
-    /**
-     * @param User $user
-     *
-     * @return ResourceCollection Contents
-     */
-    public function includeContents(User $user)
-    {
-        return new ResourceCollection($user->contents, new ContentTransformer(), 'contents');
     }
 
     /**

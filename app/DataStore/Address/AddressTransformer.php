@@ -2,12 +2,12 @@
 
 namespace WA\DataStore\Address;
 
-use League\Fractal\TransformerAbstract;
+use WA\DataStore\FilterableTransformer;
 
 /**
  * Class AddressTransformer.
  */
-class AddressTransformer extends TransformerAbstract
+class AddressTransformer extends FilterableTransformer
 {
     /**
      * @param Address $address
@@ -18,11 +18,11 @@ class AddressTransformer extends TransformerAbstract
     {
         return [
 
-            'id' => (int) $address->id,
-            'address' => $address->address,
-            'city' => $address->city,
-            'state' => $address->state,
-            'country' => $address->country,
+            'id'         => (int)$address->id,
+            'address'    => $address->address,
+            'city'       => $address->city,
+            'state'      => $address->state,
+            'country'    => $address->country,
             'postalCode' => $address->postalCode,
             'created_at' => $address->created_at,
             'updated_at' => $address->updated_at,

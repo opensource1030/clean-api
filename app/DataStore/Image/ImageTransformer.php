@@ -2,12 +2,12 @@
 
 namespace WA\DataStore\Image;
 
-use League\Fractal\TransformerAbstract;
+use WA\DataStore\FilterableTransformer;
 
 /**
  * Class ImageTransformer.
  */
-class ImageTransformer extends TransformerAbstract
+class ImageTransformer extends FilterableTransformer
 {
     /**
      * @param Image $image
@@ -18,15 +18,15 @@ class ImageTransformer extends TransformerAbstract
     {
         return [
 
-            'id' => (int) $image->id,
+            'id'           => (int)$image->id,
             'originalName' => $image->originalName,
-            'filename' => $image->filename,
-            'mimeType' => $image->mimeType,
-            'extension' => $image->extension,
-            'size' => $image->size,
-            'url' => $image->url,
-            'created_at' => $image->created_at,
-            'updated_at' => $image->updated_at,
+            'filename'     => $image->filename,
+            'mimeType'     => $image->mimeType,
+            'extension'    => $image->extension,
+            'size'         => $image->size,
+            'url'          => $image->url,
+            'created_at'   => $image->created_at,
+            'updated_at'   => $image->updated_at,
         ];
     }
 }

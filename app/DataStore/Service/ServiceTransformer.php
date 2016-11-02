@@ -2,20 +2,13 @@
 
 namespace WA\DataStore\Service;
 
-use League\Fractal\Resource\Collection as ResourceCollection;
-
-use WA\DataStore\Package\PackageTransformer;
-use WA\DataStore\Carrier\CarrierTransformer;
-
-use League\Fractal\TransformerAbstract;
-use WA\Helpers\Traits\Criteria;
+use WA\DataStore\FilterableTransformer;
 
 /**
  * Class ServiceTransformer.
  */
-class ServiceTransformer extends TransformerAbstract
+class ServiceTransformer extends FilterableTransformer
 {
-    use Criteria;
 
     protected $availableIncludes = [
         'packages',

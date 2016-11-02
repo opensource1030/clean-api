@@ -2,12 +2,12 @@
 
 namespace WA\DataStore\Condition;
 
-use League\Fractal\TransformerAbstract;
+use WA\DataStore\FilterableTransformer;
 
 /**
  * Class ConditionTransformer.
  */
-class ConditionFieldTransformer extends TransformerAbstract
+class ConditionFieldTransformer extends FilterableTransformer
 {
     /**
      * @param ConditionField $conditionField
@@ -18,9 +18,9 @@ class ConditionFieldTransformer extends TransformerAbstract
     {
         return [
 
-            'id' => (int) $conditionField->id,
+            'id'        => (int)$conditionField->id,
             'typeField' => $conditionField->typeField,
-            'field' => $conditionField->field,
+            'field'     => $conditionField->field,
         ];
     }
 }
