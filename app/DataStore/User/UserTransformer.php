@@ -61,12 +61,16 @@ class UserTransformer extends FilterableTransformer
     }
 
     /**
+     * Dynamic include override because of mixed case
+     *
      * @param User $user
      *
      * @return ResourceCollection Contents
      */
     public function includeUdls(User $user)
     {
-        return new ResourceCollection($user->udlValues, new UdlValueTransformer(), 'udlvalues');
+        $this->criteria = $this->getRequestCriteria();
+        $udlValues = $this->applyCriteria($user->udlValues(), $this->criteria);
+        return new ResourceCollection($udlValues->get(), new UdlValueTransformer(), 'udlvalues');
     }
 }

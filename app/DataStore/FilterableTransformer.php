@@ -26,9 +26,6 @@ abstract class FilterableTransformer extends TransformerAbstract
         $finder = strtolower(substr($method, 7));
         $resource = $parameters[0];
         $model = title_case(str_singular($finder));
-        if ($model == "Devicetype") {
-            $model = "DeviceType";
-        }
         $transformer = "\\WA\\DataStore\\${model}\\${model}Transformer";
 
         if (!class_exists($transformer)) {
