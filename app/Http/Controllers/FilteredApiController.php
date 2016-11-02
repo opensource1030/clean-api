@@ -3,7 +3,6 @@
 namespace WA\Http\Controllers;
 
 use Dingo\Api\Http\Response;
-use Dingo\Api\Routing\Helpers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Lang;
 use WA\Helpers\Traits\Criteria;
@@ -17,7 +16,6 @@ use WA\Repositories\RepositoryInterface;
  */
 abstract class FilteredApiController extends ApiController
 {
-    use Helpers;
     use Criteria;
 
     /**
@@ -92,7 +90,7 @@ abstract class FilteredApiController extends ApiController
             return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
         }
 
-        $response = $this->response()->withPaginator($resource, $transformer, ['key' => $this->modelPlural]);
+        $response = $this->response->paginator($resource, $transformer, ['key' => $this->modelPlural]);
         $response = $this->applyMeta($response);
         return $response;
     }
@@ -115,7 +113,7 @@ abstract class FilteredApiController extends ApiController
         $resource = $this->resource->byId($id);
 
         if ($resource === null) {
-            $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'Device']);
+            $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => $this->modelName]);
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
@@ -126,20 +124,19 @@ abstract class FilteredApiController extends ApiController
             return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
         }
 
-        $response = $this->response()->item($resource, $transformer, ['key' => $this->modelPlural]);
+        $response = $this->response->item($resource, $transformer, ['key' => $this->modelPlural]);
         $response = $this->applyMeta($response);
         return $response;
     }
 
-
-    public function applyMeta(Response $response)
-    {
-        $response->addMeta('sort', $this->criteria['sort']->get());
-        $response->addMeta('filter', $this->criteria['filters']->get());
-        $response->addMeta('fields', $this->criteria['fields']->get());
-        return parent::applyMeta($response);
-    }
-
+    /**
+     * @Get('/{modelPlural}/{id}/relationships/{includePlural}')
+     *
+     * @param $modelPlural
+     * @param $id
+     * @param $includePlural
+     * @return Response
+     */
     public function includeRelationships($modelPlural, $id, $includePlural)
     {
         $model = title_case(str_singular($modelPlural));
@@ -151,18 +148,20 @@ abstract class FilteredApiController extends ApiController
         $class = "\\WA\\Repositories\\${model}\\${model}Interface";
         $repository = app()->make($class);
 
-        if ($repository !== null && $repository instanceOf AbstractRepository) {
-            $criteria = $this->getRequestCriteria();
-            $repository->setCriteria($criteria);
-            $resource = $repository->byId($id);
-        } else {
+        if ($repository === null || !($repository instanceOf AbstractRepository)) {
             $error['errors'][$modelPlural] = Lang::get('messages.NotExistClass', ['class' => $model]);
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
+
+        $criteria = $this->getRequestCriteria();
+        $repository->setCriteria($criteria);
+        $resource = $repository->byId($id);
+
         if ($resource === null) {
             $error['errors'][$modelPlural] = Lang::get('messages.NotExistClass', ['class' => $model]);
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
+
         if (!method_exists($resource, $includePlural)) {
             $error['errors'][$modelPlural] = Lang::get('messages.NotExistClass', ['class' => $includePlural]);
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
@@ -170,18 +169,22 @@ abstract class FilteredApiController extends ApiController
 
         $results = $this->applyCriteria($resource->{$includePlural}(), $criteria);
 
-        if ($results == null) {
+        if ($results === null) {
             $error['errors']['getIncludes'] = Lang::get('messages.NotExistInclude');
             return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
         }
 
-        $response = $this->response()->withPaginator($results->paginate(25), new $includeTransformer,
+        $response = $this->response->paginator($results->paginate(25), new $includeTransformer(),
             ['key' => $includePlural]);
+
         $response = $this->applyMeta($response);
         return $response;
     }
 
     /**
+     *
+     * @Get('/{modelPlural}/{id}/{includePlural}')
+     *
      * @param $modelPlural
      * @param $id
      * @param $includePlural
@@ -226,10 +229,23 @@ abstract class FilteredApiController extends ApiController
             return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
         }
 
-        $response = $this->response()->withPaginator($results->paginate(25), new $transformer(),
+        $response = $this->response->paginator($results->paginate(25), new $transformer(),
             ['key' => $includePlural]);
         $response = $this->applyMeta($response);
         return $response;
     }
 
+    /**
+     * Fluent method to apply filtering/sorting criteria to response metadata
+     *
+     * @param Response $response
+     * @return Response
+     */
+    public function applyMeta(Response $response)
+    {
+        $response->addMeta('sort', $this->criteria['sort']->get());
+        $response->addMeta('filter', $this->criteria['filters']->get());
+        $response->addMeta('fields', $this->criteria['fields']->get());
+        return parent::applyMeta($response);
+    }
 }

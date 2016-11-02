@@ -8,8 +8,6 @@ class RelationshipsApiTest extends TestCase
 
     public function testIncludeRelationships()
     {
-        $this->markTestSkipped("Causes segfaults in phpunit with code coverage");
-
         $device = factory(\WA\DataStore\Device\Device::class)->create();
 
         $price1 = factory(\WA\DataStore\Price\Price::class)->create(['deviceId' => $device->id])->id;
@@ -49,8 +47,6 @@ class RelationshipsApiTest extends TestCase
 
     public function testIncludeRelationshipsErrors()
     {
-        $this->markTestSkipped("Causes segfaults in phpunit with code coverage");
-
         $device = factory(\WA\DataStore\Device\Device::class)->create();
 
         $price1 = factory(\WA\DataStore\Price\Price::class)->create(['deviceId' => $device->id])->id;
@@ -97,7 +93,6 @@ class RelationshipsApiTest extends TestCase
 
     public function testIncludeRelationshipsInformation()
     {
-        $this->markTestSkipped("Causes segfaults in phpunit with code coverage");
 
         $device = factory(\WA\DataStore\Device\Device::class)->create();
 
@@ -158,7 +153,6 @@ class RelationshipsApiTest extends TestCase
 
     public function testIncludeRelationshipsInformationErrors()
     {
-        $this->markTestSkipped("Causes segfaults in phpunit with code coverage");
 
         $device = factory(\WA\DataStore\Device\Device::class)->create();
 
