@@ -52,7 +52,7 @@ abstract class FilteredApiController extends ApiController
         // The inheriting controller can set a model plural and model name, or we can guess it
         if ($this->modelPlural === null) {
             $uri = $request->path();
-            $this->modelPlural = substr($uri, 0, strpos($uri, "/"));
+            $this->modelPlural = strpos($uri, "/") === false ? substr($uri, 0) : substr($uri, 0, strpos($uri, "/"));
         }
 
         if ($this->modelName === null) {
@@ -89,7 +89,7 @@ abstract class FilteredApiController extends ApiController
             $error['errors']['getincludes'] = Lang::get('messages.NotExistInclude');
             return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
         }
-
+        
         $response = $this->response->paginator($resource, $transformer, ['key' => $this->modelPlural]);
         $response = $this->applyMeta($response);
         return $response;
