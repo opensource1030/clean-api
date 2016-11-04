@@ -2,12 +2,12 @@
 
 namespace WA\DataStore\Request;
 
-use League\Fractal\TransformerAbstract;
+use WA\DataStore\FilterableTransformer;
 
 /**
  * Class RequestTransformer.
  */
-class RequestTransformer extends TransformerAbstract
+class RequestTransformer extends FilterableTransformer
 {
     /**
      * @param Request $Request
@@ -18,12 +18,12 @@ class RequestTransformer extends TransformerAbstract
     {
         return [
 
-            'id' => (int) $request->id,
-            'name' => $request->name,
+            'id'          => (int)$request->id,
+            'name'        => $request->name,
             'description' => $request->description,
-            'type' => $request->type,
-            'created_at' => $request->created_at,
-            'updated_at' => $request->updated_at,
+            'type'        => $request->type,
+            'created_at'  => $request->created_at,
+            'updated_at'  => $request->updated_at,
         ];
     }
 }

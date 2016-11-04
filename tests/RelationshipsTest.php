@@ -13,19 +13,19 @@ class RelationshipsApiTest extends TestCase
         $price1 = factory(\WA\DataStore\Price\Price::class)->create(['deviceId' => $device->id])->id;
         $price2 = factory(\WA\DataStore\Price\Price::class)->create(['deviceId' => $device->id])->id;
 
-        $this->json('GET', 'devices/'.$device->id.'/relationships/prices')
+        $this->json('GET', 'devices/' . $device->id . '/relationships/prices')
             ->seeJsonStructure([
-                'data' => [
+                'data'  => [
                     0 => [
                         'type',
                         'id',
                         'attributes' => [],
-                        'links' => [
+                        'links'      => [
                             'self',
                         ],
                     ],
                 ],
-                'meta' => [
+                'meta'  => [
                     'sort',
                     'filter',
                     'fields',
@@ -52,14 +52,14 @@ class RelationshipsApiTest extends TestCase
         $price1 = factory(\WA\DataStore\Price\Price::class)->create(['deviceId' => $device->id])->id;
         $price2 = factory(\WA\DataStore\Price\Price::class)->create(['deviceId' => $device->id])->id;
 
-        $this->json('GET', 'notexists/'.$device->id.'/relationships/prices')
+        $this->json('GET', 'notexists/' . $device->id . '/relationships/prices')
             ->seeJson([
                 'errors' => [
                     'notexists' => 'the Notexist selected doesn\'t exists',
                 ],
             ]);
 
-        $this->json('GET', 'devices/'.$device->id.'/relationships/notexists')
+        $this->json('GET', 'devices/' . $device->id . '/relationships/notexists')
             ->seeJson([
                 'errors' => [
                     'devices' => 'the notexists selected doesn\'t exists',
@@ -68,7 +68,7 @@ class RelationshipsApiTest extends TestCase
 
         $deviceId = factory(\WA\DataStore\Device\Device::class)->create()->id;
 
-        $res = $this->json('GET', 'devices/'.$deviceId.'/relationships/prices')
+        $this->json('GET', 'devices/' . $deviceId . '/relationships/prices')
             ->seeJsonStructure([
                 'total',
                 'per_page',
@@ -83,7 +83,7 @@ class RelationshipsApiTest extends TestCase
 
         $idNotExists = $deviceId + 10;
 
-        $this->json('GET', 'devices/'.$idNotExists.'/relationships/prices')
+        $this->json('GET', 'devices/' . $idNotExists . '/relationships/prices')
             ->seeJson([
                 'errors' => [
                     'devices' => 'the Device selected doesn\'t exists',
@@ -93,14 +93,15 @@ class RelationshipsApiTest extends TestCase
 
     public function testIncludeRelationshipsInformation()
     {
+
         $device = factory(\WA\DataStore\Device\Device::class)->create();
 
         $price1 = factory(\WA\DataStore\Price\Price::class)->create(['deviceId' => $device->id])->id;
         $price2 = factory(\WA\DataStore\Price\Price::class)->create(['deviceId' => $device->id])->id;
 
-        $this->json('GET', 'devices/'.$device->id.'/prices')
+        $this->json('GET', 'devices/' . $device->id . '/prices')
             ->seeJsonStructure([
-                'data' => [
+                'data'  => [
                     0 => [
                         'type',
                         'id',
@@ -125,12 +126,12 @@ class RelationshipsApiTest extends TestCase
                                 'timezone',
                             ],
                         ],
-                        'links' => [
+                        'links'      => [
                             'self',
                         ],
                     ],
                 ],
-                'meta' => [
+                'meta'  => [
                     'sort',
                     'filter',
                     'fields',
@@ -152,19 +153,20 @@ class RelationshipsApiTest extends TestCase
 
     public function testIncludeRelationshipsInformationErrors()
     {
+
         $device = factory(\WA\DataStore\Device\Device::class)->create();
 
         $price1 = factory(\WA\DataStore\Price\Price::class)->create(['deviceId' => $device->id])->id;
         $price2 = factory(\WA\DataStore\Price\Price::class)->create(['deviceId' => $device->id])->id;
 
-        $this->json('GET', 'notexists/'.$device->id.'/prices')
+        $this->json('GET', 'notexists/' . $device->id . '/prices')
             ->seeJson([
                 'errors' => [
                     'notexists' => 'the Notexist selected doesn\'t exists',
                 ],
             ]);
 
-        $this->json('GET', 'devices/'.$device->id.'/notexists')
+        $this->json('GET', 'devices/' . $device->id . '/notexists')
             ->seeJson([
                 'errors' => [
                     'devices' => 'the notexists selected doesn\'t exists',
@@ -173,7 +175,7 @@ class RelationshipsApiTest extends TestCase
 
         $deviceId = factory(\WA\DataStore\Device\Device::class)->create()->id;
 
-        $res = $this->json('GET', 'devices/'.$deviceId.'/relationships/prices')
+        $this->json('GET', 'devices/' . $deviceId . '/relationships/prices')
             ->seeJsonStructure([
                 'total',
                 'per_page',
@@ -188,7 +190,7 @@ class RelationshipsApiTest extends TestCase
 
         $idNotExists = $deviceId + 10;
 
-        $this->json('GET', 'devices/'.$idNotExists.'/relationships/prices')
+        $this->json('GET', 'devices/' . $idNotExists . '/relationships/prices')
             ->seeJson([
                 'errors' => [
                     'devices' => 'the Device selected doesn\'t exists',
@@ -196,3 +198,4 @@ class RelationshipsApiTest extends TestCase
             ]);
     }
 }
+

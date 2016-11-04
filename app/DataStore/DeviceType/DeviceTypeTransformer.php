@@ -2,12 +2,12 @@
 
 namespace WA\DataStore\DeviceType;
 
-use League\Fractal\TransformerAbstract;
+use WA\DataStore\FilterableTransformer;
 
 /**
  * Class AppTransformer.
  */
-class DeviceTypeTransformer extends TransformerAbstract
+class DeviceTypeTransformer extends FilterableTransformer
 {
     /**
      * @param DeviceType $deviceType
@@ -17,14 +17,14 @@ class DeviceTypeTransformer extends TransformerAbstract
     public function transform(DeviceType $deviceType)
     {
         return [
-            'id' => (int) $deviceType->id,
-            'make' => $deviceType->make,
-            'model' => $deviceType->model,
-            'class' => $deviceType->class,
-            'deviceOS' => $deviceType->deviceOS,
+            'id'          => (int)$deviceType->id,
+            'make'        => $deviceType->make,
+            'model'       => $deviceType->model,
+            'class'       => $deviceType->class,
+            'deviceOS'    => $deviceType->deviceOS,
             'description' => $deviceType->description,
-            'statusId' => $deviceType->statusId,
-            'image' => $deviceType->image,
+            'statusId'    => $deviceType->statusId,
+            'image'       => $deviceType->image,
         ];
     }
 }

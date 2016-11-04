@@ -3,17 +3,17 @@
 namespace WA\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Lang;
 use WA\DataStore\Condition\ConditionOperator;
 use WA\DataStore\Condition\ConditionOperatorTransformer;
 use WA\Repositories\Condition\ConditionOperatorInterface;
-use Illuminate\Support\Facades\Lang;
 
 /**
  * ConditionOperator resource.
  *
  * @Resource("conditionOperator", uri="/condition/Operatorss")
  */
-class ConditionOperatorsController extends ApiController
+class ConditionOperatorsController extends FilteredApiController
 {
     /**
      * @var ConditionOperatorInterface
@@ -25,47 +25,10 @@ class ConditionOperatorsController extends ApiController
      *
      * @param ConditionOperatorInterface $conditionOperator
      */
-    public function __construct(ConditionOperatorInterface $conditionOperator)
+    public function __construct(ConditionOperatorInterface $conditionOperator, Request $request)
     {
+        parent::__construct($conditionOperator, $request);
         $this->conditionOperator = $conditionOperator;
-    }
-
-    /**
-     * Show all ConditionOperator.
-     *
-     * Get a payload of all ConditionOperator
-     */
-    public function index()
-    {
-        $criteria = $this->getRequestCriteria();
-        $this->conditionOperator->setCriteria($criteria);
-        $conditionOperators = $this->conditionOperator->byPage();
-
-        $response = $this->response()->withPaginator($conditionOperators, new ConditionOperatorTransformer(), ['key' => 'conditionoperators']);
-        $response = $this->applyMeta($response);
-
-        return $response;
-    }
-
-    /**
-     * Show a single ConditionOperator.
-     *
-     * Get a payload of a single ConditionOperator
-     *
-     * @Get("/{id}")
-     */
-    public function show($id, Request $request)
-    {
-        $criteria = $this->getRequestCriteria();
-        $this->conditionOperator->setCriteria($criteria);
-        $conditionOperator = ConditionOperator::find($id);
-
-        if ($conditionOperator == null) {
-            $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'ConditionOperator']);
-            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
-        }
-
-        return $this->response()->item($conditionOperator, new ConditionOperatorTransformer(), ['key' => 'conditionoperators'])->setStatusCode($this->status_codes['created']);
     }
 
     /**
@@ -84,20 +47,24 @@ class ConditionOperatorsController extends ApiController
                 $conditionOperator = $this->conditionOperator->update($data);
 
                 if ($conditionOperator == 'notExist') {
-                    $error['errors']['conditionOperator'] = Lang::get('messages.NotExistClass', ['class' => 'ConditionOperator']);
+                    $error['errors']['conditionOperator'] = Lang::get('messages.NotExistClass',
+                        ['class' => 'ConditionOperator']);
                     //$error['errors']['Message'] = $e->getMessage();
                     return response()->json($error)->setStatusCode($this->status_codes['notexists']);
                 }
 
                 if ($conditionOperator == 'notSaved') {
-                    $error['errors']['conditionOperator'] = Lang::get('messages.NotSavedClass', ['class' => 'ConditionOperator']);
+                    $error['errors']['conditionOperator'] = Lang::get('messages.NotSavedClass',
+                        ['class' => 'ConditionOperator']);
                     //$error['errors']['Message'] = $e->getMessage();
                     return response()->json($error)->setStatusCode($this->status_codes['conflict']);
                 }
 
-                return $this->response()->item($conditionOperator, new ConditionOperatorTransformer(), ['key' => 'conditionoperators'])->setStatusCode($this->status_codes['created']);
+                return $this->response()->item($conditionOperator, new ConditionOperatorTransformer(),
+                    ['key' => 'conditionoperators'])->setStatusCode($this->status_codes['created']);
             } catch (\Exception $e) {
-                $error['errors']['conditionOperators'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'ConditionOperator', 'option' => 'updated', 'include' => '']);
+                $error['errors']['conditionOperators'] = Lang::get('messages.NotOptionIncludeClass',
+                    ['class' => 'ConditionOperator', 'option' => 'updated', 'include' => '']);
                 //$error['errors']['Message'] = $e->getMessage();
             }
         } else {
@@ -119,9 +86,11 @@ class ConditionOperatorsController extends ApiController
                 $data = $request->all()['data']['attributes'];
                 $conditionOperator = $this->conditionOperator->create($data);
 
-                return $this->response()->item($conditionOperator, new ConditionOperatorTransformer(), ['key' => 'conditionoperators'])->setStatusCode($this->status_codes['created']);
+                return $this->response()->item($conditionOperator, new ConditionOperatorTransformer(),
+                    ['key' => 'conditionoperators'])->setStatusCode($this->status_codes['created']);
             } catch (\Exception $e) {
-                $error['errors']['conditionOperators'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'ConditionOperator', 'option' => 'created', 'include' => '']);
+                $error['errors']['conditionOperators'] = Lang::get('messages.NotOptionIncludeClass',
+                    ['class' => 'ConditionOperator', 'option' => 'created', 'include' => '']);
                 //$error['errors']['Message'] = $e->getMessage();
             }
         } else {

@@ -5,6 +5,7 @@ namespace WA\Helpers\Traits;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use WA\DataStore\BaseDataStore;
 use WA\Exceptions\BadCriteriaException;
+use WA\Http\Requests\Parameters\Fields;
 use WA\Http\Requests\Parameters\Filters;
 use WA\Http\Requests\Parameters\Sorting;
 
@@ -33,9 +34,28 @@ trait Criteria
     /**
      * @var array
      */
-    protected $criteria = [];
+    protected $criteria = [
+        'sort'    => [],
+        'filters' => [],
+        'fields'  => []
+    ];
 
-    protected $criteriaModelName = null;
+    /**
+     * @var Filters
+     */
+    protected $filters = null;
+
+    /**
+     * @var Sorting
+     */
+    protected $sort = null;
+
+    /**
+     * @var Fields
+     */
+    protected $fields = null;
+
+    public $criteriaModelName = null;
     protected $criteriaModelColumns = null;
 
     /**
@@ -260,5 +280,48 @@ trait Criteria
         }
 
         return $vals;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getRequestCriteria()
+    {
+        $filters = $this->getFilters();
+        $sort = $this->getSort();
+        $fields = $this->getFields();
+
+        $this->criteria['filters'] = $filters;
+        $this->criteria['sort'] = $sort;
+        $this->criteria['fields'] = $fields;
+        return $this->criteria;
+    }
+
+    /**
+     * @return Sorting
+     */
+    public function getSort()
+    {
+        $sort = new Sorting(\Request::get('sort', null));
+        return $sort;
+    }
+
+    /**
+     * @return Filters
+     */
+    public function getFilters()
+    {
+        $filters = new Filters((array)\Request::get('filter', null));
+        return $filters;
+    }
+
+
+    /**
+     * @return Fields
+     */
+    public function getFields()
+    {
+        $fields = new Fields(\Request::get('fields', null));
+        return $fields;
     }
 }

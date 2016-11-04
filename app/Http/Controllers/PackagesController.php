@@ -3,26 +3,20 @@
 namespace WA\Http\Controllers;
 
 use DB;
-
 use Illuminate\Http\Request;
-use \Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Lang;
-
 use LucaDegasperi\OAuth2Server\Facades\Authorizer;
-use WA\DataStore\Condition\Condition;
 use WA\DataStore\Package\Package;
 use WA\DataStore\Package\PackageTransformer;
-use WA\Repositories\Package\PackageInterface;
 use WA\DataStore\User\User;
-use WA\DataStore\User\UserTransformer;
+use WA\Repositories\Package\PackageInterface;
 
 /**
  * Package resource.
  *
  * @Resource("Package", uri="/Package")
  */
-class PackagesController extends ApiController
+class PackagesController extends FilteredApiController
 {
     /**
      * @var PackageInterface
@@ -30,35 +24,15 @@ class PackagesController extends ApiController
     protected $package;
 
     /**
-     * Package Controller constructor.
+     * PackagesController constructor.
      *
-     * @param PackageInterface $Package
+     * @param PackageInterface $package
+     * @param Request $request
      */
-    public function __construct(PackageInterface $package)
+    public function __construct(PackageInterface $package, Request $request)
     {
+        parent::__construct($package, $request);
         $this->package = $package;
-    }
-
-    /**
-     * Show all Package.
-     *
-     * Get a payload of all Package
-     */
-    public function index(Request $request)
-    {
-        $criteria = $this->getRequestCriteria();
-        $this->package->setCriteria($criteria);
-        $package = $this->package->byPage();
-
-        if (!$this->includesAreCorrect($request, new PackageTransformer())) {
-            $error['errors']['getincludes'] = Lang::get('messages.NotExistInclude');
-            return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
-        }
-
-        $response = $this->response()->withPaginator($package, new PackageTransformer(), ['key' => 'packages']);
-        $response = $this->applyMeta($response);
-
-        return $response;
     }
 
     public function userPackages(Request $request)
@@ -122,7 +96,8 @@ class PackagesController extends ApiController
             return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
         }
 
-        return $this->response()->withPaginator($packages->paginate(25), $packageTransformer, ['key' => 'packages'])->setStatusCode($this->status_codes['created']);
+        return $this->response()->withPaginator($packages->paginate(25), $packageTransformer,
+            ['key' => 'packages'])->setStatusCode($this->status_codes['created']);
     }
 
     private function retrieveUserInfoFromAuthorizer()
@@ -162,38 +137,6 @@ class PackagesController extends ApiController
         array_push($info, $auxAddress);
 
         return $info;
-    }
-
-    /**
-     * Show a single Package.
-     *
-     * Get a payload of a single Package
-     *
-     * @Get("/{id}")
-     */
-    public function show($id, Request $request)
-    {
-        $criteria = $this->getRequestCriteria();
-        $this->package->setCriteria($criteria);
-
-        $package = Package::find($id);
-
-        if ($package == null) {
-            $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'Package']);
-            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
-        }
-
-        $packTransformer = new PackageTransformer($criteria);
-
-        if (!$this->includesAreCorrect($request, $packTransformer)) {
-            $error['errors']['getIncludes'] = Lang::get('messages.NotExistInclude');
-            return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
-        }
-
-        $response = $this->response()->item($package, $packTransformer, ['key' => 'packages'])->setStatusCode($this->status_codes['created']);
-        $response = $this->applyMeta($response);
-
-        return $response;
     }
 
     /**
@@ -242,7 +185,8 @@ class PackagesController extends ApiController
         } catch (\Exception $e) {
             DB::rollBack();
             $success = false;
-            $error['errors']['packages'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Package', 'option' => 'updated', 'include' => '']);
+            $error['errors']['packages'] = Lang::get('messages.NotOptionIncludeClass',
+                ['class' => 'Package', 'option' => 'updated', 'include' => '']);
             //$error['errors']['Message'] = $e->getMessage();
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
@@ -259,7 +203,8 @@ class PackagesController extends ApiController
                     try {
                         $package->conditions()->sync($dataConditions);
                     } catch (\Exception $e) {
-                        $error['errors']['conditions'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Package', 'option' => 'updated', 'include' => 'Conditions']);
+                        $error['errors']['conditions'] = Lang::get('messages.NotOptionIncludeClass',
+                            ['class' => 'Package', 'option' => 'updated', 'include' => 'Conditions']);
                         //$error['errors']['conditionsMessage'] = $e->getMessage();
                     }
                 }
@@ -271,7 +216,8 @@ class PackagesController extends ApiController
                     try {
                         $package->services()->sync($dataServices);
                     } catch (\Exception $e) {
-                        $error['errors']['services'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Package', 'option' => 'updated', 'include' => 'Services']);
+                        $error['errors']['services'] = Lang::get('messages.NotOptionIncludeClass',
+                            ['class' => 'Package', 'option' => 'updated', 'include' => 'Services']);
                         //$error['errors']['Message'] = $e->getMessage();
                     }
                 }
@@ -284,7 +230,8 @@ class PackagesController extends ApiController
                         $package->devices()->sync($dataDevices);
                     } catch (\Exception $e) {
                         $success = false;
-                        $error['errors']['devices'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Package', 'option' => 'updated', 'include' => 'Devices']);
+                        $error['errors']['devices'] = Lang::get('messages.NotOptionIncludeClass',
+                            ['class' => 'Package', 'option' => 'updated', 'include' => 'Devices']);
                         //$error['errors']['Message'] = $e->getMessage();
                     }
                 }
@@ -297,7 +244,8 @@ class PackagesController extends ApiController
                         $package->apps()->sync($dataApps);
                     } catch (\Exception $e) {
                         $success = false;
-                        $error['errors']['apps'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Package', 'option' => 'updated', 'include' => 'Apps']);
+                        $error['errors']['apps'] = Lang::get('messages.NotOptionIncludeClass',
+                            ['class' => 'Package', 'option' => 'updated', 'include' => 'Apps']);
                         //$error['errors']['Message'] = $e->getMessage();
                     }
                 }
@@ -306,7 +254,8 @@ class PackagesController extends ApiController
 
         if ($success) {
             DB::commit();
-            return $this->response()->item($package, new PackageTransformer(), ['key' => 'packages'])->setStatusCode($this->status_codes['created']);
+            return $this->response()->item($package, new PackageTransformer(),
+                ['key' => 'packages'])->setStatusCode($this->status_codes['created']);
         } else {
             DB::rollBack();
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
@@ -342,7 +291,8 @@ class PackagesController extends ApiController
             $package = $this->package->create($data);
         } catch (\Exception $e) {
             DB::rollBack();
-            $error['errors']['packages'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Package', 'option' => 'created', 'include' => '']);
+            $error['errors']['packages'] = Lang::get('messages.NotOptionIncludeClass',
+                ['class' => 'Package', 'option' => 'created', 'include' => '']);
             //$error['errors']['Message'] = $e->getMessage();
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
@@ -360,7 +310,8 @@ class PackagesController extends ApiController
                         $package->conditions()->sync($dataConditions);
                     } catch (\Exception $e) {
                         $success = false;
-                        $error['errors']['conditions'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Package', 'option' => 'created', 'include' => 'Conditions']);
+                        $error['errors']['conditions'] = Lang::get('messages.NotOptionIncludeClass',
+                            ['class' => 'Package', 'option' => 'created', 'include' => 'Conditions']);
                         //$error['errors']['Message'] = $e->getMessage();
                     }
                 }
@@ -373,7 +324,8 @@ class PackagesController extends ApiController
                         $package->services()->sync($dataServices);
                     } catch (\Exception $e) {
                         $success = false;
-                        $error['errors']['services'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Package', 'option' => 'created', 'include' => 'Services']);
+                        $error['errors']['services'] = Lang::get('messages.NotOptionIncludeClass',
+                            ['class' => 'Package', 'option' => 'created', 'include' => 'Services']);
                         //$error['errors']['Message'] = $e->getMessage();
                     }
                 }
@@ -386,7 +338,8 @@ class PackagesController extends ApiController
                         $package->devices()->sync($dataDevices);
                     } catch (\Exception $e) {
                         $success = false;
-                        $error['errors']['devices'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Package', 'option' => 'created', 'include' => 'Devices']);
+                        $error['errors']['devices'] = Lang::get('messages.NotOptionIncludeClass',
+                            ['class' => 'Package', 'option' => 'created', 'include' => 'Devices']);
                         //$error['errors']['Message'] = $e->getMessage();
                     }
                 }
@@ -399,7 +352,8 @@ class PackagesController extends ApiController
                         $package->apps()->sync($dataApps);
                     } catch (\Exception $e) {
                         $success = false;
-                        $error['errors']['apps'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Package', 'option' => 'created', 'include' => 'Apps']);
+                        $error['errors']['apps'] = Lang::get('messages.NotOptionIncludeClass',
+                            ['class' => 'Package', 'option' => 'created', 'include' => 'Apps']);
                         //$error['errors']['Message'] = $e->getMessage();
                     }
                 }
@@ -408,7 +362,8 @@ class PackagesController extends ApiController
 
         if ($success) {
             DB::commit();
-            return $this->response()->item($package, new PackageTransformer(), ['key' => 'packages'])->setStatusCode($this->status_codes['created']);
+            return $this->response()->item($package, new PackageTransformer(),
+                ['key' => 'packages'])->setStatusCode($this->status_codes['created']);
         } else {
             DB::rollBack();
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);

@@ -3,17 +3,17 @@
 namespace WA\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Lang;
 use WA\DataStore\Price\Price;
 use WA\DataStore\Price\PriceTransformer;
 use WA\Repositories\Price\PriceInterface;
-use Illuminate\Support\Facades\Lang;
 
 /**
  * Price resource.
  *
  * @Resource("Price", uri="/Price")
  */
-class PricesController extends ApiController
+class PricesController extends FilteredApiController
 {
     /**
      * @var PriceInterface
@@ -21,51 +21,15 @@ class PricesController extends ApiController
     protected $price;
 
     /**
-     * Price Controller constructor.
+     * PricesController constructor.
      *
-     * @param PriceInterface $Price
+     * @param PriceInterface $price
+     * @param Request $request
      */
-    public function __construct(PriceInterface $price)
+    public function __construct(PriceInterface $price, Request $request)
     {
+        parent::__construct($price, $request);
         $this->price = $price;
-    }
-
-    /**
-     * Show all Price.
-     *
-     * Get a payload of all Price
-     */
-    public function index()
-    {
-        $criteria = $this->getRequestCriteria();
-        $this->price->setCriteria($criteria);
-        $price = $this->price->byPage();
-
-        $response = $this->response()->withPaginator($price, new PriceTransformer(), ['key' => 'prices']);
-        $response = $this->applyMeta($response);
-
-        return $response;
-    }
-
-    /**
-     * Show a single Price.
-     *
-     * Get a payload of a single Price
-     *
-     * @Get("/{id}")
-     */
-    public function show($id)
-    {
-        $criteria = $this->getRequestCriteria();
-        $this->price->setCriteria($criteria);
-        $price = Price::find($id);
-
-        if ($price == null) {
-            $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'Price']);
-            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
-        }
-
-        return $this->response()->item($price, new PriceTransformer(), ['key' => 'prices'])->setStatusCode($this->status_codes['created']);
     }
 
     /**
@@ -102,7 +66,8 @@ class PricesController extends ApiController
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
-        return $this->response()->item($price, new PriceTransformer(), ['key' => 'prices'])->setStatusCode($this->status_codes['created']);
+        return $this->response()->item($price, new PriceTransformer(),
+            ['key' => 'prices'])->setStatusCode($this->status_codes['created']);
     }
 
     /**
@@ -121,7 +86,8 @@ class PricesController extends ApiController
         $data = $request->all()['data']['attributes'];
         $price = $this->price->create($data);
 
-        return $this->response()->item($price, new PriceTransformer(), ['key' => 'prices'])->setStatusCode($this->status_codes['created']);
+        return $this->response()->item($price, new PriceTransformer(),
+            ['key' => 'prices'])->setStatusCode($this->status_codes['created']);
     }
 
     /**
@@ -138,8 +104,8 @@ class PricesController extends ApiController
             $error['errors']['delete'] = Lang::get('messages.NotExistClass', ['class' => 'Price']);
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
-        
-        
+
+
         $price = Price::find($id);
         if ($price == null) {
             return array("success" => true);

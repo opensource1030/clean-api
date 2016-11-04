@@ -2,18 +2,18 @@
 
 namespace WA\Http\Controllers;
 
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Lang;
 use WA\DataStore\DeviceType\DeviceType;
 use WA\DataStore\DeviceType\DeviceTypeTransformer;
 use WA\Repositories\DeviceType\DeviceTypeInterface;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Lang;
 
 /**
  * DeviceType resource.
  *
  * @Resource("DeviceType", uri="/DeviceType")
  */
-class DeviceTypesController extends ApiController
+class DeviceTypesController extends FilteredApiController
 {
     /**
      * @var DeviceTypeInterface
@@ -21,51 +21,15 @@ class DeviceTypesController extends ApiController
     protected $deviceType;
 
     /**
-     * DeviceType Controller constructor.
+     * DeviceTypesController constructor.
      *
      * @param DeviceTypeInterface $deviceType
+     * @param Request $request
      */
-    public function __construct(DeviceTypeInterface $deviceType)
+    public function __construct(DeviceTypeInterface $deviceType, Request $request)
     {
+        parent::__construct($deviceType, $request);
         $this->deviceType = $deviceType;
-    }
-
-    /**
-     * Show all DeviceType.
-     *
-     * Get a payload of all DeviceType
-     */
-    public function index()
-    {
-        $criteria = $this->getRequestCriteria();
-        $this->deviceType->setCriteria($criteria);
-        $deviceTypes = $this->deviceType->byPage();
-
-        $response = $this->response()->withPaginator($deviceTypes, new DeviceTypeTransformer(), ['key' => 'devicetypes']);
-        $response = $this->applyMeta($response);
-
-        return $response;
-    }
-
-    /**
-     * Show a single DeviceType.
-     *
-     * Get a payload of a single DeviceType
-     *
-     * @Get("/{id}")
-     */
-    public function show($id)
-    {
-        $criteria = $this->getRequestCriteria();
-        $this->deviceType->setCriteria($criteria);
-        $deviceType = DeviceType::find($id);
-
-        if ($deviceType == null) {
-            $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'DeviceType']);
-            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
-        }
-
-        return $this->response()->item($deviceType, new DeviceTypeTransformer(), ['key' => 'devicetypes'])->setStatusCode($this->status_codes['created']);
     }
 
     /**
@@ -95,9 +59,11 @@ class DeviceTypesController extends ApiController
                     return response()->json($error)->setStatusCode($this->status_codes['conflict']);
                 }
 
-                return $this->response()->item($devicetype, new DeviceTypeTransformer(), ['key' => 'devicetypes'])->setStatusCode($this->status_codes['created']);
+                return $this->response()->item($devicetype, new DeviceTypeTransformer(),
+                    ['key' => 'devicetypes'])->setStatusCode($this->status_codes['created']);
             } catch (\Exception $e) {
-                $error['errors']['devicetypes'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'DeviceType', 'option' => 'updated', 'include' => '']);
+                $error['errors']['devicetypes'] = Lang::get('messages.NotOptionIncludeClass',
+                    ['class' => 'DeviceType', 'option' => 'updated', 'include' => '']);
                 //$error['errors']['Message'] = $e->getMessage();
             }
         } else {
@@ -119,9 +85,11 @@ class DeviceTypesController extends ApiController
                 $data = $request->all()['data']['attributes'];
                 $devicetype = $this->deviceType->create($data);
 
-                return $this->response()->item($devicetype, new DeviceTypeTransformer(), ['key' => 'devicetypes'])->setStatusCode($this->status_codes['created']);
+                return $this->response()->item($devicetype, new DeviceTypeTransformer(),
+                    ['key' => 'devicetypes'])->setStatusCode($this->status_codes['created']);
             } catch (\Exception $e) {
-                $error['errors']['devicetypes'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'DeviceType', 'option' => 'created', 'include' => '']);
+                $error['errors']['devicetypes'] = Lang::get('messages.NotOptionIncludeClass',
+                    ['class' => 'DeviceType', 'option' => 'created', 'include' => '']);
                 //$error['errors']['Message'] = $e->getMessage();
             }
         } else {

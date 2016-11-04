@@ -3,17 +3,17 @@
 namespace WA\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Lang;
 use WA\DataStore\Condition\ConditionField;
 use WA\DataStore\Condition\ConditionFieldTransformer;
 use WA\Repositories\Condition\ConditionFieldInterface;
-use Illuminate\Support\Facades\Lang;
 
 /**
  * ConditionField resource.
  *
  * @Resource("conditionfield", uri="/condition/fieldss")
  */
-class ConditionFieldsController extends ApiController
+class ConditionFieldsController extends FilteredApiController
 {
     /**
      * @var ConditionFieldInterface
@@ -25,47 +25,10 @@ class ConditionFieldsController extends ApiController
      *
      * @param ConditionFieldInterface $conditionField
      */
-    public function __construct(ConditionFieldInterface $conditionField)
+    public function __construct(ConditionFieldInterface $conditionField, Request $request)
     {
+        parent::__construct($conditionField, $request);
         $this->conditionField = $conditionField;
-    }
-
-    /**
-     * Show all ConditionField.
-     *
-     * Get a payload of all ConditionField
-     */
-    public function index()
-    {
-        $criteria = $this->getRequestCriteria();
-        $this->conditionField->setCriteria($criteria);
-        $conditionFields = $this->conditionField->byPage();
-
-        $response = $this->response()->withPaginator($conditionFields, new ConditionFieldTransformer(), ['key' => 'conditionfields']);
-        $response = $this->applyMeta($response);
-
-        return $response;
-    }
-
-    /**
-     * Show a single ConditionField.
-     *
-     * Get a payload of a single ConditionField
-     *
-     * @Get("/{id}")
-     */
-    public function show($id, Request $request)
-    {
-        $criteria = $this->getRequestCriteria();
-        $this->app->setCriteria($criteria);
-        $conditionField = ConditionField::find($id);
-
-        if ($conditionField == null) {
-            $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'ConditionField']);
-            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
-        }
-
-        return $this->response()->item($conditionField, new ConditionFieldTransformer(), ['key' => 'conditionfields'])->setStatusCode($this->status_codes['created']);
     }
 
     /**
@@ -84,20 +47,24 @@ class ConditionFieldsController extends ApiController
                 $conditionField = $this->conditionField->update($data);
 
                 if ($conditionField == 'notExist') {
-                    $error['errors']['conditionField'] = Lang::get('messages.NotExistClass', ['class' => 'ConditionField']);
+                    $error['errors']['conditionField'] = Lang::get('messages.NotExistClass',
+                        ['class' => 'ConditionField']);
                     //$error['errors']['Message'] = $e->getMessage();
                     return response()->json($error)->setStatusCode($this->status_codes['notexists']);
                 }
 
                 if ($conditionField == 'notSaved') {
-                    $error['errors']['conditionField'] = Lang::get('messages.NotSavedClass', ['class' => 'ConditionField']);
+                    $error['errors']['conditionField'] = Lang::get('messages.NotSavedClass',
+                        ['class' => 'ConditionField']);
                     //$error['errors']['Message'] = $e->getMessage();
                     return response()->json($error)->setStatusCode($this->status_codes['conflict']);
                 }
 
-                return $this->response()->item($conditionField, new ConditionFieldTransformer(), ['key' => 'conditionfields'])->setStatusCode($this->status_codes['created']);
+                return $this->response()->item($conditionField, new ConditionFieldTransformer(),
+                    ['key' => 'conditionfields'])->setStatusCode($this->status_codes['created']);
             } catch (\Exception $e) {
-                $error['errors']['conditionFields'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'ConditionField', 'option' => 'updated', 'include' => '']);
+                $error['errors']['conditionFields'] = Lang::get('messages.NotOptionIncludeClass',
+                    ['class' => 'ConditionField', 'option' => 'updated', 'include' => '']);
                 //$error['errors']['Message'] = $e->getMessage();
             }
         } else {
@@ -119,9 +86,11 @@ class ConditionFieldsController extends ApiController
                 $data = $request->all()['data']['attributes'];
                 $conditionField = $this->conditionField->create($data);
 
-                return $this->response()->item($conditionField, new ConditionFieldTransformer(), ['key' => 'conditionfields'])->setStatusCode($this->status_codes['created']);
+                return $this->response()->item($conditionField, new ConditionFieldTransformer(),
+                    ['key' => 'conditionfields'])->setStatusCode($this->status_codes['created']);
             } catch (\Exception $e) {
-                $error['errors']['conditionFields'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'ConditionField', 'option' => 'created', 'include' => '']);
+                $error['errors']['conditionFields'] = Lang::get('messages.NotOptionIncludeClass',
+                    ['class' => 'ConditionField', 'option' => 'created', 'include' => '']);
                 //$error['errors']['Message'] = $e->getMessage();
             }
         } else {

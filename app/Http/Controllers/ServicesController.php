@@ -3,17 +3,17 @@
 namespace WA\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Lang;
 use WA\DataStore\Service\Service;
 use WA\DataStore\Service\ServiceTransformer;
 use WA\Repositories\Service\ServiceInterface;
-use Illuminate\Support\Facades\Lang;
 
 /**
  * Service resource.
  *
  * @Resource("Service", uri="/services")
  */
-class ServicesController extends ApiController
+class ServicesController extends FilteredApiController
 {
     /**
      * @var ServiceInterface
@@ -21,52 +21,15 @@ class ServicesController extends ApiController
     protected $service;
 
     /**
-     * Service Controller constructor.
+     * ServicesController constructor.
      *
-     * @param ServiceInterface $Service
+     * @param ServiceInterface $service
+     * @param Request $request
      */
-    public function __construct(ServiceInterface $service)
+    public function __construct(ServiceInterface $service, Request $request)
     {
+        parent::__construct($service, $request);
         $this->service = $service;
-    }
-
-    /**
-     * Show all Service.
-     *
-     * Get a payload of all Service
-     */
-    public function index()
-    {
-        $criteria = $this->getRequestCriteria();
-        $this->service->setCriteria($criteria);
-        $service = $this->service->byPage();
-
-        $response = $this->response()->withPaginator($service, new ServiceTransformer(), ['key' => 'services']);
-        $response = $this->applyMeta($response);
-
-        return $response;
-    }
-
-    /**
-     * Show a single Service.
-     *
-     * Get a payload of a single Service
-     *
-     * @Get("/{id}")
-     */
-    public function show($id)
-    {
-        $criteria = $this->getRequestCriteria();
-        $this->service->setCriteria($criteria);
-        $service = Service::find($id);
-
-        if ($service == null) {
-            $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'Service']);
-
-            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
-        }
-
-        return $this->response()->item($service, new ServiceTransformer(), ['key' => 'services']);
     }
 
     /**
@@ -96,9 +59,11 @@ class ServicesController extends ApiController
                     return response()->json($error)->setStatusCode($this->status_codes['conflict']);
                 }
 
-                return $this->response()->item($service, new ServiceTransformer(), ['key' => 'services'])->setStatusCode($this->status_codes['created']);
+                return $this->response()->item($service, new ServiceTransformer(),
+                    ['key' => 'services'])->setStatusCode($this->status_codes['created']);
             } catch (\Exception $e) {
-                $error['errors']['services'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Service', 'option' => 'updated', 'include' => '']);
+                $error['errors']['services'] = Lang::get('messages.NotOptionIncludeClass',
+                    ['class' => 'Service', 'option' => 'updated', 'include' => '']);
                 //$error['errors']['Message'] = $e->getMessage();
             }
         } else {
@@ -120,9 +85,11 @@ class ServicesController extends ApiController
                 $data = $request->all()['data']['attributes'];
                 $service = $this->service->create($data);
 
-                return $this->response()->item($service, new ServiceTransformer(), ['key' => 'services'])->setStatusCode($this->status_codes['created']);
+                return $this->response()->item($service, new ServiceTransformer(),
+                    ['key' => 'services'])->setStatusCode($this->status_codes['created']);
             } catch (\Exception $e) {
-                $error['errors']['services'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Service', 'option' => 'created', 'include' => '']);
+                $error['errors']['services'] = Lang::get('messages.NotOptionIncludeClass',
+                    ['class' => 'Service', 'option' => 'created', 'include' => '']);
                 //$error['errors']['Message'] = $e->getMessage();
             }
         } else {

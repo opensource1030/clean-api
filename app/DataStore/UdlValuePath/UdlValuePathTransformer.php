@@ -2,12 +2,12 @@
 
 namespace WA\DataStore\UdlValuePath;
 
-use League\Fractal\TransformerAbstract;
+use WA\DataStore\FilterableTransformer;
 
 /**
  * Class UdlValuePathTransformer.
  */
-class UdlValuePathTransformer extends TransformerAbstract
+class UdlValuePathTransformer extends FilterableTransformer
 {
     /**
      * @param UdlValuePath $udlValuePath
@@ -17,8 +17,8 @@ class UdlValuePathTransformer extends TransformerAbstract
     public function transform(UdlValuePath $udlValuePath)
     {
         return [
-            'id' => $udlValuePath->id,
-            'name' => $udlValuePath->udlPath,
+            'id'          => $udlValuePath->id,
+            'name'        => $udlValuePath->udlPath,
             'lastUpdated' => $udlValuePath->updated_at,
         ];
     }

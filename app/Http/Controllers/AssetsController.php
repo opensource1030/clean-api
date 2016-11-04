@@ -2,69 +2,29 @@
 
 namespace WA\Http\Controllers;
 
-use WA\DataStore\Asset\Asset;
-use WA\DataStore\Asset\AssetTransformer;
+use Illuminate\Http\Request;
 use WA\Repositories\Asset\AssetInterface;
-use Illuminate\Support\Facades\Lang;
 
 /**
  * Class AssetsController.
  */
-class AssetsController extends ApiController
+class AssetsController extends FilteredApiController
 {
     /**
      * @var AssetInterface
      */
-    protected $assets;
+    protected $asset;
 
     /**
+     * AssetsController constructor.
+     *
      * @param AssetInterface $asset
+     * @param Request $request
      */
-    public function __construct(AssetInterface $asset)
+    public function __construct(AssetInterface $asset, Request $request)
     {
+        parent::__construct($asset, $request);
         $this->asset = $asset;
     }
 
-    /**
-     * Show all Assets.
-     *
-     * Get a payload of all Assets
-     *
-     * @Get("/")
-     * @Parameters({
-     *      @Parameter("page", description="The page of results to view.", default=1),
-     *      @Parameter("limit", description="The amount of results per page.", default=10),
-     *      @Parameter("access_token", required=true, description="Access token for authentication")
-     * })
-     */
-    public function index()
-    {
-        $criteria = $this->getRequestCriteria();
-        $this->asset->setCriteria($criteria);
-        $assets = $this->asset->byPage();
-
-        $response = $this->response()->withPaginator($assets, new AssetTransformer(), ['key' => 'assets']);
-        $response = $this->applyMeta($response);
-
-        return $response;
-    }
-
-    /**
-     * @param $id
-     *
-     * @return \Dingo\Api\Http\Response
-     */
-    public function show($id)
-    {
-        $criteria = $this->getRequestCriteria();
-        $this->asset->setCriteria($criteria);
-        $asset = $this->asset->byId($id);
-
-        if ($asset == null) {
-            $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'Asset']);
-            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
-        }
-        
-        return $this->response()->item($asset, new AssetTransformer(), ['key' => 'assets'])->setStatusCode($this->status_codes['created']);
-    }
 }
