@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
                 break;
         }
 
+        $this->call(AddonsTableSeeder::class);
         $this->call(AddressTableSeeder::class);
         $this->call(AllocationsTableSeeder::class);
         $this->call(AppsTableSeeder::class);

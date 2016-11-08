@@ -4,9 +4,13 @@ namespace WA\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Lang;
+use WA\DataStore\Addon\Addon;
 use WA\DataStore\Service\Service;
 use WA\DataStore\Service\ServiceTransformer;
 use WA\Repositories\Service\ServiceInterface;
+
+use DB;
+use Log;
 
 /**
  * Service resource.
@@ -41,36 +45,85 @@ class ServicesController extends FilteredApiController
      */
     public function store($id, Request $request)
     {
-        if ($this->isJsonCorrect($request, 'services')) {
-            try {
-                $data = $request->all()['data']['attributes'];
-                $data['id'] = $id;
-                $service = $this->service->update($data);
+        $success = true;
+        $dataAddonsFromRequest = $dataAddonsFromDB = array();
 
-                if ($service == 'notExist') {
-                    $error['errors']['service'] = Lang::get('messages.NotExistClass', ['class' => 'Service']);
-                    //$error['errors']['Message'] = $e->getMessage();
-                    return response()->json($error)->setStatusCode($this->status_codes['notexists']);
-                }
-
-                if ($service == 'notSaved') {
-                    $error['errors']['service'] = Lang::get('messages.NotSavedClass', ['class' => 'Service']);
-                    //$error['errors']['Message'] = $e->getMessage();
-                    return response()->json($error)->setStatusCode($this->status_codes['conflict']);
-                }
-
-                return $this->response()->item($service, new ServiceTransformer(),
-                    ['key' => 'services'])->setStatusCode($this->status_codes['created']);
-            } catch (\Exception $e) {
-                $error['errors']['services'] = Lang::get('messages.NotOptionIncludeClass',
-                    ['class' => 'Service', 'option' => 'updated', 'include' => '']);
-                //$error['errors']['Message'] = $e->getMessage();
-            }
-        } else {
+        /*
+         * Checks if Json has data, data-type & data-attributes.
+         */
+        if (!$this->isJsonCorrect($request, 'services')) {
             $error['errors']['json'] = Lang::get('messages.InvalidJson');
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+        } else {
+            $data = $request->all()['data'];
         }
 
-        return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+        DB::beginTransaction();
+
+        /*
+         * Now we can update the Service.
+         */
+        try {
+            $data['attributes']['id'] = $id;
+            $service = $this->service->update($data['attributes']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $error['errors']['services'] = Lang::get('messages.NotOptionIncludeClass',
+                ['class' => 'Service', 'option' => 'updated', 'include' => '']);
+            $error['errors']['Message'] = $e->getMessage();
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+        }
+
+        try {
+            $addons = Addon::where('serviceId', $id)->get();
+            $addonInterface = app()->make('WA\Repositories\Addon\AddonInterface');
+        } catch (\Exception $e) {
+            $error['errors']['addons'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Service', 'option' => 'updated', 'include' => 'Addons']);
+            $error['errors']['Message'] = $e->getMessage();
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+        }
+
+        /*
+         * Check if Json has relationships to continue or if not and commit + return.
+         */
+        if (isset($data['relationships'])) {
+            if (isset($data['relationships']['addons'])) {
+                if (isset($data['relationships']['addons']['data'])) {
+                    $data = $data['relationships']['addons']['data'];
+
+                    $this->deleteNotRequested($data, $addons, $addonInterface, 'addons');
+
+                    foreach ($data as $addon) {
+                        if (isset($addon['id'])) {
+                            if ($addon['id'] == 0) {
+                                $addonInterface->create($addon);
+                            } else {
+                                if ($addon['id'] > 0) {
+                                    $addonInterface->update($addon);
+                                } else {
+                                    $success = false;
+                                    $error['errors']['addons'] = 'the Addon has an incorrect id';
+                                }
+                            }
+                        } else {
+                            $success = false;
+                            $error['errors']['addons'] = 'the Addon has no id';
+                        }
+                    }
+                }
+            }
+        } else {
+            foreach ($addons as $addon) {
+                $addonInterface->deleteById($addon['id']);
+            }
+        }
+        if ($success) {
+            DB::commit();
+            return $this->response()->item($service, new ServiceTransformer(), ['key' => 'services'])->setStatusCode($this->status_codes['created']);
+        } else {
+            DB::rollBack();
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+        }
     }
 
     /**
@@ -80,23 +133,48 @@ class ServicesController extends FilteredApiController
      */
     public function create(Request $request)
     {
+        DB::beginTransaction();
+
         if ($this->isJsonCorrect($request, 'services')) {
             try {
                 $data = $request->all()['data']['attributes'];
                 $service = $this->service->create($data);
-
-                return $this->response()->item($service, new ServiceTransformer(),
-                    ['key' => 'services'])->setStatusCode($this->status_codes['created']);
             } catch (\Exception $e) {
+                DB::rollBack();
                 $error['errors']['services'] = Lang::get('messages.NotOptionIncludeClass',
                     ['class' => 'Service', 'option' => 'created', 'include' => '']);
                 //$error['errors']['Message'] = $e->getMessage();
+                return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+            }
+
+            if (isset($data['relationships'])) {
+                if (isset($data['relationships']['addons'])) {
+                    if (isset($data['relationships']['addons']['data'])) {
+                        
+                        $addonInterface = app()->make('WA\Repositories\Addon\AddonInterface');
+                        $data = $data['relationships']['addons']['data'];
+
+                        foreach ($data as $addon) {
+                            try {
+                                $addonInterface->create($price);    
+                            } catch (\Exception $e) {
+                                DB::rollBack();
+                                $error['errors']['services'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Service', 'option' => 'created', 'include' => '']);
+                                //$error['errors']['Message'] = $e->getMessage();
+                                return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+                                
+                            }
+                        }
+                    }
+                }
             }
         } else {
             $error['errors']['json'] = Lang::get('messages.InvalidJson');
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
-        return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+        DB::commit();
+        return $this->response()->item($service, new ServiceTransformer(), ['key' => 'services'])->setStatusCode($this->status_codes['created']);
     }
 
     /**

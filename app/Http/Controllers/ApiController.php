@@ -153,4 +153,26 @@ abstract class ApiController extends BaseController
             return $this->includesAreCorrectInf($includes, $newTransformer);
         }
     }
+
+    /**
+     *  @param: $data = Data retrieved from Request. (the new information we will work)
+     *  @param: $databaseinformation = Information retrieved from database. (the information we will modify)
+     *  @param: $interface = Interface needed to delete the includes.
+     *  @param: $type = The name of the include.
+     */
+    public function deleteNotRequested($data, $databaseinformation, $interface, $type) {
+
+        $dataFromRequest = $this->parseJsonToArray($data, $type);
+        
+        $arrayFromDB = array();
+        foreach ($databaseinformation as $some) {
+            array_push($arrayFromDB, $some->id);
+        }
+
+        $canBeDeleted = array_diff($arrayFromDB, $dataFromRequest);
+
+        foreach ($canBeDeleted as $some) {
+            $interface->deleteById($some);
+        }
+    }
 }

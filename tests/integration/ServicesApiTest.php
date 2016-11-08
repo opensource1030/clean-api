@@ -3,6 +3,10 @@
 //use Laravel\Lumen\Testing\DatabaseTransactions;
 use Laravel\Lumen\Testing\DatabaseMigrations;
 
+use WA\DataStore\Addon\Addon;
+
+
+
 class ServicesApiTest extends TestCase
 {
     //use DatabaseTransactions;
@@ -73,7 +77,7 @@ class ServicesApiTest extends TestCase
     {
         $service = factory(\WA\DataStore\Service\Service::class)->create();
 
-        $res = $this->get('services/'.$service->id)
+        $this->get('services/'.$service->id)
             ->seeJson([
                 'status' => 'Enabled',
                 'type' => 'services',
@@ -88,6 +92,79 @@ class ServicesApiTest extends TestCase
                 'internationalData' => "$service->internationalData",
                 'internationalMessages' => "$service->internationalMessages",
                 'carrierId' => "$service->carrierId",
+            ]);
+        
+    }
+
+    public function testGetServiceByIdandIncludesAddons()
+    {
+        $service = factory(\WA\DataStore\Service\Service::class)->create();
+
+        factory(\WA\DataStore\Addon\Addon::class)->create(['serviceId' => $service->id]);
+        factory(\WA\DataStore\Addon\Addon::class)->create(['serviceId' => $service->id]);
+
+        $response = $this->json('GET', 'services/'.$service->id.'?include=addons')
+            ->seeJsonStructure([
+                'data' => [
+                    'type',
+                    'id',
+                    'attributes' => [
+                        'status',
+                        'title',
+                        'planCode',
+                        'cost',
+                        'description',
+                        'domesticMinutes',
+                        'domesticData',
+                        'domesticMessages',
+                        'internationalMinutes',
+                        'internationalData',
+                        'internationalMessages',
+                        'carrierId',
+                        'created_at' => [
+                            'date',
+                            'timezone_type',
+                            'timezone',
+                        ],
+                        'updated_at' => [
+                            'date',
+                            'timezone_type',
+                            'timezone',
+                        ],
+                    ],
+                    'links' => [
+                        'self',
+                    ],
+                    'relationships' => [
+                        'addons' => [
+                            'links' => [
+                                'self',
+                                'related',
+                            ],
+                            'data' => [
+                                0 => [
+                                    'type',
+                                    'id',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                'included' => [
+                    1 => [
+                        'type',
+                        'id',
+                        'attributes' => [
+                            'name',
+                            'cost',
+                            'serviceId'
+                        ],
+                        'links' => [
+                            'self',
+                        ],
+                    ],
+
+                ],
             ]);
     }
 
@@ -156,6 +233,7 @@ class ServicesApiTest extends TestCase
             [
                 'data' => [
                     'type' => 'services',
+                    'id' => $service->id,
                     'attributes' => [
                         'status' => $service->status,
                         'title' => "$service->title",
@@ -186,6 +264,271 @@ class ServicesApiTest extends TestCase
                 'internationalData' => '100',
                 'internationalMessages' => '100',
                 'carrierId' => "1",
+            ]);
+    }
+
+    public function testUpdateServiceIncludeAddons(){
+
+        $carrier = factory(\WA\DataStore\Carrier\Carrier::class)->create();
+
+        $service = factory(\WA\DataStore\Service\Service::class)->create(['carrierId' => $carrier->id]);
+
+        $addon1 = factory(\WA\DataStore\Addon\Addon::class)->create(['serviceId' => $service->id]);
+        $addon2 = factory(\WA\DataStore\Addon\Addon::class)->create(['serviceId' => $service->id]);
+        $addon3 = factory(\WA\DataStore\Addon\Addon::class)->create(['serviceId' => $service->id]);
+
+/*
+        $var = $this->get('/services/'.$service->id.'?include=addons')
+            ->seeJsonStructure([                
+                'data' => [
+                    'type',
+                    'id',
+                    'attributes' => [
+                        'status',
+                        'title',
+                        'planCode',
+                        'cost',
+                        'description',
+                        'domesticMinutes',
+                        'domesticData',
+                        'domesticMessages',
+                        'internationalMinutes',
+                        'internationalData',
+                        'internationalMessages',
+                        'carrierId',
+                        'created_at',
+                        'updated_at',
+                    ],
+                    'links' => [
+                        'self'
+                    ],
+                    'relationships' => [
+                        'carriers' => [
+                            'links' => [
+                                'self',
+                                'related',
+                            ],
+                            'data' => [
+                                [
+                                    'type',
+                                    'id',
+                                ]
+                            ]
+                        ],
+                        'addons' => [
+                            'links' => [
+                                'self',
+                                'related',
+                            ],
+                            'data' => [
+                                [
+                                    'type',
+                                    'id',
+                                ],
+                                [
+                                    'type',
+                                    'id',
+                                ],
+                                [
+                                    'type',
+                                    'id',
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
+                'included' => [
+                    0 => [
+                        'type',
+                        'id',
+                        'attributes' => [
+                            'name',
+                            'presentation',
+                            'active',
+                            'locationId',
+                            'shortName',
+                            'created_at',
+                            'updated_at',
+                        ],
+                        'links' => [
+                            'self'
+                        ]
+                    ],
+                    1 => [
+                        'type',
+                        'id',
+                        'attributes' => [
+                            'name',
+                            'cost',
+                            'serviceId',
+                            'created_at',
+                            'updated_at',
+                        ],
+                        'links' => [
+                            'self'
+                        ]
+                    ],
+                    2 => [
+                        'type',
+                        'id',
+                        'attributes' => [
+                            'name',
+                            'cost',
+                            'serviceId',
+                            'created_at',
+                            'updated_at',
+                        ],
+                        'links' => [
+                            'self'
+                        ]
+                    ],
+                    3 => [
+                        'type',
+                        'id',
+                        'attributes' => [
+                            'name',
+                            'cost',
+                            'serviceId',
+                            'created_at',
+                            'updated_at',
+                        ],
+                        'links' => [
+                            'self'
+                        ]
+                    ]    
+                ]
+            ]);
+*/
+        $res = $this->put('/services/'.$service->id.'?include=addons',
+            [
+                'data' => [
+                    'type' => 'services',
+                    'attributes' => [
+                        'status' => 'Enabled',
+                        'title' => 'title1',
+                        'planCode' => '11111',
+                        'cost' => '30',
+                        'description' => 'desc1',
+                        'domesticMinutes' => '100',
+                        'domesticData' => '100',
+                        'domesticMessages' => '100',
+                        'internationalMinutes' => '100',
+                        'internationalData' => '100',
+                        'internationalMessages' => '100',
+                        'carrierId' => '1',
+                        'created_at' => $service->created_at,
+                        'updated_at' => $service->updated_at
+                    ],
+                    'relationships' => [
+                        'addons' => [
+                            'data' => [
+                                ['id' => $addon1->id, 'type' => 'addons', 'name' => $addon1->name, 'cost' => $addon1->cost, 'serviceId' => $service->id],
+                                ['id' => $addon2->id, 'type' => 'addons', 'name' => $addon2->name, 'cost' => $addon2->cost, 'serviceId' => $service->id],
+                                
+                            ],
+                        ],
+                    ]
+                ]
+            ])->seeJsonStructure([
+                'data' => [
+                    'type',
+                    'id',
+                    'attributes' => [
+                        'status',
+                        'title',
+                        'planCode',
+                        'cost',
+                        'description',
+                        'domesticMinutes',
+                        'domesticData',
+                        'domesticMessages',
+                        'internationalMinutes',
+                        'internationalData',
+                        'internationalMessages',
+                        'carrierId',
+                        'created_at',
+                        'updated_at',
+                    ],
+                    'links' => [
+                        'self'
+                    ],
+                    'relationships' => [
+                        'carriers' => [
+                            'links' => [
+                                'self',
+                                'related',
+                            ],
+                            'data' => [
+                                [
+                                    'type',
+                                    'id',
+                                ]
+                            ]
+                        ],
+                        'addons' => [
+                            'links' => [
+                                'self',
+                                'related',
+                            ],
+                            'data' => [
+                                [
+                                    'type',
+                                    'id',
+                                ],
+                                [
+                                    'type',
+                                    'id',
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
+                'included' => [
+                    0 => [
+                        'type',
+                        'id',
+                        'attributes' => [
+                            'name',
+                            'presentation',
+                            'active',
+                            'locationId',
+                            'shortName',
+                            'created_at',
+                            'updated_at',
+                        ],
+                        'links' => [
+                            'self'
+                        ]
+                    ],
+                    1 => [
+                        'type',
+                        'id',
+                        'attributes' => [
+                            'name',
+                            'cost',
+                            'serviceId',
+                            'created_at',
+                            'updated_at',
+                        ],
+                        'links' => [
+                            'self'
+                        ]
+                    ],
+                    2 => [
+                        'type',
+                        'id',
+                        'attributes' => [
+                            'name',
+                            'cost',
+                            'serviceId',
+                            'created_at',
+                            'updated_at',
+                        ],
+                        'links' => [
+                            'self'
+                        ]
+                    ]
+                ]
             ]);
     }
 

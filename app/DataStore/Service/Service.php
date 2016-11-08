@@ -54,7 +54,7 @@ class Service extends BaseDataStore
      */
     public function packages()
     {
-        return $this->belongsToMany('WA\DataStore\Package\Package', 'package_services', 'packageId', 'servicesId');
+        return $this->belongsToMany('WA\DataStore\Package\Package', 'package_services', 'packageId', 'serviceId');
     }
 
     /**
@@ -63,5 +63,13 @@ class Service extends BaseDataStore
     public function carriers()
     {
         return $this->belongsTo('WA\DataStore\Carrier\Carrier', 'carrierId');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function addons()
+    {
+        return $this->hasMany('WA\DataStore\Addon\Addon', 'serviceId');
     }
 }

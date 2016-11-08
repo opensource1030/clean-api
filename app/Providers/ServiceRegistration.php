@@ -2,6 +2,7 @@
 
 namespace WA\Providers;
 
+use WA\DataStore\Addon\Addon;
 use WA\DataStore\Address\Address;
 use WA\DataStore\Allocation\Allocation;
 use WA\DataStore\App\App;
@@ -39,6 +40,7 @@ use WA\DataStore\UdlValuePath\UdlValuePath;
 use WA\DataStore\UdlValuePathUsers\UdlValuePathUsers;
 use WA\DataStore\User\User;
 use WA\DataStore\UserNotifications;
+use WA\Repositories\Addon\EloquentAddon;
 use WA\Repositories\Address\EloquentAddress;
 use WA\Repositories\Allocation\EloquentAllocation;
 use WA\Repositories\App\EloquentApp;
@@ -538,6 +540,18 @@ trait ServiceRegistration
         app()->bind('WA\Repositories\Condition\ConditionOperatorInterface',
             function () {
                 return new EloquentConditionOperator(new ConditionOperator());
+            }
+        );
+    }
+
+    /**
+     * @param
+     */
+    public function registerAddon()
+    {
+        app()->bind('WA\Repositories\Addon\AddonInterface',
+            function () {
+                return new EloquentAddon(new Addon());
             }
         );
     }

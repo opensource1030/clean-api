@@ -9,9 +9,9 @@ use WA\DataStore\FilterableTransformer;
  */
 class ServiceTransformer extends FilterableTransformer
 {
-
     protected $availableIncludes = [
         'packages',
+        'addons'
     ];
 
     protected $defaultIncludes = [
@@ -26,21 +26,21 @@ class ServiceTransformer extends FilterableTransformer
     public function transform(Service $service)
     {
         return [
-            'status' => $service->status,
-            'id' => (int) $service->id,
-            'title' => $service->title,
-            'planCode' => $service->planCode,
-            'cost' => $service->cost,
-            'description' => $service->description,
-            'domesticMinutes' => $service->domesticMinutes,
-            'domesticData' => $service->domesticData,
-            'domesticMessages' => $service->domesticMessages,
-            'internationalMinutes' => $service->internationalMinutes,
-            'internationalData' => $service->internationalData,
-            'internationalMessages' => $service->internationalMessages,
-            'carrierId' => $service->carrierId,
-            'created_at' => $service->created_at,
-            'updated_at' => $service->updated_at,
+            'id'                        => (int) $service->id,
+            'status'                    => $service->status,            
+            'title'                     => $service->title,
+            'planCode'                  => $service->planCode,
+            'cost'                      => $service->cost,
+            'description'               => $service->description,
+            'domesticMinutes'           => $service->domesticMinutes,
+            'domesticData'              => $service->domesticData,
+            'domesticMessages'          => $service->domesticMessages,
+            'internationalMinutes'      => $service->internationalMinutes,
+            'internationalData'         => $service->internationalData,
+            'internationalMessages'     => $service->internationalMessages,
+            'carrierId'                 => $service->carrierId,
+            'created_at'                => $service->created_at,
+            'updated_at'                => $service->updated_at,
         ];
     }
 }
