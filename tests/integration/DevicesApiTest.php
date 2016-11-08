@@ -1158,6 +1158,320 @@ class DevicesApiTest extends TestCase
             ]);
     }
 
+    public function testUpdateServiceIncludePrices(){
+
+        $device = factory(\WA\DataStore\Device\Device::class)->create(
+            ['properties' => 'properties1', 'name' => 'Phone1']
+        );
+
+        $modCap1 = factory(\WA\DataStore\Modification\Modification::class)->create(
+            ['modType' => 'capacity']
+        );
+
+        $modSty1 = factory(\WA\DataStore\Modification\Modification::class)->create(
+            ['modType' => 'style']
+        );
+
+        $modCap2 = factory(\WA\DataStore\Modification\Modification::class)->create(
+            ['modType' => 'capacity']
+        );
+
+        $price1 = factory(\WA\DataStore\Price\Price::class)->create(
+            [
+                'deviceId' => $device->id,
+                'capacityId' => 1,
+                'styleId' => 2,
+                'carrierId' => 1,
+                'companyId' => 1,
+                'priceRetail' => 100,
+                'price1' => 100,
+                'price2' => 100,
+                'priceOwn' => 100, ]
+        );
+
+        $price2 = factory(\WA\DataStore\Price\Price::class)->create(
+            [
+                'deviceId' => $device->id,
+                'capacityId' => 1,
+                'styleId' => 2,
+                'carrierId' => 1,
+                'companyId' => 2,
+                'priceRetail' => 200,
+                'price1' => 200,
+                'price2' => 200,
+                'priceOwn' => 200, ]
+        );
+
+        $price3 = factory(\WA\DataStore\Price\Price::class)->create(
+            [
+                'deviceId' => $device->id,
+                'capacityId' => 1,
+                'styleId' => 2,
+                'carrierId' => 2,
+                'companyId' => 1,
+                'priceRetail' => 300,
+                'price1' => 300,
+                'price2' => 300,
+                'priceOwn' => 300, ]
+        );
+
+        $price4 = factory(\WA\DataStore\Price\Price::class)->create(
+            [
+                'deviceId' => $device->id,
+                'capacityId' => 1,
+                'styleId' => 2,
+                'carrierId' => 2,
+                'companyId' => 2,
+                'priceRetail' => 400,
+                'price1' => 400,
+                'price2' => 400,
+                'priceOwn' => 400, ]
+        );
+
+        $price5 = factory(\WA\DataStore\Price\Price::class)->create(
+            [
+                'deviceId' => $device->id,
+                'capacityId' => 3,
+                'styleId' => 2,
+                'carrierId' => 1,
+                'companyId' => 1,
+                'priceRetail' => 500,
+                'price1' => 500,
+                'price2' => 500,
+                'priceOwn' => 500, ]
+        );
+
+        $price6 = factory(\WA\DataStore\Price\Price::class)->create(
+            [
+                'deviceId' => $device->id,
+                'capacityId' => 3,
+                'styleId' => 2,
+                'carrierId' => 1,
+                'companyId' => 2,
+                'priceRetail' => 600,
+                'price1' => 600,
+                'price2' => 600,
+                'priceOwn' => 600, ]
+        );
+
+        $price7 = factory(\WA\DataStore\Price\Price::class)->create(
+            [
+                'deviceId' => $device->id,
+                'capacityId' => 3,
+                'styleId' => 2,
+                'carrierId' => 2,
+                'companyId' => 1,
+                'priceRetail' => 700,
+                'price1' => 700,
+                'price2' => 700,
+                'priceOwn' => 700, ]
+        );
+
+        $price8 = factory(\WA\DataStore\Price\Price::class)->create(
+            [
+                'deviceId' => $device->id,
+                'capacityId' => 3,
+                'styleId' => 2,
+                'carrierId' => 2,
+                'companyId' => 2,
+                'priceRetail' => 800,
+                'price1' => 800,
+                'price2' => 800,
+                'priceOwn' => 800, ]
+        );
+
+        $this->put('/devices/'.$device->id.'?include=prices',
+            [
+                'data' => [
+                    'type' => 'devices',
+                    'attributes' => [
+                        'name' => $device->name,
+                        'properties' => $device->properties,
+                    ],
+                    'relationships' => [
+                        'assets' => [
+                            'data' => [
+                                ['type' => 'assets', 'id' => '1'],
+                                ['type' => 'assets', 'id' => '2'],
+                            ],
+                        ],
+                        'modifications' => [
+                            'data' => [
+                                ['type' => 'modifications', 'id' => $modCap1->id],
+                                ['type' => 'modifications', 'id' => $modSty1->id],
+                            ],
+                        ],
+                        'carriers' => [
+                            'data' => [
+                                ['type' => 'carriers', 'id' => '1'],
+                                ['type' => 'carriers', 'id' => '2'],
+                            ],
+                        ],
+                        'companies' => [
+                            'data' => [
+                                ['type' => 'companies', 'id' => '1'],
+                                ['type' => 'companies', 'id' => '2'],
+                            ],
+                        ],
+                        'prices' => [
+                            'data' => [
+                                ['type' => 'prices', 'id' => $price1->id, 'capacityId' => 1, 'styleId' => 2, 'carrierId' => 1, 'companyId' => 1, 'priceRetail' => 1100, 'price1' => 1100, 'price2' => 1100, 'priceOwn' => 1100],
+                                ['type' => 'prices', 'id' => $price2->id, 'capacityId' => 1, 'styleId' => 2, 'carrierId' => 1, 'companyId' => 2, 'priceRetail' => 1200, 'price1' => 1200, 'price2' => 1200, 'priceOwn' => 1200],
+                                ['type' => 'prices', 'id' => $price3->id, 'capacityId' => 1, 'styleId' => 2, 'carrierId' => 2, 'companyId' => 1, 'priceRetail' => 1300, 'price1' => 1300, 'price2' => 1300, 'priceOwn' => 1300],
+                                ['type' => 'prices', 'id' => $price4->id, 'capacityId' => 1, 'styleId' => 2, 'carrierId' => 2, 'companyId' => 2, 'priceRetail' => 1400, 'price1' => 1400, 'price2' => 1400, 'priceOwn' => 1400],
+                            ],
+                        ],
+                    ],
+                ],
+            ])->seeJsonStructure([
+                'data' => [
+                    'type',
+                    'id',
+                    'attributes' => [
+                        'identification',
+                        'name',
+                        'properties',
+                        'externalId',
+                        'statusId',
+                        'syncId',
+                        'created_at',
+                        'updated_at',
+                    ],
+                    'links' => [
+                        'self'
+                    ],
+                    'relationships' => [
+                        'devicetypes' => [
+                            'links' => [
+                                'self',
+                                'related',
+                            ],
+                            'data' => [
+                                [
+                                    'type',
+                                    'id',
+                                ]
+                            ]
+                        ],
+                        'prices' => [
+                            'links' => [
+                                'self',
+                                'related',
+                            ],
+                            'data' => [
+                                [
+                                    'type',
+                                    'id',
+                                ],
+                                [
+                                    'type',
+                                    'id',
+                                ],
+                                [
+                                    'type',
+                                    'id',
+                                ],
+                                [
+                                    'type',
+                                    'id',
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
+                'included' => [
+                    0 => [
+                        'type',
+                        'id',
+                        'attributes' => [
+                            'make',
+                            'model',
+                            'class',
+                            'deviceOS',
+                            'description',
+                            'statusId',
+                            'image'
+                        ],
+                        'links' => [
+                            'self'
+                        ]
+                    ],
+                    1 => [
+                        'type',
+                        'id',
+                        'attributes' => [
+                            'priceRetail',
+                            'price1',
+                            'price2',
+                            'priceOwn',
+                            'deviceId',
+                            'capacityId',
+                            'styleId',
+                            'carrierId',
+                            'companyId'
+                        ],
+                        'links' => [
+                            'self'
+                        ]
+                    ],
+                    2 => [
+                        'type',
+                        'id',
+                        'attributes' => [
+                            'priceRetail',
+                            'price1',
+                            'price2',
+                            'priceOwn',
+                            'deviceId',
+                            'capacityId',
+                            'styleId',
+                            'carrierId',
+                            'companyId'
+                        ],
+                        'links' => [
+                            'self'
+                        ]
+                    ],
+                    3 => [
+                        'type',
+                        'id',
+                        'attributes' => [
+                            'priceRetail',
+                            'price1',
+                            'price2',
+                            'priceOwn',
+                            'deviceId',
+                            'capacityId',
+                            'styleId',
+                            'carrierId',
+                            'companyId'
+                        ],
+                        'links' => [
+                            'self'
+                        ]
+                    ],
+                    4 => [
+                        'type',
+                        'id',
+                        'attributes' => [
+                            'priceRetail',
+                            'price1',
+                            'price2',
+                            'priceOwn',
+                            'deviceId',
+                            'capacityId',
+                            'styleId',
+                            'carrierId',
+                            'companyId'
+                        ],
+                        'links' => [
+                            'self'
+                        ]
+                    ]
+                ]
+            ]);
+    }
+
     public function testDeleteDeviceIfExists()
     {
         // CREATE & DELETE

@@ -5,6 +5,7 @@ namespace WA\Http\Controllers;
 use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Lang;
+use WA\DataStore\Price\Price;
 use WA\DataStore\Device\Device;
 use WA\DataStore\Device\DeviceTransformer;
 use WA\Repositories\Device\DeviceInterface;
@@ -62,9 +63,9 @@ class DevicesController extends FilteredApiController
          * Now we can update the Device.
          */
         try {
-            $data = $request->all()['data']['attributes'];
-            $data['id'] = $id;
-            $device = $this->device->update($data);
+            $data = $request->all()['data'];
+            $data['attributes']['id'] = $id;
+            $device = $this->device->update($data['attributes']);
 
             if ($device == 'notExist') {
                 DB::rollBack();
@@ -92,7 +93,6 @@ class DevicesController extends FilteredApiController
          * Check if Json has relationships to continue or if not and commit + return.
          */
         if (isset($data['relationships'])) {
-
             $dataRelationships = $data['relationships'];
 
             if (isset($dataRelationships['images'])) {
@@ -164,17 +164,27 @@ class DevicesController extends FilteredApiController
                 }
             }
 
+            try {
+                $prices = Price::where('deviceId', $id)->get();
+                $interface = app()->make('WA\Repositories\Price\PriceInterface');
+            } catch (\Exception $e) {
+                $error['errors']['prices'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Device', 'option' => 'updated', 'include' => 'Prices']);
+                $error['errors']['Message'] = $e->getMessage();
+                return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+            }
+
             if (isset($dataRelationships['prices'])) {
                 if (isset($dataRelationships['prices']['data'])) {
-                    $dataPrices = $dataRelationships['prices']['data'];
+                    $data = $dataRelationships['prices']['data'];
 
                     if ($success) {
-                        try {
-                            $priceInterface = app()->make('WA\Repositories\Price\PriceInterface');
+                        try {                           
 
-                            $dataPrices = $this->deleteRepeat($dataPrices);
+                            $data = $this->deleteRepeat($data);
 
-                            foreach ($dataPrices as $price) {
+                            $this->deleteNotRequested($data, $prices, $interface, 'prices');
+
+                            foreach ($data as $price) {
                                 $check = $this->checkIfPriceRowIsCorrect($price, $dataModifications, $dataCarriers,
                                     $dataCompanies);
                                 if ($check['bool']) {
@@ -182,10 +192,10 @@ class DevicesController extends FilteredApiController
 
                                     if (isset($price['id'])) {
                                         if ($price['id'] == 0) {
-                                            $priceInterface->create($price);
+                                            $interface->create($price);
                                         } else {
                                             if ($price['id'] > 0) {
-                                                $priceInterface->update($price);
+                                                $interface->update($price);
                                             } else {
                                                 $success = false;
                                                 $error['errors']['prices'] = 'the Price has an incorrect id';
@@ -195,8 +205,6 @@ class DevicesController extends FilteredApiController
                                         $success = false;
                                         $error['errors']['prices'] = 'the Price has no id';
                                     }
-
-                                    $priceInterface->create($price);
 
                                 } else {
                                     $success = false;
@@ -524,20 +532,20 @@ class DevicesController extends FilteredApiController
 
             if (isset($dataRelationships['prices'])) {
                 if (isset($dataRelationships['prices']['data'])) {
-                    $dataPrices = $dataRelationships['prices']['data'];
+                    $data = $dataRelationships['prices']['data'];
 
                     if ($success) {
                         try {
-                            $priceInterface = app()->make('WA\Repositories\Price\PriceInterface');
+                            $interface = app()->make('WA\Repositories\Price\PriceInterface');
 
-                            $dataPrices = $this->deleteRepeat($dataPrices);
+                            $data = $this->deleteRepeat($data);
 
-                            foreach ($dataPrices as $price) {
+                            foreach ($data as $price) {
                                 $check = $this->checkIfPriceRowIsCorrect($price, $dataModifications, $dataCarriers,
                                     $dataCompanies);
                                 if ($check['bool']) {
                                     $price['deviceId'] = $device->id;
-                                    $priceInterface->create($price);
+                                    $interface->create($price);
                                 } else {
                                     $success = false;
                                     $error['errors']['prices'] = Lang::get('messages.NotOptionIncludeClass',
