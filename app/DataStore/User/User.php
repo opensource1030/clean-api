@@ -1,6 +1,7 @@
 <?php
 
 namespace WA\DataStore\User;
+//namespace App;
 
 use Illuminate\Auth\Authenticatable as IllumnateAuthenticableTrait;
 use Illuminate\Auth\Passwords\CanResetPassword as IlluminateCanResetPasswordTrait;
@@ -9,8 +10,9 @@ use Illuminate\Contracts\Auth\CanResetPassword as IlluminateCanResetPasswordCont
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Venturecraft\Revisionable\RevisionableTrait as RevisionableTrait;
 use WA\DataStore\BaseDataStore;
-use Zizaco\Entrust\Traits\EntrustUserTrait as EntrustUserTrait;
+use Zizaco\Entrust\Traits\EntrustUserTrait as EntrustUserTrait; 
 
+ 
 /**
  * Class User.
  *
@@ -25,6 +27,7 @@ use Zizaco\Entrust\Traits\EntrustUserTrait as EntrustUserTrait;
  * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\Content\Content[] $contents
  * @mixin \Eloquent
  */
+
 class User extends BaseDataStore implements IlluminateCanResetPasswordContract, IllumincateAuthenticatableContract
 {
     //    use SoftDeletes;
@@ -32,7 +35,6 @@ class User extends BaseDataStore implements IlluminateCanResetPasswordContract, 
 //    use EntrustUserTrait {
 //        EntrustUserTrait::boot insteadof RevisionableTrait;
 //    }
-
     use IlluminateCanResetPasswordTrait, IllumnateAuthenticableTrait;
 
     public $timestamps = true;

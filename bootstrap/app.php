@@ -78,8 +78,7 @@ $app->singleton('filesystem', function ($app) {
 */
 
 $app->middleware([
-    \LucaDegasperi\OAuth2Server\Middleware\OAuthExceptionHandlerMiddleware::class,
-      \WA\Http\Middleware\CorsMiddleware::class
+    \WA\Http\Middleware\CorsMiddleware::class
 ]);
 
 $app->routeMiddleware([
@@ -88,10 +87,7 @@ $app->routeMiddleware([
     'permission' => 'Zizaco\Entrust\Middleware\EntrustPermission',
     'ability' => 'Zizaco\Entrust\Middleware\EntrustAbility',
     'oauth-user-instance' => \WA\Http\Middleware\OAuth2UserInstance::class,
-    'oauth' => \LucaDegasperi\OAuth2Server\Middleware\OAuthMiddleware::class,
-    'oauth-client' => \LucaDegasperi\OAuth2Server\Middleware\OAuthClientOwnerMiddleware::class,
-    'oauth-user' => \LucaDegasperi\OAuth2Server\Middleware\OAuthUserOwnerMiddleware::class,
-    'check-authorization-params' => \LucaDegasperi\OAuth2Server\Middleware\CheckAuthCodeRequestMiddleware::class,
+    
 ]);
 
 /*
@@ -122,19 +118,18 @@ $app->configure('saml2_settings');
 // $app->register(WA\Providers\EventServiceProvider::class);
 $app->register(\Culpa\CulpaServiceProvider::class);
 $app->register(\Dingo\Api\Provider\LumenServiceProvider::class);
-$app->register(LucaDegasperi\OAuth2Server\OAuth2ServerServiceProvider::class);
-$app->register(LucaDegasperi\OAuth2Server\Storage\FluentStorageServiceProvider::class);
 $app->register(\WA\Providers\RepositoriesServiceProviders::class);
 $app->register(\WA\Providers\AppServiceProvider::class);
 $app->register(\Illuminate\Auth\Passwords\PasswordResetServiceProvider::class);
 $app->register(\Illuminate\Mail\MailServiceProvider::class);
 $app->register(\WA\Providers\EventServiceProvider::class);
 $app->register(Dingo\Api\Provider\LumenServiceProvider::class);
-$app->register(\WA\Providers\OAuthServiceProvider::class);
 $app->register(\WA\Providers\Saml2ServiceProvider::class);
 $app->register(\WA\Providers\CatchAllOptionsRequestsProvider::class);
 $app->register(\GrahamCampbell\Flysystem\FlysystemServiceProvider::class);
-
+$app->register(Laravel\Passport\PassportServiceProvider::class);
+$app->register(Dusterio\LumenPassport\PassportServiceProvider::class);
+$app->register(Dingo\Api\Provider\LumenServiceProvider::class);
 app('Dingo\Api\Transformer\Factory')->setAdapter(function ($app) {
     $base_url = env('API_DOMAIN', 'api.wirelessanalytics.com');
     $serializer = new \League\Fractal\Serializer\JsonApiSerializer($base_url);
@@ -175,7 +170,7 @@ if (!class_exists('Config')) {
 }
 
 if (!class_exists('Authorizer')) {
-    class_alias(\LucaDegasperi\OAuth2Server\Facades\Authorizer::class, 'Authorizer');
+   
 }
 
 if (!class_exists('Uuid')) {

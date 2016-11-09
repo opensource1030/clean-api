@@ -1,7 +1,10 @@
 <?php
 
-namespace WA\Providers;
+//namespace WA\Providers;
+namespace App\Providers; 
 
+use Laravel\Passport\Passport; 
+use Illuminate\Support\Facades\Route; 
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Routing\Router;
 
@@ -31,9 +34,14 @@ class RouteServiceProvider extends ServiceProvider
      *
      * @param \Illuminate\Routing\Router $router
      */
-    public function map(Router $router)
+    /*public function map(Router $router)
     {
         $router->group(['namespace' => $this->namespace], function ($router) {
         });
+    }*/
+     public function map() { 
+        $this->mapWebRoutes();
+        $this->mapApiRoutes();
+        Passport::routes();
     }
 }

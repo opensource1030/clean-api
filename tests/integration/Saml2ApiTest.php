@@ -16,7 +16,7 @@ class Saml2ApiTest extends TestCase
     **/
     public function testApiDoSSOEmailRegister()
     {
-
+         
         // CREATE ARGUMENTS
         $emailRegister = 'dev@algo.com';
 
@@ -93,7 +93,7 @@ class Saml2ApiTest extends TestCase
     **/
     public function testApiDoSSOEmailNoValid()
     {
-
+       
         // CREATE ARGUMENTS
         $emailNoValid = 'dev';
 
@@ -110,6 +110,7 @@ class Saml2ApiTest extends TestCase
     public function testApiDoSSOLoginUuid()
     {
 
+        
         // CREATE ARGUMENTS ERROR
         $uuid = 'siriondevelopers';
 

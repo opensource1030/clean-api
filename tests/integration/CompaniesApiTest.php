@@ -12,6 +12,7 @@ class CompaniesTest extends TestCase
      */
     public function testGetCompanies()
     {
+        
         factory(\WA\DataStore\Company\Company::class, 40)->create();
 
         $this->json('GET', 'companies')
@@ -32,6 +33,7 @@ class CompaniesTest extends TestCase
 
     public function testGetByCompanyId()
     {
+
         $company = factory(\WA\DataStore\Company\Company::class)->create();
 
         $this->json('GET', 'companies/'.$company->id)

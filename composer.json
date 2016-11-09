@@ -2,28 +2,34 @@
   "name": "clean_api",
   "require": {
     "php": ">=5.5.9",
-    "laravel/lumen-framework": "5.2.*",
+    "laravel/lumen-framework": "5.3.1",
     "vlucas/phpdotenv": "~2.2",
     "baum/baum": "~1.1",
     "zizaco/entrust": "5.2.x-dev",
-    "sofa/eloquence": "~5.2@dev",
+    "sofa/eloquence": "5.3.*@dev",
     "venturecraft/revisionable": "1.*",
-    "dingo/api": "1.0.*@dev",
-    "lucadegasperi/oauth2-server-laravel": "5.1.*",
-    "aacotroneo/laravel-saml2": "0.8.*",
+    "dingo/api": "1.0.0-beta6",
+    "aacotroneo/laravel-saml2": "0.8.0",
     "webpatser/laravel-uuid": "2.*",
     "nstapelbroek/culpa": "^2.0",
-    "guzzlehttp/guzzle": "^6.2",
-    "illuminate/mail": "^5.2",
+    "guzzlehttp/guzzle": "6.2",
+    "illuminate/mail": "5.3",
     "graham-campbell/flysystem": "^3.0",
-    "doctrine/dbal": "~2.3"
+    "doctrine/dbal": "~2.3",
+    "illuminate/config": "5.3.0",
+    "dusterio/lumen-passport": "~0.1",
+     "dingo/blueprint": "0.2.*",
+     "doctrine/annotations": "1.2.*"
+     
   },
   "require-dev": {
     "fzaninotto/faker": "~1.4",
-    "satooshi/php-coveralls": "dev-master",
+    "satooshi/php-coveralls": "1.0.*",
+    "barryvdh/laravel-ide-helper": "^2.1",
     "phpunit/phpunit": "5.3.*",
     "ext-sqlite3":"*",
     "raveren/kint": "*"
+     
   },
   "autoload": {
     "psr-4": {

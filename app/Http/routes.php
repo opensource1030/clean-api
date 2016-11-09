@@ -13,7 +13,41 @@
 
 $api = app('Dingo\Api\Routing\Router');
 
+ /////////////////////////////////////
 $api->version('v1', function ($api) {
+    $api->get('redirect', function () { 
+        $query = http_build_query([ 
+            'client_id' => '3', 
+            'redirect_uri' => 'clean.api/callback',
+            'response_type' => 'code', 
+            'scope' => '' 
+    ]); 
+    return redirect('http://clean.api/oauth/authorize?'.$query); 
+    });
+
+    $api->get('callback', 
+        function (Illuminate\Http\Request $request) { 
+           $http = new \GuzzleHttp\Client; 
+           $response = $http->post('http://clean.api/oauth/token', 
+            [
+              'form_params' => 
+              [ 
+                'client_id' => '3',
+                'client_secret' => 'gh9PDSgi1iW963kl21TZ3RlOP1rhcCOSSm6USTSt',
+                'grant_type' => 'authorization_code',
+                'redirect_uri' => 'clean.api/dashboard', 
+                'code' => $request->code, 
+              ], 
+        ]); 
+    return json_decode((string) $response->getBody(), true); 
+    }
+    );
+//////////////////////////////////////
+
+    $api->get('/user/{id}', function ($id) { 
+    return \WA\DataStore\User\User::find($id)->email; 
+    });
+
     $api->get('/', function () {
         return response()->json([
             'app_name'    => env('API_NAME', 'clean'),

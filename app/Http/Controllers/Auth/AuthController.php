@@ -4,7 +4,7 @@ namespace WA\Http\Controllers\Auth;
 
 use WA\Http\Controllers\ApiController;
 
-use LucaDegasperi\OAuth2Server\Authorizer;
+
 use WA\Repositories\User\UserInterface;
 use Cache;
 
