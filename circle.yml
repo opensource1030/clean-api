@@ -29,16 +29,10 @@ test:
 
 deployment:
   development:
-    branch: develop
+    branch: master
     commands:
       - bundle exec cap develop deploy
-
-
-  staging:
-    branch: [/^release\/.*/, /^hotfix\/.*/ ]
-    commands:
-      - bundle exec cap staging deploy
-
+      
 general:
   branches:
     ignore:

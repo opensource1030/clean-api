@@ -1,10 +1,10 @@
 role :app, %w{10.1.20.24}
 
 set :stage, :production
-set :deploy_to, '/home/deploy/webapps/clean'
-set :branch, "master"
-# set :keep_releases, 4
-set :log_level, :info
+set :deploy_to, '/home/deploy/webapps/clean/api'
+set :branch, "env/prod"
+set :keep_releases, 4
+set :log_level, :debug
 
 #require custom config
 # require './config/myconfig.rb'
@@ -14,7 +14,6 @@ set :ssh_options, {
 }
 
 set :tmp_dir, '/home/deploy/tmp'
-set :grunt_tasks, 'deploy:production'
 
 namespace :composer do
 
@@ -36,13 +35,8 @@ namespace :deploy do
 
   after :published, "composer:install"
   after :published, "laravel:permissions"
-  #after :published, "laravel:migrate"
-  after :published, "laravel:optimize"
-
-  after :published, "ops:make_client_dirs"
-  after :published, "ops:asset_compile"
+  after :published, "laravel:migrate"
+  
   after :published, "ops:reset_app"
-  after :published, "ops:asset_recompile"
-  after :published, "laravel:restart_queue"
-
+  # after :published, "laravel:restart_queue"
 end

@@ -22,7 +22,7 @@ set :slackistrano, {
 # Devops commands
 namespace :ops do
 
-	desc 'reset PHP FPM'
+    desc 'reset PHP FPM'
     task :reset_app do
         on roles(:app), in: :sequence, wait: 1 do
             execute "sudo service php7-fpm restart"
@@ -37,15 +37,13 @@ namespace :ops do
             execute "wget -O /home/deploy/webapps/api_doc/dist/versions/oas.json https://api.stoplight.io/v1/versions/#{version}/export/oas.json"
         end
     end 
-
     
-        desc 'Copy ENV specific files to servers.'
-        task :put_env  do
-          on roles(:app), in: :sequence, wait: 1 do
-            %x[envsubst < .env.#{fetch :rails_env} > .env ]
-            upload! ".env", "#{deploy_to}/shared/.env"
-          end
+    desc 'Copy ENV specific files to servers.'
+    task :put_env  do
+        on roles(:app), in: :sequence, wait: 1 do
+            upload! ".env.#{fetch :rails_env}", "#{deploy_to}/shared/.env"
         end
+    end
 end
 
 # Composer
@@ -74,7 +72,7 @@ namespace :laravel do
     desc "Run Laravel Artisan migrate task."
     task :migrate do
         on roles(:app), in: :sequence, wait: 5 do
-            execute "cd #{release_path} && php artisan migrate"
+            execute "cd #{release_path} && php artisan migrate --force"
         end
     end
 
@@ -96,7 +94,7 @@ namespace :laravel do
     task :optimize do
         on roles(:app), in: :sequence, wait: 5 do
             within release_path  do
-                execute "cd #{release_path} && php artisan clear-compiled"
+                execute "cd #{release_path} && php artisan cache:clear"
             end
         end
     end
@@ -111,4 +109,3 @@ namespace :laravel do
 
 
 end
-

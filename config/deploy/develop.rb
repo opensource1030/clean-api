@@ -1,10 +1,9 @@
 role :app, %w{204.156.175.49}
 
 set :stage, :develop
-set :deploy_to, '/home/deploy/webapps/api'
-set :branch, ENV['CIRCLE_BRANCH']
-#set :keep_releases, 1
-
+set :deploy_to, '/home/deploy/webapps/clean/api'
+set :branch, 'master'
+set :keep_releases, 3
 set :log_level, :debug
 
 set :ssh_options, {
