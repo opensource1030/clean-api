@@ -17,8 +17,10 @@ $api->version('v1', function ($api) {
     $api->get('/', function () {
         return response()->json([
             'app_name'    => env('API_NAME', 'clean'),
+            'app_version'    => env('APP_VERSION', 'NaN'),
+            'app_support'    => env('SUPPORT_EMAIL', 'devsuuport@wirelessanalytics.com'),
             'api_version' => env('API_VERSION', 'v1'),
-            'api_domain'  => env('API_DOMAIN', 'clean.api')
+            'api_domain'  => env('API_DOMAIN', 'api.wirelessanalytics.com')
         ]);
     });
 
