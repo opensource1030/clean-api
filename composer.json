@@ -21,7 +21,6 @@
   "require-dev": {
     "fzaninotto/faker": "~1.4",
     "satooshi/php-coveralls": "dev-master",
-    "barryvdh/laravel-ide-helper": "^2.1",
     "phpunit/phpunit": "5.3.*",
     "ext-sqlite3":"*",
     "raveren/kint": "*"
@@ -29,15 +28,15 @@
   "autoload": {
     "psr-4": {
       "WA\\": "app/"
-    }
+    },
+    "files": [
+      "app/Http/helpers.php"
+    ]
   },
   "autoload-dev": {
     "classmap": [
       "tests/",
       "database/"
-    ],
-    "files": [
-      "app/Http/helpers.php"
     ]
   },
   "config": {
@@ -49,9 +48,7 @@
   "scripts": {
     "post-update-cmd": [
       "Illuminate\\Foundation\\ComposerScripts::postUpdate",
-      "php artisan cache:clear ",
-      "php artisan ide-helper:generate",
-      "php artisan ide-helper:meta"
+      "php artisan cache:clear "
     ]
   },
   "minimum-stability": "dev"

@@ -120,7 +120,6 @@ $app->configure('saml2_settings');
 // $app->register(WA\Providers\AppServiceProvider::class);
 //$app->register(WA\Providers\AuthServiceProvider::class);
 // $app->register(WA\Providers\EventServiceProvider::class);
-$app->register(Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class);
 $app->register(\Culpa\CulpaServiceProvider::class);
 $app->register(\Dingo\Api\Provider\LumenServiceProvider::class);
 $app->register(LucaDegasperi\OAuth2Server\OAuth2ServerServiceProvider::class);
