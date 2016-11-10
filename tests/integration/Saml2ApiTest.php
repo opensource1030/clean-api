@@ -11,6 +11,9 @@ class Saml2ApiTest extends TestCase
 {
     use DatabaseMigrations;
 
+    /**
+    * @group need-review
+    **/
     public function testApiDoSSOEmailRegister()
     {
 
@@ -23,7 +26,9 @@ class Saml2ApiTest extends TestCase
             'message' => 'Please, register a new user.',
         ]);
     }
-
+    /**
+    * @group need-review
+    **/
     public function testApiDoSSOEmailPassword()
     {
 
@@ -36,7 +41,9 @@ class Saml2ApiTest extends TestCase
             'message' => 'Please, enter your password.',
         ]);
     }
-
+    /**
+    * @group need-review
+    **/
     public function testApiDoSSOEmailMicrosoftFail()
     {
 
@@ -58,6 +65,9 @@ class Saml2ApiTest extends TestCase
         $this->assertStringStartsWith('Url to redirect not found.', $returnMicrosoftArray['message']);
     }
 
+    /**
+    * @group need-review
+    **/
     public function testApiDoSSOEmailMicrosoftSaml2()
     {
 
@@ -78,6 +88,9 @@ class Saml2ApiTest extends TestCase
         $this->assertStringStartsWith('https://login.microsoftonline.com', $returnMicrosoftArray['data']['redirectUrl']);
     }
 
+    /**
+    * @group need-review
+    **/
     public function testApiDoSSOEmailNoValid()
     {
 
@@ -91,6 +104,9 @@ class Saml2ApiTest extends TestCase
         ]);
     }
 
+    /**
+    * @group need-review
+    **/
     public function testApiDoSSOLoginUuid()
     {
 
