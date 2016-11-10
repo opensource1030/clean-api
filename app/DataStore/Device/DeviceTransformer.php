@@ -55,7 +55,9 @@ class DeviceTransformer extends FilterableTransformer
     public function includeDevicetypes(Device $device)
     {
         $this->criteria = $this->getRequestCriteria();
-        $devicetypes = $this->applyCriteria($device->devicetypes(), $this->criteria);
+        $devicetypes = $this->applyCriteria($device->devicetypes(), $this->criteria, true, [
+            'devicetypes' => 'device_types'
+        ]);
         return new ResourceCollection($devicetypes->get(), new DeviceTypeTransformer(), 'devicetypes');
     }
 }

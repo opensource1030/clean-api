@@ -19,6 +19,11 @@ abstract class AbstractRepository implements RepositoryInterface
     protected $model;
 
     /**
+     * @var string
+     */
+    protected $modelClass;
+
+    /**
      * @var \Illuminate\Database\Eloquent\Builder
      */
     protected $query;
@@ -41,6 +46,7 @@ abstract class AbstractRepository implements RepositoryInterface
     public function __construct(Model $model)
     {
         $this->model = $model;
+        $this->modelClass = get_class($model);
     }
 
     /**

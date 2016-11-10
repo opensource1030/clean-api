@@ -31,7 +31,7 @@ abstract class FilterableTransformer extends TransformerAbstract
         if (!class_exists($transformer)) {
             throw new \BadMethodCallException("Unable to create $transformer");
         }
-        $include = $this->applyCriteria($resource->$finder(), $this->criteria);
+        $include = $this->applyCriteria($resource->$finder(), $this->criteria, true);
         return new ResourceCollection($include->get(), new $transformer(), $finder);
 
     }

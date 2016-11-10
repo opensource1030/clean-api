@@ -58,6 +58,16 @@ trait Criteria
     public $criteriaModelName = null;
     protected $criteriaModelColumns = null;
 
+    protected $isInclude = false;
+
+    /**
+     * We have to map some table names / model names because they aren't totally named right
+     *
+     * @var array
+     */
+    protected $modelMap = null;
+
+
     /**
      * CriteriaTransformer constructor.
      *
@@ -150,22 +160,28 @@ trait Criteria
 
     /**
      * @param $criteriaModel
-     *
+     * @param null $criteria Optional criteria
+     * @param bool $isInclude Optional Is this an include?
+     * @param null $modelMap Optional model table-name mapping for non-standard table names
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    protected function applyCriteria($criteriaModel, $criteria = null)
+    protected function applyCriteria($criteriaModel, $criteria = null, $isInclude = false, $modelMap = null)
     {
         if ($criteria !== null) {
             $this->setCriteria($criteria);
         }
 
+        $this->isInclude = $isInclude;
+        $this->modelMap = $modelMap;
         $this->criteriaModel = $criteriaModel;
 
         $this->getQuery($criteriaModel, true);
+
         $this->sort()->filter();
 
         return $this->criteriaQuery;
     }
+
 
     /**
      * Apply filter criteria to the current query.
@@ -185,60 +201,90 @@ trait Criteria
 
         foreach ($this->filterCriteria->filtering() as $filterKey => $filterVal) {
             if (strpos($filterKey, '.')) {
-                if (substr($filterKey, 0, strpos($filterKey, '.')) !== $criteriaModelName) {
+                $relKey = substr($filterKey, 0, strpos($filterKey, '.'));
+                $relColumn = substr($filterKey, strpos($filterKey, '.') + 1);
+
+                if (is_array($this->modelMap) && isset($this->modelMap[$relKey])) {
+                    $filterKey = $this->modelMap[$relKey];
+                }
+
+                if ($filterKey !== $criteriaModelName) {
+                    $op = strtolower(key($filterVal));
+                    $val = current($filterVal);
+
+                    $this->criteriaQuery->whereHas(str_singular($relKey),
+                        function ($query) use ($relColumn, $op, $val) {
+                            return $query = $this->executeCriteria($query, $relColumn, $op, $val);
+                        });
                     continue;
                 }
-                $filterKey = substr($filterKey, strpos($filterKey, '.') + 1);
+                $filterKey = $relColumn;
+            } elseif ($this->isInclude) {
+                continue;
             }
 
             if (in_array($filterKey, $criteriaModelColumns)) {
                 $op = strtolower(key($filterVal));
                 $val = current($filterVal);
-                switch ($op) {
-                    case 'gt':
-                        $this->criteriaQuery->where($filterKey, '>', $val);
-                        break;
-                    case 'lt':
-                        $this->criteriaQuery->where($filterKey, '<', $val);
-                        break;
-                    case 'ge':
-                        $this->criteriaQuery->where($filterKey, '>=', $val);
-                        break;
-                    case 'le':
-                        $this->criteriaQuery->where($filterKey, '>=', $val);
-                        break;
-                    case 'ne':
-                        // Handle delimited lists
-                        $vals = explode(',', $val);
-                        $vals = $this->extractAdvancedCriteria($vals);
-                        if (count($vals) === 0) {
-                            continue;
-                        }
-                        $this->criteriaQuery->whereNotIn($filterKey, $vals);
-                        break;
-                    case 'eq':
-                        // Handle delimited lists
-                        $vals = explode(',', $val);
-                        $vals = $this->extractAdvancedCriteria($vals);
-                        if (count($vals) === 0) {
-                            continue;
-                        }
-                        $this->criteriaQuery->whereIn($filterKey, $vals);
-                        break;
-                    case 'like':
-                        $val = str_replace('*', '%', $val);
-                        $this->criteriaQuery->where($filterKey, 'LIKE', $val);
-                        break;
-                    default:
-                        throw new BadCriteriaException('Invalid filter operator');
-                        break;
-                }
+                $this->criteriaQuery = $this->executeCriteria($this->criteriaQuery, $filterKey, $op, $val);
             } else {
                 throw new BadCriteriaException('Invalid filter criteria');
             }
         }
 
         return $this;
+    }
+
+    /**
+     * @param $query
+     * @param $filterKey
+     * @param $op
+     * @param $val
+     * @return mixed
+     * @throws BadCriteriaException
+     */
+    protected function executeCriteria($query, $filterKey, $op, $val)
+    {
+        switch ($op) {
+            case 'gt':
+                $query->where($filterKey, '>', $val);
+                break;
+            case 'lt':
+                $query->where($filterKey, '<', $val);
+                break;
+            case 'ge':
+                $query->where($filterKey, '>=', $val);
+                break;
+            case 'le':
+                $query->where($filterKey, '>=', $val);
+                break;
+            case 'ne':
+                // Handle delimited lists
+                $vals = explode(',', $val);
+                $vals = $this->extractAdvancedCriteria($vals);
+                if (count($vals) === 0) {
+                    continue;
+                }
+                $query->whereNotIn($filterKey, $vals);
+                break;
+            case 'eq':
+                // Handle delimited lists
+                $vals = explode(',', $val);
+                $vals = $this->extractAdvancedCriteria($vals);
+                if (count($vals) === 0) {
+                    continue;
+                }
+                $query->whereIn($filterKey, $vals);
+                break;
+            case 'like':
+                $val = str_replace('*', '%', $val);
+                $query->where($filterKey, 'LIKE', $val);
+                break;
+            default:
+                throw new BadCriteriaException('Invalid filter operator');
+                break;
+        }
+        return $query;
     }
 
     /**

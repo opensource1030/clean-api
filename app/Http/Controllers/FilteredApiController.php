@@ -89,9 +89,10 @@ abstract class FilteredApiController extends ApiController
             $error['errors']['getincludes'] = Lang::get('messages.NotExistInclude');
             return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
         }
-        
+
         $response = $this->response->paginator($resource, $transformer, ['key' => $this->modelPlural]);
         $response = $this->applyMeta($response);
+
         return $response;
     }
 

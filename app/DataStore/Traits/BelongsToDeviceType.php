@@ -14,6 +14,6 @@ trait BelongsToDeviceType
      */
     public function deviceType()
     {
-        return $this->belongsTo('WA\DataStore\DeviceType', 'deviceTypeId');
+        return $this->belongsTo('WA\DataStore\DeviceType\DeviceType', 'deviceTypeId');
     }
 }
