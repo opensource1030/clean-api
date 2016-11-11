@@ -124,7 +124,7 @@ class EloquentDeviceType extends AbstractRepository implements DeviceTypeInterfa
             return false;
         }
 
-        //dd("AQUI");
+     
 
         return $deviceType;
     }

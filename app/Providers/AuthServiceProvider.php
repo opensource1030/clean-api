@@ -34,10 +34,16 @@ class AuthServiceProvider extends ServiceProvider
                 return User::where('api_token', $request->input('api_token'))->first();
             }
         });*/
-         $this->registerPolicies();
+       
+  $this->registerPolicies();
+
+    /*Route::group(['prefix' => 'api', 'middleware' => 'cors'], function() {
 
         Passport::routes();
 
-        Passport::pruneRevokedTokens();
+    }); */
+      
+ Passport::routes();
+       
     }
 }

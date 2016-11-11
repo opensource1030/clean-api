@@ -21,9 +21,34 @@ $api->version('v1', function ($api) {
             'redirect_uri' => 'clean.api/callback',
             'response_type' => 'code', 
             'scope' => '' 
-    ]); 
-    return redirect('http://clean.api/oauth/authorize?'.$query); 
+        ]);
+        return redirect('http://clean.api/oauth/authorize?'.$query); 
     });
+
+    ///////////Routes//////
+    $apiA = '\Laravel\Passport\Http\Controllers\AccessTokenController';
+    $api->post('oauth/token', ['as' => 'api.token', 'uses' => $apiA.'@issueToken']);
+
+    $apiAATC = '\Laravel\Passport\Http\Controllers\AuthorizedAccessTokenController';
+    $api->get('/oauth/tokens', ['as' => 'api.tokens', 'uses' => $apiAATC.'@forUser']);
+    $api->delete('/oauth/tokens/{token_id}', ['as' => 'api.tokens.id', 'uses' => $apiAATC.'@destroy']); 
+    $apiTTC = '\Laravel\Passport\Http\Controllers\TransientTokenController';
+    $api->post('/oauth/token/refresh', ['as' => 'api.refresh', 'uses' => $apiTTC.'@refresh']);
+
+    $apiCC = '\Laravel\Passport\Http\Controllers\ClientController';
+    $api->get('/oauth/clients', ['as' => 'api.foruser', 'uses' => $apiCC.'@forUser']);
+    $api->post('/oauth/clients', ['as' => 'api.store', 'uses' => $apiCC.'@store']);
+    $api->put('/oauth/clients/{client_id}', ['as' => 'api.update', 'uses' => $apiCC.'@update']);
+    $api->delete('/oauth/clients/{client_id}', ['as' => 'api.destroy', 'uses' => $apiCC.'@destroy']);
+
+    $apiSC = '\Laravel\Passport\Http\Controllers\ScopeController';
+    $api->get('/oauth/scopes', ['as' => 'api.all', 'uses' => $apiSC.'@all']);
+
+    $apiATC = '\Laravel\Passport\Http\Controllers\PersonalAccessTokenController';
+    $api->get('/oauth/personal-access-tokens', ['as' => 'api.foruser', 'uses' => $apiATC.'@forUser']);
+    $api->post('/oauth/personal-access-tokens', ['as' => 'api.store', 'uses' => $apiATC.'@store']);
+    $api->delete('/oauth/personal-access-tokens/{token_id}', ['as' => 'api.destroy', 'uses' => $apiATC.'@destroy']);
+    ///////////////////////////
 
     $api->get('callback', 
         function (Illuminate\Http\Request $request) { 

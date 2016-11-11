@@ -2,7 +2,7 @@
 
 namespace WA\DataStore\User;
 //namespace App;
-
+use Laravel\Passport\HasApiTokens as laravelHasApiTokens;
 use Illuminate\Auth\Authenticatable as IllumnateAuthenticableTrait;
 use Illuminate\Auth\Passwords\CanResetPassword as IlluminateCanResetPasswordTrait;
 use Illuminate\Contracts\Auth\Authenticatable as IllumincateAuthenticatableContract;
@@ -36,7 +36,7 @@ class User extends BaseDataStore implements IlluminateCanResetPasswordContract, 
 //        EntrustUserTrait::boot insteadof RevisionableTrait;
 //    }
     use IlluminateCanResetPasswordTrait, IllumnateAuthenticableTrait;
-
+    use laravelHasApiTokens;
     public $timestamps = true;
     protected $tableName = 'users';
     protected $dontKeepRevisionOf = [
@@ -115,6 +115,16 @@ class User extends BaseDataStore implements IlluminateCanResetPasswordContract, 
      *
      * @return mixed
      */
+    public function findForPassport($email)
+    {
+        return User::where('email', $email)->first();
+    }
+
+    public function getAuthIdentifier()
+    {
+        return $this->id;
+    }
+    
     public function getTransformer()
     {
         return new UserTransformer();
