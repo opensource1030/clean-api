@@ -41,24 +41,6 @@ class EloquentService extends AbstractRepository implements ServiceInterface
         if (isset($data['description'])) {
             $service->description = $data['description'];
         }
-        if (isset($data['domesticMinutes'])) {
-            $service->domesticMinutes = $data['domesticMinutes'];
-        }
-        if (isset($data['domesticData'])) {
-            $service->domesticData = $data['domesticData'];
-        }
-        if (isset($data['domesticMessages'])) {
-            $service->domesticMessages = $data['domesticMessages'];
-        }
-        if (isset($data['internationalMinutes'])) {
-            $service->internationalMinutes = $data['internationalMinutes'];
-        }
-        if (isset($data['internationalData'])) {
-            $service->internationalData = $data['internationalData'];
-        }
-        if (isset($data['internationalMessages'])) {
-            $service->internationalMessages = $data['internationalMessages'];
-        }
         if (isset($data['carrierId'])) {
             $service->carrierId = $data['carrierId'];
         }
@@ -98,12 +80,6 @@ class EloquentService extends AbstractRepository implements ServiceInterface
             "planCode" => isset($data['planCode']) ? $data['planCode'] : 0,
             "cost" =>  isset($data['cost']) ? $data['cost'] : 0,
             "description" => isset($data['description']) ? $data['description'] : null,
-            "domesticMinutes" => isset($data['domesticMinutes']) ? $data['domesticMinutes'] : 0,
-            "domesticData" =>  isset($data['domesticData']) ? $data['domesticData'] : 0,
-            "domesticMessages" => isset($data['domesticMessages']) ? $data['domesticMessages'] : 0,
-            "internationalMinutes" =>  isset($data['internationalMinutes']) ? $data['internationalMinutes'] : 0,
-            "internationalData" => isset($data['internationalData']) ? $data['internationalData'] : 0,
-            "internationalMessages" => isset($data['internationalMessages']) ? $data['internationalMessages'] : 0,
             "carrierId" =>  isset($data['carrierId']) ? $data['carrierId'] : null ,
         ];
 

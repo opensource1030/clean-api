@@ -19,7 +19,7 @@ class RepositoriesServiceProviders extends ServiceProvider
      */
     public function register()
     {
-        $this->registerAddon();
+        $this->registerServiceItem();
         $this->registerApp();
         $this->registerAsset();
         $this->registerDevice();

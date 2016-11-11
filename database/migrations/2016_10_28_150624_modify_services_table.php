@@ -16,6 +16,30 @@ class ModifyServicesTable extends Migration
     {
         Schema::table(
             $this->tableName, function ($table) {
+                $table->dropColumn('domesticMinutes');
+        });
+        Schema::table(
+            $this->tableName, function ($table) {
+                $table->dropColumn('domesticData');
+        });
+        Schema::table(
+            $this->tableName, function ($table) {
+                $table->dropColumn('domesticMessages');
+        });
+        Schema::table(
+            $this->tableName, function ($table) {
+                $table->dropColumn('internationalMinutes');
+        });
+        Schema::table(
+            $this->tableName, function ($table) {
+                $table->dropColumn('internationalData');
+        });
+        Schema::table(
+            $this->tableName, function ($table) {
+                $table->dropColumn('internationalMessages');
+        });        
+        Schema::table(
+            $this->tableName, function ($table) {
                 $table->integer('carrierId')->unsigned()->nullable();
                 $table->string('status')->nullable();
         });
@@ -32,5 +56,25 @@ class ModifyServicesTable extends Migration
      */
     public function down()
     {
+        Schema::table(
+            $this->tableName, function ($table) {
+                $table->integer('domesticMinutes')->default(0);
+                $table->integer('domesticData')->default(0);
+                $table->integer('domesticMessages')->default(0);
+                $table->integer('internationalMinutes')->default(0);
+                $table->integer('internationalData')->default(0);
+                $table->integer('internationalMessages')->default(0);
+        });
+        
+        Schema::table(
+            $this->tableName, function ($table) {
+                $table->dropForeign('services_carrierid_foreign');
+                $table->dropColumn('carrierId');
+        });
+
+        Schema::table(
+            $this->tableName, function ($table) {
+                $table->dropColumn('status');
+        });
     }
 }

@@ -60,23 +60,3 @@ class CreateServices extends Migration {
 		$this->forceDropTable($this->tableName);
 	}
 }
-
-/* EXAMPLE
-
-{
-"id": 1,
-"title": "Pooled Domestic Voice Plan",
-"planCode": 55555,
-"cost": 25,
-"description": "Reduces the per minute rate for calls originating from outside the U.S.",
-"domesticMinutes": 3000,
-"domesticData": 3000,
-"domesticMessages": 3000,
-"internationalMinutes": 3000,
-"internationalData": 3000,
-"internationalMessages": 3000,
-"links": {
-"self": {
-"href": "service/1"
-}
-*/

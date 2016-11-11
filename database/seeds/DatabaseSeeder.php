@@ -18,7 +18,6 @@ class DatabaseSeeder extends Seeder
                 break;
         }
 
-        $this->call(AddonsTableSeeder::class);
         $this->call(AddressTableSeeder::class);
         $this->call(AllocationsTableSeeder::class);
         $this->call(AppsTableSeeder::class);
@@ -50,6 +49,7 @@ class DatabaseSeeder extends Seeder
         $this->call(PricesTableSeeder::class);
         //$this->call(ProvidersTableSeeder::class);
         $this->call(RequestsTableSeeder::class);
+        $this->call(ServiceItemsTableSeeder::class);
         $this->call(ServicesTableSeeder::class);
         $this->call(UdlsTableSeeder::class);
         $this->call(UserUdlsTableSeeder::class);

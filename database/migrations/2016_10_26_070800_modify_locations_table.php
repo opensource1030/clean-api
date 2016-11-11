@@ -26,5 +26,17 @@ class ModifyLocationsTable extends Migration
      */
     public function down()
     {
+        Schema::table($this->tableName, function ($table) {
+            $table->dropColumn('country');
+        });
+        Schema::table($this->tableName, function ($table) {
+            $table->dropColumn('city');
+        });
+        Schema::table($this->tableName, function ($table) {
+            $table->dropColumn('zipCode');
+        });
+        Schema::table($this->tableName, function ($table) {
+            $table->dropColumn('address');
+        });      
     }
 }

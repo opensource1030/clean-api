@@ -1,23 +1,23 @@
 <?php
 
-namespace WA\Repositories\Addon;
+namespace WA\Repositories\ServiceItem;
 
 use WA\Repositories\RepositoryInterface;
 
 /**
- * Interface AddonInterface.
+ * Interface ServiceItemsInterface.
  */
-interface AddonInterface extends RepositoryInterface
+interface ServiceItemInterface extends RepositoryInterface
 {
     /**
-     * Get Array of all Addons.
+     * Get Array of all ServiceItems.
      *
-     * @return array of Addon
+     * @return array of ServiceItem
      */
-    public function getAllAddon();
+    public function getAllServiceItems();
 
     /**
-     * Create Addon.
+     * Create ServiceItem.
      *
      * @param array $data
      *
@@ -26,7 +26,7 @@ interface AddonInterface extends RepositoryInterface
     public function create(array $data);
 
     /**
-     * Update Addon.
+     * Update ServiceItem.
      *
      * @param array $data
      *
@@ -35,7 +35,7 @@ interface AddonInterface extends RepositoryInterface
     public function update(array $data);
 
     /**
-     * Delete Addon.
+     * Delete ServiceItem.
      *
      * @param int  $id
      * @param bool $soft true soft deletes
