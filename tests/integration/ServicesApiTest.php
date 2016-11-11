@@ -3,7 +3,7 @@
 //use Laravel\Lumen\Testing\DatabaseTransactions;
 use Laravel\Lumen\Testing\DatabaseMigrations;
 
-use WA\DataStore\Addon\Addon;
+use WA\DataStore\ServiceItem\ServiceItem;
 
 
 
@@ -19,9 +19,7 @@ class ServicesApiTest extends TestCase
     {
         factory(\WA\DataStore\Service\Service::class, 40)->create();
 
-        $res = $this->get('services');
-
-        $res->seeJsonStructure([
+        $res = $this->get('services')->seeJsonStructure([
             'data' => [
                 0 => [
                     'type',
@@ -31,13 +29,7 @@ class ServicesApiTest extends TestCase
                         'title',
                         'planCode',
                         'cost',
-                        'description',
-                        'domesticMinutes',
-                        'domesticData',
-                        'domesticMessages',
-                        'internationalMinutes',
-                        'internationalData',
-                        'internationalMessages',
+                        'description',                        
                         'carrierId',
                         'created_at' => [
                             'date',
@@ -84,26 +76,20 @@ class ServicesApiTest extends TestCase
                 'title' => $service->title,
                 'planCode' => "$service->planCode",
                 'cost' => "$service->cost",
-                'description' => $service->description,
-                'domesticMinutes' => "$service->domesticMinutes",
-                'domesticData' => "$service->domesticData",
-                'domesticMessages' => "$service->domesticMessages",
-                'internationalMinutes' => "$service->internationalMinutes",
-                'internationalData' => "$service->internationalData",
-                'internationalMessages' => "$service->internationalMessages",
+                'description' => $service->description,                
                 'carrierId' => "$service->carrierId",
             ]);
         
     }
 
-    public function testGetServiceByIdandIncludesAddons()
+    public function testGetServiceByIdandIncludesServiceItems()
     {
         $service = factory(\WA\DataStore\Service\Service::class)->create();
 
-        factory(\WA\DataStore\Addon\Addon::class)->create(['serviceId' => $service->id]);
-        factory(\WA\DataStore\Addon\Addon::class)->create(['serviceId' => $service->id]);
+        factory(\WA\DataStore\ServiceItem\ServiceItem::class)->create(['serviceId' => $service->id]);
+        factory(\WA\DataStore\ServiceItem\ServiceItem::class)->create(['serviceId' => $service->id]);
 
-        $response = $this->json('GET', 'services/'.$service->id.'?include=addons')
+        $response = $this->json('GET', 'services/'.$service->id.'?include=serviceItems')
             ->seeJsonStructure([
                 'data' => [
                     'type',
@@ -113,13 +99,7 @@ class ServicesApiTest extends TestCase
                         'title',
                         'planCode',
                         'cost',
-                        'description',
-                        'domesticMinutes',
-                        'domesticData',
-                        'domesticMessages',
-                        'internationalMinutes',
-                        'internationalData',
-                        'internationalMessages',
+                        'description',                        
                         'carrierId',
                         'created_at' => [
                             'date',
@@ -136,7 +116,7 @@ class ServicesApiTest extends TestCase
                         'self',
                     ],
                     'relationships' => [
-                        'addons' => [
+                        'serviceItems' => [
                             'links' => [
                                 'self',
                                 'related',
@@ -155,8 +135,12 @@ class ServicesApiTest extends TestCase
                         'type',
                         'id',
                         'attributes' => [
-                            'name',
+                            'category',
+                            'description',
+                            'value',
+                            'unit',
                             'cost',
+                            'domain',
                             'serviceId'
                         ],
                         'links' => [
@@ -179,13 +163,7 @@ class ServicesApiTest extends TestCase
                         'title' => 'Service Test',
                         'planCode' => '11111',
                         'cost' => '22',
-                        'description' => 'Test Service',
-                        'domesticMinutes' => '111',
-                        'domesticData' => '222',
-                        'domesticMessages' => '333',
-                        'internationalMinutes' => '444',
-                        'internationalData' => '555',
-                        'internationalMessages' => '666',
+                        'description' => 'Test Service',                        
                         'carrierId' => "1",
                     ],
                 ],
@@ -197,12 +175,7 @@ class ServicesApiTest extends TestCase
                 'planCode' => '11111',
                 'cost' => '22',
                 'description' => 'Test Service',
-                'domesticMinutes' => '111',
-                'domesticData' => '222',
-                'domesticMessages' => '333',
-                'internationalMinutes' => '444',
-                'internationalData' => '555',
-                'internationalMessages' => '666',
+                
                 'carrierId' => "1",
             ]);
     }
@@ -210,10 +183,10 @@ class ServicesApiTest extends TestCase
     public function testUpdateService()
     {
         $service = factory(\WA\DataStore\Service\Service::class)->create(
-            ['status' => 'Enabled', 'title' => 'title1', 'planCode' => 11111, 'cost' => 30, 'description' => 'desc1', 'domesticMinutes' => 100, 'domesticData' => 100, 'domesticMessages' => 100, 'internationalMinutes' => 100, 'internationalData' => 100, 'internationalMessages' => 100, 'carrierId' => "1"]
+            ['status' => 'Enabled', 'title' => 'title1', 'planCode' => 11111, 'cost' => 30, 'description' => 'desc1', 'carrierId' => "1"]
         );
         $serviceAux = factory(\WA\DataStore\Service\Service::class)->create(
-            ['status' => 'Disabled', 'title' => 'title2', 'planCode' => 22222, 'cost' => 40, 'description' => 'desc2', 'domesticMinutes' => 200, 'domesticData' => 200, 'domesticMessages' => 200, 'internationalMinutes' => 200, 'internationalData' => 200, 'internationalMessages' => 200, 'carrierId' => "2"]
+            ['status' => 'Disabled', 'title' => 'title2', 'planCode' => 22222, 'cost' => 40, 'description' => 'desc2', 'carrierId' => "2"]
         );
 
         $this->assertNotEquals($service->status, $serviceAux->status);
@@ -221,12 +194,6 @@ class ServicesApiTest extends TestCase
         $this->assertNotEquals($service->title, $serviceAux->title);
         $this->assertNotEquals($service->cost, $serviceAux->cost);
         $this->assertNotEquals($service->description, $serviceAux->description);
-        $this->assertNotEquals($service->domesticMinutes, $serviceAux->domesticMinutes);
-        $this->assertNotEquals($service->domesticData, $serviceAux->domesticData);
-        $this->assertNotEquals($service->domesticMessages, $serviceAux->domesticMessages);
-        $this->assertNotEquals($service->internationalMinutes, $serviceAux->internationalMinutes);
-        $this->assertNotEquals($service->internationalData, $serviceAux->internationalData);
-        $this->assertNotEquals($service->internationalMessages, $serviceAux->internationalMessages);
         $this->assertNotEquals($service->carrierId, $serviceAux->carrierId);
 
         $this->put('/services/'.$serviceAux->id,
@@ -239,13 +206,7 @@ class ServicesApiTest extends TestCase
                         'title' => "$service->title",
                         'planCode' => "$service->planCode",
                         'cost' => "$service->cost",
-                        'description' => $service->description,
-                        'domesticMinutes' => "$service->domesticMinutes",
-                        'domesticData' => "$service->domesticData",
-                        'domesticMessages' => "$service->domesticMessages",
-                        'internationalMinutes' => "$service->internationalMinutes",
-                        'internationalData' => "$service->internationalData",
-                        'internationalMessages' => "$service->internationalMessages",
+                        'description' => $service->description,                        
                         'carrierId' => "$service->carrierId",
                     ],
                 ],
@@ -257,28 +218,23 @@ class ServicesApiTest extends TestCase
                 'planCode' => '11111',
                 'cost' => '30',
                 'description' => 'desc1',
-                'domesticMinutes' => '100',
-                'domesticData' => '100',
-                'domesticMessages' => '100',
-                'internationalMinutes' => '100',
-                'internationalData' => '100',
-                'internationalMessages' => '100',
+                
                 'carrierId' => "1",
             ]);
     }
 
-    public function testUpdateServiceIncludeAddons(){
+    public function testUpdateServiceIncludeServiceItems(){
 
         $carrier = factory(\WA\DataStore\Carrier\Carrier::class)->create();
 
         $service = factory(\WA\DataStore\Service\Service::class)->create(['carrierId' => $carrier->id]);
 
-        $addon1 = factory(\WA\DataStore\Addon\Addon::class)->create(['serviceId' => $service->id]);
-        $addon2 = factory(\WA\DataStore\Addon\Addon::class)->create(['serviceId' => $service->id]);
-        $addon3 = factory(\WA\DataStore\Addon\Addon::class)->create(['serviceId' => $service->id]);
+        $serviceitem1 = factory(\WA\DataStore\ServiceItem\ServiceItem::class)->create(['serviceId' => $service->id]);
+        $serviceitem2 = factory(\WA\DataStore\ServiceItem\ServiceItem::class)->create(['serviceId' => $service->id]);
+        $serviceitem3 = factory(\WA\DataStore\ServiceItem\ServiceItem::class)->create(['serviceId' => $service->id]);
 
 /*
-        $var = $this->get('/services/'.$service->id.'?include=addons')
+        $var = $this->get('/services/'.$service->id.'?include=serviceItems')
             ->seeJsonStructure([                
                 'data' => [
                     'type',
@@ -288,13 +244,7 @@ class ServicesApiTest extends TestCase
                         'title',
                         'planCode',
                         'cost',
-                        'description',
-                        'domesticMinutes',
-                        'domesticData',
-                        'domesticMessages',
-                        'internationalMinutes',
-                        'internationalData',
-                        'internationalMessages',
+                        'description',                        
                         'carrierId',
                         'created_at',
                         'updated_at',
@@ -315,7 +265,7 @@ class ServicesApiTest extends TestCase
                                 ]
                             ]
                         ],
-                        'addons' => [
+                        'serviceItems' => [
                             'links' => [
                                 'self',
                                 'related',
@@ -399,7 +349,7 @@ class ServicesApiTest extends TestCase
                 ]
             ]);
 */
-        $res = $this->put('/services/'.$service->id.'?include=addons',
+        $res = $this->put('/services/'.$service->id.'?include=serviceItems',
             [
                 'data' => [
                     'type' => 'services',
@@ -408,23 +358,36 @@ class ServicesApiTest extends TestCase
                         'title' => 'title1',
                         'planCode' => '11111',
                         'cost' => '30',
-                        'description' => 'desc1',
-                        'domesticMinutes' => '100',
-                        'domesticData' => '100',
-                        'domesticMessages' => '100',
-                        'internationalMinutes' => '100',
-                        'internationalData' => '100',
-                        'internationalMessages' => '100',
+                        'description' => 'desc1',                        
                         'carrierId' => '1',
                         'created_at' => $service->created_at,
                         'updated_at' => $service->updated_at
                     ],
                     'relationships' => [
-                        'addons' => [
+                        'serviceItem' => [
                             'data' => [
-                                ['id' => $addon1->id, 'type' => 'addons', 'name' => $addon1->name, 'cost' => $addon1->cost, 'serviceId' => $service->id],
-                                ['id' => $addon2->id, 'type' => 'addons', 'name' => $addon2->name, 'cost' => $addon2->cost, 'serviceId' => $service->id],
-                                
+                                [
+                                    'id'            => $serviceitem1->id,
+                                    'type'          => 'serviceitems',
+                                    'name'          => $serviceitem1->name,
+                                    'category'      => $serviceitem1->category,
+                                    'description'   => $serviceitem1->description,
+                                    'value'         => $serviceitem1->value,
+                                    'unit'          => $serviceitem1->unit,
+                                    'cost'          => $serviceitem1->cost,
+                                    'domain'        => $serviceitem1->domain,
+                                ],
+                                [
+                                    'id'            => $serviceitem2->id,
+                                    'type'          => 'serviceitems',
+                                    'name'          => $serviceitem2->name,
+                                    'category'      => $serviceitem2->category,
+                                    'description'   => $serviceitem2->description,
+                                    'value'         => $serviceitem2->value,
+                                    'unit'          => $serviceitem2->unit,
+                                    'cost'          => $serviceitem2->cost,
+                                    'domain'        => $serviceitem2->domain,
+                                ]
                             ],
                         ],
                     ]
@@ -438,13 +401,7 @@ class ServicesApiTest extends TestCase
                         'title',
                         'planCode',
                         'cost',
-                        'description',
-                        'domesticMinutes',
-                        'domesticData',
-                        'domesticMessages',
-                        'internationalMinutes',
-                        'internationalData',
-                        'internationalMessages',
+                        'description',                        
                         'carrierId',
                         'created_at',
                         'updated_at',
@@ -465,7 +422,7 @@ class ServicesApiTest extends TestCase
                                 ]
                             ]
                         ],
-                        'addons' => [
+                        'serviceItems' => [
                             'links' => [
                                 'self',
                                 'related',
@@ -504,8 +461,12 @@ class ServicesApiTest extends TestCase
                         'type',
                         'id',
                         'attributes' => [
-                            'name',
+                            'category',
+                            'description',
+                            'value',
+                            'unit',
                             'cost',
+                            'domain',
                             'serviceId',
                             'created_at',
                             'updated_at',
@@ -518,8 +479,12 @@ class ServicesApiTest extends TestCase
                         'type',
                         'id',
                         'attributes' => [
-                            'name',
+                            'category',
+                            'description',
+                            'value',
+                            'unit',
                             'cost',
+                            'domain',
                             'serviceId',
                             'created_at',
                             'updated_at',

@@ -1,30 +1,35 @@
 <?php
 
-namespace WA\DataStore\Addon;
+namespace WA\DataStore\ServiceItem;
 
 use WA\DataStore\BaseDataStore;
 
 /**
  * Class App.
  */
-class Addon extends BaseDataStore
+class ServiceItem extends BaseDataStore
 {
-    protected $table = 'addons';
+    protected $table = 'service_items';
 
     protected $fillable = [
-            'name',
-            'cost',
             'serviceId',
+            'category',
+            'description',
+            'value',
+            'unit',
+            'cost',
+            'domain',
             'updated_at', ];
+
 
     /**
      * Get the transformer instance.
      *
-     * @return AddonTransformer
+     * @return ServiceItemTransformer
      */
     public function getTransformer()
     {
-        return new AddonTransformer();
+        return new ServiceItemTransformer();
     }
 
     /**

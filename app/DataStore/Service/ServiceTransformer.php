@@ -11,7 +11,7 @@ class ServiceTransformer extends FilterableTransformer
 {
     protected $availableIncludes = [
         'packages',
-        'addons'
+        'serviceItems'
     ];
 
     protected $defaultIncludes = [
@@ -32,12 +32,6 @@ class ServiceTransformer extends FilterableTransformer
             'planCode'                  => $service->planCode,
             'cost'                      => $service->cost,
             'description'               => $service->description,
-            'domesticMinutes'           => $service->domesticMinutes,
-            'domesticData'              => $service->domesticData,
-            'domesticMessages'          => $service->domesticMessages,
-            'internationalMinutes'      => $service->internationalMinutes,
-            'internationalData'         => $service->internationalData,
-            'internationalMessages'     => $service->internationalMessages,
             'carrierId'                 => $service->carrierId,
             'created_at'                => $service->created_at,
             'updated_at'                => $service->updated_at,

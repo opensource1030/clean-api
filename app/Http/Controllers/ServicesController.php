@@ -4,7 +4,7 @@ namespace WA\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Lang;
-use WA\DataStore\Addon\Addon;
+use WA\DataStore\ServiceItem\ServiceItem;
 use WA\DataStore\Service\Service;
 use WA\DataStore\Service\ServiceTransformer;
 use WA\Repositories\Service\ServiceInterface;
@@ -46,7 +46,7 @@ class ServicesController extends FilteredApiController
     public function store($id, Request $request)
     {
         $success = true;
-        $dataAddonsFromRequest = $dataAddonsFromDB = array();
+        $dataServiceItemsFromRequest = $dataServiceItemsFromDB = array();
 
         /*
          * Checks if Json has data, data-type & data-attributes.
@@ -75,10 +75,10 @@ class ServicesController extends FilteredApiController
         }
 
         try {
-            $addons = Addon::where('serviceId', $id)->get();
-            $addonInterface = app()->make('WA\Repositories\Addon\AddonInterface');
+            $serviceItems = ServiceItem::where('serviceId', $id)->get();
+            $serviceItemsInterface = app()->make('WA\Repositories\ServiceItem\ServiceItemInterface');
         } catch (\Exception $e) {
-            $error['errors']['addons'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Service', 'option' => 'updated', 'include' => 'Addons']);
+            $error['errors']['serviceitems'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Service', 'option' => 'updated', 'include' => 'ServiceItems']);
             $error['errors']['Message'] = $e->getMessage();
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
@@ -87,34 +87,34 @@ class ServicesController extends FilteredApiController
          * Check if Json has relationships to continue or if not and commit + return.
          */
         if (isset($data['relationships'])) {
-            if (isset($data['relationships']['addons'])) {
-                if (isset($data['relationships']['addons']['data'])) {
-                    $data = $data['relationships']['addons']['data'];
+            if (isset($data['relationships']['serviceitems'])) {
+                if (isset($data['relationships']['serviceitems']['data'])) {
+                    $data = $data['relationships']['serviceitems']['data'];
 
-                    $this->deleteNotRequested($data, $addons, $addonInterface, 'addons');
+                    $this->deleteNotRequested($data, $serviceItems, $serviceItemsInterface, 'serviceitems');
 
-                    foreach ($data as $addon) {
-                        if (isset($addon['id'])) {
-                            if ($addon['id'] == 0) {
-                                $addonInterface->create($addon);
+                    foreach ($data as $item) {
+                        if (isset($item['id'])) {
+                            if ($item['id'] == 0) {
+                                $serviceItemsInterface->create($item);
                             } else {
-                                if ($addon['id'] > 0) {
-                                    $addonInterface->update($addon);
+                                if ($item['id'] > 0) {
+                                    $serviceItemsInterface->update($item);
                                 } else {
                                     $success = false;
-                                    $error['errors']['addons'] = 'the Addon has an incorrect id';
+                                    $error['errors']['items'] = 'the ServiceItem has an incorrect id';
                                 }
                             }
                         } else {
                             $success = false;
-                            $error['errors']['addons'] = 'the Addon has no id';
+                            $error['errors']['serviceitems'] = 'the ServiceItem has no id';
                         }
                     }
                 }
             }
         } else {
-            foreach ($addons as $addon) {
-                $addonInterface->deleteById($addon['id']);
+            foreach ($serviceItems as $item) {
+                $serviceItemsInterface->deleteById($item['id']);
             }
         }
         if ($success) {
@@ -148,15 +148,15 @@ class ServicesController extends FilteredApiController
             }
 
             if (isset($data['relationships'])) {
-                if (isset($data['relationships']['addons'])) {
-                    if (isset($data['relationships']['addons']['data'])) {
+                if (isset($data['relationships']['serviceitems'])) {
+                    if (isset($data['relationships']['serviceitems']['data'])) {
                         
-                        $addonInterface = app()->make('WA\Repositories\Addon\AddonInterface');
-                        $data = $data['relationships']['addons']['data'];
+                        $serviceItemsInterface = app()->make('WA\Repositories\ServiceItem\ServiceItemInterface');
+                        $data = $data['relationships']['serviceitems']['data'];
 
-                        foreach ($data as $addon) {
+                        foreach ($data as $item) {
                             try {
-                                $addonInterface->create($price);    
+                                $serviceItemsInterface->create($item);    
                             } catch (\Exception $e) {
                                 DB::rollBack();
                                 $error['errors']['services'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Service', 'option' => 'created', 'include' => '']);

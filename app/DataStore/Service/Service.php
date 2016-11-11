@@ -20,12 +20,6 @@ class Service extends BaseDataStore
         'planCode',
         'cost',
         'description',
-        'domesticMinutes',
-        'domesticData',
-        'domesticMessages',
-        'internationalMinutes',
-        'internationalData',
-        'internationalMessages',
         'carrierId',
         'updated_at'];
 
@@ -68,8 +62,8 @@ class Service extends BaseDataStore
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function addons()
+    public function serviceitems()
     {
-        return $this->hasMany('WA\DataStore\Addon\Addon', 'serviceId');
+        return $this->hasMany('WA\DataStore\ServiceItem\ServiceItem', 'serviceId');
     }
 }

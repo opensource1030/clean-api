@@ -2,15 +2,14 @@
 
 namespace WA\Providers;
 
-use WA\DataStore\Addon\Addon;
+use WA\DataStore\ServiceItem\ServiceItem;
 use WA\DataStore\Address\Address;
 use WA\DataStore\Allocation\Allocation;
 use WA\DataStore\App\App;
 use WA\DataStore\Asset\Asset;
 use WA\DataStore\Attribute;
 use WA\DataStore\Carrier\Carrier;
-use WA\DataStore\Category\CategoryApp;
-use WA\DataStore\Category\Preset;
+use WA\DataStore\CategoryApp\CategoryApp;
 use WA\DataStore\Company\Company;
 use WA\DataStore\Condition\Condition;
 use WA\DataStore\Condition\ConditionField;
@@ -30,6 +29,7 @@ use WA\DataStore\Modification\Modification;
 use WA\DataStore\NotificationCategory;
 use WA\DataStore\Order\Order;
 use WA\DataStore\Package\Package;
+use WA\DataStore\Preset\Preset;
 use WA\DataStore\Price\Price;
 use WA\DataStore\Request\Request;
 use WA\DataStore\Role\Role;
@@ -40,15 +40,14 @@ use WA\DataStore\UdlValuePath\UdlValuePath;
 use WA\DataStore\UdlValuePathUsers\UdlValuePathUsers;
 use WA\DataStore\User\User;
 use WA\DataStore\UserNotifications;
-use WA\Repositories\Addon\EloquentAddon;
+use WA\Repositories\ServiceItem\EloquentServiceItem;
 use WA\Repositories\Address\EloquentAddress;
 use WA\Repositories\Allocation\EloquentAllocation;
 use WA\Repositories\App\EloquentApp;
 use WA\Repositories\Asset\EloquentAsset;
 use WA\Repositories\Attribute\EloquentAttribute;
 use WA\Repositories\Carrier\EloquentCarrier;
-use WA\Repositories\Category\EloquentCategoryApps;
-use WA\Repositories\Category\EloquentPreset;
+use WA\Repositories\CategoryApp\EloquentCategoryApp;
 use WA\Repositories\Company\EloquentCompany;
 use WA\Repositories\Condition\EloquentCondition;
 use WA\Repositories\Condition\EloquentConditionField;
@@ -69,6 +68,7 @@ use WA\Repositories\NotificationCategory\EloquentNotificationCategory;
 use WA\Repositories\Order\EloquentOrder;
 use WA\Repositories\Package\EloquentPackage;
 use WA\Repositories\Permission\EloquentPermission;
+use WA\Repositories\Preset\EloquentPreset;
 use WA\Repositories\Price\EloquentPrice;
 use WA\Repositories\Request\EloquentRequest;
 use WA\Repositories\Role\EloquentRole;
@@ -489,7 +489,7 @@ trait ServiceRegistration
      */
     public function registerPreset()
     {
-        app()->bind('WA\Repositories\Category\PresetInterface',
+        app()->bind('WA\Repositories\Preset\PresetInterface',
             function () {
                 return new EloquentPreset(new Preset());
             }
@@ -501,9 +501,9 @@ trait ServiceRegistration
      */
     public function registerCategoryApp()
     {
-        app()->bind('WA\Repositories\Category\CategoryAppsInterface',
+        app()->bind('WA\Repositories\CategoryApp\CategoryAppInterface',
             function () {
-                return new EloquentCategoryApps(new CategoryApp());
+                return new EloquentCategoryApp(new CategoryApp());
             }
         );
     }
@@ -547,11 +547,11 @@ trait ServiceRegistration
     /**
      * @param
      */
-    public function registerAddon()
+    public function registerServiceItem()
     {
-        app()->bind('WA\Repositories\Addon\AddonInterface',
+        app()->bind('WA\Repositories\ServiceItem\ServiceItemInterface',
             function () {
-                return new EloquentAddon(new Addon());
+                return new EloquentServiceItem(new ServiceItem());
             }
         );
     }
