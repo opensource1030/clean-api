@@ -82,14 +82,14 @@ class ServicesApiTest extends TestCase
         
     }
 
-    public function testGetServiceByIdandIncludesServiceItems()
+    public function testGetServiceByIdandIncludesserviceitems()
     {
         $service = factory(\WA\DataStore\Service\Service::class)->create();
 
         factory(\WA\DataStore\ServiceItem\ServiceItem::class)->create(['serviceId' => $service->id]);
         factory(\WA\DataStore\ServiceItem\ServiceItem::class)->create(['serviceId' => $service->id]);
 
-        $response = $this->json('GET', 'services/'.$service->id.'?include=serviceItems')
+        $response = $this->json('GET', 'services/'.$service->id.'?include=serviceitems')
             ->seeJsonStructure([
                 'data' => [
                     'type',
@@ -116,7 +116,7 @@ class ServicesApiTest extends TestCase
                         'self',
                     ],
                     'relationships' => [
-                        'serviceItems' => [
+                        'serviceitems' => [
                             'links' => [
                                 'self',
                                 'related',
@@ -223,7 +223,7 @@ class ServicesApiTest extends TestCase
             ]);
     }
 
-    public function testUpdateServiceIncludeServiceItems(){
+    public function testUpdateServiceIncludeserviceitems(){
 
         $carrier = factory(\WA\DataStore\Carrier\Carrier::class)->create();
 
@@ -234,7 +234,7 @@ class ServicesApiTest extends TestCase
         $serviceitem3 = factory(\WA\DataStore\ServiceItem\ServiceItem::class)->create(['serviceId' => $service->id]);
 
 /*
-        $var = $this->get('/services/'.$service->id.'?include=serviceItems')
+        $var = $this->get('/services/'.$service->id.'?include=serviceitems')
             ->seeJsonStructure([                
                 'data' => [
                     'type',
@@ -265,7 +265,7 @@ class ServicesApiTest extends TestCase
                                 ]
                             ]
                         ],
-                        'serviceItems' => [
+                        'serviceitems' => [
                             'links' => [
                                 'self',
                                 'related',
@@ -349,7 +349,7 @@ class ServicesApiTest extends TestCase
                 ]
             ]);
 */
-        $res = $this->put('/services/'.$service->id.'?include=serviceItems',
+        $res = $this->put('/services/'.$service->id.'?include=serviceitems',
             [
                 'data' => [
                     'type' => 'services',
@@ -364,7 +364,7 @@ class ServicesApiTest extends TestCase
                         'updated_at' => $service->updated_at
                     ],
                     'relationships' => [
-                        'serviceItem' => [
+                        'serviceitems' => [
                             'data' => [
                                 [
                                     'id'            => $serviceitem1->id,
@@ -422,7 +422,7 @@ class ServicesApiTest extends TestCase
                                 ]
                             ]
                         ],
-                        'serviceItems' => [
+                        'serviceitems' => [
                             'links' => [
                                 'self',
                                 'related',
