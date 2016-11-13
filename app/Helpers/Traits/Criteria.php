@@ -296,12 +296,16 @@ trait Criteria
      */
     protected function sort()
     {
+        if ($this->isInclude === true) {
+            return $this;
+        }
+
         if ($this->sortCriteria === null) {
             return $this;
         }
 
         foreach ($this->sortCriteria->sorting() as $sortColumn => $direction) {
-            if (in_array($sortColumn, $this->criteriaModel->getTableColumns())) {
+            if (in_array($sortColumn, $this->criteriaModelColumns)) {
                 $this->criteriaQuery->orderBy($sortColumn, $direction);
             } else {
                 throw new BadCriteriaException('Invalid sort criteria');
