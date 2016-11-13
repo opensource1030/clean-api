@@ -1,16 +1,11 @@
 <?php
 
-use Laravel\Lumen\Testing\DatabaseTransactions;
-
 class ApiSortingTest extends TestCase
 {
-    use DatabaseTransactions;
+    use \Laravel\Lumen\Testing\DatabaseMigrations;
 
     public function testCanIncludeSortInMeta()
     {
-        $this->markTestIncomplete(
-          'TODO: needs to be reviewed.'
-        );
 
         $this->json('GET', '/devices?sort=-identification')
             ->seeJson(['sort' => '-identification']);
@@ -18,9 +13,7 @@ class ApiSortingTest extends TestCase
 
     public function testCanSortResource()
     {
-        $this->markTestIncomplete(
-          'TODO: needs to be reviewed.'
-        );
+        factory(\WA\DataStore\Device\Device::class, 10)->create();
 
         $response = $this->call('GET', '/devices?sort=identification');
         $json = json_decode($response->getContent());
@@ -36,9 +29,7 @@ class ApiSortingTest extends TestCase
 
     public function testCanInvertSortResource()
     {
-        $this->markTestIncomplete(
-          'TODO: needs to be reviewed.'
-        );
+        factory(\WA\DataStore\Device\Device::class, 10)->create();
 
         $response = $this->call('GET', '/devices?sort=-identification');
         $json = json_decode($response->getContent());
