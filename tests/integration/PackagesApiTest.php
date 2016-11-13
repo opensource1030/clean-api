@@ -173,6 +173,8 @@ class PackageApiTest extends TestCase
 
     public function testGetPackageByIdandIncludesServices()
     {
+        $this->markTestSkipped('Test for older version');
+
         $package = factory(\WA\DataStore\Package\Package::class)->create();
 
         $service1 = factory(\WA\DataStore\Service\Service::class)->create()->id;
