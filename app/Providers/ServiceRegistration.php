@@ -2,14 +2,13 @@
 
 namespace WA\Providers;
 
-use WA\DataStore\ServiceItem\ServiceItem;
 use WA\DataStore\Address\Address;
 use WA\DataStore\Allocation\Allocation;
 use WA\DataStore\App\App;
 use WA\DataStore\Asset\Asset;
 use WA\DataStore\Attribute;
 use WA\DataStore\Carrier\Carrier;
-use WA\DataStore\CategoryApp\CategoryApp;
+use WA\DataStore\Category\CategoryApp;
 use WA\DataStore\Company\Company;
 use WA\DataStore\Condition\Condition;
 use WA\DataStore\Condition\ConditionField;
@@ -34,20 +33,20 @@ use WA\DataStore\Price\Price;
 use WA\DataStore\Request\Request;
 use WA\DataStore\Role\Role;
 use WA\DataStore\Service\Service;
+use WA\DataStore\ServiceItem\ServiceItem;
 use WA\DataStore\Udl\Udl;
 use WA\DataStore\UdlValue\UdlValue;
 use WA\DataStore\UdlValuePath\UdlValuePath;
 use WA\DataStore\UdlValuePathUsers\UdlValuePathUsers;
 use WA\DataStore\User\User;
 use WA\DataStore\UserNotifications;
-use WA\Repositories\ServiceItem\EloquentServiceItem;
 use WA\Repositories\Address\EloquentAddress;
 use WA\Repositories\Allocation\EloquentAllocation;
 use WA\Repositories\App\EloquentApp;
 use WA\Repositories\Asset\EloquentAsset;
 use WA\Repositories\Attribute\EloquentAttribute;
 use WA\Repositories\Carrier\EloquentCarrier;
-use WA\Repositories\CategoryApp\EloquentCategoryApp;
+use WA\Repositories\Category\EloquentCategoryApps;
 use WA\Repositories\Company\EloquentCompany;
 use WA\Repositories\Condition\EloquentCondition;
 use WA\Repositories\Condition\EloquentConditionField;
@@ -73,6 +72,7 @@ use WA\Repositories\Price\EloquentPrice;
 use WA\Repositories\Request\EloquentRequest;
 use WA\Repositories\Role\EloquentRole;
 use WA\Repositories\Service\EloquentService;
+use WA\Repositories\ServiceItem\EloquentServiceItem;
 use WA\Repositories\Udl\EloquentUdl;
 use WA\Repositories\UdlValue\EloquentUdlValue;
 use WA\Repositories\UdlValuePath\EloquentUdlValuePath;
@@ -501,9 +501,9 @@ trait ServiceRegistration
      */
     public function registerCategoryApp()
     {
-        app()->bind('WA\Repositories\CategoryApp\CategoryAppInterface',
+        app()->bind('WA\Repositories\Category\CategoryAppsInterface',
             function () {
-                return new EloquentCategoryApp(new CategoryApp());
+                return new EloquentCategoryApps(new CategoryApp());
             }
         );
     }
