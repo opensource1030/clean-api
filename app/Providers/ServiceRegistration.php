@@ -9,6 +9,7 @@ use WA\DataStore\Asset\Asset;
 use WA\DataStore\Attribute;
 use WA\DataStore\Carrier\Carrier;
 use WA\DataStore\Category\CategoryApp;
+use WA\DataStore\Category\Preset;
 use WA\DataStore\Company\Company;
 use WA\DataStore\Condition\Condition;
 use WA\DataStore\Condition\ConditionField;
@@ -28,7 +29,6 @@ use WA\DataStore\Modification\Modification;
 use WA\DataStore\NotificationCategory;
 use WA\DataStore\Order\Order;
 use WA\DataStore\Package\Package;
-use WA\DataStore\Preset\Preset;
 use WA\DataStore\Price\Price;
 use WA\DataStore\Request\Request;
 use WA\DataStore\Role\Role;
@@ -47,6 +47,7 @@ use WA\Repositories\Asset\EloquentAsset;
 use WA\Repositories\Attribute\EloquentAttribute;
 use WA\Repositories\Carrier\EloquentCarrier;
 use WA\Repositories\Category\EloquentCategoryApps;
+use WA\Repositories\Category\EloquentPreset;
 use WA\Repositories\Company\EloquentCompany;
 use WA\Repositories\Condition\EloquentCondition;
 use WA\Repositories\Condition\EloquentConditionField;
@@ -67,7 +68,6 @@ use WA\Repositories\NotificationCategory\EloquentNotificationCategory;
 use WA\Repositories\Order\EloquentOrder;
 use WA\Repositories\Package\EloquentPackage;
 use WA\Repositories\Permission\EloquentPermission;
-use WA\Repositories\Preset\EloquentPreset;
 use WA\Repositories\Price\EloquentPrice;
 use WA\Repositories\Request\EloquentRequest;
 use WA\Repositories\Role\EloquentRole;
@@ -489,7 +489,7 @@ trait ServiceRegistration
      */
     public function registerPreset()
     {
-        app()->bind('WA\Repositories\Preset\PresetInterface',
+        app()->bind('WA\Repositories\Category\PresetInterface',
             function () {
                 return new EloquentPreset(new Preset());
             }
