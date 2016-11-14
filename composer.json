@@ -10,7 +10,7 @@
     "venturecraft/revisionable": "1.*",
     "dingo/api": "1.0.*@dev",
     "lucadegasperi/oauth2-server-laravel": "5.1.*",
-    "aacotroneo/laravel-saml2": "dev-master",
+    "aacotroneo/laravel-saml2": "0.8.*",
     "webpatser/laravel-uuid": "2.*",
     "nstapelbroek/culpa": "^2.0",
     "guzzlehttp/guzzle": "^6.2",
