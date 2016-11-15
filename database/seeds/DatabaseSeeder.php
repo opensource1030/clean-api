@@ -50,11 +50,15 @@ class DatabaseSeeder extends Seeder
         $this->call(PricesTableSeeder::class);
         //$this->call(ProvidersTableSeeder::class);
         $this->call(RequestsTableSeeder::class);
+        $this->call(RolesTableSeeder::class);
         $this->call(ServiceItemsTableSeeder::class);
         $this->call(ServicesTableSeeder::class);
-        $this->call(UdlsTableSeeder::class);
-        $this->call(UserUdlsTableSeeder::class);
         $this->call(UdlValuesTableSeeder::class);
+        $this->call(UdlsTableSeeder::class);
+        $this->call(UserAssetsTableSeeder::class);
+        $this->call(UserDevicesTableSeeder::class);
+        $this->call(UserRolesTableSeeder::class);
+        $this->call(UserUdlsTableSeeder::class);
         $this->call(UsersTableSeeder::class);
 
         switch (DB::getDriverName()) {

@@ -24,7 +24,8 @@ class UsersTableSeeder extends BaseTableSeeder
             'notify' => 0,
             'approverId' => 3,
             'defaultLocationId' => 'location',
-            'companyId' => 1
+            'companyId' => 1,
+            'addressId' => 1
         ];
 
         $this->loadTable($dataUserUdl1);
@@ -45,7 +46,8 @@ class UsersTableSeeder extends BaseTableSeeder
             'notify' => 0,
             'approverId' => 3,
             'defaultLocationId' => 'location',
-            'companyId' => 2
+            'companyId' => 2,
+            'addressId' => 2
         ];
 
         $this->loadTable($dataUserUdl2);
@@ -66,7 +68,8 @@ class UsersTableSeeder extends BaseTableSeeder
             'notify' => 0,
             'approverId' => 3,
             'defaultLocationId' => 'location',
-            'companyId' => 3
+            'companyId' => 3,
+            'addressId' => 3
         ];
 
         $this->loadTable($dataUserUdl3);
@@ -87,7 +90,8 @@ class UsersTableSeeder extends BaseTableSeeder
             'notify' => 0,
             'approverId' => 3,
             'defaultLocationId' => 'location',
-            'companyId' => 5
+            'companyId' => 5,
+            'addressId' => 4
         ];
 
         $this->loadTable($dataUserLogin);

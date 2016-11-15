@@ -30,6 +30,14 @@ class Address extends BaseDataStore
     }
 
     /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function users()
+    {
+        return $this->hasMany('WA\DataStore\User\User', 'addressId');
+    }
+
+    /**
      * Get the transformer instance.
      *
      * @return AddressTransformer

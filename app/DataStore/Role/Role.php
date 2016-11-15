@@ -34,4 +34,14 @@ class Role extends EntrustRole
     {
         return new RoleTransformer();
     }
+
+    /**
+     * @return array
+     */
+    public function getTableColumns()
+    {
+        return \Cache::remember($this->getTable() . '-columns', 5, function () {
+            return $this->getConnection()->getSchemaBuilder()->getColumnListing($this->getTable());
+        });
+    }
 }

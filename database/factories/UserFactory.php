@@ -32,7 +32,7 @@ $factory->define(WA\DataStore\User\User::class, function (Faker\Generator $faker
         'notes' => null,
         'level' => 0,
         'notify' => 0,
-        'companyId' => 1,
+        'companyId' => $faker->numberBetween(2, 5),
         'syncId' => null,
         'supervisorId' => $faker->numberBetween(0, 6),
         'externalId' => null,

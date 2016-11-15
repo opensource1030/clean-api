@@ -51,10 +51,6 @@ class DevicesController extends FilteredApiController
         if (!$this->isJsonCorrect($request, 'devices')) {
             $error['errors']['json'] = Lang::get('messages.InvalidJson');
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
-        } else {
-            $data = $request->all()['data'];
-            $dataType = $data['type'];
-            $dataAttributes = $data['attributes'];
         }
 
         DB::beginTransaction();
