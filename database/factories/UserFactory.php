@@ -8,26 +8,40 @@
 */
 $factory->define(WA\DataStore\User\User::class, function (Faker\Generator $faker) {
     return [
-        'identification' => uniqid('WA-'),
         'uuid' => $faker->uuid,
+        'identification' => uniqid('WA-'),
         'email' => $email = $faker->safeEmail,
-        'supervisorEmail' => $faker->safeEmail,
+        'alternateEmail' => $faker->safeEmail,
         'password' => bcrypt('user'),
+        'username' => explode('@', $email)[0],
         'confirmation_code' => md5(uniqid(mt_rand(), true)),
+        'remember_token' => null,
         'confirmed' => 1,
         'firstName' => $faker->firstName,
         'lastName' => $faker->lastName,
-        'username' => explode('@', $email)[0],
+        'alternateFirstName' => $faker->firstName,
+        'supervisorEmail' => $faker->safeEmail,
+        'companyUserIdentifier' => $faker->numberBetween(0, 5),
+        'isSupervisor' => $faker->numberBetween(0, 1),
+        'isValidator' => $faker->numberBetween(0, 1),
+        'isActive' => 1,
+        'rgt' => null,
+        'lft' => null,
+        'hierarchy' => null,
         'defaultLang' => 'en',
+        'notes' => null,
+        'level' => 0,
         'notify' => 0,
-
+        'companyId' => 1,
+        'syncId' => null,
         'supervisorId' => $faker->numberBetween(0, 6),
+        'externalId' => null,
         'approverId' => $faker->numberBetween(0, 4),
-
         'defaultLocationId' => function () {
             return factory(\WA\DataStore\Location\Location::class)->create()->id;
         },
-
-        'companyId' => 1,
+        'deleted_at' => null,
+        'created_at' => null,
+        'updated_at' => null
     ];
 });

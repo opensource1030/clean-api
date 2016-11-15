@@ -51,29 +51,40 @@ class User extends BaseDataStore implements IlluminateCanResetPasswordContract, 
      * @var array
      */
     protected $fillable = [
-        'name',
+        'uuid',
+        'identification',
         'email',
         'alternateEmail',
-        'firstName',
-        'alternateFirstName',
-        'lastName',
-        'companyUserIdentifier',
-        'supervisorEmail',
-        'isActive',
-        'syncId',
         'password',
-        'confirmed',
-        'confirmed',
         'username',
-        'identification',
-        'uuid',
         'confirmation_code',
-        'notify',
-        'notes',
-        'defaultLocationId',
+        'remember_token',
+        'confirmed',
+        'firstName',
+        'lastName',
+        'alternateFirstName',
+        'supervisorEmail',
+        'companyUserIdentifier',
+        'isSupervisor',
+        'isValidator',
+        'isActive',
+        'rgt',
+        'lft',
+        'hierarchy',
         'defaultLang',
+        'notes',
+        'level',
+        'notify',
         'companyId',
-        'departmentId',
+        'syncId',
+        'supervisorId',
+        'externalId',
+        'approverId',
+        'defaultLocationId',
+        'deleted_at',
+        'created_at',
+        'updated_at'
+        
     ];
 
     /**
@@ -81,7 +92,7 @@ class User extends BaseDataStore implements IlluminateCanResetPasswordContract, 
      *
      * @var array
      */
-    protected $hidden = ['password', 'remember_token'];
+    protected $hidden = ['uuid', 'password', 'confirmation_code', 'remember_token', 'confirmed', 'isActive', 'externalId'];
 
     protected $revisionFormattedFields = [
         'isActive' => 'boolean:No|Yes',
