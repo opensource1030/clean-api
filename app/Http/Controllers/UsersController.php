@@ -50,14 +50,11 @@ class UsersController extends FilteredApiController
 
     public function numberUsers(Request $request)
     {
-        //$error['message'] = "Function not works yet";
-        //return response()->json($error);
-
         $conditions = $request->all()['data']['conditions'];
-        $packageId = $request->all()['data']['packageId'];
+        $companyId = $request->all()['data']['companyId'];
 
-        // Retrieve all the users that have the same companyId as the package.
-        $users = User::where('companyId', $packageId);
+        // Retrieve all the users that have the same companyId as the company.
+        $users = User::where('companyId', $companyId);
         $usersAux = $users->get();
 
         $users->where(function ($query) use ($conditions, $usersAux) {
@@ -150,6 +147,7 @@ class UsersController extends FilteredApiController
         }
 
         DB::beginTransaction();
+
         /*
          * Now we can update the User.
          */
@@ -240,18 +238,20 @@ class UsersController extends FilteredApiController
                 }
             }
 
-            if (isset($dataRelationships['allocations']) && $success) {
+            try {
+                $allocations = Allocation::where('userId', $id)->get();
+                $interfaceA = app()->make('WA\Repositories\Allocation\AllocationInterface');
+                $contents = Content::where('owner_id', $id)->get();
+                $interfaceC = app()->make('WA\Repositories\Content\ContentInterface');
+            } catch (\Exception $e) {
+                $error['errors']['allocations'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'User', 'option' => 'updated', 'include' => 'allocations']);
+                $error['errors']['Message'] = $e->getMessage();
+                return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+            }
+
+            if (isset($dataRelationships['allocations'])) {
                 if (isset($dataRelationships['allocations']['data'])) {
                     $data = $dataRelationships['allocations']['data'];
-
-                    try {
-                        $allocations = Allocation::where('userId', $id)->get();
-                        $interfaceA = app()->make('WA\Repositories\Allocation\AllocationInterface');
-                    } catch (\Exception $e) {
-                        $success = false;
-                        $error['errors']['allocations'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'User', 'option' => 'updated', 'include' => 'allocations']);
-                        //$error['errors']['Message'] = $e->getMessage();
-                    }
 
                     if ($success) {
                         try {                           
@@ -274,30 +274,26 @@ class UsersController extends FilteredApiController
                                     }
                                 } else {
                                     $success = false;
-                                    $error['errors']['allocations'] = 'the Allocation has no id';
                                 }
                             }
                         } catch (\Exception $e) {
                             $success = false;
-                            $error['errors']['allocations'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'user', 'option' => 'updated', 'include' => 'allocations']);
+                            $error['errors']['allocations'] = Lang::get('messages.NotOptionIncludeClass',
+                                ['class' => 'user', 'option' => 'updated', 'include' => 'allocations']);
                             //$error['errors']['Message'] = $e->getMessage();
                         }
+                    } else {
+                        $success = false;
+                        $error['errors']['allocations'] = Lang::get('messages.NotIncludeExistsOptionClass',
+                            ['class' => 'user', 'option' => 'updated', 'include' => 'allocations']);
+                        //$error['errors']['Message'] = $e->getMessage();
                     }
                 }
             }
 
-            if (isset($dataRelationships['contents']) && $success) {
+            if (isset($dataRelationships['contents'])) {
                 if (isset($dataRelationships['contents']['data'])) {
                     $data = $dataRelationships['contents']['data'];
-
-                    try {
-                        $contents = Content::where('owner_id', $id)->get();
-                        $interfaceC = app()->make('WA\Repositories\Content\ContentInterface');
-                    } catch (\Exception $e) {
-                        $success = false;                        
-                        $error['errors']['contents'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'User', 'option' => 'updated', 'include' => 'contents']);
-                        //$error['errors']['Message'] = $e->getMessage();
-                    }
 
                     if ($success) {
                         try {                           
@@ -513,7 +509,9 @@ class UsersController extends FilteredApiController
 
         if ($success) {
             DB::commit();
-            return $this->response()->item($user, new UserTransformer(), ['key' => 'users'])->setStatusCode($this->status_codes['created']);
+
+            return $this->response()->item($user, new UserTransformer(), ['key' => 'users'])
+                        ->setStatusCode($this->status_codes['created']);
         } else {
             DB::rollBack();
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
@@ -536,5 +534,4 @@ class UsersController extends FilteredApiController
             $error['errors']['delete'] = Lang::get('messages.NotDeletedClass', ['class' => 'User']);
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
-    }
 }

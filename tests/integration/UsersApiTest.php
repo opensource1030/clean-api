@@ -643,13 +643,37 @@ class UsersApiTest extends TestCase
                         'type',
                         'id',
                         'attributes' => [
-                            'address',
-                            'city',
-                            'state',
-                            'country',
-                            'postalCode',
-                            'created_at',
-                            'updated_at'
+                            'uuid',
+                            'identification',
+                            'email',
+                            'alternateEmail',
+                            'password',
+                            'username',
+                            'confirmation_code',
+                            'remember_token',
+                            'confirmed',
+                            'firstName',
+                            'lastName',
+                            'alternateFirstName',
+                            'supervisorEmail',
+                            'companyUserIdentifier',
+                            'isSupervisor',
+                            'isValidator',
+                            'isActive',
+                            'rgt',
+                            'lft',
+                            'hierarchy',
+                            'defaultLang',
+                            'notes',
+                            'level',
+                            'notify',
+                            'companyId',
+                            'syncId',
+                            'supervisorId',
+                            'externalId',
+                            'approverId',
+                            'defaultLocationId',
+                            'addressId'
                         ],
                         'links' => [
                             'self'
@@ -894,9 +918,8 @@ class UsersApiTest extends TestCase
                         'links' => [
                             'self',
                         ],
-                    ],
-
-                ],
+                    ]
+                ]
             ]);
     }
 

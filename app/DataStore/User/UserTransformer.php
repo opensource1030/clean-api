@@ -28,6 +28,10 @@ class UserTransformer extends FilterableTransformer
         'address'
     ];
 
+    protected $defaultIncludes = [
+        'address'
+    ];
+
     /**
      * @param User $user
      *
@@ -67,10 +71,7 @@ class UserTransformer extends FilterableTransformer
             'externalId'                => $user->externalId,
             'approverId'                => $user->approverId,
             'defaultLocationId'         => $user->defaultLocationId,
-<<<<<<< f0fecca536f6555ce298515c16742c098fa49c64
             'addressId'                 => $user->addressId,
-=======
->>>>>>> CP-1520 #First modifications of the users model
             'deleted_at'                => $user->deleted_at,
             'created_at'                => $user->created_at,
             'updated_at'                => $user->updated_at
