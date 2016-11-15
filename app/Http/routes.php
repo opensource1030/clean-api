@@ -161,7 +161,7 @@ $api->version('v1', function ($api) {
         // =Users
         $usersController = 'WA\Http\Controllers\UsersController';
         $api->get('users', ['as' => 'api.users.index', 'uses' => $usersController . '@index']);
-        $api->get('users/number', ['as' => 'api.users.number', 'uses' => $usersController . '@numberUsers']);
+        $api->post('users/number', ['as' => 'api.users.number', 'uses' => $usersController . '@numberUsers']);
         $api->get('users/{id}', ['as' => 'api.users.show', 'uses' => $usersController . '@show']);
 
         // =Assets

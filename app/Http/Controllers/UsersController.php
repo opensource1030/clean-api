@@ -43,13 +43,14 @@ class UsersController extends FilteredApiController
 
     public function numberUsers(Request $request)
     {
-        $error['message'] = "Function not works yet";
-        return response()->json($error);
+        //$error['message'] = "Function not works yet";
+        //return response()->json($error);
 
-        $conditions = $request->conditions;
+        $conditions = $request->all()['data']['conditions'];
+        $packageId = $request->all()['data']['packageId'];
 
         // Retrieve all the users that have the same companyId as the package.
-        $users = User::where('companyId', $package->companyId);
+        $users = User::where('companyId', $packageId);
         $usersAux = $users->get();
 
         $users->where(function ($query) use ($conditions, $usersAux) {
@@ -60,28 +61,28 @@ class UsersController extends FilteredApiController
                 if ($conditions <> null) {
                     foreach ($conditions as $condition) {
                         foreach ($info as $i) {
-                            if ($condition->name == $i['label'] && $ok) {
-                                switch ($condition->condition) {
+                            if ($condition['name'] == $i['label'] && $ok) {
+                                switch ($condition['condition']) {
                                     case "like":
-                                        $ok = $ok && strpos($i['value'], $condition->value) !== false;
+                                        $ok = $ok && strpos($i['value'], $condition['value']) !== false;
                                         break;
                                     case "gt":
-                                        $ok = $ok && ($i['value'] > $condition->value) ? true : false;
+                                        $ok = $ok && ($i['value'] > $condition['value']) ? true : false;
                                         break;
                                     case "lt":
-                                        $ok = $ok && ($i['value'] < $condition->value) ? true : false;
+                                        $ok = $ok && ($i['value'] < $condition['value']) ? true : false;
                                         break;
                                     case "gte":
-                                        $ok = $ok && ($i['value'] >= $condition->value) ? true : false;
+                                        $ok = $ok && ($i['value'] >= $condition['value']) ? true : false;
                                         break;
                                     case "lte":
-                                        $ok = $ok && ($i['value'] <= $condition->value) ? true : false;
+                                        $ok = $ok && ($i['value'] <= $condition['value']) ? true : false;
                                         break;
                                     case "ne":
-                                        $ok = $ok && ($i['value'] <> $condition->value) ? true : false;
+                                        $ok = $ok && ($i['value'] <> $condition['value']) ? true : false;
                                         break;
                                     case "eq":
-                                        $ok = $ok && ($i['value'] == $condition->value) ? true : false;
+                                        $ok = $ok && ($i['value'] == $condition['value']) ? true : false;
                                         break;
                                     default:
                                         $ok = $ok && true;
@@ -97,13 +98,7 @@ class UsersController extends FilteredApiController
             }
         });
 
-        if (!$this->includesAreCorrect($request, new PackageTransformer())) {
-            $error['errors']['getincludes'] = Lang::get('messages.NotExistInclude');
-            return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
-        }
-
-        return $this->response()->withPaginator($packages->count(), new PackageTransformer(),
-            ['key' => 'packages'])->setStatusCode($this->status_codes['created']);
+        return array("number" => $users->count());
     }
 
     private function retrieveInformationofUser(User $user)
@@ -127,10 +122,8 @@ class UsersController extends FilteredApiController
 
         $auxBudget = ["value" => "", "name" => "budget", "label" => "Budget"];
         array_push($info, $auxBudget);
-        $auxCountry1 = ["value" => "", "name" => "country", "label" => "Country"];
-        array_push($info, $auxCountry1);
-        $auxCountry2 = ["value" => "", "name" => "country", "label" => "Country"];
-        array_push($info, $auxCountry2);
+        $auxCountry = ["value" => "", "name" => "country", "label" => "Country"];
+        array_push($info, $auxCountry);
         $auxCity = ["value" => "", "name" => "city", "label" => "City"];
         array_push($info, $auxCity);
         $auxAddress = ["value" => "", "name" => "address", "label" => "Address"];
