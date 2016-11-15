@@ -50,11 +50,14 @@ class UsersController extends FilteredApiController
 
     public function numberUsers(Request $request)
     {
-        $conditions = $request->all()['data']['conditions'];
-        $companyId = $request->all()['data']['companyId'];
+        //$error['message'] = "Function not works yet";
+        //return response()->json($error);
 
-        // Retrieve all the users that have the same companyId as the company.
-        $users = User::where('companyId', $companyId);
+        $conditions = $request->all()['data']['conditions'];
+        $packageId = $request->all()['data']['packageId'];
+
+        // Retrieve all the users that have the same companyId as the package.
+        $users = User::where('companyId', $packageId);
         $usersAux = $users->get();
 
         $users->where(function ($query) use ($conditions, $usersAux) {
