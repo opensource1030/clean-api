@@ -8,9 +8,16 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Lang;
 use Response;
 use View;
-use WA\DataStore\User\User;
+
 use WA\Helpers\Traits\SetLimits;
+use WA\DataStore\User\User;
+use WA\DataStore\User\UserTransformer;
 use WA\Repositories\User\UserInterface;
+
+use WA\DataStore\Allocation\Allocation;
+use WA\DataStore\Content\Content;
+
+
 
 /**
  * Users resource.
@@ -40,20 +47,18 @@ class UsersController extends FilteredApiController
         $this->user = $user;
     }
 
-
     public function numberUsers(Request $request)
     {
-        //$error['message'] = "Function not works yet";
-        //return response()->json($error);
-
         $conditions = $request->all()['data']['conditions'];
-        $packageId = $request->all()['data']['packageId'];
+        $companyId = $request->all()['data']['companyId'];
 
-        // Retrieve all the users that have the same companyId as the package.
-        $users = User::where('companyId', $packageId);
+        // Retrieve all the users that have the same companyId as the company.
+        $users = User::where('companyId', $companyId);
         $usersAux = $users->get();
 
         $users->where(function ($query) use ($conditions, $usersAux) {
+            $query = $query->where('id', 0);
+
             foreach ($usersAux as $user) {
                 $info = $this->retrieveInformationofUser($user);
                 $ok = true;
@@ -103,7 +108,7 @@ class UsersController extends FilteredApiController
 
     private function retrieveInformationofUser(User $user)
     {
-        // Retrieve the package conditions.
+        // Retrieve the UDLSValues.
         $udlValues = $user->UdlValues;
 
         // Retrieve the user information that will be compared.
@@ -112,22 +117,11 @@ class UsersController extends FilteredApiController
         array_push($info, $auxName);
         $auxEmail = ["value" => $user->email, "name" => "email", "label" => "Email"];
         array_push($info, $auxEmail);
-        $auxBudget = ["value" => "", "name" => "budget", "label" => "Budget"];
-        array_push($info, $auxBudget);
 
         foreach ($udlValues as $uv) {
             $aux = ["value" => $uv->name, "name" => $uv->udl->name, "label" => $uv->udl->label];
             array_push($info, $aux);
         }
-
-        $auxBudget = ["value" => "", "name" => "budget", "label" => "Budget"];
-        array_push($info, $auxBudget);
-        $auxCountry = ["value" => "", "name" => "country", "label" => "Country"];
-        array_push($info, $auxCountry);
-        $auxCity = ["value" => "", "name" => "city", "label" => "City"];
-        array_push($info, $auxCity);
-        $auxAddress = ["value" => "", "name" => "address", "label" => "Address"];
-        array_push($info, $auxAddress);
 
         return $info;
     }
@@ -138,4 +132,245 @@ class UsersController extends FilteredApiController
         Log::debug("USER: ".print_r($user, true));
     }
 
+    public function store($id, Request $request) {
+        dd("STORE");
+
+        $success = true;
+        $dataAssets = $dataDevices = $dataRoles = $dataUdls = array();
+
+        /*
+         * Checks if Json has data, data-type & data-attributes.
+         */
+        if (!$this->isJsonCorrect($request, 'users')) {
+            $error['errors']['json'] = Lang::get('messages.InvalidJson');
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+        }
+
+        DB::beginTransaction();
+
+        /*
+         * Now we can update the Device.
+         */
+        try {
+            $data = $request->all()['data'];
+            $data['attributes']['id'] = $id;
+            $user = $this->user->update($data['attributes']);
+
+            if ($user == 'notExist') {
+                DB::rollBack();
+                $error['errors']['user'] = Lang::get('messages.NotExistClass', ['class' => 'User']);
+                //$error['errors']['Message'] = $e->getMessage();
+                return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+            }
+
+            if ($user == 'notSaved') {
+                DB::rollBack();
+                $error['errors']['user'] = Lang::get('messages.NotSavedClass', ['class' => 'User']);
+                //$error['errors']['Message'] = $e->getMessage();
+                return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+            }
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $error['errors']['users'] = Lang::get('messages.NotOptionIncludeClass',
+                ['class' => 'User', 'option' => 'updated', 'include' => '']);
+            //$error['errors']['Message'] = $e->getMessage();
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+        }
+
+        /*
+         * Check if Json has relationships to continue or if not and commit + return.
+         */
+        if (isset($data['relationships'])) {
+            $dataRelationships = $data['relationships'];
+
+            if (isset($dataRelationships['assets'])) {
+                if (isset($dataRelationships['assets']['data'])) {
+                    $dataAssets = $this->parseJsonToArray($dataRelationships['assets']['data'], 'assets');
+                    try {
+                        $user->assets()->sync($dataAssets);
+                    } catch (\Exception $e) {
+                        $error['errors']['assets'] = Lang::get('messages.NotOptionIncludeClass',
+                            ['class' => 'User', 'option' => 'updated', 'include' => 'Assets']);
+                        //$error['errors']['Message'] = $e->getMessage();
+                    }
+                }
+            }
+
+            if (isset($dataRelationships['devices'])) {
+                if (isset($dataRelationships['devices']['data'])) {
+                    $dataDevices = $this->parseJsonToArray($dataRelationships['devices']['data'],
+                        'devices');
+                    try {
+                        $user->devices()->sync($dataDevices);
+                    } catch (\Exception $e) {
+                        $success = false;
+                        $error['errors']['devices'] = Lang::get('messages.NotOptionIncludeClass',
+                            ['class' => 'User', 'option' => 'updated', 'include' => 'Devices']);
+                        //$error['errors']['Message'] = $e->getMessage();
+                    }
+                }
+            }
+
+            if (isset($dataRelationships['roles'])) {
+                if (isset($dataRelationships['roles']['data'])) {
+                    $dataRoles = $this->parseJsonToArray($dataRelationships['roles']['data'], 'roles');
+                    try {
+                        $user->roles()->sync($dataRoles);
+                    } catch (\Exception $e) {
+                        $success = false;
+                        $error['errors']['roles'] = Lang::get('messages.NotOptionIncludeClass',
+                            ['class' => 'User', 'option' => 'updated', 'include' => 'Roles']);
+                        //$error['errors']['Message'] = $e->getMessage();
+                    }
+                }
+            }
+
+            if (isset($dataRelationships['udls'])) {
+                if (isset($dataRelationships['udls']['data'])) {
+                    $dataUdls = $this->parseJsonToArray($dataRelationships['udls']['data'], 'udls');
+                    try {
+                        $user->udls()->sync($dataUdls);
+                    } catch (\Exception $e) {
+                        $success = false;
+                        $error['errors']['udls'] = Lang::get('messages.NotOptionIncludeClass',
+                            ['class' => 'User', 'option' => 'updated', 'include' => 'Udls']);
+                        //$error['errors']['Message'] = $e->getMessage();
+                    }
+                }
+            }
+
+            try {
+                $allocations = Allocation::where('userId', $id)->get();
+                $interfaceA = app()->make('WA\Repositories\Allocation\AllocationInterface');
+                $contents = Content::where('owner_id', $id)->get();
+                $interfaceC = app()->make('WA\Repositories\Content\ContentInterface');
+            } catch (\Exception $e) {
+                $error['errors']['allocations'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'User', 'option' => 'updated', 'include' => 'allocations']);
+                $error['errors']['Message'] = $e->getMessage();
+                return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+            }
+
+            if (isset($dataRelationships['allocations'])) {
+                if (isset($dataRelationships['allocations']['data'])) {
+                    $data = $dataRelationships['allocations']['data'];
+
+                    if ($success) {
+                        try {                           
+                            $this->deleteNotRequested($data, $allocations, $interfaceA, 'allocations');
+
+                            foreach ($data as $allocation) {
+                                if ($check['bool']) {
+                                    $allocation['userId'] = $user->id;
+
+                                    if (isset($allocation['id'])) {
+                                        if ($allocation['id'] == 0) {
+                                            $interfaceA->create($allocation);
+                                        } else {
+                                            if ($allocation['id'] > 0) {
+                                                $interfaceA->update($allocation);
+                                            } else {
+                                                $success = false;
+                                                $error['errors']['allocations'] = 'the Allocation has an incorrect id';
+                                            }
+                                        }
+                                    } else {
+                                        $success = false;
+                                        $error['errors']['allocations'] = 'the Allocation has no id';
+                                    }
+
+                                } else {
+                                    $success = false;
+                                    $error['errors']['allocations'] = Lang::get('messages.NotOptionIncludeClass',
+                                        ['class' => 'user', 'option' => 'updated', 'include' => 'allocations']);
+                                    //$error['errors']['Check'] = $check['error'];
+                                    //$error['errors']['IdError'] = $check['id'];
+                                    //$error['errors']['Message'] = 'Any Allocation rows are not correct and no references provided relationships.';
+                                }
+                            }
+                        } catch (\Exception $e) {
+                            $success = false;
+                            $error['errors']['allocations'] = Lang::get('messages.NotOptionIncludeClass',
+                                ['class' => 'user', 'option' => 'updated', 'include' => 'allocations']);
+                            //$error['errors']['Message'] = $e->getMessage();
+                        }
+                    } else {
+                        $success = false;
+                        $error['errors']['allocations'] = Lang::get('messages.NotIncludeExistsOptionClass',
+                            ['class' => 'user', 'option' => 'updated', 'include' => 'allocations']);
+                        //$error['errors']['Message'] = $e->getMessage();
+                    }
+                }
+            }
+
+            if (isset($dataRelationships['contents'])) {
+                if (isset($dataRelationships['contents']['data'])) {
+                    $data = $dataRelationships['contents']['data'];
+
+                    if ($success) {
+                        try {                           
+                            $this->deleteNotRequested($data, $contents, $interfaceC, 'contents');
+
+                            foreach ($data as $allocation) {
+                                if ($check['bool']) {
+                                    $allocation['userId'] = $user->id;
+
+                                    if (isset($allocation['id'])) {
+                                        if ($allocation['id'] == 0) {
+                                            $interfaceC->create($allocation);
+                                        } else {
+                                            if ($allocation['id'] > 0) {
+                                                $interfaceC->update($allocation);
+                                            } else {
+                                                $success = false;
+                                                $error['errors']['contents'] = 'the Content has an incorrect id';
+                                            }
+                                        }
+                                    } else {
+                                        $success = false;
+                                        $error['errors']['contents'] = 'the Content has no id';
+                                    }
+
+                                } else {
+                                    $success = false;
+                                    $error['errors']['contents'] = Lang::get('messages.NotOptionIncludeClass',
+                                        ['class' => 'user', 'option' => 'updated', 'include' => 'contents']);
+                                    //$error['errors']['Check'] = $check['error'];
+                                    //$error['errors']['IdError'] = $check['id'];
+                                    //$error['errors']['Message'] = 'Any Content rows are not correct and no references provided relationships.';
+                                }
+                            }
+                        } catch (\Exception $e) {
+                            $success = false;
+                            $error['errors']['contents'] = Lang::get('messages.NotOptionIncludeClass',
+                                ['class' => 'user', 'option' => 'updated', 'include' => 'contents']);
+                            //$error['errors']['Message'] = $e->getMessage();
+                        }
+                    } else {
+                        $success = false;
+                        $error['errors']['contents'] = Lang::get('messages.NotIncludeExistsOptionClass',
+                            ['class' => 'user', 'option' => 'updated', 'include' => 'contents']);
+                        //$error['errors']['Message'] = $e->getMessage();
+                    }
+                }
+            }
+        }
+
+        if ($success) {
+            DB::commit();
+            return $this->response()->item($user, new userTransformer(),
+                ['key' => 'users'])->setStatusCode($this->status_codes['created']);
+        } else {
+            DB::rollBack();
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+        }
+    }
+
+    public function create(Request $request) {
+        var_dump("CREATE");
+    }
+
+    public function delete($id) {
+        var_dump("DELET");
+    }
 }

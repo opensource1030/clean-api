@@ -81,6 +81,7 @@ class User extends BaseDataStore implements IlluminateCanResetPasswordContract, 
         'externalId',
         'approverId',
         'defaultLocationId',
+        'addressId',
         'deleted_at',
         'created_at',
         'updated_at'
@@ -218,6 +219,14 @@ class User extends BaseDataStore implements IlluminateCanResetPasswordContract, 
    {
        return $this->morphMany('WA\DataStore\Content\Content', 'owner');
    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function address()
+    {
+        return $this->belongsTo('WA\DataStore\Address\Address', 'addressId');
+    }
 
     /**
      * @param $id

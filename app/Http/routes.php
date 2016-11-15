@@ -102,8 +102,11 @@ $api->version('v1', function ($api) {
         // =Users
         $usersController = 'WA\Http\Controllers\UsersController';
         $api->get('users', ['as' => 'api.users.index', 'uses' => $usersController . '@index']);
-        $api->post('users/number', ['as' => 'api.users.number', 'uses' => $usersController . '@numberUsers']);
+        $api->post('users/usersMatchingConditions', ['as' => 'api.users.number', 'uses' => $usersController . '@numberUsers']);
         $api->get('users/{id}', ['as' => 'api.users.show', 'uses' => $usersController . '@show']);
+        $api->post('users', [ 'uses' => $usersController . '@create']);
+        $api->put('users/{id}', [ 'uses' => $usersController . '@store']);
+        $api->delete('users/{id}', [ 'uses' => $usersController . '@delete']);
 
         // =Assets
         $assetsController = 'WA\Http\Controllers\AssetsController';

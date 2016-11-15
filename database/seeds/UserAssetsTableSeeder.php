@@ -1,8 +1,8 @@
 <?php
 
-class UserUdlsTableSeeder extends BaseTableSeeder
+class UserAssetsTableSeeder extends BaseTableSeeder
 {
-    protected $table = 'employee_udls';
+    protected $table = 'user_assets';
 
     public function run()
     {
@@ -11,51 +11,51 @@ class UserUdlsTableSeeder extends BaseTableSeeder
         $data = [
             [
                 'userId' => 1,
-                'udlValueId' => 5
+                'assetId' => 1
             ],
             [
                 'userId' => 1,
-                'udlValueId' => 12
+                'assetId' => 2
             ],
             [
                 'userId' => 1,
-                'udlValueId' => 27
+                'assetId' => 3
             ],
             [
                 'userId' => 1,
-                'udlValueId' => 39
+                'assetId' => 4
             ],
             [
                 'userId' => 2,
-                'udlValueId' => 5
+                'assetId' => 1
             ],
             [
                 'userId' => 2,
-                'udlValueId' => 12
+                'assetId' => 3
             ],
             [
                 'userId' => 2,
-                'udlValueId' => 27
+                'assetId' => 5
             ],
             [
                 'userId' => 2,
-                'udlValueId' => 39
+                'assetId' => 6
             ],
             [
                 'userId' => 3,
-                'udlValueId' => 5
+                'assetId' => 1
             ],
             [
                 'userId' => 3,
-                'udlValueId' => 12
+                'assetId' => 4
             ],
             [
                 'userId' => 3,
-                'udlValueId' => 27
+                'assetId' => 6
             ],
             [
                 'userId' => 3,
-                'udlValueId' => 39
+                'assetId' => 7
             ],
         ];
 
