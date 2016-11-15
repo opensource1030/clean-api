@@ -66,11 +66,22 @@ class ServicesController extends FilteredApiController
         try {
             $data['attributes']['id'] = $id;
             $service = $this->service->update($data['attributes']);
+            if($service == 'notExist'){
+                $error['errors']['services'] = Lang::get('messages.NotExistClass',
+                ['class' => 'Service']);
+                //$error['errors']['Message'] = $e->getMessage();
+                return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+            } else if ($service == 'notSaved'){
+                $error['errors']['services'] = Lang::get('messages.NotSavedClass',
+                ['class' => 'Service']);
+                //$error['errors']['Message'] = $e->getMessage();
+                return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+            }
         } catch (\Exception $e) {
             DB::rollBack();
             $error['errors']['services'] = Lang::get('messages.NotOptionIncludeClass',
                 ['class' => 'Service', 'option' => 'updated', 'include' => '']);
-            $error['errors']['Message'] = $e->getMessage();
+            //$error['errors']['Message'] = $e->getMessage();
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
@@ -79,7 +90,7 @@ class ServicesController extends FilteredApiController
             $serviceItemsInterface = app()->make('WA\Repositories\ServiceItem\ServiceItemInterface');
         } catch (\Exception $e) {
             $error['errors']['serviceitems'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Service', 'option' => 'updated', 'include' => 'ServiceItems']);
-            $error['errors']['Message'] = $e->getMessage();
+            //$error['errors']['Message'] = $e->getMessage();
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
@@ -94,6 +105,7 @@ class ServicesController extends FilteredApiController
                     $this->deleteNotRequested($data, $serviceItems, $serviceItemsInterface, 'serviceitems');
 
                     foreach ($data as $item) {
+                        $item['serviceId'] = $service->id;
                         if (isset($item['id'])) {
                             if ($item['id'] == 0) {
                                 $serviceItemsInterface->create($item);
@@ -137,8 +149,8 @@ class ServicesController extends FilteredApiController
 
         if ($this->isJsonCorrect($request, 'services')) {
             try {
-                $data = $request->all()['data']['attributes'];
-                $service = $this->service->create($data);
+                $data = $request->all()['data'];
+                $service = $this->service->create($data['attributes']);
             } catch (\Exception $e) {
                 DB::rollBack();
                 $error['errors']['services'] = Lang::get('messages.NotOptionIncludeClass',
@@ -155,6 +167,7 @@ class ServicesController extends FilteredApiController
                         $data = $data['relationships']['serviceitems']['data'];
 
                         foreach ($data as $item) {
+                            $item['serviceId'] = $service->id;
                             try {
                                 $serviceItemsInterface->create($item);    
                             } catch (\Exception $e) {
