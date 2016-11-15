@@ -212,7 +212,7 @@ trait Criteria
                     $op = strtolower(key($filterVal));
                     $val = current($filterVal);
 
-                    $this->criteriaQuery->whereHas(str_singular($relKey),
+                    $this->criteriaQuery->whereHas($relKey,
                         function ($query) use ($relColumn, $op, $val) {
                             return $query = $this->executeCriteria($query, $relColumn, $op, $val);
                         });

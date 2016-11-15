@@ -50,7 +50,8 @@ class UserTransformer extends FilterableTransformer
     public function includeAllocations(User $user)
     {
         $this->criteria = $this->getRequestCriteria();
-        $allocations = $this->applyCriteria($user->allocations(), $this->criteria);
+        $allocations = $this->applyCriteria($user->allocations(), $this->criteria, true,
+            ['allocations' => 'allocations']);
         $filters = $this->criteria['filters']->get();
 
         if (in_array('[allocations.billMonth]=[company.currentBillMonth]', $filters)) {
