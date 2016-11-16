@@ -382,6 +382,7 @@ class EloquentUser extends AbstractRepository implements UserInterface
         if(isset($data['companyId']) && $data['companyId'] != ''){
             $userData['companyId'] = $data['companyId'];
         } else {
+        if (!isset($data['companyId']) || $data['companyId'] == null){
             $domain = explode('@', $data['email'])[1];
             $company = \DB::table('company_domains')
                 ->select('companyId')
@@ -435,6 +436,44 @@ class EloquentUser extends AbstractRepository implements UserInterface
         } else {
             $userData['departmentId'] = null;
         }
+
+        $identification = uniqid('WA-');
+
+        $userData = [
+            'uuid' => isset($data['uuid']) ? $data['uuid'] : Uuid::generate(4)->string,
+            //'identification' => isset($data['identification']) ? $data['identification'] : uniqid('WA-'),
+            'identification' => $identification,
+            'email' => isset($data['email']) ? $data['email'] : null,
+            'alternateEmail' => isset($data['alternateEmail']) ? $data['alternateEmail'] : null,
+            'password' => isset($data['password']) ? $data['password'] : bcrypt($identification),
+            'username' => isset($data['username']) ? $data['username'] : explode('@', $data['email'])[0],
+            'confirmation_code' => isset($data['confirmation_code']) ? $data['confirmation_code'] : null,
+            'remember_token' => isset($data['remember_token']) ? $data['remember_token'] : null,
+            'confirmed' => isset($data['confirmed']) ? $data['confirmed'] : 0,
+            'firstName' => isset($data['firstName']) ? $data['firstName'] : null,
+            'lastName' => isset($data['lastName']) ? $data['lastName'] : null,
+            'alternateFirstName' => isset($data['alternateFirstName']) ? $data['alternateFirstName'] : null,
+            'supervisorEmail' => isset($data['supervisorEmail']) ? $data['supervisorEmail'] : null,
+            'companyUserIdentifier' => isset($data['companyUserIdentifier']) ? $data['companyUserIdentifier'] : null,
+            'isSupervisor' => isset($data['isSupervisor']) ? $data['isSupervisor'] : 0,
+            'isValidator' => isset($data['isValidator']) ? $data['isValidator'] : 0,
+            'isActive' => isset($data['isActive']) ? $data['isActive'] : 1,
+            'rgt' => isset($data['rgt']) ? $data['rgt'] : null,
+            'lft' => isset($data['lft']) ? $data['lft'] : null,
+            'hierarchy' => isset($data['hierarchy']) ? $data['hierarchy'] : null,
+            'defaultLang' => isset($data['defaultLang']) ? $data['defaultLang'] : 'en',
+            'notes' => isset($data['notes']) ? $data['notes'] : null,
+            'level' => isset($data['level']) ? $data['level'] : 0,
+            'notify' => isset($data['notify']) ? $data['notify'] : 0,
+            'companyId' => isset($data['companyId']) ? $data['companyId'] : null,
+            'syncId' => isset($data['syncId']) ? $data['syncId'] : null,
+            'supervisorId' => isset($data['supervisorId']) ? $data['supervisorId'] : null,
+            'externalId' => isset($data['externalId']) ? $data['externalId'] : null,
+            'approverId' => isset($data['approverId']) ? $data['approverId'] : null,
+            'defaultLocationId' => isset($data['defaultLocationId']) ? $data['defaultLocationId'] : null,
+            'addressId' => isset($data['addressId']) ? $data['addressId'] : null,
+            'departmentId' => isset($data['departmentId']) ? $data['departmentId'] : null,
+        ];
 
         $user = $this->model->create($userData);
 
@@ -756,7 +795,6 @@ class EloquentUser extends AbstractRepository implements UserInterface
         if(isset($data['departmentId']) && $data['departmentId'] != ''){
             $user->departmentId = $data['departmentId'];
         }
-
 
         if (!$user->save()) {
             return 'notSaved';
