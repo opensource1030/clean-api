@@ -12,6 +12,7 @@ use WA\Repositories\Udl\UdlInterface;
 use WA\Repositories\UdlValue\UdlValueInterface;
 use WA\Repositories\UdlValuePath\UdlValuePathInterface;
 use Webpatser\Uuid\Uuid;
+use DB;
 
 class EloquentUser extends AbstractRepository implements UserInterface
 {
@@ -232,10 +233,72 @@ class EloquentUser extends AbstractRepository implements UserInterface
      *
      * @return User | false
      */
-    public function create(
-        array $data,
-        array $udlValues = []
-    ) {
+    public function create(array $data)
+    {
+        if (!isset($data['companyId']) || $data['companyId'] == null){
+            $domain = explode('@', $data['email'])[1];
+            $company = \DB::table('company_domains')
+                ->select('companyId')
+                ->where('domain', $domain)->get();
+            if($company != null){
+                $data['companyId'] = $company[0]->companyId;// ID segun el correo electronico.
+            } else {
+                $error['errors']['email'] = $domain;
+                $error['errors']['user'] = 'User\'s Email Domain doesn\'t exists in our company_domains table';
+                return response()->json($error)->setStatusCode(409);
+            }             
+        }
+
+        $identification = uniqid('WA-');
+
+        $userData = [
+            'uuid' => isset($data['uuid']) ? $data['uuid'] : Uuid::generate(4)->string,
+            //'identification' => isset($data['identification']) ? $data['identification'] : uniqid('WA-'),
+            'identification' => $identification,
+            'email' => isset($data['email']) ? $data['email'] : null,
+            'alternateEmail' => isset($data['alternateEmail']) ? $data['alternateEmail'] : null,
+            'password' => isset($data['password']) ? $data['password'] : bcrypt($identification),
+            'username' => isset($data['username']) ? $data['username'] : explode('@', $data['email'])[0],
+            'confirmation_code' => isset($data['confirmation_code']) ? $data['confirmation_code'] : null,
+            'remember_token' => isset($data['remember_token']) ? $data['remember_token'] : null,
+            'confirmed' => isset($data['confirmed']) ? $data['confirmed'] : 0,
+            'firstName' => isset($data['firstName']) ? $data['firstName'] : null,
+            'lastName' => isset($data['lastName']) ? $data['lastName'] : null,
+            'alternateFirstName' => isset($data['alternateFirstName']) ? $data['alternateFirstName'] : null,
+            'supervisorEmail' => isset($data['supervisorEmail']) ? $data['supervisorEmail'] : null,
+            'companyUserIdentifier' => isset($data['companyUserIdentifier']) ? $data['companyUserIdentifier'] : null,
+            'isSupervisor' => isset($data['isSupervisor']) ? $data['isSupervisor'] : 0,
+            'isValidator' => isset($data['isValidator']) ? $data['isValidator'] : 0,
+            'isActive' => isset($data['isActive']) ? $data['isActive'] : 1,
+            'rgt' => isset($data['rgt']) ? $data['rgt'] : null,
+            'lft' => isset($data['lft']) ? $data['lft'] : null,
+            'hierarchy' => isset($data['hierarchy']) ? $data['hierarchy'] : null,
+            'defaultLang' => isset($data['defaultLang']) ? $data['defaultLang'] : 'en',
+            'notes' => isset($data['notes']) ? $data['notes'] : null,
+            'level' => isset($data['level']) ? $data['level'] : 0,
+            'notify' => isset($data['notify']) ? $data['notify'] : 0,
+            'companyId' => isset($data['companyId']) ? $data['companyId'] : null,
+            'syncId' => isset($data['syncId']) ? $data['syncId'] : null,
+            'supervisorId' => isset($data['supervisorId']) ? $data['supervisorId'] : null,
+            'externalId' => isset($data['externalId']) ? $data['externalId'] : null,
+            'approverId' => isset($data['approverId']) ? $data['approverId'] : null,
+            'defaultLocationId' => isset($data['defaultLocationId']) ? $data['defaultLocationId'] : null,
+            'addressId' => isset($data['addressId']) ? $data['addressId'] : null,
+            'departmentId' => isset($data['departmentId']) ? $data['departmentId'] : null,
+        ];
+
+        $user = $this->model->create($userData);
+
+        if (!$user) {
+            return false;
+        }
+
+        return $user;
+
+
+
+/*
+
         $tmp_password = null;
 
         if (isset($data['udlValues'])) {
@@ -302,7 +365,7 @@ class EloquentUser extends AbstractRepository implements UserInterface
             'isValidator' => isset($data['isValidator']) ? $data['isValidator'] : 0,
             'notes' => isset($data['notes']) ? $data['notes'] : '',
             'level' => isset($data['level']) ? $data['level'] : '',
-            'evDepartmentId' => (isset($data['evDepartmentId'])) ? $data['evDepartmentId'] : '',
+            'departmentId' => (isset($data['departmentId'])) ? $data['evDepartmentId'] : '',
             'approverId' => isset($data['approverId']) && isset($data['approverId']) ? $data['approverId'] : 0,
             'externalSupervisorId' => $this->getExternalSupervisorId($sup_email),
 
@@ -315,9 +378,9 @@ class EloquentUser extends AbstractRepository implements UserInterface
                 return false;
             }
 
-            /*if (!empty($udlValues) && !is_null($user->id)) {
+            if (!empty($udlValues) && !is_null($user->id)) {
                 $this->syncUDLValues($user, $udlValues);
-            }*/
+            }
 
             if (!empty($data['user_roles']) && !is_null($user->id)) {
                 foreach ($data['user_roles'] as $role) {
@@ -350,6 +413,7 @@ class EloquentUser extends AbstractRepository implements UserInterface
         } catch (\Exception $e) {
             Log::error('[ '.get_class().' | '.$e->getLine().' ] | There was an issue: '.$e->getMessage());
         }
+*/
     }
 
     /**
@@ -410,10 +474,57 @@ class EloquentUser extends AbstractRepository implements UserInterface
      *
      * @return bool
      */
-    public function update(
-        array $data,
-        array $udlValues = []
-    ) {
+    public function update(array $data)
+    {
+        $user = $this->model->find($data['id']);
+
+        if (!$user) {
+            return 'notExist';
+        }
+
+        $user->uuid                     = isset($data['uuid']) ? $data['uuid'] : $user->uuid;
+        $user->identification           = isset($data['identification']) ? $data['identification'] : $user->identification;
+        $user->email                    = isset($data['email']) ? $data['email'] : $user->email;
+        $user->alternateEmail           = isset($data['alternateEmail']) ? $data['alternateEmail'] : $user->alternateEmail;
+        $user->password                 = isset($data['password']) ? $data['password'] : $user->password;
+        $user->username                 = isset($data['username']) ? $data['username'] : $user->username;
+        $user->confirmation_code        = isset($data['confirmation_code']) ? $data['confirmation_code'] : $user->confirmation_code;
+        $user->remember_token           = isset($data['remember_token']) ? $data['remember_token'] : $user->remember_token;
+        $user->confirmed                = isset($data['confirmed']) ? $data['confirmed'] : $user->confirmed;
+        $user->firstName                = isset($data['firstName']) ? $data['firstName'] : $user->firstName;
+        $user->lastName                 = isset($data['lastName']) ? $data['lastName'] : $user->lastName;
+        $user->alternateFirstName       = isset($data['alternateFirstName']) ? $data['alternateFirstName'] : $user->alternateFirstName;
+        $user->supervisorEmail          = isset($data['supervisorEmail']) ? $data['supervisorEmail'] : $user->supervisorEmail;
+        $user->companyUserIdentifier    = isset($data['companyUserIdentifier']) ? $data['companyUserIdentifier'] : $user->companyUserIdentifier;
+        $user->isSupervisor             = isset($data['isSupervisor']) ? $data['isSupervisor'] : $user->isSupervisor;
+        $user->isValidator              = isset($data['isValidator']) ? $data['isValidator'] : $user->isValidator;
+        $user->isActive                 = isset($data['isActive']) ? $data['isActive'] : $user->isActive;
+        $user->rgt                      = isset($data['rgt']) ? $data['rgt'] : $user->rgt;
+        $user->lft                      = isset($data['lft']) ? $data['lft'] : $user->lft;
+        $user->hierarchy                = isset($data['hierarchy']) ? $data['hierarchy'] : $user->hierarchy;
+        $user->defaultLang              = isset($data['defaultLang']) ? $data['defaultLang'] : $user->defaultLang;
+        $user->notes                    = isset($data['notes']) ? $data['notes'] : $user->notes;
+        $user->level                    = isset($data['level']) ? $data['level'] : $user->level;
+        $user->notify                   = isset($data['notify']) ? $data['notify'] : $user->notify;
+        $user->companyId                = isset($data['companyId']) ? $data['companyId'] : $user->companyId;
+        $user->syncId                   = isset($data['syncId']) ? $data['syncId'] : $user->syncId;
+        $user->supervisorId             = isset($data['supervisorId']) ? $data['supervisorId'] : $user->supervisorId;
+        $user->externalId               = isset($data['externalId']) ? $data['externalId'] : $user->externalId;
+        $user->approverId               = isset($data['approverId']) ? $data['approverId'] : $user->approverId;
+        $user->defaultLocationId        = isset($data['defaultLocationId']) ? $data['defaultLocationId'] : $user->defaultLocationId;
+        $user->addressId                = isset($data['addressId']) ? $data['addressId'] : $user->addressId;
+        $user->departmentId             = isset($data['departmentId']) ? $data['departmentId'] : $user->departmentId;
+
+
+        if (!$user->save()) {
+            return 'notSaved';
+        }
+
+        return $user;
+
+
+
+/*
         if (empty($udlValues) && (isset($data['udlValues']) && !empty($data['udlValues']))) {
             $udlValues = $this->compactUdlValues($data['udlValues'], $data['companyId']);
         }
@@ -438,7 +549,7 @@ class EloquentUser extends AbstractRepository implements UserInterface
         $user->supervisorEmail = strtolower(isset($data['supervisorEmail']) ? $data['supervisorEmail'] : null);
         $user->supervisorId = !empty($data['supervisorId']) ? $data['supervisorId'] : null;
         $user->approverId = isset($data['approverId']) ? $data['approverId'] : null;
-        $user->companyUserIdentifier = $data['companyUserIdentifier'];
+        $user->companyUserIdentifier = !empty($data['companyUserIdentifier']) ? $data['companyUserIdentifier'] : null;
         $user->isActive = isset($data['isActive']) ? $data['isActive'] : 0;
         $user->isValidator = isset($data['isValidator']) ? $data['isValidator'] : 0;
         $user->notify = isset($data['notify']) ? $data['notify'] : 0;
@@ -448,7 +559,7 @@ class EloquentUser extends AbstractRepository implements UserInterface
         $user->defaultLang = !empty($data['defaultLang']) ? $data['defaultLang'] : 'en';
         $data['defaultLang'] = $user->defaultLang;
 
-        $user->departmentId = !empty($data['departmentId']) ? $data['departmentId'] : 0;
+        $user->departmentId = !empty($data['departmentId']) ? $data['departmentId'] : null;
         $data['departmentId'] = $user->departmentId;
         $user->companyId = !empty($data['companyId']) ? $data['companyId'] : null;
         $user->notes = isset($data['notes']) ? $data['notes'] : '';
@@ -465,9 +576,9 @@ class EloquentUser extends AbstractRepository implements UserInterface
             return false;
         }
 
-        /* if (!empty($udlValues)) {
+        if (!empty($udlValues)) {
              $this->syncUDLValues($user, $udlValues);
-         }*/
+         }
 
         //Save User Roles
         $user->roles()->detach();
@@ -495,6 +606,7 @@ class EloquentUser extends AbstractRepository implements UserInterface
         }
 
         return $user;
+*/
     }
 
     /**
