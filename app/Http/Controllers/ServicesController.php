@@ -83,8 +83,18 @@ class ServicesController extends FilteredApiController
             $error['errors']['services'] = Lang::get('messages.NotOptionIncludeClass',
                 ['class' => 'Service', 'option' => 'updated', 'include' => '']);
             //$error['errors']['Message'] = $e->getMessage();
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
-        
+
+        try {
+            $serviceItems = ServiceItem::where('serviceId', $id)->get();
+            $serviceItemsInterface = app()->make('WA\Repositories\ServiceItem\ServiceItemInterface');
+        } catch (\Exception $e) {
+            $error['errors']['serviceitems'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Service', 'option' => 'updated', 'include' => 'ServiceItems']);
+            //$error['errors']['Message'] = $e->getMessage();
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+        }
+
         /*
          * Check if Json has relationships to continue or if not and commit + return.
          */
@@ -184,6 +194,7 @@ class ServicesController extends FilteredApiController
                         foreach ($data as $item) {
                             $item['serviceId'] = $service->id;
                             try {
+                                $item['serviceId'] = $service->id;
                                 $serviceItemsInterface->create($item);    
                             } catch (\Exception $e) {
                                 DB::rollBack();
