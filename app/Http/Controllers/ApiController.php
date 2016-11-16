@@ -162,8 +162,15 @@ abstract class ApiController extends BaseController
      */
     public function deleteNotRequested($data, $databaseinformation, $interface, $type) {
 
-        $dataFromRequest = $this->parseJsonToArray($data, $type);
-        
+        $dataFromRequest = array();
+        foreach ($data as $item) {
+            if(isset($item['id'])){
+                if($item['id'] > 0) {
+                    array_push($dataFromRequest, $item['id']);
+                }
+            }
+        }
+
         $arrayFromDB = array();
         foreach ($databaseinformation as $some) {
             array_push($arrayFromDB, $some->id);
