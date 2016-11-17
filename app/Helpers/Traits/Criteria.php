@@ -60,6 +60,8 @@ trait Criteria
 
     protected $isInclude = false;
 
+    protected $returnEmptyResults = false;
+
     /**
      * We have to map some table names / model names because they aren't totally named right
      *
@@ -121,6 +123,10 @@ trait Criteria
 
         if (isset($criteria['filters'])) {
             $this->setFilters($criteria['filters']);
+        }
+
+        if (isset($criteria['fields'])) {
+            $this->setFilters($criteria['fields']);
         }
 
         return true;
@@ -209,13 +215,14 @@ trait Criteria
                 }
 
                 if ($filterKey !== $criteriaModelName) {
-                    $op = strtolower(key($filterVal));
-                    $val = current($filterVal);
-
-                    $this->criteriaQuery->whereHas($relKey,
-                        function ($query) use ($relColumn, $op, $val) {
-                            return $query = $this->executeCriteria($query, $relColumn, $op, $val);
-                        });
+                    if ($this->returnEmptyResults === true) {
+                        $op = strtolower(key($filterVal));
+                        $val = current($filterVal);
+                        $this->criteriaQuery->whereHas($relKey,
+                            function ($query) use ($relColumn, $op, $val) {
+                                return $query = $this->executeCriteria($query, $relColumn, $op, $val);
+                            });
+                    }
                     continue;
                 }
                 $filterKey = $relColumn;
