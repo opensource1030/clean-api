@@ -21,6 +21,14 @@ class AllocationTransformer extends FilterableTransformer
             'other_charge'        => $allocations->otherCharges,
             'fees'                => $allocations->fees,
             'last_upgrade'        => $allocations->last_upgrade,
+            'voice_category'      => $allocations->voiceCategory,
+            'data_category'       => $allocations->dataCategory,
+            'messaging'           => $allocations->textMessagingCost,
+            'taxes'               => $allocations->taxes,
+            'equipment'           => $allocations->equipmentCost,
+            'other_category'      => $allocations->otherCategory,
+            'unknown_category'    => $allocations->unknownCategory,
+
         ];
     }
 }
