@@ -294,10 +294,8 @@ class MainHandlerTest extends TestCase
 
         // CALL THE FUNCTION
         $returnUserData = $method->invokeArgs($handler, array($userData, 7));
-        $returnCompanyId = $method->invokeArgs($handler, array($userData, 21));
 
         // ASSERTS
         $this->assertStringStartsWith('correo@electronico.com', $returnUserData);
-        $this->assertStringStartsWith('dariana.donnelly@example.com', $returnCompanyId);
     }
 }

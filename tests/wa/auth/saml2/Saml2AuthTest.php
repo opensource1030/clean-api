@@ -7,9 +7,7 @@ use OneLogin_Saml2_Auth;
 
 class Saml2AuthTest extends TestCase
 { 
-    /**
-    * @group need-review
-    **/
+
     public function testLogin()
     {
         // Route information
