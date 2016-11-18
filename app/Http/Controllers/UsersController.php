@@ -146,7 +146,6 @@ class UsersController extends FilteredApiController
         }
 
         DB::beginTransaction();
-
         /*
          * Now we can update the User.
          */
@@ -256,6 +255,7 @@ class UsersController extends FilteredApiController
 
                             foreach ($data as $allocation) {
                                 $allocation['userId'] = $user->id;
+                                $allocation['companyId'] = $user->companyId;
 
                                 if (isset($allocation['id'])) {
                                     if ($allocation['id'] == 0) {
@@ -360,12 +360,11 @@ class UsersController extends FilteredApiController
         try {
             $data = $request->all()['data'];
             $user = $this->user->create($data['attributes']);
-
         } catch (\Exception $e) {
             $success = false;
             $error['errors']['users'] = Lang::get('messages.NotOptionIncludeClass',
                 ['class' => 'User', 'option' => 'created', 'include' => '']);
-            $error['errors']['Message'] = $e->getMessage();
+            //$error['errors']['Message'] = $e->getMessage();
         }
 
         /*
@@ -387,7 +386,7 @@ class UsersController extends FilteredApiController
                         $success = false;
                         $error['errors']['address'] = Lang::get('messages.NotOptionIncludeClass',
                             ['class' => 'User', 'option' => 'created', 'include' => 'Address']);
-                        $error['errors']['Message'] = $e->getMessage();
+                        //$error['errors']['Message'] = $e->getMessage();
                     }
                 }
             }
@@ -443,7 +442,7 @@ class UsersController extends FilteredApiController
                         $success = false;
                         $error['errors']['udls'] = Lang::get('messages.NotOptionIncludeClass',
                             ['class' => 'User', 'option' => 'created', 'include' => 'Udls']);
-                        $error['errors']['Message'] = $e->getMessage();
+                        //$error['errors']['Message'] = $e->getMessage();
                     }
                 }
             }
@@ -457,7 +456,7 @@ class UsersController extends FilteredApiController
                     } catch (\Exception $e) {
                         $success = false;
                         $error['errors']['allocations'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'User', 'option' => 'created', 'include' => 'Allocations']);
-                        $error['errors']['Message'] = $e->getMessage();
+                        //$error['errors']['Message'] = $e->getMessage();
                     }
 
                     if ($success) {
@@ -470,7 +469,7 @@ class UsersController extends FilteredApiController
                         } catch (\Exception $e) {
                             $success = false;
                             $error['errors']['allocations'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'User', 'option' => 'created', 'include' => 'Allocations']);
-                            $error['errors']['Message'] = $e->getMessage();
+                            //$error['errors']['Message'] = $e->getMessage();
                         }
                     }
                 }
@@ -504,19 +503,11 @@ class UsersController extends FilteredApiController
             }
         }
 
-
-        //var_dump("AQUI");
         if ($success) {
-            //var_dump("ANTES COMMIT");
-
             DB::commit();
-            //dd("DESPUES COMMIT");
-
             return $this->response()->item($user, new UserTransformer(), ['key' => 'users'])->setStatusCode($this->status_codes['created']);
         } else {
-            //var_dump("ANTES ROLLBACK");
             DB::rollBack();
-            //dd("DESPUES ROLLBACK");
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
     }

@@ -249,7 +249,7 @@ class EloquentUser extends AbstractRepository implements UserInterface
             }             
         }
 
-        $identification = uniqid('WA-');
+        $identification = isset($data['identification']) ? $data['identification'] : uniqid('WA-');
 
         $userData = [
             'uuid' => isset($data['uuid']) ? $data['uuid'] : Uuid::generate(4)->string,
@@ -345,9 +345,7 @@ class EloquentUser extends AbstractRepository implements UserInterface
             'lastName' => isset($data['lastName']) ? $data['lastName'] : null,
             'companyId' => isset($data['companyId']) ? $data['companyId'] : 0,
             'companyExternalId' => isset($data['companyExternalId']) ? $data['companyExternalId'] : $this->getCompanyExternalId($data['companyId']),
-            'companyUserIdentifier' => isset($data['companyUserIdentifier']) ?
-                $id = $data['companyUserIdentifier'] :
-                $id = $data['identification'],
+            'companyUserIdentifier' => isset($data['companyUserIdentifier']) ? $id = $data['companyUserIdentifier'] : $id = $data['identification'],
             'isActive' => isset($data['isActive']) ? $data['isActive'] : 0,
             'syncId' => isset($data['syncId']) ? $data['syncId'] : null,
             'defaultLocationId' => isset($data['defaultLocationId']) ? $data['defaultLocationId'] : 236, //US
@@ -514,7 +512,6 @@ class EloquentUser extends AbstractRepository implements UserInterface
         $user->defaultLocationId        = isset($data['defaultLocationId']) ? $data['defaultLocationId'] : $user->defaultLocationId;
         $user->addressId                = isset($data['addressId']) ? $data['addressId'] : $user->addressId;
         $user->departmentId             = isset($data['departmentId']) ? $data['departmentId'] : $user->departmentId;
-
 
         if (!$user->save()) {
             return 'notSaved';

@@ -18,9 +18,11 @@ class UdlTransformer extends FilterableTransformer
     {
         return [
             'id'    => $udl->id,
+            'companyId'    => $udl->companyId,
             'name'  => $udl->name,
             'label' => $udl->label,
             'sections' => $udl->udlValues,
+            'legacyUdlField' => $udl->legacyUdlField,
         ];
     }
 }

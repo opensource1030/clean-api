@@ -17,10 +17,12 @@ class UdlValueTransformer extends FilterableTransformer
     public function transform(UdlValue $udlValue)
     {
         return [
-            'id'          => $udlValue->id,
-            'uld'         => $udlValue->udl->name,
-            'name'        => $udlValue->name,
-            'lastUpdated' => $udlValue->updated_at,
+            'id'            => $udlValue->id,
+            'udlName'       => $udlValue->udl->name,
+            'udlLabel'      => $udlValue->udl->label,
+            'companyName'   => $udlValue->udl->company->name,
+            'companyLabel'  => $udlValue->udl->company->label,
+            'companySName'  => $udlValue->udl->company->shortName,
         ];
     }
 }
