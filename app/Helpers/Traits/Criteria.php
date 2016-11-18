@@ -126,7 +126,7 @@ trait Criteria
         }
 
         if (isset($criteria['fields'])) {
-            $this->setFilters($criteria['fields']);
+            $this->setFields($criteria['fields']);
         }
 
         return true;
@@ -159,6 +159,22 @@ trait Criteria
     {
         if ($filterCriteria !== null) {
             $this->filterCriteria = $filterCriteria;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Set fields criteria.
+     *
+     * @param Filters $fieldCriteria
+     *
+     * @return $this
+     */
+    public function setFields(Fields $fieldCriteria)
+    {
+        if ($fieldCriteria !== null) {
+            $this->fieldCriteria = $fieldCriteria;
         }
 
         return $this;
