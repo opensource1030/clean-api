@@ -187,12 +187,13 @@ trait Criteria
      * @param null $modelMap Optional model table-name mapping for non-standard table names
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    protected function applyCriteria($criteriaModel, $criteria = null, $isInclude = false, $modelMap = null)
+    protected function applyCriteria($criteriaModel, $criteria = null, $isInclude = false, $modelMap = null, $returnEmptyResults = false)
     {
         if ($criteria !== null) {
             $this->setCriteria($criteria);
         }
 
+        $this->returnEmptyResults = $returnEmptyResults;
         $this->isInclude = $isInclude;
         $this->modelMap = $modelMap;
         $this->criteriaModel = $criteriaModel;
