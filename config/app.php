@@ -41,14 +41,3 @@ return [
     //'fallback_locale' => env('APP_FALLBACK_LOCALE', 'en'),
     'fallback_locale' => 'en',
 ];
-//LARAVEL 5.3
-
-/*'providers' => [
-    //
-     Illuminate\Notifications\NotificationServiceProvider::class,
-];
-
-'aliases' => [
-     //
-    'Notification' => Illuminate\Support\Facades\Notification::class, 
-];*/

@@ -11,55 +11,149 @@
 
 namespace WA\Auth;
 
-use League\OAuth2\Server\Entity\AccessTokenEntity;
-use League\OAuth2\Server\Entity\ClientEntity;
-use League\OAuth2\Server\Entity\RefreshTokenEntity;
-use League\OAuth2\Server\Entity\SessionEntity;
-use League\OAuth2\Server\Event;
-use League\OAuth2\Server\Exception;
-use League\OAuth2\Server\Util\SecureKey;
-use League\OAuth2\Server\Grant\AbstractGrant;
-use Cache;
-use Session;
+//namespace WA\Passport;
 
+use Illuminate\Http\Request;
+use Laravel\Passport\Bridge\User;
+use League\OAuth2\Server\Entities\UserEntityInterface;
+use League\OAuth2\Server\Exception\OAuthServerException;
+use League\OAuth2\Server\Grant\AbstractGrant;
+use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
+use League\OAuth2\Server\Repositories\UserRepositoryInterface;
+use Laravel\Passport\Bridge\RefreshTokenRepository;
+use Laravel\Passport\Bridge\UserRepository;
+use League\OAuth2\Server\RequestEvent;
+use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Log;
 /**
  * SSO grant class.
  */
 class SSOGrant extends AbstractGrant
 {
+/**
+     * @param UserRepositoryInterface         $userRepository
+     * @param RefreshTokenRepositoryInterface $refreshTokenRepository
+     */
+    public function __construct(
+        UserRepositoryInterface $userRepository,
+        RefreshTokenRepositoryInterface $refreshTokenRepository
+    )
+    {
+        /*Log::debug("test1: ".print_r($this->setUserRepository($userRepository), true));
+        
+            Log::debug("test2: ".print_r( $this->setRefreshTokenRepository($refreshTokenRepository), true));
+            dd("END");*/
+        $this->setUserRepository($userRepository);
+        $this->setRefreshTokenRepository($refreshTokenRepository);
+        $this->refreshTokenTTL = new \DateInterval('P1M');
+    }
+    /**
+     * {@inheritdoc}
+     */
+    public function respondToAccessTokenRequest(
+        ServerRequestInterface $request,
+        ResponseTypeInterface $responseType,
+        \DateInterval $accessTokenTTL
+    )
+    {
+        // Validate request
+        $client = $this->validateClient($request);
+        $scopes = $this->validateScopes($this->getRequestParameter('scope', $request));
+        $user = $this->validateUser($request);
+        // Finalize the requested scopes
+        $scopes = $this->scopeRepository->finalizeScopes($scopes, $this->getIdentifier(), $client, $user->getIdentifier());
+        // Issue and persist new tokens
+        $accessToken = $this->issueAccessToken($accessTokenTTL, $client, $user->getIdentifier(), $scopes);
+        $refreshToken = $this->issueRefreshToken($accessToken);
+        // Inject tokens into response
+        $responseType->setAccessToken($accessToken);
+        $responseType->setRefreshToken($refreshToken);
+        return $responseType;
+    }
+    /**
+     * {@inheritdoc}
+     */
+    public function getIdentifier()
+    {
+        return 'sso';
+    }
+    /**
+     * @param ServerRequestInterface $request
+     *
+     * @return UserEntityInterface
+     * @throws OAuthServerException
+     */
+
+    
+    protected function validateUser(ServerRequestInterface $request)
+    {
+
+        $laravelRequest = new Request($request->getParsedBody());
+        $user = $this->getUserEntityByRequest($laravelRequest);
+        if ($user instanceof UserEntityInterface === false) {
+            $this->getEmitter()->emit(new RequestEvent(RequestEvent::USER_AUTHENTICATION_FAILED, $request));
+            throw OAuthServerException::invalidCredentials();
+        }
+        return $user;
+    }
+    /**
+     * Retrieve user by request.
+     *
+     * @param \Illuminate\Http\Request $request
+     *
+     * @return \Laravel\Passport\Bridge\User|null
+     * @throws \League\OAuth2\Server\Exception\OAuthServerException
+     */
+    protected function getUserEntityByRequest(Request $request)
+    {
+        if (is_null($model = config('auth.providers.users.model'))) { 
+            throw OAuthServerException::serverError('Unable to determine user model from configuration.');
+        }
+        if (method_exists($model, 'byPassportSSOGrantRequest')) { 
+            $user = (new $model)->byPassportSSOGrantRequest($request);
+        } else { 
+            throw OAuthServerException::serverError('Unable to find byPassportSSOGrantRequest method on user model.');
+        }
+        return ($user) ? new User($user->id) : null;
+    }
+}
+
+
+
     /**
      * Grant identifier.
      *
      * @var string
-     */
+     
     protected $identifier = 'sso';
 
     /**
      * Response type.
      *
      * @var string
-     */
+     
     protected $responseType;
 
     /**
      * Callback to authenticate a user's name and password.
      *
      * @var callable
-     */
+     
     protected $callback;
 
     /**
      * Access token expires in override.
      *
      * @var int
-     */
+     
     protected $accessTokenTTL;
 
     /**
      * Set the callback to verify a user's username and password.
      *
      * @param callable $callback The callback function
-     */
+     
     public function setVerifyCredentialsCallback(callable $callback)
     {
         $this->callback = $callback;
@@ -71,7 +165,7 @@ class SSOGrant extends AbstractGrant
      * @return callable
      *
      * @throws
-     */
+     
     protected function getVerifyCredentialsCallback()
     {
         if (is_null($this->callback) || !is_callable($this->callback)) {
@@ -87,7 +181,7 @@ class SSOGrant extends AbstractGrant
      * @return array
      *
      * @throws
-     */
+     
     public function completeFlow()
     {
         // Get the required params
@@ -177,4 +271,8 @@ class SSOGrant extends AbstractGrant
 
         return $response;
     }
-}
+
+
+
+    
+}*/

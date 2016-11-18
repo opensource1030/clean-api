@@ -142,7 +142,6 @@ class UsersController extends FilteredApiController
     public function getLoggedInUser(Request $request)
     {
         $user = Auth::user();
-        var_dump($user);
     }
 
 }

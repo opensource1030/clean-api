@@ -28,6 +28,8 @@
     "barryvdh/laravel-ide-helper": "^2.1",
     "phpunit/phpunit": "5.3.*",
     "ext-sqlite3":"*",
+    "symfony/css-selector": "3.1.*",
+    "symfony/dom-crawler": "3.1.*",
     "raveren/kint": "*"
      
   },

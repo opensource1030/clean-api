@@ -2,7 +2,7 @@
 
 namespace WA\DataStore\User;
 //namespace App;
-use Laravel\Passport\HasApiTokens as laravelHasApiTokens;
+use Laravel\Passport\HasApiTokens;
 use Illuminate\Auth\Authenticatable as IllumnateAuthenticableTrait;
 use Illuminate\Auth\Passwords\CanResetPassword as IlluminateCanResetPasswordTrait;
 use Illuminate\Contracts\Auth\Authenticatable as IllumincateAuthenticatableContract;
@@ -11,8 +11,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Venturecraft\Revisionable\RevisionableTrait as RevisionableTrait;
 use WA\DataStore\BaseDataStore;
 use Zizaco\Entrust\Traits\EntrustUserTrait as EntrustUserTrait; 
-
- 
+use Illuminate\Http\Request;
+use Cache;
 /**
  * Class User.
  *
@@ -36,7 +36,7 @@ class User extends BaseDataStore implements IlluminateCanResetPasswordContract, 
 //        EntrustUserTrait::boot insteadof RevisionableTrait;
 //    }
     use IlluminateCanResetPasswordTrait, IllumnateAuthenticableTrait;
-    use laravelHasApiTokens;
+    use HasApiTokens;
     public $timestamps = true;
     protected $tableName = 'users';
     protected $dontKeepRevisionOf = [
@@ -232,5 +232,37 @@ class User extends BaseDataStore implements IlluminateCanResetPasswordContract, 
                 return $device->id == $id;
             }
         )->isEmpty();
+    }
+
+    /**
+ * Verify and retrieve user by custom token request.
+ *
+ * @param \Illuminate\Http\Request $request
+ *
+ * @return \Illuminate\Database\Eloquent\Model|null
+ * @throws \League\OAuth2\Server\Exception\OAuthServerException
+ */
+public function byPassportSSOGrantRequest(Request $request)
+{
+    try {
+        if ($request->input('grant_type') == 'sso') { 
+            return $this->SSOGrantVerify($request);
+            
+        }
+    } catch (\Exception $e) {
+        throw OAuthServerException::accessDenied($e->getMessage());
+    }
+    return null;
+}
+
+    public function SSOGrantVerify(Request $request)
+    {
+        $uuid = $request->input('uuid');
+        $laravelUser = Cache::get('saml2user_'.$uuid);
+        if (!isset($laravelUser)) {
+            return null;
+        } else {
+            return $laravelUser;
+        }
     }
 }

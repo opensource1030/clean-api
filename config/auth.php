@@ -63,11 +63,10 @@ return [
     | Supported: "database", "eloquent"
     |
     */
-
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => WA\DataStore\User\User::class,
+            'model' => WA\DataStore\User\User::Class,
         ],
 
         // 'users' => [

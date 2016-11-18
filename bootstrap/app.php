@@ -129,6 +129,7 @@ $app->register(\WA\Providers\CatchAllOptionsRequestsProvider::class);
 $app->register(\GrahamCampbell\Flysystem\FlysystemServiceProvider::class);
 $app->register(Laravel\Passport\PassportServiceProvider::class);
 $app->register(Dusterio\LumenPassport\PassportServiceProvider::class);
+$app->register(\WA\Providers\SSOGrantProvider::class);
 $app->register(Dingo\Api\Provider\LumenServiceProvider::class);
 app('Dingo\Api\Transformer\Factory')->setAdapter(function ($app) {
     $base_url = env('API_DOMAIN', 'api.wirelessanalytics.com');
