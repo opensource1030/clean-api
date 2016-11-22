@@ -39,6 +39,7 @@ class DatabaseSeeder extends Seeder
         $this->call(LocationsTableSeeder::class);
         $this->call(ModificationsTableSeeder::class);
         //$this->call(OAuthTableSeeder::class);
+        $this->call(OauthClientsTableSeeder::class);
         $this->call(OrdersTableSeeder::class);
         $this->call(PackageAppsTableSeeder::class);
         $this->call(PackageConditionsTableSeeder::class);
