@@ -2,51 +2,26 @@
 
 namespace WA\Providers;
 
-use WA\User;
-use Laravel\Passport\Passport;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Gate;
-//use Illuminate\Support\ServiceProvider;
-use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Laravel\Passport\PassportServiceProvider;
+use WA\Auth\BearerTokenResponse;
+use League\OAuth2\Server\AuthorizationServer;
 
-
-class AuthServiceProvider extends ServiceProvider
+class AuthServiceProvider extends PassportServiceProvider
 {
     /**
-     * Register any application services.
+     * Make the authorization service instance.
+     *
+     * @return AuthorizationServer
      */
-    public function register()
+    public function makeAuthorizationServer()
     {
-    }
-
-    /**
-     * Boot the authentication services for the application.
-     */
-    public function boot()
-    {
-        // Here you may define how you wish users to be authenticated for your Lumen
-        // application. The callback which receives the incoming request instance
-        // should return either a User instance or null. You're free to obtain
-        // the User instance via an API token or any other method necessary.
-
-       /* Auth::viaRequest('api', function ($request) {
-            if ($request->input('api_token')) {
-                return User::where('api_token', $request->input('api_token'))->first();
-            }
-        });*/
-       
-  $this->registerPolicies();
-
-    /*Route::group(['prefix' => 'api', 'middleware' => 'cors'], function() {
-
-        Passport::routes();
-
-    }); */
-      
-   Passport::routes();
-   Passport::tokensExpireIn(Carbon::now()->addDays(15));
-
-   Passport::refreshTokensExpireIn(Carbon::now()->addDays(30));
-       
+        return new AuthorizationServer(
+            $this->app->make(\Laravel\Passport\Bridge\ClientRepository::class),
+            $this->app->make(\Laravel\Passport\Bridge\AccessTokenRepository::class),
+            $this->app->make(\Laravel\Passport\Bridge\ScopeRepository::class),
+            'file://'.\Laravel\Passport\Passport::keyPath('oauth-private.key'),
+            'file://'.\Laravel\Passport\Passport::keyPath('oauth-public.key'),
+            new BearerTokenResponse()
+        );
     }
 }

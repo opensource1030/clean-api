@@ -26,7 +26,7 @@ $api->version('v1', function ($api) {
     });
 
     ///////////Routes//////
-    $apiA = '\Laravel\Passport\Http\Controllers\AccessTokenController';
+    $apiA = '\Dusterio\LumenPassport\Http\Controllers\AccessTokenController';
     $api->post('oauth/token', ['as' => 'api.token', 'uses' => $apiA.'@issueToken']);
 
     $apiAATC = '\Laravel\Passport\Http\Controllers\AuthorizedAccessTokenController';

@@ -267,12 +267,12 @@ class MainHandler extends BaseHandler
     {
 
         // FACEBOOK VERSION
-        /*
-        if ($idCompany == 21) {
-            return "dariana.donnelly@example.com";
+       /* 
+        if ($idCompany == 1) {
+            return "laurianne96@example.com";
             //return $userData['attributes']['facebook_user'][0];
-        }
-        */
+        }*/
+        
 
         // DEFAULT VERSION (MICROSOFT)
         return $userData['attributes'][$this->userEmail][0];

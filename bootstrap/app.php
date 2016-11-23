@@ -114,7 +114,6 @@ $app->configure('saml2_settings');
 */
 
 // $app->register(WA\Providers\AppServiceProvider::class);
-//$app->register(WA\Providers\AuthServiceProvider::class);
 // $app->register(WA\Providers\EventServiceProvider::class);
 $app->register(\Culpa\CulpaServiceProvider::class);
 $app->register(\Dingo\Api\Provider\LumenServiceProvider::class);
@@ -127,7 +126,7 @@ $app->register(Dingo\Api\Provider\LumenServiceProvider::class);
 $app->register(\WA\Providers\Saml2ServiceProvider::class);
 $app->register(\WA\Providers\CatchAllOptionsRequestsProvider::class);
 $app->register(\GrahamCampbell\Flysystem\FlysystemServiceProvider::class);
-$app->register(Laravel\Passport\PassportServiceProvider::class);
+$app->register(WA\Providers\AuthServiceProvider::class);
 $app->register(Dusterio\LumenPassport\PassportServiceProvider::class);
 $app->register(\WA\Providers\SSOGrantProvider::class);
 app('Dingo\Api\Transformer\Factory')->setAdapter(function ($app) {
