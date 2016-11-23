@@ -449,7 +449,7 @@ class CategoryAppsApiTest extends TestCase
         $this->assertNotEquals($categoryApp->id, $categoryAppAux->id);
         $this->assertNotEquals($categoryApp->name, $categoryAppAux->name);
 
-        $this->json('PUT', 'categoryapps/'.$categoryApp->id,
+        $this->json('PATCH', 'categoryapps/'.$categoryApp->id,
             [
                 'data' => [
                     'type' => 'categoryapps',

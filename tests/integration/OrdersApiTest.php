@@ -101,7 +101,7 @@ class OrdersApiTest extends TestCase
         $this->assertNotEquals($order1->deviceId, $order2->deviceId);
         $this->assertNotEquals($order1->serviceId, $order2->serviceId);
 
-        $this->put('/orders/'.$order1->id,
+        $this->PATCH('/orders/'.$order1->id,
             [
                 'data' => [
                     'type' => 'orders',

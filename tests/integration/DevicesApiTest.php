@@ -1101,7 +1101,7 @@ class DevicesApiTest extends TestCase
                 'priceOwn' => 800, ]
         );
 
-        $this->put('/devices/'.$device->id,
+        $this->PATCH('/devices/'.$device->id,
             [
                 'data' => [
                     'type' => 'devices',
@@ -1280,7 +1280,7 @@ class DevicesApiTest extends TestCase
                 'priceOwn' => 800, ]
         );
 
-        $this->put('/devices/'.$device->id.'?include=prices',
+        $this->PATCH('/devices/'.$device->id.'?include=prices',
             [
                 'data' => [
                     'type' => 'devices',

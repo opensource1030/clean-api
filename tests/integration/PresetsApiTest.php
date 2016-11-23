@@ -477,7 +477,7 @@ class PresetsApiTest extends TestCase
         $this->assertNotEquals($preset->id, $presetAux->id);
         $this->assertNotEquals($preset->name, $presetAux->name);
 
-        $this->json('PUT', 'presets/'.$preset->id,
+        $this->json('PATCH', 'presets/'.$preset->id,
             [
                 'data' => [
                     'type' => 'presets',

@@ -190,7 +190,7 @@ class PricesApiTest extends TestCase
         $this->assertNotEquals($price->price2, $priceAux->price2);
         $this->assertNotEquals($price->priceOwn, $priceAux->priceOwn);
 
-        $this->put('/prices/'.$priceAux->id,
+        $this->PATCH('/prices/'.$priceAux->id,
             [
                 'data' => [
                     'type' => 'prices',

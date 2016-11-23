@@ -65,7 +65,7 @@ class ModificationsApiTest extends TestCase
     {
         $modification = factory(\WA\DataStore\Modification\Modification::class)->create();
 
-        $this->put('/modifications/'.$modification->id,
+        $this->PATCH('/modifications/'.$modification->id,
             [
                 'data' => [
                     'type' => 'modifications',

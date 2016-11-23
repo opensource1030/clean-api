@@ -119,7 +119,7 @@ class CarriersApiTest extends TestCase
                 'shortName' => $carrier1->shortName,
             ]);
 
-        $this->json('PUT', 'carriers/'.$carrier1->id,
+        $this->json('PATCH', 'carriers/'.$carrier1->id,
             [
                 'data' => [
                     'type' => 'carriers',

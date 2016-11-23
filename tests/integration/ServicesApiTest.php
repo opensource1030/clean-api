@@ -196,7 +196,7 @@ class ServicesApiTest extends TestCase
         $this->assertNotEquals($service->description, $serviceAux->description);
         $this->assertNotEquals($service->carrierId, $serviceAux->carrierId);
 
-        $this->put('/services/'.$serviceAux->id,
+        $this->PATCH('/services/'.$serviceAux->id,
             [
                 'data' => [
                     'type' => 'services',
@@ -349,7 +349,7 @@ class ServicesApiTest extends TestCase
                 ]
             ]);
 */
-        $res = $this->put('/services/'.$service->id.'?include=serviceitems',
+        $res = $this->PATCH('/services/'.$service->id.'?include=serviceitems',
             [
                 'data' => [
                     'type' => 'services',

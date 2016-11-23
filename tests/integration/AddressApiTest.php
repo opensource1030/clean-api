@@ -118,7 +118,7 @@ class AddressApiTest extends TestCase
                 'postalCode' => "$address1->postalCode",
             ]);
 
-        $this->json('PUT', 'address/'.$address1->id,
+        $this->json('PATCH', 'address/'.$address1->id,
             [
                 'data' => [
                     'type' => 'address',

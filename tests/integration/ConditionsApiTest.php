@@ -108,7 +108,7 @@ class ConditionsApiTest extends TestCase
                 'value' => $condition1->value,
             ]);
 
-        $res = $this->json('PUT', 'conditions/'.$condition1->id,
+        $res = $this->json('PATCH', 'conditions/'.$condition1->id,
             [
                 'data' => [
                     'type' => 'conditions',

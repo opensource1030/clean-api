@@ -108,7 +108,7 @@ class AppsApiTest extends TestCase
                 'description' => $app1->description,
             ]);
 
-        $this->json('PUT', 'apps/'.$app1->id,
+        $this->json('PATCH', 'apps/'.$app1->id,
             [
                 'data' => [
                     'type' => 'apps',

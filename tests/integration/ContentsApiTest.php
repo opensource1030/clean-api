@@ -65,7 +65,7 @@ class ContentsApiTest extends TestCase
     {
         $contents = factory(\WA\DataStore\Content\Content::class)->create();
 
-        $this->put('/contents/'.$contents->id, [
+        $this->PATCH('/contents/'.$contents->id, [
             'content' => 'Test Content',
             'active' => $contents->active,
             'owner_type' => $contents->owner_type,

@@ -54,8 +54,6 @@ class ServicesController extends FilteredApiController
         if (!$this->isJsonCorrect($request, 'services')) {
             $error['errors']['json'] = Lang::get('messages.InvalidJson');
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
-        } else {
-            $data = $request->all()['data'];
         }
 
         DB::beginTransaction();
@@ -64,71 +62,74 @@ class ServicesController extends FilteredApiController
          * Now we can update the Service.
          */
         try {
+            $data = $request->all()['data'];
             $data['attributes']['id'] = $id;
             $service = $this->service->update($data['attributes']);
-            if($service == 'notExist'){
-                $error['errors']['services'] = Lang::get('messages.NotExistClass',
-                ['class' => 'Service']);
+
+            if ($service == 'notExist') {
+                $success = false;
+                $code = 'notexists';
+                $error['errors']['service'] = Lang::get('messages.NotExistClass', ['class' => 'Service']);
                 //$error['errors']['Message'] = $e->getMessage();
-                return response()->json($error)->setStatusCode($this->status_codes['conflict']);
-            } else if ($service == 'notSaved'){
-                $error['errors']['services'] = Lang::get('messages.NotSavedClass',
-                ['class' => 'Service']);
+            }
+
+            if ($service == 'notSaved') {
+                $success = false;
+                $error['errors']['service'] = Lang::get('messages.NotSavedClass', ['class' => 'Service']);
                 //$error['errors']['Message'] = $e->getMessage();
-                return response()->json($error)->setStatusCode($this->status_codes['conflict']);
             }
         } catch (\Exception $e) {
-            DB::rollBack();
+            $succes = false;
             $error['errors']['services'] = Lang::get('messages.NotOptionIncludeClass',
                 ['class' => 'Service', 'option' => 'updated', 'include' => '']);
             //$error['errors']['Message'] = $e->getMessage();
-            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
-
-        try {
-            $serviceItems = ServiceItem::where('serviceId', $id)->get();
-            $serviceItemsInterface = app()->make('WA\Repositories\ServiceItem\ServiceItemInterface');
-        } catch (\Exception $e) {
-            $error['errors']['serviceitems'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Service', 'option' => 'updated', 'include' => 'ServiceItems']);
-            //$error['errors']['Message'] = $e->getMessage();
-            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
-        }
-
+        
         /*
          * Check if Json has relationships to continue or if not and commit + return.
          */
-        if (isset($data['relationships'])) {
+        if (isset($data['relationships']) && $success) {
             if (isset($data['relationships']['serviceitems'])) {
                 if (isset($data['relationships']['serviceitems']['data'])) {
                     $data = $data['relationships']['serviceitems']['data'];
 
-                    $this->deleteNotRequested($data, $serviceItems, $serviceItemsInterface, 'serviceitems');
-
-                    foreach ($data as $item) {
-                        $item['serviceId'] = $service->id;
-                        if (isset($item['id'])) {
-                            if ($item['id'] == 0) {
-                                $serviceItemsInterface->create($item);
-                            } else {
-                                if ($item['id'] > 0) {
-                                    $serviceItemsInterface->update($item);
-                                } else {
-                                    $success = false;
-                                    $error['errors']['items'] = 'the ServiceItem has an incorrect id';
-                                }
-                            }
-                        } else {
-                            $success = false;
-                            $error['errors']['serviceitems'] = 'the ServiceItem has no id';
-                        }
+                    try {
+                        $serviceItems = ServiceItem::where('serviceId', $id)->get();
+                        $serviceItemsInterface = app()->make('WA\Repositories\ServiceItem\ServiceItemInterface');
+                    } catch (\Exception $e) {
+                        $succes = false;
+                        $error['errors']['serviceitems'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Service', 'option' => 'updated', 'include' => 'ServiceItems']);
+                        //$error['errors']['Message'] = $e->getMessage();
                     }
+
+                    if ($success) {
+                        $this->deleteNotRequested($data, $serviceItems, $serviceItemsInterface, 'serviceitems');
+
+                        foreach ($data as $item) {
+                            $item['serviceId'] = $service->id;
+                            $item['companyId'] = $service->companyId;
+
+                            if (isset($item['id'])) {
+                                if ($item['id'] == 0) {
+                                    $serviceItemsInterface->create($item);
+                                } else {
+                                    if ($item['id'] > 0) {
+                                        $serviceItemsInterface->update($item);
+                                    } else {
+                                        $success = false;
+                                        $error['errors']['items'] = 'the ServiceItem has an incorrect id';
+                                    }
+                                }
+                            } else {
+                                $success = false;
+                                $error['errors']['serviceitems'] = 'the ServiceItem has no id';
+                            }
+                        }
+                    }                    
                 }
             }
-        } else {
-            foreach ($serviceItems as $item) {
-                $serviceItemsInterface->deleteById($item['id']);
-            }
         }
+
         if ($success) {
             DB::commit();
             return $this->response()->item($service, new ServiceTransformer(), ['key' => 'services'])->setStatusCode($this->status_codes['created']);
@@ -155,7 +156,7 @@ class ServicesController extends FilteredApiController
                 DB::rollBack();
                 $error['errors']['services'] = Lang::get('messages.NotOptionIncludeClass',
                     ['class' => 'Service', 'option' => 'created', 'include' => '']);
-                //$error['errors']['Message'] = $e->getMessage();
+                $error['errors']['Message'] = $e->getMessage();
                 return response()->json($error)->setStatusCode($this->status_codes['conflict']);
             }
 

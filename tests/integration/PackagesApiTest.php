@@ -659,7 +659,7 @@ class PackageApiTest extends TestCase
         $this->assertNotEquals($package->name, $packageAux->name);
         $this->assertNotEquals($package->addressId, $packageAux->addressId);
 
-        $this->put('/packages/'.$package->id,
+        $this->PATCH('/packages/'.$package->id,
             [
                 'data' => [
                     'type' => 'packages',
