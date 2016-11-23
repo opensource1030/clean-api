@@ -22,8 +22,8 @@ $factory->define(WA\DataStore\User\User::class, function (Faker\Generator $faker
         'alternateFirstName' => $faker->firstName,
         'supervisorEmail' => $faker->safeEmail,
         'companyUserIdentifier' => $faker->numberBetween(1, 5),
-        'isSupervisor' => $faker->numberBetween(0, 1),
-        'isValidator' => $faker->numberBetween(0, 1),
+        'isSupervisor' => 0,
+        'isValidator' => 0,
         'isActive' => 1,
         'rgt' => null,
         'lft' => null,
@@ -34,9 +34,9 @@ $factory->define(WA\DataStore\User\User::class, function (Faker\Generator $faker
         'notify' => 0,
         'companyId' => $faker->numberBetween(2, 5),
         'syncId' => null,
-        'supervisorId' => $faker->numberBetween(0, 6),
+        'supervisorId' => $faker->numberBetween(1, 5),
         'externalId' => null,
-        'approverId' => $faker->numberBetween(0, 4),
+        'approverId' => $faker->numberBetween(1, 5),
         'defaultLocationId' => function () {
             return factory(\WA\DataStore\Location\Location::class)->create()->id;
         },

@@ -18,6 +18,7 @@ use WA\DataStore\Allocation\Allocation;
 use WA\DataStore\Content\Content;
 
 use DB;
+use Log;
 
 /**
  * Users resource.
@@ -331,7 +332,7 @@ class UsersController extends FilteredApiController
 
         if ($success) {
             DB::commit();
-            return $this->response()->item($user, new userTransformer(),
+            return $this->response()->item($user, new UserTransformer(),
                 ['key' => 'users'])->setStatusCode($this->status_codes['created']);
         } else {
             DB::rollBack();
@@ -360,11 +361,15 @@ class UsersController extends FilteredApiController
         try {
             $data = $request->all()['data'];
             $user = $this->user->create($data['attributes']);
+            if(!$user){
+                $error['errors']['User'] = 'The User has not been created, some data information is wrong, may be the Email.';
+                return response()->json($error)->setStatusCode(409);
+            }
         } catch (\Exception $e) {
             $success = false;
             $error['errors']['users'] = Lang::get('messages.NotOptionIncludeClass',
                 ['class' => 'User', 'option' => 'created', 'include' => '']);
-            //$error['errors']['Message'] = $e->getMessage();
+            $error['errors']['Message'] = $e->getMessage();
         }
 
         /*
@@ -380,13 +385,13 @@ class UsersController extends FilteredApiController
                         $interfaceAd = app()->make('WA\Repositories\Address\AddressInterface');
                         $addressId = $interfaceAd->create($dataAddress)->getAttributes()['id'];
                         $data['attributes']['addressId'] = $addressId;
-                        $data['attributes']['id'] = $user->id;                        
+                        $data['attributes']['id'] = $user->id;     
                         $user = $this->user->update($data['attributes']);
                     } catch (\Exception $e) {
                         $success = false;
                         $error['errors']['address'] = Lang::get('messages.NotOptionIncludeClass',
                             ['class' => 'User', 'option' => 'created', 'include' => 'Address']);
-                        //$error['errors']['Message'] = $e->getMessage();
+                        $error['errors']['Message'] = $e->getMessage();
                     }
                 }
             }
@@ -489,9 +494,9 @@ class UsersController extends FilteredApiController
 
                     if ($success) {
                         try {                           
-                            foreach ($data as $allocation) {
-                                $allocation['owner_id'] = $user->id;
-                                $interfaceC->create($allocation);
+                            foreach ($data as $content) {
+                                $content['owner_id'] = $user->id;
+                                $interfaceC->create($content);
                             }
                         } catch (\Exception $e) {
                             $success = false;

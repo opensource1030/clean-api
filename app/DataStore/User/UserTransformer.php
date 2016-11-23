@@ -21,6 +21,7 @@ class UserTransformer extends FilterableTransformer
         'allocations',
         'contents',
         'udls',
+        'contents',
     ];
 
     protected $defaultIncludes = [

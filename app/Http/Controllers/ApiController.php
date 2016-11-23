@@ -5,6 +5,8 @@ namespace WA\Http\Controllers;
 use Dingo\Api\Http\Response;
 use Dingo\Api\Routing\Helpers;
 
+use Log;
+
 /**
  * Extensible API controller.
  *
@@ -162,14 +164,17 @@ abstract class ApiController extends BaseController
      */
     public function deleteNotRequested($data, $databaseinformation, $interface, $type) {
 
-        $dataFromRequest = $this->parseJsonToArray($data, $type);
+        $arrayFromData = array();
+        foreach ($data as $any) {
+            array_push($arrayFromData, $any['id']);
+        }
         
         $arrayFromDB = array();
         foreach ($databaseinformation as $some) {
             array_push($arrayFromDB, $some->id);
         }
 
-        $canBeDeleted = array_diff($arrayFromDB, $dataFromRequest);
+        $canBeDeleted = array_diff($arrayFromDB, $arrayFromData);
 
         foreach ($canBeDeleted as $some) {
             $interface->deleteById($some);

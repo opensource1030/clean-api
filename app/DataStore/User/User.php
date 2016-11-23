@@ -229,7 +229,7 @@ class User extends BaseDataStore implements IlluminateCanResetPasswordContract, 
     */
    public function contents()
    {
-       return $this->morphMany('WA\DataStore\Content\Content', 'owner');
+       return $this->hasMany('WA\DataStore\Content\Content', 'owner_id');
    }
 
     /**
