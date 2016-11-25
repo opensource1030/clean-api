@@ -137,8 +137,10 @@ $api->version('v1', function ($api) {
         $usersController = 'WA\Http\Controllers\UsersController';
         $api->get('users', ['as' => 'api.users.index', 'uses' => $usersController . '@index']);
         $api->post('users/usersMatchingConditions', ['as' => 'api.users.number', 'uses' => $usersController . '@numberUsers']);
-        $api->post('users/number', ['as' => 'api.users.number', 'uses' => $usersController . '@numberUsers']);
-        $api->get('users/me', ['as' => 'api.users.show', 'uses' => $usersController . '@getLoggedInUser']);
+
+        $api->get('users/number', ['as' => 'api.users.number', 'uses' => $usersController . '@numberUsers']);
+        $api->get('users/me', ['as' => 'api.users.logged', 'uses' => $usersController . '@getLoggedInUser']);
+
         $api->get('users/{id}', ['as' => 'api.users.show', 'uses' => $usersController . '@show']);
         $api->post('users', [ 'uses' => $usersController . '@create']);
         $api->patch('users/{id}', [ 'uses' => $usersController . '@store']);

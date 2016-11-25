@@ -97,7 +97,9 @@ trait Criteria
             if ($criteriaModel instanceof Relation) {
                 $this->criteriaQuery = $criteriaModel;
                 $this->criteriaModelName = $criteriaModel->getRelated()->getTable();
-                $this->criteriaModelColumns = $criteriaModel->getRelated()->getTableColumns();
+                if(method_exists( $criteriaModel->getRelated() , 'getTableColumns' )){
+                    $this->criteriaModelColumns = $criteriaModel->getRelated()->getTableColumns();    
+                }                
             } elseif ($criteriaModel instanceof BaseDataStore) {
                 $this->criteriaQuery = $criteriaModel->newQuery();
                 $this->criteriaModelName = $criteriaModel->getTable();

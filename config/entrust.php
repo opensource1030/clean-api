@@ -39,7 +39,7 @@ return [
     | Update the permission if it is in a different namespace.
     |
     */
-    'permission' => 'WA\DataStore\Permission',
+    'permission' => 'WA\DataStore\Permission\Permission',
 
     /*
     |--------------------------------------------------------------------------

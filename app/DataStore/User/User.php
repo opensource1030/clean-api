@@ -11,6 +11,7 @@ use Illuminate\Contracts\Auth\CanResetPassword as IlluminateCanResetPasswordCont
 use Illuminate\Http\Request;
 use Laravel\Passport\HasApiTokens;
 use WA\DataStore\BaseDataStore;
+use Cache;
 
 /**
  * Class User.
@@ -35,6 +36,7 @@ class User extends BaseDataStore implements IlluminateCanResetPasswordContract, 
 //    }
     use IlluminateCanResetPasswordTrait, IllumnateAuthenticableTrait;
     use HasApiTokens;
+    use EntrustUserTrait;
     public $timestamps = true;
     protected $tableName = 'users';
     protected $dontKeepRevisionOf = [
@@ -279,9 +281,9 @@ class User extends BaseDataStore implements IlluminateCanResetPasswordContract, 
     public function byPassportSSOGrantRequest(Request $request)
     {
         try {
-            if ($request->input('grant_type') == 'sso') {
-                return $this->SSOGrantVerify($request);
 
+            if ($request->input('grant_type') == 'sso') { 
+                return $this->SSOGrantVerify($request);
             }
         } catch (\Exception $e) {
             throw OAuthServerException::accessDenied($e->getMessage());
