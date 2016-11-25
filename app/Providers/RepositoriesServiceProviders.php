@@ -24,7 +24,7 @@ class RepositoriesServiceProviders extends ServiceProvider
         $this->registerAsset();
         $this->registerDevice();
         $this->registerCarrier();
-
+        
         $this->registerDeviceCarrier();
         $this->registerCompany();
         $this->registerDeviceCompany();
@@ -48,6 +48,7 @@ class RepositoriesServiceProviders extends ServiceProvider
         $this->registerEmailNotifications();
         $this->registerRole();
         $this->registerPermission();
+         $this->registerScope();
         $this->registerAllocation();
         $this->registerContent();
         $this->registerService();

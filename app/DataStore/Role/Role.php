@@ -8,6 +8,7 @@ use Config;
  * Class Role.
  */
 class Role extends BaseDataStore
+
 {
     use EntrustRoleTrait;
     /**
@@ -16,6 +17,12 @@ class Role extends BaseDataStore
      * @var string
      */
     protected $table;
+
+    public function permissions()
+    {
+        return $this->belongsToMany('WA\DataStore\Permission\Permission', 'permission_role', 'role_id', 'permission_id');
+    }
+
     /**
      * Creates a new instance of the model.
      *
@@ -44,6 +51,5 @@ class Role extends BaseDataStore
             return $this->getConnection()->getSchemaBuilder()->getColumnListing($this->getTable());
         });
     }
-
 }
 

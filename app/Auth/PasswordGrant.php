@@ -25,6 +25,7 @@ use WA\DataStore\Permission\Permission;
 use WA\DataStore\Role\Role;
 
 use Log;
+
 /**
  * Password grant class.
  */
@@ -45,7 +46,7 @@ class PasswordGrant extends PassGrant
 
         if (!$this->thisUserHasTheCorrectScope($scopes, $user->getIdentifier())) {
             $error['errors']['scopes'] = 'The User has not assigned the scope needed to complete the request.';
-            return response()->json($error)->setStatusCode('401');
+            return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
         }
 
         // Finalize the requested scopes
@@ -85,6 +86,5 @@ class PasswordGrant extends PassGrant
             return true;
         }
         return false;
-
     }
 }

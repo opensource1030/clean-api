@@ -1,4 +1,5 @@
 <?php
+
 namespace WA\DataStore\Permission;
 use Zizaco\Entrust\Contracts\EntrustPermissionInterface;
 use WA\DataStore\BaseDataStore;
@@ -28,6 +29,7 @@ class Permission extends BaseDataStore
         parent::__construct($attributes);
         $this->table = Config::get('entrust.permissions_table');
     }
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
@@ -35,6 +37,7 @@ class Permission extends BaseDataStore
     {
         return $this->belongsToMany('WA\DataStore\Scope\Scope', 'scope_permission', 'scope_id', 'permission_id');
     }
+
     /**
      * Get the transformer instance.
      *

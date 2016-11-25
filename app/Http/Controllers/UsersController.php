@@ -558,6 +558,26 @@ class UsersController extends FilteredApiController
         }
     }
 
+    public function getLoggedInUser(Request $request)
+    {
+        $user = Auth::user();
+
+        if ($user === null) {
+            $error['errors']['scopes'] = 'There\'s no user authenticated';
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+        }
+
+        $transformer = $user->getTransformer();
+
+        if (!$this->includesAreCorrect($request, $transformer)) {
+            $error['errors']['getIncludes'] = Lang::get('messages.NotExistInclude');
+            return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
+        }
+
+        $response = $this->response->item($user, $transformer, ['key' => 'users']);
+        return $response;
+    }
+
    /* public function getLoggedInUser(Request $request)
     {
         $user = Auth::user();

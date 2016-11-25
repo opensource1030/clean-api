@@ -12,10 +12,10 @@ use Laravel\Passport\PassportServiceProvider;
 use WA\Auth\BearerTokenResponse;
 use League\OAuth2\Server\AuthorizationServer;
 use WA\Auth\PasswordGrant;
-use Log;
-use Schema;
 use WA\DataStore\Scope\Scope;
 
+use Log;
+use Schema;
 class AuthServiceProvider extends PassportServiceProvider
 {
     /**
@@ -35,12 +35,15 @@ class AuthServiceProvider extends PassportServiceProvider
         );
     }
 
-    public function boot(){
+      public function boot()
+    {
+
         parent::boot();
             //$this->registerPolicies();
 
             //Passport::routes();
         if (Schema::hasTable('scopes')){
+
             $scope = Scope::all();
             
             $listScope = array();

@@ -91,7 +91,6 @@ class ScopePermissionsTableSeeder extends BaseTableSeeder
                 'permission_id' => 16,    
             ],
             
-
         ];
 
         $this->loadTable($dataRolePermisScope);

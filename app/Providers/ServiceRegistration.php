@@ -33,6 +33,8 @@ use WA\DataStore\Package\Package;
 use WA\DataStore\Price\Price;
 use WA\DataStore\Request\Request;
 use WA\DataStore\Role\Role;
+use WA\DataStore\Permission\Permission;
+use WA\DataStore\Scope\Scope;
 use WA\DataStore\Service\Service;
 use WA\DataStore\ServiceItem\ServiceItem;
 use WA\DataStore\Udl\Udl;
@@ -69,6 +71,7 @@ use WA\Repositories\Modification\EloquentModification;
 use WA\Repositories\NotificationCategory\EloquentNotificationCategory;
 use WA\Repositories\Order\EloquentOrder;
 use WA\Repositories\Package\EloquentPackage;
+use WA\Repositories\Scope\EloquentScope;
 use WA\Repositories\Permission\EloquentPermission;
 use WA\Repositories\Price\EloquentPrice;
 use WA\Repositories\Request\EloquentRequest;
@@ -391,6 +394,22 @@ trait ServiceRegistration
             });
     }
 
+    public function registerScope()
+    {
+        app()->bind('WA\Repositories\Scope\ScopeInterface',
+            function () {
+                return new EloquentScope( new Scope(),
+                    app()->make('WA\Repositories\Permission\PermissionInterface'));
+            });
+    }
+    public function registerPermission()
+    {
+        app()->bind('WA\Repositories\Permission\PermissionInterface',
+            function () {
+                return new EloquentPermission(new Permission(),
+                    app()->make('WA\Repositories\Role\RoleInterface'));
+            });
+    }
     public function registerRole()
     {
         app()->bind('WA\Repositories\Role\RoleInterface',
@@ -399,13 +418,6 @@ trait ServiceRegistration
             });
     }
 
-    public function registerPermission()
-    {
-        app()->bind('WA\Repositories\Permission\PermissionsInterface',
-            function () {
-                return new EloquentPermission(app()->make('WA\Repositories\Role\RoleInterface'));
-            });
-    }
 
     public function registerAllocation()
     {

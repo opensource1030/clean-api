@@ -33,7 +33,6 @@ class Scope extends BaseDataStore
         return new ScopeTransformer();
     }
 
-
     public static function getByName($name){
         return Scope::where('name', $name)->get();
     }
@@ -41,4 +40,7 @@ class Scope extends BaseDataStore
     public static function getId(){
         return $this->id;
     }
+   /* public function getId(){
+        return $this->id;
+    }*/
 }

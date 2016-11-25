@@ -49,6 +49,8 @@ $api->version('v1', function ($api) {
     $api->get('/oauth/personal-access-tokens', ['as' => 'api.foruser', 'uses' => $apiATC.'@forUser']);
     $api->post('/oauth/personal-access-tokens', ['as' => 'api.store', 'uses' => $apiATC.'@store']);
     $api->delete('/oauth/personal-access-tokens/{token_id}', ['as' => 'api.destroy', 'uses' => $apiATC.'@destroy']);
+    //$api->post('/create', [ 'middleware'=>['api.auth','scope:create'],'as' => 'api.create',  'uses' => $apiATC.'@create']);
+
     ///////////////////////////
 
     $api->get('callback', 
@@ -114,8 +116,8 @@ $api->version('v1', function ($api) {
     ]);
     */
 
-    $apiAuth = 'WA\Http\Controllers\Auth\AuthController';
-    $api->post('oauth/access_token', ['as' => 'api.token', 'uses' => $apiAuth . '@accessToken']);
+    //$apiAuth = 'WA\Http\Controllers\Auth\AuthController';
+    //$api->post('oauth/access_token', ['as' => 'api.token', 'uses' => $apiAuth . '@accessToken']);
 
     $middleware = [];
     if (!app()->runningUnitTests()) {
@@ -126,7 +128,9 @@ $api->version('v1', function ($api) {
 
     $api->group(['middleware' => $middleware], function ($api) {
 
-        // =Companies
+        $apiATC = '\Laravel\Passport\Http\Controllers\PersonalAccessTokenController';
+        $api->post('/create', [ 'middleware' => ['scope:create'], 'as' => 'api.create',  'uses' => $apiATC.'@create']);
+
         $companiesController = 'WA\Http\Controllers\CompaniesController';
         $api->get('companies', ['as' => 'api.company.index', 'uses' => $companiesController . '@index']);
         $api->get('companies/{id}', ['as' => 'api.company.show', 'uses' => $companiesController . '@show']);
@@ -334,8 +338,29 @@ $api->version('v1', function ($api) {
         //=Jobs
         $jobsController = 'WA\Http\Controllers\JobsController';
         $api->put('jobs/updateBillingMonths', ['uses' => $jobsController . '@updateBillingMonths']);
+        
+        //=Roles
+        $rolesController = 'WA\Http\Controllers\RolesController';
+        $api->get('roles', ['as' => 'api.roles.index', 'uses' => $rolesController . '@index']);
+        $api->get('roles/{id}', ['as' => 'api.roles.show', 'uses' => $rolesController . '@show']);
+        $api->post('roles', ['uses' => $rolesController . '@create']);
+        $api->put('roles/{id}', ['uses' => $rolesController . '@store']);
+        $api->delete('roles/{id}', ['uses' => $rolesController . '@delete']);
 
+         //=Permissions
+        $permissionsController = 'WA\Http\Controllers\PermissionsController';
+        $api->get('permissions', ['as' => 'api.permissions.index', 'uses' => $permissionsController . '@index']);
+        $api->get('permissions/{id}', ['as' => 'api.permissions.show', 'uses' => $permissionsController . '@show']);
+        $api->post('permissions', ['uses' => $permissionsController . '@create']);
+        $api->put('permissions/{id}', ['uses' => $permissionsController . '@store']);
+        $api->delete('permissions/{id}', ['uses' => $permissionsController . '@delete']);
 
-
+         //=Scopes
+        $scopesController = 'WA\Http\Controllers\ScopesController';
+        $api->get('scopes', ['as' => 'api.scopes.index', 'uses' => $scopesController . '@index']);
+        $api->get('scopes/{id}', ['as' => 'api.scopes.show', 'uses' => $scopesController . '@show']);
+        $api->post('scopes', ['uses' => $scopesController . '@create']);
+        $api->put('scopes/{id}', ['uses' => $scopesController . '@store']);
+        $api->delete('scopes/{id}', ['uses' => $scopesController . '@delete']);
     });
 });
