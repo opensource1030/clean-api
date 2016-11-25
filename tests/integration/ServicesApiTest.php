@@ -223,6 +223,126 @@ class ServicesApiTest extends TestCase
             ]);
     }
 
+public function testUpdateServiceIncludeAllDeleteRelationships()
+    {
+        $service = factory(\WA\DataStore\Service\Service::class)->create();
+ 
+        // SERVICEITEMS
+        $serviceitem1 = factory(\WA\DataStore\ServiceItem\ServiceItem::class)->create(['serviceId' => $service->id]);
+        $serviceitem2 = factory(\WA\DataStore\ServiceItem\ServiceItem::class)->create(['serviceId' => $service->id]);
+
+        $serviceSItDB = DB::table('service_items')->where('serviceId', $service->id)->get();
+
+        $this->assertCount(2, $serviceSItDB);
+        $this->assertEquals($serviceSItDB[0]->serviceId, $service->id);
+        $this->assertEquals($serviceSItDB[1]->serviceId, $service->id);
+
+        $serviceitem1DB = DB::table('service_items')->where('serviceId', $service->id)->get()[0];
+        $serviceitem2DB = DB::table('service_items')->where('serviceId', $service->id)->get()[1];
+
+        $this->assertEquals($serviceitem1DB->id, $serviceitem1->id);
+        $this->assertEquals($serviceitem1DB->serviceId, $serviceitem1->serviceId);
+        $this->assertEquals($serviceitem1DB->category, $serviceitem1->category);
+        $this->assertEquals($serviceitem1DB->value, $serviceitem1->value);
+        $this->assertEquals($serviceitem1DB->description, $serviceitem1->description);
+        $this->assertEquals($serviceitem1DB->cost, $serviceitem1->cost);
+        $this->assertEquals($serviceitem1DB->unit, $serviceitem1->unit);
+        $this->assertEquals($serviceitem1DB->domain, $serviceitem1->domain);
+
+        $this->assertEquals($serviceitem2DB->id, $serviceitem2->id);
+        $this->assertEquals($serviceitem2DB->serviceId, $serviceitem2->serviceId);
+        $this->assertEquals($serviceitem2DB->category, $serviceitem2->category);
+        $this->assertEquals($serviceitem2DB->value, $serviceitem2->value);
+        $this->assertEquals($serviceitem2DB->description, $serviceitem2->description);
+        $this->assertEquals($serviceitem2DB->cost, $serviceitem2->cost);
+        $this->assertEquals($serviceitem2DB->unit, $serviceitem2->unit);
+        $this->assertEquals($serviceitem2DB->domain, $serviceitem2->domain);
+
+        $res = $this->json('PATCH', '/services/'.$service->id.'?include=serviceitems',
+            [
+                'data' => [
+                    'type' => 'services',
+                    'attributes' => [
+                        'title' => $service->title,
+                        'planCode' => $service->planCode,
+                        'cost' => $service->cost,
+                        'description' => $service->description,
+                        'carrierId' => $service->carrierId,
+                        'status' => $service->status
+                    ],
+                    'relationships' => [
+                        'serviceitems' => [
+                            'data' => [
+                                ['type' => 'serviceitems', 'id' => $serviceitem1->id]
+                            ],
+                        ]
+                    ],
+                ],
+            ]
+            )
+            //Log::debug("testUpdateServiceIncludeAllDeleteRelationships: ".print_r($res->response->getContent(), true));
+            ->seeJson(
+                [
+                    'title' => $service->title,
+                    'planCode' => $service->planCode,
+                    'cost' => $service->cost,
+                    'description' => $service->description,
+                    'carrierId' => $service->carrierId,
+                    'status' => $service->status
+                ])
+            ->seeJsonStructure(
+                [
+                    'data' => [
+                        'type',
+                        'id',
+                        'attributes' => [
+                            'title',
+                            'planCode',
+                            'cost',
+                            'description',
+                            'carrierId',
+                            'status'
+                        ],
+                        'links' => [
+                            'self'
+                        ],
+                        'relationships' => [
+                            'serviceitems' => [
+                                'links' => [
+                                    'self',
+                                    'related'
+                                ],
+                                'data' => [
+                                    0 => [
+                                        'type',
+                                        'id'
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ],
+                    'included' => [
+                        0 => [
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'serviceId',
+                                'category',
+                                'description',
+                                'value',
+                                'unit',
+                                'cost',
+                                'domain'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ]
+                    ]
+                ]);
+    }
+
+/*
     public function testUpdateServiceIncludeserviceitems(){
 
         $carrier = factory(\WA\DataStore\Carrier\Carrier::class)->create();
@@ -233,7 +353,7 @@ class ServicesApiTest extends TestCase
         $serviceitem2 = factory(\WA\DataStore\ServiceItem\ServiceItem::class)->create(['serviceId' => $service->id]);
         $serviceitem3 = factory(\WA\DataStore\ServiceItem\ServiceItem::class)->create(['serviceId' => $service->id]);
 
-/*
+
         $var = $this->get('/services/'.$service->id.'?include=serviceitems')
             ->seeJsonStructure([                
                 'data' => [
@@ -348,7 +468,7 @@ class ServicesApiTest extends TestCase
                     ]    
                 ]
             ]);
-*/
+
         $res = $this->PATCH('/services/'.$service->id.'?include=serviceitems',
             [
                 'data' => [
@@ -496,7 +616,7 @@ class ServicesApiTest extends TestCase
                 ]
             ]);
     }
-
+*/
     public function testDeleteServiceIfExists()
     {
         // CREATE & DELETE
