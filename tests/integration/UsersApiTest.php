@@ -9,6 +9,7 @@ class UsersApiTest extends TestCase
     /**
      * A basic functional test for user endpoints.
      */
+
     public function testGetUsers()
     {
         $user = factory(\WA\DataStore\User\User::class, 20)->create();
@@ -435,7 +436,6 @@ class UsersApiTest extends TestCase
                             'self',
                         ],
                     ],
-
                 ],
             ]);
     }
@@ -647,9 +647,7 @@ class UsersApiTest extends TestCase
                             'city',
                             'state',
                             'country',
-                            'postalCode',
-                            'created_at',
-                            'updated_at'
+                            'postalCode'
                         ],
                         'links' => [
                             'self'
@@ -894,9 +892,8 @@ class UsersApiTest extends TestCase
                         'links' => [
                             'self',
                         ],
-                    ],
-
-                ],
+                    ]
+                ]
             ]);
     }
 
@@ -2620,16 +2617,16 @@ class UsersApiTest extends TestCase
                     'alternateFirstName' => $user1->alternateFirstName,
                     'supervisorEmail' => $user1->supervisorEmail,
                     'companyUserIdentifier' => $user1->companyUserIdentifier,
-                    'isSupervisor' => "$user1->isSupervisor",
-                    'isValidator' => "$user1->isValidator",
+                    'isSupervisor' => $user1->isSupervisor,
+                    'isValidator' => $user1->isValidator,
                     'isActive' => $user1->isActive,
                     'rgt' => $user1->rgt,
                     'lft' => $user1->lft,
                     'hierarchy' => $user1->hierarchy,
                     'defaultLang' => $user1->defaultLang,
                     'notes' => $user1->notes,
-                    'level' => "$user1->level",
-                    'notify' => "$user1->notify",
+                    'level' => $user1->level,
+                    'notify' => $user1->notify,
                     'companyId' => $user1->companyId,
                     'syncId' => $user1->syncId,
                     'supervisorId' => $user1->supervisorId,
@@ -2974,16 +2971,16 @@ class UsersApiTest extends TestCase
                     'alternateFirstName' => $user->alternateFirstName,
                     'supervisorEmail' => $user->supervisorEmail,
                     'companyUserIdentifier' => $user->companyUserIdentifier,
-                    'isSupervisor' => "$user->isSupervisor",
-                    'isValidator' => "$user->isValidator",
+                    'isSupervisor' => $user->isSupervisor,
+                    'isValidator' => $user->isValidator,
                     'isActive' => $user->isActive,
                     'rgt' => $user->rgt,
                     'lft' => $user->lft,
                     'hierarchy' => $user->hierarchy,
                     'defaultLang' => $user->defaultLang,
                     'notes' => $user->notes,
-                    'level' => "$user->level",
-                    'notify' => "$user->notify",
+                    'level' => $user->level,
+                    'notify' => $user->notify,
                     'companyId' => $user->companyId,
                     'syncId' => $user->syncId,
                     'supervisorId' => $user->supervisorId,
@@ -3550,16 +3547,16 @@ class UsersApiTest extends TestCase
                     'alternateFirstName' => $user->alternateFirstName,
                     'supervisorEmail' => $user->supervisorEmail,
                     'companyUserIdentifier' => $user->companyUserIdentifier,
-                    'isSupervisor' => "$user->isSupervisor",
-                    'isValidator' => "$user->isValidator",
+                    'isSupervisor' => $user->isSupervisor,
+                    'isValidator' => $user->isValidator,
                     'isActive' => $user->isActive,
                     'rgt' => $user->rgt,
                     'lft' => $user->lft,
                     'hierarchy' => $user->hierarchy,
                     'defaultLang' => $user->defaultLang,
                     'notes' => $user->notes,
-                    'level' => "$user->level",
-                    'notify' => "$user->notify",
+                    'level' => $user->level,
+                    'notify' => $user->notify,
                     'companyId' => $user->companyId,
                     'syncId' => $user->syncId,
                     'supervisorId' => $user->supervisorId,

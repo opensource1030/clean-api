@@ -235,202 +235,205 @@ class EloquentUser extends AbstractRepository implements UserInterface
      */
     public function create(array $data)
     {
-        if(isset($data['uuid']) && $data['uuid'] != ''){
+
+        if(isset($data['uuid']) && $data['uuid'] !== ''){
             $userData['uuid'] = $data['uuid'];
         } else {
             $userData['uuid'] = Uuid::generate(4)->string;
         }
 
-        if(isset($data['identification']) && $data['identification'] != ''){
+        if(isset($data['identification']) && $data['identification'] !== ''){
             $userData['identification'] = $data['identification'];
         } else {
             $userData['identification'] = uniqid('WA-');
         }
 
-        if(isset($data['email']) && $data['email'] != ''){
+        if(isset($data['email']) && $data['email'] !== ''){
             $userData['email'] = $data['email'];
         } else {
             return false;
         }
 
-        if(isset($data['alternateEmail']) && $data['alternateEmail'] != ''){
+        if(isset($data['alternateEmail']) && $data['alternateEmail'] !== ''){
             $userData['alternateEmail'] = $data['alternateEmail'];
         } else {
             $userData['alternateEmail'] = null;
         }
 
-        if(isset($data['password']) && $data['password'] != ''){
+        if(isset($data['password']) && $data['password'] !== ''){
             $userData['password'] = $data['password'];
         } else {
             $userData['password'] = bcrypt($userData['identification']);
         }
 
-        if(isset($data['username']) && $data['username'] != ''){
+        if(isset($data['username']) && $data['username'] !== ''){
             $userData['username'] = $data['username'];
         } else {
             $userData['username'] = explode('@', $data['email'])[0];
         }
 
-        if(isset($data['confirmation_code']) && $data['confirmation_code'] != ''){
+        if(isset($data['confirmation_code']) && $data['confirmation_code'] !== ''){
             $userData['confirmation_code'] = $data['confirmation_code'];
         } else {
             $userData['confirmation_code'] = null;
         }
 
-        if(isset($data['remember_token']) && $data['remember_token'] != ''){
+        if(isset($data['remember_token']) && $data['remember_token'] !== ''){
             $userData['remember_token'] = $data['remember_token'];
         } else {
             $userData['remember_token'] = null;
         }
 
-        if(isset($data['confirmed']) && $data['confirmed'] != ''){
+        if(isset($data['confirmed']) && $data['confirmed'] !== ''){
             $userData['confirmed'] = $data['confirmed'];
         } else {
             $userData['confirmed'] = 0;
         }
 
-        if(isset($data['firstName']) && $data['firstName'] != ''){
+        if(isset($data['firstName']) && $data['firstName'] !== ''){
             $userData['firstName'] = $data['firstName'];
         } else {
             $userData['firstName'] = null;
         }
 
-        if(isset($data['lastName']) && $data['lastName'] != ''){
+        if(isset($data['lastName']) && $data['lastName'] !== ''){
             $userData['lastName'] = $data['lastName'];
         } else {
             $userData['lastName'] = null;
         }
 
-        if(isset($data['alternateFirstName']) && $data['alternateFirstName'] != ''){
+        if(isset($data['alternateFirstName']) && $data['alternateFirstName'] !== ''){
             $userData['alternateFirstName'] = $data['alternateFirstName'];
         } else {
             $userData['alternateFirstName'] = null;
         }
 
-        if(isset($data['supervisorEmail']) && $data['supervisorEmail'] != ''){
+        if(isset($data['supervisorEmail']) && $data['supervisorEmail'] !== ''){
             $userData['supervisorEmail'] = $data['supervisorEmail'];
         } else {
             $userData['supervisorEmail'] = null;
         }
 
-        if(isset($data['companyUserIdentifier']) && $data['companyUserIdentifier'] != ''){
+        if(isset($data['companyUserIdentifier']) && $data['companyUserIdentifier'] !== ''){
             $userData['companyUserIdentifier'] = $data['companyUserIdentifier'];
         } else {
             $userData['companyUserIdentifier'] = null;
         }
 
-        if(isset($data['isSupervisor']) && $data['isSupervisor'] != ''){
+        if(isset($data['isSupervisor']) && $data['isSupervisor'] !== ''){
             $userData['isSupervisor'] = $data['isSupervisor'];
         } else {
             $userData['isSupervisor'] = 0;
         }
 
-        if(isset($data['isValidator']) && $data['isValidator'] != ''){
+        if(isset($data['isValidator']) && $data['isValidator'] !== ''){
             $userData['isValidator'] = $data['isValidator'];
         } else {
             $userData['isValidator'] = 0;
         }
 
-        if(isset($data['isActive']) && $data['isActive'] != ''){
+        if(isset($data['isActive']) && $data['isActive'] !== ''){
             $userData['isActive'] = $data['isActive'];
         } else {
             $userData['isActive'] = 1;
         }
 
-        if(isset($data['rgt']) && $data['rgt'] != ''){
+        if(isset($data['rgt']) && $data['rgt'] !== ''){
             $userData['rgt'] = $data['rgt'];
         } else {
             $userData['rgt'] = null;
         }
 
-        if(isset($data['lft']) && $data['lft'] != ''){
+        if(isset($data['lft']) && $data['lft'] !== ''){
             $userData['lft'] = $data['lft'];
         } else {
             $userData['lft'] = null;
         }
 
-        if(isset($data['hierarchy']) && $data['hierarchy'] != ''){
+        if(isset($data['hierarchy']) && $data['hierarchy'] !== ''){
             $userData['hierarchy'] = $data['hierarchy'];
         } else {
             $userData['hierarchy'] = null;
         }
 
-        if(isset($data['defaultLang']) && $data['defaultLang'] != ''){
+        if(isset($data['defaultLang']) && $data['defaultLang'] !== ''){
             $userData['defaultLang'] = $data['defaultLang'];
         } else {
             $userData['defaultLang'] = 'en';
         }
 
-        if(isset($data['notes']) && $data['notes'] != ''){
+        if(isset($data['notes']) && $data['notes'] !== ''){
             $userData['notes'] = $data['notes'];
         } else {
             $userData['notes'] = null;
         }
 
-        if(isset($data['level']) && $data['level'] != ''){
+        if(isset($data['level']) && $data['level'] !== ''){
             $userData['level'] = $data['level'];
         } else {
             $userData['level'] = 0;
         }
 
-        if(isset($data['notify']) && $data['notify'] != ''){
+        if(isset($data['notify']) && $data['notify'] !== ''){
             $userData['notify'] = $data['notify'];
         } else {
             $userData['notify'] = 0;
         }
 
-        if(isset($data['companyId']) && $data['companyId'] != ''){
+        if(isset($data['companyId']) && $data['companyId'] !== ''){
             $userData['companyId'] = $data['companyId'];
         } else {
-            $domain = explode('@', $data['email'])[1];
-            $company = \DB::table('company_domains')
-                ->select('companyId')
-                ->where('domain', $domain)->get();
-            
-            if($company != null){
-                $userData['companyId'] = $company[0]->companyId;
-            } else {
-                return false;
-            } 
+            if (!isset($data['companyId']) || $data['companyId'] == null){
+                $domain = explode('@', $data['email'])[1];
+                $company = \DB::table('company_domains')
+                    ->select('companyId')
+                    ->where('domain', $domain)->get();
+                
+                if($company !== null){
+                    $userData['companyId'] = $company[0]->companyId;
+                } else {
+                    return false;
+                } 
+            }
         }
 
-        if(isset($data['syncId']) && $data['syncId'] != ''){
+        if(isset($data['syncId']) && $data['syncId'] !== ''){
             $userData['syncId'] = $data['syncId'];
         } else {
             $userData['syncId'] = null;
         }
 
-        if(isset($data['supervisorId']) && $data['supervisorId'] != ''){
+        if(isset($data['supervisorId']) && $data['supervisorId'] !== ''){
             $userData['supervisorId'] = $data['supervisorId'];
         } else {
             $userData['supervisorId'] = null;
         }
 
-        if(isset($data['externalId']) && $data['externalId'] != ''){
+        if(isset($data['externalId']) && $data['externalId'] !== ''){
             $userData['externalId'] = $data['externalId'];
         } else {
             $userData['externalId'] = null;
         }
 
-        if(isset($data['approverId']) && $data['approverId'] != ''){
+        if(isset($data['approverId']) && $data['approverId'] !== ''){
             $userData['approverId'] = $data['approverId'];
         } else {
             $userData['approverId'] = null;
         }
 
-        if(isset($data['defaultLocationId']) && $data['defaultLocationId'] != ''){
+        if(isset($data['defaultLocationId']) && $data['defaultLocationId'] !== ''){
             $userData['defaultLocationId'] = $data['defaultLocationId'];
         } else {
             $userData['defaultLocationId'] = null;
         }
 
-        if(isset($data['addressId']) && $data['addressId'] != ''){
+        if(isset($data['addressId']) && $data['addressId'] !== ''){
             $userData['addressId'] = $data['addressId'];
         } else {
             $userData['addressId'] = null;
         }
 
-        if(isset($data['departmentId']) && $data['departmentId'] != ''){
+        if(isset($data['departmentId']) && $data['departmentId'] !== ''){
             $userData['departmentId'] = $data['departmentId'];
         } else {
             $userData['departmentId'] = null;
@@ -629,134 +632,133 @@ class EloquentUser extends AbstractRepository implements UserInterface
             return 'notExist';
         }
 
-        if(isset($data['uuid']) && $data['uuid'] != ''){
+        if(isset($data['uuid']) && $data['uuid'] !== ''){
             $user->uuid = $data['uuid'];
         }
 
-        if(isset($data['identification']) && $data['identification'] != ''){
+        if(isset($data['identification']) && $data['identification'] !== ''){
             $user->identification = $data['identification'];
         }
 
-        if(isset($data['email']) && $data['email'] != ''){
+        if(isset($data['email']) && $data['email'] !== ''){
             $user->email = $data['email'];
         }
 
-        if(isset($data['alternateEmail']) && $data['alternateEmail'] != ''){
+        if(isset($data['alternateEmail']) && $data['alternateEmail'] !== ''){
             $user->alternateEmail = $data['alternateEmail'];
         }
 
-        if(isset($data['password']) && $data['password'] != ''){
+        if(isset($data['password']) && $data['password'] !== ''){
             $user->password = $data['password'];
         }
 
-        if(isset($data['username']) && $data['username'] != ''){
+        if(isset($data['username']) && $data['username'] !== ''){
             $user->username = $data['username'];
         }
 
-        if(isset($data['confirmation_code']) && $data['confirmation_code'] != ''){
+        if(isset($data['confirmation_code']) && $data['confirmation_code'] !== ''){
             $user->confirmation_code = $data['confirmation_code'];
         }
 
-        if(isset($data['remember_token']) && $data['remember_token'] != ''){
+        if(isset($data['remember_token']) && $data['remember_token'] !== ''){
             $user->remember_token = $data['remember_token'];
         }
 
-        if(isset($data['confirmed']) && $data['confirmed'] != ''){
+        if(isset($data['confirmed']) && $data['confirmed'] !== ''){
             $user->confirmed = $data['confirmed'];
         }
 
-        if(isset($data['firstName']) && $data['firstName'] != ''){
+        if(isset($data['firstName']) && $data['firstName'] !== ''){
             $user->firstName = $data['firstName'];
         }
 
-        if(isset($data['lastName']) && $data['lastName'] != ''){
+        if(isset($data['lastName']) && $data['lastName'] !== ''){
             $user->lastName = $data['lastName'];
         }
 
-        if(isset($data['alternateFirstName']) && $data['alternateFirstName'] != ''){
+        if(isset($data['alternateFirstName']) && $data['alternateFirstName'] !== ''){
             $user->alternateFirstName = $data['alternateFirstName'];
         }
 
-        if(isset($data['supervisorEmail']) && $data['supervisorEmail'] != ''){
+        if(isset($data['supervisorEmail']) && $data['supervisorEmail'] !== ''){
             $user->supervisorEmail = $data['supervisorEmail'];
         }
 
-        if(isset($data['companyUserIdentifier']) && $data['companyUserIdentifier'] != ''){
+        if(isset($data['companyUserIdentifier']) && $data['companyUserIdentifier'] !== ''){
             $user->companyUserIdentifier = $data['companyUserIdentifier'];
         }
 
-        if(isset($data['isSupervisor']) && $data['isSupervisor'] != ''){
+        if(isset($data['isSupervisor']) && $data['isSupervisor'] !== ''){
             $user->isSupervisor = $data['isSupervisor'];
         }
 
-        if(isset($data['isValidator']) && $data['isValidator'] != ''){
+        if(isset($data['isValidator']) && $data['isValidator'] !== ''){
             $user->isValidator = $data['isValidator'];
         }
 
-        if(isset($data['isActive']) && $data['isActive'] != ''){
+        if(isset($data['isActive']) && $data['isActive'] !== ''){
             $user->isActive = $data['isActive'];
         }
 
-        if(isset($data['rgt']) && $data['rgt'] != ''){
+        if(isset($data['rgt']) && $data['rgt'] !== ''){
             $user->rgt = $data['rgt'];
         }
 
-        if(isset($data['lft']) && $data['lft'] != ''){
+        if(isset($data['lft']) && $data['lft'] !== ''){
             $user->lft = $data['lft'];
         }
 
-        if(isset($data['hierarchy']) && $data['hierarchy'] != ''){
+        if(isset($data['hierarchy']) && $data['hierarchy'] !== ''){
             $user->hierarchy = $data['hierarchy'];
         }
 
-        if(isset($data['defaultLang']) && $data['defaultLang'] != ''){
+        if(isset($data['defaultLang']) && $data['defaultLang'] !== ''){
             $user->defaultLang = $data['defaultLang'];
         }
 
-        if(isset($data['notes']) && $data['notes'] != ''){
+        if(isset($data['notes']) && $data['notes'] !== ''){
             $user->notes = $data['notes'];
         }
 
-        if(isset($data['level']) && $data['level'] != ''){
+        if(isset($data['level']) && $data['level'] !== ''){
             $user->level = $data['level'];
         }
 
-        if(isset($data['notify']) && $data['notify'] != ''){
+        if(isset($data['notify']) && $data['notify'] !== ''){
             $user->notify = $data['notify'];
         }
 
-        if(isset($data['companyId']) && $data['companyId'] != ''){
+        if(isset($data['companyId']) && $data['companyId'] !== ''){
             $user->companyId = $data['companyId'];
         }
 
-        if(isset($data['syncId']) && $data['syncId'] != ''){
+        if(isset($data['syncId']) && $data['syncId'] !== ''){
             $user->syncId = $data['syncId'];
         }
 
-        if(isset($data['supervisorId']) && $data['supervisorId'] != ''){
+        if(isset($data['supervisorId']) && $data['supervisorId'] !== ''){
             $user->supervisorId = $data['supervisorId'];
         }
 
-        if(isset($data['externalId']) && $data['externalId'] != ''){
+        if(isset($data['externalId']) && $data['externalId'] !== ''){
             $user->externalId = $data['externalId'];
         }
 
-        if(isset($data['approverId']) && $data['approverId'] != ''){
+        if(isset($data['approverId']) && $data['approverId'] !== ''){
             $user->approverId = $data['approverId'];
         }
 
-        if(isset($data['defaultLocationId']) && $data['defaultLocationId'] != ''){
+        if(isset($data['defaultLocationId']) && $data['defaultLocationId'] !== ''){
             $user->defaultLocationId = $data['defaultLocationId'];
         }
 
-        if(isset($data['addressId']) && $data['addressId'] != ''){
+        if(isset($data['addressId']) && $data['addressId'] !== ''){
             $user->addressId = $data['addressId'];
         }
 
-        if(isset($data['departmentId']) && $data['departmentId'] != ''){
+        if(isset($data['departmentId']) && $data['departmentId'] !== ''){
             $user->departmentId = $data['departmentId'];
         }
-
 
         if (!$user->save()) {
             return 'notSaved';

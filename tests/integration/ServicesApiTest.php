@@ -276,9 +276,9 @@ class ServicesApiTest extends TestCase
                 'planCode' => '11111',
                 'cost' => '22',
                 'description' => 'Test Service',
-                'carrierId' => $carrier->id,
+                'carrierId' => 1,
             ])
-            ->seeJsonStructure([
+            ->seeJsonStructure([                
                 'data' => [
                     'type',
                     'id',
@@ -447,7 +447,7 @@ class ServicesApiTest extends TestCase
                 'planCode' => "$service->planCode",
                 'cost' => "$service->cost",
                 'description' => $service->description,
-                'carrierId' => "$service->carrierId",
+                'carrierId' => "$service->carrierId"
             ]);
     }
 
@@ -493,23 +493,45 @@ class ServicesApiTest extends TestCase
                 'data' => [
                     'type' => 'services',
                     'attributes' => [
+                        'status' => $service->status,
                         'title' => $service->title,
                         'planCode' => $service->planCode,
                         'cost' => $service->cost,
-                        'description' => $service->description,
+                        'description' => $service->description,                        
                         'carrierId' => $service->carrierId,
-                        'status' => $service->status
+                        'created_at' => $service->created_at,
+                        'updated_at' => $service->updated_at
                     ],
                     'relationships' => [
                         'serviceitems' => [
                             'data' => [
-                                ['type' => 'serviceitems', 'id' => $serviceitem1->id]
+                                [
+                                    'id'            => $serviceitem1->id,
+                                    'type'          => 'serviceitems',
+                                    'name'          => $serviceitem1->name,
+                                    'category'      => $serviceitem1->category,
+                                    'description'   => $serviceitem1->description,
+                                    'value'         => $serviceitem1->value,
+                                    'unit'          => $serviceitem1->unit,
+                                    'cost'          => $serviceitem1->cost,
+                                    'domain'        => $serviceitem1->domain,
+                                ],
+                                [
+                                    'id'            => $serviceitem2->id,
+                                    'type'          => 'serviceitems',
+                                    'name'          => $serviceitem2->name,
+                                    'category'      => $serviceitem2->category,
+                                    'description'   => $serviceitem2->description,
+                                    'value'         => $serviceitem2->value,
+                                    'unit'          => $serviceitem2->unit,
+                                    'cost'          => $serviceitem2->cost,
+                                    'domain'        => $serviceitem2->domain,
+                                ]
                             ],
-                        ]
-                    ],
-                ],
-            ]
-            )
+                        ],
+                    ]
+                ]
+            ])
             //Log::debug("testUpdateServiceIncludeAllDeleteRelationships: ".print_r($res->response->getContent(), true));
             ->seeJson(
                 [

@@ -147,6 +147,7 @@ class UsersController extends FilteredApiController
         }
 
         DB::beginTransaction();
+
         /*
          * Now we can update the User.
          */
@@ -361,6 +362,7 @@ class UsersController extends FilteredApiController
         try {
             $data = $request->all()['data'];
             $user = $this->user->create($data['attributes']);
+
             if(!$user){
                 $error['errors']['User'] = 'The User has not been created, some data information is wrong, may be the Email.';
                 return response()->json($error)->setStatusCode(409);
@@ -385,7 +387,8 @@ class UsersController extends FilteredApiController
                         $interfaceAd = app()->make('WA\Repositories\Address\AddressInterface');
                         $addressId = $interfaceAd->create($dataAddress)->getAttributes()['id'];
                         $data['attributes']['addressId'] = $addressId;
-                        $data['attributes']['id'] = $user->id;     
+                        $data['attributes']['id'] = $user->id;   
+
                         $user = $this->user->update($data['attributes']);
                     } catch (\Exception $e) {
                         $success = false;
@@ -510,7 +513,9 @@ class UsersController extends FilteredApiController
 
         if ($success) {
             DB::commit();
-            return $this->response()->item($user, new UserTransformer(), ['key' => 'users'])->setStatusCode($this->status_codes['created']);
+
+            return $this->response()->item($user, new UserTransformer(), ['key' => 'users'])
+                        ->setStatusCode($this->status_codes['created']);
         } else {
             DB::rollBack();
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
