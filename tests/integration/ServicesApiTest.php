@@ -15,11 +15,12 @@ class ServicesApiTest extends TestCase
     /**
      * A basic functional test for services.
      */
+
     public function testGetServices()
     {
         factory(\WA\DataStore\Service\Service::class, 40)->create();
 
-        $res = $this->get('services')->seeJsonStructure([
+        $res = $this->json('GET', 'services')->seeJsonStructure([
             'data' => [
                 0 => [
                     'type',
@@ -65,31 +66,28 @@ class ServicesApiTest extends TestCase
         ]);
     }
 
-    public function testGetServiceById()
+    public function testGetServiceByIdandIncludes()
     {
-        $service = factory(\WA\DataStore\Service\Service::class)->create();
+        $carrier = factory(\WA\DataStore\Carrier\Carrier::class)->create();
 
-        $this->get('services/'.$service->id)
+        $service = factory(\WA\DataStore\Service\Service::class)->create(['carrierId' => $carrier->id]);
+        
+        $package = factory(\WA\DataStore\Package\Package::class)->create();
+        $service->packages()->sync([$package->id]);
+
+        factory(\WA\DataStore\ServiceItem\ServiceItem::class)->create(['serviceId' => $service->id]);
+        factory(\WA\DataStore\ServiceItem\ServiceItem::class)->create(['serviceId' => $service->id]);
+
+        $res = $this->json('GET', 'services/'.$service->id.'?include=serviceitems,carriers,packages')
+        //Log::debug("testGetServiceByIdandIncludes: ".print_r($res->response->getContent(), true));
             ->seeJson([
-                'status' => 'Enabled',
-                'type' => 'services',
+                'status' => $service->status,
                 'title' => $service->title,
                 'planCode' => "$service->planCode",
                 'cost' => "$service->cost",
                 'description' => $service->description,                
                 'carrierId' => "$service->carrierId",
-            ]);
-        
-    }
-
-    public function testGetServiceByIdandIncludesserviceitems()
-    {
-        $service = factory(\WA\DataStore\Service\Service::class)->create();
-
-        factory(\WA\DataStore\ServiceItem\ServiceItem::class)->create(['serviceId' => $service->id]);
-        factory(\WA\DataStore\ServiceItem\ServiceItem::class)->create(['serviceId' => $service->id]);
-
-        $response = $this->json('GET', 'services/'.$service->id.'?include=serviceitems')
+            ])
             ->seeJsonStructure([
                 'data' => [
                     'type',
@@ -126,12 +124,66 @@ class ServicesApiTest extends TestCase
                                     'type',
                                     'id',
                                 ],
+                                1 => [
+                                    'type',
+                                    'id',
+                                ]
                             ],
                         ],
+                        'carriers' => [
+                            'links' => [
+                                'self',
+                                'related',
+                            ],
+                            'data' => [
+                                0 => [
+                                    'type',
+                                    'id',
+                                ],
+                            ],
+                        ],
+                        'packages' => [
+                            'links' => [
+                                'self',
+                                'related',
+                            ],
+                            'data' => [
+                                0 => [
+                                    'type',
+                                    'id',
+                                ],
+                            ],
+                        ]
                     ],
                 ],
                 'included' => [
+                    0 => [
+                        'type',
+                        'id',
+                        'attributes' => [
+                            'name',
+                            'presentation',
+                            'active',
+                            'locationId',
+                            'shortName'
+                        ],
+                        'links' => [
+                            'self',
+                        ],
+                    ],
                     1 => [
+                        'type',
+                        'id',
+                        'attributes' => [
+                            'name',
+                            'addressId',
+                            'companyId'
+                        ],
+                        'links' => [
+                            'self',
+                        ],
+                    ],
+                    2 => [
                         'type',
                         'id',
                         'attributes' => [
@@ -147,6 +199,22 @@ class ServicesApiTest extends TestCase
                             'self',
                         ],
                     ],
+                    3 => [
+                        'type',
+                        'id',
+                        'attributes' => [
+                            'category',
+                            'description',
+                            'value',
+                            'unit',
+                            'cost',
+                            'domain',
+                            'serviceId'
+                        ],
+                        'links' => [
+                            'self',
+                        ],
+                    ]
 
                 ],
             ]);
@@ -154,29 +222,191 @@ class ServicesApiTest extends TestCase
 
     public function testCreateService()
     {
-        $this->post('/services',
-            [
-                'data' => [
-                    'type' => 'services',
-                    'attributes' => [
-                        'status' => 'Enabled',
-                        'title' => 'Service Test',
-                        'planCode' => '11111',
-                        'cost' => '22',
-                        'description' => 'Test Service',                        
-                        'carrierId' => "1",
-                    ],
-                ],
-            ])
+        $carrier = factory(\WA\DataStore\Carrier\Carrier::class)->create();
+        $package = factory(\WA\DataStore\Package\Package::class)->create();
+        $serviceitem1 = factory(\WA\DataStore\ServiceItem\ServiceItem::class)->create();
+        $serviceitem2 = factory(\WA\DataStore\ServiceItem\ServiceItem::class)->create();
+
+        $res = $this->json('POST', 'services?include=serviceitems,carriers,packages',
+                [
+                    'data' => [
+                        'type' => 'services',
+                        'attributes' => [
+                            'status' => 'Enabled',
+                            'title' => 'Service Test',
+                            'planCode' => '11111',
+                            'cost' => '22',
+                            'description' => 'Test Service',
+                            'carrierId' => $carrier->id,
+                        ],
+                        'relationships' => [
+                            'packages' => [
+                                'data' => [
+                                    ['type' => 'packages', 'id' => $package->id]
+                                ],
+                            ],
+                            'serviceitems' => [
+                                'data' => [
+                                    [
+                                        'category' => $serviceitem1->category,
+                                        'description' => $serviceitem1->description,
+                                        'value' => $serviceitem1->value,
+                                        'unit' => $serviceitem1->unit,
+                                        'cost' => $serviceitem1->cost,
+                                        'domain' => $serviceitem1->domain,
+                                    ],
+                                    [
+                                        'category' => $serviceitem2->category,
+                                        'description' => $serviceitem2->description,
+                                        'value' => $serviceitem2->value,
+                                        'unit' => $serviceitem2->unit,
+                                        'cost' => $serviceitem2->cost,
+                                        'domain' => $serviceitem2->domain,
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            )
+            //Log::debug("testCreateService: ".print_r($res->response->getContent(), true));
             ->seeJson([
                 'status' => 'Enabled',
-                'type' => 'services',
                 'title' => 'Service Test',
                 'planCode' => '11111',
                 'cost' => '22',
                 'description' => 'Test Service',
-                
-                'carrierId' => "1",
+                'carrierId' => $carrier->id,
+            ])
+            ->seeJsonStructure([
+                'data' => [
+                    'type',
+                    'id',
+                    'attributes' => [
+                        'status',
+                        'title',
+                        'planCode',
+                        'cost',
+                        'description',                        
+                        'carrierId',
+                        'created_at' => [
+                            'date',
+                            'timezone_type',
+                            'timezone',
+                        ],
+                        'updated_at' => [
+                            'date',
+                            'timezone_type',
+                            'timezone',
+                        ],
+                    ],
+                    'links' => [
+                        'self',
+                    ],
+                    'relationships' => [
+                        'serviceitems' => [
+                            'links' => [
+                                'self',
+                                'related',
+                            ],
+                            'data' => [
+                                0 => [
+                                    'type',
+                                    'id',
+                                ],
+                                1 => [
+                                    'type',
+                                    'id',
+                                ]
+                            ],
+                        ],
+                        'carriers' => [
+                            'links' => [
+                                'self',
+                                'related',
+                            ],
+                            'data' => [
+                                0 => [
+                                    'type',
+                                    'id',
+                                ],
+                            ],
+                        ],
+                        'packages' => [
+                            'links' => [
+                                'self',
+                                'related',
+                            ],
+                            'data' => [
+                                0 => [
+                                    'type',
+                                    'id',
+                                ],
+                            ],
+                        ]
+                    ],
+                ],
+                'included' => [
+                    0 => [
+                        'type',
+                        'id',
+                        'attributes' => [
+                            'name',
+                            'presentation',
+                            'active',
+                            'locationId',
+                            'shortName'
+                        ],
+                        'links' => [
+                            'self',
+                        ],
+                    ],
+                    1 => [
+                        'type',
+                        'id',
+                        'attributes' => [
+                            'name',
+                            'addressId',
+                            'companyId'
+                        ],
+                        'links' => [
+                            'self',
+                        ],
+                    ],
+                    2 => [
+                        'type',
+                        'id',
+                        'attributes' => [
+                            'category',
+                            'description',
+                            'value',
+                            'unit',
+                            'cost',
+                            'domain',
+                            'serviceId'
+                        ],
+                        'links' => [
+                            'self',
+                        ],
+                    ],
+                    3 => [
+                        'type',
+                        'id',
+                        'attributes' => [
+                            'category',
+                            'description',
+                            'value',
+                            'unit',
+                            'cost',
+                            'domain',
+                            'serviceId'
+                        ],
+                        'links' => [
+                            'self',
+                        ],
+                    ]
+
+                ],
             ]);
     }
 
@@ -196,7 +426,7 @@ class ServicesApiTest extends TestCase
         $this->assertNotEquals($service->description, $serviceAux->description);
         $this->assertNotEquals($service->carrierId, $serviceAux->carrierId);
 
-        $this->PATCH('/services/'.$serviceAux->id,
+        $this->json('PATCH', '/services/'.$serviceAux->id,
             [
                 'data' => [
                     'type' => 'services',
@@ -212,20 +442,20 @@ class ServicesApiTest extends TestCase
                 ],
             ])
             ->seeJson([
-                'status' => 'Enabled',
-                'type' => 'services',
-                'title' => 'title1',
-                'planCode' => '11111',
-                'cost' => '30',
-                'description' => 'desc1',
-                
-                'carrierId' => "1",
+                'status' => $service->status,
+                'title' => "$service->title",
+                'planCode' => "$service->planCode",
+                'cost' => "$service->cost",
+                'description' => $service->description,
+                'carrierId' => "$service->carrierId",
             ]);
     }
 
-public function testUpdateServiceIncludeAllDeleteRelationships()
+    public function testUpdateServiceIncludeAllDeleteRelationships()
     {
-        $service = factory(\WA\DataStore\Service\Service::class)->create();
+        $carrier = factory(\WA\DataStore\Carrier\Carrier::class)->create();
+
+        $service = factory(\WA\DataStore\Service\Service::class)->create(['carrierId' => $carrier->id]);
  
         // SERVICEITEMS
         $serviceitem1 = factory(\WA\DataStore\ServiceItem\ServiceItem::class)->create(['serviceId' => $service->id]);
@@ -241,7 +471,7 @@ public function testUpdateServiceIncludeAllDeleteRelationships()
         $serviceitem2DB = DB::table('service_items')->where('serviceId', $service->id)->get()[1];
 
         $this->assertEquals($serviceitem1DB->id, $serviceitem1->id);
-        $this->assertEquals($serviceitem1DB->serviceId, $serviceitem1->serviceId);
+        $this->assertEquals($serviceitem1DB->serviceId, $service->id);
         $this->assertEquals($serviceitem1DB->category, $serviceitem1->category);
         $this->assertEquals($serviceitem1DB->value, $serviceitem1->value);
         $this->assertEquals($serviceitem1DB->description, $serviceitem1->description);
@@ -250,7 +480,7 @@ public function testUpdateServiceIncludeAllDeleteRelationships()
         $this->assertEquals($serviceitem1DB->domain, $serviceitem1->domain);
 
         $this->assertEquals($serviceitem2DB->id, $serviceitem2->id);
-        $this->assertEquals($serviceitem2DB->serviceId, $serviceitem2->serviceId);
+        $this->assertEquals($serviceitem2DB->serviceId, $service->id);
         $this->assertEquals($serviceitem2DB->category, $serviceitem2->category);
         $this->assertEquals($serviceitem2DB->value, $serviceitem2->value);
         $this->assertEquals($serviceitem2DB->description, $serviceitem2->description);
@@ -307,6 +537,18 @@ public function testUpdateServiceIncludeAllDeleteRelationships()
                             'self'
                         ],
                         'relationships' => [
+                            'carriers' => [
+                                'links' => [
+                                    'self',
+                                    'related'
+                                ],
+                                'data' => [
+                                    0 => [
+                                        'type',
+                                        'id'
+                                    ]
+                                ]
+                            ],
                             'serviceitems' => [
                                 'links' => [
                                     'self',
@@ -326,6 +568,20 @@ public function testUpdateServiceIncludeAllDeleteRelationships()
                             'type',
                             'id',
                             'attributes' => [
+                                'name',
+                                'presentation',
+                                'active',
+                                'locationId',
+                                'shortName'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        1 => [
+                            'type',
+                            'id',
+                            'attributes' => [
                                 'serviceId',
                                 'category',
                                 'description',
@@ -342,281 +598,201 @@ public function testUpdateServiceIncludeAllDeleteRelationships()
                 ]);
     }
 
-/*
-    public function testUpdateServiceIncludeserviceitems(){
-
+    public function testUpdateServiceIncludeAllAddRelationships()
+    {
         $carrier = factory(\WA\DataStore\Carrier\Carrier::class)->create();
 
         $service = factory(\WA\DataStore\Service\Service::class)->create(['carrierId' => $carrier->id]);
-
+        $service2 = factory(\WA\DataStore\Service\Service::class)->create(['carrierId' => $carrier->id]);
+ 
+        // SERVICEITEMS
         $serviceitem1 = factory(\WA\DataStore\ServiceItem\ServiceItem::class)->create(['serviceId' => $service->id]);
         $serviceitem2 = factory(\WA\DataStore\ServiceItem\ServiceItem::class)->create(['serviceId' => $service->id]);
-        $serviceitem3 = factory(\WA\DataStore\ServiceItem\ServiceItem::class)->create(['serviceId' => $service->id]);
+        $serviceitem3 = factory(\WA\DataStore\ServiceItem\ServiceItem::class)->create(['serviceId' => $service2->id]);
 
+        $serviceSItDB = DB::table('service_items')->where('serviceId', $service->id)->get();
 
-        $var = $this->get('/services/'.$service->id.'?include=serviceitems')
-            ->seeJsonStructure([                
-                'data' => [
-                    'type',
-                    'id',
-                    'attributes' => [
-                        'status',
-                        'title',
-                        'planCode',
-                        'cost',
-                        'description',                        
-                        'carrierId',
-                        'created_at',
-                        'updated_at',
-                    ],
-                    'links' => [
-                        'self'
-                    ],
-                    'relationships' => [
-                        'carriers' => [
-                            'links' => [
-                                'self',
-                                'related',
-                            ],
-                            'data' => [
-                                [
-                                    'type',
-                                    'id',
-                                ]
-                            ]
-                        ],
-                        'serviceitems' => [
-                            'links' => [
-                                'self',
-                                'related',
-                            ],
-                            'data' => [
-                                [
-                                    'type',
-                                    'id',
-                                ],
-                                [
-                                    'type',
-                                    'id',
-                                ],
-                                [
-                                    'type',
-                                    'id',
-                                ]
-                            ]
-                        ]
-                    ]
-                ],
-                'included' => [
-                    0 => [
-                        'type',
-                        'id',
-                        'attributes' => [
-                            'name',
-                            'presentation',
-                            'active',
-                            'locationId',
-                            'shortName',
-                            'created_at',
-                            'updated_at',
-                        ],
-                        'links' => [
-                            'self'
-                        ]
-                    ],
-                    1 => [
-                        'type',
-                        'id',
-                        'attributes' => [
-                            'name',
-                            'cost',
-                            'serviceId',
-                            'created_at',
-                            'updated_at',
-                        ],
-                        'links' => [
-                            'self'
-                        ]
-                    ],
-                    2 => [
-                        'type',
-                        'id',
-                        'attributes' => [
-                            'name',
-                            'cost',
-                            'serviceId',
-                            'created_at',
-                            'updated_at',
-                        ],
-                        'links' => [
-                            'self'
-                        ]
-                    ],
-                    3 => [
-                        'type',
-                        'id',
-                        'attributes' => [
-                            'name',
-                            'cost',
-                            'serviceId',
-                            'created_at',
-                            'updated_at',
-                        ],
-                        'links' => [
-                            'self'
-                        ]
-                    ]    
-                ]
-            ]);
+        $this->assertCount(2, $serviceSItDB);
+        $this->assertEquals($serviceSItDB[0]->serviceId, $service->id);
+        $this->assertEquals($serviceSItDB[1]->serviceId, $service->id);
 
-        $res = $this->PATCH('/services/'.$service->id.'?include=serviceitems',
+        $serviceitem1DB = DB::table('service_items')->where('serviceId', $service->id)->get()[0];
+        $serviceitem2DB = DB::table('service_items')->where('serviceId', $service->id)->get()[1];
+        $serviceitem3DB = DB::table('service_items')->where('serviceId', $service2->id)->get()[0];
+
+        $this->assertEquals($serviceitem1DB->id, $serviceitem1->id);
+        $this->assertEquals($serviceitem1DB->serviceId, $service->id);
+        $this->assertEquals($serviceitem1DB->category, $serviceitem1->category);
+        $this->assertEquals($serviceitem1DB->value, $serviceitem1->value);
+        $this->assertEquals($serviceitem1DB->description, $serviceitem1->description);
+        $this->assertEquals($serviceitem1DB->cost, $serviceitem1->cost);
+        $this->assertEquals($serviceitem1DB->unit, $serviceitem1->unit);
+        $this->assertEquals($serviceitem1DB->domain, $serviceitem1->domain);
+
+        $this->assertEquals($serviceitem2DB->id, $serviceitem2->id);
+        $this->assertEquals($serviceitem2DB->serviceId, $service->id);
+        $this->assertEquals($serviceitem2DB->category, $serviceitem2->category);
+        $this->assertEquals($serviceitem2DB->value, $serviceitem2->value);
+        $this->assertEquals($serviceitem2DB->description, $serviceitem2->description);
+        $this->assertEquals($serviceitem2DB->cost, $serviceitem2->cost);
+        $this->assertEquals($serviceitem2DB->unit, $serviceitem2->unit);
+        $this->assertEquals($serviceitem2DB->domain, $serviceitem2->domain);
+
+        $this->assertEquals($serviceitem3DB->serviceId, $service2->id);
+        $this->assertNotEquals($serviceitem3DB->serviceId, $service->id);
+
+        $res = $this->json('PATCH', '/services/'.$service->id.'?include=serviceitems',
             [
                 'data' => [
                     'type' => 'services',
                     'attributes' => [
-                        'status' => 'Enabled',
-                        'title' => 'title1',
-                        'planCode' => '11111',
-                        'cost' => '30',
-                        'description' => 'desc1',                        
-                        'carrierId' => '1',
-                        'created_at' => $service->created_at,
-                        'updated_at' => $service->updated_at
+                        'title' => $service->title,
+                        'planCode' => $service->planCode,
+                        'cost' => $service->cost,
+                        'description' => $service->description,
+                        'carrierId' => $service->carrierId,
+                        'status' => $service->status
                     ],
                     'relationships' => [
                         'serviceitems' => [
                             'data' => [
-                                [
-                                    'id'            => $serviceitem1->id,
-                                    'type'          => 'serviceitems',
-                                    'name'          => $serviceitem1->name,
-                                    'category'      => $serviceitem1->category,
-                                    'description'   => $serviceitem1->description,
-                                    'value'         => $serviceitem1->value,
-                                    'unit'          => $serviceitem1->unit,
-                                    'cost'          => $serviceitem1->cost,
-                                    'domain'        => $serviceitem1->domain,
-                                ],
-                                [
-                                    'id'            => $serviceitem2->id,
-                                    'type'          => 'serviceitems',
-                                    'name'          => $serviceitem2->name,
-                                    'category'      => $serviceitem2->category,
-                                    'description'   => $serviceitem2->description,
-                                    'value'         => $serviceitem2->value,
-                                    'unit'          => $serviceitem2->unit,
-                                    'cost'          => $serviceitem2->cost,
-                                    'domain'        => $serviceitem2->domain,
-                                ]
+                                ['type' => 'serviceitems', 'id' => $serviceitem1->id],
+                                ['type' => 'serviceitems', 'id' => $serviceitem2->id],
+                                ['type' => 'serviceitems', 'id' => $serviceitem3->id]
                             ],
-                        ],
-                    ]
-                ]
-            ])->seeJsonStructure([
-                'data' => [
-                    'type',
-                    'id',
-                    'attributes' => [
-                        'status',
-                        'title',
-                        'planCode',
-                        'cost',
-                        'description',                        
-                        'carrierId',
-                        'created_at',
-                        'updated_at',
-                    ],
-                    'links' => [
-                        'self'
-                    ],
-                    'relationships' => [
-                        'carriers' => [
-                            'links' => [
-                                'self',
-                                'related',
-                            ],
-                            'data' => [
-                                [
-                                    'type',
-                                    'id',
-                                ]
-                            ]
-                        ],
-                        'serviceitems' => [
-                            'links' => [
-                                'self',
-                                'related',
-                            ],
-                            'data' => [
-                                [
-                                    'type',
-                                    'id',
-                                ],
-                                [
-                                    'type',
-                                    'id',
-                                ]
-                            ]
                         ]
-                    ]
+                    ],
                 ],
-                'included' => [
-                    0 => [
+            ]
+            )
+            //Log::debug("testUpdateServiceIncludeAllDeleteRelationships: ".print_r($res->response->getContent(), true));
+            ->seeJson(
+                [
+                    'title' => $service->title,
+                    'planCode' => $service->planCode,
+                    'cost' => $service->cost,
+                    'description' => $service->description,
+                    'carrierId' => $service->carrierId,
+                    'status' => $service->status
+                ])
+            ->seeJsonStructure(
+                [
+                    'data' => [
                         'type',
                         'id',
                         'attributes' => [
-                            'name',
-                            'presentation',
-                            'active',
-                            'locationId',
-                            'shortName',
-                            'created_at',
-                            'updated_at',
+                            'title',
+                            'planCode',
+                            'cost',
+                            'description',
+                            'carrierId',
+                            'status'
                         ],
                         'links' => [
                             'self'
+                        ],
+                        'relationships' => [
+                            'carriers' => [
+                                'links' => [
+                                    'self',
+                                    'related'
+                                ],
+                                'data' => [
+                                    0 => [
+                                        'type',
+                                        'id'
+                                    ]
+                                ]
+                            ],
+                            'serviceitems' => [
+                                'links' => [
+                                    'self',
+                                    'related'
+                                ],
+                                'data' => [
+                                    0 => [
+                                        'type',
+                                        'id'
+                                    ],
+                                    1 => [
+                                        'type',
+                                        'id'
+                                    ],
+                                    2 => [
+                                        'type',
+                                        'id'
+                                    ]
+                                ]
+                            ]
                         ]
                     ],
-                    1 => [
-                        'type',
-                        'id',
-                        'attributes' => [
-                            'category',
-                            'description',
-                            'value',
-                            'unit',
-                            'cost',
-                            'domain',
-                            'serviceId',
-                            'created_at',
-                            'updated_at',
+                    'included' => [
+                        0 => [
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'name',
+                                'presentation',
+                                'active',
+                                'locationId',
+                                'shortName'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
                         ],
-                        'links' => [
-                            'self'
-                        ]
-                    ],
-                    2 => [
-                        'type',
-                        'id',
-                        'attributes' => [
-                            'category',
-                            'description',
-                            'value',
-                            'unit',
-                            'cost',
-                            'domain',
-                            'serviceId',
-                            'created_at',
-                            'updated_at',
+                        1 => [
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'serviceId',
+                                'category',
+                                'description',
+                                'value',
+                                'unit',
+                                'cost',
+                                'domain'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
                         ],
-                        'links' => [
-                            'self'
+                        2 => [
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'serviceId',
+                                'category',
+                                'description',
+                                'value',
+                                'unit',
+                                'cost',
+                                'domain'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        3 => [
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'serviceId',
+                                'category',
+                                'description',
+                                'value',
+                                'unit',
+                                'cost',
+                                'domain'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
                         ]
                     ]
-                ]
-            ]);
+                ]);
     }
-*/
+
     public function testDeleteServiceIfExists()
     {
         // CREATE & DELETE

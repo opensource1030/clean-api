@@ -659,11 +659,8 @@ class UsersApiTest extends TestCase
                         'type',
                         'id',
                         'attributes' => [
-                            'udlName',
-                            'udlLabel',
-                            'companyName',
-                            'companyLabel',
-                            'companySName'
+                            'udlId',
+                            'udlValue'
                         ],
                         'links' => [
                             'self',
@@ -1213,7 +1210,6 @@ class UsersApiTest extends TestCase
                 ],
             ]
             )
-            //Log::debug("---------------------------------------------------------------------------------------------------");
             //Log::debug("testCreateUser: ".print_r($res->response->getContent(), true));
             ->seeJson(
                 [
@@ -1627,11 +1623,8 @@ class UsersApiTest extends TestCase
                             'type',
                             'id',
                             'attributes' => [
-                                'udlName',
-                                'udlLabel',
-                                'companyName',
-                                'companyLabel',
-                                'companySName'
+                                'udlId',
+                                'udlValue'
                             ],
                             'links' => [
                                 'self'
@@ -1641,11 +1634,8 @@ class UsersApiTest extends TestCase
                             'type',
                             'id',
                             'attributes' => [
-                                'udlName',
-                                'udlLabel',
-                                'companyName',
-                                'companyLabel',
-                                'companySName'
+                                'udlId',
+                                'udlValue'
                             ],
                             'links' => [
                                 'self'
@@ -3267,11 +3257,8 @@ class UsersApiTest extends TestCase
                             'type',
                             'id',
                             'attributes' => [
-                                'udlName',
-                                'udlLabel',
-                                'companyName',
-                                'companyLabel',
-                                'companySName'
+                                'udlId',
+                                'udlValue'
                             ],
                             'links' => [
                                 'self'
@@ -4074,11 +4061,8 @@ class UsersApiTest extends TestCase
                             'type',
                             'id',
                             'attributes' => [
-                                'udlName',
-                                'udlLabel',
-                                'companyName',
-                                'companyLabel',
-                                'companySName'
+                                'udlId',
+                                'udlValue'
                             ],
                             'links' => [
                                 'self'
@@ -4088,11 +4072,8 @@ class UsersApiTest extends TestCase
                             'type',
                             'id',
                             'attributes' => [
-                                'udlName',
-                                'udlLabel',
-                                'companyName',
-                                'companyLabel',
-                                'companySName'
+                                'udlId',
+                                'udlValue'
                             ],
                             'links' => [
                                 'self'
@@ -4102,11 +4083,8 @@ class UsersApiTest extends TestCase
                             'type',
                             'id',
                             'attributes' => [
-                                'udlName',
-                                'udlLabel',
-                                'companyName',
-                                'companyLabel',
-                                'companySName'
+                                'udlId',
+                                'udlValue'
                             ],
                             'links' => [
                                 'self'

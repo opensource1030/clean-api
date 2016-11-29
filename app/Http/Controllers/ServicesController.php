@@ -161,6 +161,20 @@ class ServicesController extends FilteredApiController
             }
 
             if (isset($data['relationships'])) {
+                if (isset($data['relationships']['packages'])) {
+                    if (isset($data['relationships']['packages']['data'])) {
+                        $datapackages = $this->parseJsonToArray($data['relationships']['packages']['data'], 'packages');
+                        try {
+                            $service->packages()->sync($datapackages);
+                        } catch (\Exception $e) {
+                            $success = false;
+                            $error['errors']['packages'] = Lang::get('messages.NotOptionIncludeClass',
+                                ['class' => 'Service', 'option' => 'updated', 'include' => 'Packages']);
+                            //$error['errors']['Message'] = $e->getMessage();
+                        }
+                    }
+                }
+
                 if (isset($data['relationships']['serviceitems'])) {
                     if (isset($data['relationships']['serviceitems']['data'])) {
                         
@@ -186,6 +200,7 @@ class ServicesController extends FilteredApiController
             $error['errors']['json'] = Lang::get('messages.InvalidJson');
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
+        //dd("END");
 
         DB::commit();
         return $this->response()->item($service, new ServiceTransformer(), ['key' => 'services'])->setStatusCode($this->status_codes['created']);

@@ -18,11 +18,8 @@ class UdlValueTransformer extends FilterableTransformer
     {
         return [
             'id'            => $udlValue->id,
-            'udlName'       => $udlValue->udl->name,
-            'udlLabel'      => $udlValue->udl->label,
-            'companyName'   => $udlValue->udl->company->name,
-            'companyLabel'  => $udlValue->udl->company->label,
-            'companySName'  => $udlValue->udl->company->shortName,
+            'udlId'         => $udlValue->udlId,
+            'udlValue'      => $udlValue->name
         ];
     }
 }

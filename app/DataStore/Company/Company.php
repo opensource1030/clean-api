@@ -82,14 +82,6 @@ class Company extends BaseDataStore
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function udlValues()
-    {
-        return $this->hasMany('WA\DataStore\UdlValue\UdlValue', 'companyId');
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
     public function rules()
     {
         return $this->belongsToMany('WA\DataStore\Rule\Rule', 'company_rules', 'companyId', 'ruleId');
