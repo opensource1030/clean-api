@@ -235,6 +235,7 @@ class EloquentUser extends AbstractRepository implements UserInterface
      */
     public function create(array $data)
     {
+
         if(isset($data['uuid']) && $data['uuid'] !== ''){
             $userData['uuid'] = $data['uuid'];
         } else {

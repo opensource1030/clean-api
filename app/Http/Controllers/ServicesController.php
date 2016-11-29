@@ -138,6 +138,10 @@ class ServicesController extends FilteredApiController
                     }                    
                 }
             }
+        } else {
+            foreach ($serviceItems as $item) {
+                $serviceItemsInterface->deleteById($item['id']);
+            }
         }
 
         if ($success) {
@@ -184,7 +188,6 @@ class ServicesController extends FilteredApiController
                         }
                     }
                 }
-
                 if (isset($data['relationships']['serviceitems'])) {
                     if (isset($data['relationships']['serviceitems']['data'])) {
                         
@@ -192,7 +195,6 @@ class ServicesController extends FilteredApiController
                         $data = $data['relationships']['serviceitems']['data'];
 
                         foreach ($data as $item) {
-                            $item['serviceId'] = $service->id;
                             try {
                                 $item['serviceId'] = $service->id;
                                 $serviceItemsInterface->create($item);    

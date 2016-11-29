@@ -436,7 +436,6 @@ class UsersApiTest extends TestCase
                             'self',
                         ],
                     ],
-
                 ],
             ]);
     }
