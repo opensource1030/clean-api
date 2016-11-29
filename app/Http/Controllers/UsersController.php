@@ -556,6 +556,7 @@ class UsersController extends FilteredApiController
             $error['errors']['delete'] = Lang::get('messages.NotDeletedClass', ['class' => 'User']);
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
+    }
 
     public function getLoggedInUser(Request $request)
     {

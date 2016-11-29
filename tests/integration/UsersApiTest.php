@@ -4229,5 +4229,4 @@ class UsersApiTest extends TestCase
         $responseDel = $this->call('DELETE', '/users/1');
         $this->assertEquals(404, $responseDel->status());
     }
-
 }
