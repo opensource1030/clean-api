@@ -28,10 +28,6 @@ class UserTransformer extends FilterableTransformer
         'address'
     ];
 
-    protected $defaultIncludes = [
-        'address'
-    ];
-
     /**
      * @param User $user
      *
