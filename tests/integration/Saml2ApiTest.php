@@ -11,7 +11,7 @@ class Saml2ApiTest extends TestCase
 {
     use DatabaseMigrations;
 
-    public function testApiDoSSOEmailRegister()
+    public function testApiDoSSOEmailRegisterDomainDoesNotExist()
     {
          
         // CREATE ARGUMENTS
@@ -27,13 +27,36 @@ class Saml2ApiTest extends TestCase
     public function testApiDoSSOEmailPassword()
     {
 
+        $email = 'dev@withpassword.com';
+        $redirectToUrl = 'http://google.es';
+
+        // CREATE COMPANY and COMPANY DOMAIN
+        $company = factory(\WA\DataStore\Company\Company::class)->create()->id;
+        $companyDomains = factory(\WA\DataStore\Company\CompanyDomains::class)->create(['companyId' => $company, 'domain' => 'withpassword.com']);
         // CREATE USER
-        $user = factory(\WA\DataStore\User\User::class)->create()->email;
+        $user = factory(\WA\DataStore\User\User::class)->create(['email' => $email, 'companyId' => $company])->email;
 
         // CALL THE API ROUTE + ASSERTS
-        $returnPassword = $this->json('GET', 'doSSO/'.$user)->seeJson([
+        $returnPassword = $this->json('GET', 'doSSO/'.$user.'?redirectToUrl='.$redirectToUrl)->seeJson([
             'error' => 'User Found, Password Required',
             'message' => 'Please, enter your password.',
+        ]);
+    }
+
+    public function testApiDoSSOEmailRegisterUserDoesNotExist()
+    {
+
+        $email = 'dev@withpassword.com';
+        $redirectToUrl = 'http://google.es';
+
+        // CREATE COMPANY and COMPANY DOMAIN
+        $company = factory(\WA\DataStore\Company\Company::class)->create()->id;
+        $companyDomains = factory(\WA\DataStore\Company\CompanyDomains::class)->create(['companyId' => $company, 'domain' => 'withpassword.com']);
+
+        // CALL THE API ROUTE + ASSERTS
+        $returnPassword = $this->json('GET', 'doSSO/'.$email.'?redirectToUrl='.$redirectToUrl)->seeJson([
+            'error' => 'User Not Found, Register Required',
+            'message' => 'Please, register a new user.',
         ]);
     }
 

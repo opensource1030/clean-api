@@ -56,8 +56,16 @@ class SSO extends ApiController
             // THIS EMAIL HAS COMPANY RELATED?
             $idCompany = $this->company->getIdByUserEmail($email);
 
+            if ($idCompany > 0)   {
+                $company = $this->company->byId($idCompany);
+            } else {
+                return response()
+                    ->json(['error' => 'User Not Found, Register Required', 'message' => 'Please, register a new user.'])
+                    ->setStatusCode($this->status_codes['conflict']);
+            }
+
             // SSO COMPANY == NULL -> LOOK DATABASE USER.
-            if ($idCompany == 0) {
+            if ($company->saml2Settings() == null) {
 
                 // LOOK DATABASE USER
                 $user = $this->user->byEmail($email);
