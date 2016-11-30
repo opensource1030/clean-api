@@ -79,6 +79,9 @@ class UsersApiTest extends TestCase
                         'type',
                         'id',
                         'attributes' => [
+                            'name',
+                            'attn',
+                            'phone',
                             'address',
                             'city',
                             'state',
@@ -210,6 +213,9 @@ class UsersApiTest extends TestCase
                         'type',
                         'id',
                         'attributes' => [
+                            'name',
+                            'attn',
+                            'phone',
                             'address',
                             'city',
                             'state',
@@ -396,6 +402,9 @@ class UsersApiTest extends TestCase
                         'type',
                         'id',
                         'attributes' => [
+                            'name',
+                            'attn',
+                            'phone',
                             'address',
                             'city',
                             'state',
@@ -515,6 +524,9 @@ class UsersApiTest extends TestCase
                         'type',
                         'id',
                         'attributes' => [
+                            'name',
+                            'attn',
+                            'phone',
                             'address',
                             'city',
                             'state',
@@ -648,6 +660,9 @@ class UsersApiTest extends TestCase
                         'type',
                         'id',
                         'attributes' => [
+                            'name',
+                            'attn',
+                            'phone',
                             'address',
                             'city',
                             'state',
@@ -769,6 +784,9 @@ class UsersApiTest extends TestCase
                         'type',
                         'id',
                         'attributes' => [
+                            'name',
+                            'attn',
+                            'phone',
                             'address',
                             'city',
                             'state',
@@ -872,6 +890,9 @@ class UsersApiTest extends TestCase
                         'type',
                         'id',
                         'attributes' => [
+                            'name',
+                            'attn',
+                            'phone',
                             'address',
                             'city',
                             'state',
@@ -990,6 +1011,9 @@ class UsersApiTest extends TestCase
                         'type',
                         'id',
                         'attributes' => [
+                            'name',
+                            'attn',
+                            'phone',
                             'address',
                             'city',
                             'state',
@@ -1105,6 +1129,9 @@ class UsersApiTest extends TestCase
                         'type',
                         'id',
                         'attributes' => [
+                            'name',
+                            'attn',
+                            'phone',
                             'address',
                             'city',
                             'state',
@@ -1575,6 +1602,9 @@ class UsersApiTest extends TestCase
                             'type',
                             'id',
                             'attributes' => [
+                                'name',
+                                'attn',
+                                'phone',
                                 'address',
                                 'city',
                                 'state',
@@ -1960,6 +1990,9 @@ class UsersApiTest extends TestCase
                             'type',
                             'id',
                             'attributes' => [
+                                'name',
+                                'attn',
+                                'phone',
                                 'address',
                                 'city',
                                 'state',
@@ -2126,6 +2159,9 @@ class UsersApiTest extends TestCase
                             'type',
                             'id',
                             'attributes' => [
+                                'name',
+                                'attn',
+                                'phone',
                                 'address',
                                 'city',
                                 'state',
@@ -2292,6 +2328,9 @@ class UsersApiTest extends TestCase
                             'type',
                             'id',
                             'attributes' => [
+                                'name',
+                                'attn',
+                                'phone',
                                 'address',
                                 'city',
                                 'state',
@@ -2459,6 +2498,9 @@ class UsersApiTest extends TestCase
                             'type',
                             'id',
                             'attributes' => [
+                                'name',
+                                'attn',
+                                'phone',
                                 'address',
                                 'city',
                                 'state',
@@ -2626,6 +2668,9 @@ class UsersApiTest extends TestCase
                             'type',
                             'id',
                             'attributes' => [
+                                'name',
+                                'attn',
+                                'phone',
                                 'address',
                                 'city',
                                 'state',
@@ -2779,6 +2824,9 @@ class UsersApiTest extends TestCase
                             'type',
                             'id',
                             'attributes' => [
+                                'name',
+                                'attn',
+                                'phone',
                                 'address',
                                 'city',
                                 'state',
@@ -3214,6 +3262,9 @@ class UsersApiTest extends TestCase
                             'type',
                             'id',
                             'attributes' => [
+                                'name',
+                                'attn',
+                                'phone',
                                 'address',
                                 'city',
                                 'state',
@@ -3891,6 +3942,9 @@ class UsersApiTest extends TestCase
                             'type',
                             'id',
                             'attributes' => [
+                                'name',
+                                'attn',
+                                'phone',
                                 'address',
                                 'city',
                                 'state',

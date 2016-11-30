@@ -24,6 +24,15 @@ class EloquentAddress extends AbstractRepository implements AddressInterface
             return 'notExist';
         }
 
+        if (isset($data['name'])) {
+            $address->name = $data['name'];
+        }
+        if (isset($data['attn'])) {
+            $address->attn = $data['attn'];
+        }
+        if (isset($data['phone'])) {
+            $address->phone = $data['phone'];
+        }
         if (isset($data['address'])) {
             $address->address = $data['address'];
         }
@@ -69,6 +78,9 @@ class EloquentAddress extends AbstractRepository implements AddressInterface
     public function create(array $data)
     {
         $addressData = [
+            "name" => isset($data['name']) ? $data['name'] : '',
+            "attn" => isset($data['attn']) ? $data['attn'] : '',
+            "phone" => isset($data['phone']) ? $data['phone'] : '',
             "address" =>  isset($data['address']) ? $data['address'] : '' ,
             "city" => isset($data['city']) ? $data['city'] : '',
             "state" => isset($data['state']) ? $data['state'] : '',

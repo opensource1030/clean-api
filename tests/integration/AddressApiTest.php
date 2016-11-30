@@ -20,6 +20,9 @@ class AddressApiTest extends TestCase
                         'type',
                         'id',
                         'attributes' => [
+                            'name',
+                            'attn',
+                            'phone',
                             'address',
                             'city',
                             'state',
@@ -63,6 +66,9 @@ class AddressApiTest extends TestCase
         $res = $this->json('GET', 'address/'.$address->id)
             ->seeJson([
                 'type' => 'address',
+                'name' => $address->name,
+                'attn' => $address->attn,
+                'phone' => "$address->phone",
                 'address' => $address->address,
                 'city' => $address->city,
                 'state' => $address->state,
@@ -78,6 +84,9 @@ class AddressApiTest extends TestCase
                 'data' => [
                     'type' => 'address',
                     'attributes' => [
+                        'name' => 'addressName',
+                        'attn' => 'addressAttn',
+                        'phone' => 'addressPhone',
                         'address' => 'addressAddress',
                         'city' => 'addressCity',
                         'state' => 'addressState',
@@ -88,6 +97,9 @@ class AddressApiTest extends TestCase
             ])
             ->seeJson([
                 'type' => 'address',
+                'name' => 'addressName',
+                'attn' => 'addressAttn',
+                'phone' => 'addressPhone',                
                 'address' => 'addressAddress',
                 'city' => 'addressCity',
                 'state' => 'addressState',
@@ -111,6 +123,9 @@ class AddressApiTest extends TestCase
         $this->json('GET', 'address/'.$address1->id)
             ->seeJson([
                 'type' => 'address',
+                'name' => $address1->name,
+                'attn' => $address1->attn,
+                'phone' => "$address1->phone",
                 'address' => $address1->address,
                 'city' => $address1->city,
                 'state' => $address1->state,
@@ -123,6 +138,9 @@ class AddressApiTest extends TestCase
                 'data' => [
                     'type' => 'address',
                     'attributes' => [
+                        'name' => $address2->name,
+                        'attn' => $address2->attn,
+                        'phone' => $address2->phone,
                         'address' => $address2->address,
                         'city' => $address2->city,
                         'state' => $address2->state,
@@ -134,6 +152,9 @@ class AddressApiTest extends TestCase
             ->seeJson([
                 //'type' => 'address',
                 'id' => $address1->id,
+                'name' => $address2->name,
+                'attn' => $address2->attn,
+                'phone' => $address2->phone,
                 'address' => $address2->address,
                 'city' => $address2->city,
                 'state' => $address2->state,
