@@ -19,7 +19,8 @@ class DeviceTransformer extends FilterableTransformer
         'devicetypes',
         'modifications',
         'images',
-        'prices'
+        'prices',
+        'orders'
     ];
 
     protected $defaultIncludes = [

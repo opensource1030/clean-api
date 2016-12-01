@@ -8,6 +8,8 @@ use WA\DataStore\Order\Order;
 use WA\DataStore\Order\OrderTransformer;
 use WA\Repositories\Order\OrderInterface;
 
+use DB;
+
 /**
  * Order resource.
  *
@@ -41,36 +43,91 @@ class OrdersController extends FilteredApiController
      */
     public function store($id, Request $request)
     {
-        if ($this->isJsonCorrect($request, 'orders')) {
-            try {
-                $data = $request->all()['data']['attributes'];
-                $data['id'] = $id;
-                $order = $this->order->update($data);
+        $success = true;
+        $code = 'conflict';
+        $dataApps = $dataServiceItems = array();
 
-                if ($order == 'notExist') {
-                    $error['errors']['order'] = Lang::get('messages.NotExistClass', ['class' => 'Order']);
-                    //$error['errors']['Message'] = $e->getMessage();
-                    return response()->json($error)->setStatusCode($this->status_codes['notexists']);
-                }
-
-                if ($order == 'notSaved') {
-                    $error['errors']['order'] = Lang::get('messages.NotSavedClass', ['class' => 'Order']);
-                    //$error['errors']['Message'] = $e->getMessage();
-                    return response()->json($error)->setStatusCode($this->status_codes['conflict']);
-                }
-
-                return $this->response()->item($order, new OrderTransformer(),
-                    ['key' => 'orders'])->setStatusCode($this->status_codes['created']);
-            } catch (\Exception $e) {
-                $error['errors']['orders'] = Lang::get('messages.NotOptionIncludeClass',
-                    ['class' => 'Order', 'option' => 'updated', 'include' => '']);
-                //$error['errors']['Message'] = $e->getMessage();
-            }
-        } else {
+        /*
+         * Checks if Json has data, data-type & data-attributes.
+         */
+        if (!$this->isJsonCorrect($request, 'orders')) {
             $error['errors']['json'] = Lang::get('messages.InvalidJson');
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
-        return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+        DB::beginTransaction();
+
+        /*
+         * Now we can update the Order.
+         */
+        try {
+            $data = $request->all()['data'];
+            $data['attributes']['id'] = $id;
+            $order = $this->order->update($data['attributes']);
+
+            if ($order == 'notExist') {
+                $success = false;
+                $code = 'notexists';
+                $error['errors']['order'] = Lang::get('messages.NotExistClass', ['class' => 'Order']);
+                //$error['errors']['Message'] = $e->getMessage();
+            }
+
+            if ($order == 'notSaved') {
+                $success = false;
+                $error['errors']['order'] = Lang::get('messages.NotSavedClass', ['class' => 'Order']);
+                //$error['errors']['Message'] = $e->getMessage();
+            }
+
+        } catch (\Exception $e) {
+            $success = false;
+            $error['errors']['orders'] = Lang::get('messages.NotOptionIncludeClass',
+                ['class' => 'Order', 'option' => 'updated', 'include' => '']);
+            //$error['errors']['Message'] = $e->getMessage();
+        }
+
+        /*
+         * Check if Json has relationships to continue or if not and commit + return.
+         */
+        if (isset($data['relationships']) && $success) {
+            $dataRelationships = $data['relationships'];
+
+            if (isset($dataRelationships['apps']) && $success) {
+                if (isset($dataRelationships['apps']['data'])) {
+                    $dataApps = $this->parseJsonToArray($dataRelationships['apps']['data'], 'apps');
+                    try {
+                        $order->apps()->sync($dataApps);
+                    } catch (\Exception $e) {
+                        $success = false;
+                        $error['errors']['apps'] = Lang::get('messages.NotOptionIncludeClass',
+                            ['class' => 'Order', 'option' => 'updated', 'include' => 'Apps']);
+                        //$error['errors']['Message'] = $e->getMessage();
+                    }
+                }
+            }
+
+            if (isset($dataRelationships['serviceitems']) && $success) {
+                if (isset($dataRelationships['serviceitems']['data'])) {
+                    $dataServiceItems = $this->parseJsonToArray($dataRelationships['serviceitems']['data'], 'serviceitems');
+                    try {
+                        $order->serviceitems()->sync($dataServiceItems);
+                    } catch (\Exception $e) {
+                        $success = false;
+                        $error['errors']['serviceitems'] = Lang::get('messages.NotOptionIncludeClass',
+                            ['class' => 'Order', 'option' => 'updated', 'include' => 'Service Items']);
+                        //$error['errors']['Message'] = $e->getMessage();
+                    }
+                }
+            }
+        }
+
+        if ($success) {
+            DB::commit();
+            return $this->response()->item($order, new OrderTransformer(),
+                ['key' => 'orders'])->setStatusCode($this->status_codes['created']);
+        } else {
+            DB::rollBack();
+            return response()->json($error)->setStatusCode($this->status_codes[$code]);
+        }
     }
 
     /**
@@ -80,23 +137,80 @@ class OrdersController extends FilteredApiController
      */
     public function create(Request $request)
     {
-        if ($this->isJsonCorrect($request, 'orders')) {
-            try {
-                $data = $request->all()['data']['attributes'];
-                $order = $this->order->create($data);
+        $success = true;
+        $dataApps = $dataServiceItems = array();
 
-                return $this->response()->item($order, new OrderTransformer(),
-                    ['key' => 'orders'])->setStatusCode($this->status_codes['created']);
-            } catch (\Exception $e) {
-                $error['errors']['orders'] = Lang::get('messages.NotOptionIncludeClass',
-                    ['class' => 'Order', 'option' => 'created', 'include' => '']);
-                //$error['errors']['Message'] = $e->getMessage();
-            }
-        } else {
+        /*
+         * Checks if Json has data, data-type & data-attributes.
+         */
+        if (!$this->isJsonCorrect($request, 'orders')) {
             $error['errors']['json'] = Lang::get('messages.InvalidJson');
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
-        return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+        DB::beginTransaction();
+
+        /*
+         * Now we can create the Order.
+         */
+        try {
+            $data = $request->all()['data'];
+            $order = $this->order->create($data['attributes']);
+
+            if(!$order){
+                $error['errors']['Order'] = 'The Order has not been created, some data information is wrong.';
+                return response()->json($error)->setStatusCode(409);
+            }
+        } catch (\Exception $e) {
+            $success = false;
+            $error['errors']['orders'] = Lang::get('messages.NotOptionIncludeClass',
+                ['class' => 'Order', 'option' => 'created', 'include' => '']);
+            $error['errors']['Message'] = $e->getMessage();
+        }
+
+        /*
+         * Check if Json has relationships to continue or if not and commit + return.
+         */
+        if (isset($data['relationships']) && $success) {
+            $dataRelationships = $data['relationships'];
+
+            if (isset($dataRelationships['apps'])) {
+                if (isset($dataRelationships['apps']['data'])) {
+                    $dataApps = $this->parseJsonToArray($dataRelationships['apps']['data'], 'apps');
+                    try {
+                        $order->apps()->sync($dataApps);
+                    } catch (\Exception $e) {
+                        $success = false;
+                        $error['errors']['Apps'] = Lang::get('messages.NotOptionIncludeClass',
+                            ['class' => 'Order', 'option' => 'created', 'include' => 'Apps']);
+                        $error['errors']['Message'] = $e->getMessage();
+                    }
+                }
+            }
+
+            if (isset($dataRelationships['serviceitems'])) {
+                if (isset($dataRelationships['serviceitems']['data'])) {
+                    $dataServiceItems = $this->parseJsonToArray($dataRelationships['serviceitems']['data'], 'serviceitems');
+                    try {
+                        $order->serviceitems()->sync($dataServiceItems);
+                    } catch (\Exception $e) {
+                        $success = false;
+                        $error['errors']['serviceitems'] = Lang::get('messages.NotOptionIncludeClass',
+                            ['class' => 'Order', 'option' => 'created', 'include' => 'Service Items']);
+                        //$error['errors']['Message'] = $e->getMessage();
+                    }
+                }
+            }
+        }
+
+        if ($success) {
+            DB::commit();
+            return $this->response()->item($order, new OrderTransformer(), ['key' => 'orders'])
+                        ->setStatusCode($this->status_codes['created']);
+        } else {
+            DB::rollBack();
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+        }
     }
 
     /**

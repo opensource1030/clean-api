@@ -66,4 +66,12 @@ class Service extends BaseDataStore
     {
         return $this->hasMany('WA\DataStore\ServiceItem\ServiceItem', 'serviceId');
     }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function orders()
+    {
+        return $this->hasMany('WA\DataStore\Order\Order', 'serviceId');
+    }
 }

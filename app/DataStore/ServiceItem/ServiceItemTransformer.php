@@ -30,4 +30,13 @@ class ServiceItemTransformer extends FilterableTransformer
             'updated_at'    => $item->updated_at,
         ];
     }
+
+    public function includeOrders(ServiceItem $serviceitem)
+    {
+        $this->criteria = $this->getRequestCriteria();
+        $orders = $this->applyCriteria($serviceitem->orders(), $this->criteria, true, [
+            'orders' => 'orders'
+        ]);
+        return new ResourceCollection ($orders->get(), new OrderTransformer(), 'orders');
+    }
 }

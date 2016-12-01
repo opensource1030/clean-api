@@ -24,6 +24,8 @@ class OrdersTableSeeder extends BaseTableSeeder
                 'packageId' => 1,
                 'deviceId' => 1,
                 'serviceId' => 1,
+                'carrierId' => 1,
+
             ],
             [
                 'status' => 'Accepted',
@@ -31,6 +33,7 @@ class OrdersTableSeeder extends BaseTableSeeder
                 'packageId' => 2,
                 'deviceId' => 2,
                 'serviceId' => 2,
+                'carrierId' => 2,
             ],
             [
                 'status' => 'Pending',
@@ -38,6 +41,7 @@ class OrdersTableSeeder extends BaseTableSeeder
                 'packageId' => 3,
                 'deviceId' => 3,
                 'serviceId' => 3,
+                'carrierId' => 3,
             ],
             [
                 'status' => 'Accepted',
@@ -45,6 +49,7 @@ class OrdersTableSeeder extends BaseTableSeeder
                 'packageId' => 4,
                 'deviceId' => 4,
                 'serviceId' => 4,
+                'carrierId' => 4,
             ],
         ];
 

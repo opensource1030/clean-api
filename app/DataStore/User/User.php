@@ -241,6 +241,14 @@ class User extends BaseDataStore implements IlluminateCanResetPasswordContract, 
     }
 
     /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function orders()
+    {
+        return $this->hasMany('WA\DataStore\Order\Order', 'userId');
+    }
+
+    /**
      * @param $id
      *
      * @return bool

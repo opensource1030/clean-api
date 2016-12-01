@@ -117,6 +117,40 @@ class UsersApiTest extends TestCase
 
         $res = $this->get('/users/'.$user->id)
         //Log::debug("Users/id: ".print_r($res->response->getContent(), true));
+            ->seeJson([
+                    'type' => 'users',
+                    'uuid' => $user->uuid,
+                    'identification' => $user->identification,
+                    'email' => $user->email,
+                    'alternateEmail' => $user->alternateEmail,
+                    'password' => $user->password,
+                    'username' => $user->username,
+                    'confirmation_code' => $user->confirmation_code,
+                    'remember_token' => $user->remember_token,
+                    'confirmed' => "$user->confirmed",
+                    'firstName' => $user->firstName,
+                    'lastName' => $user->lastName,
+                    'alternateFirstName' => $user->alternateFirstName,
+                    'supervisorEmail' => $user->supervisorEmail,
+                    'companyUserIdentifier' => "$user->companyUserIdentifier",
+                    'isSupervisor' => "$user->isSupervisor",
+                    'isValidator' => "$user->isValidator",
+                    'isActive' => "$user->isActive",
+                    'rgt' => $user->rgt,
+                    'lft' => $user->lft,
+                    'hierarchy' => $user->hierarchy,
+                    'defaultLang' => $user->defaultLang,
+                    'notes' => $user->notes,
+                    'level' => "$user->level",
+                    'notify' => "$user->notify",
+                    'companyId' => "$user->companyId",
+                    'syncId' => $user->syncId,
+                    'supervisorId' => "$user->supervisorId",
+                    'externalId' => $user->externalId,
+                    'approverId' => "$user->approverId",
+                    'defaultLocationId' => "$user->defaultLocationId",
+                    'addressId' => "$user->addressId"
+                ])
             ->seeJsonStructure([
                 'data' => [
                     'type', 

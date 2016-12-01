@@ -14,7 +14,8 @@ class ServiceTransformer extends FilterableTransformer
     protected $availableIncludes = [
         'packages',
         'serviceitems',
-        'carriers'
+        'carriers',
+        'orders'
     ];
 
     protected $defaultIncludes = [

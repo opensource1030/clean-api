@@ -141,6 +141,14 @@ class Device extends MutableDataStore
     }
 
     /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function orders()
+    {
+        return $this->hasMany('WA\DataStore\Order\Order', 'deviceId');
+    }
+
+    /**
      * Get the transformer instance.
      *
      * @return mixed

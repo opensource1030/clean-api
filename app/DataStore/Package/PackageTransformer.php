@@ -15,6 +15,7 @@ class PackageTransformer extends FilterableTransformer
         'services',
         'devices',
         'apps',
+        'orders'
     ];
 
     /**

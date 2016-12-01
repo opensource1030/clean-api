@@ -39,4 +39,12 @@ class ServiceItem extends BaseDataStore
     {
         return $this->belongsTo('WA\DataStore\Service\Service', 'serviceId');
     }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function orders()
+    {
+        return $this->belongsToMany('WA\DataStore\Order\Order', 'order_serviceitems', 'serviceItemId', 'orderId');
+    }
 }

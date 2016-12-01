@@ -44,4 +44,12 @@ class App extends BaseDataStore
     {
         return $this->belongsToMany('WA\DataStore\Package\Package', 'package_apps', 'packageId', 'appsId');
     }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function orders()
+    {
+        return $this->belongsToMany('WA\DataStore\Order\Order', 'order_apps', 'orderId', 'appId');
+    }
 }
