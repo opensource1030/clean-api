@@ -76,4 +76,6 @@ return [
 
 	'prefix' => 'wa',
 
+	'ttl' => 3600
+
 ];

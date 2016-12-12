@@ -44,4 +44,6 @@ class Role extends BaseDataStore
             return $this->getConnection()->getSchemaBuilder()->getColumnListing($this->getTable());
         });
     }
+
 }
+

@@ -11,7 +11,6 @@ use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvid
 use Laravel\Passport\PassportServiceProvider;
 use WA\Auth\BearerTokenResponse;
 use League\OAuth2\Server\AuthorizationServer;
-use Laravel\Passport\Passport;
 use WA\Auth\PasswordGrant;
 
 class AuthServiceProvider extends PassportServiceProvider

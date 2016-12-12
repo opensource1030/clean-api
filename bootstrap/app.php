@@ -97,9 +97,11 @@ $app->routeMiddleware([
 |
 */
 $app->configure('api');
+$app->configure('cache');
 $app->configure('services');
 $app->configure('mail');
 $app->configure('saml2_settings');
+$app->configure('entrust');
 
 
 /*

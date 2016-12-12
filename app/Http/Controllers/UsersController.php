@@ -558,7 +558,7 @@ class UsersController extends FilteredApiController
         }
     }
 
-    public function getLoggedInUser(Request $request)
+   /* public function getLoggedInUser(Request $request)
     {
         $user = Auth::user();
 
@@ -576,5 +576,6 @@ class UsersController extends FilteredApiController
 
         $response = $this->response->item($user, $transformer, ['key' => 'users']);
         return $response;
-    }
+    }*/
 }
+ 

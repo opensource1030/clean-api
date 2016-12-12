@@ -17,6 +17,7 @@ class Permission extends BaseDataStore
      * @var string
      */
     protected $table;
+
     /**
      * Creates a new instance of the model.
      *

@@ -18,10 +18,13 @@ use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 use League\OAuth2\Server\RequestEvent;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Psr\Http\Message\ServerRequestInterface;
-
+use WA\DataStore\Scope\Scope;
 use DB;
 use WA\DataStore\User\User;
+use WA\DataStore\Permission\Permission;
+use WA\DataStore\Role\Role;
 
+use Log;
 /**
  * Password grant class.
  */
@@ -42,7 +45,7 @@ class PasswordGrant extends PassGrant
 
         if (!$this->thisUserHasTheCorrectScope($scopes, $user->getIdentifier())) {
             $error['errors']['scopes'] = 'The User has not assigned the scope needed to complete the request.';
-            return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
+            return response()->json($error)->setStatusCode('401');
         }
 
         // Finalize the requested scopes
@@ -59,28 +62,29 @@ class PasswordGrant extends PassGrant
         return $responseType;
     }
 
-    private function thisUserHasTheCorrectScope($scope, $userId){
-
-        return true;
-
-        // ROLES of the USER Retrieved From DB.
+    public function thisUserHasTheCorrectScope($scopes, $userId){
+       //ROLES of the USER Retrived From DB
         $user = User::find($userId);
-        $roles = $user->roles;        
+       
+        $roles = $user->roles;
         
         $perms = array();
-        foreach ($scope as $scp) {
-            // SCOPES requested by Name
-            $var = Scope::findByName($scp);
-            // PERMISSIONS of the Scope
-            $varPerms = $var->permissions;
-            // PUSH the Name of the Permissions into the Array
-            array_push($perms, $varPerms);
+        foreach ($scopes as $scp) {
+           //SCOPES requested by Name
+            $scope = Scope::getByName($scp->getIdentifier())[0];
+           // PERMISSIONS of the Scope
+            $scopePerms = $scope->permissions;
+            //PUSH the name of the Permissions into the Array
+            foreach ($scopePerms as $perm) {
+                array_push($perms, $perm->name);                            
+            }
         }
-
-        // CKECK IF THE ROLES HAS THE PERMISSIONS
+        // CHECK IF THE ROLES HAS THE PERMISSIONS
         if($user->ability($roles, $perms)){
+            
             return true;
         }
         return false;
+
     }
 }
