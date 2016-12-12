@@ -56,11 +56,11 @@ class AllocationsApiTest extends TestCase
                 'carrier' => $allocation->carrier,
                 'currency' => $allocation->currency,
                 'device' => $allocation->handsetModel,
-                'allocated_charge' => "$allocation->totalAllocatedCharge",
-                'service_plan_charge' => "$allocation->servicePlanCharges",
-                'usage_charge' => "$allocation->usageCharges",
-                'other_charge' => "$allocation->otherCharges",
-                'fees' => "$allocation->fees",
+                'allocated_charge' => $allocation->totalAllocatedCharge,
+                'service_plan_charge' => $allocation->servicePlanCharges,
+                'usage_charge' => $allocation->usageCharges,
+                'other_charge' => $allocation->otherCharges,
+                'fees' => $allocation->fees,
             ]);
     }
 }
