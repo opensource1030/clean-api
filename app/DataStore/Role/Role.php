@@ -4,13 +4,14 @@ use Zizaco\Entrust\Contracts\EntrustRoleInterface;
 use WA\DataStore\BaseDataStore;
 use Zizaco\Entrust\Traits\EntrustRoleTrait;
 use Config;
+
 /**
  * Class Role.
  */
 class Role extends BaseDataStore
-
 {
     use EntrustRoleTrait;
+
     /**
      * The database table used by the model.
      *

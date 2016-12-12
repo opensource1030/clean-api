@@ -21,7 +21,7 @@ class ScopesTableSeeder extends BaseTableSeeder
             [
                 'name' => 'RolePermisScope',
                 'display_name' => 'RolePermisScope',
-                'description' => 'Power to administrate the Rloe, Permitions and Scopes',
+                'description' => 'Power to administrate the Role, Permitions and Scopes',
                 
             ],
             [

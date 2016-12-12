@@ -5,6 +5,7 @@ use Zizaco\Entrust\Contracts\EntrustPermissionInterface;
 use WA\DataStore\BaseDataStore;
 use Zizaco\Entrust\Traits\EntrustPermissionTrait;
 use Config;
+
 /**
  * Class Permission.
  */

@@ -37,9 +37,6 @@ class Scope extends BaseDataStore
         return Scope::where('name', $name)->get();
     }
 
-    public static function getId(){
-        return $this->id;
-    }
    /* public function getId(){
         return $this->id;
     }*/
