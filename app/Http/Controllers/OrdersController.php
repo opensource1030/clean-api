@@ -205,6 +205,13 @@ class OrdersController extends FilteredApiController
 
         if ($success) {
             DB::commit();
+            /*
+            $data = [
+                'Apps' => 'Added some Apps',
+                'ServiceItems' => 'Added some ServiceItems',
+            ];
+            $this->sendConfirmationEmail($data,'email@email.com', 'Order'));
+            */
             return $this->response()->item($order, new OrderTransformer(), ['key' => 'orders'])
                         ->setStatusCode($this->status_codes['created']);
         } else {

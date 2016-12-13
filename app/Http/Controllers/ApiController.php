@@ -180,4 +180,24 @@ abstract class ApiController extends BaseController
             $interface->deleteById($some);
         }
     }
+
+    /**
+     *  @param: $data = Information.
+     *  @param: $email = Email to Send.
+     *  @param: $type = Model Created.
+     */
+    public function sendConfirmationEmail($data, $email, $type = '') {
+
+        try {
+            Mail::send('emails.employee.welcome', $data, 
+                function ($m) use ($email, $type) {
+                    $m->from(env('MAIL_FROM_ADDRESS'), 'Wireless Analytics');
+                    $m->to($email)->subject($type.' Created!');
+                }
+            );
+        } catch (\Exception $e) {
+            return false;
+        }
+        return true;        
+    }
 }
