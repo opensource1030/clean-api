@@ -95,7 +95,9 @@ class ImagesController extends FilteredApiController
             $imageFile['size'] = $file->getClientSize();
             $imageFile['url'] = $filename . '.' . $extension;
 
-            $value = Storage::put($filename . '.' . $extension, file_get_contents($file));
+            $filenameWithoutDot = explode(".", $filename)[0];
+
+            $value = Storage::put($filenameWithoutDot . '.' . $extension, file_get_contents($file));
 
             if ($value) {
                 $image = $this->image->create($imageFile);

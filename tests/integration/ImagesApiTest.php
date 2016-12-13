@@ -59,20 +59,22 @@ class ImagesApiTest extends TestCase
 
     public function testGetImageById()
     {
-        copy('./database/seeds/imagesseeder/phpFmndT1.png', './storage/app/public/phpFmndT1.png');
+        copy('./database/seeds/imagesseeder/phpFmndT1.png', './storage/app/public/filename.png');
 
         $image = factory(\WA\DataStore\Image\Image::class)->create([
                 'originalName' => 'iphone6.png',
-                'filename' => 'phpFmndT1',
+                'filename' => 'filename',
                 'mimeType' => 'image/png',
                 'extension' => 'png',
                 'size' => 235417,
-                'url' => 'phpFmndT1.png',
+                'url' => 'filename.png',
             ]);
 
         $res = $this->json('GET', 'images/'.$image->id);
 
         $this->assertEquals('image/png', $res->response->headers->get('Content-Type'));
+
+        $this->call('DELETE', 'images/'.$image->id);
     }
 
     public function testGetImageInformationById()
@@ -93,19 +95,19 @@ class ImagesApiTest extends TestCase
 
     public function testCreateImage()
     {
-        copy('./database/seeds/imagesseeder/phpFmndT1.png', './storage/app/public/phpFmndT1.png');
+        copy('./database/seeds/imagesseeder/phpFmndT1.png', './storage/app/public/filename.png');
 
         $image = factory(\WA\DataStore\Image\Image::class)->create([
                 'originalName' => 'iphone6.png',
-                'filename' => 'phpFmndT1',
+                'filename' => 'filename',
                 'mimeType' => 'image/png',
                 'extension' => 'png',
                 'size' => 235417,
-                'url' => 'phpFmndT1.png',
+                'url' => 'filename.png',
             ]);
 
         $uploadedFile = new Symfony\Component\HttpFoundation\File\UploadedFile(
-            './storage/app/public/phpFmndT1.png',
+            './storage/app/public/filename.png',
             'iphone6.png',
             'image/png',
             235417,
@@ -120,9 +122,12 @@ class ImagesApiTest extends TestCase
                 [],
                 ['filename' => $uploadedFile]
             );
-        $this->assertStringStartsWith('{"data":{"type":"images","id":"2","attributes":{"originalName":"iphone6.png","filename":"phpFmndT1.png","mimeType":"image\/png","extension":"png","size":235417,"url":"phpFmndT1.png.png"',
+
+        $this->assertStringStartsWith('{"data":{"type":"images","id":"2","attributes"',
             $response->getContent()
             );
+
+        $this->call('DELETE', 'images/'.$image->id);
     }
 
     public function testDeleteImageIfExists()
