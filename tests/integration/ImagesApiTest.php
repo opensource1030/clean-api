@@ -59,6 +59,9 @@ class ImagesApiTest extends TestCase
 
     public function testGetImageById()
     {
+        if(!is_dir('./storage/app/public')){
+            mkdir('./storage/app/public', 0755, true);
+        }
         copy('./database/seeds/imagesseeder/phpFmndT1.png', './storage/app/public/filename.png');
 
         $image = factory(\WA\DataStore\Image\Image::class)->create([
@@ -95,6 +98,9 @@ class ImagesApiTest extends TestCase
 
     public function testCreateImage()
     {
+        if(!is_dir('./storage/app/public')){
+            mkdir('./storage/app/public', 0755, true);
+        }
         copy('./database/seeds/imagesseeder/phpFmndT1.png', './storage/app/public/filename.png');
 
         $image = factory(\WA\DataStore\Image\Image::class)->create([
