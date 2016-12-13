@@ -186,6 +186,7 @@ abstract class ApiController extends BaseController
      *  @param: $email = Email to Send.
      *  @param: $type = Model Created.
      */
+    /*
     public function sendConfirmationEmail($data, $email, $type = '') {
 
         try {
@@ -199,5 +200,5 @@ abstract class ApiController extends BaseController
             return false;
         }
         return true;        
-    }
+    }*/
 }
