@@ -124,31 +124,6 @@ $api->version('v1', function ($api) {
     }
 
     $api->group(['middleware' => $middleware], function ($api) {
-        $api->get('{model}/{id}/relationships/{include}', function ($model, $id, $include) {
-            $modelName = title_case($model);
-            $modelSingular = str_singular($modelName);
-            $controllerName = "\\WA\\Http\\Controllers\\${modelName}Controller";
-            if (!class_exists($controllerName)) {
-                $error['errors'][$model] = \Illuminate\Support\Facades\Lang::get('messages.NotExistClass',
-                    ['class' => $modelSingular]);
-                return response()->json($error)->setStatusCode(404);
-            }
-            $controller = app()->make($controllerName);
-            return $controller->includeRelationships($model, $id, $include);
-        });
-
-        $api->get('{model}/{id}/{include}', function ($model, $id, $include) {
-            $modelName = title_case($model);
-            $modelSingular = str_singular($modelName);
-            $controllerName = "\\WA\\Http\\Controllers\\${modelName}Controller";
-            if (!class_exists($controllerName)) {
-                $error['errors'][$model] = \Illuminate\Support\Facades\Lang::get('messages.NotExistClass',
-                    ['class' => $modelSingular]);
-                return response()->json($error)->setStatusCode(404);
-            }
-            $controller = app()->make($controllerName);
-            return $controller->includeInformationRelationships($model, $id, $include);
-        });
 
         // =Companies
         $companiesController = 'WA\Http\Controllers\CompaniesController';
@@ -326,5 +301,30 @@ $api->version('v1', function ($api) {
         //$api->patch('conditionsoperators/{id}', ['uses' => $conditionOpController . '@store']);
         //$api->delete('conditionsoperators/{id}', ['uses' => $conditionOpController . '@delete']);
 
+        $api->get('{model}/{id}/relationships/{include}', function ($model, $id, $include) {
+            $modelName = title_case($model);
+            $modelSingular = str_singular($modelName);
+            $controllerName = "\\WA\\Http\\Controllers\\${modelName}Controller";
+            if (!class_exists($controllerName)) {
+                $error['errors'][$model] = \Illuminate\Support\Facades\Lang::get('messages.NotExistClass',
+                    ['class' => $modelSingular]);
+                return response()->json($error)->setStatusCode(404);
+            }
+            $controller = app()->make($controllerName);
+            return $controller->includeRelationships($model, $id, $include);
+        });
+
+        $api->get('{model}/{id}/{include}', function ($model, $id, $include) {
+            $modelName = title_case($model);
+            $modelSingular = str_singular($modelName);
+            $controllerName = "\\WA\\Http\\Controllers\\${modelName}Controller";
+            if (!class_exists($controllerName)) {
+                $error['errors'][$model] = \Illuminate\Support\Facades\Lang::get('messages.NotExistClass',
+                    ['class' => $modelSingular]);
+                return response()->json($error)->setStatusCode(404);
+            }
+            $controller = app()->make($controllerName);
+            return $controller->includeInformationRelationships($model, $id, $include);
+        });
     });
 });

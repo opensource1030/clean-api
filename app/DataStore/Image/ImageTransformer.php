@@ -23,7 +23,7 @@ class ImageTransformer extends FilterableTransformer
             'filename'     => $image->filename,
             'mimeType'     => $image->mimeType,
             'extension'    => $image->extension,
-            'size'         => $image->size,
+            'size'         => (int)$image->size,
             'url'          => $image->url,
             'created_at'   => $image->created_at,
             'updated_at'   => $image->updated_at,
