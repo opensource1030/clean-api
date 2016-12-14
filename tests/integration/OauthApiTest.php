@@ -16,8 +16,8 @@ class OauthApiTest extends TestCase
         $password = 'user';
 
         $user = factory(\WA\DataStore\User\User::class)->create([
-            'email' => 'email@email.wirelessanalytics.com',
-            'password' => '$2y$10$oc9QZeaYYAd.8BPGmXGaFu9cAqycKTcBu7LRzmT2J231F0BzKwpxj6'
+            'email' => 'email@email.com',
+            'password' => '$2y$10$oc9QZeaYYAd.8BPGmXGaFu9cAycKTcBu7LRzmT2J231F0BzKwpxj6'
         ]);
 
         $oauth = factory(\WA\DataStore\Oauth\Oauth::class)->create([
@@ -38,8 +38,8 @@ class OauthApiTest extends TestCase
             'client_secret' => $oauth->secret
         ];
 
-        $res = $this->call('POST', 'oauth/token', $body, [], [], [], true );
-        $array = (array)json_decode($res->getContent());
+        $call = $this->call('POST', 'oauth/token', $body, [], [], [], true );
+        $array = (array)json_decode($call->getContent());
 
         $this->assertArrayHasKey('user_id', $array);
         $this->assertArrayHasKey('token_type', $array);
