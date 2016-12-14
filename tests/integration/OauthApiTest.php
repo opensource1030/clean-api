@@ -12,25 +12,44 @@ class OauthApiTest extends TestCase
 
     public function testApiOauthAccessToken()
     {
-        $this->markTestIncomplete(
-              'TODO: needs to be reviewed. AuthController@accessToken gets the right Request, the problem could be in League\oauth2-server\src\AuthorizationServer than can\'t get que Request'
-        );
+        $grantType = 'password';
+        $password = 'user';
 
-        $emailMicrosoft = 'dev@wirelessanalytics.com';
-        $oauth = factory(\WA\DataStore\Oauth\Oauth::class)->create();
-        $user = factory(\WA\DataStore\User\User::class)->create(['email' => $emailMicrosoft]);
+        $user = factory(\WA\DataStore\User\User::class)->create([
+            'email' => 'email@email.wirelessanalytics.com',
+            'password' => '$2y$10$oc9QZeaYYAd.8BPGmXGaFu9cAqycKTcBu7LRzmT2J231F0BzKwpxj6'
+        ]);
 
-        $parameters = [
-                'grant_type' => 'password',
-                'client_id' => $oauth->id,
-                'client_secret' => $oauth->secret,
-                'username' => $emailMicrosoft,
-                'password' => 'user',
-            ];
-        $headers = [
-                'Accept' => 'application/x.v1+json',
-            ];
+        $oauth = factory(\WA\DataStore\Oauth\Oauth::class)->create([
+            'user_Id' => null,
+            'name' => 'Password Grant Client',
+            'secret' => 'ab9QdKGBXZmZn50aPlf4bLlJtC4BJJNC0M99i7B7',
+            'redirect' => 'http://localhost',
+            'personal_access_client' => 0,
+            'password_client' => 1,
+            'revoked' => 0,
+        ]);
 
-        $this->call('POST', 'oauth/access_token', $parameters);
+        $body = [
+            'grant_type' => $grantType,
+            'username' => $user->email,
+            'password' => $password,
+            'client_id' => $oauth->id,
+            'client_secret' => $oauth->secret
+        ];
+
+        $res = $this->call('POST', 'oauth/token', $body, [], [], [], true );
+        $array = (array)json_decode($res->getContent());
+
+        $this->assertArrayHasKey('user_id', $array);
+        $this->assertArrayHasKey('token_type', $array);
+        $this->assertArrayHasKey('expires_in', $array);
+        $this->assertArrayHasKey('access_token', $array);
+        $this->assertArrayHasKey('refresh_token', $array);
+
+        $this->assertEquals($array['user_id'], '1');
+        $this->assertEquals($array['token_type'], 'Bearer');
+        $this->assertEquals(strlen($array['access_token']), 1071);
+        $this->assertEquals(strlen($array['refresh_token']), 684);
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
 use Laravel\Lumen\Testing\DatabaseMigrations;
+use WA\DataStore\User\User;
 
 class UsersApiTest extends TestCase
 {
@@ -239,6 +240,70 @@ class UsersApiTest extends TestCase
 
         $response = $this->call('GET', '/users/'.$userId);
         $this->assertEquals(404, $response->status());
+    }
+
+    public function testGetLoggedInUser()
+    {
+        $grantType = 'password';
+        $password = 'user';
+
+        $user = factory(\WA\DataStore\User\User::class)->create([
+            'email' => 'email@email.com',
+            'password' => '$2y$10$oc9QZeaYYAd.8BPGmXGaFu9cAycKTcBu7LRzmT2J231F0BzKwpxj6'
+        ]);
+
+        $oauth = factory(\WA\DataStore\Oauth\Oauth::class)->create([
+            'user_Id' => null,
+            'name' => 'Password Grant Client',
+            'secret' => 'ab9QdKGBXZmZn50aPlf4bLlJtC4BJJNC0M99i7B7',
+            'redirect' => 'http://localhost',
+            'personal_access_client' => 0,
+            'password_client' => 1,
+            'revoked' => 0,
+        ]);
+
+        $body = [
+            'grant_type' => $grantType,
+            'username' => $user->email,
+            'password' => $password,
+            'client_id' => $oauth->id,
+            'client_secret' => $oauth->secret
+        ];
+
+        $call = $this->call('POST', 'oauth/token', $body, [], [], [], true );
+        $array = (array)json_decode($call->getContent());
+
+        $bearerToken = $array['token_type'].' '.$array['access_token'];
+        $this->be($user);
+
+        $res = $this->call('GET', 'users/me', [], [], [], ['Accept' => 'application/vnd.v1+json', 'Authorization' => $bearerToken], true );
+        $resArray = (array)json_decode($res->getContent());
+
+        $this->assertEquals($resArray['identification'], $user->identification);
+        $this->assertEquals($resArray['email'], $user->email);
+        $this->assertEquals($resArray['alternateEmail'], $user->alternateEmail);
+        $this->assertEquals($resArray['username'], $user->username);
+        $this->assertEquals($resArray['firstName'], $user->firstName);
+        $this->assertEquals($resArray['lastName'], $user->lastName);
+        $this->assertEquals($resArray['alternateFirstName'], $user->alternateFirstName);
+        $this->assertEquals($resArray['supervisorEmail'], $user->supervisorEmail);
+        $this->assertEquals($resArray['companyUserIdentifier'], $user->companyUserIdentifier);
+        $this->assertEquals($resArray['isSupervisor'], $user->isSupervisor);
+        $this->assertEquals($resArray['isValidator'], $user->isValidator);
+        $this->assertEquals($resArray['rgt'], $user->rgt);
+        $this->assertEquals($resArray['lft'], $user->lft);
+        $this->assertEquals($resArray['hierarchy'], $user->hierarchy);
+        $this->assertEquals($resArray['defaultLang'], $user->defaultLang);
+        $this->assertEquals($resArray['notes'], $user->notes);
+        $this->assertEquals($resArray['level'], $user->level);
+        $this->assertEquals($resArray['notify'], $user->notify);
+        $this->assertEquals($resArray['companyId'], $user->companyId);
+        $this->assertEquals($resArray['syncId'], $user->syncId);
+        $this->assertEquals($resArray['supervisorId'], $user->supervisorId);
+        $this->assertEquals($resArray['approverId'], $user->approverId);
+        $this->assertEquals($resArray['defaultLocationId'], $user->defaultLocationId);
+        $this->assertEquals($resArray['addressId'], $user->addressId);
+
     }
 
     public function testGetUserByIdandIncludesAssets()
