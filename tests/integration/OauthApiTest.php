@@ -1,24 +1,19 @@
 <?php
-
 namespace WA\Testing\Auth;
-
 use Laravel\Lumen\Testing\DatabaseMigrations;
 use WA\DataStore\User\User;
 use Laravel\Passport\Bridge\Scope;
 use WA\DataStore\Scope\Scope as ScopeModel;
 use Laravel\Passport\Passport;
 use TestCase;
-
 class OauthApiTest extends TestCase
 {
     use DatabaseMigrations;
-
     public function testApiOauthAccessToken()
     {   //@Todo
-
-        $this->markTestIncomplete(
+        /*$this->markTestIncomplete(
           'This test has has some problems.'
-        );
+        );*/
         $grantType = 'password';
         $password = 'user';
         $scope = factory(\WA\DataStore\Scope\Scope::class)->create(['name' => 'get', 'display_name'=>'get']);
@@ -45,9 +40,7 @@ class OauthApiTest extends TestCase
             'password_client' => 1,
             'revoked' => 0,
         ]);
-
         // Setup TokensCan as in AuthSericeProvider, as it is not properly executed on app bootstrap during the test
-
         $scopes = ScopeModel::all();
             
         $listScope = array();
@@ -65,7 +58,6 @@ class OauthApiTest extends TestCase
             'client_secret' => $oauth->secret,
             'scope' => $scp
         ];
-
         $call = $this->call('POST', 'oauth/token', $body, [], [], [], true );
         $array = (array)json_decode($call->getContent());
         
@@ -74,7 +66,6 @@ class OauthApiTest extends TestCase
         $this->assertArrayHasKey('expires_in', $array);
         $this->assertArrayHasKey('access_token', $array);
         $this->assertArrayHasKey('refresh_token', $array);
-
         $this->assertEquals($array['user_id'], '1');
         $this->assertEquals($array['token_type'], 'Bearer');
         $this->assertEquals(strlen($array['access_token']),1078);

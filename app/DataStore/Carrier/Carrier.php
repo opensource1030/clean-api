@@ -107,10 +107,15 @@ class Carrier extends BaseDataStore
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
+
     public function allocations()
     {
         return $this->hasMany('WA\DataStore\Allocation\Allocation', 'carrier');
 
+    }
+    public function deviceVariations()
+    {
+        return $this->hasMany('WA\DataStore\DeviceVariation\DeviceVariation', 'carrierId');
     }
 
     /**

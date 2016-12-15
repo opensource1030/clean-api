@@ -98,8 +98,9 @@ class RelationshipsTest extends TestCase
         $price1 = factory(\WA\DataStore\Price\Price::class)->create(['deviceId' => $device->id])->id;
         $price2 = factory(\WA\DataStore\Price\Price::class)->create(['deviceId' => $device->id])->id;
 
-        $this->json('GET', 'devices/'.$device->id.'/prices')
-            ->seeJsonStructure([
+        $this->json('GET', 'devices/'.$device->id.'/devicevariations')
+            ->seeJsonStructure(
+            [
                 'data' => [
                     0 => [
                         'type',

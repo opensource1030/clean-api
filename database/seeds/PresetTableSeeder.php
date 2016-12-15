@@ -11,14 +11,17 @@ class PresetTableSeeder extends BaseTableSeeder
         $data = [
             [
                 'name' => 'preset1',
+                'companyId' =>1,
                 
             ],
             [
                 'name' => 'preset2',
+                'companyId' =>1,
                 
             ],
             [
                 'name' => 'preset3',
+                'companyId' =>1,
                 
             ]
             

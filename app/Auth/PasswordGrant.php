@@ -72,7 +72,7 @@ class PasswordGrant extends PassGrant
         
         $perms = array();
         foreach ($scopes as $scp) {
-           //SCOPES requested by Name
+           //SCOPES requested by Name         
             $scope = Scope::getByName($scp->getIdentifier())[0];
            // PERMISSIONS of the Scope
             $scopePerms = $scope->permissions;
@@ -81,6 +81,7 @@ class PasswordGrant extends PassGrant
                 array_push($perms, $perm->name);                            
             }
         }
+
         // CHECK IF THE ROLES HAS THE PERMISSIONS
         if($user->ability($roles, $perms)){
             

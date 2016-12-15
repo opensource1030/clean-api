@@ -88,17 +88,13 @@ class PricesApiTest extends TestCase
 
     public function testCreatePrice()
     {
+        $deviceVariation = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create();
         $device = factory(\WA\DataStore\Device\Device::class)->create();
-        $capacity = factory(\WA\DataStore\Modification\Modification::class)->create(
-            ['modType' => 'capacity']
-        );
-        $style = factory(\WA\DataStore\Modification\Modification::class)->create(
-            ['modType' => 'style']
-        );
+
         $carrier = factory(\WA\DataStore\Carrier\Carrier::class)->create();
         $company = factory(\WA\DataStore\Company\Company::class)->create();
 
-        $this->post('/prices',
+       $deviceVariation = $this->POST('/devicevariations',
             [
                 'data' => [
                     'type' => 'prices',
@@ -113,7 +109,14 @@ class PricesApiTest extends TestCase
                         'price2' => 500,
                         'priceOwn' => 600,
                     ],
-                ],
+                    'relationships' => [
+                        'carriers' => [
+                            'data' => [
+                                ['type' => 'carriers', 'id' => $carrier->id],
+                            ],
+                        ],
+                    ]
+                ]
             ])
             ->seeJson([
                 'type' => 'prices',
@@ -129,35 +132,33 @@ class PricesApiTest extends TestCase
             ]);
     }
 
-    public function testUpdatePrice()
-    {
-        $device1 = factory(\WA\DataStore\Device\Device::class)->create();
+    public function testUpdateDeviceVariation()
+    {  
+        $deviceVariation = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create();
+        $device1 = factory(\WA\DataStore\Device\Device::class)->create()->id;
         $capacity1 = factory(\WA\DataStore\Modification\Modification::class)->create(
             ['modType' => 'capacity']
         );
         $style1 = factory(\WA\DataStore\Modification\Modification::class)->create(
             ['modType' => 'style']
         );
-        $carrier1 = factory(\WA\DataStore\Carrier\Carrier::class)->create();
-        $company1 = factory(\WA\DataStore\Company\Company::class)->create();
+        $carrier1 = factory(\WA\DataStore\Carrier\Carrier::class)->create()->id;
+        $company1 = factory(\WA\DataStore\Company\Company::class)->create()->id;
 
-        $device2 = factory(\WA\DataStore\Device\Device::class)->create();
+        $device2 = factory(\WA\DataStore\Device\Device::class)->create()->id;
         $capacity2 = factory(\WA\DataStore\Modification\Modification::class)->create(
             ['modType' => 'capacity']
         );
         $style2 = factory(\WA\DataStore\Modification\Modification::class)->create(
             ['modType' => 'style']
         );
-        $carrier2 = factory(\WA\DataStore\Carrier\Carrier::class)->create();
-        $company2 = factory(\WA\DataStore\Company\Company::class)->create();
-
-        $price = factory(\WA\DataStore\Price\Price::class)->create(
+        $carrier2 = factory(\WA\DataStore\Carrier\Carrier::class)->create()->id;
+        $company2 = factory(\WA\DataStore\Company\Company::class)->create()->id;
+        $price = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create(
             [
-                'deviceId' => $device1->id,
-                'capacityId' => $capacity1->id,
-                'styleId' => $style1->id,
-                'carrierId' => $carrier1->id,
-                'companyId' => $company1->id,
+                'deviceId' => $device1,
+                'carrierId' => $carrier1,
+                'companyId' => $company1,
                 'priceRetail' => 300,
                 'price1' => 400,
                 'price2' => 500,
@@ -167,11 +168,9 @@ class PricesApiTest extends TestCase
 
         $priceAux = factory(\WA\DataStore\Price\Price::class)->create(
             [
-                'deviceId' => $device2->id,
-                'capacityId' => $capacity2->id,
-                'styleId' => $style2->id,
-                'carrierId' => $carrier2->id,
-                'companyId' => $company2->id,
+                'deviceId' => $device2,
+                'carrierId' => $carrier2,
+                'companyId' => $company2,
                 'priceRetail' => 350,
                 'price1' => 450,
                 'price2' => 550,
@@ -190,7 +189,8 @@ class PricesApiTest extends TestCase
         $this->assertNotEquals($price->price2, $priceAux->price2);
         $this->assertNotEquals($price->priceOwn, $priceAux->priceOwn);
 
-        $this->PATCH('/prices/'.$priceAux->id,
+        $deviceVariation = $this->PATCH('/devicevariations/'.$priceAux->id,
+
             [
                 'data' => [
                     'type' => 'prices',

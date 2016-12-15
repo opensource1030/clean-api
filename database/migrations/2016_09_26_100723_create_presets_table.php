@@ -18,7 +18,7 @@ class CreatePresetsTable extends Migration
             function ($table) {
                 $table->increments('id');
                 $table->string('name');
-
+                
                 $table->nullableTimestamps();
             }
         );

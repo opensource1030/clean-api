@@ -82,29 +82,29 @@ class PresetsController extends FilteredApiController
         }
 
         if (isset($data['relationships'])) {
-            if (isset($data['relationships']['images'])) {
-                if (isset($data['relationships']['images']['data'])) {
+            if (isset($data['relationships']['company'])) {
+                if (isset($data['relationships']['company']['data'])) {
                     try {
-                        $dataImages = $this->parseJsonToArray($data['relationships']['images']['data'], 'images');
-                        $preset->images()->sync($dataImages);
+                        $dataCompany = $this->parseJsonToArray($data['relationships']['company']['data'], 'company');
+                        $preset->company()->sync($dataCompany);
                     } catch (\Exception $e) {
                         $success = false;
-                        $error['errors']['images'] = Lang::get('messages.NotOptionIncludeClass',
-                            ['class' => 'Preset', 'option' => 'created', 'include' => 'Images']);
+                        $error['errors']['company'] = Lang::get('messages.NotOptionIncludeClass',
+                            ['class' => 'Preset', 'option' => 'created', 'include' => 'Company']);
                         //$error['errors']['Message'] = $e->getMessage();
                     }
                 }
             }
 
-            if (isset($data['relationships']['devices'])) {
-                if (isset($data['relationships']['devices']['data'])) {
+            if (isset($data['relationships']['deviceVariations'])) {
+                if (isset($data['relationships']['deviceVariations']['data'])) {
                     try {
-                        $dataDevices = $this->parseJsonToArray($data['relationships']['devices']['data'], 'devices');
-                        $preset->devices()->sync($dataDevices);
+                        $dataDeviceVariations = $this->parseJsonToArray($data['relationships']['deviceVariations']['data'], 'deviceVariations');
+                        $preset->deviceVariations()->sync($dataDeviceVariations);
                     } catch (\Exception $e) {
                         $success = false;
-                        $error['errors']['devices'] = Lang::get('messages.NotOptionIncludeClass',
-                            ['class' => 'Preset', 'option' => 'created', 'include' => 'Devices']);
+                        $error['errors']['deviceVariations'] = Lang::get('messages.NotOptionIncludeClass',
+                            ['class' => 'Preset', 'option' => 'created', 'include' => 'DeviceVariations']);
                         //$error['errors']['Message'] = $e->getMessage();
                     }
                 }
@@ -154,29 +154,29 @@ class PresetsController extends FilteredApiController
         }
 
         if (isset($data['relationships'])) {
-            if (isset($data['relationships']['images'])) {
-                if (isset($data['relationships']['images']['data'])) {
+            if (isset($data['relationships']['company'])) {
+                if (isset($data['relationships']['company']['data'])) {
                     try {
-                        $dataImages = $this->parseJsonToArray($data['relationships']['images']['data'], 'images');
-                        $preset->images()->sync($dataImages);
+                        $dataCompany = $this->parseJsonToArray($data['relationships']['company']['data'], 'company');
+                        $preset->company()->sync($dataCompany);
                     } catch (\Exception $e) {
                         $success = false;
-                        $error['errors']['images'] = Lang::get('messages.NotOptionIncludeClass',
-                            ['class' => 'Preset', 'option' => 'created', 'include' => 'Images']);
+                        $error['errors']['company'] = Lang::get('messages.NotOptionIncludeClass',
+                            ['class' => 'Preset', 'option' => 'created', 'include' => 'Company']);
                         //$error['errors']['Message'] = $e->getMessage();
                     }
                 }
             }
 
-            if (isset($data['relationships']['devices'])) {
-                if (isset($data['relationships']['devices']['data'])) {
+            if (isset($data['relationships']['deviceVariations'])) {
+                if (isset($data['relationships']['deviceVariations']['data'])) {
                     try {
-                        $dataDevices = $this->parseJsonToArray($data['relationships']['devices']['data'], 'devices');
-                        $preset->devices()->sync($dataDevices);
+                        $datadeviceVariations = $this->parseJsonToArray($data['relationships']['deviceVariations']['data'], 'deviceVariations');
+                        $preset->deviceVariations()->sync($datadeviceVariations);
                     } catch (\Exception $e) {
                         $success = false;
-                        $error['errors']['devices'] = Lang::get('messages.NotOptionIncludeClass',
-                            ['class' => 'Preset', 'option' => 'created', 'include' => 'Devices']);
+                        $error['errors']['deviceVariations'] = Lang::get('messages.NotOptionIncludeClass',
+                            ['class' => 'Preset', 'option' => 'created', 'include' => 'deviceVariations']);
                         //$error['errors']['Message'] = $e->getMessage();
                     }
                 }

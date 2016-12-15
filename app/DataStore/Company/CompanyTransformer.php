@@ -20,6 +20,7 @@ class CompanyTransformer extends FilterableTransformer
         'contents',
         'udls',
         'currentBillMonths',
+        'deviceVariations'
     ];
 
     /**

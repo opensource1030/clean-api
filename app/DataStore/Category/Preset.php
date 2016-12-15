@@ -10,22 +10,23 @@ class Preset extends BaseDataStore
 
     protected $fillable = [
             'name',
+            'companyId'
             ];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function devices()
+    public function deviceVariations()
     {
-        return $this->belongsToMany('WA\DataStore\Device\Device', 'preset_devices', 'presetId', 'deviceId');
+        return $this->belongsToMany('WA\DataStore\DeviceVariation\DeviceVariation', 'preset_deviceVariations', 'presetId', 'deviceVariationId');
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function images()
+    public function companies()
     {
-        return $this->belongsToMany('WA\DataStore\Image\Image', 'preset_images', 'presetId', 'imageId');
+        return $this->belongsTo('WA\DataStore\Company\Company', 'companyId');
     }
 
     /**

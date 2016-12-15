@@ -1,5 +1,6 @@
 <?php
 
+
 $factory->define(WA\DataStore\Scope\Scope::class, function ($faker) {
     
     $nameArray = ['get'];

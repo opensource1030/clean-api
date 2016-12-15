@@ -59,6 +59,19 @@ class Company extends BaseDataStore
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
+    public function presets()
+    {
+        return $this->hasMany('WA\DataStore\Category\Preset', 'companyId');
+    }
+
+    public function deviceVariations()
+    {
+        return $this->hasMany('WA\DataStore\DeviceVariation\DeviceVariation', 'companyId');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function udls()
     {
         return $this->hasMany('WA\DataStore\Udl\Udl', 'companyId');

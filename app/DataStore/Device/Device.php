@@ -147,7 +147,7 @@ class Device extends MutableDataStore
     {
         return $this->hasMany('WA\DataStore\Order\Order', 'deviceId');
     }
-
+   
     /**
      * Get the transformer instance.
      *

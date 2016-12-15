@@ -64,12 +64,12 @@ class DatabaseSeeder extends Seeder
         $this->call(ScopePermissionsTableSeeder::class);
         $this->call(UdlsTableSeeder::class);
         $this->call(UserAssetsTableSeeder::class);
-        $this->call(UserDevicesTableSeeder::class);
+        //$this->call(UserDevicesTableSeeder::class);
+        //$this->call(UserRolesTableSeeder::class);
         $this->call(UserUdlsTableSeeder::class);
         $this->call(UsersTableSeeder::class);
         $this->call(PresetTableSeeder::class);
-        $this->call(PresetDeviceTableSeeder::class);
-        $this->call(PresetImageTableSeeder::class);
+        $this->call(PresetDeviceVariationTableSeeder::class);
 
         switch (DB::getDriverName()) {
             case 'mysql':
