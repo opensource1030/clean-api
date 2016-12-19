@@ -374,6 +374,7 @@ class DevicesController extends FilteredApiController
 
                     $esIgual = true;
 
+
                     if ($dataAux[$k]['capacityId'] <> $data[$j]['capacityId']) {
                         $esIgual = $esIgual && false;
                     }
@@ -382,12 +383,22 @@ class DevicesController extends FilteredApiController
                     }
                     if ($dataAux[$k]['carrierId'] <> $data[$j]['carrierId']) {
                         $esIgual = $esIgual && false;
+
+                    if (isset($dataAux[$k]['carrierId']) && isset($data[$j]['carrierId'])) {
+                        if ($dataAux[$k]['carrierId'] <> $data[$j]['carrierId']) {
+                            $esIgual = $esIgual && false;
+                        }    
+
                     }
-                    if ($dataAux[$k]['deviceId'] <> $data[$j]['deviceId']) {
-                        $esIgual = $esIgual && false;
+                    if (isset($dataAux[$k]['deviceId']) && isset($data[$j]['deviceId'])) {
+                        if ($dataAux[$k]['deviceId'] <> $data[$j]['deviceId']) {
+                            $esIgual = $esIgual && false;
+                        }
                     }
-                    if ($dataAux[$k]['companyId'] <> $data[$j]['companyId']) {
-                        $esIgual = $esIgual && false;
+                    if (isset($dataAux[$k]['companyId']) && isset($data[$j]['companyId'])) {
+                        if ($dataAux[$k]['companyId'] <> $data[$j]['companyId']) {
+                            $esIgual = $esIgual && false;
+                        }
                     }
 
                     if ($esIgual) {
@@ -405,7 +416,7 @@ class DevicesController extends FilteredApiController
         }
         return $dataAux;
     }
-
+}
     private function checkIfDeviceVariationsRowIsCorrect($deviceVariations, $deviceId)
     {   $modInterface = app()->make('WA\Repositories\Device\DeviceInterface');
 

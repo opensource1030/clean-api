@@ -106,12 +106,13 @@ class Company extends BaseDataStore
         return $contents;
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function currentBillMonths()    {
 
-    public function currentBillMonths()
-    {
-        return $this->hasMany('WA\DataStore\Company\CompanyCurrentBillMonth', 'companyId');
+       return $this->hasMany('WA\DataStore\Company\CompanyCurrentBillMonth', 'companyId');
     }
-
 
     /**
      * Get the transformer instance.

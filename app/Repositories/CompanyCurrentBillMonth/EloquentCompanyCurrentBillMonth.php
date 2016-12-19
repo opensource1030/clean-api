@@ -104,7 +104,4 @@ class EloquentCompanyCurrentBillMonth extends AbstractRepository implements  Com
         return $currentBillMonth;
     }
 
-
-
-
 }

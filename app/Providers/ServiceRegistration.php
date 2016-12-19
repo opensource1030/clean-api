@@ -572,6 +572,7 @@ trait ServiceRegistration
 
     public function registerCurrentBillMonth()
     {
+
         app()->bind('WA\Repositories\CompanyCurrentBillMonth\CompanyCurrentBillMonthInterface',
             function () {
                 return new EloquentCompanyCurrentBillMonth(new CompanyCurrentBillMonth());

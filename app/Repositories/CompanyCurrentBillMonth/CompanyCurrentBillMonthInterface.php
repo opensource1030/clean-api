@@ -4,7 +4,7 @@ namespace WA\Repositories\CompanyCurrentBillMonth;
 
 use WA\Repositories\RepositoryInterface;
 
-interface CompanyCurrentBillMonthInterface  extends RepositoryInterface
+interface CompanyCurrentBillMonthInterface extends RepositoryInterface
 {
 
     /**
@@ -22,7 +22,6 @@ interface CompanyCurrentBillMonthInterface  extends RepositoryInterface
      * @return mixed
      */
     public function getTransformer();
-
     /**
      * Get by company id and carrier id
      *
@@ -49,6 +48,5 @@ interface CompanyCurrentBillMonthInterface  extends RepositoryInterface
      * @return bool
      */
     public function update(array $data);
-
 
 }

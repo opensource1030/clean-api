@@ -98,8 +98,4 @@ class CompanyTransformer extends FilterableTransformer
     {
         return new ResourceCollection($company->udls, new UdlTransformer(), 'udls');
     }
-
-
-
-
 }

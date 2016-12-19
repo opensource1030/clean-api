@@ -24,7 +24,6 @@ class CreateCompanyCurrentBillMonthTable extends Migration
                 $table->integer('carrierId')->unsigned();
                 $table->integer('companyId')->unsigned();
                 $table->date('currentBillMonth')->nullable();
-
                 $table->nullableTimestamps();
             }
         );

@@ -38,7 +38,7 @@ class User extends BaseDataStore implements IlluminateCanResetPasswordContract, 
 //    }
     use IlluminateCanResetPasswordTrait, IllumnateAuthenticableTrait;
     use HasApiTokens;
-    use EntrustUserTrait;
+    use \Zizaco\Entrust\Traits\EntrustUserTrait;
     public $timestamps = true;
     protected $tableName = 'users';
     protected $dontKeepRevisionOf = [
@@ -283,8 +283,7 @@ class User extends BaseDataStore implements IlluminateCanResetPasswordContract, 
     public function byPassportSSOGrantRequest(Request $request)
     {
         try {
-
-            if ($request->input('grant_type') == 'sso') { 
+            if ($request->input('grant_type') == 'sso') {
                 return $this->SSOGrantVerify($request);
             }
         } catch (\Exception $e) {
