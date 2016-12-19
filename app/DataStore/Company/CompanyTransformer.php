@@ -5,6 +5,7 @@ namespace WA\DataStore\Company;
 use League\Fractal\Resource\Collection as ResourceCollection;
 use WA\DataStore\Allocation\AllocationTransformer;
 use WA\DataStore\Content\ContentTransformer;
+use WA\DataStore\Company\CompanyCurrentBillMonthTransformer;
 use WA\DataStore\FilterableTransformer;
 use WA\DataStore\Udl\UdlTransformer;
 
@@ -18,6 +19,7 @@ class CompanyTransformer extends FilterableTransformer
         'allocations',
         'contents',
         'udls',
+        'currentBillMonths',
     ];
 
     /**
@@ -79,10 +81,24 @@ class CompanyTransformer extends FilterableTransformer
     /**
      * @param Company $company
      *
+     * @return ResourceCollection CompanyCurrentBillMonth
+     */
+    public function includeCurrentBillMonths(Company $company)
+    {
+        return new ResourceCollection($company->currentBillMonths, new CompanyCurrentBillMonthTransformer(), 'currentBillMonths');
+    }
+
+    /**
+     * @param Company $company
+     *
      * @return ResourceCollection Contents
      */
     public function includeUdls(Company $company)
     {
         return new ResourceCollection($company->udls, new UdlTransformer(), 'udls');
     }
+
+
+
+
 }

@@ -18,6 +18,7 @@ use Alert;
  * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\Rule\Rule[] $rules
  * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\Allocation\Allocation[] $allocations
  * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\Content\Content[] $contents
+ * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\Company\CompanyCurrentBillMonth[] $currentBillMonths
  * @property-read \WA\DataStore\User\User $usersCount
  * @property-read mixed $users_count
  * @mixin \Eloquent
@@ -93,6 +94,7 @@ class Company extends BaseDataStore
     public function allocations()
     {
         return $this->hasMany('WA\DataStore\Allocation\Allocation', 'companyId');
+
     }
 
     /**
@@ -113,6 +115,15 @@ class Company extends BaseDataStore
     public function pools()
     {
         return $this->belongsToMany('WA\DataStore\PoolGroup', 'pool_bases', 'companyId', 'poolGroupId', 'baseCost');
+    }
+
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function currentBillMonths()    {
+
+       return $this->hasMany('WA\DataStore\Company\CompanyCurrentBillMonth', 'companyId');
     }
 
     /**
