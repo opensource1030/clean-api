@@ -44,4 +44,64 @@ class CompaniesTest extends TestCase
                 'label' => $company->label,
             ]);
     }
+
+    public function testGetCompanyByIdandIncludesCurrentBillMonths()
+    {
+        $company = factory(\WA\DataStore\Company\Company::class)->create();
+
+        $currentBillMonth1 = factory(\WA\DataStore\Company\CompanyCurrentBillMonth::class)->create();
+
+        $company->currentBillMonths()->save($currentBillMonth1);
+
+        $this->get('/companies/'.$company->id.'?include=currentBillMonths')
+            ->seeJsonStructure([
+                'data' => [
+                    'type',
+                    'id',
+                    'attributes' => [
+                        'name',
+                        'label',
+                        'active',
+                        'udlpath',
+                        'isCensus',
+                        'udlPathRule',
+                        'assetPath',
+                        'currentBillMonth',
+                    ],
+                    'links' => [
+                        'self',
+                    ],
+                    'relationships' => [
+                        'currentBillMonths' => [
+                            'links' => [
+                                'self',
+                                'related',
+                            ],
+                            'data' => [
+                                0 => [
+                                    'type',
+                                    'id',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                'included' => [
+                    0 => [
+                        'type',
+                        'id',
+                        'attributes' => [
+                            'bill_month',
+                            'carrier',
+                            'companyId',
+                        ],
+                        'links' => [
+                            'self',
+                        ],
+                    ],
+
+                ],
+            ]);
+    }
+
 }
