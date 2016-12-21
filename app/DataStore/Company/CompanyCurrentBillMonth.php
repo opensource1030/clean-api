@@ -15,7 +15,6 @@ use WA\DataStore\BaseDataStore;
  * @method static \Illuminate\Database\Query\Builder|\WA\DataStore\Company\CompanyCurrentBillMonth whereId($value)
  * @method static \Illuminate\Database\Query\Builder|\WA\DataStore\Company\CompanyCurrentBillMonth whereCompanyId($value)
  */
-
 class CompanyCurrentBillMonth extends BaseDataStore
 {
     protected $table = 'company_current_bill_months';
@@ -28,6 +27,14 @@ class CompanyCurrentBillMonth extends BaseDataStore
     public function companies()
     {
         return $this->belongsTo('WA\DataStore\Company\Company', 'companyId');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function carriers()
+    {
+        return $this->belongsTo('WA\DataStore\Carrier\Carrier', 'carrierId');
     }
 
     /**

@@ -1,18 +1,17 @@
 <?php
 
 namespace WA\DataStore\User;
+
 //namespace App;
-use Laravel\Passport\HasApiTokens;
+use Cache;
 use Illuminate\Auth\Authenticatable as IllumnateAuthenticableTrait;
 use Illuminate\Auth\Passwords\CanResetPassword as IlluminateCanResetPasswordTrait;
 use Illuminate\Contracts\Auth\Authenticatable as IllumincateAuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as IlluminateCanResetPasswordContract;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Venturecraft\Revisionable\RevisionableTrait as RevisionableTrait;
-use WA\DataStore\BaseDataStore;
-use Zizaco\Entrust\Traits\EntrustUserTrait as EntrustUserTrait; 
 use Illuminate\Http\Request;
-use Cache;
+use Laravel\Passport\HasApiTokens;
+use WA\DataStore\BaseDataStore;
+
 /**
  * Class User.
  *
@@ -27,7 +26,6 @@ use Cache;
  * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\Content\Content[] $contents
  * @mixin \Eloquent
  */
-
 class User extends BaseDataStore implements IlluminateCanResetPasswordContract, IllumincateAuthenticatableContract
 {
     //    use SoftDeletes;
@@ -87,7 +85,7 @@ class User extends BaseDataStore implements IlluminateCanResetPasswordContract, 
         'deleted_at',
         'created_at',
         'updated_at'
-        
+
     ];
 
     /**
@@ -95,18 +93,26 @@ class User extends BaseDataStore implements IlluminateCanResetPasswordContract, 
      *
      * @var array
      */
-    protected $hidden = ['uuid', 'password', 'confirmation_code', 'remember_token', 'confirmed', 'isActive', 'externalId'];
+    protected $hidden = [
+        'uuid',
+        'password',
+        'confirmation_code',
+        'remember_token',
+        'confirmed',
+        'isActive',
+        'externalId'
+    ];
 
     protected $revisionFormattedFields = [
-        'isActive' => 'boolean:No|Yes',
+        'isActive'   => 'boolean:No|Yes',
         'deleted_at' => 'isEmpty:Active|Deleted',
     ];
 
     protected $revisionFormattedFieldName = array(
-        'firstName' => 'First Name',
-        'lastName' => 'Last Name',
+        'firstName'       => 'First Name',
+        'lastName'        => 'Last Name',
         'supervisorEmail' => 'Supervisor Email',
-        'deleted_at' => 'Deleted At',
+        'deleted_at'      => 'Deleted At',
     );
 
     protected $revisionNullString = 'nothing';
@@ -136,7 +142,7 @@ class User extends BaseDataStore implements IlluminateCanResetPasswordContract, 
     {
         return $this->id;
     }
-    
+
     public function getTransformer()
     {
         return new UserTransformer();
@@ -222,15 +228,15 @@ class User extends BaseDataStore implements IlluminateCanResetPasswordContract, 
         return $this->hasMany('WA\DataStore\Allocation\Allocation', 'userId');
     }
 
-   /**
-    * Get all the employee related static contents.
-    *
-    * @return \Illuminate\Database\Eloquent\Relations\MorphMany
-    */
-   public function contents()
-   {
-       return $this->hasMany('WA\DataStore\Content\Content', 'owner_id');
-   }
+    /**
+     * Get all the employee related static contents.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+     */
+    public function contents()
+    {
+        return $this->hasMany('WA\DataStore\Content\Content', 'owner_id');
+    }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -263,34 +269,39 @@ class User extends BaseDataStore implements IlluminateCanResetPasswordContract, 
     }
 
     /**
- * Verify and retrieve user by custom token request.
- *
- * @param \Illuminate\Http\Request $request
- *
- * @return \Illuminate\Database\Eloquent\Model|null
- * @throws \League\OAuth2\Server\Exception\OAuthServerException
- */
-public function byPassportSSOGrantRequest(Request $request)
-{
-    try {
-        if ($request->input('grant_type') == 'sso') { 
-            return $this->SSOGrantVerify($request);
-            
+     * Verify and retrieve user by custom token request.
+     *
+     * @param \Illuminate\Http\Request $request
+     *
+     * @return \Illuminate\Database\Eloquent\Model|null
+     * @throws \League\OAuth2\Server\Exception\OAuthServerException
+     */
+    public function byPassportSSOGrantRequest(Request $request)
+    {
+        try {
+            if ($request->input('grant_type') == 'sso') {
+                return $this->SSOGrantVerify($request);
+
+            }
+        } catch (\Exception $e) {
+            throw OAuthServerException::accessDenied($e->getMessage());
         }
-    } catch (\Exception $e) {
-        throw OAuthServerException::accessDenied($e->getMessage());
+        return null;
     }
-    return null;
-}
 
     public function SSOGrantVerify(Request $request)
     {
         $uuid = $request->input('uuid');
-        $laravelUser = Cache::get('saml2user_'.$uuid);
+        $laravelUser = Cache::get('saml2user_' . $uuid);
         if (!isset($laravelUser)) {
             return null;
         } else {
             return $laravelUser;
         }
+    }
+
+    public function getCurrentBillMonths()
+    {
+        return $this->company->companyCurrentBillMonths;
     }
 }
