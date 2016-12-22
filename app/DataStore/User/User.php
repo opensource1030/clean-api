@@ -8,10 +8,12 @@ use Illuminate\Auth\Authenticatable as IllumnateAuthenticableTrait;
 use Illuminate\Auth\Passwords\CanResetPassword as IlluminateCanResetPasswordTrait;
 use Illuminate\Contracts\Auth\Authenticatable as IllumincateAuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as IlluminateCanResetPasswordContract;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Venturecraft\Revisionable\RevisionableTrait as RevisionableTrait;
 use Illuminate\Http\Request;
 use Laravel\Passport\HasApiTokens;
 use WA\DataStore\BaseDataStore;
-use Cache;
+use Zizaco\Entrust\Traits\EntrustUserTrait as EntrustUserTrait; 
 
 /**
  * Class User.
