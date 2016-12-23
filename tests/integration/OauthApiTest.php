@@ -4,7 +4,7 @@ namespace WA\Testing\Auth;
 
 use Laravel\Lumen\Testing\DatabaseMigrations;
 use WA\DataStore\User\User;
-use Laravel\Passport\Bridge\Scope as ScopeGI;
+use Laravel\Passport\Bridge\Scope;
 use TestCase;
 
 class OauthApiTest extends TestCase
@@ -14,17 +14,26 @@ class OauthApiTest extends TestCase
     public function testApiOauthAccessToken()
     {   //@Todo
 
-        $this->markTestIncomplete(
+        /*$this->markTestIncomplete(
           'This test has has some problems.'
-        );
+        );*/
         $grantType = 'password';
         $password = 'user';
-        $scope = 'get';
+        $scope = factory(\WA\DataStore\Scope\Scope::class)->create();
+        
         $user = factory(\WA\DataStore\User\User::class)->create([
             'email' => 'email@email.com',
             'password' => '$2y$10$oc9QZeaYYAd.8BPGmXGaFu9cAycKTcBu7LRzmT2J231F0BzKwpxj6'
         ]);
 
+        /*$role = factory(\WA\DataStore\Role\Role::class)->create();
+        $permission1 = factory(\WA\DataStore\Permission\Permission::class)->create();
+        $permission2 = factory(\WA\DataStore\Permission\Permission::class)->create();
+        $user->roles()->sync([$role->id]);
+        $role->perms()->sync([$permission1->id,$permission2->id]);
+        $scope->permissions()->sync([$permission1->id,$permission2->id]);*/
+        $scp = $scope->name;
+        
         $oauth = factory(\WA\DataStore\Oauth\Oauth::class)->create([
             'user_Id' => null,
             'name' => 'Password Grant Client',
@@ -40,12 +49,13 @@ class OauthApiTest extends TestCase
             'username' => $user->email,
             'password' => $password,
             'client_id' => $oauth->id,
-            'client_secret' => $oauth->secret
+            'client_secret' => $oauth->secret,
+            'scope' => $scp
         ];
 
         $call = $this->call('POST', 'oauth/token', $body, [], [], [], true );
         $array = (array)json_decode($call->getContent());
-    
+        dd($array);
         $this->assertArrayHasKey('user_id', $array);
         $this->assertArrayHasKey('token_type', $array);
         $this->assertArrayHasKey('expires_in', $array);
