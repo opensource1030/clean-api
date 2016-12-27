@@ -11,7 +11,7 @@ class AllocationTransformer extends FilterableTransformer
         return [
             'id'                  => (int)$allocations->id,
             'bill_month'          => $allocations->billMonth,
-            'carrier'             => $allocations->carrier,
+            'carrier'             => $allocations->carriers->presentation,
             'mobile_number'       => $allocations->mobileNumber,
             'currency'            => $allocations->currency,
             'device'              => $allocations->handsetModel,

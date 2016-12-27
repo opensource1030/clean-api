@@ -9,6 +9,7 @@ use WA\DataStore\BaseDataStore;
  *
  * @property-read \WA\DataStore\Company\Company $companies
  * @property-read \WA\DataStore\User\User $users
+ * @property-read \WA\DataStore\User\User $carriers
  * @mixin \Eloquent
  */
 class Allocation extends BaseDataStore
@@ -27,6 +28,11 @@ class Allocation extends BaseDataStore
     public function users()
     {
         return $this->belongsTo('WA\DataStore\User\User', 'userId');
+    }
+
+    public function carriers()
+    {
+        return $this->belongsTo('WA\DataStore\Carrier\Carrier', 'carrier');
     }
 
     /**

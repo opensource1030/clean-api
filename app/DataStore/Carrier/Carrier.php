@@ -105,6 +105,15 @@ class Carrier extends BaseDataStore
     }
 
     /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function allocations()
+    {
+        return $this->hasMany('WA\DataStore\Allocation\Allocation', 'carrier');
+
+    }
+
+    /**
      * Get the transformer instance.
      *
      * @return mixed
