@@ -883,8 +883,15 @@ class UsersApiTest extends TestCase
     {
         $user = factory(\WA\DataStore\User\User::class)->create();
 
-        $allocation1 = factory(\WA\DataStore\Allocation\Allocation::class)->create(['userId' => $user->id])->id;
-        $allocation2 = factory(\WA\DataStore\Allocation\Allocation::class)->create(['userId' => $user->id])->id;
+        $allocation1 = factory(\WA\DataStore\Allocation\Allocation::class)->create(['userId' => $user->id]);
+        $carrier1 = factory(\WA\DataStore\Carrier\Carrier::class)->create();
+        $allocation1->carriers()->associate($carrier1);
+        $allocation1->save();
+
+        $allocation2 = factory(\WA\DataStore\Allocation\Allocation::class)->create(['userId' => $user->id]);
+        $carrier2 = factory(\WA\DataStore\Carrier\Carrier::class)->create();
+        $allocation2->carriers()->associate($carrier2);
+        $allocation2->save();
 
         $res = $this->json('GET', 'users/'.$user->id.'?include=allocations')
         //Log::debug("Users/id: ".print_r($res->response->getContent(), true));
@@ -1131,7 +1138,13 @@ class UsersApiTest extends TestCase
         $udlV2 = factory(\WA\DataStore\UdlValue\UdlValue::class)->create(['udlId' => $udl2])->id;
 
         $allocation1 = factory(\WA\DataStore\Allocation\Allocation::class)->create();
+        $carrier1 = factory(\WA\DataStore\Carrier\Carrier::class)->create();
+        $allocation1->carriers()->associate($carrier1);
+        $allocation1->save();
         $allocation2 = factory(\WA\DataStore\Allocation\Allocation::class)->create();
+        $allocation2->carriers()->associate($carrier1);
+        $allocation2->save();
+
 
         $content1 = factory(\WA\DataStore\Content\Content::class)->create();
         $content2 = factory(\WA\DataStore\Content\Content::class)->create();
@@ -2929,8 +2942,13 @@ class UsersApiTest extends TestCase
         $this->assertEquals($udlV2DB->externalId, $udlV2->externalId);
 
         // ALLOCATIONS
+        $carrier = factory(\WA\DataStore\Carrier\Carrier::class)->create();
         $allocation1 = factory(\WA\DataStore\Allocation\Allocation::class)->create(['userId' => $user->id]);
+        $allocation1->carriers()->associate($carrier);
+        $allocation1->save();
         $allocation2 = factory(\WA\DataStore\Allocation\Allocation::class)->create(['userId' => $user->id]);
+        $allocation2->carriers()->associate($carrier);
+        $allocation2->save();
 
         $content1 = factory(\WA\DataStore\Content\Content::class)->create(['owner_id' => $user->id, 'owner_type' => 'users']);
         $content2 = factory(\WA\DataStore\Content\Content::class)->create(['owner_id' => $user->id, 'owner_type' => 'users']);
@@ -3397,8 +3415,13 @@ class UsersApiTest extends TestCase
         $udl3 = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $companyId])->id;
         $udlV3 = factory(\WA\DataStore\UdlValue\UdlValue::class)->create(['udlId' => $udl2])->id;
 
+        $carrier = factory(\WA\DataStore\Carrier\Carrier::class)->create();
         $allocation1 = factory(\WA\DataStore\Allocation\Allocation::class)->create(['userId' => $user->id]);
+        $allocation1->carriers()->associate($carrier);
+        $allocation1->save();
         $allocation2 = factory(\WA\DataStore\Allocation\Allocation::class)->create(['userId' => $user->id]);
+        $allocation2->carriers()->associate($carrier);
+        $allocation2->save();
         
         $content1 = factory(\WA\DataStore\Content\Content::class)->create(['owner_id' => $user->id, 'owner_type' => 'users']);
         $content2 = factory(\WA\DataStore\Content\Content::class)->create(['owner_id' => $user->id, 'owner_type' => 'users']);
