@@ -3,9 +3,9 @@
 
 $factory->define(WA\DataStore\Scope\Scope::class, function ($faker) {
     
-    $nameArray = ['get', 'delete'];
+    $nameArray = ['get'];
     $name = $nameArray[array_rand($nameArray)];
-    $displayArray = ['get', 'delete'];
+    $displayArray = ['get'];
     $display = $displayArray[array_rand($displayArray)];
     return [
         

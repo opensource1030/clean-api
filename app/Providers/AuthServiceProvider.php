@@ -34,12 +34,19 @@ class AuthServiceProvider extends PassportServiceProvider
 
     public function boot(){
         parent::boot();
+            //$this->registerPolicies();
 
-        Passport::tokensCan([
-            'create' => 'Create any content',
-            'update' => 'Create any content',
-            'delete' => 'Create any content'
-            ]);
+            //Passport::routes();
+        if (Schema::hasTable('scopes')){
+            $scope = Scope::all();
+            
+            $listScope = array();
+            foreach ($scope as $scop){
+                $listScope[$scop->getAttributes()['name']] = $scop->getAttributes()['description'];
+            }
+
+            Passport::tokensCan($listScope);      
+        }
     }
 
     /**

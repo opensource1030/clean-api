@@ -2,6 +2,9 @@
 
 use Laravel\Lumen\Testing\DatabaseMigrations;
 use WA\DataStore\User\User;
+use Laravel\Passport\Bridge\Scope;
+use WA\DataStore\Scope\Scope as ScopeModel;
+use Laravel\Passport\Passport;
 
 class UsersApiTest extends TestCase
 {
@@ -256,6 +259,13 @@ class UsersApiTest extends TestCase
         ]);
 
         $scope = factory(\WA\DataStore\Scope\Scope::class)->create(['name' => 'get', 'display_name'=>'get']);
+        $role = factory(\WA\DataStore\Role\Role::class)->create();
+        $permission1 = factory(\WA\DataStore\Permission\Permission::class)->create();
+        $permission2 = factory(\WA\DataStore\Permission\Permission::class)->create();
+        $user->roles()->sync([$role->id]);
+        $role->perms()->sync([$permission1->id,$permission2->id]);
+        $scope->permissions()->sync([$permission1->id,$permission2->id]);
+        
         $scp = $scope->name;
         $oauth = factory(\WA\DataStore\Oauth\Oauth::class)->create([
             'user_Id' => null,
@@ -266,6 +276,16 @@ class UsersApiTest extends TestCase
             'password_client' => 1,
             'revoked' => 0,
         ]);
+        // Setup TokensCan as in AuthSericeProvider, as it is not properly executed on app bootstrap during the test
+
+        $scopes = ScopeModel::all();
+            
+        $listScope = array();
+        foreach ($scopes as $scop){
+            $listScope[$scop->getAttributes()['name']] = $scop->getAttributes()['description'];
+        }
+
+        Passport::tokensCan($listScope);
 
         $body = [
             'grant_type' => $grantType,
@@ -312,7 +332,7 @@ class UsersApiTest extends TestCase
 
     }
 
-    /*public function testGetUserByIdandIncludesAssets()
+    public function testGetUserByIdandIncludesAssets()
     {
         $user = factory(\WA\DataStore\User\User::class)->create();
 
@@ -4234,5 +4254,5 @@ class UsersApiTest extends TestCase
         // DELETE NO EXISTING.
         $responseDel = $this->call('DELETE', '/users/1');
         $this->assertEquals(404, $responseDel->status());
-    }*/
+    }
 }
