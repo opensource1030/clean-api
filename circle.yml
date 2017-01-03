@@ -22,9 +22,9 @@ dependencies:
 test:
   override:
     - cp .env.test .env
-    - php vendor/bin/phpunit -c phpunit.xml --exclude-group need-review --coverage-clover build/logs/clover.xml --coverage-html build/logs/coverage_html
+    - php vendor/bin/phpunit -c phpunit.xml --exclude-group need-review --coverage-clover build/logs/clover.xml 
   post:
-    - cp -r build/logs/{clover.xml,coverage_html} $CIRCLE_ARTIFACTS
+    - cp -r build/logs/{clover.xml} $CIRCLE_ARTIFACTS
     - php vendor/bin/coveralls -v
 
 deployment:
