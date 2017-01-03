@@ -25,6 +25,7 @@ $api->version('v1', function ($api) {
         return redirect('http://clean.api/oauth/authorize?'.$query); 
     });
 
+
     ///////////Routes//////
     $apiA = '\Dusterio\LumenPassport\Http\Controllers\AccessTokenController';
     $api->post('oauth/token', ['as' => 'api.token', 'uses' => $apiA.'@issueToken']);
@@ -327,5 +328,12 @@ $api->version('v1', function ($api) {
             $controller = app()->make($controllerName);
             return $controller->includeInformationRelationships($model, $id, $include);
         });
+
+        //=Jobs
+        $jobsController = 'WA\Http\Controllers\JobsController';
+        $api->put('jobs/updateBillingMonths', ['uses' => $jobsController . '@updateBillingMonths']);
+
+
+
     });
 });
