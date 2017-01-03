@@ -1,6 +1,6 @@
 <?php
 
-namespace WA\Repositories\Price;
+namespace WA\Repositories\DeviceVariation;
 
 use WA\Repositories\AbstractRepository;
 
@@ -9,7 +9,7 @@ use WA\Repositories\AbstractRepository;
  *
  * @package WA\Repositories\Price
  */
-class EloquentPrice extends AbstractRepository implements PriceInterface
+class EloquentDeviceVariation extends AbstractRepository implements DeviceVariationInterface
 {
     /**
      * Update Price.
@@ -20,45 +20,39 @@ class EloquentPrice extends AbstractRepository implements PriceInterface
      */
     public function update(array $data)
     {
-        $price = $this->model->find($data['id']);
+        $deviceVariation = $this->model->find($data['id']);
 
-        if (!$price) {
+        if (!$deviceVariation) {
             return 'notExist';
         }
 
         if (isset($data['deviceId'])) {
-            $price->deviceId = $data['deviceId'];
-        }
-        if (isset($data['capacityId'])) {
-            $price->capacityId = $data['capacityId'];
-        }
-        if (isset($data['styleId'])) {
-            $price->styleId = $data['styleId'];
+            $deviceVariation->deviceId = $data['deviceId'];
         }
         if (isset($data['carrierId'])) {
-            $price->carrierId = $data['carrierId'];
+            $deviceVariation->carrierId = $data['carrierId'];
         }
         if (isset($data['companyId'])) {
-            $price->companyId = $data['companyId'];
+            $deviceVariation->companyId = $data['companyId'];
         }
         if (isset($data['priceRetail'])) {
-            $price->priceRetail = $data['priceRetail'];
+            $deviceVariation->priceRetail = $data['priceRetail'];
         }
         if (isset($data['price1'])) {
-            $price->price1 = $data['price1'];
+            $deviceVariation->price1 = $data['price1'];
         }
         if (isset($data['price2'])) {
-            $price->price2 = $data['price2'];
+            $deviceVariation->price2 = $data['price2'];
         }
         if (isset($data['priceOwn'])) {
-            $price->priceOwn = $data['priceOwn'];
+            $deviceVariation->priceOwn = $data['priceOwn'];
         }
 
-        if (!$price->save()) {
+        if (!$deviceVariation->save()) {
             return 'notSaved';
         }
 
-        return $price;
+        return $deviceVariation;
     }
 
     /**
@@ -66,11 +60,11 @@ class EloquentPrice extends AbstractRepository implements PriceInterface
      *
      * @return array of Price
      */
-    public function getAllPrice()
+    public function getAllDeviceVariation()
     {
-        $prices = $this->model->all();
+        $deviceVariations = $this->model->all();
 
-        return $prices;
+        return $deviceVariations;
     }
 
     /**
@@ -82,10 +76,8 @@ class EloquentPrice extends AbstractRepository implements PriceInterface
      */
     public function create(array $data)
     {
-        $priceData = [
+        $deviceVariationData = [
             "deviceId" => isset($data['deviceId']) ? $data['deviceId'] : 0,
-            "capacityId" => isset($data['capacityId']) ? $data['capacityId'] : 0,
-            "styleId" => isset($data['styleId']) ? $data['styleId'] : 0,
             "carrierId" => isset($data['carrierId']) ? $data['carrierId'] : 0,
             "companyId" => isset($data['companyId']) ? $data['companyId'] : 0,
             "priceRetail" => isset($data['priceRetail']) ? $data['priceRetail'] : 0,
@@ -94,13 +86,13 @@ class EloquentPrice extends AbstractRepository implements PriceInterface
             "priceOwn" => isset($data['priceOwn']) ? $data['priceOwn'] : 0
         ];
 
-        $price = $this->model->create($priceData);
+        $deviceVariation = $this->model->create($deviceVariationData);
 
-        if (!$price) {
+        if (!$deviceVariation) {
             return false;
         }
 
-        return $price;
+        return $deviceVariation;
     }
 
     /**
@@ -125,58 +117,36 @@ class EloquentPrice extends AbstractRepository implements PriceInterface
     }
 
     /**
-     * Get an array of all the available Price.
+     * Get an array of all the available DeviceVariation.
      *
-     * @return Array of Price
+     * @return Array of DeviceVariation
      */
-    public function getPriceDevices($id)
+    public function getDeviceVariationDevices($id)
     {
-        $prices = $this->model->where('deviceId', $id)->get();
+        $deviceVariations = $this->model->where('deviceId', $id)->get();
         /*->take( $filter['numItems'] )->offset( $filter['numItems'] * ( $filter['page'] - 1 ) );*/
-        return $prices;
+        return $deviceVariations;
     }
 
     /**
-     * Get an array of all the available Price.
+     * Get an array of all the available DeviceVariation.
      *
-     * @return Array of Price
+     * @return Array of DeviceVariation
      */
-    public function getPriceCapacities($id)
+    public function getDeviceVariationCarriers($id)
     {
-        $prices = $this->model->all();
-        return $prices;
+        $deviceVariations = $this->model->where('carrierId', $id)->get();
+        return $deviceVariations;
     }
 
     /**
-     * Get an array of all the available Price.
+     * Get an array of all the available DeviceVariation.
      *
-     * @return Array of Price
+     * @return Array of DeviceVariation
      */
-    public function getPriceStyles($id)
+    public function getDeviceVariationCompanies($id)
     {
-        $prices = $this->model->all();
-        return $prices;
-    }
-
-    /**
-     * Get an array of all the available Price.
-     *
-     * @return Array of Price
-     */
-    public function getPriceCarriers($id)
-    {
-        $prices = $this->model->all();
-        return $prices;
-    }
-
-    /**
-     * Get an array of all the available Price.
-     *
-     * @return Array of Price
-     */
-    public function getPriceCompanies($id)
-    {
-        $prices = $this->model->all();
-        return $prices;
+        $deviceVariations = $this->model->where('companyId', $id)->get();
+        return $deviceVariations;
     }
 }

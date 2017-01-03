@@ -9,9 +9,8 @@ use WA\DataStore\FilterableTransformer;
  */
 class PresetTransformer extends FilterableTransformer
 {
-
     protected $availableIncludes = [
-        'deviceVariations',
+        'devicevariations',
         'companies',
     ];
 

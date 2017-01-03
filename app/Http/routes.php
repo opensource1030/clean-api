@@ -25,7 +25,6 @@ $api->version('v1', function ($api) {
         return redirect('http://clean.api/oauth/authorize?'.$query); 
     });
 
-
     ///////////Routes//////
     $apiA = '\Dusterio\LumenPassport\Http\Controllers\AccessTokenController';
     $api->post('oauth/token', ['as' => 'api.token', 'uses' => $apiA.'@issueToken']);
@@ -145,7 +144,6 @@ $api->version('v1', function ($api) {
 
         $api->get('users/number', ['as' => 'api.users.number', 'uses' => $usersController . '@numberUsers']);
         $api->get('users/me', ['as' => 'api.users.logged', 'uses' => $usersController . '@getLoggedInUser']);
-
         $api->get('users/{id}', ['as' => 'api.users.show', 'uses' => $usersController . '@show']);
         $api->post('users', [ 'uses' => $usersController . '@create']);
         $api->patch('users/{id}', [ 'uses' => $usersController . '@store']);
@@ -235,13 +233,13 @@ $api->version('v1', function ($api) {
         $api->patch('carriers/{id}', ['uses' => $carrierController . '@store']);
         $api->delete('carriers/{id}', ['uses' => $carrierController . '@delete']);
 
-        //=Price
-        $priceController = 'WA\Http\Controllers\PricesController';
-        $api->get('prices', ['as' => 'api.price.index', 'uses' => $priceController . '@index']);
-        $api->get('prices/{id}', ['as' => 'api.price.show', 'uses' => $priceController . '@show']);
-        $api->post('prices', ['uses' => $priceController . '@create']);
-        $api->patch('prices/{id}', ['uses' => $priceController . '@store']);
-        $api->delete('prices/{id}', ['uses' => $priceController . '@delete']);
+        //=DeviceVariation
+        $deviceVariationsController = 'WA\Http\Controllers\DeviceVariationsController';
+        $api->get('devicevariations', ['as' => 'api.deviceVariation.index', 'uses' => $deviceVariationsController . '@index']);
+        $api->get('devicevariations/{id}', ['as' => 'api.deviceVariation.show', 'uses' => $deviceVariationsController . '@show']);
+        $api->post('devicevariations', ['uses' => $deviceVariationsController . '@create']);
+        $api->patch('devicevariations/{id}', ['uses' => $deviceVariationsController . '@store']);
+        $api->delete('devicevariations/{id}', ['uses' => $deviceVariationsController . '@delete']);
 
         //=Image
         $imageController = 'WA\Http\Controllers\ImagesController';
@@ -308,6 +306,31 @@ $api->version('v1', function ($api) {
         //$api->post('conditionsoperators', ['uses' => $conditionOpController . '@create']);
         //$api->patch('conditionsoperators/{id}', ['uses' => $conditionOpController . '@store']);
         //$api->delete('conditionsoperators/{id}', ['uses' => $conditionOpController . '@delete']);
+        
+        //=Roles
+        $rolesController = 'WA\Http\Controllers\RolesController';
+        $api->get('roles', ['as' => 'api.roles.index', 'uses' => $rolesController . '@index']);
+        $api->get('roles/{id}', ['as' => 'api.roles.show', 'uses' => $rolesController . '@show']);
+        $api->post('roles', ['uses' => $rolesController . '@create']);
+        $api->put('roles/{id}', ['uses' => $rolesController . '@store']);
+        $api->delete('roles/{id}', ['uses' => $rolesController . '@delete']);
+
+         //=Permissions
+        $permissionsController = 'WA\Http\Controllers\PermissionsController';
+        $api->get('permissions', ['as' => 'api.permissions.index', 'uses' => $permissionsController . '@index']);
+        $api->get('permissions/{id}', ['as' => 'api.permissions.show', 'uses' => $permissionsController . '@show']);
+        $api->post('permissions', ['uses' => $permissionsController . '@create']);
+        $api->put('permissions/{id}', ['uses' => $permissionsController . '@store']);
+        $api->delete('permissions/{id}', ['uses' => $permissionsController . '@delete']);
+
+         //=Scopes
+        $scopesController = 'WA\Http\Controllers\ScopesController';
+        $api->get('scopes', ['as' => 'api.scopes.index', 'uses' => $scopesController . '@index']);
+        $api->get('scopes/{id}', ['as' => 'api.scopes.show', 'uses' => $scopesController . '@show']);
+        $api->post('scopes', ['uses' => $scopesController . '@create']);
+        $api->put('scopes/{id}', ['uses' => $scopesController . '@store']);
+        $api->delete('scopes/{id}', ['uses' => $scopesController . '@delete']);
+
 
         $api->get('{model}/{id}/relationships/{include}', function ($model, $id, $include) {
             $modelName = title_case($model);
@@ -338,29 +361,5 @@ $api->version('v1', function ($api) {
         //=Jobs
         $jobsController = 'WA\Http\Controllers\JobsController';
         $api->put('jobs/updateBillingMonths', ['uses' => $jobsController . '@updateBillingMonths']);
-        
-        //=Roles
-        $rolesController = 'WA\Http\Controllers\RolesController';
-        $api->get('roles', ['as' => 'api.roles.index', 'uses' => $rolesController . '@index']);
-        $api->get('roles/{id}', ['as' => 'api.roles.show', 'uses' => $rolesController . '@show']);
-        $api->post('roles', ['uses' => $rolesController . '@create']);
-        $api->put('roles/{id}', ['uses' => $rolesController . '@store']);
-        $api->delete('roles/{id}', ['uses' => $rolesController . '@delete']);
-
-         //=Permissions
-        $permissionsController = 'WA\Http\Controllers\PermissionsController';
-        $api->get('permissions', ['as' => 'api.permissions.index', 'uses' => $permissionsController . '@index']);
-        $api->get('permissions/{id}', ['as' => 'api.permissions.show', 'uses' => $permissionsController . '@show']);
-        $api->post('permissions', ['uses' => $permissionsController . '@create']);
-        $api->put('permissions/{id}', ['uses' => $permissionsController . '@store']);
-        $api->delete('permissions/{id}', ['uses' => $permissionsController . '@delete']);
-
-         //=Scopes
-        $scopesController = 'WA\Http\Controllers\ScopesController';
-        $api->get('scopes', ['as' => 'api.scopes.index', 'uses' => $scopesController . '@index']);
-        $api->get('scopes/{id}', ['as' => 'api.scopes.show', 'uses' => $scopesController . '@show']);
-        $api->post('scopes', ['uses' => $scopesController . '@create']);
-        $api->put('scopes/{id}', ['uses' => $scopesController . '@store']);
-        $api->delete('scopes/{id}', ['uses' => $scopesController . '@delete']);
     });
 });

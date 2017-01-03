@@ -45,7 +45,7 @@ class OrdersController extends FilteredApiController
     {
         $success = true;
         $code = 'conflict';
-        $dataApps = $dataServiceItems = array();
+        $data_apps = $data_serviceitems = $data_devices = array();
 
         /*
          * Checks if Json has data, data-type & data-attributes.
@@ -93,9 +93,9 @@ class OrdersController extends FilteredApiController
 
             if (isset($dataRelationships['apps']) && $success) {
                 if (isset($dataRelationships['apps']['data'])) {
-                    $dataApps = $this->parseJsonToArray($dataRelationships['apps']['data'], 'apps');
+                    $data_apps = $this->parseJsonToArray($dataRelationships['apps']['data'], 'apps');
                     try {
-                        $order->apps()->sync($dataApps);
+                        $order->apps()->sync($data_apps);
                     } catch (\Exception $e) {
                         $success = false;
                         $error['errors']['apps'] = Lang::get('messages.NotOptionIncludeClass',
@@ -107,13 +107,27 @@ class OrdersController extends FilteredApiController
 
             if (isset($dataRelationships['serviceitems']) && $success) {
                 if (isset($dataRelationships['serviceitems']['data'])) {
-                    $dataServiceItems = $this->parseJsonToArray($dataRelationships['serviceitems']['data'], 'serviceitems');
+                    $data_serviceitems = $this->parseJsonToArray($dataRelationships['serviceitems']['data'], 'serviceitems');
                     try {
-                        $order->serviceitems()->sync($dataServiceItems);
+                        $order->serviceitems()->sync($data_serviceitems);
                     } catch (\Exception $e) {
                         $success = false;
                         $error['errors']['serviceitems'] = Lang::get('messages.NotOptionIncludeClass',
                             ['class' => 'Order', 'option' => 'updated', 'include' => 'Service Items']);
+                        //$error['errors']['Message'] = $e->getMessage();
+                    }
+                }
+            }
+
+            if (isset($dataRelationships['devicevariations']) && $success) {
+                if (isset($dataRelationships['devicevariations']['data'])) {
+                    $data_devices = $this->parseJsonToArray($dataRelationships['devicevariations']['data'], 'devicevariations');
+                    try {
+                        $order->deviceVariations()->sync($data_devices);
+                    } catch (\Exception $e) {
+                        $success = false;
+                        $error['errors']['devicevariations'] = Lang::get('messages.NotOptionIncludeClass',
+                            ['class' => 'Order', 'option' => 'updated', 'include' => 'DeviceVariations']);
                         //$error['errors']['Message'] = $e->getMessage();
                     }
                 }
@@ -138,7 +152,7 @@ class OrdersController extends FilteredApiController
     public function create(Request $request)
     {
         $success = true;
-        $dataApps = $dataServiceItems = array();
+        $data_apps = $data_serviceitems = $data_devices = array();
 
         /*
          * Checks if Json has data, data-type & data-attributes.
@@ -176,9 +190,9 @@ class OrdersController extends FilteredApiController
 
             if (isset($dataRelationships['apps'])) {
                 if (isset($dataRelationships['apps']['data'])) {
-                    $dataApps = $this->parseJsonToArray($dataRelationships['apps']['data'], 'apps');
+                    $data_apps = $this->parseJsonToArray($dataRelationships['apps']['data'], 'apps');
                     try {
-                        $order->apps()->sync($dataApps);
+                        $order->apps()->sync($data_apps);
                     } catch (\Exception $e) {
                         $success = false;
                         $error['errors']['Apps'] = Lang::get('messages.NotOptionIncludeClass',
@@ -190,13 +204,27 @@ class OrdersController extends FilteredApiController
 
             if (isset($dataRelationships['serviceitems'])) {
                 if (isset($dataRelationships['serviceitems']['data'])) {
-                    $dataServiceItems = $this->parseJsonToArray($dataRelationships['serviceitems']['data'], 'serviceitems');
+                    $data_serviceitems = $this->parseJsonToArray($dataRelationships['serviceitems']['data'], 'serviceitems');
                     try {
-                        $order->serviceitems()->sync($dataServiceItems);
+                        $order->serviceitems()->sync($data_serviceitems);
                     } catch (\Exception $e) {
                         $success = false;
                         $error['errors']['serviceitems'] = Lang::get('messages.NotOptionIncludeClass',
                             ['class' => 'Order', 'option' => 'created', 'include' => 'Service Items']);
+                        //$error['errors']['Message'] = $e->getMessage();
+                    }
+                }
+            }
+
+            if (isset($dataRelationships['devicevariations']) && $success) {
+                if (isset($dataRelationships['devicevariations']['data'])) {
+                    $data_devices = $this->parseJsonToArray($dataRelationships['devicevariations']['data'], 'devicevariations');
+                    try {
+                        $order->deviceVariations()->sync($data_devices);
+                    } catch (\Exception $e) {
+                        $success = false;
+                        $error['errors']['devicevariations'] = Lang::get('messages.NotOptionIncludeClass',
+                            ['class' => 'Order', 'option' => 'updated', 'include' => 'DeviceVariations']);
                         //$error['errors']['Message'] = $e->getMessage();
                     }
                 }

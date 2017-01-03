@@ -24,9 +24,6 @@ class OrdersApiTest extends TestCase
                             'status',
                             'userId',
                             'packageId',
-                            'deviceId',
-                            'serviceId',
-                            'carrierId',
                             'created_at',
                             'updated_at',
                         ],
@@ -46,7 +43,6 @@ class OrdersApiTest extends TestCase
                 'status' => $order->status,
                 'userId' => $order->userId,
                 'packageId' => $order->packageId,
-                'deviceId' => $order->deviceId,
                 'serviceId' => $order->serviceId,
             ])->seeJsonStructure([
                 'data' => [
@@ -56,9 +52,7 @@ class OrdersApiTest extends TestCase
                         'status',
                         'userId',
                         'packageId',
-                        'deviceId',
                         'serviceId',
-                        'carrierId'
                     ],
                     'links' => [
                         'self',
@@ -86,22 +80,19 @@ class OrdersApiTest extends TestCase
         $user = factory(\WA\DataStore\User\User::class)->create();
         $package = factory(\WA\DataStore\Package\Package::class)->create();
         $service = factory(\WA\DataStore\Service\Service::class)->create();
-        $device = factory(\WA\DataStore\Device\Device::class)->create();
-        $carrier = factory(\WA\DataStore\Carrier\Carrier::class)->create();
-
-        $order = factory(\WA\DataStore\Order\Order::class)->create(['userId' => $user->id, 'packageId' => $package->id, 'serviceId' => $service->id, 'deviceId' => $device->id, 'carrierId' => $carrier->id]);
+        $order = factory(\WA\DataStore\Order\Order::class)->create(['userId' => $user->id, 'packageId' => $package->id, 'serviceId' => $service->id]);
 
         $app1 = factory(\WA\DataStore\App\App::class)->create()->id;
         $app2 = factory(\WA\DataStore\App\App::class)->create()->id;
         $dataApps = array($app1, $app2);
         $order->apps()->sync($dataApps);
 
-        $serviceitem1 = factory(\WA\DataStore\ServiceItem\ServiceItem::class)->create()->id;
-        $serviceitem2 = factory(\WA\DataStore\ServiceItem\ServiceItem::class)->create()->id;
-        $dataServiceItems = array($serviceitem1, $serviceitem2);
-        $order->serviceitems()->sync($dataServiceItems);
+        $deviceVariation1 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create()->id;
+        $deviceVariation2 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create()->id;
+        $dataDeviceVariations = array($deviceVariation1, $deviceVariation2);
+        $order->deviceVariations()->sync($dataDeviceVariations);
 
-        $res = $this->json('GET', '/orders/'.$order->id.'?include=users,packages,services,devices,carriers,apps,serviceitems')
+        $res = $this->json('GET', '/orders/'.$order->id.'?include=users,packages,services,devicevariations,apps')
         //Log::debug("testGetOrderByIdIncludeAll: ".print_r($res->response->getContent(), true));
             ->seeJsonStructure([
                 'data' => [
@@ -111,9 +102,7 @@ class OrdersApiTest extends TestCase
                         'status',
                         'userId',
                         'packageId',
-                        'deviceId',
                         'serviceId',
-                        'carrierId'
                     ],
                     'links' => [
                         'self',
@@ -143,13 +132,17 @@ class OrdersApiTest extends TestCase
                                 ],
                             ],
                         ],
-                        'devices' => [
+                        'devicevariations' => [
                             'links' => [
                                 'self',
                                 'related',
                             ],
                             'data' => [
                                 0 => [
+                                    'type',
+                                    'id',
+                                ],
+                                1 => [
                                     'type',
                                     'id',
                                 ],
@@ -167,35 +160,7 @@ class OrdersApiTest extends TestCase
                                 ],
                             ],
                         ],
-                        'carriers' => [
-                            'links' => [
-                                'self',
-                                'related',
-                            ],
-                            'data' => [
-                                0 => [
-                                    'type',
-                                    'id',
-                                ],
-                            ],
-                        ],
                         'apps' => [
-                            'links' => [
-                                'self',
-                                'related',
-                            ],
-                            'data' => [
-                                0 => [
-                                    'type',
-                                    'id',
-                                ],
-                                1 => [
-                                    'type',
-                                    'id',
-                                ]
-                            ],
-                        ],
-                        'serviceitems' => [
                             'links' => [
                                 'self',
                                 'related',
@@ -215,23 +180,21 @@ class OrdersApiTest extends TestCase
                 ],
             //]);
                 'included' => [
-                    0 => [
+                    0 => [ // ADDRESS
                         'type',
                         'id',
                         'attributes' => [
-                            'make',
-                            'model',
-                            'class',
-                            'deviceOS',
-                            'description',
-                            'statusId',
-                            'image'
+                            'address',
+                            'city',
+                            'state',
+                            'country',
+                            'postalCode'
                         ],
                         'links' => [
                             'self'
                         ]
                     ],
-                    1 => [
+                    1 => [ // CARRIERS
                         'type',
                         'id',
                         'attributes' => [
@@ -239,46 +202,40 @@ class OrdersApiTest extends TestCase
                             'presentation',
                             'active',
                             'locationId',
-                            'shortName',
-                            'created_at',
-                            'updated_at'
+                            'shortName'
                         ],
                         'links' => [
                             'self'
                         ]
                     ],
-                    2 => [
+                    2 => [ // USER
                         'type',
                         'id',
                         'attributes' => [
+                            'uuid',
                             'identification',
-                            'name',
-                            'properties',
-                            'externalId',
-                            'statusId',
-                            'syncId',
-                            'created_at',
-                            'updated_at'
+                            'email',
+                            'alternateEmail',
+                            'username',
+                            'syncId'
                         ],
                         'links' => [
                             'self'
                         ]
                     ],
-                    3 => [
+                    3 => [ // PACKAGE
                         'type',
                         'id',
                         'attributes' => [
                             'name',
                             'addressId',
-                            'companyId',
-                            'created_at',
-                            'updated_at'
+                            'companyId'
                         ],
                         'links' => [
                             'self'
                         ]
                     ],
-                    4 => [
+                    4 => [ // SERVICE
                         'type',
                         'id',
                         'attributes' => [
@@ -287,69 +244,63 @@ class OrdersApiTest extends TestCase
                             'planCode',
                             'cost',
                             'description',
+                            'carrierId'
+                        ],
+                        'links' => [
+                            'self'
+                        ]
+                    ],
+                    5 => [ // APP
+                        'type',
+                        'id',
+                        'attributes' => [
+                            'type',
+                            'image',
+                            'description'
+                        ],
+                        'links' => [
+                            'self'
+                        ]
+                    ],
+                    6 => [ // APP
+                        'type',
+                        'id',
+                        'attributes' => [
+                            'type',
+                            'image',
+                            'description'
+                        ],
+                        'links' => [
+                            'self'
+                        ]
+                    ],
+                    7 => [ // DEVICEVARIATIONS
+                        'type',
+                        'id',
+                        'attributes' => [
+                            'priceRetail',
+                            'price1',
+                            'price2',
+                            'priceOwn',
+                            'deviceId',
                             'carrierId',
-                            'created_at',
-                            'updated_at'
+                            'companyId'
                         ],
                         'links' => [
                             'self'
                         ]
                     ],
-                    5 => [
+                    8 => [ // DEVICEVARIATIONS
                         'type',
                         'id',
                         'attributes' => [
-                            'type',
-                            'image',
-                            'description',
-                            'created_at',
-                            'updated_at'
-                        ],
-                        'links' => [
-                            'self'
-                        ]
-                    ],
-                    6 => [
-                        'type',
-                        'id',
-                        'attributes' => [
-                            'type',
-                            'image',
-                            'description',
-                            'created_at',
-                            'updated_at'
-                        ],
-                        'links' => [
-                            'self'
-                        ]
-                    ],
-                    7 => [
-                        'type',
-                        'id',
-                        'attributes' => [
-                            'serviceId',
-                            'category',
-                            'description',
-                            'value',
-                            'unit',
-                            'cost',
-                            'domain'
-                        ],
-                        'links' => [
-                            'self'
-                        ]
-                    ],
-                    8 => [
-                        'type',
-                        'id',
-                        'attributes' => [
-                            'serviceId',
-                            'category',
-                            'description',
-                            'value',
-                            'unit',
-                            'cost',
-                            'domain'
+                            'priceRetail',
+                            'price1',
+                            'price2',
+                            'priceOwn',
+                            'deviceId',
+                            'carrierId',
+                            'companyId'
                         ],
                         'links' => [
                             'self'
@@ -363,9 +314,7 @@ class OrdersApiTest extends TestCase
     {
         $userId = factory(\WA\DataStore\User\User::class)->create()->id;
         $packageId = factory(\WA\DataStore\Package\Package::class)->create()->id;
-        $deviceId = factory(\WA\DataStore\Device\Device::class)->create()->id;
         $serviceId = factory(\WA\DataStore\Service\Service::class)->create()->id;
-        $carrierId = factory(\WA\DataStore\Carrier\Carrier::class)->create()->id;
 
         $app1 = factory(\WA\DataStore\App\App::class)->create()->id;
         $app2 = factory(\WA\DataStore\App\App::class)->create()->id;
@@ -373,7 +322,10 @@ class OrdersApiTest extends TestCase
         $serviceitem1 = factory(\WA\DataStore\ServiceItem\ServiceItem::class)->create()->id;
         $serviceitem2 = factory(\WA\DataStore\ServiceItem\ServiceItem::class)->create()->id;
 
-        $res = $this->json('POST', '/orders?include=users,packages,services,devices,carriers,apps,serviceitems',
+        $deviceVariation1 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create()->id;
+        $deviceVariation2 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create()->id;
+
+        $res = $this->json('POST', '/orders?include=users,packages,services,devicevariations,apps',
             [
                 'data' => [
                     'type' => 'orders',
@@ -381,9 +333,7 @@ class OrdersApiTest extends TestCase
                         'status' => 'Enabled',
                         'userId' => $userId,
                         'packageId' => $packageId,
-                        'deviceId' => $deviceId,
-                        'serviceId' => $serviceId,
-                        'carrierId' => $carrierId
+                        'serviceId' => $serviceId
                     ],
                     'relationships' => [
                         'apps' => [
@@ -392,10 +342,10 @@ class OrdersApiTest extends TestCase
                                 ['type' => 'apps', 'id' => $app2],
                             ],
                         ],
-                        'serviceitems' => [
+                        'devicevariations' => [
                             'data' => [
-                                ['type' => 'serviceitems', 'id' => $serviceitem1],
-                                ['type' => 'serviceitems', 'id' => $serviceitem2],
+                                ['type' => 'devicevariations', 'id' => $deviceVariation1],
+                                ['type' => 'devicevariations', 'id' => $deviceVariation2],
                             ],
                         ]
                     ]
@@ -408,9 +358,7 @@ class OrdersApiTest extends TestCase
                     'status' => 'Enabled',
                     'userId' => $userId,
                     'packageId' => $packageId,
-                    'deviceId' => $deviceId,
-                    'serviceId' => $serviceId,
-                    'carrierId' => $carrierId
+                    'serviceId' => $serviceId
                 ])
             ->seeJsonStructure(
                 [
@@ -421,9 +369,7 @@ class OrdersApiTest extends TestCase
                             'status',
                             'userId',
                             'packageId',
-                            'deviceId',
-                            'serviceId',
-                            'carrierId'
+                            'serviceId'
                         ],
                         'links' => [
                             'self'
@@ -453,31 +399,23 @@ class OrdersApiTest extends TestCase
                                     ],
                                 ],
                             ],
-                            'devices' => [
+                            'devicevariations' => [
                                 'links' => [
                                     'self',
                                     'related',
                                 ],
                                 'data' => [
                                     0 => [
+                                        'type',
+                                        'id',
+                                    ],
+                                    1 => [
                                         'type',
                                         'id',
                                     ],
                                 ],
                             ],
                             'services' => [
-                                'links' => [
-                                    'self',
-                                    'related',
-                                ],
-                                'data' => [
-                                    0 => [
-                                        'type',
-                                        'id',
-                                    ],
-                                ],
-                            ],
-                            'carriers' => [
                                 'links' => [
                                     'self',
                                     'related',
@@ -504,43 +442,25 @@ class OrdersApiTest extends TestCase
                                         'id',
                                     ]
                                 ],
-                            ],
-                            'serviceitems' => [
-                                'links' => [
-                                    'self',
-                                    'related',
-                                ],
-                                'data' => [
-                                    0 => [
-                                        'type',
-                                        'id',
-                                    ],
-                                    1 => [
-                                        'type',
-                                        'id',
-                                    ]
-                                ],
                             ]
                         ]
                     ],
                     'included' => [
-                        0 => [
+                        0 => [ // ADDRESS
                             'type',
                             'id',
                             'attributes' => [
-                                'make',
-                                'model',
-                                'class',
-                                'deviceOS',
-                                'description',
-                                'statusId',
-                                'image'
+                                'address',
+                                'city',
+                                'state',
+                                'country',
+                                'postalCode'
                             ],
                             'links' => [
                                 'self'
                             ]
                         ],
-                        1 => [
+                        1 => [ // CARRIERS
                             'type',
                             'id',
                             'attributes' => [
@@ -548,46 +468,40 @@ class OrdersApiTest extends TestCase
                                 'presentation',
                                 'active',
                                 'locationId',
-                                'shortName',
-                                'created_at',
-                                'updated_at'
+                                'shortName'
                             ],
                             'links' => [
                                 'self'
                             ]
                         ],
-                        2 => [
+                        2 => [ // USER
                             'type',
                             'id',
                             'attributes' => [
+                                'uuid',
                                 'identification',
-                                'name',
-                                'properties',
-                                'externalId',
-                                'statusId',
-                                'syncId',
-                                'created_at',
-                                'updated_at'
+                                'email',
+                                'alternateEmail',
+                                'username',
+                                'syncId'
                             ],
                             'links' => [
                                 'self'
                             ]
                         ],
-                        3 => [
+                        3 => [ // PACKAGE
                             'type',
                             'id',
                             'attributes' => [
                                 'name',
                                 'addressId',
-                                'companyId',
-                                'created_at',
-                                'updated_at'
+                                'companyId'
                             ],
                             'links' => [
                                 'self'
                             ]
                         ],
-                        4 => [
+                        4 => [ // SERVICE
                             'type',
                             'id',
                             'attributes' => [
@@ -596,69 +510,63 @@ class OrdersApiTest extends TestCase
                                 'planCode',
                                 'cost',
                                 'description',
+                                'carrierId'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        5 => [ // APP
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'type',
+                                'image',
+                                'description'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        6 => [ // APP
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'type',
+                                'image',
+                                'description'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        7 => [ // DEVICEVARIATIONS
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'priceRetail',
+                                'price1',
+                                'price2',
+                                'priceOwn',
+                                'deviceId',
                                 'carrierId',
-                                'created_at',
-                                'updated_at'
+                                'companyId'
                             ],
                             'links' => [
                                 'self'
                             ]
                         ],
-                        5 => [
+                        8 => [ // DEVICEVARIATIONS
                             'type',
                             'id',
                             'attributes' => [
-                                'type',
-                                'image',
-                                'description',
-                                'created_at',
-                                'updated_at'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        6 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'type',
-                                'image',
-                                'description',
-                                'created_at',
-                                'updated_at'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        7 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'serviceId',
-                                'category',
-                                'description',
-                                'value',
-                                'unit',
-                                'cost',
-                                'domain'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        8 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'serviceId',
-                                'category',
-                                'description',
-                                'value',
-                                'unit',
-                                'cost',
-                                'domain'
+                                'priceRetail',
+                                'price1',
+                                'price2',
+                                'priceOwn',
+                                'deviceId',
+                                'carrierId',
+                                'companyId'
                             ],
                             'links' => [
                                 'self'
@@ -677,7 +585,6 @@ class OrdersApiTest extends TestCase
         $this->assertNotEquals($order1->status, $order2->status);
         $this->assertNotEquals($order1->userId, $order2->userId);
         $this->assertNotEquals($order1->packageId, $order2->packageId);
-        $this->assertNotEquals($order1->deviceId, $order2->deviceId);
         $this->assertNotEquals($order1->serviceId, $order2->serviceId);
 
         $this->PATCH('/orders/'.$order1->id,
@@ -688,7 +595,6 @@ class OrdersApiTest extends TestCase
                         'status' => $order2->status,
                         'userId' => $order2->userId,
                         'packageId' => $order2->packageId,
-                        'deviceId' => $order2->deviceId,
                         'serviceId' => $order2->serviceId,
                     ],
                 ],
@@ -699,7 +605,6 @@ class OrdersApiTest extends TestCase
                 'status' => $order2->status,
                 'userId' => $order2->userId,
                 'packageId' => $order2->packageId,
-                'deviceId' => $order2->deviceId,
                 'serviceId' => $order2->serviceId,
             ]);
     }
@@ -708,9 +613,7 @@ class OrdersApiTest extends TestCase
     {
         $userId = factory(\WA\DataStore\User\User::class)->create()->id;
         $packageId = factory(\WA\DataStore\Package\Package::class)->create()->id;
-        $deviceId = factory(\WA\DataStore\Device\Device::class)->create()->id;
         $serviceId = factory(\WA\DataStore\Service\Service::class)->create()->id;
-        $carrierId = factory(\WA\DataStore\Carrier\Carrier::class)->create()->id;
 
         $order = factory(\WA\DataStore\Order\Order::class)->create();
 
@@ -723,16 +626,16 @@ class OrdersApiTest extends TestCase
         $this->assertEquals($orderAppDB[0]->appId, $app1);
         $this->assertEquals($orderAppDB[1]->appId, $app2);
 
-        $serviceitem1 = factory(\WA\DataStore\ServiceItem\ServiceItem::class)->create()->id;
-        $serviceitem2 = factory(\WA\DataStore\ServiceItem\ServiceItem::class)->create()->id;
-        $order->serviceitems()->sync(array($serviceitem1, $serviceitem2));
+        $deviceVariation1 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create()->id;
+        $deviceVariation2 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create()->id;
+        $order->deviceVariations()->sync(array($deviceVariation1, $deviceVariation2));
 
-        $orderSIDB = DB::table('order_serviceitems')->where('orderId', $order->id)->get();
-        $this->assertCount(2, $orderSIDB);
-        $this->assertEquals($orderSIDB[0]->serviceItemId, $serviceitem1);
-        $this->assertEquals($orderSIDB[1]->serviceItemId, $serviceitem2);
+        $orderDDB = DB::table('order_device_variations')->where('orderId', $order->id)->get();
+        $this->assertCount(2, $orderDDB);
+        $this->assertEquals($orderDDB[0]->deviceVariationId, $deviceVariation1);
+        $this->assertEquals($orderDDB[1]->deviceVariationId, $deviceVariation2);
 
-        $res = $this->json('PATCH', '/orders/'.$order->id.'?include=users,packages,services,devices,carriers,apps,serviceitems',
+        $res = $this->json('PATCH', '/orders/'.$order->id.'?include=users,packages,services,devicevariations,apps',
             [
                 'data' => [
                     'type' => 'orders',
@@ -740,9 +643,7 @@ class OrdersApiTest extends TestCase
                         'status' => 'Enabled',
                         'userId' => $userId,
                         'packageId' => $packageId,
-                        'deviceId' => $deviceId,
-                        'serviceId' => $serviceId,
-                        'carrierId' => $carrierId
+                        'serviceId' => $serviceId
                     ],
                     'relationships' => [
                         'apps' => [
@@ -750,9 +651,9 @@ class OrdersApiTest extends TestCase
                                 ['type' => 'apps', 'id' => $app1]
                             ],
                         ],
-                        'serviceitems' => [
+                        'devicevariations' => [
                             'data' => [
-                                ['type' => 'serviceitems', 'id' => $serviceitem1]
+                                ['type' => 'devicevariations', 'id' => $deviceVariation1]
                             ],
                         ]
                     ]
@@ -765,9 +666,7 @@ class OrdersApiTest extends TestCase
                     'status' => 'Enabled',
                     'userId' => $userId,
                     'packageId' => $packageId,
-                    'deviceId' => $deviceId,
-                    'serviceId' => $serviceId,
-                    'carrierId' => $carrierId
+                    'serviceId' => $serviceId
                 ])
             ->seeJsonStructure(
                 [
@@ -778,9 +677,7 @@ class OrdersApiTest extends TestCase
                             'status',
                             'userId',
                             'packageId',
-                            'deviceId',
-                            'serviceId',
-                            'carrierId'
+                            'serviceId'
                         ],
                         'links' => [
                             'self'
@@ -810,7 +707,7 @@ class OrdersApiTest extends TestCase
                                     ],
                                 ],
                             ],
-                            'devices' => [
+                            'devicevariations' => [
                                 'links' => [
                                     'self',
                                     'related',
@@ -819,22 +716,10 @@ class OrdersApiTest extends TestCase
                                     0 => [
                                         'type',
                                         'id',
-                                    ],
+                                    ]
                                 ],
                             ],
                             'services' => [
-                                'links' => [
-                                    'self',
-                                    'related',
-                                ],
-                                'data' => [
-                                    0 => [
-                                        'type',
-                                        'id',
-                                    ],
-                                ],
-                            ],
-                            'carriers' => [
                                 'links' => [
                                     'self',
                                     'related',
@@ -857,39 +742,25 @@ class OrdersApiTest extends TestCase
                                         'id',
                                     ]
                                 ],
-                            ],
-                            'serviceitems' => [
-                                'links' => [
-                                    'self',
-                                    'related',
-                                ],
-                                'data' => [
-                                    0 => [
-                                        'type',
-                                        'id',
-                                    ]
-                                ],
                             ]
                         ]
                     ],
                     'included' => [
-                        0 => [
+                        0 => [ // ADDRESS
                             'type',
                             'id',
                             'attributes' => [
-                                'make',
-                                'model',
-                                'class',
-                                'deviceOS',
-                                'description',
-                                'statusId',
-                                'image'
+                                'address',
+                                'city',
+                                'state',
+                                'country',
+                                'postalCode'
                             ],
                             'links' => [
                                 'self'
                             ]
                         ],
-                        1 => [
+                        1 => [ // CARRIERS
                             'type',
                             'id',
                             'attributes' => [
@@ -897,46 +768,40 @@ class OrdersApiTest extends TestCase
                                 'presentation',
                                 'active',
                                 'locationId',
-                                'shortName',
-                                'created_at',
-                                'updated_at'
+                                'shortName'
                             ],
                             'links' => [
                                 'self'
                             ]
                         ],
-                        2 => [
+                        2 => [ // USER
                             'type',
                             'id',
                             'attributes' => [
+                                'uuid',
                                 'identification',
-                                'name',
-                                'properties',
-                                'externalId',
-                                'statusId',
-                                'syncId',
-                                'created_at',
-                                'updated_at'
+                                'email',
+                                'alternateEmail',
+                                'username',
+                                'syncId'
                             ],
                             'links' => [
                                 'self'
                             ]
                         ],
-                        3 => [
+                        3 => [ // PACKAGE
                             'type',
                             'id',
                             'attributes' => [
                                 'name',
                                 'addressId',
-                                'companyId',
-                                'created_at',
-                                'updated_at'
+                                'companyId'
                             ],
                             'links' => [
                                 'self'
                             ]
                         ],
-                        4 => [
+                        4 => [ // SERVICE
                             'type',
                             'id',
                             'attributes' => [
@@ -945,44 +810,40 @@ class OrdersApiTest extends TestCase
                                 'planCode',
                                 'cost',
                                 'description',
-                                'carrierId',
-                                'created_at',
-                                'updated_at'
+                                'carrierId'
                             ],
                             'links' => [
                                 'self'
                             ]
                         ],
-                        5 => [
+                        5 => [ // APP
                             'type',
                             'id',
                             'attributes' => [
                                 'type',
                                 'image',
-                                'description',
-                                'created_at',
-                                'updated_at'
+                                'description'
                             ],
                             'links' => [
                                 'self'
                             ]
                         ],
-                        6 => [
+                        6 => [ // DEVICEVARIATIONS
                             'type',
                             'id',
                             'attributes' => [
-                                'serviceId',
-                                'category',
-                                'description',
-                                'value',
-                                'unit',
-                                'cost',
-                                'domain'
+                                'priceRetail',
+                                'price1',
+                                'price2',
+                                'priceOwn',
+                                'deviceId',
+                                'carrierId',
+                                'companyId'
                             ],
                             'links' => [
                                 'self'
                             ]
-                        ]
+                        ]               
                     ]
                 ]);
     }
@@ -993,7 +854,6 @@ class OrdersApiTest extends TestCase
         $packageId = factory(\WA\DataStore\Package\Package::class)->create()->id;
         $deviceId = factory(\WA\DataStore\Device\Device::class)->create()->id;
         $serviceId = factory(\WA\DataStore\Service\Service::class)->create()->id;
-        $carrierId = factory(\WA\DataStore\Carrier\Carrier::class)->create()->id;
 
         $order = factory(\WA\DataStore\Order\Order::class)->create();
 
@@ -1008,18 +868,18 @@ class OrdersApiTest extends TestCase
 
         $app3 = factory(\WA\DataStore\App\App::class)->create()->id;
 
-        $serviceitem1 = factory(\WA\DataStore\ServiceItem\ServiceItem::class)->create()->id;
-        $serviceitem2 = factory(\WA\DataStore\ServiceItem\ServiceItem::class)->create()->id;
-        $order->serviceitems()->sync(array($serviceitem1, $serviceitem2));
+        $deviceVariation1 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create()->id;
+        $deviceVariation2 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create()->id;
+        $order->deviceVariations()->sync(array($deviceVariation1, $deviceVariation2));
 
-        $orderSIDB = DB::table('order_serviceitems')->where('orderId', $order->id)->get();
-        $this->assertCount(2, $orderSIDB);
-        $this->assertEquals($orderSIDB[0]->serviceItemId, $serviceitem1);
-        $this->assertEquals($orderSIDB[1]->serviceItemId, $serviceitem2);
+        $orderDDB = DB::table('order_device_variations')->where('orderId', $order->id)->get();
+        $this->assertCount(2, $orderDDB);
+        $this->assertEquals($orderDDB[0]->deviceVariationId, $deviceVariation1);
+        $this->assertEquals($orderDDB[1]->deviceVariationId, $deviceVariation2);
 
-        $serviceitem3 = factory(\WA\DataStore\ServiceItem\ServiceItem::class)->create()->id;
+        $deviceVariation3 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create()->id;
 
-        $res = $this->json('PATCH', '/orders/'.$order->id.'?include=users,packages,services,devices,carriers,apps,serviceitems',
+        $res = $this->json('PATCH', '/orders/'.$order->id.'?include=users,packages,services,devicevariations,apps',
             [
                 'data' => [
                     'type' => 'orders',
@@ -1027,9 +887,7 @@ class OrdersApiTest extends TestCase
                         'status' => 'Enabled',
                         'userId' => $userId,
                         'packageId' => $packageId,
-                        'deviceId' => $deviceId,
-                        'serviceId' => $serviceId,
-                        'carrierId' => $carrierId
+                        'serviceId' => $serviceId
                     ],
                     'relationships' => [
                         'apps' => [
@@ -1037,14 +895,14 @@ class OrdersApiTest extends TestCase
                                 ['type' => 'apps', 'id' => $app1],
                                 ['type' => 'apps', 'id' => $app2],
                                 ['type' => 'apps', 'id' => $app3]
-                            ],
+                            ]
                         ],
-                        'serviceitems' => [
+                        'devicevariations' => [
                             'data' => [
-                                ['type' => 'serviceitems', 'id' => $serviceitem1],
-                                ['type' => 'serviceitems', 'id' => $serviceitem2],
-                                ['type' => 'serviceitems', 'id' => $serviceitem3]
-                            ],
+                                ['type' => 'devicevariations', 'id' => $deviceVariation1],
+                                ['type' => 'devicevariations', 'id' => $deviceVariation2],
+                                ['type' => 'devicevariations', 'id' => $deviceVariation3]
+                            ]
                         ]
                     ]
                 ]
@@ -1056,9 +914,7 @@ class OrdersApiTest extends TestCase
                     'status' => 'Enabled',
                     'userId' => $userId,
                     'packageId' => $packageId,
-                    'deviceId' => $deviceId,
-                    'serviceId' => $serviceId,
-                    'carrierId' => $carrierId
+                    'serviceId' => $serviceId
                 ])
             ->seeJsonStructure(
                 [
@@ -1069,9 +925,7 @@ class OrdersApiTest extends TestCase
                             'status',
                             'userId',
                             'packageId',
-                            'deviceId',
-                            'serviceId',
-                            'carrierId'
+                            'serviceId'
                         ],
                         'links' => [
                             'self'
@@ -1101,7 +955,7 @@ class OrdersApiTest extends TestCase
                                     ],
                                 ],
                             ],
-                            'devices' => [
+                            'devicevariations' => [
                                 'links' => [
                                     'self',
                                     'related',
@@ -1111,21 +965,17 @@ class OrdersApiTest extends TestCase
                                         'type',
                                         'id',
                                     ],
+                                    1 => [
+                                        'type',
+                                        'id',
+                                    ],
+                                    2 => [
+                                        'type',
+                                        'id',
+                                    ]
                                 ],
                             ],
                             'services' => [
-                                'links' => [
-                                    'self',
-                                    'related',
-                                ],
-                                'data' => [
-                                    0 => [
-                                        'type',
-                                        'id',
-                                    ],
-                                ],
-                            ],
-                            'carriers' => [
                                 'links' => [
                                     'self',
                                     'related',
@@ -1156,47 +1006,25 @@ class OrdersApiTest extends TestCase
                                         'id',
                                     ]
                                 ],
-                            ],
-                            'serviceitems' => [
-                                'links' => [
-                                    'self',
-                                    'related',
-                                ],
-                                'data' => [
-                                    0 => [
-                                        'type',
-                                        'id',
-                                    ],
-                                    1 => [
-                                        'type',
-                                        'id',
-                                    ],
-                                    2 => [
-                                        'type',
-                                        'id',
-                                    ]
-                                ],
                             ]
                         ]
                     ],
                     'included' => [
-                        0 => [
+                        0 => [ // ADDRESS
                             'type',
                             'id',
                             'attributes' => [
-                                'make',
-                                'model',
-                                'class',
-                                'deviceOS',
-                                'description',
-                                'statusId',
-                                'image'
+                                'address',
+                                'city',
+                                'state',
+                                'country',
+                                'postalCode'
                             ],
                             'links' => [
                                 'self'
                             ]
                         ],
-                        1 => [
+                        1 => [ // CARRIERS
                             'type',
                             'id',
                             'attributes' => [
@@ -1204,46 +1032,40 @@ class OrdersApiTest extends TestCase
                                 'presentation',
                                 'active',
                                 'locationId',
-                                'shortName',
-                                'created_at',
-                                'updated_at'
+                                'shortName'
                             ],
                             'links' => [
                                 'self'
                             ]
                         ],
-                        2 => [
+                        2 => [ // USER
                             'type',
                             'id',
                             'attributes' => [
+                                'uuid',
                                 'identification',
-                                'name',
-                                'properties',
-                                'externalId',
-                                'statusId',
-                                'syncId',
-                                'created_at',
-                                'updated_at'
+                                'email',
+                                'alternateEmail',
+                                'username',
+                                'syncId'
                             ],
                             'links' => [
                                 'self'
                             ]
                         ],
-                        3 => [
+                        3 => [ // PACKAGE
                             'type',
                             'id',
                             'attributes' => [
                                 'name',
                                 'addressId',
-                                'companyId',
-                                'created_at',
-                                'updated_at'
+                                'companyId'
                             ],
                             'links' => [
                                 'self'
                             ]
                         ],
-                        4 => [
+                        4 => [ // SERVICE
                             'type',
                             'id',
                             'attributes' => [
@@ -1252,99 +1074,91 @@ class OrdersApiTest extends TestCase
                                 'planCode',
                                 'cost',
                                 'description',
+                                'carrierId'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        5 => [ // APP
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'type',
+                                'image',
+                                'description'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        6 => [ // APP
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'type',
+                                'image',
+                                'description'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        7 => [ // APP
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'type',
+                                'image',
+                                'description'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        8 => [ // DEVICEVARIATIONS
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'priceRetail',
+                                'price1',
+                                'price2',
+                                'priceOwn',
+                                'deviceId',
                                 'carrierId',
-                                'created_at',
-                                'updated_at'
+                                'companyId'
                             ],
                             'links' => [
                                 'self'
                             ]
                         ],
-                        5 => [
+                        9 => [ // DEVICEVARIATIONS
                             'type',
                             'id',
                             'attributes' => [
-                                'type',
-                                'image',
-                                'description',
-                                'created_at',
-                                'updated_at'
+                                'priceRetail',
+                                'price1',
+                                'price2',
+                                'priceOwn',
+                                'deviceId',
+                                'carrierId',
+                                'companyId'
                             ],
                             'links' => [
                                 'self'
                             ]
                         ],
-                        6 => [
+                        10 => [ // DEVICEVARIATIONS
                             'type',
                             'id',
                             'attributes' => [
-                                'type',
-                                'image',
-                                'description',
-                                'created_at',
-                                'updated_at'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        7 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'type',
-                                'image',
-                                'description',
-                                'created_at',
-                                'updated_at'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        8 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'serviceId',
-                                'category',
-                                'description',
-                                'value',
-                                'unit',
-                                'cost',
-                                'domain'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        9 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'serviceId',
-                                'category',
-                                'description',
-                                'value',
-                                'unit',
-                                'cost',
-                                'domain'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        10 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'serviceId',
-                                'category',
-                                'description',
-                                'value',
-                                'unit',
-                                'cost',
-                                'domain'
+                                'priceRetail',
+                                'price1',
+                                'price2',
+                                'priceOwn',
+                                'deviceId',
+                                'carrierId',
+                                'companyId'
                             ],
                             'links' => [
                                 'self'

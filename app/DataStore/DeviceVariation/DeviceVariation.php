@@ -21,6 +21,22 @@ class DeviceVariation extends MutableDataStore
     ];
 
     /**
+     * Get the transformer instance.
+     *
+     * @return mixed
+     */
+    public function getTransformer()
+    {
+        return new DeviceVariationTransformer();
+    }
+     /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function images()
+    {
+        return $this->belongsToMany('WA\DataStore\Image\Image', 'deviceVariation_images', 'deviceVariationId', 'imageId');
+    }
+    /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function modifications()
@@ -28,14 +44,30 @@ class DeviceVariation extends MutableDataStore
         return $this->belongsToMany('WA\DataStore\Modification\Modification', 'device_variations_modifications', 'deviceVariationId', 'modificationId');
     }
 
-
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function presets()
     {
-        return $this->belongsToMany('WA\DataStore\Preset\Preset', 'preset_deviceVariations', 'presetId', 'deviceVariationId');
+        return $this->belongsToMany('WA\DataStore\Preset\Preset', 'preset_device_variations', 'presetId', 'deviceVariationId');
     }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function packages()
+    {
+        return $this->belongsToMany('WA\DataStore\Package\Package', 'package_devices', 'packageId', 'deviceId');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function users()
+    {
+        return $this->belongsToMany('WA\DataStore\User\User', 'user_device_variations', 'userId', 'deviceId');
+    }
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
@@ -59,21 +91,12 @@ class DeviceVariation extends MutableDataStore
     {
         return $this->belongsTo('WA\DataStore\Device\Device', 'deviceId');
     }
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function assets()
+    public function orders()
     {
-        return $this->hasMany('WA\DataStore\Asset\Asset', 'deviceVariationId');
-    }
-
-    /**
-     * Get the transformer instance.
-     *
-     * @return mixed
-     */
-    public function getTransformer()
-    {
-        return new DeviceVariationTransformer();
+        return $this->belongsToMany('WA\DataStore\Order\Order', 'order_device_variations', 'orderId', 'deviceId');
     }
 }

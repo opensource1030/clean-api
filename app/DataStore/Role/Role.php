@@ -1,4 +1,5 @@
 <?php
+
 namespace WA\DataStore\Role;
 use Zizaco\Entrust\Contracts\EntrustRoleInterface;
 use WA\DataStore\BaseDataStore;
@@ -53,4 +54,3 @@ class Role extends BaseDataStore
         });
     }
 }
-

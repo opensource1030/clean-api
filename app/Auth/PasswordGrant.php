@@ -45,9 +45,8 @@ class PasswordGrant extends PassGrant
         $user = $this->validateUser($request, $client);
 
         if (!$this->thisUserHasTheCorrectScope($scopes, $user->getIdentifier())) {
-            $errorMessage = 'The user is not authorized to use the requested scope';
-            $hint = sprintf('Check the `%s` scope', $this->getRequestParameter('scope', $request));
-            throw new OAuthServerException($errorMessage, 0, 'unauthorized_scope', 403, $hint);
+            $error['errors']['scopes'] = 'The User has not assigned the scope needed to complete the request.';
+            return response()->json($error)->setStatusCode('401');
         }
 
         // Finalize the requested scopes

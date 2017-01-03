@@ -30,7 +30,7 @@ use WA\DataStore\Modification\Modification;
 use WA\DataStore\NotificationCategory;
 use WA\DataStore\Order\Order;
 use WA\DataStore\Package\Package;
-use WA\DataStore\Price\Price;
+use WA\DataStore\DeviceVariation\DeviceVariation;
 use WA\DataStore\Request\Request;
 use WA\DataStore\Role\Role;
 use WA\DataStore\Permission\Permission;
@@ -73,7 +73,7 @@ use WA\Repositories\Order\EloquentOrder;
 use WA\Repositories\Package\EloquentPackage;
 use WA\Repositories\Scope\EloquentScope;
 use WA\Repositories\Permission\EloquentPermission;
-use WA\Repositories\Price\EloquentPrice;
+use WA\Repositories\DeviceVariation\EloquentDeviceVariation;
 use WA\Repositories\Request\EloquentRequest;
 use WA\Repositories\Role\EloquentRole;
 use WA\Repositories\Service\EloquentService;
@@ -184,12 +184,12 @@ trait ServiceRegistration
     /**
      * @param
      */
-    public function registerPrice()
+    public function registerDeviceVariation()
     {
         app()->singleton(
-            'WA\Repositories\Price\PriceInterface',
+            'WA\Repositories\DeviceVariation\DeviceVariationInterface',
             function () {
-                return new EloquentPrice(new Price(),
+                return new EloquentDeviceVariation(new DeviceVariation(),
                     app()->make('WA\Repositories\JobStatus\JobStatusInterface')
                 );
             }

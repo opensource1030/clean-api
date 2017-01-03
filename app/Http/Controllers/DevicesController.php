@@ -5,7 +5,7 @@ namespace WA\Http\Controllers;
 use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Lang;
-use WA\DataStore\Price\Price;
+use WA\DataStore\DeviceVariation\DeviceVariation;
 use WA\DataStore\Device\Device;
 use WA\DataStore\Device\DeviceTransformer;
 use WA\Repositories\Device\DeviceInterface;
@@ -49,7 +49,7 @@ class DevicesController extends FilteredApiController
          * Checks if Json has data, data-type & data-attributes.
          */
         if (!$this->isJsonCorrect($request, 'devices')) {
-            $error['errors']['json'] = Lang::get('messages.InvalidJson');
+            //$error['errors']['json'] = Lang::get('messages.InvalidJson');
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
@@ -104,19 +104,6 @@ class DevicesController extends FilteredApiController
                 }
             }
 
-            if (isset($dataRelationships['assets'])) {
-                if (isset($dataRelationships['assets']['data'])) {
-                    $dataAssets = $this->parseJsonToArray($dataRelationships['assets']['data'], 'assets');
-                    try {
-                        $device->assets()->sync($dataAssets);
-                    } catch (\Exception $e) {
-                        $error['errors']['assets'] = Lang::get('messages.NotOptionIncludeClass',
-                            ['class' => 'Device', 'option' => 'updated', 'include' => 'Assets']);
-                        //$error['errors']['Message'] = $e->getMessage();
-                    }
-                }
-            }
-
             if (isset($dataRelationships['modifications'])) {
                 if (isset($dataRelationships['modifications']['data'])) {
                     $dataModifications = $this->parseJsonToArray($dataRelationships['modifications']['data'],
@@ -131,66 +118,43 @@ class DevicesController extends FilteredApiController
                     }
                 }
             }
-
-            if (isset($dataRelationships['carriers'])) {
-                if (isset($dataRelationships['carriers']['data'])) {
-                    $dataCarriers = $this->parseJsonToArray($dataRelationships['carriers']['data'], 'carriers');
-                    try {
-                        $device->carriers()->sync($dataCarriers);
-                    } catch (\Exception $e) {
-                        $success = false;
-                        $error['errors']['carriers'] = Lang::get('messages.NotOptionIncludeClass',
-                            ['class' => 'Device', 'option' => 'updated', 'include' => 'Carriers']);
-                        //$error['errors']['Message'] = $e->getMessage();
-                    }
-                }
-            }
-
-            if (isset($dataRelationships['companies'])) {
-                if (isset($dataRelationships['companies']['data'])) {
-                    $dataCompanies = $this->parseJsonToArray($dataRelationships['companies']['data'], 'companies');
-                    try {
-                        $device->companies()->sync($dataCompanies);
-                    } catch (\Exception $e) {
-                        $success = false;
-                        $error['errors']['companies'] = Lang::get('messages.NotOptionIncludeClass',
-                            ['class' => 'Device', 'option' => 'updated', 'include' => 'Companies']);
-                        //$error['errors']['Message'] = $e->getMessage();
-                    }
-                }
-            }
-
-            try {
+           
+           /* try {
                 $deviceVariations = DeviceVariation::where('deviceId', $id)->get();
-                $interface = app()->make('WA\Repositories\DeviceVariation\DeviceVariationInterface');
+                //$helper = app()->make('WA\Http\Controllers\DeviceVariationsHelperController');
             } catch (\Exception $e) {
                 $error['errors']['devicevariations'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Device', 'option' => 'updated', 'include' => 'DeviceVariations']);
-                $error['errors']['Message'] = $e->getMessage();
+                //$error['errors']['Message'] = $e->getMessage();
                 return response()->json($error)->setStatusCode($this->status_codes['conflict']);
-            }
+            }*/
 
             if (isset($dataRelationships['devicevariations'])) {
                 if (isset($dataRelationships['devicevariations']['data'])) {
-                    $data = $dataRelationships['devicevariations']['data'];
 
                     if ($success) {
-                        try {                           
+                        try {    
+                            $deviceVar = DeviceVariation::where('deviceId', $id)->get();
+                                                   
+                            $helper = app()->make('WA\Http\Controllers\DeviceVariationsHelperController');
 
-                            $data = $this->deleteRepeat($data);
-
-                            $this->deleteNotRequested($data, $deviceVariations, $interface, 'devicevariations');
-
-                            foreach ($data as $deviceVariations) {
-                                $check = $this->checkIfDeviceVariationsRowIsCorrect($deviceVariations, $dataModifications);
-                                if ($check['bool']) {
-                                    $deviceVariations['deviceId'] = $device->id;
-
-                                    if (isset($deviceVariations['id'])) {
+                            
+        
+                            $this->deleteNotRequested($dataRelationships['devicevariations']['data'], $deviceVar, $helper, 'devicevariations');                       
+                                //$check = $this->checkIfDeviceVariationsRowIsCorrect($deviceVariations, $dataModifications);
+                                //if ($check['bool']) {
+                                    
+                                    $success=$helper->store($dataRelationships['devicevariations'],$device->id);
+                                    if (!$success){ 
+                                        $error['errors']['devicevariations'] = Lang::get('messages.NotOptionIncludeClass',
+                                        ['class' => 'Device', 'option' => 'updated', 'include' => 'DeviceVariations']);
+                                        //$error['errors']['Message'] = $e->getMessage();
+                                    }
+                                    /*if (isset($deviceVariations['id'])) {
                                         if ($deviceVariations['id'] == 0) {
-                                            $interface->create($deviceVariations);
+                                            $helper->create($deviceVariations);
                                         } else {
                                             if ($deviceVariations['id'] > 0) {
-                                                $interface->update($deviceVariations);
+                                                $helper->update($deviceVariations);
                                             } else {
                                                 $success = false;
                                                 $error['errors']['devicevariations'] = 'the Device Variation has an incorrect id';
@@ -199,17 +163,17 @@ class DevicesController extends FilteredApiController
                                     } else {
                                         $success = false;
                                         $error['errors']['devicevariations'] = 'the Device Variation has no id';
-                                    }
+                                    }*/
 
-                                } else {
+                               /* } else {
                                     $success = false;
                                     $error['errors']['devicevariations'] = Lang::get('messages.NotOptionIncludeClass',
-                                        ['class' => 'Device', 'option' => 'updated', 'include' => 'DeviceVariations']);
+                                        ['class' => 'Device', 'option' => 'updated', 'include' => 'Devicevariations']);
                                     //$error['errors']['Check'] = $check['error'];
                                     //$error['errors']['IdError'] = $check['id'];
                                     //$error['errors']['Message'] = 'Any price rows are not correct and no references provided relationships.';
-                                }
-                            }
+                                }*/
+                            
                         } catch (\Exception $e) {
                             $success = false;
                             $error['errors']['devicevariations'] = Lang::get('messages.NotOptionIncludeClass',
@@ -219,7 +183,7 @@ class DevicesController extends FilteredApiController
                     } else {
                         $success = false;
                         $error['errors']['devicevariations'] = Lang::get('messages.NotIncludeExistsOptionClass',
-                            ['class' => 'Device', 'option' => 'updated', 'include' => 'DeviceVariations']);
+                            ['class' => 'Device', 'option' => 'updated', 'include' => 'Devicevariations']);
                         //$error['errors']['Message'] = $e->getMessage();
                     }
                 }
@@ -243,14 +207,14 @@ class DevicesController extends FilteredApiController
      * @return \Dingo\Api\Http\Response
      */
     public function create(Request $request)
-    {
+    {   
         $success = true;
         $dataImages =  $dataModifications = array();
 
         /*
          * Checks if Json has data, data-type & data-attributes.
          */
-        if (!$this->isJsonCorrect($request, 'devices')) {
+        if (!$this->isJsonCorrect($request, 'devices')) { 
             $error['errors']['json'] = Lang::get('messages.InvalidJson');
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         } else {
@@ -270,7 +234,7 @@ class DevicesController extends FilteredApiController
             DB::rollBack();
             $error['errors']['devices'] = Lang::get('messages.NotOptionIncludeClass',
                 ['class' => 'Device', 'option' => 'created', 'include' => '']);
-            //$error['errors']['Message'] = $e->getMessage();
+            $error['errors']['Message'] = $e->getMessage();
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
@@ -311,33 +275,38 @@ class DevicesController extends FilteredApiController
 
             if (isset($dataRelationships['devicevariations'])) {
                 if (isset($dataRelationships['devicevariations']['data'])) {
-                    $data = $dataRelationships['devicevariations']['data'];
+                    //$data = $dataRelationships['devicevariations']['data'];
+
+
 
                     if ($success) {
                         try {
-                            $interface = app()->make('WA\Repositories\DeviceVariation\DeviceVariationInterface');
+                            $helper = app()->make('WA\Http\Controllers\DeviceVariationsHelperController');
 
-                            $data = $this->deleteRepeat($data);
+                            //$data = $this->deleteRepeat($data);
+                            
 
-                            foreach ($data as $deviceVariations) {
-                                $check = $this->checkIfDeviceVariationsRowIsCorrect($deviceVariations, $device);
-                                if ($check['bool']) {
-                                    $deviceVariations['deviceId'] = $device->id;
-                                    $interface->create($deviceVariations);
-                                } else {
+                            //foreach ($data as $deviceVariations) {
+                                //$check = $this->checkIfDeviceVariationsRowIsCorrect($deviceVariations, $device);
+                               // if ($check['bool']) {
+                                    //$data['attributes']['deviceId'] = $device->id;
+                                    $helper->create($dataRelationships['devicevariations'], $device->id);
+                               /* } else {
                                     $success = false;
                                     $error['errors']['devicevariations'] = Lang::get('messages.NotOptionIncludeClass',
                                         ['class' => 'Device', 'option' => 'created', 'include' => 'DeviceVariations']);
                                     //$error['errors']['Check'] = $check['error'];
                                     //$error['errors']['IdError'] = $check['id'];
                                     //$error['errors']['Message'] = 'Any devicevariations rows are not correct and no references provided relationships.';
-                                }
-                            }
+                                }*/
+                            
                         } catch (\Exception $e) {
+
                             $success = false;
-                            $error['errors']['devicevariations'] = Lang::get('messages.NotOptionIncludeClass',
-                                ['class' => 'Device', 'option' => 'created', 'include' => 'DeviceVariations']);
-                            //$error['errors']['Message'] = $e->getMessage();
+                            $errors = 'Device Variation not created.';
+                           //$error['errors']['devicevariations'] = Lang::get('messages.NotOptionIncludeClass',
+                                //['class' => 'Device', 'option' => 'created', 'include' => 'DeviceVariations']);
+                            $error['errors']['Message'] = $e->getMessage();
                         }
                     } else {
                         $success = false;
@@ -374,21 +343,10 @@ class DevicesController extends FilteredApiController
 
                     $esIgual = true;
 
-
-                    if ($dataAux[$k]['capacityId'] <> $data[$j]['capacityId']) {
-                        $esIgual = $esIgual && false;
-                    }
-                    if ($dataAux[$k]['styleId'] <> $data[$j]['styleId']) {
-                        $esIgual = $esIgual && false;
-                    }
-                    if ($dataAux[$k]['carrierId'] <> $data[$j]['carrierId']) {
-                        $esIgual = $esIgual && false;
-
                     if (isset($dataAux[$k]['carrierId']) && isset($data[$j]['carrierId'])) {
                         if ($dataAux[$k]['carrierId'] <> $data[$j]['carrierId']) {
                             $esIgual = $esIgual && false;
                         }    
-
                     }
                     if (isset($dataAux[$k]['deviceId']) && isset($data[$j]['deviceId'])) {
                         if ($dataAux[$k]['deviceId'] <> $data[$j]['deviceId']) {
@@ -416,7 +374,7 @@ class DevicesController extends FilteredApiController
         }
         return $dataAux;
     }
-}
+
     private function checkIfDeviceVariationsRowIsCorrect($deviceVariations, $deviceId)
     {   $modInterface = app()->make('WA\Repositories\Device\DeviceInterface');
 
@@ -488,59 +446,40 @@ class DevicesController extends FilteredApiController
     }
 
     /*
-     *
-     * PRIVATE FUNCTIONS
-     *
-     */
-
-    /*
-     *      Checks if an ARRAY has repeated rows and returns an ARRAY without them.
+     *      Checks if an ARRAY param of Prices has information that is equal to the other information provided.
      *
      *      @param: 
-     *          "prices" : {
-     *              "data" : [
-     *                  {
-     *                      "type": "prices",
-     *                      "capacityId": 1,
-     *                      "styleId": 2,
-     *                      "carrierId": 1,
-     *                      "companyId": 1,
-     *                      "priceRetail": 100,
-     *                      "price1": 100,
-     *                      "price2": 100,
-     *                      "priceOwn": 100
-     *                  },
-     *                  {
-     *                      "type": "prices",
-     *                      "capacityId": 1,
-     *                      "styleId": 2,
-     *                      "carrierId": 1,
-     *                      "companyId": 1,
-     *                      "priceRetail": 100,
-     *                      "price1": 100,
-     *                      "price2": 100,
-     *                      "priceOwn": 100
-     *                  },
-     *                  ...
-     *      @return: array(
-     *                  {
-     *                      "type": "prices",
-     *                      "capacityId": 1,
-     *                      "styleId": 2,
-     *                      "carrierId": 1,
-     *                      "companyId": 1,
-     *                      "priceRetail": 100,
-     *                      "price1": 100,
-     *                      "price2": 100,
-     *                      "priceOwn": 100
-     *                  },
-     *                  ...
+     *          array (size=9) (prices)
+     *              'type' => string 'prices' (length=6)
+     *              'capacityId' => int 1
+     *              'styleId' => int 2
+     *              'carrierId' => int 1
+     *              'companyId' => int 1
+     *              'priceRetail' => int 100
+     *              'price1' => int 100
+     *              'price2' => int 100
+     *              'priceOwn' => int 100
+     *          array (size=3) (modifications)
+     *              0 => int 1
+     *              1 => int 2
+     *              2 => int 3
+     *          array (size=2) (carriers)
+     *              0 => int 1
+     *              1 => int 2
+     *          array (size=2) (companies)
+     *              0 => int 1
+     *              1 => int 2
+     *      @return:
+     *          array (size=3)
+     *              'bool' => boolean true
+     *              'error' => string 'No Error' (length=8)
+     *              'id' => int 0
      */
 
     /**
-     * Create a new device
+     * Delete a device
      *
-     * @return \Dingo\Api\Http\Response
+     * @param $id
      */
     public function delete($id)
     {

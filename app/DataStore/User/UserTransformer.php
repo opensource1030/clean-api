@@ -15,14 +15,14 @@ class UserTransformer extends FilterableTransformer
 
     protected $availableIncludes = [
         'assets',
-        'devices',
+        'services',
         'companies',
+        'orders',
+        'devicevariations',
         'roles',
         'allocations',
         'contents',
         'udls',
-        'contents',
-        'orders'
     ];
 
     protected $defaultIncludes = [

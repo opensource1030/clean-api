@@ -16,7 +16,7 @@ class UsersApiTest extends TestCase
     {
         $user = factory(\WA\DataStore\User\User::class, 20)->create();
         $res = $this->json('GET', '/users')
-       // Log::debug("Users: ".print_r($res->response->getContent(), true));
+        //Log::debug("Users: ".print_r($res->response->getContent(), true));
             ->seeJsonStructure([
                 'data' => [
                     0 => [
@@ -111,7 +111,6 @@ class UsersApiTest extends TestCase
                 ],
             ]);
     }
-
     public function testGetUserByIdIfExists()
     {
         $user = factory(\WA\DataStore\User\User::class)->create();
@@ -321,10 +320,9 @@ class UsersApiTest extends TestCase
     public function testGetUserByIdandIncludesAssets()
     {
         $user = factory(\WA\DataStore\User\User::class)->create();
-        $asset1 = factory(\WA\DataStore\Asset\Asset::class)->create()->id;
-        $asset2 = factory(\WA\DataStore\Asset\Asset::class)->create()->id;
-        $dataAssets = array($asset1, $asset2);
-        $user->assets()->sync($dataAssets);
+        $asset1 = factory(\WA\DataStore\Asset\Asset::class)->create(['userId' => $user->id])->id;
+        $asset2 = factory(\WA\DataStore\Asset\Asset::class)->create(['userId' => $user->id])->id;
+
         $response = $this->json('GET', 'users/'.$user->id.'?include=assets')
             ->seeJsonStructure([
                 'data' => [
@@ -430,14 +428,16 @@ class UsersApiTest extends TestCase
             ]);
     }
 
-    public function testGetUserByIdandIncludesDevices()
+    public function testGetUserByIdandIncludesDeviceVariations()
     {
         $user = factory(\WA\DataStore\User\User::class)->create();
-        $device1 = factory(\WA\DataStore\Device\Device::class)->create()->id;
-        $device2 = factory(\WA\DataStore\Device\Device::class)->create()->id;
-        $datadevices = array($device1, $device2);
-        $user->devices()->sync($datadevices);
-        $res = $this->json('GET', 'users/'.$user->id.'?include=devices')
+
+        $deviceVariation1 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create()->id;
+        $deviceVariation2 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create()->id;
+        $datadevicevariations = array($deviceVariation1, $deviceVariation2);
+        $user->devicevariations()->sync($datadevicevariations);
+        
+        $res = $this->json('GET', 'users/'.$user->id.'?include=devicevariations')
         //Log::debug("Users/id: ".print_r($res->response->getContent(), true));
             ->seeJsonStructure([
                 'data' => [
@@ -492,7 +492,7 @@ class UsersApiTest extends TestCase
                                 ],
                             ],
                         ],
-                        'devices' => [
+                        'devicevariations' => [
                             'links' => [
                                 'self',
                                 'related',
@@ -502,12 +502,16 @@ class UsersApiTest extends TestCase
                                     'type',
                                     'id',
                                 ],
-                            ],
-                        ],
-                    ],
+                                1 => [
+                                    'type',
+                                    'id',
+                                ]
+                            ]
+                        ]
+                    ]
                 ],
                 'included' => [
-                    2 => [
+                    0 => [
                         'type',
                         'id',
                         'attributes' => [
@@ -523,22 +527,39 @@ class UsersApiTest extends TestCase
                             'self'
                         ]
                     ],
-                    3 => [
+                    1 => [
                         'type',
                         'id',
                         'attributes' => [
-                            'identification',
-                            'name',
-                            'properties',
-                            'externalId',
-                            'statusId',
-                            'syncId',
+                            'priceRetail',
+                            'price1',
+                            'price2',
+                            'priceOwn',
+                            'deviceId',
+                            'carrierId',
+                            'companyId',
                         ],
                         'links' => [
                             'self',
                         ],
                     ],
-                ],
+                    2 => [
+                        'type',
+                        'id',
+                        'attributes' => [
+                            'priceRetail',
+                            'price1',
+                            'price2',
+                            'priceOwn',
+                            'deviceId',
+                            'carrierId',
+                            'companyId',
+                        ],
+                        'links' => [
+                            'self',
+                        ]
+                    ]
+                ]
             ]);
     }
 
@@ -601,8 +622,8 @@ class UsersApiTest extends TestCase
                                 0 => [
                                     'type',
                                     'id',
-                                ],
-                            ],
+                                ]
+                            ]
                         ],
                         'roles' => [
                             'links' => [
@@ -614,9 +635,13 @@ class UsersApiTest extends TestCase
                                     'type',
                                     'id',
                                 ],
-                            ],
-                        ],
-                    ],
+                                1 => [
+                                    'type',
+                                    'id',
+                                ]
+                            ]
+                        ]
+                    ]
                 ],
                 'included' => [
                     0 => [
@@ -645,9 +670,20 @@ class UsersApiTest extends TestCase
                             'self',
                         ],
                     ],
-                ],
+                    2 => [
+                        'type',
+                        'id',
+                        'attributes' => [
+                            'name'
+                        ],
+                        'links' => [
+                            'self',
+                        ]
+                    ]
+                ]
             ]);
     }
+    
     public function testGetUserByIdandIncludesUdls()
     {
         $user = factory(\WA\DataStore\User\User::class)->create();
@@ -757,6 +793,7 @@ class UsersApiTest extends TestCase
                 ],
             ]);
     }
+    
     public function testGetUserByIdandIncludesCompanies()
     {
         $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
@@ -864,6 +901,7 @@ class UsersApiTest extends TestCase
                 ],
             ]);
     }
+    
     public function testGetUserByIdandIncludesAllocations()
     {
         $user = factory(\WA\DataStore\User\User::class)->create();
@@ -987,6 +1025,7 @@ class UsersApiTest extends TestCase
                 ]
             ]);
     }
+    
     public function testGetUserByIdandIncludesContents()
     {
         $user = factory(\WA\DataStore\User\User::class)->create();
@@ -1094,6 +1133,7 @@ class UsersApiTest extends TestCase
                 ],
             ]);
     }
+
     public function testCreateUser()
     {
         $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
@@ -1102,26 +1142,37 @@ class UsersApiTest extends TestCase
  
         $asset1 = factory(\WA\DataStore\Asset\Asset::class)->create()->id;
         $asset2 = factory(\WA\DataStore\Asset\Asset::class)->create()->id;
-        $device1 = factory(\WA\DataStore\Device\Device::class)->create()->id;
-        $device2 = factory(\WA\DataStore\Device\Device::class)->create()->id;
+        
+        $devicevariation1 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create()->id;
+        $devicevariation2 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create()->id;
+        
         $role1 = factory(\WA\DataStore\Role\Role::class)->create()->id;
         $role2 = factory(\WA\DataStore\Role\Role::class)->create()->id;
+        
         $udl1 = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $companyId])->id;
         $udl2 = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $companyId])->id;
+        
         $udlV1 = factory(\WA\DataStore\UdlValue\UdlValue::class)->create(['udlId' => $udl1])->id;
         $udlV2 = factory(\WA\DataStore\UdlValue\UdlValue::class)->create(['udlId' => $udl2])->id;
-        $allocation1 = factory(\WA\DataStore\Allocation\Allocation::class)->create();
+        
         $carrier1 = factory(\WA\DataStore\Carrier\Carrier::class)->create();
+
+        $allocation1 = factory(\WA\DataStore\Allocation\Allocation::class)->create();
         $allocation1->carriers()->associate($carrier1);
         $allocation1->save();
-        $allocation2 = factory(\WA\DataStore\Allocation\Allocation::class)->create();
 
+        $allocation2 = factory(\WA\DataStore\Allocation\Allocation::class)->create();
         $allocation2->carriers()->associate($carrier1);
         $allocation2->save();
 
         $content1 = factory(\WA\DataStore\Content\Content::class)->create();
         $content2 = factory(\WA\DataStore\Content\Content::class)->create();
-        $res = $this->json('POST', '/users?include=assets,devices,roles,udls,allocations,companies,contents',
+
+        $service1 = factory(\WA\DataStore\Service\Service::class)->create();
+        $service2 = factory(\WA\DataStore\Service\Service::class)->create();
+
+
+        $res = $this->json('POST', '/users?include=assets,devicevariations,roles,udls,allocations,companies,contents',
             [
                 'data' => [
                     'type' => 'users',
@@ -1164,10 +1215,16 @@ class UsersApiTest extends TestCase
                                 ['type' => 'assets', 'id' => $asset2],
                             ],
                         ],
-                        'devices' => [
+                        'devicevariations' => [
                             'data' => [
-                                ['type' => 'devices', 'id' => $device1],
-                                ['type' => 'devices', 'id' => $device2],
+                                ['type' => 'devicevariations', 'id' => $devicevariation1],
+                                ['type' => 'devicevariations', 'id' => $devicevariation2],
+                            ],
+                        ],
+                        'services' => [
+                            'data' => [
+                                ['type' => 'services', 'id' => $service1],
+                                ['type' => 'services', 'id' => $service2],
                             ],
                         ],
                         'roles' => [
@@ -1385,17 +1442,9 @@ class UsersApiTest extends TestCase
                                     'related'
                                 ],
                                 'data' => [
-                                    0 => [
-                                        'type',
-                                        'id'
-                                    ],
-                                    1 => [
-                                        'type',
-                                        'id'
-                                    ]
                                 ]
                             ],
-                            'devices' => [
+                            'devicevariations' => [
                                 'links' => [
                                     'self',
                                     'related'
@@ -1490,39 +1539,7 @@ class UsersApiTest extends TestCase
                         ]
                     ],
                     'included' => [
-                        0 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'make',
-                                'model',
-                                'class',
-                                'deviceOS',
-                                'description',
-                                'statusId',
-                                'image'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        1 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'make',
-                                'model',
-                                'class',
-                                'deviceOS',
-                                'description',
-                                'statusId',
-                                'image'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        2 => [
+                        0 => [ // ADDRESS
                             'type',
                             'id',
                             'attributes' => [
@@ -1536,69 +1553,7 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        3 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'identification',
-                                'active',
-                                'statusId',
-                                'typeId',
-                                'externalId',
-                                'carrierId',
-                                'syncId'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        4 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'identification',
-                                'active',
-                                'statusId',
-                                'typeId',
-                                'externalId',
-                                'carrierId',
-                                'syncId'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        5 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'identification',
-                                'name',
-                                'properties',
-                                'externalId',
-                                'statusId',
-                                'syncId'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        6 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'identification',
-                                'name',
-                                'properties',
-                                'externalId',
-                                'statusId',
-                                'syncId'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        7 => [
+                        1 => [ // COMPANIES
                             'type',
                             'id',
                             'attributes' => [
@@ -1615,7 +1570,39 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        8 => [
+                        2 => [ // DEVICEVARIANTS
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'priceRetail',
+                                'price1',
+                                'price2',
+                                'priceOwn',
+                                'deviceId',
+                                'carrierId',
+                                'companyId'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        3 => [ // DEVICEVARIANTS
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'priceRetail',
+                                'price1',
+                                'price2',
+                                'priceOwn',
+                                'deviceId',
+                                'carrierId',
+                                'companyId'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        4 => [ // ROLES
                             'type',
                             'id',
                             'attributes' => [
@@ -1625,7 +1612,7 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        9 => [
+                        5 => [ // ROLES
                             'type',
                             'id',
                             'attributes' => [
@@ -1635,7 +1622,7 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        10 => [
+                        6 => [ // ALLOCATIONS
                             'type',
                             'id',
                             'attributes' => [
@@ -1655,7 +1642,7 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        11 => [
+                        7 => [ // ALLOCATIONS
                             'type',
                             'id',
                             'attributes' => [
@@ -1675,7 +1662,7 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        12 => [
+                        8 => [  // CONTENTS
                             'type',
                             'id',
                             'attributes' => [
@@ -1688,7 +1675,7 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        13 => [
+                        9 => [ // CONTENTS
                             'type',
                             'id',
                             'attributes' => [
@@ -1701,7 +1688,7 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        14 => [
+                        10 => [ // UDLS
                             'type',
                             'id',
                             'attributes' => [
@@ -1712,7 +1699,7 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        15 => [
+                        11 => [ // UDLS
                             'type',
                             'id',
                             'attributes' => [
@@ -1726,6 +1713,7 @@ class UsersApiTest extends TestCase
                     ]
                 ]);
     }
+
     public function testCreateUserReturnNoValidData()
     {
         // 'data' no valid.
@@ -1742,6 +1730,7 @@ class UsersApiTest extends TestCase
             ]
         );
     }
+
     public function testCreateUserReturnNoValidType()
     {
         // 'type' no valid.
@@ -1763,6 +1752,7 @@ class UsersApiTest extends TestCase
             ]
         );
     }
+
     public function testCreateUserReturnNoValidAttributes()
     {
         // 'attributes' no valid.
@@ -1784,6 +1774,7 @@ class UsersApiTest extends TestCase
             ]
         );
     }
+    
     public function testCreateUserReturnRelationshipNoExists()
     {
         $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
@@ -2776,15 +2767,13 @@ class UsersApiTest extends TestCase
         $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId, 'addressId' => $addressId]);
  
         // ASSETS
-        $asset1 = factory(\WA\DataStore\Asset\Asset::class)->create();
-        $asset2 = factory(\WA\DataStore\Asset\Asset::class)->create();
-        $arrayA = array($asset1->id, $asset2->id);
-        $user->assets()->sync($arrayA);
-        $userAssetDB = DB::table('user_assets')->where('userId', $user->id)->get();
+        $asset1 = factory(\WA\DataStore\Asset\Asset::class)->create(['userId' => $user->id]);
+        $asset2 = factory(\WA\DataStore\Asset\Asset::class)->create(['userId' => $user->id]);
 
+        $userAssetDB = DB::table('assets')->where('userId', $user->id)->get();
         $this->assertCount(2, $userAssetDB);
-        $this->assertEquals($userAssetDB[0]->assetId, $asset1->id);
-        $this->assertEquals($userAssetDB[1]->assetId, $asset2->id);
+        $this->assertEquals($userAssetDB[0]->id, $asset1->id);
+        $this->assertEquals($userAssetDB[1]->id, $asset2->id);
         $asset1DB = DB::table('assets')->where('id', $asset1->id)->get()[0];
         $asset2DB = DB::table('assets')->where('id', $asset2->id)->get()[0];
         
@@ -2806,38 +2795,36 @@ class UsersApiTest extends TestCase
         $this->assertEquals($asset2DB->statusId, $asset2->statusId);
         $this->assertEquals($asset2DB->syncId, $asset2->syncId);
 
-        // DEVICES        
-        $device1 = factory(\WA\DataStore\Device\Device::class)->create();
-        $device2 = factory(\WA\DataStore\Device\Device::class)->create();
-        $arrayD = array($device1->id, $device2->id);
-        $user->devices()->sync($arrayD);
+        // DEVICE VARIATIONS       
+        $devicevariation1 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create();
+        $devicevariation2 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create();
+        $arrayD = array($devicevariation1->id, $devicevariation2->id);
+        $user->devicevariations()->sync($arrayD);
 
-        $userDeviceDB = DB::table('user_devices')->where('userId', $user->id)->get();
+        $userDeviceDB = DB::table('user_device_variations')->where('userId', $user->id)->get();
         $this->assertCount(2, $userDeviceDB);
-        $this->assertEquals($userDeviceDB[0]->deviceId, $device1->id);
-        $this->assertEquals($userDeviceDB[1]->deviceId, $device2->id);
-
-        $device1DB = DB::table('devices')->where('id', $device1->id)->get()[0];
-        $device2DB = DB::table('devices')->where('id', $device2->id)->get()[0];
+        $this->assertEquals($userDeviceDB[0]->deviceVariationId, $devicevariation1->id);
+        $this->assertEquals($userDeviceDB[1]->deviceVariationId, $devicevariation2->id);
         
-        $this->assertEquals($device1DB->id, $device1->id);
-        $this->assertEquals($device1DB->identification, $device1->identification);
-        $this->assertEquals($device1DB->name, $device1->name);
-        $this->assertEquals($device1DB->properties, $device1->properties);
-        $this->assertEquals($device1DB->externalId, $device1->externalId);
-        $this->assertEquals($device1DB->deviceTypeId, $device1->deviceTypeId);
-        $this->assertEquals($device1DB->statusId, $device1->statusId);
-        $this->assertEquals($device1DB->syncId, $device1->syncId);
-
-        $this->assertEquals($device2DB->id, $device2->id);
-        $this->assertEquals($device2DB->identification, $device2->identification);
-        $this->assertEquals($device2DB->name, $device2->name);
-        $this->assertEquals($device2DB->properties, $device2->properties);
-        $this->assertEquals($device2DB->externalId, $device2->externalId);
-        $this->assertEquals($device2DB->deviceTypeId, $device2->deviceTypeId);
-        $this->assertEquals($device2DB->statusId, $device2->statusId);
-        $this->assertEquals($device2DB->syncId, $device2->syncId);
-
+        $deviceVar1DB = DB::table('device_variations')->where('id', $devicevariation1->id)->get()[0];
+        $deviceVar2DB = DB::table('device_variations')->where('id', $devicevariation2->id)->get()[0];
+        $this->assertEquals($deviceVar1DB->id, $devicevariation1->id);
+        $this->assertEquals($deviceVar1DB->priceRetail, $devicevariation1->priceRetail);
+        $this->assertEquals($deviceVar1DB->price1, $devicevariation1->price1);
+        $this->assertEquals($deviceVar1DB->price2, $devicevariation1->price2);
+        $this->assertEquals($deviceVar1DB->priceOwn, $devicevariation1->priceOwn);
+        $this->assertEquals($deviceVar1DB->deviceId, $devicevariation1->deviceId);
+        $this->assertEquals($deviceVar1DB->carrierId, $devicevariation1->carrierId);
+        $this->assertEquals($deviceVar1DB->companyId, $devicevariation1->companyId);
+        $this->assertEquals($deviceVar2DB->id, $devicevariation2->id);
+        $this->assertEquals($deviceVar2DB->priceRetail, $devicevariation2->priceRetail);
+        $this->assertEquals($deviceVar2DB->price1, $devicevariation2->price1);
+        $this->assertEquals($deviceVar2DB->price2, $devicevariation2->price2);
+        $this->assertEquals($deviceVar2DB->priceOwn, $devicevariation2->priceOwn);
+        $this->assertEquals($deviceVar2DB->deviceId, $devicevariation2->deviceId);
+        $this->assertEquals($deviceVar2DB->carrierId, $devicevariation2->carrierId);
+        $this->assertEquals($deviceVar2DB->companyId, $devicevariation2->companyId);
+        
         // ROLES
         $role1 = factory(\WA\DataStore\Role\Role::class)->create();
         $role2 = factory(\WA\DataStore\Role\Role::class)->create();
@@ -2894,7 +2881,7 @@ class UsersApiTest extends TestCase
 
         $content1 = factory(\WA\DataStore\Content\Content::class)->create(['owner_id' => $user->id, 'owner_type' => 'users']);
         $content2 = factory(\WA\DataStore\Content\Content::class)->create(['owner_id' => $user->id, 'owner_type' => 'users']);
-        $res = $this->json('PATCH', '/users/'.$user->id.'?include=assets,devices,roles,udls,allocations,companies,contents',
+        $res = $this->json('PATCH', '/users/'.$user->id.'?include=assets,devicevariations,roles,udls,allocations,companies,contents',
             [
                 'data' => [
                     'type' => 'users',
@@ -2936,9 +2923,9 @@ class UsersApiTest extends TestCase
                                 ['type' => 'assets', 'id' => $asset1->id]
                             ],
                         ],
-                        'devices' => [
+                        'devicevariations' => [
                             'data' => [
-                                ['type' => 'devices', 'id' => $device1->id]
+                                ['type' => 'devicevariations', 'id' => $devicevariation1->id]
                             ],
                         ],
                         'roles' => [
@@ -3109,10 +3096,14 @@ class UsersApiTest extends TestCase
                                     0 => [
                                         'type',
                                         'id'
+                                    ],
+                                    1 => [
+                                        'type',
+                                        'id'
                                     ]
                                 ]
                             ],
-                            'devices' => [
+                            'devicevariations' => [
                                 'links' => [
                                     'self',
                                     'related'
@@ -3187,23 +3178,7 @@ class UsersApiTest extends TestCase
                         ]
                     ],
                     'included' => [
-                        0 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'make',
-                                'model',
-                                'class',
-                                'deviceOS',
-                                'description',
-                                'statusId',
-                                'image'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        1 => [
+                        0 => [ // ADDRESS
                             'type',
                             'id',
                             'attributes' => [
@@ -3217,7 +3192,7 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        2 => [
+                        1 => [ // ASSETS
                             'type',
                             'id',
                             'attributes' => [
@@ -3233,22 +3208,23 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        3 => [
+                        2 => [ // ASSETS
                             'type',
                             'id',
                             'attributes' => [
                                 'identification',
-                                'name',
-                                'properties',
-                                'externalId',
+                                'active',
                                 'statusId',
+                                'typeId',
+                                'externalId',
+                                'carrierId',
                                 'syncId'
                             ],
                             'links' => [
                                 'self'
                             ]
                         ],
-                        4 => [
+                        3 => [ // COMPANIES
                             'type',
                             'id',
                             'attributes' => [
@@ -3265,7 +3241,24 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        5 => [
+                        4 => [ // DEVICEVARIATIONS
+                            'type',
+                            'id',
+                            'attributes' => [
+                                
+                                'priceRetail',
+                                'price1',
+                                'price2',
+                                'priceOwn',
+                                'deviceId',
+                                'carrierId',
+                                'companyId'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        5 => [ // ROLES
                             'type',
                             'id',
                             'attributes' => [
@@ -3275,7 +3268,7 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        6 => [
+                        6 => [ // ALLOCATIONS
                             'type',
                             'id',
                             'attributes' => [
@@ -3295,7 +3288,7 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        7 => [
+                        7 => [ // CONTENTS
                             'type',
                             'id',
                             'attributes' => [
@@ -3308,7 +3301,7 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        8 => [
+                        8 => [ // UDLVALUES
                             'type',
                             'id',
                             'attributes' => [
@@ -3328,23 +3321,22 @@ class UsersApiTest extends TestCase
         $addressId = factory(\WA\DataStore\Address\Address::class)->create()->id;
         $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId, 'addressId' => $addressId]);
  
-        $asset1 = factory(\WA\DataStore\Asset\Asset::class)->create()->id;
-        $asset2 = factory(\WA\DataStore\Asset\Asset::class)->create()->id;
-        $arrayA = array($asset1, $asset2);
-        $user->assets()->sync($arrayA);
+        $asset1 = factory(\WA\DataStore\Asset\Asset::class)->create(['userId' => $user->id])->id;
+        $asset2 = factory(\WA\DataStore\Asset\Asset::class)->create(['userId' => $user->id])->id;
         $asset3 = factory(\WA\DataStore\Asset\Asset::class)->create()->id;
-
-        $device1 = factory(\WA\DataStore\Device\Device::class)->create()->id;
-        $device2 = factory(\WA\DataStore\Device\Device::class)->create()->id;
-        $arrayD = array($device1, $device2);
-        $user->devices()->sync($arrayD);
-        $device3 = factory(\WA\DataStore\Device\Device::class)->create()->id;
-
+        
+        $deviceVariation1 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create()->id;
+        $deviceVariation2 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create()->id;
+        $arrayD = array($deviceVariation1, $deviceVariation2);
+        $user->devicevariations()->sync($arrayD);
+        $deviceVariation3 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create()->id;
+        
         $role1 = factory(\WA\DataStore\Role\Role::class)->create()->id;
         $role2 = factory(\WA\DataStore\Role\Role::class)->create()->id;
         $arrayR = array($role1, $role2);
         $user->roles()->sync($arrayR);
         $role3 = factory(\WA\DataStore\Role\Role::class)->create()->id;
+        
         $udl1 = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $companyId])->id;
         $udl2 = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $companyId])->id;
         $udlV1 = factory(\WA\DataStore\UdlValue\UdlValue::class)->create(['udlId' => $udl1])->id;
@@ -3353,6 +3345,8 @@ class UsersApiTest extends TestCase
         $user->udlValues()->sync($arrayU);
         $udl3 = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $companyId])->id;
         $udlV3 = factory(\WA\DataStore\UdlValue\UdlValue::class)->create(['udlId' => $udl2])->id;
+
+        $carrier = factory(\WA\DataStore\Carrier\Carrier::class)->create();
 
         $allocation1 = factory(\WA\DataStore\Allocation\Allocation::class)->create(['userId' => $user->id]);
         $allocation1->carriers()->associate($carrier);
@@ -3364,7 +3358,7 @@ class UsersApiTest extends TestCase
         $content1 = factory(\WA\DataStore\Content\Content::class)->create(['owner_id' => $user->id, 'owner_type' => 'users']);
         $content2 = factory(\WA\DataStore\Content\Content::class)->create(['owner_id' => $user->id, 'owner_type' => 'users']);
         
-        $res = $this->json('PATCH', '/users/'.$user->id.'?include=assets,devices,roles,udls,allocations,companies,contents',
+        $res = $this->json('PATCH', '/users/'.$user->id.'?include=assets,devicevariations,roles,udls,allocations,companies,contents',
             [
                 'data' => [
                     'type' => 'users',
@@ -3408,11 +3402,11 @@ class UsersApiTest extends TestCase
                                 ['type' => 'assets', 'id' => $asset3]
                             ],
                         ],
-                        'devices' => [
+                        'devicevariations' => [
                             'data' => [
-                                ['type' => 'devices', 'id' => $device1],
-                                ['type' => 'devices', 'id' => $device2],
-                                ['type' => 'devices', 'id' => $device3]
+                                ['type' => 'devicevariations', 'id' => $deviceVariation1],
+                                ['type' => 'devicevariations', 'id' => $deviceVariation2],
+                                ['type' => 'devicevariations', 'id' => $deviceVariation3]
                             ],
                         ],
                         'roles' => [
@@ -3698,7 +3692,7 @@ class UsersApiTest extends TestCase
                                     ]
                                 ]
                             ],
-                            'devices' => [
+                            'devicevariations' => [
                                 'links' => [
                                     'self',
                                     'related'
@@ -3817,54 +3811,6 @@ class UsersApiTest extends TestCase
                             'type',
                             'id',
                             'attributes' => [
-                                'make',
-                                'model',
-                                'class',
-                                'deviceOS',
-                                'description',
-                                'statusId',
-                                'image'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        1 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'make',
-                                'model',
-                                'class',
-                                'deviceOS',
-                                'description',
-                                'statusId',
-                                'image'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        2 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'make',
-                                'model',
-                                'class',
-                                'deviceOS',
-                                'description',
-                                'statusId',
-                                'image'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        3 => [
-                            'type',
-                            'id',
-                            'attributes' => [
                                 'address',
                                 'city',
                                 'state',
@@ -3875,100 +3821,55 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
+                        1 => [
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'identification',
+                                'active',
+                                'statusId',
+                                'typeId',
+                                'externalId',
+                                'carrierId',
+                                'syncId'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        2 => [
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'identification',
+                                'active',
+                                'statusId',
+                                'typeId',
+                                'externalId',
+                                'carrierId',
+                                'syncId'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        3 => [
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'identification',
+                                'active',
+                                'statusId',
+                                'typeId',
+                                'externalId',
+                                'carrierId',
+                                'syncId'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
                         4 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'identification',
-                                'active',
-                                'statusId',
-                                'typeId',
-                                'externalId',
-                                'carrierId',
-                                'syncId'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        5 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'identification',
-                                'active',
-                                'statusId',
-                                'typeId',
-                                'externalId',
-                                'carrierId',
-                                'syncId'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        6 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'identification',
-                                'active',
-                                'statusId',
-                                'typeId',
-                                'externalId',
-                                'carrierId',
-                                'syncId'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        7 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'identification',
-                                'name',
-                                'properties',
-                                'externalId',
-                                'statusId',
-                                'syncId'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        8 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'identification',
-                                'name',
-                                'properties',
-                                'externalId',
-                                'statusId',
-                                'syncId'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        9 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'identification',
-                                'name',
-                                'properties',
-                                'externalId',
-                                'statusId',
-                                'syncId'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        10 => [
                             'type',
                             'id',
                             'attributes' => [
@@ -3985,11 +3886,99 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        11 => [
+                        5 => [
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'priceRetail',
+                                'price1',
+                                'price2',
+                                'priceOwn',
+                                'deviceId',
+                                'carrierId',
+                                'companyId'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        6 => [
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'priceRetail',
+                                'price1',
+                                'price2',
+                                'priceOwn',
+                                'deviceId',
+                                'carrierId',
+                                'companyId'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        7 => [
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'priceRetail',
+                                'price1',
+                                'price2',
+                                'priceOwn',
+                                'deviceId',
+                                'carrierId',
+                                'companyId'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        8 => [
                             'type',
                             'id',
                             'attributes' => [
                                 'name'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        9 => [
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'name'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        10 => [
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'name'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        11 => [
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'bill_month',
+                                'carrier',
+                                'mobile_number',
+                                'currency',
+                                'device',
+                                'allocated_charge',
+                                'service_plan_charge',
+                                'usage_charge',
+                                'other_charge',
+                                'fees_charge',
+                                'last_upgrade'
                             ],
                             'links' => [
                                 'self'
@@ -3999,7 +3988,17 @@ class UsersApiTest extends TestCase
                             'type',
                             'id',
                             'attributes' => [
-                                'name'
+                                'bill_month',
+                                'carrier',
+                                'mobile_number',
+                                'currency',
+                                'device',
+                                'allocated_charge',
+                                'service_plan_charge',
+                                'usage_charge',
+                                'other_charge',
+                                'fees_charge',
+                                'last_upgrade'
                             ],
                             'links' => [
                                 'self'
@@ -4009,7 +4008,17 @@ class UsersApiTest extends TestCase
                             'type',
                             'id',
                             'attributes' => [
-                                'name'
+                                'bill_month',
+                                'carrier',
+                                'mobile_number',
+                                'currency',
+                                'device',
+                                'allocated_charge',
+                                'service_plan_charge',
+                                'usage_charge',
+                                'other_charge',
+                                'fees_charge',
+                                'last_upgrade'
                             ],
                             'links' => [
                                 'self'
@@ -4019,17 +4028,10 @@ class UsersApiTest extends TestCase
                             'type',
                             'id',
                             'attributes' => [
-                                'bill_month',
-                                'carrier',
-                                'mobile_number',
-                                'currency',
-                                'device',
-                                'allocated_charge',
-                                'service_plan_charge',
-                                'usage_charge',
-                                'other_charge',
-                                'fees_charge',
-                                'last_upgrade'
+                                'content',
+                                'active',
+                                'owner_type',
+                                'owner_id'
                             ],
                             'links' => [
                                 'self'
@@ -4039,17 +4041,10 @@ class UsersApiTest extends TestCase
                             'type',
                             'id',
                             'attributes' => [
-                                'bill_month',
-                                'carrier',
-                                'mobile_number',
-                                'currency',
-                                'device',
-                                'allocated_charge',
-                                'service_plan_charge',
-                                'usage_charge',
-                                'other_charge',
-                                'fees_charge',
-                                'last_upgrade'
+                                'content',
+                                'active',
+                                'owner_type',
+                                'owner_id'
                             ],
                             'links' => [
                                 'self'
@@ -4059,17 +4054,10 @@ class UsersApiTest extends TestCase
                             'type',
                             'id',
                             'attributes' => [
-                                'bill_month',
-                                'carrier',
-                                'mobile_number',
-                                'currency',
-                                'device',
-                                'allocated_charge',
-                                'service_plan_charge',
-                                'usage_charge',
-                                'other_charge',
-                                'fees_charge',
-                                'last_upgrade'
+                                'content',
+                                'active',
+                                'owner_type',
+                                'owner_id'
                             ],
                             'links' => [
                                 'self'
@@ -4079,10 +4067,8 @@ class UsersApiTest extends TestCase
                             'type',
                             'id',
                             'attributes' => [
-                                'content',
-                                'active',
-                                'owner_type',
-                                'owner_id'
+                                'udlId',
+                                'udlValue'
                             ],
                             'links' => [
                                 'self'
@@ -4092,51 +4078,14 @@ class UsersApiTest extends TestCase
                             'type',
                             'id',
                             'attributes' => [
-                                'content',
-                                'active',
-                                'owner_type',
-                                'owner_id'
+                                'udlId',
+                                'udlValue'
                             ],
                             'links' => [
                                 'self'
                             ]
                         ],
                         19 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'content',
-                                'active',
-                                'owner_type',
-                                'owner_id'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        20 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'udlId',
-                                'udlValue'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        21 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'udlId',
-                                'udlValue'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        22 => [
                             'type',
                             'id',
                             'attributes' => [

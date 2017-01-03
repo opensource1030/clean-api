@@ -29,4 +29,3 @@ class PermissionTransformer extends FilterableTransformer
         ];
     }
 }
-

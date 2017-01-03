@@ -1,7 +1,7 @@
 <?php
 
 /**
- * DeviceCapacitiesTableSeeder - Insert info into database.
+ * DeviceModificationsTableSeeder - Insert info into database.
  *
  * @author   Agustí Dosaiguas
  */

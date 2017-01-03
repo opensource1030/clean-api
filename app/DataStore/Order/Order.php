@@ -15,9 +15,7 @@ class Order extends BaseDataStore
             'status',
             'userId',
             'packageId',
-            'deviceId',
             'serviceId',
-            'carrierId',
             'updated_at', ];
 
     /**
@@ -49,11 +47,11 @@ class Order extends BaseDataStore
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function serviceitems()
+    public function deviceVariations()
     {
-        return $this->belongsToMany('WA\DataStore\ServiceItem\ServiceItem', 'order_serviceitems', 'orderId', 'serviceItemId');
+        return $this->belongsToMany('WA\DataStore\DeviceVariation\DeviceVariation', 'order_device_variations', 'orderId', 'deviceVariationId');
     }
 
         /**
@@ -70,15 +68,7 @@ class Order extends BaseDataStore
     public function packages()
     {
         return $this->belongsTo('WA\DataStore\Package\Package', 'packageId');
-    }
-
-        /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function devices()
-    {
-        return $this->belongsTo('WA\DataStore\Device\Device', 'deviceId');
-    }
+    }    
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -86,13 +76,5 @@ class Order extends BaseDataStore
     public function services()
     {
         return $this->belongsTo('WA\DataStore\Service\Service', 'serviceId');
-    }
-
-        /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function carriers()
-    {
-        return $this->belongsTo('WA\DataStore\Carrier\Carrier', 'carrierId');
     }
 }

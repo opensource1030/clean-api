@@ -43,9 +43,9 @@ class ModificationsController extends FilteredApiController
     {
         if ($this->isJsonCorrect($request, 'modifications')) {
             try {
-                $data = $request->all()['data']['attributes'];
-                $data['id'] = $id;
-                $modification = $this->modification->update($data);
+                $data = $request->all()['data'];
+                $data['attributes']['id'] = $id;
+                $modification = $this->modification->update($data['attributes']);
 
                 if ($modification == 'notExist') {
                     $error['errors']['modification'] = Lang::get('messages.NotExistClass', ['class' => 'Modification']);

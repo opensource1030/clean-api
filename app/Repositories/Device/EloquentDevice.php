@@ -283,6 +283,8 @@ class EloquentDevice extends AbstractRepository implements DeviceInterface
         $device->externalId = isset($data['externalId']) ? $data['externalId'] : $device->externalId;
         $device->identification = isset($data['identification']) ? $data['identification'] : $device->identification;
         $device->syncId = isset($data['syncId']) ? $data['syncId'] : $device->syncId;
+        $device->make = isset($data['make']) ? $data['make'] : $device->make;
+        $device->model = isset($data['model']) ? $data['model'] : $device->model;
 
         if (!$device->save()) {
             return 'notSaved';

@@ -16,9 +16,9 @@ class Preset extends BaseDataStore
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function deviceVariations()
+    public function devicevariations()
     {
-        return $this->belongsToMany('WA\DataStore\DeviceVariation\DeviceVariation', 'preset_deviceVariations', 'presetId', 'deviceVariationId');
+        return $this->belongsToMany('WA\DataStore\DeviceVariation\DeviceVariation', 'preset_device_variations', 'presetId', 'deviceVariationId');
     }
 
     /**

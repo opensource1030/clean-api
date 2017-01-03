@@ -85,8 +85,8 @@ class CompaniesController extends FilteredApiController
             return response()->json($error)->setStatusCode(404);
         }
         $data = $request->all();
-        $data['id'] = $id;
-        $company = $this->company->update($data);
+        $data['attributes']['id'] = $id;
+        $company = $this->company->update($data['attributes']);
         if (!$company) {
             $error['errors']['put'] = 'Company could not be updated. Please check your data';
 

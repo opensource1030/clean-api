@@ -56,9 +56,9 @@ class Package extends BaseDataStore
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function devices()
+    public function devicevariations()
     {
-        return $this->belongsToMany('WA\DataStore\Device\Device', 'package_devices', 'packageId', 'deviceId');
+        return $this->belongsToMany('WA\DataStore\DeviceVariation\DeviceVariation', 'package_devices', 'packageId', 'deviceId');
     }
 
     /**
@@ -75,5 +75,21 @@ class Package extends BaseDataStore
     public function orders()
     {
         return $this->hasMany('WA\DataStore\Order\Order', 'packageId');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function companies()
+    {
+        return $this->belongsTo('WA\DataStore\Company\Company', 'companyId');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function address()
+    {
+        return $this->belongsTo('WA\DataStore\Address\Address', 'addressId');
     }
 }

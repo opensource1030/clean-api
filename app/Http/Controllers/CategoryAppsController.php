@@ -54,9 +54,9 @@ class CategoryAppsController extends FilteredApiController
         DB::beginTransaction();
 
         try {
-            $data = $request->all()['data']['attributes'];
-            $data['id'] = $id;
-            $categoryApps = $this->categoryApps->update($data);
+            $data = $request->all()['data'];
+            $data['attributes']['id'] = $id;
+            $categoryApps = $this->categoryApps->update($data['attributes']);
 
             if ($categoryApps == 'notExist') {
                 DB::rollBack();
@@ -136,8 +136,8 @@ class CategoryAppsController extends FilteredApiController
         DB::beginTransaction();
 
         try {
-            $data = $request->all()['data']['attributes'];
-            $categoryApps = $this->categoryApps->create($data);
+            $data = $request->all()['data'];
+            $categoryApps = $this->categoryApps->create($data['attributes']);
         } catch (\Exception $e) {
             DB::rollBack();
             $error['errors']['categoryapps'] = Lang::get('messages.NotOptionIncludeClass',

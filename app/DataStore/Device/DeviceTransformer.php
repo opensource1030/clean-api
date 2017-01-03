@@ -13,14 +13,10 @@ class DeviceTransformer extends FilterableTransformer
 {
 
     protected $availableIncludes = [
-        'assets',
-        'carriers',
-        'companies',
         'devicetypes',
         'modifications',
         'images',
-        'prices',
-        'orders'
+        'devicevariations',
     ];
 
     protected $defaultIncludes = [
@@ -39,11 +35,15 @@ class DeviceTransformer extends FilterableTransformer
             'identification' => $device->identification,
             'name'           => $device->name,
             'properties'     => $device->properties,
-            'externalId'     => $device->externalId,
-            'statusId'       => $device->statusId,
-            'syncId'         => $device->syncId,
+            'externalId'     => (int)$device->externalId,
+            'statusId'       => (int)$device->statusId,
+            'syncId'         => (int)$device->syncId,
+            'make'           => $device->make,
+            'model'          => $device->model,
             'created_at'     => $device->created_at,
-            'updated_at'     => $device->updated_at
+            'updated_at'     => $device->updated_at,
+            'defaultPrice'   => (int)$device->defaultPrice,
+            'currency'       => $device->currency
         ];
     }
 

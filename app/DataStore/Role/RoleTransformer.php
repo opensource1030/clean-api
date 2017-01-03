@@ -27,4 +27,3 @@ class RoleTransformer extends FilterableTransformer
         ];
     }
 }
-

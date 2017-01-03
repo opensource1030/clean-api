@@ -46,6 +46,18 @@ class CreateOrderServiceitemsTable extends Migration
      */
     public function down()
     {
+        Schema::table(
+            $this->tableName, function ($table) {
+                $table->dropForeign('order_serviceitems_orderid_foreign');
+                $table->dropColumn('orderId');
+        });
+
+        Schema::table(
+            $this->tableName, function ($table) {
+                $table->dropForeign('order_serviceitems_serviceitemid_foreign');
+                $table->dropColumn('serviceItemId');
+        });
+
         $this->forceDropTable($this->tableName);
     }
 }

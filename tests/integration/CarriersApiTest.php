@@ -119,7 +119,7 @@ class CarriersApiTest extends TestCase
                 'shortName' => $carrier1->shortName,
             ]);
 
-        $this->json('PATCH', 'carriers/'.$carrier1->id,
+        $res = $this->json('PATCH', 'carriers/'.$carrier1->id,
             [
                 'data' => [
                     'type' => 'carriers',
@@ -132,6 +132,7 @@ class CarriersApiTest extends TestCase
                     ],
                 ],
             ])
+            //Log::debug("Users: ".print_r($res->response->getContent(), true));
             ->seeJson([
                 //'type' => 'carriers',
                 'id' => $carrier1->id,

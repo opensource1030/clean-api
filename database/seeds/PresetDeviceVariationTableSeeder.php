@@ -2,7 +2,7 @@
 
 class PresetDeviceVariationTableSeeder extends BaseTableSeeder
 {
-    protected $table = 'preset_deviceVariations';
+    protected $table = 'preset_device_variations';
 
     public function run()
     {

@@ -3,7 +3,7 @@
 //use Laravel\Lumen\Testing\DatabaseTransactions;
 use Laravel\Lumen\Testing\DatabaseMigrations;
 
-class PricesApiTest extends TestCase
+class DeviceVariationApiTest extends TestCase
 {
     //use DatabaseTransactions;
     use DatabaseMigrations;
@@ -11,11 +11,11 @@ class PricesApiTest extends TestCase
     /**
      * A basic functional test for Prices.
      */
-    public function testGetPrices()
+    public function testGetDeviceVariations()
     {
-        factory(\WA\DataStore\Price\Price::class, 40)->create();
+        factory(\WA\DataStore\DeviceVariation\DeviceVariation::class, 40)->create();
 
-        $res = $this->get('prices');
+        $res = $this->json('GET', 'devicevariations');
 
         $res->seeJsonStructure([
             'data' => [
@@ -24,8 +24,6 @@ class PricesApiTest extends TestCase
                     'id',
                     'attributes' => [
                         'deviceId',
-                        'capacityId',
-                        'styleId',
                         'carrierId',
                         'companyId',
                         'priceRetail',
@@ -66,42 +64,40 @@ class PricesApiTest extends TestCase
         ]);
     }
 
-    public function testGetPriceById()
+    public function testGetDeviceVariationById()
     {
-        $price = factory(\WA\DataStore\Price\Price::class)->create();
+        $devVar = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create();
 
-        $res = $this->get('prices/'.$price->id)
+        $res = $this->json('GET', 'devicevariations/'.$devVar->id)
             ->seeJson(
             [
-                'type' => 'prices',
-                'deviceId' => "$price->deviceId",
-                'capacityId' => "$price->capacityId",
-                'styleId' => "$price->styleId",
-                'carrierId' => "$price->carrierId",
-                'companyId' => "$price->companyId",
-                'priceRetail' => "$price->priceRetail",
-                'price1' => "$price->price1",
-                'price2' => "$price->price2",
-                'priceOwn' => "$price->priceOwn",
+                'type' => 'devicevariations',
+                'deviceId' => $devVar->deviceId,
+                'carrierId' => $devVar->carrierId,
+                'companyId' => $devVar->companyId,
+                'priceRetail' => $devVar->priceRetail,
+                'price1' => $devVar->price1,
+                'price2' => $devVar->price2,
+                'priceOwn' => $devVar->priceOwn,
             ]);
     }
 
-    public function testCreatePrice()
+    public function testCreateDeviceVariation()
     {
         $deviceVariation = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create();
         $device = factory(\WA\DataStore\Device\Device::class)->create();
-
+        $modCap1 = factory(\WA\DataStore\Modification\Modification::class)->create()->id;
         $carrier = factory(\WA\DataStore\Carrier\Carrier::class)->create();
         $company = factory(\WA\DataStore\Company\Company::class)->create();
+        $image1 = factory(\WA\DataStore\Image\Image::class)->create()->id;
+        $image2 = factory(\WA\DataStore\Image\Image::class)->create()->id;
 
        $deviceVariation = $this->POST('/devicevariations',
             [
                 'data' => [
-                    'type' => 'prices',
+                    'type' => 'devicevariations',
                     'attributes' => [
                         'deviceId' => $device->id,
-                        'capacityId' => $capacity->id,
-                        'styleId' => $style->id,
                         'carrierId' => $carrier->id,
                         'companyId' => $company->id,
                         'priceRetail' => 300,
@@ -110,19 +106,23 @@ class PricesApiTest extends TestCase
                         'priceOwn' => 600,
                     ],
                     'relationships' => [
-                        'carriers' => [
+                        'images' => [
                             'data' => [
-                                ['type' => 'carriers', 'id' => $carrier->id],
+                                ['type' => 'images', 'id' => $image1],
+                                ['type' => 'images', 'id' => $image2],
+                            ],
+                        ],
+                        'modifications' => [
+                            'data' => [
+                                ['type' => 'modifications', 'id' => $modCap1],
                             ],
                         ],
                     ]
                 ]
             ])
             ->seeJson([
-                'type' => 'prices',
+                'type' => 'devicevariations',
                 'deviceId' => $device->id,
-                'capacityId' => $capacity->id,
-                'styleId' => $style->id,
                 'carrierId' => $carrier->id,
                 'companyId' => $company->id,
                 'priceRetail' => 300,
@@ -136,25 +136,16 @@ class PricesApiTest extends TestCase
     {  
         $deviceVariation = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create();
         $device1 = factory(\WA\DataStore\Device\Device::class)->create()->id;
-        $capacity1 = factory(\WA\DataStore\Modification\Modification::class)->create(
-            ['modType' => 'capacity']
-        );
-        $style1 = factory(\WA\DataStore\Modification\Modification::class)->create(
-            ['modType' => 'style']
-        );
+        $modCap1 = factory(\WA\DataStore\Modification\Modification::class)->create()->id;
+        
         $carrier1 = factory(\WA\DataStore\Carrier\Carrier::class)->create()->id;
         $company1 = factory(\WA\DataStore\Company\Company::class)->create()->id;
 
         $device2 = factory(\WA\DataStore\Device\Device::class)->create()->id;
-        $capacity2 = factory(\WA\DataStore\Modification\Modification::class)->create(
-            ['modType' => 'capacity']
-        );
-        $style2 = factory(\WA\DataStore\Modification\Modification::class)->create(
-            ['modType' => 'style']
-        );
+        
         $carrier2 = factory(\WA\DataStore\Carrier\Carrier::class)->create()->id;
         $company2 = factory(\WA\DataStore\Company\Company::class)->create()->id;
-        $price = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create(
+        $devVar = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create(
             [
                 'deviceId' => $device1,
                 'carrierId' => $carrier1,
@@ -166,7 +157,7 @@ class PricesApiTest extends TestCase
             ]
         );
 
-        $priceAux = factory(\WA\DataStore\Price\Price::class)->create(
+        $devVarAux = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create(
             [
                 'deviceId' => $device2,
                 'carrierId' => $carrier2,
@@ -178,63 +169,63 @@ class PricesApiTest extends TestCase
             ]
         );
 
-        $this->assertNotEquals($price->id, $priceAux->id);
-        $this->assertNotEquals($price->deviceId, $priceAux->deviceId);
-        $this->assertNotEquals($price->capacityId, $priceAux->capacityId);
-        $this->assertNotEquals($price->styleId, $priceAux->styleId);
-        $this->assertNotEquals($price->carrierId, $priceAux->carrierId);
-        $this->assertNotEquals($price->companyId, $priceAux->companyId);
-        $this->assertNotEquals($price->priceRetail, $priceAux->priceRetail);
-        $this->assertNotEquals($price->price1, $priceAux->price1);
-        $this->assertNotEquals($price->price2, $priceAux->price2);
-        $this->assertNotEquals($price->priceOwn, $priceAux->priceOwn);
+        $this->assertNotEquals($devVar->id, $devVarAux->id);
+        $this->assertNotEquals($devVar->deviceId, $devVarAux->deviceId);
+        $this->assertNotEquals($devVar->carrierId, $devVarAux->carrierId);
+        $this->assertNotEquals($devVar->companyId, $devVarAux->companyId);
+        $this->assertNotEquals($devVar->priceRetail, $devVarAux->priceRetail);
+        $this->assertNotEquals($devVar->price1, $devVarAux->price1);
+        $this->assertNotEquals($devVar->price2, $devVarAux->price2);
+        $this->assertNotEquals($devVar->priceOwn, $devVarAux->priceOwn);
 
-        $deviceVariation = $this->PATCH('/devicevariations/'.$priceAux->id,
-
+        $deviceVariation = $this->PATCH('/devicevariations/'.$devVarAux->id,
             [
                 'data' => [
-                    'type' => 'prices',
+                    'type' => 'devicevariations',
                     'attributes' => [
-                        'deviceId' => $price->deviceId,
-                        'capacityId' => $price->capacityId,
-                        'styleId' => $price->styleId,
-                        'carrierId' => $price->carrierId,
-                        'companyId' => $price->companyId,
-                        'priceRetail' => $price->priceRetail,
-                        'price1' => $price->price1,
-                        'price2' => $price->price2,
-                        'priceOwn' => $price->priceOwn,
+                        'deviceId' => $devVar->deviceId,
+                        'carrierId' => $devVar->carrierId,
+                        'companyId' => $devVar->companyId,
+                        'priceRetail' => $devVar->priceRetail,
+                        'price1' => $devVar->price1,
+                        'price2' => $devVar->price2,
+                        'priceOwn' => $devVar->priceOwn,
                     ],
+                    'relationships' => [
+                        'modifications' => [
+                            'data' => [
+                                ['type' => 'modifications', 'id' => $modCap1],
+                            ],
+                        ],
+                    ]
                 ],
             ])
             ->seeJson([
-                'type' => 'prices',
-                'deviceId' => $price->deviceId,
-                'capacityId' => $price->capacityId,
-                'styleId' => $price->styleId,
-                'carrierId' => $price->carrierId,
-                'companyId' => $price->companyId,
-                'priceRetail' => $price->priceRetail,
-                'price1' => $price->price1,
-                'price2' => $price->price2,
-                'priceOwn' => $price->priceOwn,
+                'type' => 'devicevariations',
+                'deviceId' => $devVar->deviceId,
+                'carrierId' => $devVar->carrierId,
+                'companyId' => $devVar->companyId,
+                'priceRetail' => $devVar->priceRetail,
+                'price1' => $devVar->price1,
+                'price2' => $devVar->price2,
+                'priceOwn' => $devVar->priceOwn,
             ]);
     }
 
-    public function testDeletePriceIfExists()
+    public function testDeleteDeviceVariationIfExists()
     {
         // CREATE & DELETE
-        $price = factory(\WA\DataStore\Price\Price::class)->create();
-        $responseDel = $this->call('DELETE', '/prices/'.$price->id);
+        $devVar = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create();
+        $responseDel = $this->call('DELETE', '/devicevariations/'.$devVar->id);
         $this->assertEquals(200, $responseDel->status());
-        $responseGet = $this->call('GET', '/prices/'.$price->id);
+        $responseGet = $this->call('GET', '/devicevariations/'.$devVar->id);
         $this->assertEquals(404, $responseGet->status());
     }
 
-    public function testDeletepriceIfNoExists()
+    public function testDeleteDeviceVariationIfNoExists()
     {
         // DELETE NO EXISTING.
-        $responseDel = $this->call('DELETE', '/prices/1');
+        $responseDel = $this->call('DELETE', '/devicevariations/1');
         $this->assertEquals(404, $responseDel->status());
     }
 }

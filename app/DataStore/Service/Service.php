@@ -60,11 +60,11 @@ class Service extends BaseDataStore
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\belongsToMany
      */
-    public function serviceitems()
+    public function user()
     {
-        return $this->hasMany('WA\DataStore\ServiceItem\ServiceItem', 'serviceId');
+        return $this->belongsToMany('WA\DataStore\User\User', 'user_services', 'userId', 'serviceId');
     }
 
     /**
@@ -73,5 +73,13 @@ class Service extends BaseDataStore
     public function orders()
     {
         return $this->hasMany('WA\DataStore\Order\Order', 'serviceId');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function serviceitems()
+    {
+        return $this->hasMany('WA\DataStore\ServiceItem\ServiceItem', 'serviceId');
     }
 }

@@ -10,10 +10,11 @@ class RelationshipsTest extends TestCase
     {
         $device = factory(\WA\DataStore\Device\Device::class)->create();
 
-        $price1 = factory(\WA\DataStore\Price\Price::class)->create(['deviceId' => $device->id])->id;
-        $price2 = factory(\WA\DataStore\Price\Price::class)->create(['deviceId' => $device->id])->id;
+        $devicevariation1 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create(['deviceId' => $device->id])->id;
 
-        $this->json('GET', 'devices/'.$device->id.'/relationships/prices')
+        $devicevariation2 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create(['deviceId' => $device->id])->id;
+
+        $this->json('GET', 'devices/'.$device->id.'/relationships/devicevariations')
             ->seeJsonStructure([
                 'data' => [
                     0 => [
@@ -49,10 +50,11 @@ class RelationshipsTest extends TestCase
     {
         $device = factory(\WA\DataStore\Device\Device::class)->create();
 
-        $price1 = factory(\WA\DataStore\Price\Price::class)->create(['deviceId' => $device->id])->id;
-        $price2 = factory(\WA\DataStore\Price\Price::class)->create(['deviceId' => $device->id])->id;
+        $devicevariation1 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create(['deviceId' => $device->id])->id;
 
-        $this->json('GET', 'notexists/'.$device->id.'/relationships/prices')
+        $devicevariation2 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create(['deviceId' => $device->id])->id;
+
+        $this->json('GET', 'notexists/'.$device->id.'/relationships/devicevariations')
             ->seeJson([
                 'errors' => [
                     'notexists' => 'the Notexist selected doesn\'t exists',
@@ -68,7 +70,7 @@ class RelationshipsTest extends TestCase
 
         $deviceId = factory(\WA\DataStore\Device\Device::class)->create()->id;
 
-        $res = $this->json('GET', 'devices/'.$deviceId.'/relationships/prices')
+        $res = $this->json('GET', 'devices/'.$deviceId.'/relationships/devicevariations')
             ->seeJsonStructure([
                 'total',
                 'per_page',
@@ -83,7 +85,7 @@ class RelationshipsTest extends TestCase
 
         $idNotExists = $deviceId + 10;
 
-        $this->json('GET', 'devices/'.$idNotExists.'/relationships/prices')
+        $this->json('GET', 'devices/'.$idNotExists.'/relationships/devicevariations')
             ->seeJson([
                 'errors' => [
                     'devices' => 'the Device selected doesn\'t exists',
@@ -95,8 +97,9 @@ class RelationshipsTest extends TestCase
     {
         $device = factory(\WA\DataStore\Device\Device::class)->create();
 
-        $price1 = factory(\WA\DataStore\Price\Price::class)->create(['deviceId' => $device->id])->id;
-        $price2 = factory(\WA\DataStore\Price\Price::class)->create(['deviceId' => $device->id])->id;
+        $devicevariation1 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create(['deviceId' => $device->id])->id;
+
+        $devicevariation2 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create(['deviceId' => $device->id])->id;
 
         $this->json('GET', 'devices/'.$device->id.'/devicevariations')
             ->seeJsonStructure(
@@ -111,8 +114,6 @@ class RelationshipsTest extends TestCase
                             'price2',
                             'priceOwn',
                             'deviceId',
-                            'capacityId',
-                            'styleId',
                             'carrierId',
                             'companyId',
                             'created_at' => [
@@ -155,10 +156,11 @@ class RelationshipsTest extends TestCase
     {
         $device = factory(\WA\DataStore\Device\Device::class)->create();
 
-        $price1 = factory(\WA\DataStore\Price\Price::class)->create(['deviceId' => $device->id])->id;
-        $price2 = factory(\WA\DataStore\Price\Price::class)->create(['deviceId' => $device->id])->id;
+        $devicevariation1 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create(['deviceId' => $device->id])->id;
 
-        $this->json('GET', 'notexists/'.$device->id.'/prices')
+        $devicevariation2 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create(['deviceId' => $device->id])->id;
+
+        $this->json('GET', 'notexists/'.$device->id.'/devicevariations')
             ->seeJson([
                 'errors' => [
                     'notexists' => 'the Notexist selected doesn\'t exists',
@@ -174,7 +176,7 @@ class RelationshipsTest extends TestCase
 
         $deviceId = factory(\WA\DataStore\Device\Device::class)->create()->id;
 
-        $res = $this->json('GET', 'devices/'.$deviceId.'/relationships/prices')
+        $res = $this->json('GET', 'devices/'.$deviceId.'/relationships/devicevariations')
             ->seeJsonStructure([
                 'total',
                 'per_page',
@@ -188,8 +190,8 @@ class RelationshipsTest extends TestCase
             ]);
 
         $idNotExists = $deviceId + 10;
-
-        $this->json('GET', 'devices/'.$idNotExists.'/relationships/prices')
+        
+        $this->json('GET', 'devices/'.$idNotExists.'/relationships/devicevariations')
             ->seeJson([
                 'errors' => [
                     'devices' => 'the Device selected doesn\'t exists',

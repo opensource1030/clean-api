@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\SoftDeletes as SoftDeletingTrait;
 use WA\DataStore\MutableDataStore;
 
 /**
- * WA\DataStore\Asset\Asset\Asset.
+ * WA\DataStore\Asset\Asset.
  *
  * @property int $id
  * @property string $identification
@@ -49,11 +49,11 @@ class Asset extends MutableDataStore
     protected $table = 'assets';
     protected $dates = ['deleted_at'];
     protected $fillable = [
+        'userId',
         'statusId',
         'typeId',
         'identification',
         'externalId',
-        'carrierId',
         'id',
         'isActive',
         'syncId',
@@ -74,15 +74,7 @@ class Asset extends MutableDataStore
      */
     public function users()
     {
-        return $this->belongsToMany('WA\DataStore\User\User', 'user_assets', 'assetId', 'userId');
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function devices()
-    {
-        return $this->belongsToMany('WA\DataStore\Device\Device', 'asset_devices', 'assetId', 'deviceId');
+        return $this->belongsTo('WA\DataStore\User\User', 'userId');
     }
 
     /**
@@ -144,14 +136,6 @@ class Asset extends MutableDataStore
     public function attributes()
     {
         return $this->morphToMany('WA\DataStore\Attribute', 'attributable')->withPivot(['value', 'dataOriginationId']);
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function carrier()
-    {
-        return $this->belongsTo('WA\DataStore\Carrier\Carrier', 'carrierId');
     }
 
     /**

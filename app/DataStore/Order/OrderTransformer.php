@@ -9,7 +9,7 @@ use WA\DataStore\App\AppTransformer;
 use WA\DataStore\User\UserTransformer;
 use WA\DataStore\Package\PackageTransformer;
 use WA\DataStore\Service\ServiceTransformer;
-use WA\DataStore\Device\DeviceTransformer;
+use WA\DataStore\DeviceVariation\DeviceVariationTransformer;
 use WA\DataStore\Carrier\CarrierTransformer;
 
 /**
@@ -20,11 +20,9 @@ class OrderTransformer extends FilterableTransformer
     protected $availableIncludes = [
         'users',
         'packages',
-        'devices',
         'services',
-        'carriers',
         'apps',
-        'serviceitems'
+        'devicevariations'
     ];
 
     /**
@@ -35,14 +33,11 @@ class OrderTransformer extends FilterableTransformer
     public function transform(Order $order)
     {
         return [
-
             'id'         => (int)$order->id,
             'status'     => $order->status,
             'userId'     => (int)$order->userId,
             'packageId'  => (int)$order->packageId,
-            'deviceId'   => (int)$order->deviceId,
             'serviceId'  => (int)$order->serviceId,
-            'carrierId'  => (int)$order->serviceId,
             'created_at' => $order->created_at,
             'updated_at' => $order->updated_at,
         ];
@@ -71,10 +66,10 @@ class OrderTransformer extends FilterableTransformer
     public function includeUsers(Order $order)
     {
         $this->criteria = $this->getRequestCriteria();
-        $devices = $this->applyCriteria($order->devices(), $this->criteria, true, [
-            'devices' => 'devices'
+        $users = $this->applyCriteria($order->users(), $this->criteria, true, [
+            'users' => 'users'
         ]);
-        return new ResourceCollection ($devices->get(), new DeviceTransformer(), 'devices');
+        return new ResourceCollection ($users->get(), new UserTransformer(), 'users');
     }
 
     public function includePackages(Order $order)
@@ -86,13 +81,13 @@ class OrderTransformer extends FilterableTransformer
         return new ResourceCollection ($packages->get(), new PackageTransformer(), 'packages');
     }
 
-    public function includeDevices(Order $order)
+    public function includeDeviceVariations(Order $order)
     {
         $this->criteria = $this->getRequestCriteria();
-        $devices = $this->applyCriteria($order->devices(), $this->criteria, true, [
-            'devices' => 'devices'
+        $deviceVariations = $this->applyCriteria($order->deviceVariations(), $this->criteria, true, [
+            'devicevariations' => 'devicevariations'
         ]);
-        return new ResourceCollection ($devices->get(), new DeviceTransformer(), 'devices');
+        return new ResourceCollection ($deviceVariations->get(), new DeviceVariationTransformer(), 'devicevariations');
     }
 
     public function includeServices(Order $order)
@@ -104,12 +99,4 @@ class OrderTransformer extends FilterableTransformer
         return new ResourceCollection ($services->get(), new ServiceTransformer(), 'services');
     }
 
-    public function includeCarriers(Order $order)
-    {
-        $this->criteria = $this->getRequestCriteria();
-        $carriers = $this->applyCriteria($order->carriers(), $this->criteria, true, [
-            'carriers' => 'carriers'
-        ]);
-        return new ResourceCollection ($carriers->get(), new CarrierTransformer(), 'carriers');
-    }
 }

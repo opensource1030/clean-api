@@ -1,13 +1,13 @@
 <?php
 
 /**
- * PackageAppsTableSeeder - Insert info into database.
+ * OrderDevicesTableSeeder - Insert info into database.
  *
  * @author   Agustí Dosaiguas
  */
-class OrderServiceItemsTableSeeder extends BaseTableSeeder
+class OrderDeviceVariationsTableSeeder extends BaseTableSeeder
 {
-    protected $table = 'order_serviceitems';
+    protected $table = 'order_device_variations';
 
     /**
      * Run the database seeds.
@@ -20,99 +20,99 @@ class OrderServiceItemsTableSeeder extends BaseTableSeeder
 
             [
                 'orderId' => 1,
-                'serviceItemId' => 1,
+                'deviceVariationId' => 1,
             ],
             [
                 'orderId' => 1,
-                'serviceItemId' => 2,
+                'deviceVariationId' => 2,
             ],
             [
                 'orderId' => 1,
-                'serviceItemId' => 3,
+                'deviceVariationId' => 3,
             ],
             [
                 'orderId' => 1,
-                'serviceItemId' => 4,
+                'deviceVariationId' => 4,
             ],
             [
                 'orderId' => 1,
-                'serviceItemId' => 5,
+                'deviceVariationId' => 5,
             ],
             [
                 'orderId' => 1,
-                'serviceItemId' => 6,
+                'deviceVariationId' => 6,
             ],
             [
                 'orderId' => 1,
-                'serviceItemId' => 7,
+                'deviceVariationId' => 7,
             ],
             [
                 'orderId' => 1,
-                'serviceItemId' => 8,
+                'deviceVariationId' => 8,
             ],
             [
                 'orderId' => 2,
-                'serviceItemId' => 1,
+                'deviceVariationId' => 1,
             ],
             [
                 'orderId' => 2,
-                'serviceItemId' => 2,
+                'deviceVariationId' => 2,
             ],
             [
                 'orderId' => 2,
-                'serviceItemId' => 3,
+                'deviceVariationId' => 3,
             ],
             [
                 'orderId' => 2,
-                'serviceItemId' => 4,
+                'deviceVariationId' => 4,
             ],
             [
                 'orderId' => 2,
-                'serviceItemId' => 5,
+                'deviceVariationId' => 5,
             ],
             [
                 'orderId' => 2,
-                'serviceItemId' => 6,
+                'deviceVariationId' => 6,
             ],
             [
                 'orderId' => 2,
-                'serviceItemId' => 7,
+                'deviceVariationId' => 7,
             ],
             [
                 'orderId' => 2,
-                'serviceItemId' => 8,
+                'deviceVariationId' => 8,
             ],
             [
                 'orderId' => 3,
-                'serviceItemId' => 1,
+                'deviceVariationId' => 1,
             ],
             [
                 'orderId' => 3,
-                'serviceItemId' => 2,
+                'deviceVariationId' => 2,
             ],
             [
                 'orderId' => 3,
-                'serviceItemId' => 3,
+                'deviceVariationId' => 3,
             ],
             [
                 'orderId' => 3,
-                'serviceItemId' => 4,
+                'deviceVariationId' => 4,
             ],
             [
                 'orderId' => 3,
-                'serviceItemId' => 5,
+                'deviceVariationId' => 5,
             ],
             [
                 'orderId' => 3,
-                'serviceItemId' => 6,
+                'deviceVariationId' => 6,
             ],
             [
                 'orderId' => 3,
-                'serviceItemId' => 7,
+                'deviceVariationId' => 7,
             ],
             [
                 'orderId' => 3,
-                'serviceItemId' => 8,
+                'deviceVariationId' => 8,
             ]
         ];
 

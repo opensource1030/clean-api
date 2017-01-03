@@ -43,9 +43,9 @@ class RolesController extends FilteredApiController
     {
         if ($this->isJsonCorrect($request, 'roles')) {
             try {
-                $data = $request->all()['data']['attributes'];
-                $data['id'] = $id;
-                $role = $this->role->update($data);
+                $data = $request->all()['data'];
+                $data['attributes']['id'] = $id;
+                $role = $this->role->update($data['attributes']);
 
                 if ($role == 'notExist') {
                     $error['errors']['role'] = Lang::get('messages.NotExistClass', ['class' => 'Role']);

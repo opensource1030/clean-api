@@ -40,30 +40,16 @@ class Company extends BaseDataStore
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function devices()
-    {
-        return $this->belongsToMany('WA\DataStore\Device\Device', 'companies_devices', 'companyId', 'deviceId');
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function carriers()
-    {
-        return $this->belongsToMany('WA\DataStore\Company\Company', 'companies_carriers', 'companyId', 'carrierId',
-            'billingAccountNumber');
-    }
-
-    /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function presets()
     {
         return $this->hasMany('WA\DataStore\Category\Preset', 'companyId');
     }
-
+    
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function deviceVariations()
     {
         return $this->hasMany('WA\DataStore\DeviceVariation\DeviceVariation', 'companyId');
@@ -91,7 +77,14 @@ class Company extends BaseDataStore
     public function allocations()
     {
         return $this->hasMany('WA\DataStore\Allocation\Allocation', 'companyId');
+    }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function packages()
+    {
+        return $this->hasMany('WA\DataStore\Package\Package', 'companyId');
     }
 
     /**

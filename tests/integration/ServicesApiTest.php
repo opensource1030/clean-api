@@ -86,7 +86,7 @@ class ServicesApiTest extends TestCase
                 'planCode' => "$service->planCode",
                 'cost' => "$service->cost",
                 'description' => $service->description,                
-                'carrierId' => "$service->carrierId",
+                'carrierId' => $service->carrierId,
             ])
             ->seeJsonStructure([
                 'data' => [
@@ -413,10 +413,10 @@ class ServicesApiTest extends TestCase
     public function testUpdateService()
     {
         $service = factory(\WA\DataStore\Service\Service::class)->create(
-            ['status' => 'Enabled', 'title' => 'title1', 'planCode' => 11111, 'cost' => 30, 'description' => 'desc1', 'carrierId' => "1"]
+            ['status' => 'Enabled', 'title' => 'title1', 'planCode' => 11111, 'cost' => 30, 'description' => 'desc1', 'carrierId' => 1]
         );
         $serviceAux = factory(\WA\DataStore\Service\Service::class)->create(
-            ['status' => 'Disabled', 'title' => 'title2', 'planCode' => 22222, 'cost' => 40, 'description' => 'desc2', 'carrierId' => "2"]
+            ['status' => 'Disabled', 'title' => 'title2', 'planCode' => 22222, 'cost' => 40, 'description' => 'desc2', 'carrierId' => 2]
         );
 
         $this->assertNotEquals($service->status, $serviceAux->status);
@@ -437,7 +437,7 @@ class ServicesApiTest extends TestCase
                         'planCode' => "$service->planCode",
                         'cost' => "$service->cost",
                         'description' => $service->description,                        
-                        'carrierId' => "$service->carrierId",
+                        'carrierId' => $service->carrierId,
                     ],
                 ],
             ])
@@ -447,7 +447,7 @@ class ServicesApiTest extends TestCase
                 'planCode' => "$service->planCode",
                 'cost' => "$service->cost",
                 'description' => $service->description,
-                'carrierId' => "$service->carrierId"
+                'carrierId' => $service->carrierId
             ]);
     }
 

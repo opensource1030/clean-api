@@ -1,7 +1,7 @@
 <?php
 
-/**
- * PricesTableSeeder - Insert info into database.
+/*
+ * RolesTableSeeder - Insert info into database.
  *
  * @author   Agustí Dosaiguas
  */

@@ -18,13 +18,8 @@ class DeviceTypeTransformer extends FilterableTransformer
     {
         return [
             'id'          => (int)$deviceType->id,
-            'make'        => $deviceType->make,
-            'model'       => $deviceType->model,
-            'class'       => $deviceType->class,
-            'deviceOS'    => $deviceType->deviceOS,
-            'description' => $deviceType->description,
+            'name'        => $deviceType->name,
             'statusId'    => $deviceType->statusId,
-            'image'       => $deviceType->image,
         ];
     }
 }

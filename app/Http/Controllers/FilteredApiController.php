@@ -141,7 +141,7 @@ abstract class FilteredApiController extends ApiController
     public function includeRelationships($modelPlural, $id, $includePlural)
     {
         $model = title_case(str_singular($modelPlural));
-        $includeModel = title_case(str_singular($includePlural));
+        $includeModel = $this->includeModelFunction($modelPlural, $includePlural);
 
         $transformer = "\\WA\\DataStore\\${model}\\${model}Transformer";
         $includeTransformer = "\\WA\\DataStore\\${includeModel}\\${includeModel}Transformer";
@@ -194,7 +194,7 @@ abstract class FilteredApiController extends ApiController
     public function includeInformationRelationships($modelPlural, $id, $includePlural)
     {
         $plural = str_plural($modelPlural);
-        $includeTC = title_case(str_singular($includePlural));
+        $includeTC = $this->includeModelFunction($modelPlural, $includePlural);
         $transformer = "\\WA\\DataStore\\$includeTC\\$includeTC" . 'Transformer';
 
         if ($plural == $modelPlural) {
@@ -248,5 +248,31 @@ abstract class FilteredApiController extends ApiController
         $response->addMeta('filter', $this->criteria['filters']->get());
         $response->addMeta('fields', $this->criteria['fields']->get());
         return parent::applyMeta($response);
+    }
+     /**
+     * When the include is a combination of two words we need to title_case both to create the Transformer.
+     * We supose that the includePlural argument has the $model as a substring.
+     *
+     *  @arg1: $model => represents the model.
+     *  @arg2: $includePlural => represents the include
+     *
+     *  Example: devices/2/relationships/devicetypes
+     *  $model = devices
+     *  $includePlural = devicetypes
+     *  @return DeviceType
+     *
+     */
+    private function includeModelFunction($model, $includePlural){
+        
+        $modelSingular = str_singular($model);        
+        $strlen = strlen($modelSingular);
+        $var = strpos($includePlural, $modelSingular);
+
+        if ($var !== false) {
+            $substring = substr($includePlural, $strlen);
+            return title_case($modelSingular) . title_case(str_singular($substring));
+        }
+
+        return title_case(str_singular($includePlural));
     }
 }

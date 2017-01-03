@@ -44,12 +44,13 @@ class DeviceVariationsController extends FilteredApiController
     public function store($id, Request $request)
     {
         $success = true;
-        $dataModifications = array();
+         $dataModifications = $dataPresets =array();
+
 
         /*
          * Checks if Json has data, data-type & data-attributes.
          */
-        if (!$this->isJsonCorrect($request, 'deviceVariations')) {
+        if (!$this->isJsonCorrect($request, 'devicevariations')) {
             $error['errors']['json'] = Lang::get('messages.InvalidJson');
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
@@ -60,9 +61,9 @@ class DeviceVariationsController extends FilteredApiController
          * Now we can create the DeviceVariation.
          */
         try {
-            $data = $request->all()['data']['attributes'];
-            $data['id'] = $id;
-            $deviceVariation = $this->deviceVariation->update($data);
+            $data = $request->all()['data'];
+            $data['attributes']['id'] = $id;
+            $deviceVariation = $this->deviceVariation->update($data['attributes']);
 
             if ($deviceVariation == 'notExist') {
                 DB::rollBack();
@@ -94,9 +95,9 @@ class DeviceVariationsController extends FilteredApiController
 
             if (isset($dataRelationships['modifications'])) {
                 if (isset($dataRelationships['modifications']['data'])) {
-                    $dataDeviceVariations = $this->parseJsonToArray($dataRelationships['modifications']['data'], 'modifications');
+                    $dataModifications = $this->parseJsonToArray($dataRelationships['modifications']['data'], 'modifications');
                     try {
-                        $deviceVariation->modifications()->sync($dataDeviceVariations);
+                        $deviceVariation->modifications()->sync($dataModifications);
                     } catch (\Exception $e) {
                         $error['errors']['modifications'] = Lang::get('messages.NotOptionIncludeClass',
                             ['class' => 'DeviceVariation', 'option' => 'updated', 'include' => 'Modifications']);
@@ -104,31 +105,18 @@ class DeviceVariationsController extends FilteredApiController
                     }
                 }
             }
-            if (isset($dataRelationships['carriers'])) {
-                if (isset($dataRelationships['carriers']['data'])) {
-                    $dataCarriers = $this->parseJsonToArray($dataRelationships['carriers']['data'], 'carriers');
+            if (isset($dataRelationships['images'])) {
+                if (isset($dataRelationships['images']['data'])) {
+                    $dataImages = $this->parseJsonToArray($dataRelationships['images']['data'], 'images');
                     try {
-                        $device->carriers()->sync($dataCarriers);
+                        $device->images()->sync($dataImages);
                     } catch (\Exception $e) {
-                        $error['errors']['carriers'] = Lang::get('messages.NotOptionIncludeClass',
-                            ['class' => 'DeviceVariation', 'option' => 'updated', 'include' => 'Carriers']);
+                        $error['errors']['images'] = Lang::get('messages.NotOptionIncludeClass',
+                            ['class' => 'DeviceVariation', 'option' => 'updated', 'include' => 'Images']);
                         //$error['errors']['Message'] = $e->getMessage();
                     }
                 }
             }
-            if (isset($dataRelationships['devices'])) {
-                if (isset($dataRelationships['devices']['data'])) {
-                    $dataDevices = $this->parseJsonToArray($dataRelationships['devices']['data'], 'devices');
-                    try {
-                        $device->devices()->sync($dataDevices);
-                    } catch (\Exception $e) {
-                        $error['errors']['devices'] = Lang::get('messages.NotOptionIncludeClass',
-                            ['class' => 'DeviceVariation', 'option' => 'updated', 'include' => 'devices']);
-                        //$error['errors']['Message'] = $e->getMessage();
-                    }
-                }
-            }
-            
         }
 
         if ($success) {
@@ -149,12 +137,12 @@ class DeviceVariationsController extends FilteredApiController
     public function create(Request $request)
     {
         $success = true;
-        $dataModifications = array();
+        $dataModifications = $dataPresets =array();
 
         /*
          * Checks if Json has data, data-type & data-attributes.
          */
-        if (!$this->isJsonCorrect($request, 'deviceVariations')) {
+        if (!$this->isJsonCorrect($request, 'devicevariations')) {
             $error['errors']['json'] = Lang::get('messages.InvalidJson');
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
@@ -165,8 +153,8 @@ class DeviceVariationsController extends FilteredApiController
          * Now we can create the DeviceVariation.
          */
         try {
-            $data = $request->all()['data']['attributes'];
-            $deviceVariation = $this->deviceVariation->create($data);
+            $data = $request->all()['data'];
+            $deviceVariation = $this->deviceVariation->create($data['attributes']);
         } catch (\Exception $e) {
             DB::rollBack();
             $error['errors']['deviceVariations'] = Lang::get('messages.NotOptionIncludeClass',
@@ -183,9 +171,9 @@ class DeviceVariationsController extends FilteredApiController
 
             if (isset($dataRelationships['modifications'])) {
                 if (isset($dataRelationships['modifications']['data'])) {
-                    $dataDeviceValiations = $this->parseJsonToArray($dataRelationships['modifications']['data'], 'modifications');
+                    $dataModifications = $this->parseJsonToArray($dataRelationships['modifications']['data'], 'modifications');
                     try {
-                        $deviceVariation->modifications()->sync($dataDeviceValiations);
+                        $deviceVariation->modifications()->sync($dataModifications);
                     } catch (\Exception $e) {
                         $error['errors']['modifications'] = Lang::get('messages.NotOptionIncludeClass',
                             ['class' => 'DeviceVariation', 'option' => 'updated', 'include' => 'Modifications']);
@@ -193,38 +181,14 @@ class DeviceVariationsController extends FilteredApiController
                     }
                 }
             }
-            if (isset($dataRelationships['presets'])) {
-                if (isset($dataRelationships['presets']['data'])) {
-                    $dataDeviceVariations = $this->parseJsonToArray($dataRelationships['presets']['data'], 'presets');
+            if (isset($dataRelationships['images'])) {
+                if (isset($dataRelationships['images']['data'])) {
+                    $dataImages = $this->parseJsonToArray($dataRelationships['images']['data'], 'images');
                     try {
-                        $deviceVariation->presets()->sync($dataDeviceVariations);
+                        $device->images()->sync($dataImages);
                     } catch (\Exception $e) {
-                        $error['errors']['presets'] = Lang::get('messages.NotOptionIncludeClass',
-                            ['class' => 'DeviceVariation', 'option' => 'updated', 'include' => 'Presets']);
-                        //$error['errors']['ModificationsMessage'] = $e->getMessage();
-                    }
-                }
-            }
-            if (isset($dataRelationships['carriers'])) {
-                if (isset($dataRelationships['carriers']['data'])) {
-                    $dataCarriers = $this->parseJsonToArray($dataRelationships['carriers']['data'], 'carriers');
-                    try {
-                        $device->carriers()->sync($dataCarriers);
-                    } catch (\Exception $e) {
-                        $error['errors']['carriers'] = Lang::get('messages.NotOptionIncludeClass',
-                            ['class' => 'DeviceVariation', 'option' => 'updated', 'include' => 'Carriers']);
-                        //$error['errors']['Message'] = $e->getMessage();
-                    }
-                }
-            }
-            if (isset($dataRelationships['devices'])) {
-                if (isset($dataRelationships['devices']['data'])) {
-                    $dataDevices = $this->parseJsonToArray($dataRelationships['devices']['data'], 'devices');
-                    try {
-                        $device->devices()->sync($dataDevices);
-                    } catch (\Exception $e) {
-                        $error['errors']['devices'] = Lang::get('messages.NotOptionIncludeClass',
-                            ['class' => 'DeviceVariation', 'option' => 'updated', 'include' => 'devices']);
+                        $error['errors']['images'] = Lang::get('messages.NotOptionIncludeClass',
+                            ['class' => 'DeviceVariation', 'option' => 'created', 'include' => 'Images']);
                         //$error['errors']['Message'] = $e->getMessage();
                     }
                 }

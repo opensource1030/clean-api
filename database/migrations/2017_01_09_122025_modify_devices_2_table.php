@@ -3,13 +3,12 @@
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
-use WA\Database\Command\TablesRelationsAndIndexes;
 
-class ModifyOrdersTable extends Migration
+class ModifyDevices2Table extends Migration
 {
-    use TablesRelationsAndIndexes;
+    use \WA\Database\Command\TablesRelationsAndIndexes;
 
-    protected $tableName = 'orders';
+    protected $tableName = 'devices';
 
     /**
      * Run the migrations.
@@ -20,12 +19,8 @@ class ModifyOrdersTable extends Migration
     {
         Schema::table(
             $this->tableName, function ($table) {
-                $table->integer('carrierId')->unsigned()->nullable();
-        });
-
-        Schema::table(
-            $this->tableName, function ($table) {
-                $table->foreign('carrierId')->references('id')->on('carriers');
+                $table->double('defaultPrice')->nullable();
+                $table->string('currency')->nullable();
         });
     }
 
@@ -38,8 +33,12 @@ class ModifyOrdersTable extends Migration
     {
         Schema::table(
             $this->tableName, function ($table) {
-                $table->dropForeign('orders_carrierid_foreign');
-                $table->dropColumn('carrierId');
+                $table->dropColumn('defaultPrice');
+        });
+
+        Schema::table(
+            $this->tableName, function ($table) {
+                $table->dropColumn('currency');
         });
     }
 }

@@ -112,7 +112,6 @@ class MainHandler extends BaseHandler
 
     private function getEmailFromUserData($userData, $idCompany)
     {
-
         //if (isset($userData['attributes'][$this->userEmail][0])) { // TESTING
             return $userData['attributes'][$this->userEmail][0];
         //}

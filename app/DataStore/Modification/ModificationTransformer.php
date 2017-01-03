@@ -20,6 +20,7 @@ class ModificationTransformer extends FilterableTransformer
             'id'         => (int)$modification->id,
             'modType'    => $modification->modType,
             'value'      => $modification->value,
+            'unit'       => $modification->unit,
             'created_at' => $modification->created_at,
             'updated_at' => $modification->updated_at,
         ];

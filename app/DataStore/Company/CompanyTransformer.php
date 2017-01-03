@@ -19,8 +19,11 @@ class CompanyTransformer extends FilterableTransformer
         'allocations',
         'contents',
         'udls',
+        'devicevariations',
         'currentBillMonths',
-        'deviceVariations'
+        'packages',
+        'presets',
+        'users'
     ];
 
     /**

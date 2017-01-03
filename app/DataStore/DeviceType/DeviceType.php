@@ -37,11 +37,7 @@ class DeviceType extends MutableDataStore
     protected $table = 'device_types';
 
     protected $fillable = [
-        'make',
-        'model',
-        'class',
-        'deviceOS',
-        'description',
+        'name',
         'statusId',
     ];
 

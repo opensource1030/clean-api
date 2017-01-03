@@ -10,6 +10,11 @@ use League\Fractal\Resource\Collection as ResourceCollection;
  */
 class AppTransformer extends FilterableTransformer
 {
+    protected $availableIncludes = [
+        'packages',
+        'orders'
+    ];
+
     /**
      * @param App $app
      *
@@ -35,5 +40,14 @@ class AppTransformer extends FilterableTransformer
             'orders' => 'orders'
         ]);
         return new ResourceCollection ($orders->get(), new OrderTransformer(), 'orders');
+    }
+
+    public function includePackages(App $app)
+    {
+        $this->criteria = $this->getRequestCriteria();
+        $packages = $this->applyCriteria($app->packages(), $this->criteria, true, [
+            'packages' => 'packages'
+        ]);
+        return new ResourceCollection ($packages->get(), new OrderTransformer(), 'packages');
     }
 }

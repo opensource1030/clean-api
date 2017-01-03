@@ -1,7 +1,7 @@
 <?php
 
 /**
- * PackageAppsTableSeeder - Insert info into database.
+ * OrderAppsTableSeeder - Insert info into database.
  *
  * @author   Agustí Dosaiguas
  */

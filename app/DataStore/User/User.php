@@ -8,12 +8,9 @@ use Illuminate\Auth\Authenticatable as IllumnateAuthenticableTrait;
 use Illuminate\Auth\Passwords\CanResetPassword as IlluminateCanResetPasswordTrait;
 use Illuminate\Contracts\Auth\Authenticatable as IllumincateAuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as IlluminateCanResetPasswordContract;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Venturecraft\Revisionable\RevisionableTrait as RevisionableTrait;
 use Illuminate\Http\Request;
 use Laravel\Passport\HasApiTokens;
 use WA\DataStore\BaseDataStore;
-use Zizaco\Entrust\Traits\EntrustUserTrait as EntrustUserTrait; 
 
 /**
  * Class User.
@@ -177,11 +174,11 @@ class User extends BaseDataStore implements IlluminateCanResetPasswordContract, 
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return \Illuminate\Database\Eloquent\Relations\hasMany
      */
     public function assets()
     {
-        return $this->belongsToMany('WA\DataStore\Asset\Asset', 'user_assets', 'userId', 'assetId');
+        return $this->hasMany('WA\DataStore\Asset\Asset', 'userId');
     }
 
     /**
@@ -190,14 +187,6 @@ class User extends BaseDataStore implements IlluminateCanResetPasswordContract, 
     public function companies()
     {
         return $this->belongsTo('WA\DataStore\Company\Company', 'companyId');
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function devices()
-    {
-        return $this->belongsToMany('WA\DataStore\Device\Device', 'user_devices', 'userId', 'deviceId');
     }
 
     /**
@@ -222,6 +211,22 @@ class User extends BaseDataStore implements IlluminateCanResetPasswordContract, 
     public function roles()
     {
         return $this->belongsToMany('WA\DataStore\Role\Role', 'role_user', 'user_id', 'role_id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function devicevariations()
+    {
+        return $this->belongsToMany('WA\DataStore\DeviceVariation\DeviceVariation', 'user_device_variations', 'userId', 'deviceVariationId');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function services()
+    {
+        return $this->belongsToMany('WA\DataStore\Service\Service', 'user_services', 'userId', 'serviceId');
     }
 
     /**

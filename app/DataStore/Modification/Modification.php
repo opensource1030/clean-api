@@ -14,6 +14,7 @@ class Modification extends BaseDataStore
     protected $fillable = [
         'modType',
         'value',
+        'unit',
         'updated_at',
     ];
 
@@ -43,5 +44,13 @@ class Modification extends BaseDataStore
     public function devices()
     {
         return $this->belongsToMany('WA\DataStore\Device\Device', 'device_modifications', 'deviceId', 'modificationId');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function devicesvariations()
+    {
+        return $this->belongsToMany('WA\DataStore\DeviceVariation\DeviceVariation', 'device_variations_modifications', 'deviceVariationId', 'modificationId');
     }
 }
