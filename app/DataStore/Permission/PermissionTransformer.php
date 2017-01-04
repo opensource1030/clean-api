@@ -1,14 +1,15 @@
 <?php
-
 namespace WA\DataStore\Permission;
-
 use WA\DataStore\FilterableTransformer;
-
 /**
  * Class PermissionTransformer.
  */
 class PermissionTransformer extends FilterableTransformer
 {
+    protected $availableIncludes = [
+        'scopes',
+        'roles',
+    ];
     /**
      * @param Permission $permission
      *
@@ -18,7 +19,9 @@ class PermissionTransformer extends FilterableTransformer
     {
         return [
             'id'   => (int)$permission->id,
-            'name' => $permission->display_name
+            'name' => $permission->display_name,
+           
         ];
     }
 }
+
