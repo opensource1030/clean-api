@@ -19,25 +19,29 @@ class RolesTableSeeder extends BaseTableSeeder
         $data = [
 
             [
-                'name' => 'superAdmin',
-                'display_name' => 'superAdmin',
-                'description' => 'User with full power and access',
-                
+                'name' => "Game Master",
+                'display_name' => null,
+                'description' => null
             ],
             [
-                'name' => 'admin',
-                'display_name' => 'admin',
-                'description' => 'Administrator of the company account',
+                'name' => "Gamer",
+                'display_name' => null,
+                'description' => null
             ],
             [
-                'name' => 'wta',
-                'display_name' => 'wta',
-                'description' => 'Accept or no the services',
+                'name' => "Cheater",
+                'display_name' => null,
+                'description' => null
             ],
             [
-               'name' => 'user',
-                'display_name' => 'user',
-                'description' => 'Normal user',
+                'name' => "User",
+                'display_name' => null,
+                'description' => null
+            ],
+            [
+                'name' => "Noob",
+                'display_name' => null,
+                'description' => null
             ]
         ];
         

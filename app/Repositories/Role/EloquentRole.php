@@ -1,6 +1,7 @@
 <?php
 
 namespace WA\Repositories\Role;
+
 use Illuminate\Database\Eloquent\Model;
 use WA\Repositories\AbstractRepository;
 
@@ -14,8 +15,10 @@ class EloquentRole extends AbstractRepository implements RoleInterface
     public function getAllRoles()
     {
         $roles = $this->model->all()->toArray();
+
         return $roles;
     }
+
     /**
      * Get Permissions by the Role ID.
      *

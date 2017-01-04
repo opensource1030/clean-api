@@ -1,6 +1,7 @@
 <?php
 
 namespace WA\Helpers\Traits;
+
 use Illuminate\Database\Eloquent\Relations\Relation;
 use WA\DataStore\BaseDataStore;
 use WA\Exceptions\BadCriteriaException;
@@ -14,18 +15,22 @@ trait Criteria
      * @var \Illuminate\Database\Eloquent\Model|BaseDataStore
      */
     protected $criteriaModel;
+
     /**
      * @var \Illuminate\Database\Eloquent\Builder
      */
     protected $criteriaQuery;
+
     /**
      * @var Sorting
      */
     protected $sortCriteria = null;
+
     /**
      * @var Filters
      */
     protected $filterCriteria = null;
+
     /**
      * @var array
      */
@@ -34,28 +39,37 @@ trait Criteria
         'filters' => [],
         'fields'  => []
     ];
+
     /**
      * @var Filters
      */
     protected $filters = null;
+
     /**
      * @var Sorting
      */
     protected $sort = null;
+
     /**
      * @var Fields
      */
     protected $fields = null;
+
     public $criteriaModelName = null;
     protected $criteriaModelColumns = null;
+
     protected $isInclude = false;
+
     protected $returnEmptyResults = false;
+
     /**
      * We have to map some table names / model names because they aren't totally named right
      *
      * @var array
      */
     protected $modelMap = null;
+
+
     /**
      * CriteriaTransformer constructor.
      *
@@ -65,6 +79,7 @@ trait Criteria
     {
         $this->criteria = $criteria;
     }
+
     /**
      * Get a query-builder instance for this model.
      *
@@ -91,8 +106,10 @@ trait Criteria
                 $this->criteriaModelColumns = $criteriaModel->getTableColumns();
             }
         }
+
         return $this->criteriaQuery;
     }
+
     /**
      * Convenience method to set all criteria at once.
      *
@@ -105,14 +122,18 @@ trait Criteria
         if (isset($criteria['sort'])) {
             $this->setSort($criteria['sort']);
         }
+
         if (isset($criteria['filters'])) {
             $this->setFilters($criteria['filters']);
         }
+
         if (isset($criteria['fields'])) {
             $this->setFields($criteria['fields']);
         }
+
         return true;
     }
+
     /**
      * Set sort criteria.
      *
@@ -125,8 +146,10 @@ trait Criteria
         if ($sortCriteria !== null) {
             $this->sortCriteria = $sortCriteria;
         }
+
         return $this;
     }
+
     /**
      * Set filter criteria.
      *
@@ -139,8 +162,10 @@ trait Criteria
         if ($filterCriteria !== null) {
             $this->filterCriteria = $filterCriteria;
         }
+
         return $this;
     }
+
     /**
      * Set fields criteria.
      *
@@ -153,8 +178,10 @@ trait Criteria
         if ($fieldCriteria !== null) {
             $this->fieldCriteria = $fieldCriteria;
         }
+
         return $this;
     }
+
     /**
      * @param $criteriaModel
      * @param null $criteria Optional criteria
@@ -167,14 +194,20 @@ trait Criteria
         if ($criteria !== null) {
             $this->setCriteria($criteria);
         }
+
         $this->returnEmptyResults = $returnEmptyResults;
         $this->isInclude = $isInclude;
         $this->modelMap = $modelMap;
         $this->criteriaModel = $criteriaModel;
+
         $this->getQuery($criteriaModel, true);
+
         $this->sort()->filter();
+
         return $this->criteriaQuery;
     }
+
+
     /**
      * Apply filter criteria to the current query.
      *
@@ -187,15 +220,19 @@ trait Criteria
         if ($this->filterCriteria === null) {
             return $this;
         }
+
         $criteriaModelName = $this->criteriaModelName;
         $criteriaModelColumns = $this->criteriaModelColumns;
+
         foreach ($this->filterCriteria->filtering() as $filterKey => $filterVal) {
             if (strpos($filterKey, '.')) {
                 $relKey = substr($filterKey, 0, strpos($filterKey, '.'));
                 $relColumn = substr($filterKey, strpos($filterKey, '.') + 1);
+
                 if (is_array($this->modelMap) && isset($this->modelMap[$relKey])) {
                     $filterKey = $this->modelMap[$relKey];
                 }
+
                 if ($filterKey !== $criteriaModelName) {
                     if ($this->returnEmptyResults === true) {
                         $op = strtolower(key($filterVal));
@@ -211,6 +248,7 @@ trait Criteria
             } elseif ($this->isInclude) {
                 continue;
             }
+
             if (in_array($filterKey, $criteriaModelColumns)) {
                 $op = strtolower(key($filterVal));
                 $val = current($filterVal);
@@ -219,8 +257,10 @@ trait Criteria
                 throw new BadCriteriaException('Invalid filter criteria');
             }
         }
+
         return $this;
     }
+
     /**
      * @param $query
      * @param $filterKey
@@ -272,6 +312,7 @@ trait Criteria
         }
         return $query;
     }
+
     /**
      * Apply sort criteria to the current query.
      *
@@ -284,9 +325,11 @@ trait Criteria
         if ($this->isInclude === true) {
             return $this;
         }
+
         if ($this->sortCriteria === null) {
             return $this;
         }
+
         foreach ($this->sortCriteria->sorting() as $sortColumn => $direction) {
             if (in_array($sortColumn, $this->criteriaModelColumns)) {
                 $this->criteriaQuery->orderBy($sortColumn, $direction);
@@ -294,8 +337,10 @@ trait Criteria
                 throw new BadCriteriaException('Invalid sort criteria');
             }
         }
+
         return $this;
     }
+
     /**
      * @param $vals
      *
@@ -309,8 +354,10 @@ trait Criteria
                 unset($vals[$key]);
             }
         }
+
         return $vals;
     }
+
     /**
      * @return mixed
      */
@@ -319,11 +366,13 @@ trait Criteria
         $filters = $this->getFilters();
         $sort = $this->getSort();
         $fields = $this->getFields();
+
         $this->criteria['filters'] = $filters;
         $this->criteria['sort'] = $sort;
         $this->criteria['fields'] = $fields;
         return $this->criteria;
     }
+
     /**
      * @return Sorting
      */
@@ -332,6 +381,7 @@ trait Criteria
         $sort = new Sorting(\Request::get('sort', null));
         return $sort;
     }
+
     /**
      * @return Filters
      */
@@ -340,6 +390,8 @@ trait Criteria
         $filters = new Filters((array)\Request::get('filter', null));
         return $filters;
     }
+
+
     /**
      * @return Fields
      */
