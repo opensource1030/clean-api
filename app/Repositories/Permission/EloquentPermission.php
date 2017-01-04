@@ -1,11 +1,20 @@
 <?php
+
 namespace WA\Repositories\Permission;
+
 use WA\Repositories\AbstractRepository;
 use WA\Repositories\Role\RoleInterface;
-use WA\Repositories\Permission\PermissionInterface;
-class EloquentPermission extends AbstractRepository implements PermissionInterface
+
+class EloquentPermission extends AbstractRepository implements PermissionsInterface
 {
     protected $role;
+
+    public function __construct(
+      RoleInterface $role
+    ) {
+        $this->role = $role;
+    }
+
     /**
      * Get the Permissions by the Role ID.
      *
@@ -16,19 +25,7 @@ class EloquentPermission extends AbstractRepository implements PermissionInterfa
     public function byRole($id)
     {
         $role = $this->role->byId($id);
+
         return $role->permissions;
     }
- /**
-     * Get Permissions by the Scope ID.
-     *
-     * @param int $id
-     *
-     * @return object of the permissions information
-     */
-    public function getScope($id)
-    {
-        return $this->model->where('id', $id)->first()->scopes;
-    }
-    
-    
 }

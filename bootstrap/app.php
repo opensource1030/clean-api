@@ -86,9 +86,7 @@ $app->routeMiddleware([
     'role' => 'Zizaco\Entrust\Middleware\EntrustRole',
     'permission' => 'Zizaco\Entrust\Middleware\EntrustPermission',
     'ability' => 'Zizaco\Entrust\Middleware\EntrustAbility',
-    'oauth-user-instance' => \WA\Http\Middleware\OAuth2UserInstance::class,
-    'scopes' => \Laravel\Passport\Http\Middleware\CheckScopes::class,
-    'scope' => \Laravel\Passport\Http\Middleware\CheckForAnyScope::class
+    'oauth-user-instance' => \WA\Http\Middleware\OAuth2UserInstance::class
     
 ]);
 

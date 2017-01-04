@@ -48,16 +48,11 @@ class DatabaseSeeder extends Seeder
         $this->call(PackageDevicesTableSeeder::class);
         $this->call(PackageServicesTableSeeder::class);
         $this->call(PackagesTableSeeder::class);
-         $this->call(PermissionsTableSeeder::class);
-        $this->call(PermissionRolesTableSeeder::class);
         //$this->call(PagesTableSeeder::class);
         $this->call(PricesTableSeeder::class);
         //$this->call(ProvidersTableSeeder::class);
         $this->call(RequestsTableSeeder::class);
         $this->call(RolesTableSeeder::class);
-        $this->call(RoleUsersTableSeeder::class);
-         $this->call(ScopesTableSeeder::class);
-        $this->call(ScopePermissionsTableSeeder::class);
         $this->call(ServiceItemsTableSeeder::class);
         $this->call(ServicesTableSeeder::class);
         $this->call(UdlValuesTableSeeder::class);
