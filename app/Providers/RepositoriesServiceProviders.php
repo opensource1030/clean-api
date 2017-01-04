@@ -48,6 +48,7 @@ class RepositoriesServiceProviders extends ServiceProvider
         $this->registerEmailNotifications();
         $this->registerRole();
         $this->registerPermission();
+        $this->registerScope();
         $this->registerAllocation();
         $this->registerContent();
         $this->registerService();
