@@ -11,6 +11,7 @@ class RoleTransformer extends FilterableTransformer
 {
     protected $availableIncludes = [
         'permissions',
+        'users',
     ];
 
     /**
@@ -26,3 +27,4 @@ class RoleTransformer extends FilterableTransformer
         ];
     }
 }
+
