@@ -32,6 +32,7 @@ class jobsController extends FilteredApiController
 
         //Get the most recent billing month for every company per carrier
         $query = <<<BLOCK
+
         SELECT c.id as companyId, cr.id as carrierId, Max(ac.billMonth) AS currentBillMonth
 FROM allocations ac
 LEFT JOIN carriers cr on cr.id = ac.carrier  COLLATE utf8_unicode_ci
@@ -44,8 +45,7 @@ BLOCK;
         $currentBillMonths = \DB::select($query);
 
         //Update the current bill month table with the latest date
-        foreach($currentBillMonths as $billMonth)
-        {
+        foreach ($currentBillMonths as $billMonth) {
             $companyId = isset($billMonth->{'companyId'}) ? $billMonth->{'companyId'} : null;
             $carrierId = isset($billMonth->{'carrierId'}) ? $billMonth->{'carrierId'} : null;
             $billMonth = isset($billMonth->{'currentBillMonth'}) ? $billMonth->{'currentBillMonth'} : null;
@@ -56,19 +56,18 @@ BLOCK;
 
 
             //If exists, update using id
-            if(!empty($currentBillMonth))
-            {
+            if (!empty($currentBillMonth)) {
                 $data = [
                     'id' => $currentBillMonth['id'],
                     'billMonth' => $billMonth ? $billMonth : null,
                 ];
 
                 //$id = $currentBillMonth['id'];
-               //echo "Updated for Id $id <br />";
+                //echo "Updated for Id $id <br />";
 
                 $this->currentBillMonth->update($data);
 
-            }else{
+            } else {
                 //If not exists, add an entry
                 $billData = [
                     'companyId' => $companyId,
@@ -78,19 +77,19 @@ BLOCK;
 
                 $this->currentBillMonth->create($billData);
                 //echo"bill month inserted for company $companyId and carrier $carrierId <br />";
+
             }
 
         }
 
-        if(!empty($currentBillMonths))
-        {
-            $message['message']['put']= "Company Current Bill Months Updated";
+        if (!empty($currentBillMonths)) {
+            $message['message']['put'] = "Company Current Bill Months Updated";
             return response()->json($message)->setStatusCode(200);
 
-        } else{
-            $message['message']['put']= "Company Current Bill Months Not Updated";
+        } else {
+            $message['message']['put'] = "Company Current Bill Months Not Updated";
             return response()->json($message)->setStatusCode(400);
-        }
 
+        }
     }
 }
