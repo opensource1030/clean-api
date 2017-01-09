@@ -32,7 +32,7 @@ class jobsController extends FilteredApiController
 
         //Get the most recent billing month for every company per carrier
         $query = <<<BLOCK
-        SELECT c.id as companyId, cr.id as carrierId, Max(ac.billMonth) AS BillMonth
+        SELECT c.id as companyId, cr.id as carrierId, Max(ac.billMonth) AS currentBillMonth
 FROM allocations ac
 LEFT JOIN carriers cr on cr.id = ac.carrier  COLLATE utf8_unicode_ci
 LEFT JOIN companies c on c.id = ac.companyId
@@ -48,7 +48,7 @@ BLOCK;
         {
             $companyId = isset($billMonth->{'companyId'}) ? $billMonth->{'companyId'} : null;
             $carrierId = isset($billMonth->{'carrierId'}) ? $billMonth->{'carrierId'} : null;
-            $billMonth = isset($billMonth->{'BillMonth'}) ? $billMonth->{'BillMonth'} : null;
+            $billMonth = isset($billMonth->{'currentBillMonth'}) ? $billMonth->{'currentBillMonth'} : null;
 
 
             //select from current bill month table by company id and carrier id
@@ -60,11 +60,11 @@ BLOCK;
             {
                 $data = [
                     'id' => $currentBillMonth['id'],
-                    'billMonth' => isset($currentBillMonth['currentBillMonth']) ? $currentBillMonth['currentBillMonth'] : null,
+                    'billMonth' => $billMonth ? $billMonth : null,
                 ];
 
                 //$id = $currentBillMonth['id'];
-               // echo "Updated for Id $id <br />";
+               //echo "Updated for Id $id <br />";
 
                 $this->currentBillMonth->update($data);
 
@@ -80,9 +80,16 @@ BLOCK;
                 //echo"bill month inserted for company $companyId and carrier $carrierId <br />";
             }
 
+        }
+
+        if(!empty($currentBillMonths))
+        {
             $message['message']['put']= "Company Current Bill Months Updated";
             return response()->json($message)->setStatusCode(200);
 
+        } else{
+            $message['message']['put']= "Company Current Bill Months Not Updated";
+            return response()->json($message)->setStatusCode(400);
         }
 
     }
