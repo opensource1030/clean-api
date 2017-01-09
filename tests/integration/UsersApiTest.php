@@ -247,9 +247,9 @@ class UsersApiTest extends TestCase
 
     public function testGetLoggedInUser()
     {
-        /*$this->markTestSkipped(
+        $this->markTestSkipped(
               '.'
-            );*/
+            );
         $grantType = 'password';
         $password = 'user';
 

@@ -12,6 +12,8 @@ use Laravel\Passport\PassportServiceProvider;
 use WA\Auth\BearerTokenResponse;
 use League\OAuth2\Server\AuthorizationServer;
 use WA\Auth\PasswordGrant;
+use Log;
+use Schema;
 
 class AuthServiceProvider extends PassportServiceProvider
 {
@@ -53,7 +55,7 @@ class AuthServiceProvider extends PassportServiceProvider
      * Create and configure a Password grant instance.
      *
      * @return PasswordGrant
-     */
+     *//*
     protected function makePasswordGrant()
     {
         $grant = new PasswordGrant(
@@ -64,5 +66,5 @@ class AuthServiceProvider extends PassportServiceProvider
         $grant->setRefreshTokenTTL(Passport::refreshTokensExpireIn());
 
         return $grant;
-    }
+    }*/
 }
