@@ -43,5 +43,68 @@ class EloquentCompanyCurrentBillMonth extends AbstractRepository implements  Com
         return $this->model->getTransformer();
     }
 
+    /**
+     * Get by company id and carrier id
+     *
+     * @param $companyId
+     * @param $carrierId
+     * @return mixed
+     */
+    public function byCompanyIdAndCarrierId($companyId, $carrierId)
+    {
+        return $this->model->where('companyId', $companyId)->where('carrierId', $carrierId)->first();
+    }
+
+    /**
+     * Create new entry in current bill month table.
+     *
+     * @param array $data
+     *
+     * @return bool|static
+     */
+    public function create(array $data)
+    {
+        $billMonthData = [
+            'companyId' =>  isset($data['companyId']) ? $data['companyId'] : null,
+            'carrierId' => isset($data['carrierId']) ? $data['carrierId'] : null,
+            'currentBillMonth' => isset($data['billMonth']) ? $data['billMonth'] : null,
+
+        ];
+
+        $currentBillMonth = $this->model->create($billMonthData);
+
+        if (!$currentBillMonth) {
+            return false;
+        }
+
+        return $currentBillMonth;
+    }
+
+    /**
+     * Update current bill month for a company/carrier
+     *
+     * @param array $data
+     *
+     * @return bool
+     */
+    public function update(array $data)
+    {
+        $currentBillMonth = $this->model->find($data['id']);
+
+        if (!$currentBillMonth) {
+            return false;
+        }
+
+        $currentBillMonth->currentBillMonth = isset($data['billMonth']) ? $data['billMonth'] : null;
+
+        if (!$currentBillMonth->save()) {
+            return false;
+        }
+
+        return $currentBillMonth;
+    }
+
+
+
 
 }
