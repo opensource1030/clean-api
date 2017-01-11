@@ -14,6 +14,7 @@ use League\OAuth2\Server\AuthorizationServer;
 use WA\Auth\PasswordGrant;
 use Log;
 use Schema;
+use WA\DataStore\Scope\Scope;
 
 class AuthServiceProvider extends PassportServiceProvider
 {
