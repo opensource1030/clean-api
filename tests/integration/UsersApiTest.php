@@ -2949,7 +2949,7 @@ class UsersApiTest extends TestCase
         $arrayU = array($udlV1->id, $udlV2->id);
         $user->udlValues()->sync($arrayU);
 
-        $userUdlDB = DB::table('employee_udls')->where('userId', $user->id)->get();
+        $userUdlDB = DB::table('user_udls')->where('userId', $user->id)->get();
         $this->assertCount(2, $userUdlDB);
         $this->assertEquals($userUdlDB[0]->udlValueId, $udlV1->id);
         $this->assertEquals($userUdlDB[1]->udlValueId, $udlV2->id);

@@ -2,7 +2,7 @@
 
 class UserUdlsTableSeeder extends BaseTableSeeder
 {
-    protected $table = 'employee_udls';
+    protected $table = 'user_udls';
 
     public function run()
     {
