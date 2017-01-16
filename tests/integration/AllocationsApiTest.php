@@ -36,7 +36,7 @@ class AllocationsApiTest extends TestCase
                             'service_plan_charge',
                             'usage_charge',
                             'other_charge',
-                            'fees',
+                            'fees_charge',
                             'last_upgrade',
 
                         ],
@@ -71,7 +71,7 @@ class AllocationsApiTest extends TestCase
                                 'service_plan_charge',
                                 'usage_charge',
                                 'other_charge',
-                                'fees',
+                                'fees_charge',
                                 'last_upgrade',
 
                             ],
