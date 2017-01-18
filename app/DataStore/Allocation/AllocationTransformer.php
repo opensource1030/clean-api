@@ -38,6 +38,8 @@ class AllocationTransformer extends FilterableTransformer
             'intl_ld_text_usage'        => (int) $allocations->intlLDTextUsage,
             'etf_charge'                => (float) $allocations->etfCharge,
             'other_carrier_charge'      => (float) $allocations->otherCarrierCharge,
+            'device_esn_imei'           => $allocations->deviceEsnImei,
+            'device_sim'                => $allocations->deviceSim,
         ];
     }
 }

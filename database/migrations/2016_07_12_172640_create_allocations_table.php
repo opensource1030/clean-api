@@ -85,6 +85,26 @@ class CreateAllocationsTable extends Migration
 
                 //last upgrade date
                 $table->string('last_upgrade');
+
+                //Other charges and usage data
+                $table->string('deviceType');
+                $table->decimal('domesticUsageCharge');
+                $table->integer('domesticDataUsage');
+                $table->integer('domesticVoiceUsage');
+                $table->integer('domesticTextUsage');
+                $table->decimal('intlRoamUsageCharge');
+                $table->integer('intlRoamDataUsage');
+                $table->integer('intlRoamVoiceUsage');
+                $table->integer('intlRoamTextUsage');
+                $table->decimal('intlLDUsageCharge');
+                $table->integer('intlLDVoiceUsage');
+                $table->integer('intlLDTextUsage');
+                $table->decimal('etfCharge');
+                $table->decimal('otherCarrierCharge');
+                $table->string('deviceEsnImei');
+                $table->string('deviceSim');
+
+
             });
 
         Schema::table(

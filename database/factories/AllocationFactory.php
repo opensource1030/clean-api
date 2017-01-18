@@ -5,6 +5,7 @@ $factory->define(\WA\DataStore\Allocation\Allocation::class, function (\Faker\Ge
     $currencies = ['USD'];
     $handsets = ['Apple iPhone 6 16GB Space Gray', 'Samsung Galaxy S4 - Black', 'Google Nexus 6 Xt1103'];
     $bill_months = ['2016-05-01', '2016-06-01', '2016-07-01', '2016-08-01'];
+    $device_type = ['BB/PDA/iPhone', 'Data Card', 'Voice'];
 
     return [
 
@@ -68,6 +69,26 @@ $factory->define(\WA\DataStore\Allocation\Allocation::class, function (\Faker\Ge
 
         //Last Upgrade
         'last_upgrade' => 'N/A',
+
+        //Other usage and charges data
+        'deviceType' => $device_type[array_rand($device_type)],
+        'domesticUsageCharge' => $faker->biasedNumberBetween(5, 15),
+        'domesticDataUsage' => $faker->biasedNumberBetween(50, 1500),
+        'domesticVoiceUsage' => $faker->biasedNumberBetween(50, 1500),
+        'domesticTextUsage' => $faker->biasedNumberBetween(50, 1500),
+        'intlRoamUsageCharge' => $faker->biasedNumberBetween(50, 1500),
+        'intlRoamDataUsage' => $faker->biasedNumberBetween(50, 1500),
+        'intlRoamVoiceUsage' => $faker->biasedNumberBetween(50, 1500),
+        'intlRoamTextUsage' => $faker->biasedNumberBetween(50, 1500),
+        'intlLDUsageCharge' => $faker->biasedNumberBetween(50, 1500),
+        'intlLDVoiceUsage' => $faker->biasedNumberBetween(50, 1500),
+        'intlLDTextUsage' => $faker->biasedNumberBetween(50, 1500),
+        'etfCharge' => $faker->biasedNumberBetween(50, 1500),
+        'otherCarrierCharge' => $faker->biasedNumberBetween(50, 1500),
+        'deviceEsnImei' => $faker->biasedNumberBetween(50, 1500),
+        'deviceSim' => $faker->biasedNumberBetween(50, 1500),
+
+
 
         'userId' => 1,
 

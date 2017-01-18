@@ -18,7 +18,9 @@ class Allocation extends BaseDataStore
 
     public $timestamps = false;
 
-    protected $fillable = ['userId', 'companyId', 'billMonth', 'mobileNumber', 'carrier', 'currency', 'handsetModel', 'totalAllocatedCharge', 'preAllocatedAmountDue', 'otherAdjustments', 'preAdjustedAccessCharge', 'adjustedAccessCharge', 'bBCharge', 'pDACharge', 'iPhoneCharge', 'featuresCharge', 'dataCardCharge', 'lDCanadaCharge', 'uSAddOnPlanCharge', 'uSLDAddOnPlanCharge', 'uSDataRoamingCharge', 'nightAndWeekendAddOnCharge', 'minuteAddOnCharge', 'servicePlanCharge', 'directConnectCharge', 'textMessagingCharge', 'dataCharge', 'intlRoamingCharge', 'intlLongDistanceCharge', 'directoryAssistanceCharge', 'callForwardingCharge', 'airtimeCharge', 'usageCharge', 'equipmentCharge', 'otherDiscountCharge', 'taxesCharge', 'thirdPartyCharge', 'otherCharge', 'waFees', 'lineFees', 'mobilityFees', 'feesCharge', 'last_upgrade', 'otherAdjustments', 'featuresCharge'];
+    protected $fillable = ['userId', 'companyId', 'billMonth', 'mobileNumber', 'carrier', 'currency', 'handsetModel', 'totalAllocatedCharge', 'preAllocatedAmountDue', 'otherAdjustments', 'preAdjustedAccessCharge', 'adjustedAccessCharge', 'bBCharge', 'pDACharge', 'iPhoneCharge', 'featuresCharge', 'dataCardCharge', 'lDCanadaCharge', 'uSAddOnPlanCharge', 'uSLDAddOnPlanCharge', 'uSDataRoamingCharge', 'nightAndWeekendAddOnCharge', 'minuteAddOnCharge', 'servicePlanCharge', 'directConnectCharge', 'textMessagingCharge', 'dataCharge', 'intlRoamingCharge', 'intlLongDistanceCharge', 'directoryAssistanceCharge', 'callForwardingCharge', 'airtimeCharge', 'usageCharge', 'equipmentCharge', 'otherDiscountCharge', 'taxesCharge', 'thirdPartyCharge', 'otherCharge', 'waFees', 'lineFees', 'mobilityFees', 'feesCharge', 'last_upgrade', 'otherAdjustments',
+        'featuresCharge', 'deviceType', 'domesticUsageCharge', 'domesticDataUsage', 'domesticVoiceUsage', 'domesticTextUsage', 'intlRoamUsageCharge',
+    'intlRoamDataUsage', 'intlRoamVoiceUsage', 'intlRoamTextUsage', 'intlLDUsageCharge', 'intlLDVoiceUsage', 'intlLDTextUsage', 'etfCharge', 'otherCarrierCharge', 'deviceEsnImei','deviceSim'];
 
     public function companies()
     {
