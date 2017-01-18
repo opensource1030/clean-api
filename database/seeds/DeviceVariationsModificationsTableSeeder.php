@@ -27,45 +27,21 @@ class DeviceVariationsModificationsTableSeeder extends BaseTableSeeder
                 'modificationId' => 2,
             ],
             [
-                'deviceVariationId' => 1,
-                'modificationId' => 3,
-            ],
-            [
-                'deviceVariationId' => 1,
-                'modificationId' => 4,
-            ],
-            [
                 'deviceVariationId' => 2,
                 'modificationId' => 1,
             ],
             [
                 'deviceVariationId' => 2,
-                'modificationId' => 2,
+                'modificationId' => 5,
             ],
             [
-                'deviceVariationId' => 2,
+                'deviceVariationId' => 3,
                 'modificationId' => 3,
-            ],
-            [
-                'deviceVariationId' => 2,
-                'modificationId' => 5,
-            ],
-                        [
-                'deviceVariationId' => 3,
-                'modificationId' => 1,
-            ],
-            [
-                'deviceVariationId' => 3,
-                'modificationId' => 2,
-            ],
-            [
-                'deviceVariationId' => 3,
-                'modificationId' => 5,
             ],
             [
                 'deviceVariationId' => 3,
                 'modificationId' => 6,
-            ],
+            ]
         ];
 
         $this->loadTable($data);

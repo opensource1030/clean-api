@@ -40,20 +40,15 @@ class DeviceVariationsHelperController extends FilteredApiController
      */
     public function store($data, $deviceId)
     {
-
+        DB::beginTransaction();
         foreach ($data['data'] as $var) {
             $aux['data'] = $var;    
             if (!$this->isJsonCorrect($aux, 'devicevariations')) {
 
                 return false;
             }
-
-            DB::beginTransaction();
-            
-                # code...
             
             $aux['data']['attributes']['deviceId']=$deviceId;
-            
             if($aux['data']['id']>0){
                 $aux['data']['attributes']['id'] = $aux['data']['id'];
                 $deviceVariation = $this->deviceVariation->update($aux['data']['attributes']);
@@ -106,7 +101,6 @@ class DeviceVariationsHelperController extends FilteredApiController
                 }
             }
         }
-        
         DB::commit();
         return true;
     }
@@ -136,7 +130,6 @@ class DeviceVariationsHelperController extends FilteredApiController
 
                 $data['attributes']['deviceId'] = $id;
                 $deviceVariation = $this->deviceVariation->create($data['attributes']);
-
                 if (isset($data['relationships']['modifications'])) {
                     if (isset($data['relationships']['modifications']['data'])) {
                         $dataDeviceVariations = $this->parseJsonToArray($data['relationships']['modifications']['data'], 'modifications');
@@ -161,9 +154,6 @@ class DeviceVariationsHelperController extends FilteredApiController
                 }
             }
 
-        /*try {
-            $var['data']['attributes']['deviceId'] = $id;
-            $deviceVariation = $this->deviceVariation->create($data);*/
         } catch (\Exception $e) {
             DB::rollBack();
             return false;

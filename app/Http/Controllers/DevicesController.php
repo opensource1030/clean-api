@@ -73,7 +73,6 @@ class DevicesController extends FilteredApiController
             if ($device == 'notSaved') {
                 DB::rollBack();
                 $error['errors']['device'] = Lang::get('messages.NotSavedClass', ['class' => 'Device']);
-                //$error['errors']['Message'] = $e->getMessage();
                 return response()->json($error)->setStatusCode($this->status_codes['conflict']);
             }
 
@@ -81,7 +80,6 @@ class DevicesController extends FilteredApiController
             DB::rollBack();
             $error['errors']['devices'] = Lang::get('messages.NotOptionIncludeClass',
                 ['class' => 'Device', 'option' => 'updated', 'include' => '']);
-            //$error['errors']['Message'] = $e->getMessage();
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
@@ -99,7 +97,6 @@ class DevicesController extends FilteredApiController
                     } catch (\Exception $e) {
                         $error['errors']['images'] = Lang::get('messages.NotOptionIncludeClass',
                             ['class' => 'Device', 'option' => 'updated', 'include' => 'Images']);
-                        //$error['errors']['Message'] = $e->getMessage();
                     }
                 }
             }
@@ -114,19 +111,9 @@ class DevicesController extends FilteredApiController
                         $success = false;
                         $error['errors']['modifications'] = Lang::get('messages.NotOptionIncludeClass',
                             ['class' => 'Device', 'option' => 'updated', 'include' => 'Modifications']);
-                        //$error['errors']['Message'] = $e->getMessage();
                     }
                 }
             }
-           
-           /* try {
-                $deviceVariations = DeviceVariation::where('deviceId', $id)->get();
-                //$helper = app()->make('WA\Http\Controllers\DeviceVariationsHelperController');
-            } catch (\Exception $e) {
-                $error['errors']['devicevariations'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Device', 'option' => 'updated', 'include' => 'DeviceVariations']);
-                //$error['errors']['Message'] = $e->getMessage();
-                return response()->json($error)->setStatusCode($this->status_codes['conflict']);
-            }*/
 
             if (isset($dataRelationships['devicevariations'])) {
                 if (isset($dataRelationships['devicevariations']['data'])) {
@@ -139,52 +126,23 @@ class DevicesController extends FilteredApiController
 
                             
         
-                            $this->deleteNotRequested($dataRelationships['devicevariations']['data'], $deviceVar, $helper, 'devicevariations');                       
-                                //$check = $this->checkIfDeviceVariationsRowIsCorrect($deviceVariations, $dataModifications);
-                                //if ($check['bool']) {
-                                    
+                            $this->deleteNotRequested($dataRelationships['devicevariations']['data'], $deviceVar, $helper, 'devicevariations');                                            
                                     $success=$helper->store($dataRelationships['devicevariations'],$device->id);
                                     if (!$success){ 
                                         $error['errors']['devicevariations'] = Lang::get('messages.NotOptionIncludeClass',
                                         ['class' => 'Device', 'option' => 'updated', 'include' => 'DeviceVariations']);
-                                        //$error['errors']['Message'] = $e->getMessage();
                                     }
-                                    /*if (isset($deviceVariations['id'])) {
-                                        if ($deviceVariations['id'] == 0) {
-                                            $helper->create($deviceVariations);
-                                        } else {
-                                            if ($deviceVariations['id'] > 0) {
-                                                $helper->update($deviceVariations);
-                                            } else {
-                                                $success = false;
-                                                $error['errors']['devicevariations'] = 'the Device Variation has an incorrect id';
-                                            }
-                                        }
-                                    } else {
-                                        $success = false;
-                                        $error['errors']['devicevariations'] = 'the Device Variation has no id';
-                                    }*/
-
-                               /* } else {
-                                    $success = false;
-                                    $error['errors']['devicevariations'] = Lang::get('messages.NotOptionIncludeClass',
-                                        ['class' => 'Device', 'option' => 'updated', 'include' => 'Devicevariations']);
-                                    //$error['errors']['Check'] = $check['error'];
-                                    //$error['errors']['IdError'] = $check['id'];
-                                    //$error['errors']['Message'] = 'Any price rows are not correct and no references provided relationships.';
-                                }*/
                             
                         } catch (\Exception $e) {
                             $success = false;
                             $error['errors']['devicevariations'] = Lang::get('messages.NotOptionIncludeClass',
                                 ['class' => 'Device', 'option' => 'updated', 'include' => 'DeviceVariations']);
-                            //$error['errors']['Message'] = $e->getMessage();
                         }
                     } else {
                         $success = false;
                         $error['errors']['devicevariations'] = Lang::get('messages.NotIncludeExistsOptionClass',
                             ['class' => 'Device', 'option' => 'updated', 'include' => 'Devicevariations']);
-                        //$error['errors']['Message'] = $e->getMessage();
+                        
                     }
                 }
             }
@@ -253,7 +211,6 @@ class DevicesController extends FilteredApiController
                     } catch (\Exception $e) {
                         $error['errors']['images'] = Lang::get('messages.NotOptionIncludeClass',
                             ['class' => 'Device', 'option' => 'created', 'include' => 'Images']);
-                        //$error['errors']['Message'] = $e->getMessage();
                     }
                 }
             }
@@ -268,51 +225,33 @@ class DevicesController extends FilteredApiController
                         $success = false;
                         $error['errors']['modifications'] = Lang::get('messages.NotOptionIncludeClass',
                             ['class' => 'Device', 'option' => 'created', 'include' => 'Modifications']);
-                        //$error['errors']['Message'] = $e->getMessage();
+                        
                     }
                 }
             }
 
             if (isset($dataRelationships['devicevariations'])) {
                 if (isset($dataRelationships['devicevariations']['data'])) {
-                    //$data = $dataRelationships['devicevariations']['data'];
-
-
 
                     if ($success) {
                         try {
                             $helper = app()->make('WA\Http\Controllers\DeviceVariationsHelperController');
 
-                            //$data = $this->deleteRepeat($data);
                             
-
-                            //foreach ($data as $deviceVariations) {
-                                //$check = $this->checkIfDeviceVariationsRowIsCorrect($deviceVariations, $device);
-                               // if ($check['bool']) {
-                                    //$data['attributes']['deviceId'] = $device->id;
                                     $helper->create($dataRelationships['devicevariations'], $device->id);
-                               /* } else {
-                                    $success = false;
-                                    $error['errors']['devicevariations'] = Lang::get('messages.NotOptionIncludeClass',
-                                        ['class' => 'Device', 'option' => 'created', 'include' => 'DeviceVariations']);
-                                    //$error['errors']['Check'] = $check['error'];
-                                    //$error['errors']['IdError'] = $check['id'];
-                                    //$error['errors']['Message'] = 'Any devicevariations rows are not correct and no references provided relationships.';
-                                }*/
                             
                         } catch (\Exception $e) {
 
                             $success = false;
                             $errors = 'Device Variation not created.';
-                           //$error['errors']['devicevariations'] = Lang::get('messages.NotOptionIncludeClass',
-                                //['class' => 'Device', 'option' => 'created', 'include' => 'DeviceVariations']);
+                           
                             $error['errors']['Message'] = $e->getMessage();
                         }
                     } else {
                         $success = false;
                         $error['errors']['devicevariations'] = Lang::get('messages.NotIncludeExistsOptionClass',
                             ['class' => 'Device', 'option' => 'created', 'include' => 'DeviceVariations']);
-                        //$error['errors']['Message'] = $e->getMessage();
+                        
                     }
                 }
             }
@@ -393,88 +332,7 @@ class DevicesController extends FilteredApiController
             }
         }
 
-        
-        /*$modInterface = app()->make('WA\Repositories\Modification\ModificationInterface');
-        $existsCapacity = false;
-        if (isset($deviceVariations['deviceId'])) {
-
-            foreach ($modifications as $mod) {
-
-                $modification = $modInterface->byId($mod);
-                $reflectorResponse = new \ReflectionClass($modification);
-                $classResponse = $reflectorResponse->getProperty('attributes');
-                $classResponse->setAccessible(true);
-                $dataResponse = $classResponse->getValue($modification);
-
-                if ($deviceVariations['deviceId'] == $dataResponse['id']) {
-                    if ($dataResponse['modType'] == 'capacity') {
-                        $existsCapacity = true;
-                    }
-                }
-            }
-
-            if (!$existsCapacity) {
-                return array("bool" => false, "error" => "Capacity Not Found", "id" => $deviceVariations['deviceId']);
-            }
-        }
-
-
-        $existsStyle = false;
-        if (isset($deviceVariations['styleId'])) {
-
-            foreach ($modifications as $mod) {
-
-                $modification = $modInterface->byId($mod);
-                $reflectorResponse = new \ReflectionClass($modification);
-                $classResponse = $reflectorResponse->getProperty('attributes');
-                $classResponse->setAccessible(true);
-                $dataResponse = $classResponse->getValue($modification);
-
-                if ($deviceVariations['styleId'] == $dataResponse['id']) {
-                    if ($dataResponse['modType'] == 'style') {
-                        $existsStyle = true;
-                    }
-                }
-            }
-
-            if (!$existsStyle) {
-                return array("bool" => false, "error" => "Style Not Found", "id" => $deviceVariations['styleId']);
-            }
-        }
-
-        return array("bool" => true, "error" => "No Error", "id" => 0);*/
     }
-
-    /*
-     *      Checks if an ARRAY param of Prices has information that is equal to the other information provided.
-     *
-     *      @param: 
-     *          array (size=9) (prices)
-     *              'type' => string 'prices' (length=6)
-     *              'capacityId' => int 1
-     *              'styleId' => int 2
-     *              'carrierId' => int 1
-     *              'companyId' => int 1
-     *              'priceRetail' => int 100
-     *              'price1' => int 100
-     *              'price2' => int 100
-     *              'priceOwn' => int 100
-     *          array (size=3) (modifications)
-     *              0 => int 1
-     *              1 => int 2
-     *              2 => int 3
-     *          array (size=2) (carriers)
-     *              0 => int 1
-     *              1 => int 2
-     *          array (size=2) (companies)
-     *              0 => int 1
-     *              1 => int 2
-     *      @return:
-     *          array (size=3)
-     *              'bool' => boolean true
-     *              'error' => string 'No Error' (length=8)
-     *              'id' => int 0
-     */
 
     /**
      * Delete a device

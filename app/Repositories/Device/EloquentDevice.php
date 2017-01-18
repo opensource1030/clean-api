@@ -53,6 +53,74 @@ class EloquentDevice extends AbstractRepository implements DeviceInterface
 
         return $userDevices;
     }
+    /**
+     * Create a new Device.
+     *
+     * @param array $data
+     *
+     * @return Device | false
+     */
+    public function create(array $data){
+        if(isset($data['name']) && $data['name'] !== ''){
+            $deviceData['name'] = $data['name'];
+        } else {
+            return false;
+        }
+        if(isset($data['properties']) && $data['properties'] !== ''){
+            $deviceData['properties'] = $data['properties'];
+        } else {
+            return false;
+        }
+        if(isset($data['deviceTypeId']) && $data['deviceTypeId'] !== ''){
+            $deviceData['deviceTypeId'] = $data['deviceTypeId'];
+        } else {
+            return false;
+        }
+        if(isset($data['statusId']) && $data['statusId'] !== ''){
+            $deviceData['statusId'] = $data['statusId'];
+        } else {
+            $deviceData['statusId']
+            = null;
+        }
+        if(isset($data['externalId']) && $data['externalId'] !== ''){
+            $deviceData['externalId'] = $data['externalId'];
+        } else {
+            $deviceData['externalId'] = null;
+        }
+        if(isset($data['syncId']) && $data['syncId'] !== ''){
+            $deviceData['syncId'] = $data['syncId'];
+        } else {
+            $deviceData['syncId'] = null;
+        }
+        if(isset($data['make']) && $data['make'] !== ''){
+            $deviceData['make'] = $data['make'];
+        } else {
+            $deviceData['make'] = null;
+        }
+        if(isset($data['model']) && $data['model'] !== ''){
+            $deviceData['model'] = $data['model'];
+        } else {
+            $deviceData['model'] = null;
+        }
+        if(isset($data['identification']) && $data['identification'] !== ''){
+            $deviceData['identification'] = $data['identification'];
+        } else {
+            $generator = app()->make('WA\Helpers\DeviceHelper');
+            $ident = $generator->generateIds($data['deviceTypeId']);
+            if (!$ident) {
+                return false;
+            }
+            $deviceData['identification'] = $ident;
+        } 
+        $device = $this->model->create($deviceData);
+
+        if (!$device) {
+            return false;
+        }
+
+        return $device;
+        
+    }
 
     /**
      * Get device by their identification.
