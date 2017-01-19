@@ -30,7 +30,8 @@ class ServicesApiTest extends TestCase
                         'title',
                         'planCode',
                         'cost',
-                        'description',                        
+                        'description',
+                        'currency',
                         'carrierId',
                         'created_at' => [
                             'date',
@@ -85,7 +86,8 @@ class ServicesApiTest extends TestCase
                 'title' => $service->title,
                 'planCode' => "$service->planCode",
                 'cost' => "$service->cost",
-                'description' => $service->description,                
+                'description' => $service->description,
+                'currency' => 'USD',
                 'carrierId' => $service->carrierId,
             ])
             ->seeJsonStructure([
@@ -97,7 +99,8 @@ class ServicesApiTest extends TestCase
                         'title',
                         'planCode',
                         'cost',
-                        'description',                        
+                        'description',
+                        'currency',
                         'carrierId',
                         'created_at' => [
                             'date',
@@ -237,6 +240,7 @@ class ServicesApiTest extends TestCase
                             'planCode' => '11111',
                             'cost' => '22',
                             'description' => 'Test Service',
+                            'currency' => 'USD',
                             'carrierId' => $carrier->id,
                         ],
                         'relationships' => [
@@ -276,6 +280,7 @@ class ServicesApiTest extends TestCase
                 'planCode' => '11111',
                 'cost' => '22',
                 'description' => 'Test Service',
+                'currency' => 'USD',
                 'carrierId' => 1,
             ])
             ->seeJsonStructure([                
@@ -287,7 +292,8 @@ class ServicesApiTest extends TestCase
                         'title',
                         'planCode',
                         'cost',
-                        'description',                        
+                        'description',
+                        'currency',
                         'carrierId',
                         'created_at' => [
                             'date',
@@ -413,10 +419,10 @@ class ServicesApiTest extends TestCase
     public function testUpdateService()
     {
         $service = factory(\WA\DataStore\Service\Service::class)->create(
-            ['status' => 'Enabled', 'title' => 'title1', 'planCode' => 11111, 'cost' => 30, 'description' => 'desc1', 'carrierId' => 1]
+            ['status' => 'Enabled', 'title' => 'title1', 'planCode' => 11111, 'cost' => 30, 'description' => 'desc1', 'currency' => 'USD', 'carrierId' => 1]
         );
         $serviceAux = factory(\WA\DataStore\Service\Service::class)->create(
-            ['status' => 'Disabled', 'title' => 'title2', 'planCode' => 22222, 'cost' => 40, 'description' => 'desc2', 'carrierId' => 2]
+            ['status' => 'Disabled', 'title' => 'title2', 'planCode' => 22222, 'cost' => 40, 'description' => 'desc2', 'currency' => 'EUR', 'carrierId' => 2]
         );
 
         $this->assertNotEquals($service->status, $serviceAux->status);
@@ -424,6 +430,7 @@ class ServicesApiTest extends TestCase
         $this->assertNotEquals($service->title, $serviceAux->title);
         $this->assertNotEquals($service->cost, $serviceAux->cost);
         $this->assertNotEquals($service->description, $serviceAux->description);
+        $this->assertNotEquals($service->currency, $serviceAux->currency);
         $this->assertNotEquals($service->carrierId, $serviceAux->carrierId);
 
         $this->json('PATCH', '/services/'.$serviceAux->id,
@@ -436,7 +443,8 @@ class ServicesApiTest extends TestCase
                         'title' => "$service->title",
                         'planCode' => "$service->planCode",
                         'cost' => "$service->cost",
-                        'description' => $service->description,                        
+                        'description' => $service->description,
+                        'currency' => $service->currency,
                         'carrierId' => $service->carrierId,
                     ],
                 ],
@@ -447,6 +455,7 @@ class ServicesApiTest extends TestCase
                 'planCode' => "$service->planCode",
                 'cost' => "$service->cost",
                 'description' => $service->description,
+                'currency' => $service->currency,
                 'carrierId' => $service->carrierId
             ]);
     }
@@ -497,7 +506,8 @@ class ServicesApiTest extends TestCase
                         'title' => $service->title,
                         'planCode' => $service->planCode,
                         'cost' => $service->cost,
-                        'description' => $service->description,                        
+                        'description' => $service->description,
+                        'currency' => $service->currency,
                         'carrierId' => $service->carrierId,
                         'created_at' => $service->created_at,
                         'updated_at' => $service->updated_at
@@ -539,6 +549,7 @@ class ServicesApiTest extends TestCase
                     'planCode' => $service->planCode,
                     'cost' => $service->cost,
                     'description' => $service->description,
+                    'currency' => $service->currency,
                     'carrierId' => $service->carrierId,
                     'status' => $service->status
                 ])
@@ -552,6 +563,7 @@ class ServicesApiTest extends TestCase
                             'planCode',
                             'cost',
                             'description',
+                            'currency',
                             'carrierId',
                             'status'
                         ],
@@ -672,6 +684,7 @@ class ServicesApiTest extends TestCase
                         'planCode' => $service->planCode,
                         'cost' => $service->cost,
                         'description' => $service->description,
+                        'currency' => $service->currency,
                         'carrierId' => $service->carrierId,
                         'status' => $service->status
                     ],
@@ -694,6 +707,7 @@ class ServicesApiTest extends TestCase
                     'planCode' => $service->planCode,
                     'cost' => $service->cost,
                     'description' => $service->description,
+                    'currency' => $service->currency,
                     'carrierId' => $service->carrierId,
                     'status' => $service->status
                 ])
@@ -707,6 +721,7 @@ class ServicesApiTest extends TestCase
                             'planCode',
                             'cost',
                             'description',
+                            'currency',
                             'carrierId',
                             'status'
                         ],

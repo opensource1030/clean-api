@@ -41,6 +41,9 @@ class EloquentService extends AbstractRepository implements ServiceInterface
         if (isset($data['description'])) {
             $service->description = $data['description'];
         }
+        if (isset($data['currency'])) {
+            $service->currency = $data['currency'];
+        }
         if (isset($data['carrierId'])) {
             $service->carrierId = $data['carrierId'];
         }
@@ -80,6 +83,7 @@ class EloquentService extends AbstractRepository implements ServiceInterface
             "planCode" => isset($data['planCode']) ? $data['planCode'] : 0,
             "cost" =>  isset($data['cost']) ? $data['cost'] : 0,
             "description" => isset($data['description']) ? $data['description'] : null,
+            "currency" => isset($data['currency']) ? $data['currency'] : 'USD',
             "carrierId" =>  isset($data['carrierId']) ? $data['carrierId'] : null ,
         ];
 

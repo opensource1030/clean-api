@@ -37,6 +37,7 @@ class ServiceTransformer extends FilterableTransformer
             'planCode'    => $service->planCode,
             'cost'        => $service->cost,
             'description' => $service->description,
+            'currency'    => $service->currency,
             'carrierId'   => (int)$service->carrierId,
             'created_at'  => $service->created_at,
             'updated_at'  => $service->updated_at,

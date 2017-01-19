@@ -20,6 +20,7 @@ class Service extends BaseDataStore
         'planCode',
         'cost',
         'description',
+        'currency',
         'carrierId',
         'updated_at'];
 
