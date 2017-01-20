@@ -37,12 +37,14 @@ class CompanyTransformer extends FilterableTransformer
             'id'               => (int)$company->id,
             'name'             => $company->name,
             'label'            => $company->label,
-            'active'           => $company->active,
+            'active'           => (int)$company->active,
             'udlpath'          => $company->udlpath,
             'isCensus'         => $company->isCensus,
             'udlPathRule'      => $company->udlPathRule,
             'assetPath'        => $company->assetPath,
+             'shortName'        => $company->shortName,
             'currentBillMonth' => $company->currentBillMonth,
+            'defaultLocation'  => $company->defaultLocation
         ];
     }
 

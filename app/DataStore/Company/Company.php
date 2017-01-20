@@ -26,7 +26,18 @@ class Company extends BaseDataStore
 {
     protected $table = 'companies';
 
-    protected $fillable = ['name', 'label', 'active', 'isCensus', 'shortName'];
+    protected $fillable = [ 
+                             'name',
+                             'label',
+                             'active',
+                             'udlpath',
+                             'isCensus',
+                             'udlPathRule',
+                             'assetPath',
+                             'shortName',
+                             'currentBillMonth',
+                             'defaultLocation'
+                           ];
 
     protected $morphClass = 'company';
 
