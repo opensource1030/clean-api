@@ -235,6 +235,28 @@ class EloquentUser extends AbstractRepository implements UserInterface
      */
     public function create(array $data)
     {
+        if(isset($data['email']) && $data['email'] !== ''){
+            $userData['email'] = $data['email'];
+        } else {
+            return false;
+        }
+
+        if(isset($data['companyId']) && $data['companyId'] !== ''){
+            $userData['companyId'] = $data['companyId'];
+        } else {
+            if (!isset($data['companyId']) || $data['companyId'] == null){
+                $domain = explode('@', $data['email'])[1];
+                $company = \DB::table('company_domains')
+                    ->select('companyId')
+                    ->where('domain', $domain)->get();
+                
+                if($company !== null){
+                    $userData['companyId'] = $company[0]->companyId;
+                } else {
+                    return false;
+                } 
+            }
+        }  
 
         if(isset($data['uuid']) && $data['uuid'] !== ''){
             $userData['uuid'] = $data['uuid'];
@@ -245,14 +267,13 @@ class EloquentUser extends AbstractRepository implements UserInterface
         if(isset($data['identification']) && $data['identification'] !== ''){
             $userData['identification'] = $data['identification'];
         } else {
-            $userData['identification'] = uniqid('WA-');
-        }
-
-        if(isset($data['email']) && $data['email'] !== ''){
-            $userData['email'] = $data['email'];
-        } else {
-            return false;
-        }
+            $generator = app()->make('WA\Helpers\UserHelper');
+            $ident = $generator->generateIds($userData['companyId']);
+            if (!$ident) {
+                return false;
+            }
+            $userData['identification'] = $ident;
+        }     
 
         if(isset($data['alternateEmail']) && $data['alternateEmail'] !== ''){
             $userData['alternateEmail'] = $data['alternateEmail'];
@@ -380,23 +401,6 @@ class EloquentUser extends AbstractRepository implements UserInterface
             $userData['notify'] = 0;
         }
 
-        if(isset($data['companyId']) && $data['companyId'] !== ''){
-            $userData['companyId'] = $data['companyId'];
-        } else {
-            if (!isset($data['companyId']) || $data['companyId'] == null){
-                $domain = explode('@', $data['email'])[1];
-                $company = \DB::table('company_domains')
-                    ->select('companyId')
-                    ->where('domain', $domain)->get();
-                
-                if($company !== null){
-                    $userData['companyId'] = $company[0]->companyId;
-                } else {
-                    return false;
-                } 
-            }
-        }
-
         if(isset($data['syncId']) && $data['syncId'] !== ''){
             $userData['syncId'] = $data['syncId'];
         } else {
@@ -446,124 +450,6 @@ class EloquentUser extends AbstractRepository implements UserInterface
         }
 
         return $user;
-
-
-
-/*
-
-        $tmp_password = null;
-
-        if (isset($data['udlValues'])) {
-            $udlValues = $data['udlValues'];
-        }
-
-        if (!isset($data['identification']) && !isset($data['companyUserIdentifier'])) {
-            $helper = app()->make('WA\Http\Controllers\Admin\HelperController');
-            $data['identification'] = $helper->generateIds($data['companyId']);
-        }
-
-        if (!isset($data['companyUserIdentifier'])) {
-            $data['companyUserIdentifier'] = $data['identification'];
-        }
-
-        if (!isset($data['identification']) & isset($data['companyUserIdentifier'])) {
-            $data['identification'] = $data['companyUserIdentifier'];
-        }
-
-        $data['uuid'] = Uuid::generate(4)->string;
-        if (!empty($tmp_email = $data['email'])) {
-            $tmp_password = bcrypt('user');
-        }
-
-        $tmp_password = $tmp_password ?: bcrypt($data['identification']);
-
-        $user = $this->byCompanyIdOrEmail($data);
-
-        if ($user) {
-            $this->isUpdatable($user, $data);
-
-            return true;
-        }
-
-        if (empty($udlValues) && (isset($data['udlValues']) && !empty($data['udlValues']))) {
-            $udlValues = $this->compactUdlValues($data['udlValues'], $data['companyId']);
-        }
-
-        $userData = [
-            'supervisorEmail' => $sup_email = isset($data['supervisorEmail']) ? strtolower($data['supervisorEmail']) : null,
-            'supervisorId' => isset($data['supervisorId']) ? $data['supervisorId'] : null,
-            'firstName' => isset($data['firstName']) ? $data['firstName'] : null,
-            'alternateFirstName' => isset($data['alternateFirstName']) ? $data['alternateFirstName'] : null,
-            'lastName' => isset($data['lastName']) ? $data['lastName'] : null,
-            'companyId' => isset($data['companyId']) ? $data['companyId'] : 0,
-            'companyExternalId' => isset($data['companyExternalId']) ? $data['companyExternalId'] : $this->getCompanyExternalId($data['companyId']),
-            'companyUserIdentifier' => isset($data['companyUserIdentifier']) ? $id = $data['companyUserIdentifier'] : $id = $data['identification'],
-            'isActive' => isset($data['isActive']) ? $data['isActive'] : 0,
-            'syncId' => isset($data['syncId']) ? $data['syncId'] : null,
-            'defaultLocationId' => isset($data['defaultLocationId']) ? $data['defaultLocationId'] : 236, //US
-            'defaultLang' => isset($data['defaultLang']) ? $data['defaultLang'] : 'en',
-            'email' => strtolower(isset($data['email']) ? strtolower($data['email']) : null),
-            'alternateEmail' => strtolower(isset($data['alternateEmail']) ? strtolower($data['alternateEmail']) : null),
-            'password' => $pwd = isset($data['password']) ? bcrypt($data['password']) : $tmp_password,
-            'password_confirmation' => $pwd,
-            'confirmed' => isset($data['confirmed']) ? $data['confirmed'] : 0,
-            'username' => isset($data['username']) ? $data['username'] : null,
-            'confirmation_code' => md5(uniqid(mt_rand(), true)),
-            'identification' => $data['identification'],
-            'notify' => isset($data['notify']) ? $data['notify'] : 0,
-            'isSupervisor' => isset($data['isSupervisor']) ? $data['isSupervisor'] : 0,
-            'isValidator' => isset($data['isValidator']) ? $data['isValidator'] : 0,
-            'notes' => isset($data['notes']) ? $data['notes'] : '',
-            'level' => isset($data['level']) ? $data['level'] : '',
-            'departmentId' => (isset($data['departmentId'])) ? $data['evDepartmentId'] : '',
-            'approverId' => isset($data['approverId']) && isset($data['approverId']) ? $data['approverId'] : 0,
-            'externalSupervisorId' => $this->getExternalSupervisorId($sup_email),
-
-        ];
-
-        try {
-            $user = $this->model->create($userData);
-
-            if (!$user && !empty($user->errors['messages'])) {
-                return false;
-            }
-
-            if (!empty($udlValues) && !is_null($user->id)) {
-                $this->syncUDLValues($user, $udlValues);
-            }
-
-            if (!empty($data['user_roles']) && !is_null($user->id)) {
-                foreach ($data['user_roles'] as $role) {
-                    $user->roles()->attach($user->id, ['role_id' => (int) $role]);
-                    $user->save();
-                }
-            } else {
-                if (!is_null($user->id)) {
-                    $user->roles()->attach($user->id, ['role_id' => 5]);
-                    $user->save();
-                }
-            }
-
-            //Save Udl Values
-            if (!empty($data['udls']) && !is_null($user->id)) {
-                foreach ($data['udls'] as $udl) {
-                    foreach ($udl as $udl_id => $udl_value) {
-                        $udlValueId = $udl_value['value'];
-                    }
-
-                    if (empty($udlValueId)) {
-                        continue;
-                    }
-
-                    $user->udlValues()->attach($user->id, ['udlValueId' => (int) $udlValueId]);
-                }
-            }
-
-            return $user;
-        } catch (\Exception $e) {
-            Log::error('[ '.get_class().' | '.$e->getLine().' ] | There was an issue: '.$e->getMessage());
-        }
-*/
     }
 
     /**
@@ -765,92 +651,6 @@ class EloquentUser extends AbstractRepository implements UserInterface
         }
 
         return $user;
-
-
-
-/*
-        if (empty($udlValues) && (isset($data['udlValues']) && !empty($data['udlValues']))) {
-            $udlValues = $this->compactUdlValues($data['udlValues'], $data['companyId']);
-        }
-
-        $user = $this->byCompanyIdOrEmail($data);
-
-        if (!$user) {
-            return false;
-        }
-
-        $data['identification'] = isset($user->identification) ? $user->identification : $data['identification'];
-        $data['companyUserIdentifier'] = isset($user->companyUserIdentifier) ? $user->companyUserIdentifier : $data['companyUserIdentifier'];
-
-        $data['externalSupervisorId'] = isset($data['supervisorEmail']) ? $this->getExternalSupervisorId($data['supervisorEmail']) : null;
-
-        $user->email = $data['email'];
-        $user->alternateEmail = strtolower(isset($data['alternateEmail']) ? $data['alternateEmail'] : null);
-        $user->firstName = $data['firstName'];
-        $user->alternateFirstName = isset($data['alternateFirstName']) ? $data['alternateFirstName'] : null;
-        $user->identification = $data['identification'];
-        $user->lastName = $data['lastName'];
-        $user->supervisorEmail = strtolower(isset($data['supervisorEmail']) ? $data['supervisorEmail'] : null);
-        $user->supervisorId = !empty($data['supervisorId']) ? $data['supervisorId'] : null;
-        $user->approverId = isset($data['approverId']) ? $data['approverId'] : null;
-        $user->companyUserIdentifier = !empty($data['companyUserIdentifier']) ? $data['companyUserIdentifier'] : null;
-        $user->isActive = isset($data['isActive']) ? $data['isActive'] : 0;
-        $user->isValidator = isset($data['isValidator']) ? $data['isValidator'] : 0;
-        $user->notify = isset($data['notify']) ? $data['notify'] : 0;
-        $user->isSupervisor = isset($data['isSupervisor']) ? $data['isSupervisor'] : 0;
-        $user->defaultLocationId = !empty($data['defaultLocationId']) ? $data['defaultLocationId'] : 8; //US
-        $data['defaultLocationId'] = $user->defaultLocationId;
-        $user->defaultLang = !empty($data['defaultLang']) ? $data['defaultLang'] : 'en';
-        $data['defaultLang'] = $user->defaultLang;
-
-        $user->departmentId = !empty($data['departmentId']) ? $data['departmentId'] : null;
-        $data['departmentId'] = $user->departmentId;
-        $user->companyId = !empty($data['companyId']) ? $data['companyId'] : null;
-        $user->notes = isset($data['notes']) ? $data['notes'] : '';
-        $data['notes'] = $user->notes;
-        $user->notify = !empty($data['notify']) ? $data['notify'] : null;
-        $data['notify'] = $user->notify;
-        $user->isValidator = !empty($data['notify']) ? $data['notify'] : null;
-        $data['isValidator'] = $user->isValidator;
-        $user->syncId = isset($data['syncId']) ? $data['syncId'] : $user->syncId;
-
-        $data['approverId'] = 0;
-
-        if (!$user->save()) {
-            return false;
-        }
-
-        if (!empty($udlValues)) {
-             $this->syncUDLValues($user, $udlValues);
-         }
-
-        //Save User Roles
-        $user->roles()->detach();
-        if (!empty($data['user_roles']) && !is_null($user->id)) {
-            foreach ($data['user_roles'] as $role) {
-                $user->roles()->attach($user->id, ['role_id' => (int) $role]);
-                $user->save();
-            }
-        }
-
-        //Save Udl Values
-        $user->udlValues()->detach();
-        if (!empty($data['udls']) && !is_null($user->id)) {
-            foreach ($data['udls'] as $udl) {
-                foreach ($udl as $udl_id => $udl_value) {
-                    $udlValueId = $udl_value['value'];
-                }
-
-                if (empty($udlValueId)) {
-                    continue;
-                }
-
-                $user->udlValues()->attach($user->id, ['udlValueId' => (int) $udlValueId]);
-            }
-        }
-
-        return $user;
-*/
     }
 
     /**

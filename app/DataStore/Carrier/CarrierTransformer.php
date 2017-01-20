@@ -12,6 +12,8 @@ class CarrierTransformer extends FilterableTransformer
 
     protected $availableIncludes = [
         'images',
+        'services',
+        'devicevariations'
     ];
 
     /**

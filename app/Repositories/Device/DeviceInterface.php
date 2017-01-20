@@ -92,4 +92,5 @@ interface DeviceInterface extends RepositoryInterface
      * @return object object of updated repo
      */
     public function update(array $data);
+    public function create(array $data);
 }

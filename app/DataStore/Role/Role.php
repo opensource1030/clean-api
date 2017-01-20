@@ -1,30 +1,40 @@
 <?php
 
 namespace WA\DataStore\Role;
-
-use Zizaco\Entrust\EntrustRole;
+use Zizaco\Entrust\Contracts\EntrustRoleInterface;
+use WA\DataStore\BaseDataStore;
+use Zizaco\Entrust\Traits\EntrustRoleTrait;
+use Config;
 
 /**
  * Class Role.
  */
-class Role extends EntrustRole
+class Role extends BaseDataStore
 {
+    use EntrustRoleTrait;
+
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * The database table used by the model.
+     *
+     * @var string
      */
+    protected $table;
+
     public function permissions()
     {
-        return $this->belongsToMany('WA\DataStore\Permission', 'permission_role', 'role_id', 'permission_id');
+        return $this->belongsToMany('WA\DataStore\Permission\Permission', 'permission_role', 'role_id', 'permission_id');
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * Creates a new instance of the model.
+     *
+     * @param array $attributes
      */
-    public function users()
+    public function __construct(array $attributes = [])
     {
-        return $this->belongsToMany('WA\DataStore\User\User', 'role_user', 'role_id', 'user_id');
+        parent::__construct($attributes);
+        $this->table = Config::get('entrust.roles_table');
     }
-
     /**
      * Get the transformer instance.
      *
@@ -34,7 +44,6 @@ class Role extends EntrustRole
     {
         return new RoleTransformer();
     }
-
     /**
      * @return array
      */

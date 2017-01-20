@@ -129,7 +129,23 @@ class UsersController extends FilteredApiController
 
     public function getLoggedInUser(Request $request)
     {
+        $criteria = $this->getRequestCriteria();
+        $this->user->setCriteria($criteria);
         $user = Auth::user();
+
+        if ($user === null) {
+            $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => $this->modelName]);
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+        }
+
+        if (!$this->includesAreCorrect($request, new UserTransformer())) {
+            $error['errors']['getIncludes'] = Lang::get('messages.NotExistInclude');
+            return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
+        }
+
+        $response = $this->response->item($user, new UserTransformer(), ['key' => $this->modelPlural]);
+        $response = $this->applyMeta($response);
+        return $response;
     }
 
     public function store($id, Request $request) 
@@ -182,29 +198,15 @@ class UsersController extends FilteredApiController
         if (isset($data['relationships']) && $success) {
             $dataRelationships = $data['relationships'];
 
-            if (isset($dataRelationships['assets'])) {
-                if (isset($dataRelationships['assets']['data'])) {
-                    $dataAssets = $this->parseJsonToArray($dataRelationships['assets']['data'], 'assets');
+            if (isset($dataRelationships['devicevariations']) && $success) {
+                if (isset($dataRelationships['devicevariations']['data'])) {
+                    $dataDevices = $this->parseJsonToArray($dataRelationships['devicevariations']['data'], 'devicevariations');
                     try {
-                        $user->assets()->sync($dataAssets);
+                        $user->devicevariations()->sync($dataDevices);
                     } catch (\Exception $e) {
                         $success = false;
-                        $error['errors']['assets'] = Lang::get('messages.NotOptionIncludeClass',
-                            ['class' => 'User', 'option' => 'updated', 'include' => 'Assets']);
-                        //$error['errors']['Message'] = $e->getMessage();
-                    }
-                }
-            }
-
-            if (isset($dataRelationships['devices']) && $success) {
-                if (isset($dataRelationships['devices']['data'])) {
-                    $dataDevices = $this->parseJsonToArray($dataRelationships['devices']['data'], 'devices');
-                    try {
-                        $user->devices()->sync($dataDevices);
-                    } catch (\Exception $e) {
-                        $success = false;
-                        $error['errors']['devices'] = Lang::get('messages.NotOptionIncludeClass',
-                            ['class' => 'User', 'option' => 'updated', 'include' => 'Devices']);
+                        $error['errors']['devicevariations'] = Lang::get('messages.NotOptionIncludeClass',
+                            ['class' => 'User', 'option' => 'updated', 'include' => 'DeviceVariations']);
                         //$error['errors']['Message'] = $e->getMessage();
                     }
                 }
@@ -219,6 +221,20 @@ class UsersController extends FilteredApiController
                         $success = false;
                         $error['errors']['roles'] = Lang::get('messages.NotOptionIncludeClass',
                             ['class' => 'User', 'option' => 'updated', 'include' => 'Roles']);
+                        //$error['errors']['Message'] = $e->getMessage();
+                    }
+                }
+            }
+
+            if (isset($dataRelationships['services']) && $success) {
+                if (isset($dataRelationships['services']['data'])) {
+                    $dataservices = $this->parseJsonToArray($dataRelationships['services']['data'], 'services');
+                    try {
+                        $user->services()->sync($dataservices);
+                    } catch (\Exception $e) {
+                        $success = false;
+                        $error['errors']['services'] = Lang::get('messages.NotOptionIncludeClass',
+                            ['class' => 'User', 'option' => 'updated', 'include' => 'Services']);
                         //$error['errors']['Message'] = $e->getMessage();
                     }
                 }
@@ -329,6 +345,52 @@ class UsersController extends FilteredApiController
                     }
                 }
             }
+/*
+            if (isset($dataRelationships['assets']) && $success) {
+                if (isset($dataRelationships['assets']['data'])) {
+                    $data = $dataRelationships['assets']['data'];
+
+                    try {
+                        $assets = Asset::where('userId', $id)->get();
+                        $interfaceAss = app()->make('WA\Repositories\Asset\AssetInterface');
+                    } catch (\Exception $e) {
+                        $success = false;                        
+                        $error['errors']['assets'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'User', 'option' => 'updated', 'include' => 'assets']);
+                        //$error['errors']['Message'] = $e->getMessage();
+                    }
+
+                    if ($success) {
+                        try {                           
+                            $this->deleteNotRequested($data, $assets, $interfaceAss, 'assets');
+
+                            foreach ($data as $asset) {
+                                    
+                                $asset['userId'] = $user->id;
+
+                                if (isset($asset['id'])) {
+                                    if ($asset['id'] == 0) {
+                                        $interfaceAss->create($asset);
+                                    } else {
+                                        if ($asset['id'] > 0) {
+                                            $interfaceAss->update($asset);
+                                        } else {
+                                            $success = false;
+                                            $error['errors']['assets'] = 'the Asset has an incorrect id';
+                                        }
+                                    }
+                                } else {
+                                    $success = false;
+                                    $error['errors']['assets'] = 'the Asset has no id';
+                                }
+                            }
+                        } catch (\Exception $e) {
+                            $success = false;
+                            $error['errors']['assets'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'user', 'option' => 'updated', 'include' => 'assets']);
+                            //$error['errors']['Message'] = $e->getMessage();
+                        }
+                    }
+                }
+            }*/
         }
 
         if ($success) {
@@ -371,7 +433,7 @@ class UsersController extends FilteredApiController
             $success = false;
             $error['errors']['users'] = Lang::get('messages.NotOptionIncludeClass',
                 ['class' => 'User', 'option' => 'created', 'include' => '']);
-            $error['errors']['Message'] = $e->getMessage();
+            //$error['errors']['Message'] = $e->getMessage();
         }
 
         /*
@@ -394,34 +456,20 @@ class UsersController extends FilteredApiController
                         $success = false;
                         $error['errors']['address'] = Lang::get('messages.NotOptionIncludeClass',
                             ['class' => 'User', 'option' => 'created', 'include' => 'Address']);
-                        $error['errors']['Message'] = $e->getMessage();
-                    }
-                }
-            }
-
-            if (isset($dataRelationships['assets'])) {
-                if (isset($dataRelationships['assets']['data'])) {
-                    $dataAssets = $this->parseJsonToArray($dataRelationships['assets']['data'], 'assets');
-                    try {
-                        $user->assets()->sync($dataAssets);
-                    } catch (\Exception $e) {
-                        $success = false;
-                        $error['errors']['assets'] = Lang::get('messages.NotOptionIncludeClass',
-                            ['class' => 'User', 'option' => 'created', 'include' => 'Assets']);
                         //$error['errors']['Message'] = $e->getMessage();
                     }
                 }
             }
 
-            if (isset($dataRelationships['devices']) && $success) {
-                if (isset($dataRelationships['devices']['data'])) {
-                    $dataDevices = $this->parseJsonToArray($dataRelationships['devices']['data'], 'devices');
+            if (isset($dataRelationships['devicevariations']) && $success) {
+                if (isset($dataRelationships['devicevariations']['data'])) {
+                    $dataDeviceVariations = $this->parseJsonToArray($dataRelationships['devicevariations']['data'], 'devicevariations');
                     try {
-                        $user->devices()->sync($dataDevices);
+                        $user->devicevariations()->sync($dataDeviceVariations);
                     } catch (\Exception $e) {
                         $success = false;
-                        $error['errors']['devices'] = Lang::get('messages.NotOptionIncludeClass',
-                            ['class' => 'User', 'option' => 'created', 'include' => 'Devices']);
+                        $error['errors']['devicevariations'] = Lang::get('messages.NotOptionIncludeClass',
+                            ['class' => 'User', 'option' => 'created', 'include' => 'DeviceVariations']);
                         //$error['errors']['Message'] = $e->getMessage();
                     }
                 }
@@ -460,7 +508,7 @@ class UsersController extends FilteredApiController
                     $data = $dataRelationships['allocations']['data'];
 
                     try {
-                        $interfaceA = app()->make('WA\Repositories\Allocation\AllocationInterface');
+                        $interfaceAll = app()->make('WA\Repositories\Allocation\AllocationInterface');
                     } catch (\Exception $e) {
                         $success = false;
                         $error['errors']['allocations'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'User', 'option' => 'created', 'include' => 'Allocations']);
@@ -472,7 +520,7 @@ class UsersController extends FilteredApiController
                             foreach ($data as $allocation) {
                                 $allocation['userId'] = $user->id;
                                 $allocation['companyId'] = $user->companyId;
-                                $interfaceA->create($allocation);
+                                $interfaceAll->create($allocation);
                             }
                         } catch (\Exception $e) {
                             $success = false;
@@ -509,6 +557,33 @@ class UsersController extends FilteredApiController
                     }
                 }
             }
+/*
+            if (isset($dataRelationships['assets']) && $success) {
+                if (isset($dataRelationships['assets']['data'])) {
+                    $data = $dataRelationships['assets']['data'];
+
+                    try {
+                        $interfaceAss = app()->make('WA\Repositories\Asset\AssetInterface');
+                    } catch (\Exception $e) {
+                        $success = false;                        
+                        $error['errors']['assets'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'User', 'option' => 'created', 'include' => 'Assets']);
+                        $error['errors']['Message'] = $e->getMessage();
+                    }
+
+                    if ($success) {
+                        try {                           
+                            foreach ($data as $asset) {
+                                $asset['userId'] = $user->id;
+                                $interfaceAss->create($asset);
+                            }
+                        } catch (\Exception $e) {
+                            $success = false;
+                            $error['errors']['assets'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'User', 'option' => 'created', 'include' => 'Assets']);
+                            $error['errors']['Message'] = $e->getMessage();
+                        }
+                    }
+                }
+            }*/
         }
 
         if ($success) {
@@ -539,4 +614,24 @@ class UsersController extends FilteredApiController
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
     }
+
+    /*public function getLoggedInUser(Request $request)
+    {
+        $user = Auth::user();
+
+        if ($user === null) {
+            $error['errors']['scopes'] = 'There\'s no user authenticated';
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+        }
+
+        $transformer = $user->getTransformer();
+
+        if (!$this->includesAreCorrect($request, $transformer)) {
+            $error['errors']['getIncludes'] = Lang::get('messages.NotExistInclude');
+            return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
+        }
+
+        $response = $this->response->item($user, $transformer, ['key' => 'users']);
+        return $response;
+    }*/
 }

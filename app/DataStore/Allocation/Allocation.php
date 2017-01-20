@@ -9,6 +9,7 @@ use WA\DataStore\BaseDataStore;
  *
  * @property-read \WA\DataStore\Company\Company $companies
  * @property-read \WA\DataStore\User\User $users
+ * @property-read \WA\DataStore\User\User $carriers
  * @mixin \Eloquent
  */
 class Allocation extends BaseDataStore
@@ -17,7 +18,9 @@ class Allocation extends BaseDataStore
 
     public $timestamps = false;
 
-    protected $fillable = ['userId', 'companyId', 'billMonth', 'mobileNumber', 'carrier', 'currency', 'handsetModel', 'totalAllocatedCharge', 'preAllocatedAmountDue', 'therAdjustments', 'preAdjustedAccessCharge', 'adjustedAccessCost', 'bBCost', 'pDACost', 'iPhoneCost', 'featuresCost', 'dataCardCost', 'lDCanadaCost', 'uSAddOnPlanCost', 'uSLDAddOnPlanCost', 'uSDataRoamingCost', 'nightAndWeekendAddOnCost', 'minuteAddOnCost', 'servicePlanCharges', 'directConnectCost', 'textMessagingCost', 'dataCost', 'intlRoamingCost', 'intlLongDistanceCost', 'directoryAssistanceCost', 'callForwardingCost', 'airtimeCost', 'usageCharges', 'equipmentCost', 'otherDiscountChargesCost', 'taxes', 'thirdPartyCost', 'otherCharges', 'waFees', 'lineFees', 'mobilityFees', 'fees', 'last_upgrade', 'otherAdjustments', 'featuresCost'];
+    protected $fillable = ['userId', 'companyId', 'billMonth', 'mobileNumber', 'carrier', 'currency', 'handsetModel', 'totalAllocatedCharge', 'preAllocatedAmountDue', 'otherAdjustments', 'preAdjustedAccessCharge', 'adjustedAccessCharge', 'bBCharge', 'pDACharge', 'iPhoneCharge', 'featuresCharge', 'dataCardCharge', 'lDCanadaCharge', 'uSAddOnPlanCharge', 'uSLDAddOnPlanCharge', 'uSDataRoamingCharge', 'nightAndWeekendAddOnCharge', 'minuteAddOnCharge', 'servicePlanCharge', 'directConnectCharge', 'textMessagingCharge', 'dataCharge', 'intlRoamingCharge', 'intlLongDistanceCharge', 'directoryAssistanceCharge', 'callForwardingCharge', 'airtimeCharge', 'usageCharge', 'equipmentCharge', 'otherDiscountCharge', 'taxesCharge', 'thirdPartyCharge', 'otherCharge', 'waFees', 'lineFees', 'mobilityFees', 'feesCharge', 'last_upgrade', 'otherAdjustments',
+        'featuresCharge', 'deviceType', 'domesticUsageCharge', 'domesticDataUsage', 'domesticVoiceUsage', 'domesticTextUsage', 'intlRoamUsageCharge',
+    'intlRoamDataUsage', 'intlRoamVoiceUsage', 'intlRoamTextUsage', 'intlLDUsageCharge', 'intlLDVoiceUsage', 'intlLDTextUsage', 'etfCharge', 'otherCarrierCharge', 'deviceEsnImei','deviceSim'];
 
     public function companies()
     {
@@ -27,6 +30,11 @@ class Allocation extends BaseDataStore
     public function users()
     {
         return $this->belongsTo('WA\DataStore\User\User', 'userId');
+    }
+
+    public function carriers()
+    {
+        return $this->belongsTo('WA\DataStore\Carrier\Carrier', 'carrier');
     }
 
     /**

@@ -32,7 +32,7 @@ class UdlValue extends BaseDataStore
      */
     public function users()
     {
-        return $this->belongsToMany('WA\DataStore\User\User', 'employee_udls', 'udlValueId', 'userId');
+        return $this->belongsToMany('WA\DataStore\User\User', 'user_udls', 'udlValueId', 'userId');
     }
 
     /**

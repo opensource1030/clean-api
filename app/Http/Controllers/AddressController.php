@@ -43,9 +43,9 @@ class AddressController extends FilteredApiController
     {
         if ($this->isJsonCorrect($request, 'address')) {
             try {
-                $data = $request->all()['data']['attributes'];
-                $data['id'] = $id;
-                $address = $this->address->update($data);
+                $data = $request->all()['data'];
+                $data['attributes']['id'] = $id;
+                $address = $this->address->update($data['attributes']);
 
                 if ($address == 'notExist') {
                     $error['errors']['address'] = Lang::get('messages.NotExistClass', ['class' => 'Address']);

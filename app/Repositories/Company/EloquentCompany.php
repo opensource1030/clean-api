@@ -9,6 +9,9 @@ use WA\Repositories\Carrier\CarrierInterface;
 use WA\Repositories\Device\DeviceInterface;
 use WA\Repositories\Udl\UdlInterface;
 use WA\Repositories\User\UserInterface;
+use WA\Repositories\Category\PresetInterface;
+use WA\Repositories\Package\PackageInterface;
+use WA\Repositories\DeviceVariation\DeviceVariationInterface;
 
 class EloquentCompany extends AbstractRepository implements CompanyInterface
 {
@@ -41,6 +44,12 @@ class EloquentCompany extends AbstractRepository implements CompanyInterface
 
     protected $domainsTable = 'company_domains';
 
+    protected $preset;
+
+    protected $package;
+
+    protected $deviceVariation;
+
     /**
      * @param Model            $model
      * @param UserInterface    $user
@@ -51,15 +60,21 @@ class EloquentCompany extends AbstractRepository implements CompanyInterface
     public function __construct(
         Model $model,
         UserInterface $user,
-        UdlInterface $udl,
-        CarrierInterface $carrier,
-        DeviceInterface $device
+        UdlInterface $udl
+       // PresetInterface $preset,
+        //PackageInterface $package,
+        //DeviceVariationInterface $deviceVariation
+       // CarrierInterface $carrier,
+       // DeviceInterface $device
     ) {
         $this->model = $model;
         $this->user = $user;
         $this->udl = $udl;
-        $this->device = $device;
-        $this->carrier = $carrier;
+        //$this->preset = $preset;
+        //$this->package = $package;
+        //$this->deviceVariation = $deviceVariation; 
+        //$this->device = $device;
+        //$this->carrier = $carrier;
     }
 
     /**
@@ -171,7 +186,7 @@ class EloquentCompany extends AbstractRepository implements CompanyInterface
      *
      * @return object object of company
      */
-    public function getCarriers($id)
+    /*public function getCarriers($id)
     {
         return $this->carrier->byCompany($id);
     }
@@ -180,8 +195,20 @@ class EloquentCompany extends AbstractRepository implements CompanyInterface
         $id
     ) {
         return $this->device->byCompany($id);
-    }
+    }*/
 
+    public function getPresets($id)
+    {
+        return $this->preset->byCompany($id);
+    }
+    public function getPackages($id)
+    {
+        return $this->package->byCompany($id);
+    }
+    public function getDeviceVariations($id)
+    {
+        return $this->deviceVariation->byCompany($id);
+    }
     /**
      * Get all active companies.
      *
@@ -486,10 +513,13 @@ class EloquentCompany extends AbstractRepository implements CompanyInterface
         $companyData = [
             'name' => isset($data['name']) ? $data['name'] : null,
             'label' => isset($data['label']) ? $data['label'] : null,
-            'shortName' => isset($data['shortName']) ? $data['shortName'] : null,
+            'shortName' => isset($data['shortName']) ? $data['shortName'] : 'ShortName',
+            'assetPath' => isset($data['assetPath']) ? $data['assetPath'] : '/ACME/WA',
             'rawDataDirectoryPath' => isset($data['rawDataDirectoryPath']) ? $data['rawDataDirectoryPath'] : null,
             'active' => isset($data['active']) ? $data['active'] : 0,
             'isCensus' => isset($data['isCensus']) ? $data['isCensus'] : 0,
+            'currentBillMonth' => isset($data['currentBillMonth']) ? $data['currentBillMonth'] : null,
+            'defaultLocation' => isset($data['defaultLocation']) ? $data['defaultLocation'] : null,
             // 'isLive' => isset($data['isLive']) ? $data['isLive'] : 0
         ];
 
@@ -498,23 +528,6 @@ class EloquentCompany extends AbstractRepository implements CompanyInterface
 
             if (!$company && !empty($company->errors['messages'])) {
                 return false;
-            }
-
-            if (isset($data['carrierId']) && count($data['carrierId']) >= 1) {
-                for ($x = 0; $x < count($data['carrierId']); ++$x) {
-                    if (!empty($data['carrierId'][$x])) {
-                        $carrierPAN = !empty($data['carrierPAN'][$x]) ? trim($data['carrierPAN'][$x]) : null;
-                        $company->carriers()->attach(
-                            $company->id,
-                            [
-                                'carrierId' => (int) $data['carrierId'][$x],
-                                'billingAccountNumber' => trim($data['carrierBAN'][$x]),
-                                'parentAccountNumber' => $carrierPAN,
-                            ]
-                        );
-                        $company->save();
-                    }
-                }
             }
 
             return $company;
@@ -561,34 +574,18 @@ class EloquentCompany extends AbstractRepository implements CompanyInterface
 
         $company->name = isset($data['name']) ? $data['name'] : null;
         $company->label = isset($data['label']) ? $data['label'] : null;
-        $company->shortName = isset($data['shortName']) ? $data['shortName'] : null;
+        $company->shortName = isset($data['shortName']) ? $data['shortName'] : 'shortName';
         $company->active = isset($data['active']) ? $data['active'] : 0;
         // $company->isLive = isset($data['isLive']) ? $data['isLive'] : 0;
         $company->isCensus = isset($data['isCensus']) ? $data['isCensus'] : 0;
-
+        $company->assetPath = isset($data['assetPath']) ? $data['assetPath'] : '/ACME/WA';
+        $company->active = isset($data['active']) ? $data['active'] : 0;
+        $company->currentBillMonth = isset($data['currentBillMonth']) ? $data['currentBillMonth'] : null;
+        $company->defaultLocation = isset($data['defaultLocation']) ? $data['defaultLocation'] : null;
         if (!$company->save()) {
             return false;
         }
-
-        //Remove existing entries first to avoid duplicate rows
-        $company->carriers()->detach();
-        if (!empty($data['carrierId']) && count($data['carrierId']) >= 1) {
-            for ($x = 0; $x < count($data['carrierId']); ++$x) {
-                if (!empty($data['carrierId'][$x])) {
-                    $carrierPAN = !empty($data['carrierPAN'][$x]) ? trim($data['carrierPAN'][$x]) : null;
-                    $company->carriers()->attach(
-                        $company->id,
-                        [
-                            'carrierId' => (int) $data['carrierId'][$x],
-                            'billingAccountNumber' => trim($data['carrierBAN'][$x]),
-                            'parentAccountNumber' => $carrierPAN,
-                        ]
-                    );
-                    $company->save();
-                }
-            }
-        }
-
+        
         return $company;
     }
 

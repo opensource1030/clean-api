@@ -213,7 +213,6 @@ class ServicesController extends FilteredApiController
             $error['errors']['json'] = Lang::get('messages.InvalidJson');
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
-        //dd("END");
 
         DB::commit();
         return $this->response()->item($service, new ServiceTransformer(), ['key' => 'services'])->setStatusCode($this->status_codes['created']);

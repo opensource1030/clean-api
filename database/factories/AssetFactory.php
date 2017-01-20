@@ -19,7 +19,13 @@ $factory->define(\WA\DataStore\Asset\Asset::class, function (\Faker\Generator $f
     return [
         'identification' => $faker->e164PhoneNumber,
         'active' => 1,
+        'userId' => function () {
+            if (!$user = app()->make(\WA\DataStore\User\User::class)->first()) {
+                return factory(\WA\DataStore\User\User::class)->create()->id;
+            }
 
+            return $user->id;
+        },
         'typeId' => function () {
             if (!$assets = app()->make(\WA\DataStore\AssetType::class)->first()) {
                 return factory(\WA\DataStore\AssetType::class)->create()->id;

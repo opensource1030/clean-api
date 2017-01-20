@@ -5,6 +5,7 @@ namespace WA\DataStore\Company;
 use League\Fractal\Resource\Collection as ResourceCollection;
 use WA\DataStore\Allocation\AllocationTransformer;
 use WA\DataStore\Content\ContentTransformer;
+use WA\DataStore\Company\CompanyCurrentBillMonthTransformer;
 use WA\DataStore\FilterableTransformer;
 use WA\DataStore\Udl\UdlTransformer;
 
@@ -18,6 +19,11 @@ class CompanyTransformer extends FilterableTransformer
         'allocations',
         'contents',
         'udls',
+        'devicevariations',
+        'currentBillMonths',
+        'packages',
+        'presets',
+        'users'
     ];
 
     /**
@@ -31,12 +37,14 @@ class CompanyTransformer extends FilterableTransformer
             'id'               => (int)$company->id,
             'name'             => $company->name,
             'label'            => $company->label,
-            'active'           => $company->active,
+            'active'           => (int)$company->active,
             'udlpath'          => $company->udlpath,
             'isCensus'         => $company->isCensus,
             'udlPathRule'      => $company->udlPathRule,
             'assetPath'        => $company->assetPath,
+             'shortName'        => $company->shortName,
             'currentBillMonth' => $company->currentBillMonth,
+            'defaultLocation'  => $company->defaultLocation
         ];
     }
 
@@ -74,6 +82,16 @@ class CompanyTransformer extends FilterableTransformer
         }
 
         return new ResourceCollection($contents, new ContentTransformer(), 'contents');
+    }
+
+    /**
+     * @param Company $company
+     *
+     * @return ResourceCollection CompanyCurrentBillMonth
+     */
+    public function includeCurrentBillMonths(Company $company)
+    {
+        return new ResourceCollection($company->currentBillMonths, new CompanyCurrentBillMonthTransformer(), 'currentBillMonths');
     }
 
     /**

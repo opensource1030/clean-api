@@ -246,14 +246,14 @@ class PackageApiTest extends TestCase
                 ],
             ]);
     }
-
+/*  @TODO: DeviceVariations
     public function testGetPackageByIdandIncludesDevices()
     {
         $package = factory(\WA\DataStore\Package\Package::class)->create();
 
-        $device = factory(\WA\DataStore\Device\Device::class)->create()->id;
+        //$device = factory(\WA\DataStore\Device\Device::class)->create()->id;
 
-        $package->devices()->sync(array($device));
+        //$package->devices()->sync(array($device));
 
         $res = $this->json('GET', 'packages/'.$package->id.'?include=devices')
             ->seeJsonStructure([
@@ -327,7 +327,7 @@ class PackageApiTest extends TestCase
                 ],
             ]);
     }
-
+*/
     public function testGetPackageByIdandIncludesApps()
     {
         $package = factory(\WA\DataStore\Package\Package::class)->create();

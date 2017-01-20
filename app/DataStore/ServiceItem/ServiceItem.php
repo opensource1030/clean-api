@@ -39,4 +39,5 @@ class ServiceItem extends BaseDataStore
     {
         return $this->belongsTo('WA\DataStore\Service\Service', 'serviceId');
     }
+
 }

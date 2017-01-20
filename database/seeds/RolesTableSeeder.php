@@ -1,7 +1,7 @@
 <?php
 
-/**
- * PricesTableSeeder - Insert info into database.
+/*
+ * RolesTableSeeder - Insert info into database.
  *
  * @author   Agustí Dosaiguas
  */
@@ -19,32 +19,28 @@ class RolesTableSeeder extends BaseTableSeeder
         $data = [
 
             [
-                'name' => "Game Master",
-                'display_name' => null,
-                'description' => null
+                'name' => 'superAdmin',
+                'display_name' => 'superAdmin',
+                'description' => 'User with full power and access',
+                
             ],
             [
-                'name' => "Gamer",
-                'display_name' => null,
-                'description' => null
+                'name' => 'admin',
+                'display_name' => 'admin',
+                'description' => 'Administrator of the company account',
             ],
             [
-                'name' => "Cheater",
-                'display_name' => null,
-                'description' => null
+                'name' => 'wta',
+                'display_name' => 'wta',
+                'description' => 'Accept or no the services',
             ],
             [
-                'name' => "User",
-                'display_name' => null,
-                'description' => null
-            ],
-            [
-                'name' => "Noob",
-                'display_name' => null,
-                'description' => null
+               'name' => 'user',
+                'display_name' => 'user',
+                'description' => 'Normal user',
             ]
         ];
-        
+
         $this->loadTable($data);
     }
 }

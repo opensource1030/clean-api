@@ -43,9 +43,9 @@ class DeviceTypesController extends FilteredApiController
     {
         if ($this->isJsonCorrect($request, 'devicetypes')) {
             try {
-                $data = $request->all()['data']['attributes'];
-                $data['id'] = $id;
-                $devicetype = $this->deviceType->update($data);
+                $data = $request->all()['data'];
+                $data['attributes']['id'] = $id;
+                $devicetype = $this->deviceType->update($data['attributes']);
 
                 if ($devicetype == 'notExist') {
                     $error['errors']['devicetype'] = Lang::get('messages.NotExistClass', ['class' => 'DeviceType']);

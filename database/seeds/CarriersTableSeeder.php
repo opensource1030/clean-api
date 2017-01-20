@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * CarriersTableSeeder - Insert info into database.
+ *
+ * @author   Agustí Dosaiguas
+ */
 class CarriersTableSeeder extends BaseTableSeeder
 {
     protected $table = 'carriers';

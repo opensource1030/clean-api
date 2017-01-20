@@ -4,7 +4,7 @@ namespace WA\Http\Controllers;
 
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Storage;
-use Request;
+use Illuminate\Http\Request;
 use WA\DataStore\Image\Image;
 use WA\DataStore\Image\ImageTransformer;
 use WA\Repositories\Image\ImageInterface;
@@ -40,7 +40,7 @@ class ImagesController extends FilteredApiController
      *
      * @Get("/{id}")
      */
-    public function show($id)
+    public function show($id, Request $request)
     {
         $criteria = $this->getRequestCriteria();
         $this->image->setCriteria($criteria);
@@ -83,10 +83,10 @@ class ImagesController extends FilteredApiController
      *
      * @return \Dingo\Api\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
         try {
-            $file = Request::file('filename');
+            $file = $request->file('filename');
 
             $imageFile['originalName'] = $file->getClientOriginalName();
             $filename = $imageFile['filename'] = $file->getFilename();
@@ -95,7 +95,9 @@ class ImagesController extends FilteredApiController
             $imageFile['size'] = $file->getClientSize();
             $imageFile['url'] = $filename . '.' . $extension;
 
-            $value = Storage::put($filename . '.' . $extension, file_get_contents($file));
+            $filenameWithoutDot = explode(".", $filename)[0];
+
+            $value = Storage::put($filenameWithoutDot . '.' . $extension, file_get_contents($file));
 
             if ($value) {
                 $image = $this->image->create($imageFile);

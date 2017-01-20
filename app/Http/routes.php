@@ -48,6 +48,8 @@ $api->version('v1', function ($api) {
     $api->get('/oauth/personal-access-tokens', ['as' => 'api.foruser', 'uses' => $apiATC.'@forUser']);
     $api->post('/oauth/personal-access-tokens', ['as' => 'api.store', 'uses' => $apiATC.'@store']);
     $api->delete('/oauth/personal-access-tokens/{token_id}', ['as' => 'api.destroy', 'uses' => $apiATC.'@destroy']);
+    //$api->post('/create', [ 'middleware'=>['api.auth','scope:create'],'as' => 'api.create',  'uses' => $apiATC.'@create']);
+
     ///////////////////////////
 
     $api->get('callback', 
@@ -113,44 +115,21 @@ $api->version('v1', function ($api) {
     ]);
     */
 
-    $apiAuth = 'WA\Http\Controllers\Auth\AuthController';
-    $api->post('oauth/access_token', ['as' => 'api.token', 'uses' => $apiAuth . '@accessToken']);
+    //$apiAuth = 'WA\Http\Controllers\Auth\AuthController';
+    //$api->post('oauth/access_token', ['as' => 'api.token', 'uses' => $apiAuth . '@accessToken']);
 
     $middleware = [];
     if (!app()->runningUnitTests()) {
         if (env('API_AUTH_MIDDLEWARE') !== null) {
-            $middleware[] = env('API_AUTH_MIDDLEWARE', 'api.auth');
+            $middleware[] = env('API_AUTH_MIDDLEWARE', 'auth:api');
         }
     }
 
     $api->group(['middleware' => $middleware], function ($api) {
-        $api->get('{model}/{id}/relationships/{include}', function ($model, $id, $include) {
-            $modelName = title_case($model);
-            $modelSingular = str_singular($modelName);
-            $controllerName = "\\WA\\Http\\Controllers\\${modelName}Controller";
-            if (!class_exists($controllerName)) {
-                $error['errors'][$model] = \Illuminate\Support\Facades\Lang::get('messages.NotExistClass',
-                    ['class' => $modelSingular]);
-                return response()->json($error)->setStatusCode(404);
-            }
-            $controller = app()->make($controllerName);
-            return $controller->includeRelationships($model, $id, $include);
-        });
 
-        $api->get('{model}/{id}/{include}', function ($model, $id, $include) {
-            $modelName = title_case($model);
-            $modelSingular = str_singular($modelName);
-            $controllerName = "\\WA\\Http\\Controllers\\${modelName}Controller";
-            if (!class_exists($controllerName)) {
-                $error['errors'][$model] = \Illuminate\Support\Facades\Lang::get('messages.NotExistClass',
-                    ['class' => $modelSingular]);
-                return response()->json($error)->setStatusCode(404);
-            }
-            $controller = app()->make($controllerName);
-            return $controller->includeInformationRelationships($model, $id, $include);
-        });
+        $apiATC = '\Laravel\Passport\Http\Controllers\PersonalAccessTokenController';
+        $api->post('/create', [ 'middleware' => ['scope:create'], 'as' => 'api.create',  'uses' => $apiATC.'@create']);
 
-        // =Companies
         $companiesController = 'WA\Http\Controllers\CompaniesController';
         $api->get('companies', ['as' => 'api.company.index', 'uses' => $companiesController . '@index']);
         $api->get('companies/{id}', ['as' => 'api.company.show', 'uses' => $companiesController . '@show']);
@@ -162,7 +141,9 @@ $api->version('v1', function ($api) {
         $usersController = 'WA\Http\Controllers\UsersController';
         $api->get('users', ['as' => 'api.users.index', 'uses' => $usersController . '@index']);
         $api->post('users/usersMatchingConditions', ['as' => 'api.users.number', 'uses' => $usersController . '@numberUsers']);
-        $api->post('users/number', ['as' => 'api.users.number', 'uses' => $usersController . '@numberUsers']);
+
+        $api->get('users/number', ['as' => 'api.users.number', 'uses' => $usersController . '@numberUsers']);
+        $api->get('users/me', ['as' => 'api.users.logged', 'uses' => $usersController . '@getLoggedInUser']);
         $api->get('users/{id}', ['as' => 'api.users.show', 'uses' => $usersController . '@show']);
         $api->post('users', [ 'uses' => $usersController . '@create']);
         $api->patch('users/{id}', [ 'uses' => $usersController . '@store']);
@@ -252,13 +233,13 @@ $api->version('v1', function ($api) {
         $api->patch('carriers/{id}', ['uses' => $carrierController . '@store']);
         $api->delete('carriers/{id}', ['uses' => $carrierController . '@delete']);
 
-        //=Price
-        $priceController = 'WA\Http\Controllers\PricesController';
-        $api->get('prices', ['as' => 'api.price.index', 'uses' => $priceController . '@index']);
-        $api->get('prices/{id}', ['as' => 'api.price.show', 'uses' => $priceController . '@show']);
-        $api->post('prices', ['uses' => $priceController . '@create']);
-        $api->patch('prices/{id}', ['uses' => $priceController . '@store']);
-        $api->delete('prices/{id}', ['uses' => $priceController . '@delete']);
+        //=DeviceVariation
+        $deviceVariationsController = 'WA\Http\Controllers\DeviceVariationsController';
+        $api->get('devicevariations', ['as' => 'api.deviceVariation.index', 'uses' => $deviceVariationsController . '@index']);
+        $api->get('devicevariations/{id}', ['as' => 'api.deviceVariation.show', 'uses' => $deviceVariationsController . '@show']);
+        $api->post('devicevariations', ['uses' => $deviceVariationsController . '@create']);
+        $api->patch('devicevariations/{id}', ['uses' => $deviceVariationsController . '@store']);
+        $api->delete('devicevariations/{id}', ['uses' => $deviceVariationsController . '@delete']);
 
         //=Image
         $imageController = 'WA\Http\Controllers\ImagesController';
@@ -325,6 +306,60 @@ $api->version('v1', function ($api) {
         //$api->post('conditionsoperators', ['uses' => $conditionOpController . '@create']);
         //$api->patch('conditionsoperators/{id}', ['uses' => $conditionOpController . '@store']);
         //$api->delete('conditionsoperators/{id}', ['uses' => $conditionOpController . '@delete']);
+        
+        //=Roles
+        $rolesController = 'WA\Http\Controllers\RolesController';
+        $api->get('roles', ['as' => 'api.roles.index', 'uses' => $rolesController . '@index']);
+        $api->get('roles/{id}', ['as' => 'api.roles.show', 'uses' => $rolesController . '@show']);
+        $api->post('roles', ['uses' => $rolesController . '@create']);
+        $api->put('roles/{id}', ['uses' => $rolesController . '@store']);
+        $api->delete('roles/{id}', ['uses' => $rolesController . '@delete']);
 
+         //=Permissions
+        $permissionsController = 'WA\Http\Controllers\PermissionsController';
+        $api->get('permissions', ['as' => 'api.permissions.index', 'uses' => $permissionsController . '@index']);
+        $api->get('permissions/{id}', ['as' => 'api.permissions.show', 'uses' => $permissionsController . '@show']);
+        $api->post('permissions', ['uses' => $permissionsController . '@create']);
+        $api->put('permissions/{id}', ['uses' => $permissionsController . '@store']);
+        $api->delete('permissions/{id}', ['uses' => $permissionsController . '@delete']);
+
+         //=Scopes
+        $scopesController = 'WA\Http\Controllers\ScopesController';
+        $api->get('scopes', ['as' => 'api.scopes.index', 'uses' => $scopesController . '@index']);
+        $api->get('scopes/{id}', ['as' => 'api.scopes.show', 'uses' => $scopesController . '@show']);
+        $api->post('scopes', ['uses' => $scopesController . '@create']);
+        $api->put('scopes/{id}', ['uses' => $scopesController . '@store']);
+        $api->delete('scopes/{id}', ['uses' => $scopesController . '@delete']);
+
+
+        $api->get('{model}/{id}/relationships/{include}', function ($model, $id, $include) {
+            $modelName = title_case($model);
+            $modelSingular = str_singular($modelName);
+            $controllerName = "\\WA\\Http\\Controllers\\${modelName}Controller";
+            if (!class_exists($controllerName)) {
+                $error['errors'][$model] = \Illuminate\Support\Facades\Lang::get('messages.NotExistClass',
+                    ['class' => $modelSingular]);
+                return response()->json($error)->setStatusCode(404);
+            }
+            $controller = app()->make($controllerName);
+            return $controller->includeRelationships($model, $id, $include);
+        });
+
+        $api->get('{model}/{id}/{include}', function ($model, $id, $include) {
+            $modelName = title_case($model);
+            $modelSingular = str_singular($modelName);
+            $controllerName = "\\WA\\Http\\Controllers\\${modelName}Controller";
+            if (!class_exists($controllerName)) {
+                $error['errors'][$model] = \Illuminate\Support\Facades\Lang::get('messages.NotExistClass',
+                    ['class' => $modelSingular]);
+                return response()->json($error)->setStatusCode(404);
+            }
+            $controller = app()->make($controllerName);
+            return $controller->includeInformationRelationships($model, $id, $include);
+        });
+
+        //=Jobs
+        $jobsController = 'WA\Http\Controllers\JobsController';
+        $api->put('jobs/updateBillingMonths', ['uses' => $jobsController . '@updateBillingMonths']);
     });
 });

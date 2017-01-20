@@ -39,6 +39,9 @@ class EloquentOrder extends AbstractRepository implements OrderInterface
         if (isset($data['serviceId'])) {
             $order->serviceId = $data['serviceId'];
         }
+        if (isset($data['carrierId'])) {
+            $order->carrierId = $data['carrierId'];
+        }
 
         if (!$order->save()) {
             return 'notSaved';
@@ -69,11 +72,12 @@ class EloquentOrder extends AbstractRepository implements OrderInterface
     public function create(array $data)
     {
         $orderData = [
-            'status' => isset($data['status']) ? $data['status'] : null,
-            'userId' => isset($data['userId']) ? $data['userId'] : null,
-            'packageId' => isset($data['packageId']) ? $data['packageId'] : null,
-            'deviceId' => isset($data['deviceId']) ? $data['deviceId'] : null,
-            'serviceId' => isset($data['serviceId']) ? $data['serviceId'] : null,
+            'status'        => isset($data['status'])       ? $data['status']       : null,
+            'userId'        => isset($data['userId'])       ? $data['userId']       : null,
+            'packageId'     => isset($data['packageId'])    ? $data['packageId']    : null,
+            'deviceId'      => isset($data['deviceId'])     ? $data['deviceId']     : null,
+            'serviceId'     => isset($data['serviceId'])    ? $data['serviceId']    : null,
+            'carrierId'     => isset($data['carrierId'])    ? $data['carrierId']    : null,
         ];
 
         $order = $this->model->create($orderData);

@@ -20,6 +20,7 @@ class Service extends BaseDataStore
         'planCode',
         'cost',
         'description',
+        'currency',
         'carrierId',
         'updated_at'];
 
@@ -57,6 +58,22 @@ class Service extends BaseDataStore
     public function carriers()
     {
         return $this->belongsTo('WA\DataStore\Carrier\Carrier', 'carrierId');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\belongsToMany
+     */
+    public function user()
+    {
+        return $this->belongsToMany('WA\DataStore\User\User', 'user_services', 'userId', 'serviceId');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function orders()
+    {
+        return $this->hasMany('WA\DataStore\Order\Order', 'serviceId');
     }
 
     /**

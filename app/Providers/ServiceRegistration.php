@@ -11,6 +11,7 @@ use WA\DataStore\Carrier\Carrier;
 use WA\DataStore\Category\CategoryApp;
 use WA\DataStore\Category\Preset;
 use WA\DataStore\Company\Company;
+use WA\DataStore\Company\CompanyCurrentBillMonth;
 use WA\DataStore\Condition\Condition;
 use WA\DataStore\Condition\ConditionField;
 use WA\DataStore\Condition\ConditionOperator;
@@ -29,9 +30,11 @@ use WA\DataStore\Modification\Modification;
 use WA\DataStore\NotificationCategory;
 use WA\DataStore\Order\Order;
 use WA\DataStore\Package\Package;
-use WA\DataStore\Price\Price;
+use WA\DataStore\DeviceVariation\DeviceVariation;
 use WA\DataStore\Request\Request;
 use WA\DataStore\Role\Role;
+use WA\DataStore\Permission\Permission;
+use WA\DataStore\Scope\Scope;
 use WA\DataStore\Service\Service;
 use WA\DataStore\ServiceItem\ServiceItem;
 use WA\DataStore\Udl\Udl;
@@ -49,6 +52,7 @@ use WA\Repositories\Carrier\EloquentCarrier;
 use WA\Repositories\Category\EloquentCategoryApps;
 use WA\Repositories\Category\EloquentPreset;
 use WA\Repositories\Company\EloquentCompany;
+use WA\Repositories\CompanyCurrentBillMonth\EloquentCompanyCurrentBillMonth;
 use WA\Repositories\Condition\EloquentCondition;
 use WA\Repositories\Condition\EloquentConditionField;
 use WA\Repositories\Condition\EloquentConditionOperator;
@@ -67,8 +71,9 @@ use WA\Repositories\Modification\EloquentModification;
 use WA\Repositories\NotificationCategory\EloquentNotificationCategory;
 use WA\Repositories\Order\EloquentOrder;
 use WA\Repositories\Package\EloquentPackage;
+use WA\Repositories\Scope\EloquentScope;
 use WA\Repositories\Permission\EloquentPermission;
-use WA\Repositories\Price\EloquentPrice;
+use WA\Repositories\DeviceVariation\EloquentDeviceVariation;
 use WA\Repositories\Request\EloquentRequest;
 use WA\Repositories\Role\EloquentRole;
 use WA\Repositories\Service\EloquentService;
@@ -179,12 +184,12 @@ trait ServiceRegistration
     /**
      * @param
      */
-    public function registerPrice()
+    public function registerDeviceVariation()
     {
         app()->singleton(
-            'WA\Repositories\Price\PriceInterface',
+            'WA\Repositories\DeviceVariation\DeviceVariationInterface',
             function () {
-                return new EloquentPrice(new Price(),
+                return new EloquentDeviceVariation(new DeviceVariation(),
                     app()->make('WA\Repositories\JobStatus\JobStatusInterface')
                 );
             }
@@ -389,6 +394,22 @@ trait ServiceRegistration
             });
     }
 
+    public function registerScope()
+    {
+        app()->bind('WA\Repositories\Scope\ScopeInterface',
+            function () {
+                return new EloquentScope( new Scope(),
+                    app()->make('WA\Repositories\Permission\PermissionInterface'));
+            });
+    }
+    public function registerPermission()
+    {
+        app()->bind('WA\Repositories\Permission\PermissionInterface',
+            function () {
+                return new EloquentPermission(new Permission(),
+                    app()->make('WA\Repositories\Role\RoleInterface'));
+            });
+    }
     public function registerRole()
     {
         app()->bind('WA\Repositories\Role\RoleInterface',
@@ -397,13 +418,6 @@ trait ServiceRegistration
             });
     }
 
-    public function registerPermission()
-    {
-        app()->bind('WA\Repositories\Permission\PermissionsInterface',
-            function () {
-                return new EloquentPermission(app()->make('WA\Repositories\Role\RoleInterface'));
-            });
-    }
 
     public function registerAllocation()
     {
@@ -554,5 +568,14 @@ trait ServiceRegistration
                 return new EloquentServiceItem(new ServiceItem());
             }
         );
+    }
+
+    public function registerCurrentBillMonth()
+    {
+
+        app()->bind('WA\Repositories\CompanyCurrentBillMonth\CompanyCurrentBillMonthInterface',
+            function () {
+                return new EloquentCompanyCurrentBillMonth(new CompanyCurrentBillMonth());
+            });
     }
 }

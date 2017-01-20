@@ -5,7 +5,7 @@ namespace WA\Http\Controllers;
 use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Lang;
-use WA\DataStore\Price\Price;
+use WA\DataStore\DeviceVariation\DeviceVariation;
 use WA\DataStore\Device\Device;
 use WA\DataStore\Device\DeviceTransformer;
 use WA\Repositories\Device\DeviceInterface;
@@ -43,13 +43,13 @@ class DevicesController extends FilteredApiController
     public function store($id, Request $request)
     {
         $success = true;
-        $dataImages = $dataAssets = $dataModifications = $dataCarriers = $dataCompanies = array();
+        $dataImages = $dataModifications = array();
 
         /*
          * Checks if Json has data, data-type & data-attributes.
          */
         if (!$this->isJsonCorrect($request, 'devices')) {
-            $error['errors']['json'] = Lang::get('messages.InvalidJson');
+            //$error['errors']['json'] = Lang::get('messages.InvalidJson');
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
@@ -73,7 +73,6 @@ class DevicesController extends FilteredApiController
             if ($device == 'notSaved') {
                 DB::rollBack();
                 $error['errors']['device'] = Lang::get('messages.NotSavedClass', ['class' => 'Device']);
-                //$error['errors']['Message'] = $e->getMessage();
                 return response()->json($error)->setStatusCode($this->status_codes['conflict']);
             }
 
@@ -81,7 +80,6 @@ class DevicesController extends FilteredApiController
             DB::rollBack();
             $error['errors']['devices'] = Lang::get('messages.NotOptionIncludeClass',
                 ['class' => 'Device', 'option' => 'updated', 'include' => '']);
-            //$error['errors']['Message'] = $e->getMessage();
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
@@ -99,20 +97,6 @@ class DevicesController extends FilteredApiController
                     } catch (\Exception $e) {
                         $error['errors']['images'] = Lang::get('messages.NotOptionIncludeClass',
                             ['class' => 'Device', 'option' => 'updated', 'include' => 'Images']);
-                        //$error['errors']['Message'] = $e->getMessage();
-                    }
-                }
-            }
-
-            if (isset($dataRelationships['assets'])) {
-                if (isset($dataRelationships['assets']['data'])) {
-                    $dataAssets = $this->parseJsonToArray($dataRelationships['assets']['data'], 'assets');
-                    try {
-                        $device->assets()->sync($dataAssets);
-                    } catch (\Exception $e) {
-                        $error['errors']['assets'] = Lang::get('messages.NotOptionIncludeClass',
-                            ['class' => 'Device', 'option' => 'updated', 'include' => 'Assets']);
-                        //$error['errors']['Message'] = $e->getMessage();
                     }
                 }
             }
@@ -127,101 +111,147 @@ class DevicesController extends FilteredApiController
                         $success = false;
                         $error['errors']['modifications'] = Lang::get('messages.NotOptionIncludeClass',
                             ['class' => 'Device', 'option' => 'updated', 'include' => 'Modifications']);
-                        //$error['errors']['Message'] = $e->getMessage();
                     }
                 }
             }
 
-            if (isset($dataRelationships['carriers'])) {
-                if (isset($dataRelationships['carriers']['data'])) {
-                    $dataCarriers = $this->parseJsonToArray($dataRelationships['carriers']['data'], 'carriers');
-                    try {
-                        $device->carriers()->sync($dataCarriers);
-                    } catch (\Exception $e) {
-                        $success = false;
-                        $error['errors']['carriers'] = Lang::get('messages.NotOptionIncludeClass',
-                            ['class' => 'Device', 'option' => 'updated', 'include' => 'Carriers']);
-                        //$error['errors']['Message'] = $e->getMessage();
-                    }
-                }
-            }
-
-            if (isset($dataRelationships['companies'])) {
-                if (isset($dataRelationships['companies']['data'])) {
-                    $dataCompanies = $this->parseJsonToArray($dataRelationships['companies']['data'], 'companies');
-                    try {
-                        $device->companies()->sync($dataCompanies);
-                    } catch (\Exception $e) {
-                        $success = false;
-                        $error['errors']['companies'] = Lang::get('messages.NotOptionIncludeClass',
-                            ['class' => 'Device', 'option' => 'updated', 'include' => 'Companies']);
-                        //$error['errors']['Message'] = $e->getMessage();
-                    }
-                }
-            }
-
-            try {
-                $prices = Price::where('deviceId', $id)->get();
-                $interface = app()->make('WA\Repositories\Price\PriceInterface');
-            } catch (\Exception $e) {
-                $error['errors']['prices'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Device', 'option' => 'updated', 'include' => 'Prices']);
-                $error['errors']['Message'] = $e->getMessage();
-                return response()->json($error)->setStatusCode($this->status_codes['conflict']);
-            }
-
-            if (isset($dataRelationships['prices'])) {
-                if (isset($dataRelationships['prices']['data'])) {
-                    $data = $dataRelationships['prices']['data'];
+            if (isset($dataRelationships['devicevariations'])) {
+                if (isset($dataRelationships['devicevariations']['data'])) {
 
                     if ($success) {
-                        try {                           
+                        try {    
+                            $deviceVar = DeviceVariation::where('deviceId', $id)->get();
+                                                   
+                            $helper = app()->make('WA\Http\Controllers\DeviceVariationsHelperController');
 
-                            $data = $this->deleteRepeat($data);
-
-                            $this->deleteNotRequested($data, $prices, $interface, 'prices');
-
-                            foreach ($data as $price) {
-                                $check = $this->checkIfPriceRowIsCorrect($price, $dataModifications, $dataCarriers,
-                                    $dataCompanies);
-                                if ($check['bool']) {
-                                    $price['deviceId'] = $device->id;
-
-                                    if (isset($price['id'])) {
-                                        if ($price['id'] == 0) {
-                                            $interface->create($price);
-                                        } else {
-                                            if ($price['id'] > 0) {
-                                                $interface->update($price);
-                                            } else {
-                                                $success = false;
-                                                $error['errors']['prices'] = 'the Price has an incorrect id';
-                                            }
-                                        }
-                                    } else {
-                                        $success = false;
-                                        $error['errors']['prices'] = 'the Price has no id';
+                            
+        
+                            $this->deleteNotRequested($dataRelationships['devicevariations']['data'], $deviceVar, $helper, 'devicevariations');                                            
+                                    $success=$helper->store($dataRelationships['devicevariations'],$device->id);
+                                    if (!$success){ 
+                                        $error['errors']['devicevariations'] = Lang::get('messages.NotOptionIncludeClass',
+                                        ['class' => 'Device', 'option' => 'updated', 'include' => 'DeviceVariations']);
                                     }
-
-                                } else {
-                                    $success = false;
-                                    $error['errors']['prices'] = Lang::get('messages.NotOptionIncludeClass',
-                                        ['class' => 'Device', 'option' => 'updated', 'include' => 'Prices']);
-                                    //$error['errors']['Check'] = $check['error'];
-                                    //$error['errors']['IdError'] = $check['id'];
-                                    //$error['errors']['Message'] = 'Any price rows are not correct and no references provided relationships.';
-                                }
-                            }
+                            
                         } catch (\Exception $e) {
                             $success = false;
-                            $error['errors']['prices'] = Lang::get('messages.NotOptionIncludeClass',
-                                ['class' => 'Device', 'option' => 'updated', 'include' => 'Prices']);
-                            //$error['errors']['Message'] = $e->getMessage();
+                            $error['errors']['devicevariations'] = Lang::get('messages.NotOptionIncludeClass',
+                                ['class' => 'Device', 'option' => 'updated', 'include' => 'DeviceVariations']);
                         }
                     } else {
                         $success = false;
-                        $error['errors']['prices'] = Lang::get('messages.NotIncludeExistsOptionClass',
-                            ['class' => 'Device', 'option' => 'updated', 'include' => 'Prices']);
-                        //$error['errors']['Message'] = $e->getMessage();
+                        $error['errors']['devicevariations'] = Lang::get('messages.NotIncludeExistsOptionClass',
+                            ['class' => 'Device', 'option' => 'updated', 'include' => 'Devicevariations']);
+                        
+                    }
+                }
+            }
+        }
+
+        if ($success) {
+            DB::commit();
+            return $this->response()->item($device, new DeviceTransformer(),
+                ['key' => 'devices'])->setStatusCode($this->status_codes['created']);
+        } else {
+            DB::rollBack();
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+        }
+    }
+
+    
+    /**
+     * Create a new device
+     *
+     * @return \Dingo\Api\Http\Response
+     */
+    public function create(Request $request)
+    {   
+        $success = true;
+        $dataImages =  $dataModifications = array();
+
+        /*
+         * Checks if Json has data, data-type & data-attributes.
+         */
+        if (!$this->isJsonCorrect($request, 'devices')) { 
+            $error['errors']['json'] = Lang::get('messages.InvalidJson');
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+        } else {
+            $data = $request->all()['data'];
+            $dataType = $data['type'];
+            $dataAttributes = $data['attributes'];
+        }
+
+        DB::beginTransaction();
+
+        /*
+         * Now we can create the Device.
+         */
+        try {
+            $device = $this->device->create($dataAttributes);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $error['errors']['devices'] = Lang::get('messages.NotOptionIncludeClass',
+                ['class' => 'Device', 'option' => 'created', 'include' => '']);
+            $error['errors']['Message'] = $e->getMessage();
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+        }
+
+        /*
+         * Check if Json has relationships to continue or if not and commit + return.
+         */
+        if (isset($data['relationships'])) {
+
+            $dataRelationships = $data['relationships'];
+
+            if (isset($dataRelationships['images'])) {
+                if (isset($dataRelationships['images']['data'])) {
+                    $dataImages = $this->parseJsonToArray($dataRelationships['images']['data'], 'images');
+                    try {
+                        $device->images()->sync($dataImages);
+                    } catch (\Exception $e) {
+                        $error['errors']['images'] = Lang::get('messages.NotOptionIncludeClass',
+                            ['class' => 'Device', 'option' => 'created', 'include' => 'Images']);
+                    }
+                }
+            }
+
+            if (isset($dataRelationships['modifications'])) {
+                if (isset($dataRelationships['modifications']['data'])) {
+                    $dataModifications = $this->parseJsonToArray($dataRelationships['modifications']['data'],
+                        'modifications');
+                    try {
+                        $device->modifications()->sync($dataModifications);
+                    } catch (\Exception $e) {
+                        $success = false;
+                        $error['errors']['modifications'] = Lang::get('messages.NotOptionIncludeClass',
+                            ['class' => 'Device', 'option' => 'created', 'include' => 'Modifications']);
+                        
+                    }
+                }
+            }
+
+            if (isset($dataRelationships['devicevariations'])) {
+                if (isset($dataRelationships['devicevariations']['data'])) {
+
+                    if ($success) {
+                        try {
+                            $helper = app()->make('WA\Http\Controllers\DeviceVariationsHelperController');
+
+                            
+                                    $helper->create($dataRelationships['devicevariations'], $device->id);
+                            
+                        } catch (\Exception $e) {
+
+                            $success = false;
+                            $errors = 'Device Variation not created.';
+                           
+                            $error['errors']['Message'] = $e->getMessage();
+                        }
+                    } else {
+                        $success = false;
+                        $error['errors']['devicevariations'] = Lang::get('messages.NotIncludeExistsOptionClass',
+                            ['class' => 'Device', 'option' => 'created', 'include' => 'DeviceVariations']);
+                        
                     }
                 }
             }
@@ -252,17 +282,20 @@ class DevicesController extends FilteredApiController
 
                     $esIgual = true;
 
-                    if ($dataAux[$k]['capacityId'] <> $data[$j]['capacityId']) {
-                        $esIgual = $esIgual && false;
+                    if (isset($dataAux[$k]['carrierId']) && isset($data[$j]['carrierId'])) {
+                        if ($dataAux[$k]['carrierId'] <> $data[$j]['carrierId']) {
+                            $esIgual = $esIgual && false;
+                        }    
                     }
-                    if ($dataAux[$k]['styleId'] <> $data[$j]['styleId']) {
-                        $esIgual = $esIgual && false;
+                    if (isset($dataAux[$k]['deviceId']) && isset($data[$j]['deviceId'])) {
+                        if ($dataAux[$k]['deviceId'] <> $data[$j]['deviceId']) {
+                            $esIgual = $esIgual && false;
+                        }
                     }
-                    if ($dataAux[$k]['carrierId'] <> $data[$j]['carrierId']) {
-                        $esIgual = $esIgual && false;
-                    }
-                    if ($dataAux[$k]['companyId'] <> $data[$j]['companyId']) {
-                        $esIgual = $esIgual && false;
+                    if (isset($dataAux[$k]['companyId']) && isset($data[$j]['companyId'])) {
+                        if ($dataAux[$k]['companyId'] <> $data[$j]['companyId']) {
+                            $esIgual = $esIgual && false;
+                        }
                     }
 
                     if ($esIgual) {
@@ -281,332 +314,25 @@ class DevicesController extends FilteredApiController
         return $dataAux;
     }
 
-    private function checkIfPriceRowIsCorrect($price, $modifications, $carriers, $companies)
-    {
-        $modInterface = app()->make('WA\Repositories\Modification\ModificationInterface');
+    private function checkIfDeviceVariationsRowIsCorrect($deviceVariations, $deviceId)
+    {   $modInterface = app()->make('WA\Repositories\Device\DeviceInterface');
 
-        $existsCapacity = false;
-        if (isset($price['capacityId'])) {
+        if (isset($deviceVariations['deviceId'])) {
 
-            foreach ($modifications as $mod) {
-
-                $modification = $modInterface->byId($mod);
-                $reflectorResponse = new \ReflectionClass($modification);
+            $device = $modInterface->byId($mod);
+                $reflectorResponse = new \ReflectionClass($device);
                 $classResponse = $reflectorResponse->getProperty('attributes');
                 $classResponse->setAccessible(true);
-                $dataResponse = $classResponse->getValue($modification);
-
-                if ($price['capacityId'] == $dataResponse['id']) {
-                    if ($dataResponse['modType'] == 'capacity') {
-                        $existsCapacity = true;
-                    }
-                }
+                $dataResponse = $classResponse->getValue($device);
+            if ($deviceVariations['deviceId'] == $dataResponse['id']) {
+                    return array("bool" => true, "error" => "No Error", "id" => 0);
             }
-
-            if (!$existsCapacity) {
-                return array("bool" => false, "error" => "Capacity Not Found", "id" => $price['capacityId']);
+            else{
+                return array("bool" => false, "error" => "Id Not Found", "id" => $deviceVariations['deviceId']);
             }
         }
 
-
-        $existsStyle = false;
-        if (isset($price['styleId'])) {
-
-            foreach ($modifications as $mod) {
-
-                $modification = $modInterface->byId($mod);
-                $reflectorResponse = new \ReflectionClass($modification);
-                $classResponse = $reflectorResponse->getProperty('attributes');
-                $classResponse->setAccessible(true);
-                $dataResponse = $classResponse->getValue($modification);
-
-                if ($price['styleId'] == $dataResponse['id']) {
-                    if ($dataResponse['modType'] == 'style') {
-                        $existsStyle = true;
-                    }
-                }
-            }
-
-            if (!$existsStyle) {
-                return array("bool" => false, "error" => "Style Not Found", "id" => $price['styleId']);
-            }
-        }
-
-        $existsCarrier = false;
-        if (isset($price['carrierId'])) {
-
-            foreach ($carriers as $as) {
-                if ($as == $price['carrierId']) {
-                    $existsCarrier = true;
-                }
-            }
-
-            if (!$existsCarrier) {
-                return array("bool" => false, "error" => "Carrier Not Found", "id" => $price['carrierId']);
-            }
-        }
-
-        $existsCompany = false;
-        if (isset($price['companyId'])) {
-
-            foreach ($companies as $as) {
-                if ($as == $price['companyId']) {
-                    $existsCompany = true;
-                }
-            }
-
-            if (!$existsCompany) {
-                return array("bool" => false, "error" => "Company Not Found", "id" => $price['companyId']);
-            }
-        }
-
-        return array("bool" => true, "error" => "No Error", "id" => 0);
     }
-
-    /*
-     *
-     * PRIVATE FUNCTIONS
-     *
-     */
-
-    /*
-     *      Checks if an ARRAY has repeated rows and returns an ARRAY without them.
-     *
-     *      @param: 
-     *          "prices" : {
-     *              "data" : [
-     *                  {
-     *                      "type": "prices",
-     *                      "capacityId": 1,
-     *                      "styleId": 2,
-     *                      "carrierId": 1,
-     *                      "companyId": 1,
-     *                      "priceRetail": 100,
-     *                      "price1": 100,
-     *                      "price2": 100,
-     *                      "priceOwn": 100
-     *                  },
-     *                  {
-     *                      "type": "prices",
-     *                      "capacityId": 1,
-     *                      "styleId": 2,
-     *                      "carrierId": 1,
-     *                      "companyId": 1,
-     *                      "priceRetail": 100,
-     *                      "price1": 100,
-     *                      "price2": 100,
-     *                      "priceOwn": 100
-     *                  },
-     *                  ...
-     *      @return: array(
-     *                  {
-     *                      "type": "prices",
-     *                      "capacityId": 1,
-     *                      "styleId": 2,
-     *                      "carrierId": 1,
-     *                      "companyId": 1,
-     *                      "priceRetail": 100,
-     *                      "price1": 100,
-     *                      "price2": 100,
-     *                      "priceOwn": 100
-     *                  },
-     *                  ...
-     */
-
-    /**
-     * Create a new device
-     *
-     * @return \Dingo\Api\Http\Response
-     */
-    public function create(Request $request)
-    {
-        $success = true;
-        $dataImages = $dataAssets = $dataModifications = $dataCarriers = $dataCompanies = array();
-
-        /*
-         * Checks if Json has data, data-type & data-attributes.
-         */
-        if (!$this->isJsonCorrect($request, 'devices')) {
-            $error['errors']['json'] = Lang::get('messages.InvalidJson');
-            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
-        } else {
-            $data = $request->all()['data'];
-            $dataType = $data['type'];
-            $dataAttributes = $data['attributes'];
-        }
-
-        DB::beginTransaction();
-
-        /*
-         * Now we can create the Device.
-         */
-        try {
-            $device = $this->device->create($dataAttributes);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            $error['errors']['devices'] = Lang::get('messages.NotOptionIncludeClass',
-                ['class' => 'Device', 'option' => 'created', 'include' => '']);
-            //$error['errors']['Message'] = $e->getMessage();
-            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
-        }
-
-        /*
-         * Check if Json has relationships to continue or if not and commit + return.
-         */
-        if (isset($data['relationships'])) {
-
-            $dataRelationships = $data['relationships'];
-
-            if (isset($dataRelationships['images'])) {
-                if (isset($dataRelationships['images']['data'])) {
-                    $dataImages = $this->parseJsonToArray($dataRelationships['images']['data'], 'images');
-                    try {
-                        $device->images()->sync($dataImages);
-                    } catch (\Exception $e) {
-                        $error['errors']['images'] = Lang::get('messages.NotOptionIncludeClass',
-                            ['class' => 'Device', 'option' => 'created', 'include' => 'Images']);
-                        //$error['errors']['Message'] = $e->getMessage();
-                    }
-                }
-            }
-
-            if (isset($dataRelationships['assets'])) {
-                if (isset($dataRelationships['assets']['data'])) {
-                    $dataAssets = $this->parseJsonToArray($dataRelationships['assets']['data'], 'assets');
-                    try {
-                        $device->assets()->sync($dataAssets);
-                    } catch (\Exception $e) {
-                        $error['errors']['assets'] = Lang::get('messages.NotOptionIncludeClass',
-                            ['class' => 'Device', 'option' => 'created', 'include' => 'Assets']);
-                        //$error['errors']['Message'] = $e->getMessage();
-                    }
-                }
-            }
-
-            if (isset($dataRelationships['modifications'])) {
-                if (isset($dataRelationships['modifications']['data'])) {
-                    $dataModifications = $this->parseJsonToArray($dataRelationships['modifications']['data'],
-                        'modifications');
-                    try {
-                        $device->modifications()->sync($dataModifications);
-                    } catch (\Exception $e) {
-                        $success = false;
-                        $error['errors']['modifications'] = Lang::get('messages.NotOptionIncludeClass',
-                            ['class' => 'Device', 'option' => 'created', 'include' => 'Modifications']);
-                        //$error['errors']['Message'] = $e->getMessage();
-                    }
-                }
-            }
-
-            if (isset($dataRelationships['carriers'])) {
-                if (isset($dataRelationships['carriers']['data'])) {
-                    $dataCarriers = $this->parseJsonToArray($dataRelationships['carriers']['data'], 'carriers');
-                    try {
-                        $device->carriers()->sync($dataCarriers);
-                    } catch (\Exception $e) {
-                        $success = false;
-                        $error['errors']['carriers'] = Lang::get('messages.NotOptionIncludeClass',
-                            ['class' => 'Device', 'option' => 'created', 'include' => 'Carriers']);
-                        //$error['errors']['Message'] = $e->getMessage();
-                    }
-                }
-            }
-
-            if (isset($dataRelationships['companies'])) {
-                if (isset($dataRelationships['companies']['data'])) {
-                    $dataCompanies = $this->parseJsonToArray($dataRelationships['companies']['data'], 'companies');
-                    try {
-                        $device->companies()->sync($dataCompanies);
-                    } catch (\Exception $e) {
-                        $success = false;
-                        $error['errors']['companies'] = Lang::get('messages.NotOptionIncludeClass',
-                            ['class' => 'Device', 'option' => 'created', 'include' => 'Companies']);
-                        //$error['errors']['Message'] = $e->getMessage();
-                    }
-                }
-            }
-
-            if (isset($dataRelationships['prices'])) {
-                if (isset($dataRelationships['prices']['data'])) {
-                    $data = $dataRelationships['prices']['data'];
-
-                    if ($success) {
-                        try {
-                            $interface = app()->make('WA\Repositories\Price\PriceInterface');
-
-                            $data = $this->deleteRepeat($data);
-
-                            foreach ($data as $price) {
-                                $check = $this->checkIfPriceRowIsCorrect($price, $dataModifications, $dataCarriers,
-                                    $dataCompanies);
-                                if ($check['bool']) {
-                                    $price['deviceId'] = $device->id;
-                                    $interface->create($price);
-                                } else {
-                                    $success = false;
-                                    $error['errors']['prices'] = Lang::get('messages.NotOptionIncludeClass',
-                                        ['class' => 'Device', 'option' => 'created', 'include' => 'Prices']);
-                                    //$error['errors']['Check'] = $check['error'];
-                                    //$error['errors']['IdError'] = $check['id'];
-                                    //$error['errors']['Message'] = 'Any price rows are not correct and no references provided relationships.';
-                                }
-                            }
-                        } catch (\Exception $e) {
-                            $success = false;
-                            $error['errors']['prices'] = Lang::get('messages.NotOptionIncludeClass',
-                                ['class' => 'Device', 'option' => 'created', 'include' => 'Prices']);
-                            //$error['errors']['Message'] = $e->getMessage();
-                        }
-                    } else {
-                        $success = false;
-                        $error['errors']['prices'] = Lang::get('messages.NotIncludeExistsOptionClass',
-                            ['class' => 'Device', 'option' => 'created', 'include' => 'Prices']);
-                        //$error['errors']['Message'] = $e->getMessage();
-                    }
-                }
-            }
-        }
-
-        if ($success) {
-            DB::commit();
-            return $this->response()->item($device, new DeviceTransformer(),
-                ['key' => 'devices'])->setStatusCode($this->status_codes['created']);
-        } else {
-            DB::rollBack();
-            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
-        }
-    }
-
-    /*
-     *      Checks if an ARRAY param of Prices has information that is equal to the other information provided.
-     *
-     *      @param: 
-     *          array (size=9) (prices)
-     *              'type' => string 'prices' (length=6)
-     *              'capacityId' => int 1
-     *              'styleId' => int 2
-     *              'carrierId' => int 1
-     *              'companyId' => int 1
-     *              'priceRetail' => int 100
-     *              'price1' => int 100
-     *              'price2' => int 100
-     *              'priceOwn' => int 100
-     *          array (size=3) (modifications)
-     *              0 => int 1
-     *              1 => int 2
-     *              2 => int 3
-     *          array (size=2) (carriers)
-     *              0 => int 1
-     *              1 => int 2
-     *          array (size=2) (companies)
-     *              0 => int 1
-     *              1 => int 2
-     *      @return:
-     *          array (size=3)
-     *              'bool' => boolean true
-     *              'error' => string 'No Error' (length=8)
-     *              'id' => int 0
-     */
 
     /**
      * Delete a device

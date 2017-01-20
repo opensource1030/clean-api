@@ -50,31 +50,11 @@ class Device extends MutableDataStore
         'externalId',
         'identification',
         'syncId',
+        'make',
+        'model',
+        'defaultPrice',
+        'currency'
     ];
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function assets()
-    {
-        return $this->belongsToMany('WA\DataStore\Asset\Asset', 'asset_devices', 'deviceId', 'assetId');
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function users()
-    {
-        return $this->belongsToMany('WA\DataStore\User\User', 'user_devices', 'deviceId', 'userId');
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function carriers()
-    {
-        return $this->belongsToMany('WA\DataStore\Carrier\Carrier', 'device_carriers', 'deviceId', 'carrierId');
-    }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
@@ -82,14 +62,6 @@ class Device extends MutableDataStore
     public function modifications()
     {
         return $this->belongsToMany('WA\DataStore\Modification\Modification', 'device_modifications', 'deviceId', 'modificationId');
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function companies()
-    {
-        return $this->belongsToMany('WA\DataStore\Company\Company', 'device_companies', 'deviceId', 'companyId');
     }
 
     /**
@@ -103,17 +75,9 @@ class Device extends MutableDataStore
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function prices()
+    public function devicevariations()
     {
-        return $this->hasMany('WA\DataStore\Price\Price', 'deviceId');
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function packages()
-    {
-        return $this->belongsToMany('WA\DataStore\Package\Package', 'package_devices', 'packageId', 'deviceId');
+        return $this->hasMany('WA\DataStore\DeviceVariation\DeviceVariation', 'deviceId');
     }
 
     /**

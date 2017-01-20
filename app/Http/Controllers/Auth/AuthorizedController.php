@@ -25,6 +25,11 @@ class AuthorizedController extends BaseController
     protected $currentCompany;
 
     /**
+     * @var device
+     */
+    protected $device;
+
+    /**
      * AuthorizedController constructor.
      */
     public function __construct()

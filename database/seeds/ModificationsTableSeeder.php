@@ -1,7 +1,7 @@
 <?php
 
 /**
- * capacitiesTableSeeder - Insert info into database.
+ * ModificationsTableSeeder - Insert info into database.
  *
  * @author   Agustí Dosaiguas
  */

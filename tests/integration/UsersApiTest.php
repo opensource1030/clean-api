@@ -1,19 +1,20 @@
 <?php
-
 use Laravel\Lumen\Testing\DatabaseMigrations;
+use WA\DataStore\User\User;
+use Laravel\Passport\Bridge\Scope;
+use WA\DataStore\Scope\Scope as ScopeModel;
+use Laravel\Passport\Passport;
 
 class UsersApiTest extends TestCase
 {
     use DatabaseMigrations;
-
     /**
      * A basic functional test for user endpoints.
      */
-
+    
     public function testGetUsers()
     {
         $user = factory(\WA\DataStore\User\User::class, 20)->create();
-
         $res = $this->json('GET', '/users')
         //Log::debug("Users: ".print_r($res->response->getContent(), true));
             ->seeJsonStructure([
@@ -110,13 +111,45 @@ class UsersApiTest extends TestCase
                 ],
             ]);
     }
-
     public function testGetUserByIdIfExists()
     {
         $user = factory(\WA\DataStore\User\User::class)->create();
-
         $res = $this->get('/users/'.$user->id)
         //Log::debug("Users/id: ".print_r($res->response->getContent(), true));
+            ->seeJson([
+                    'type' => 'users',
+                    'uuid' => $user->uuid,
+                    'identification' => $user->identification,
+                    'email' => $user->email,
+                    'alternateEmail' => $user->alternateEmail,
+                    'password' => $user->password,
+                    'username' => $user->username,
+                    'confirmation_code' => $user->confirmation_code,
+                    'remember_token' => $user->remember_token,
+                    'confirmed' => "$user->confirmed",
+                    'firstName' => $user->firstName,
+                    'lastName' => $user->lastName,
+                    'alternateFirstName' => $user->alternateFirstName,
+                    'supervisorEmail' => $user->supervisorEmail,
+                    'companyUserIdentifier' => "$user->companyUserIdentifier",
+                    'isSupervisor' => "$user->isSupervisor",
+                    'isValidator' => "$user->isValidator",
+                    'isActive' => "$user->isActive",
+                    'rgt' => $user->rgt,
+                    'lft' => $user->lft,
+                    'hierarchy' => $user->hierarchy,
+                    'defaultLang' => $user->defaultLang,
+                    'notes' => $user->notes,
+                    'level' => "$user->level",
+                    'notify' => "$user->notify",
+                    'companyId' => "$user->companyId",
+                    'syncId' => $user->syncId,
+                    'supervisorId' => "$user->supervisorId",
+                    'externalId' => $user->externalId,
+                    'approverId' => "$user->approverId",
+                    'defaultLocationId' => "$user->defaultLocationId",
+                    'addressId' => "$user->addressId"
+                ])
             ->seeJsonStructure([
                 'data' => [
                     'type', 
@@ -197,26 +230,98 @@ class UsersApiTest extends TestCase
                 ]
             ]);
     }
-
     public function testGetUserByIdIfNoExists()
     {
         $userId = factory(\WA\DataStore\User\User::class)->create()->id;
         $userId = $userId + 10;
-
         $response = $this->call('GET', '/users/'.$userId);
         $this->assertEquals(404, $response->status());
     }
+    public function testGetLoggedInUser()
+    {
 
+        $this->markTestSkipped(
+              '.'
+            );
+
+        $grantType = 'password';
+        $password = 'user';
+        $user = factory(\WA\DataStore\User\User::class)->create([
+            'email' => 'email@email.com',
+            'password' => '$2y$10$oc9QZeaYYAd.8BPGmXGaFu9cAycKTcBu7LRzmT2J231F0BzKwpxj6'
+        ]);
+        $scope = factory(\WA\DataStore\Scope\Scope::class)->create(['name' => 'get', 'display_name'=>'get']);
+        $role = factory(\WA\DataStore\Role\Role::class)->create();
+        $permission1 = factory(\WA\DataStore\Permission\Permission::class)->create();
+        $permission2 = factory(\WA\DataStore\Permission\Permission::class)->create();
+        $user->roles()->sync([$role->id]);
+        $role->perms()->sync([$permission1->id,$permission2->id]);
+        $scope->permissions()->sync([$permission1->id,$permission2->id]);
+        
+        $scp = $scope->name;
+        $oauth = factory(\WA\DataStore\Oauth\Oauth::class)->create([
+            'user_Id' => null,
+            'name' => 'Password Grant Client',
+            'secret' => 'ab9QdKGBXZmZn50aPlf4bLlJtC4BJJNC0M99i7B7',
+            'redirect' => 'http://localhost',
+            'personal_access_client' => 0,
+            'password_client' => 1,
+            'revoked' => 0,
+        ]);
+        // Setup TokensCan as in AuthSericeProvider, as it is not properly executed on app bootstrap during the test
+        $scopes = ScopeModel::all();
+            
+        $listScope = array();
+        foreach ($scopes as $scop){
+            $listScope[$scop->getAttributes()['name']] = $scop->getAttributes()['description'];
+        }
+
+        Passport::tokensCan($listScope);
+
+        $body = [
+            'grant_type' => $grantType,
+            'username' => $user->email,
+            'password' => $password,
+            'client_id' => $oauth->id,
+            'client_secret' => $oauth->secret,
+            'scope'=> $scp
+        ];
+        $call = $this->call('POST', 'oauth/token', $body, [], [], [], true );
+        $array = (array)json_decode($call->getContent());
+        $bearerToken = $array['token_type'].' '.$array['access_token'];
+        $this->be($user);
+        $res = $this->call('GET', 'users/me', [], [], [], ['Accept' => 'application/vnd.v1+json', 'Authorization' => $bearerToken], true );
+        $resArray = (array)json_decode($res->getContent());
+        $this->assertEquals($resArray['identification'], $user->identification);
+        $this->assertEquals($resArray['email'], $user->email);
+        $this->assertEquals($resArray['alternateEmail'], $user->alternateEmail);
+        $this->assertEquals($resArray['username'], $user->username);
+        $this->assertEquals($resArray['firstName'], $user->firstName);
+        $this->assertEquals($resArray['lastName'], $user->lastName);
+        $this->assertEquals($resArray['alternateFirstName'], $user->alternateFirstName);
+        $this->assertEquals($resArray['supervisorEmail'], $user->supervisorEmail);
+        $this->assertEquals($resArray['companyUserIdentifier'], $user->companyUserIdentifier);
+        $this->assertEquals($resArray['isSupervisor'], $user->isSupervisor);
+        $this->assertEquals($resArray['isValidator'], $user->isValidator);
+        $this->assertEquals($resArray['rgt'], $user->rgt);
+        $this->assertEquals($resArray['lft'], $user->lft);
+        $this->assertEquals($resArray['hierarchy'], $user->hierarchy);
+        $this->assertEquals($resArray['defaultLang'], $user->defaultLang);
+        $this->assertEquals($resArray['notes'], $user->notes);
+        $this->assertEquals($resArray['level'], $user->level);
+        $this->assertEquals($resArray['notify'], $user->notify);
+        $this->assertEquals($resArray['companyId'], $user->companyId);
+        $this->assertEquals($resArray['syncId'], $user->syncId);
+        $this->assertEquals($resArray['supervisorId'], $user->supervisorId);
+        $this->assertEquals($resArray['approverId'], $user->approverId);
+        $this->assertEquals($resArray['defaultLocationId'], $user->defaultLocationId);
+        $this->assertEquals($resArray['addressId'], $user->addressId);
+    }
     public function testGetUserByIdandIncludesAssets()
     {
         $user = factory(\WA\DataStore\User\User::class)->create();
-
-        $asset1 = factory(\WA\DataStore\Asset\Asset::class)->create()->id;
-        $asset2 = factory(\WA\DataStore\Asset\Asset::class)->create()->id;
-
-        $dataAssets = array($asset1, $asset2);
-
-        $user->assets()->sync($dataAssets);
+        $asset1 = factory(\WA\DataStore\Asset\Asset::class)->create(['userId' => $user->id])->id;
+        $asset2 = factory(\WA\DataStore\Asset\Asset::class)->create(['userId' => $user->id])->id;
 
         $response = $this->json('GET', 'users/'.$user->id.'?include=assets')
             ->seeJsonStructure([
@@ -319,23 +424,20 @@ class UsersApiTest extends TestCase
                             'self',
                         ],
                     ],
-
                 ],
             ]);
     }
 
-    public function testGetUserByIdandIncludesDevices()
+    public function testGetUserByIdandIncludesDeviceVariations()
     {
         $user = factory(\WA\DataStore\User\User::class)->create();
 
-        $device1 = factory(\WA\DataStore\Device\Device::class)->create()->id;
-        $device2 = factory(\WA\DataStore\Device\Device::class)->create()->id;
-
-        $datadevices = array($device1, $device2);
-
-        $user->devices()->sync($datadevices);
-
-        $res = $this->json('GET', 'users/'.$user->id.'?include=devices')
+        $deviceVariation1 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create()->id;
+        $deviceVariation2 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create()->id;
+        $datadevicevariations = array($deviceVariation1, $deviceVariation2);
+        $user->devicevariations()->sync($datadevicevariations);
+        
+        $res = $this->json('GET', 'users/'.$user->id.'?include=devicevariations')
         //Log::debug("Users/id: ".print_r($res->response->getContent(), true));
             ->seeJsonStructure([
                 'data' => [
@@ -390,7 +492,7 @@ class UsersApiTest extends TestCase
                                 ],
                             ],
                         ],
-                        'devices' => [
+                        'devicevariations' => [
                             'links' => [
                                 'self',
                                 'related',
@@ -400,12 +502,16 @@ class UsersApiTest extends TestCase
                                     'type',
                                     'id',
                                 ],
-                            ],
-                        ],
-                    ],
+                                1 => [
+                                    'type',
+                                    'id',
+                                ]
+                            ]
+                        ]
+                    ]
                 ],
                 'included' => [
-                    2 => [
+                    0 => [
                         'type',
                         'id',
                         'attributes' => [
@@ -421,36 +527,49 @@ class UsersApiTest extends TestCase
                             'self'
                         ]
                     ],
-                    3 => [
+                    1 => [
                         'type',
                         'id',
                         'attributes' => [
-                            'identification',
-                            'name',
-                            'properties',
-                            'externalId',
-                            'statusId',
-                            'syncId',
+                            'priceRetail',
+                            'price1',
+                            'price2',
+                            'priceOwn',
+                            'deviceId',
+                            'carrierId',
+                            'companyId',
                         ],
                         'links' => [
                             'self',
                         ],
                     ],
-                ],
+                    2 => [
+                        'type',
+                        'id',
+                        'attributes' => [
+                            'priceRetail',
+                            'price1',
+                            'price2',
+                            'priceOwn',
+                            'deviceId',
+                            'carrierId',
+                            'companyId',
+                        ],
+                        'links' => [
+                            'self',
+                        ]
+                    ]
+                ]
             ]);
     }
 
     public function testGetUserByIdandIncludesRoles()
     {
         $user = factory(\WA\DataStore\User\User::class)->create();
-
         $role1 = factory(\WA\DataStore\Role\Role::class)->create()->id;
         $role2 = factory(\WA\DataStore\Role\Role::class)->create()->id;
-
         $dataroles = array($role1, $role2);
-
         $user->roles()->sync($dataroles);
-
         $res = $this->json('GET', 'users/'.$user->id.'?include=roles')
         //Log::debug("Users/id: ".print_r($res->response->getContent(), true));
             ->seeJsonStructure([
@@ -503,8 +622,8 @@ class UsersApiTest extends TestCase
                                 0 => [
                                     'type',
                                     'id',
-                                ],
-                            ],
+                                ]
+                            ]
                         ],
                         'roles' => [
                             'links' => [
@@ -516,9 +635,13 @@ class UsersApiTest extends TestCase
                                     'type',
                                     'id',
                                 ],
-                            ],
-                        ],
-                    ],
+                                1 => [
+                                    'type',
+                                    'id',
+                                ]
+                            ]
+                        ]
+                    ]
                 ],
                 'included' => [
                     0 => [
@@ -547,28 +670,31 @@ class UsersApiTest extends TestCase
                             'self',
                         ],
                     ],
-
-                ],
+                    2 => [
+                        'type',
+                        'id',
+                        'attributes' => [
+                            'name'
+                        ],
+                        'links' => [
+                            'self',
+                        ]
+                    ]
+                ]
             ]);
     }
-
+    
     public function testGetUserByIdandIncludesUdls()
     {
         $user = factory(\WA\DataStore\User\User::class)->create();
-
         $company1 = factory(\WA\DataStore\Company\Company::class)->create()->id;
         $company2 = factory(\WA\DataStore\Company\Company::class)->create()->id;
-
         $udl1 = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $company1])->id;
         $udl2 = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $company2])->id;
-
         $udlV1 = factory(\WA\DataStore\UdlValue\UdlValue::class)->create(['udlId' => $udl1])->id;
         $udlV2 = factory(\WA\DataStore\UdlValue\UdlValue::class)->create(['udlId' => $udl2])->id;
-
         $dataudls = array($udlV1, $udlV2);
-
         $user->udlValues()->sync($dataudls);
-
         $res = $this->json('GET', 'users/'.$user->id.'?include=udls')
         //Log::debug("testGetUserByIdandIncludesUdls: ".print_r($res->response->getContent(), true));
             ->seeJsonStructure([
@@ -664,17 +790,14 @@ class UsersApiTest extends TestCase
                             'self',
                         ],
                     ],
-
                 ],
             ]);
     }
-
+    
     public function testGetUserByIdandIncludesCompanies()
     {
         $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
-
         $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId]);
-
         $res = $this->json('GET', 'users/'.$user->id.'?include=companies')
         //Log::debug("Users/id: ".print_r($res->response->getContent(), true));
             ->seeJsonStructure([
@@ -775,17 +898,23 @@ class UsersApiTest extends TestCase
                             'self',
                         ],
                     ],
-
                 ],
             ]);
     }
-
+    
     public function testGetUserByIdandIncludesAllocations()
     {
         $user = factory(\WA\DataStore\User\User::class)->create();
 
-        $allocation1 = factory(\WA\DataStore\Allocation\Allocation::class)->create(['userId' => $user->id])->id;
-        $allocation2 = factory(\WA\DataStore\Allocation\Allocation::class)->create(['userId' => $user->id])->id;
+        $allocation1 = factory(\WA\DataStore\Allocation\Allocation::class)->create(['userId' => $user->id]);
+        $carrier1 = factory(\WA\DataStore\Carrier\Carrier::class)->create();
+        $allocation1->carriers()->associate($carrier1);
+        $allocation1->save();
+
+        $allocation2 = factory(\WA\DataStore\Allocation\Allocation::class)->create(['userId' => $user->id]);
+        $carrier2 = factory(\WA\DataStore\Carrier\Carrier::class)->create();
+        $allocation2->carriers()->associate($carrier2);
+        $allocation2->save();
 
         $res = $this->json('GET', 'users/'.$user->id.'?include=allocations')
         //Log::debug("Users/id: ".print_r($res->response->getContent(), true));
@@ -886,7 +1015,7 @@ class UsersApiTest extends TestCase
                             'service_plan_charge',
                             'usage_charge',
                             'other_charge',
-                            'fees',
+                            'fees_charge',
                             'last_upgrade',
                         ],
                         'links' => [
@@ -896,14 +1025,12 @@ class UsersApiTest extends TestCase
                 ]
             ]);
     }
-
+    
     public function testGetUserByIdandIncludesContents()
     {
         $user = factory(\WA\DataStore\User\User::class)->create();
-
         $content1 = factory(\WA\DataStore\Content\Content::class)->create(['owner_id' => $user->id])->id;
         $content2 = factory(\WA\DataStore\Content\Content::class)->create(['owner_id' => $user->id])->id;
-
         $res = $this->json('GET', 'users/'.$user->id.'?include=contents')
         //Log::debug("Users/id: ".print_r($res->response->getContent(), true));
             ->seeJsonStructure([
@@ -1003,7 +1130,6 @@ class UsersApiTest extends TestCase
                             'self',
                         ],
                     ],
-
                 ],
             ]);
     }
@@ -1011,33 +1137,42 @@ class UsersApiTest extends TestCase
     public function testCreateUser()
     {
         $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
-
         $addressId = factory(\WA\DataStore\Address\Address::class)->create()->id;
-
         $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId, 'addressId' => $addressId]);
  
         $asset1 = factory(\WA\DataStore\Asset\Asset::class)->create()->id;
         $asset2 = factory(\WA\DataStore\Asset\Asset::class)->create()->id;
-
-        $device1 = factory(\WA\DataStore\Device\Device::class)->create()->id;
-        $device2 = factory(\WA\DataStore\Device\Device::class)->create()->id;
-
+        
+        $devicevariation1 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create()->id;
+        $devicevariation2 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create()->id;
+        
         $role1 = factory(\WA\DataStore\Role\Role::class)->create()->id;
         $role2 = factory(\WA\DataStore\Role\Role::class)->create()->id;
-
+        
         $udl1 = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $companyId])->id;
         $udl2 = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $companyId])->id;
-
+        
         $udlV1 = factory(\WA\DataStore\UdlValue\UdlValue::class)->create(['udlId' => $udl1])->id;
         $udlV2 = factory(\WA\DataStore\UdlValue\UdlValue::class)->create(['udlId' => $udl2])->id;
+        
+        $carrier1 = factory(\WA\DataStore\Carrier\Carrier::class)->create();
 
         $allocation1 = factory(\WA\DataStore\Allocation\Allocation::class)->create();
+        $allocation1->carriers()->associate($carrier1);
+        $allocation1->save();
+
         $allocation2 = factory(\WA\DataStore\Allocation\Allocation::class)->create();
+        $allocation2->carriers()->associate($carrier1);
+        $allocation2->save();
 
         $content1 = factory(\WA\DataStore\Content\Content::class)->create();
         $content2 = factory(\WA\DataStore\Content\Content::class)->create();
 
-        $res = $this->json('POST', '/users?include=assets,devices,roles,udls,allocations,companies,contents',
+        $service1 = factory(\WA\DataStore\Service\Service::class)->create();
+        $service2 = factory(\WA\DataStore\Service\Service::class)->create();
+
+
+        $res = $this->json('POST', '/users?include=assets,devicevariations,roles,udls,allocations,companies,contents',
             [
                 'data' => [
                     'type' => 'users',
@@ -1080,10 +1215,16 @@ class UsersApiTest extends TestCase
                                 ['type' => 'assets', 'id' => $asset2],
                             ],
                         ],
-                        'devices' => [
+                        'devicevariations' => [
                             'data' => [
-                                ['type' => 'devices', 'id' => $device1],
-                                ['type' => 'devices', 'id' => $device2],
+                                ['type' => 'devicevariations', 'id' => $devicevariation1],
+                                ['type' => 'devicevariations', 'id' => $devicevariation2],
+                            ],
+                        ],
+                        'services' => [
+                            'data' => [
+                                ['type' => 'services', 'id' => $service1],
+                                ['type' => 'services', 'id' => $service2],
                             ],
                         ],
                         'roles' => [
@@ -1101,6 +1242,7 @@ class UsersApiTest extends TestCase
                         'allocations' => [
                             'data' => [
                                 [
+                                    'id' => $allocation1->id,
                                     'billMonth' => $allocation1->billMonth,
                                     'mobileNumber' => $allocation1->mobileNumber,
                                     'carrier' => $allocation1->carrier,
@@ -1110,40 +1252,57 @@ class UsersApiTest extends TestCase
                                     'preAllocatedAmountDue' => $allocation1->preAllocatedAmountDue,
                                     'otherAdjustments' => $allocation1->otherAdjustments,
                                     'preAdjustedAccessCharge' => $allocation1->preAdjustedAccessCharge,
-                                    'adjustedAccessCost' => $allocation1->adjustedAccessCost,
-                                    'bBCost' => $allocation1->bBCost,
-                                    'pDACost' => $allocation1->pDACost,
-                                    'iPhoneCost' => $allocation1->iPhoneCost,
-                                    'featuresCost' => $allocation1->featuresCost,
-                                    'dataCardCost' => $allocation1->dataCardCost,
-                                    'lDCanadaCost' => $allocation1->lDCanadaCost,
-                                    'uSAddOnPlanCost' => $allocation1->uSAddOnPlanCost,
-                                    'uSLDAddOnPlanCost' => $allocation1->uSLDAddOnPlanCost,
-                                    'uSDataRoamingCost' => $allocation1->uSDataRoamingCost,
-                                    'nightAndWeekendAddOnCost' => $allocation1->nightAndWeekendAddOnCost,
-                                    'minuteAddOnCost' => $allocation1->minuteAddOnCost,
-                                    'servicePlanCharges' => $allocation1->servicePlanCharges,
-                                    'directConnectCost' => $allocation1->directConnectCost,
-                                    'textMessagingCost' => $allocation1->textMessagingCost,
-                                    'dataCost' => $allocation1->dataCost,
-                                    'intlRoamingCost' => $allocation1->intlRoamingCost,
-                                    'intlLongDistanceCost' => $allocation1->intlLongDistanceCost,
-                                    'directoryAssistanceCost' => $allocation1->directoryAssistanceCost,
-                                    'callForwardingCost' => $allocation1->callForwardingCost,
-                                    'airtimeCost' => $allocation1->airtimeCost,
-                                    'usageCharges' => $allocation1->usageCharges,
-                                    'equipmentCost' => $allocation1->equipmentCost,
-                                    'otherDiscountChargesCost' => $allocation1->otherDiscountChargesCost,
-                                    'taxes' => $allocation1->taxes,
-                                    'thirdPartyCost' => $allocation1->thirdPartyCost,
-                                    'otherCharges' => $allocation1->otherCharges,
+                                    'adjustedAccessCharge' => $allocation1->adjustedAccessCharge,
+                                    'bBCharge' => $allocation1->bBCharge,
+                                    'pDACharge' => $allocation1->pDACharge,
+                                    'iPhoneCharge' => $allocation1->iPhoneCharge,
+                                    'featuresCharge' => $allocation1->featuresCharge,
+                                    'dataCardCharge' => $allocation1->dataCardCharge,
+                                    'lDCanadaCharge' => $allocation1->lDCanadaCharge,
+                                    'uSAddOnPlanCharge' => $allocation1->uSAddOnPlanCharge,
+                                    'uSLDAddOnPlanCharge' => $allocation1->uSAddOnPlanCharge,
+                                    'uSDataRoamingCharge' => $allocation1->uSDataRoamingCharge,
+                                    'nightAndWeekendAddOnCharge' => $allocation1->nightAndWeekendAddOnCharge,
+                                    'minuteAddOnCharge' => $allocation1->minuteAddOnCharge,
+                                    'servicePlanCharge' => $allocation1->servicePlanCharge,
+                                    'directConnectCharge' => $allocation1->directConnectCharge,
+                                    'textMessagingCharge' => $allocation1->textMessagingCharge,
+                                    'dataCharge' => $allocation1->dataCharge,
+                                    'intlRoamingCharge' => $allocation1->intlRoamingCharge,
+                                    'intlLongDistanceCharge' => $allocation1->intlLongDistanceCharge,
+                                    'directoryAssistanceCharge' => $allocation1->directoryAssistanceCharge,
+                                    'callForwardingCharge' => $allocation1->callForwardingCharge,
+                                    'airtimeCharge' => $allocation1->airtimeCharge,
+                                    'usageCharge' => $allocation1->usageCharge,
+                                    'equipmentCharge' => $allocation1->equipmentCharge,
+                                    'otherDiscountCharge' => $allocation1->otherDiscountCharge,
+                                    'taxesCharge' => $allocation1->taxesCharge,
+                                    'thirdPartyCharge' => $allocation1->thirdPartyCharge,
+                                    'otherCharge' => $allocation1->otherCharge,
                                     'waFees' => $allocation1->waFees,
                                     'lineFees' => $allocation1->lineFees,
                                     'mobilityFees' => $allocation1->mobilityFees,
-                                    'fees' => $allocation1->fees,
-                                    'last_upgrade' => $allocation1->last_upgrade
+                                    'feesCharge' => $allocation1->feesCharge,
+                                    'last_upgrade' => $allocation1->last_upgrade,
+                                    'deviceType' => $allocation1->deviceType,
+                                    'domesticUsageCharge' => $allocation1->domesticUsageCharge,
+                                    'domesticDataUsage' => $allocation1->domesticDataUsage,
+                                    'domesticVoiceUsage' => $allocation1->domesticVoiceUsage,
+                                    'domesticTextUsage' => $allocation1->domesticTextUsage,
+                                    'intlRoamUsageCharge' => $allocation1->intlRoamUsageCharge,
+                                    'intlRoamDataUsage' => $allocation1->intlRoamDataUsage,
+                                    'intlRoamVoiceUsage' => $allocation1->intlRoamVoiceUsage,
+                                    'intlRoamTextUsage' => $allocation1->intlRoamTextUsage,
+                                    'intlLDUsageCharge' => $allocation1->intlLDUsageCharge,
+                                    'intlLDVoiceUsage' => $allocation1->intlLDVoiceUsage,
+                                    'intlLDTextUsage' => $allocation1->intlLDTextUsage,
+                                    'etfCharge' => $allocation1->etfCharge,
+                                    'otherCarrierCharge' => $allocation1->otherCarrierCharge,
+                                    'deviceEsnImei' => $allocation1->deviceEsnImei,
+                                    'deviceSim' => $allocation1->deviceSim
                                 ],
                                 [
+                                    'id' => $allocation2->id,
                                     'billMonth' => $allocation2->billMonth,
                                     'mobileNumber' => $allocation2->mobileNumber,
                                     'carrier' => $allocation2->carrier,
@@ -1153,40 +1312,55 @@ class UsersApiTest extends TestCase
                                     'preAllocatedAmountDue' => $allocation2->preAllocatedAmountDue,
                                     'otherAdjustments' => $allocation2->otherAdjustments,
                                     'preAdjustedAccessCharge' => $allocation2->preAdjustedAccessCharge,
-                                    'adjustedAccessCost' => $allocation2->adjustedAccessCost,
-                                    'bBCost' => $allocation2->bBCost,
-                                    'pDACost' => $allocation2->pDACost,
-                                    'iPhoneCost' => $allocation2->iPhoneCost,
-                                    'featuresCost' => $allocation2->featuresCost,
-                                    'dataCardCost' => $allocation2->dataCardCost,
-                                    'lDCanadaCost' => $allocation2->lDCanadaCost,
-                                    'uSAddOnPlanCost' => $allocation2->uSAddOnPlanCost,
-                                    'uSLDAddOnPlanCost' => $allocation2->uSLDAddOnPlanCost,
-                                    'uSDataRoamingCost' => $allocation2->uSDataRoamingCost,
-                                    'nightAndWeekendAddOnCost' => $allocation2->nightAndWeekendAddOnCost,
-                                    'minuteAddOnCost' => $allocation2->minuteAddOnCost,
-                                    'servicePlanCharges' => $allocation2->servicePlanCharges,
-                                    'directConnectCost' => $allocation2->directConnectCost,
-                                    'textMessagingCost' => $allocation2->textMessagingCost,
-                                    'dataCost' => $allocation2->dataCost,
-                                    'intlRoamingCost' => $allocation2->intlRoamingCost,
-                                    'intlLongDistanceCost' => $allocation2->intlLongDistanceCost,
-                                    'directoryAssistanceCost' => $allocation2->directoryAssistanceCost,
-                                    'callForwardingCost' => $allocation2->callForwardingCost,
-                                    'airtimeCost' => $allocation2->airtimeCost,
-                                    'usageCharges' => $allocation2->usageCharges,
-                                    'equipmentCost' => $allocation2->equipmentCost,
-                                    'otherDiscountChargesCost' => $allocation2->otherDiscountChargesCost,
-                                    'taxes' => $allocation2->taxes,
-                                    'thirdPartyCost' => $allocation2->thirdPartyCost,
-                                    'otherCharges' => $allocation2->otherCharges,
+                                    'adjustedAccessCharge' => $allocation2->adjustedAccessCharge,
+                                    'bBCharge' => $allocation2->bBCharge,
+                                    'pDACharge' => $allocation2->pDACharge,
+                                    'iPhoneCharge' => $allocation2->iPhoneCharge,
+                                    'featuresCharge' => $allocation2->featuresCharge,
+                                    'dataCardCharge' => $allocation2->dataCardCharge,
+                                    'lDCanadaCharge' => $allocation2->lDCanadaCharge,
+                                    'uSAddOnPlanCharge' => $allocation2->uSAddOnPlanCharge,
+                                    'uSLDAddOnPlanCharge' => $allocation2->uSAddOnPlanCharge,
+                                    'uSDataRoamingCharge' => $allocation2->uSDataRoamingCharge,
+                                    'nightAndWeekendAddOnCharge' => $allocation2->nightAndWeekendAddOnCharge,
+                                    'minuteAddOnCharge' => $allocation2->minuteAddOnCharge,
+                                    'servicePlanCharge' => $allocation2->servicePlanCharge,
+                                    'directConnectCharge' => $allocation2->directConnectCharge,
+                                    'textMessagingCharge' => $allocation2->textMessagingCharge,
+                                    'dataCharge' => $allocation2->dataCharge,
+                                    'intlRoamingCharge' => $allocation2->intlRoamingCharge,
+                                    'intlLongDistanceCharge' => $allocation2->intlLongDistanceCharge,
+                                    'directoryAssistanceCharge' => $allocation2->directoryAssistanceCharge,
+                                    'callForwardingCharge' => $allocation2->callForwardingCharge,
+                                    'airtimeCharge' => $allocation2->airtimeCharge,
+                                    'usageCharge' => $allocation2->usageCharge,
+                                    'equipmentCharge' => $allocation2->equipmentCharge,
+                                    'otherDiscountCharge' => $allocation2->otherDiscountCharge,
+                                    'taxesCharge' => $allocation2->taxesCharge,
+                                    'thirdPartyCharge' => $allocation2->thirdPartyCharge,
+                                    'otherCharge' => $allocation2->otherCharge,
                                     'waFees' => $allocation2->waFees,
                                     'lineFees' => $allocation2->lineFees,
                                     'mobilityFees' => $allocation2->mobilityFees,
-                                    'fees' => $allocation2->fees,
-                                    'last_upgrade' => $allocation2->last_upgrade
+                                    'feesCharge' => $allocation2->feesCharge,
+                                    'last_upgrade' => $allocation2->last_upgrade,
+                                    'deviceType' => $allocation2->deviceType,
+                                    'domesticUsageCharge' => $allocation2->domesticUsageCharge,
+                                    'domesticDataUsage' => $allocation2->domesticDataUsage,
+                                    'domesticVoiceUsage' => $allocation2->domesticVoiceUsage,
+                                    'domesticTextUsage' => $allocation2->domesticTextUsage,
+                                    'intlRoamUsageCharge' => $allocation2->intlRoamUsageCharge,
+                                    'intlRoamDataUsage' => $allocation2->intlRoamDataUsage,
+                                    'intlRoamVoiceUsage' => $allocation2->intlRoamVoiceUsage,
+                                    'intlRoamTextUsage' => $allocation2->intlRoamTextUsage,
+                                    'intlLDUsageCharge' => $allocation2->intlLDUsageCharge,
+                                    'intlLDVoiceUsage' => $allocation2->intlLDVoiceUsage,
+                                    'intlLDTextUsage' => $allocation2->intlLDTextUsage,
+                                    'etfCharge' => $allocation2->etfCharge,
+                                    'otherCarrierCharge' => $allocation2->otherCarrierCharge,
+                                    'deviceEsnImei' => $allocation2->deviceEsnImei,
+                                    'deviceSim' => $allocation2->deviceSim
                                 ]
-
                             ]
                         ],
                         'contents' => [
@@ -1300,17 +1474,9 @@ class UsersApiTest extends TestCase
                                     'related'
                                 ],
                                 'data' => [
-                                    0 => [
-                                        'type',
-                                        'id'
-                                    ],
-                                    1 => [
-                                        'type',
-                                        'id'
-                                    ]
                                 ]
                             ],
-                            'devices' => [
+                            'devicevariations' => [
                                 'links' => [
                                     'self',
                                     'related'
@@ -1405,39 +1571,7 @@ class UsersApiTest extends TestCase
                         ]
                     ],
                     'included' => [
-                        0 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'make',
-                                'model',
-                                'class',
-                                'deviceOS',
-                                'description',
-                                'statusId',
-                                'image'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        1 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'make',
-                                'model',
-                                'class',
-                                'deviceOS',
-                                'description',
-                                'statusId',
-                                'image'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        2 => [
+                        0 => [ // ADDRESS
                             'type',
                             'id',
                             'attributes' => [
@@ -1451,69 +1585,7 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        3 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'identification',
-                                'active',
-                                'statusId',
-                                'typeId',
-                                'externalId',
-                                'carrierId',
-                                'syncId'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        4 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'identification',
-                                'active',
-                                'statusId',
-                                'typeId',
-                                'externalId',
-                                'carrierId',
-                                'syncId'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        5 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'identification',
-                                'name',
-                                'properties',
-                                'externalId',
-                                'statusId',
-                                'syncId'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        6 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'identification',
-                                'name',
-                                'properties',
-                                'externalId',
-                                'statusId',
-                                'syncId'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        7 => [
+                        1 => [ // COMPANIES
                             'type',
                             'id',
                             'attributes' => [
@@ -1530,7 +1602,39 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        8 => [
+                        2 => [ // DEVICEVARIANTS
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'priceRetail',
+                                'price1',
+                                'price2',
+                                'priceOwn',
+                                'deviceId',
+                                'carrierId',
+                                'companyId'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        3 => [ // DEVICEVARIANTS
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'priceRetail',
+                                'price1',
+                                'price2',
+                                'priceOwn',
+                                'deviceId',
+                                'carrierId',
+                                'companyId'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        4 => [ // ROLES
                             'type',
                             'id',
                             'attributes' => [
@@ -1540,7 +1644,7 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        9 => [
+                        5 => [ // ROLES
                             'type',
                             'id',
                             'attributes' => [
@@ -1550,7 +1654,7 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        10 => [
+                        6 => [ // ALLOCATIONS
                             'type',
                             'id',
                             'attributes' => [
@@ -1563,14 +1667,14 @@ class UsersApiTest extends TestCase
                                 'service_plan_charge',
                                 'usage_charge',
                                 'other_charge',
-                                'fees',
+                                'fees_charge',
                                 'last_upgrade'
                             ],
                             'links' => [
                                 'self'
                             ]
                         ],
-                        11 => [
+                        7 => [ // ALLOCATIONS
                             'type',
                             'id',
                             'attributes' => [
@@ -1583,14 +1687,14 @@ class UsersApiTest extends TestCase
                                 'service_plan_charge',
                                 'usage_charge',
                                 'other_charge',
-                                'fees',
+                                'fees_charge',
                                 'last_upgrade'
                             ],
                             'links' => [
                                 'self'
                             ]
                         ],
-                        12 => [
+                        8 => [  // CONTENTS
                             'type',
                             'id',
                             'attributes' => [
@@ -1603,7 +1707,7 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        13 => [
+                        9 => [ // CONTENTS
                             'type',
                             'id',
                             'attributes' => [
@@ -1616,7 +1720,7 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        14 => [
+                        10 => [ // UDLS
                             'type',
                             'id',
                             'attributes' => [
@@ -1627,7 +1731,7 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        15 => [
+                        11 => [ // UDLS
                             'type',
                             'id',
                             'attributes' => [
@@ -1671,7 +1775,6 @@ class UsersApiTest extends TestCase
                         'username' => 'username',
                     ],
                 ],
-
             ]
             )->seeJson(
             [
@@ -1703,15 +1806,12 @@ class UsersApiTest extends TestCase
             ]
         );
     }
-
+    
     public function testCreateUserReturnRelationshipNoExists()
     {
         $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
-
         $addressId = factory(\WA\DataStore\Address\Address::class)->create()->id;
-
         $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId, 'addressId' => $addressId]);
-
         $res = $this->json('POST', '/users?include=assets',
             [
                 'data' => [
@@ -1873,15 +1973,11 @@ class UsersApiTest extends TestCase
                     ]
                 ]);
     }
-
     public function testCreateUserReturnRelationshipNoExistsInclude()
     {
         $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
-
         $addressId = factory(\WA\DataStore\Address\Address::class)->create()->id;
-
         $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId, 'addressId' => $addressId]);
-
         $res = $this->json('POST', '/users?include=assets',
             [
                 'data' => [
@@ -2043,15 +2139,11 @@ class UsersApiTest extends TestCase
                     ]
                 ]);
     }
-
     public function testCreateUserReturnRelationshipNoData()
     {
         $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
-
         $addressId = factory(\WA\DataStore\Address\Address::class)->create()->id;
-
         $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId, 'addressId' => $addressId]);
-
         $res = $this->json('POST', '/users?include=assets',
             [
                 'data' => [
@@ -2217,11 +2309,8 @@ class UsersApiTest extends TestCase
     public function testCreateUserReturnRelationshipNoCorrectType()
     {
         $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
-
         $addressId = factory(\WA\DataStore\Address\Address::class)->create()->id;
-
         $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId, 'addressId' => $addressId]);
-
         $res = $this->json('POST', '/users?include=assets',
             [
                 'data' => [
@@ -2387,11 +2476,8 @@ class UsersApiTest extends TestCase
     public function testCreateUserReturnRelationshipNoIdExists()
     {
         $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
-
         $addressId = factory(\WA\DataStore\Address\Address::class)->create()->id;
-
         $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId, 'addressId' => $addressId]);
-
         $res = $this->json('POST', '/users?include=assets',
             [
                 'data' => [
@@ -2553,12 +2639,10 @@ class UsersApiTest extends TestCase
                     ]
                 ]);
     }
-
     public function testUpdateUser()
     {
         $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
         $addressId = factory(\WA\DataStore\Address\Address::class)->create()->id;
-
         $user1 = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId, 'addressId' => $addressId]);
         $user2 = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId, 'addressId' => $addressId]);
         
@@ -2708,7 +2792,6 @@ class UsersApiTest extends TestCase
                     ]
                 ]);
     }
-
     public function testUpdateUserIncludeAllDeleteRelationships()
     {
         $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
@@ -2716,16 +2799,13 @@ class UsersApiTest extends TestCase
         $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId, 'addressId' => $addressId]);
  
         // ASSETS
-        $asset1 = factory(\WA\DataStore\Asset\Asset::class)->create();
-        $asset2 = factory(\WA\DataStore\Asset\Asset::class)->create();
-        $arrayA = array($asset1->id, $asset2->id);
-        $user->assets()->sync($arrayA);
+        $asset1 = factory(\WA\DataStore\Asset\Asset::class)->create(['userId' => $user->id]);
+        $asset2 = factory(\WA\DataStore\Asset\Asset::class)->create(['userId' => $user->id]);
 
-        $userAssetDB = DB::table('user_assets')->where('userId', $user->id)->get();
+        $userAssetDB = DB::table('assets')->where('userId', $user->id)->get();
         $this->assertCount(2, $userAssetDB);
-        $this->assertEquals($userAssetDB[0]->assetId, $asset1->id);
-        $this->assertEquals($userAssetDB[1]->assetId, $asset2->id);
-
+        $this->assertEquals($userAssetDB[0]->id, $asset1->id);
+        $this->assertEquals($userAssetDB[1]->id, $asset2->id);
         $asset1DB = DB::table('assets')->where('id', $asset1->id)->get()[0];
         $asset2DB = DB::table('assets')->where('id', $asset2->id)->get()[0];
         
@@ -2747,49 +2827,45 @@ class UsersApiTest extends TestCase
         $this->assertEquals($asset2DB->statusId, $asset2->statusId);
         $this->assertEquals($asset2DB->syncId, $asset2->syncId);
 
-        // DEVICES        
-        $device1 = factory(\WA\DataStore\Device\Device::class)->create();
-        $device2 = factory(\WA\DataStore\Device\Device::class)->create();
-        $arrayD = array($device1->id, $device2->id);
-        $user->devices()->sync($arrayD);
+        // DEVICE VARIATIONS       
+        $devicevariation1 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create();
+        $devicevariation2 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create();
+        $arrayD = array($devicevariation1->id, $devicevariation2->id);
+        $user->devicevariations()->sync($arrayD);
 
-        $userDeviceDB = DB::table('user_devices')->where('userId', $user->id)->get();
+        $userDeviceDB = DB::table('user_device_variations')->where('userId', $user->id)->get();
         $this->assertCount(2, $userDeviceDB);
-        $this->assertEquals($userDeviceDB[0]->deviceId, $device1->id);
-        $this->assertEquals($userDeviceDB[1]->deviceId, $device2->id);
-
-        $device1DB = DB::table('devices')->where('id', $device1->id)->get()[0];
-        $device2DB = DB::table('devices')->where('id', $device2->id)->get()[0];
+        $this->assertEquals($userDeviceDB[0]->deviceVariationId, $devicevariation1->id);
+        $this->assertEquals($userDeviceDB[1]->deviceVariationId, $devicevariation2->id);
         
-        $this->assertEquals($device1DB->id, $device1->id);
-        $this->assertEquals($device1DB->identification, $device1->identification);
-        $this->assertEquals($device1DB->name, $device1->name);
-        $this->assertEquals($device1DB->properties, $device1->properties);
-        $this->assertEquals($device1DB->externalId, $device1->externalId);
-        $this->assertEquals($device1DB->deviceTypeId, $device1->deviceTypeId);
-        $this->assertEquals($device1DB->statusId, $device1->statusId);
-        $this->assertEquals($device1DB->syncId, $device1->syncId);
-
-        $this->assertEquals($device2DB->id, $device2->id);
-        $this->assertEquals($device2DB->identification, $device2->identification);
-        $this->assertEquals($device2DB->name, $device2->name);
-        $this->assertEquals($device2DB->properties, $device2->properties);
-        $this->assertEquals($device2DB->externalId, $device2->externalId);
-        $this->assertEquals($device2DB->deviceTypeId, $device2->deviceTypeId);
-        $this->assertEquals($device2DB->statusId, $device2->statusId);
-        $this->assertEquals($device2DB->syncId, $device2->syncId);
-
+        $deviceVar1DB = DB::table('device_variations')->where('id', $devicevariation1->id)->get()[0];
+        $deviceVar2DB = DB::table('device_variations')->where('id', $devicevariation2->id)->get()[0];
+        $this->assertEquals($deviceVar1DB->id, $devicevariation1->id);
+        $this->assertEquals($deviceVar1DB->priceRetail, $devicevariation1->priceRetail);
+        $this->assertEquals($deviceVar1DB->price1, $devicevariation1->price1);
+        $this->assertEquals($deviceVar1DB->price2, $devicevariation1->price2);
+        $this->assertEquals($deviceVar1DB->priceOwn, $devicevariation1->priceOwn);
+        $this->assertEquals($deviceVar1DB->deviceId, $devicevariation1->deviceId);
+        $this->assertEquals($deviceVar1DB->carrierId, $devicevariation1->carrierId);
+        $this->assertEquals($deviceVar1DB->companyId, $devicevariation1->companyId);
+        $this->assertEquals($deviceVar2DB->id, $devicevariation2->id);
+        $this->assertEquals($deviceVar2DB->priceRetail, $devicevariation2->priceRetail);
+        $this->assertEquals($deviceVar2DB->price1, $devicevariation2->price1);
+        $this->assertEquals($deviceVar2DB->price2, $devicevariation2->price2);
+        $this->assertEquals($deviceVar2DB->priceOwn, $devicevariation2->priceOwn);
+        $this->assertEquals($deviceVar2DB->deviceId, $devicevariation2->deviceId);
+        $this->assertEquals($deviceVar2DB->carrierId, $devicevariation2->carrierId);
+        $this->assertEquals($deviceVar2DB->companyId, $devicevariation2->companyId);
+        
         // ROLES
         $role1 = factory(\WA\DataStore\Role\Role::class)->create();
         $role2 = factory(\WA\DataStore\Role\Role::class)->create();
         $arrayR = array($role1->id, $role2->id);
         $user->roles()->sync($arrayR);
-
         $userRoleDB = DB::table('role_user')->where('user_id', $user->id)->get();
         $this->assertCount(2, $userRoleDB);
         $this->assertEquals($userRoleDB[0]->role_id, $role1->id);
         $this->assertEquals($userRoleDB[1]->role_id, $role2->id);
-
         $role1DB = DB::table('roles')->where('id', $role1->id)->get()[0];
         $role2DB = DB::table('roles')->where('id', $role2->id)->get()[0];
         
@@ -2797,12 +2873,10 @@ class UsersApiTest extends TestCase
         $this->assertEquals($role1DB->name, $role1->name);
         $this->assertEquals($role1DB->display_name, $role1->display_name);
         $this->assertEquals($role1DB->description, $role1->description);
-
         $this->assertEquals($role2DB->id, $role2->id);
         $this->assertEquals($role2DB->name, $role2->name);
         $this->assertEquals($role2DB->display_name, $role2->display_name);
         $this->assertEquals($role2DB->description, $role2->description);
-
         // UDLVALUES
         $udl1 = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $companyId]);
         $udl2 = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $companyId]);
@@ -2811,11 +2885,11 @@ class UsersApiTest extends TestCase
         $arrayU = array($udlV1->id, $udlV2->id);
         $user->udlValues()->sync($arrayU);
 
-        $userUdlDB = DB::table('employee_udls')->where('userId', $user->id)->get();
+        $userUdlDB = DB::table('user_udls')->where('userId', $user->id)->get();
+
         $this->assertCount(2, $userUdlDB);
         $this->assertEquals($userUdlDB[0]->udlValueId, $udlV1->id);
         $this->assertEquals($userUdlDB[1]->udlValueId, $udlV2->id);
-
         $udlV1DB = DB::table('udl_values')->where('id', $udlV1->id)->get()[0];
         $udlV2DB = DB::table('udl_values')->where('id', $udlV2->id)->get()[0];
         
@@ -2823,20 +2897,23 @@ class UsersApiTest extends TestCase
         $this->assertEquals($udlV1DB->name, $udlV1->name);
         $this->assertEquals($udlV1DB->udlId, $udlV1->udlId);
         $this->assertEquals($udlV1DB->externalId, $udlV1->externalId);
-
         $this->assertEquals($udlV2DB->id, $udlV2->id);
         $this->assertEquals($udlV2DB->name, $udlV2->name);
         $this->assertEquals($udlV2DB->udlId, $udlV2->udlId);
         $this->assertEquals($udlV2DB->externalId, $udlV2->externalId);
-
         // ALLOCATIONS
+        $carrier = factory(\WA\DataStore\Carrier\Carrier::class)->create();
         $allocation1 = factory(\WA\DataStore\Allocation\Allocation::class)->create(['userId' => $user->id]);
+        $allocation1->carriers()->associate($carrier);
+        $allocation1->save();
         $allocation2 = factory(\WA\DataStore\Allocation\Allocation::class)->create(['userId' => $user->id]);
+
+        $allocation2->carriers()->associate($carrier);
+        $allocation2->save();
 
         $content1 = factory(\WA\DataStore\Content\Content::class)->create(['owner_id' => $user->id, 'owner_type' => 'users']);
         $content2 = factory(\WA\DataStore\Content\Content::class)->create(['owner_id' => $user->id, 'owner_type' => 'users']);
-
-        $res = $this->json('PATCH', '/users/'.$user->id.'?include=assets,devices,roles,udls,allocations,companies,contents',
+        $res = $this->json('PATCH', '/users/'.$user->id.'?include=assets,devicevariations,roles,udls,allocations,companies,contents',
             [
                 'data' => [
                     'type' => 'users',
@@ -2878,9 +2955,9 @@ class UsersApiTest extends TestCase
                                 ['type' => 'assets', 'id' => $asset1->id]
                             ],
                         ],
-                        'devices' => [
+                        'devicevariations' => [
                             'data' => [
-                                ['type' => 'devices', 'id' => $device1->id]
+                                ['type' => 'devicevariations', 'id' => $devicevariation1->id]
                             ],
                         ],
                         'roles' => [
@@ -2906,37 +2983,37 @@ class UsersApiTest extends TestCase
                                     'preAllocatedAmountDue' => $allocation1->preAllocatedAmountDue,
                                     'otherAdjustments' => $allocation1->otherAdjustments,
                                     'preAdjustedAccessCharge' => $allocation1->preAdjustedAccessCharge,
-                                    'adjustedAccessCost' => $allocation1->adjustedAccessCost,
-                                    'bBCost' => $allocation1->bBCost,
-                                    'pDACost' => $allocation1->pDACost,
-                                    'iPhoneCost' => $allocation1->iPhoneCost,
-                                    'featuresCost' => $allocation1->featuresCost,
-                                    'dataCardCost' => $allocation1->dataCardCost,
-                                    'lDCanadaCost' => $allocation1->lDCanadaCost,
-                                    'uSAddOnPlanCost' => $allocation1->uSAddOnPlanCost,
-                                    'uSLDAddOnPlanCost' => $allocation1->uSLDAddOnPlanCost,
-                                    'uSDataRoamingCost' => $allocation1->uSDataRoamingCost,
-                                    'nightAndWeekendAddOnCost' => $allocation1->nightAndWeekendAddOnCost,
-                                    'minuteAddOnCost' => $allocation1->minuteAddOnCost,
-                                    'servicePlanCharges' => $allocation1->servicePlanCharges,
-                                    'directConnectCost' => $allocation1->directConnectCost,
-                                    'textMessagingCost' => $allocation1->textMessagingCost,
-                                    'dataCost' => $allocation1->dataCost,
-                                    'intlRoamingCost' => $allocation1->intlRoamingCost,
-                                    'intlLongDistanceCost' => $allocation1->intlLongDistanceCost,
-                                    'directoryAssistanceCost' => $allocation1->directoryAssistanceCost,
-                                    'callForwardingCost' => $allocation1->callForwardingCost,
-                                    'airtimeCost' => $allocation1->airtimeCost,
-                                    'usageCharges' => $allocation1->usageCharges,
-                                    'equipmentCost' => $allocation1->equipmentCost,
-                                    'otherDiscountChargesCost' => $allocation1->otherDiscountChargesCost,
-                                    'taxes' => $allocation1->taxes,
-                                    'thirdPartyCost' => $allocation1->thirdPartyCost,
-                                    'otherCharges' => $allocation1->otherCharges,
+                                    'adjustedAccessCharge' => $allocation1->adjustedAccessCharge,
+                                    'bBCharge' => $allocation1->bBCharge,
+                                    'pDACharge' => $allocation1->pDACharge,
+                                    'iPhoneCharge' => $allocation1->iPhoneCharge,
+                                    'featuresCharge' => $allocation1->featuresCharge,
+                                    'dataCardCharge' => $allocation1->dataCardCharge,
+                                    'lDCanadaCharge' => $allocation1->lDCanadaCharge,
+                                    'uSAddOnPlanCharge' => $allocation1->uSAddOnPlanCharge,
+                                    'uSLDAddOnPlanCharge' => $allocation1->uSAddOnPlanCharge,
+                                    'uSDataRoamingCharge' => $allocation1->uSDataRoamingCharge,
+                                    'nightAndWeekendAddOnCharge' => $allocation1->nightAndWeekendAddOnCharge,
+                                    'minuteAddOnCharge' => $allocation1->minuteAddOnCharge,
+                                    'servicePlanCharge' => $allocation1->servicePlanCharge,
+                                    'directConnectCharge' => $allocation1->directConnectCharge,
+                                    'textMessagingCharge' => $allocation1->textMessagingCharge,
+                                    'dataCharge' => $allocation1->dataCharge,
+                                    'intlRoamingCharge' => $allocation1->intlRoamingCharge,
+                                    'intlLongDistanceCharge' => $allocation1->intlLongDistanceCharge,
+                                    'directoryAssistanceCharge' => $allocation1->directoryAssistanceCharge,
+                                    'callForwardingCharge' => $allocation1->callForwardingCharge,
+                                    'airtimeCharge' => $allocation1->airtimeCharge,
+                                    'usageCharge' => $allocation1->usageCharge,
+                                    'equipmentCharge' => $allocation1->equipmentCharge,
+                                    'otherDiscountCharge' => $allocation1->otherDiscountCharge,
+                                    'taxesCharge' => $allocation1->taxesCharge,
+                                    'thirdPartyCharge' => $allocation1->thirdPartyCharge,
+                                    'otherCharge' => $allocation1->otherCharge,
                                     'waFees' => $allocation1->waFees,
                                     'lineFees' => $allocation1->lineFees,
                                     'mobilityFees' => $allocation1->mobilityFees,
-                                    'fees' => $allocation1->fees,
+                                    'feesCharge' => $allocation1->feesCharge,
                                     'last_upgrade' => $allocation1->last_upgrade
                                 ]
                             ]
@@ -3051,10 +3128,14 @@ class UsersApiTest extends TestCase
                                     0 => [
                                         'type',
                                         'id'
+                                    ],
+                                    1 => [
+                                        'type',
+                                        'id'
                                     ]
                                 ]
                             ],
-                            'devices' => [
+                            'devicevariations' => [
                                 'links' => [
                                     'self',
                                     'related'
@@ -3129,23 +3210,7 @@ class UsersApiTest extends TestCase
                         ]
                     ],
                     'included' => [
-                        0 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'make',
-                                'model',
-                                'class',
-                                'deviceOS',
-                                'description',
-                                'statusId',
-                                'image'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        1 => [
+                        0 => [ // ADDRESS
                             'type',
                             'id',
                             'attributes' => [
@@ -3159,7 +3224,7 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        2 => [
+                        1 => [ // ASSETS
                             'type',
                             'id',
                             'attributes' => [
@@ -3175,22 +3240,23 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        3 => [
+                        2 => [ // ASSETS
                             'type',
                             'id',
                             'attributes' => [
                                 'identification',
-                                'name',
-                                'properties',
-                                'externalId',
+                                'active',
                                 'statusId',
+                                'typeId',
+                                'externalId',
+                                'carrierId',
                                 'syncId'
                             ],
                             'links' => [
                                 'self'
                             ]
                         ],
-                        4 => [
+                        3 => [ // COMPANIES
                             'type',
                             'id',
                             'attributes' => [
@@ -3207,7 +3273,24 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        5 => [
+                        4 => [ // DEVICEVARIATIONS
+                            'type',
+                            'id',
+                            'attributes' => [
+                                
+                                'priceRetail',
+                                'price1',
+                                'price2',
+                                'priceOwn',
+                                'deviceId',
+                                'carrierId',
+                                'companyId'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        5 => [ // ROLES
                             'type',
                             'id',
                             'attributes' => [
@@ -3217,7 +3300,7 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        6 => [
+                        6 => [ // ALLOCATIONS
                             'type',
                             'id',
                             'attributes' => [
@@ -3230,14 +3313,14 @@ class UsersApiTest extends TestCase
                                 'service_plan_charge',
                                 'usage_charge',
                                 'other_charge',
-                                'fees',
+                                'fees_charge',
                                 'last_upgrade'
                             ],
                             'links' => [
                                 'self'
                             ]
                         ],
-                        7 => [
+                        7 => [ // CONTENTS
                             'type',
                             'id',
                             'attributes' => [
@@ -3250,7 +3333,7 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        8 => [
+                        8 => [ // UDLVALUES
                             'type',
                             'id',
                             'attributes' => [
@@ -3264,31 +3347,28 @@ class UsersApiTest extends TestCase
                     ]
                 ]);
     }
-
     public function testUpdateUserIncludeAllAddRelationships()
     {
         $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
         $addressId = factory(\WA\DataStore\Address\Address::class)->create()->id;
         $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId, 'addressId' => $addressId]);
  
-        $asset1 = factory(\WA\DataStore\Asset\Asset::class)->create()->id;
-        $asset2 = factory(\WA\DataStore\Asset\Asset::class)->create()->id;
-        $arrayA = array($asset1, $asset2);
-        $user->assets()->sync($arrayA);
+        $asset1 = factory(\WA\DataStore\Asset\Asset::class)->create(['userId' => $user->id])->id;
+        $asset2 = factory(\WA\DataStore\Asset\Asset::class)->create(['userId' => $user->id])->id;
         $asset3 = factory(\WA\DataStore\Asset\Asset::class)->create()->id;
-
-        $device1 = factory(\WA\DataStore\Device\Device::class)->create()->id;
-        $device2 = factory(\WA\DataStore\Device\Device::class)->create()->id;
-        $arrayD = array($device1, $device2);
-        $user->devices()->sync($arrayD);
-        $device3 = factory(\WA\DataStore\Device\Device::class)->create()->id;
-
+        
+        $deviceVariation1 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create()->id;
+        $deviceVariation2 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create()->id;
+        $arrayD = array($deviceVariation1, $deviceVariation2);
+        $user->devicevariations()->sync($arrayD);
+        $deviceVariation3 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create()->id;
+        
         $role1 = factory(\WA\DataStore\Role\Role::class)->create()->id;
         $role2 = factory(\WA\DataStore\Role\Role::class)->create()->id;
         $arrayR = array($role1, $role2);
         $user->roles()->sync($arrayR);
         $role3 = factory(\WA\DataStore\Role\Role::class)->create()->id;
-
+        
         $udl1 = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $companyId])->id;
         $udl2 = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $companyId])->id;
         $udlV1 = factory(\WA\DataStore\UdlValue\UdlValue::class)->create(['udlId' => $udl1])->id;
@@ -3298,13 +3378,19 @@ class UsersApiTest extends TestCase
         $udl3 = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $companyId])->id;
         $udlV3 = factory(\WA\DataStore\UdlValue\UdlValue::class)->create(['udlId' => $udl2])->id;
 
+        $carrier = factory(\WA\DataStore\Carrier\Carrier::class)->create();
+
         $allocation1 = factory(\WA\DataStore\Allocation\Allocation::class)->create(['userId' => $user->id]);
+        $allocation1->carriers()->associate($carrier);
+        $allocation1->save();
         $allocation2 = factory(\WA\DataStore\Allocation\Allocation::class)->create(['userId' => $user->id]);
+        $allocation2->carriers()->associate($carrier);
+        $allocation2->save();
         
         $content1 = factory(\WA\DataStore\Content\Content::class)->create(['owner_id' => $user->id, 'owner_type' => 'users']);
         $content2 = factory(\WA\DataStore\Content\Content::class)->create(['owner_id' => $user->id, 'owner_type' => 'users']);
         
-        $res = $this->json('PATCH', '/users/'.$user->id.'?include=assets,devices,roles,udls,allocations,companies,contents',
+        $res = $this->json('PATCH', '/users/'.$user->id.'?include=assets,devicevariations,roles,udls,allocations,companies,contents',
             [
                 'data' => [
                     'type' => 'users',
@@ -3348,11 +3434,11 @@ class UsersApiTest extends TestCase
                                 ['type' => 'assets', 'id' => $asset3]
                             ],
                         ],
-                        'devices' => [
+                        'devicevariations' => [
                             'data' => [
-                                ['type' => 'devices', 'id' => $device1],
-                                ['type' => 'devices', 'id' => $device2],
-                                ['type' => 'devices', 'id' => $device3]
+                                ['type' => 'devicevariations', 'id' => $deviceVariation1],
+                                ['type' => 'devicevariations', 'id' => $deviceVariation2],
+                                ['type' => 'devicevariations', 'id' => $deviceVariation3]
                             ],
                         ],
                         'roles' => [
@@ -3382,38 +3468,54 @@ class UsersApiTest extends TestCase
                                     'preAllocatedAmountDue' => $allocation1->preAllocatedAmountDue,
                                     'otherAdjustments' => $allocation1->otherAdjustments,
                                     'preAdjustedAccessCharge' => $allocation1->preAdjustedAccessCharge,
-                                    'adjustedAccessCost' => $allocation1->adjustedAccessCost,
-                                    'bBCost' => $allocation1->bBCost,
-                                    'pDACost' => $allocation1->pDACost,
-                                    'iPhoneCost' => $allocation1->iPhoneCost,
-                                    'featuresCost' => $allocation1->featuresCost,
-                                    'dataCardCost' => $allocation1->dataCardCost,
-                                    'lDCanadaCost' => $allocation1->lDCanadaCost,
-                                    'uSAddOnPlanCost' => $allocation1->uSAddOnPlanCost,
-                                    'uSLDAddOnPlanCost' => $allocation1->uSLDAddOnPlanCost,
-                                    'uSDataRoamingCost' => $allocation1->uSDataRoamingCost,
-                                    'nightAndWeekendAddOnCost' => $allocation1->nightAndWeekendAddOnCost,
-                                    'minuteAddOnCost' => $allocation1->minuteAddOnCost,
-                                    'servicePlanCharges' => $allocation1->servicePlanCharges,
-                                    'directConnectCost' => $allocation1->directConnectCost,
-                                    'textMessagingCost' => $allocation1->textMessagingCost,
-                                    'dataCost' => $allocation1->dataCost,
-                                    'intlRoamingCost' => $allocation1->intlRoamingCost,
-                                    'intlLongDistanceCost' => $allocation1->intlLongDistanceCost,
-                                    'directoryAssistanceCost' => $allocation1->directoryAssistanceCost,
-                                    'callForwardingCost' => $allocation1->callForwardingCost,
-                                    'airtimeCost' => $allocation1->airtimeCost,
-                                    'usageCharges' => $allocation1->usageCharges,
-                                    'equipmentCost' => $allocation1->equipmentCost,
-                                    'otherDiscountChargesCost' => $allocation1->otherDiscountChargesCost,
-                                    'taxes' => $allocation1->taxes,
-                                    'thirdPartyCost' => $allocation1->thirdPartyCost,
-                                    'otherCharges' => $allocation1->otherCharges,
+                                    'adjustedAccessCharge' => $allocation1->adjustedAccessCharge,
+                                    'bBCharge' => $allocation1->bBCharge,
+                                    'pDACharge' => $allocation1->pDACharge,
+                                    'iPhoneCharge' => $allocation1->iPhoneCharge,
+                                    'featuresCharge' => $allocation1->featuresCharge,
+                                    'dataCardCharge' => $allocation1->dataCardCharge,
+                                    'lDCanadaCharge' => $allocation1->lDCanadaCharge,
+                                    'uSAddOnPlanCharge' => $allocation1->uSAddOnPlanCharge,
+                                    'uSLDAddOnPlanCharge' => $allocation1->uSAddOnPlanCharge,
+                                    'uSDataRoamingCharge' => $allocation1->uSDataRoamingCharge,
+                                    'nightAndWeekendAddOnCharge' => $allocation1->nightAndWeekendAddOnCharge,
+                                    'minuteAddOnCharge' => $allocation1->minuteAddOnCharge,
+                                    'servicePlanCharge' => $allocation1->servicePlanCharge,
+                                    'directConnectCharge' => $allocation1->directConnectCharge,
+                                    'textMessagingCharge' => $allocation1->textMessagingCharge,
+                                    'dataCharge' => $allocation1->dataCharge,
+                                    'intlRoamingCharge' => $allocation1->intlRoamingCharge,
+                                    'intlLongDistanceCharge' => $allocation1->intlLongDistanceCharge,
+                                    'directoryAssistanceCharge' => $allocation1->directoryAssistanceCharge,
+                                    'callForwardingCharge' => $allocation1->callForwardingCharge,
+                                    'airtimeCharge' => $allocation1->airtimeCharge,
+                                    'usageCharge' => $allocation1->usageCharge,
+                                    'equipmentCharge' => $allocation1->equipmentCharge,
+                                    'otherDiscountCharge' => $allocation1->otherDiscountCharge,
+                                    'taxesCharge' => $allocation1->taxesCharge,
+                                    'thirdPartyCharge' => $allocation1->thirdPartyCharge,
+                                    'otherCharge' => $allocation1->otherCharge,
                                     'waFees' => $allocation1->waFees,
                                     'lineFees' => $allocation1->lineFees,
                                     'mobilityFees' => $allocation1->mobilityFees,
-                                    'fees' => $allocation1->fees,
-                                    'last_upgrade' => $allocation1->last_upgrade
+                                    'feesCharge' => $allocation1->feesCharge,
+                                    'last_upgrade' => $allocation1->last_upgrade,
+                                    'deviceType' => $allocation1->deviceType,
+                                    'domesticUsageCharge' => $allocation1->domesticUsageCharge,
+                                    'domesticDataUsage' => $allocation1->domesticDataUsage,
+                                    'domesticVoiceUsage' => $allocation1->domesticVoiceUsage,
+                                    'domesticTextUsage' => $allocation1->domesticTextUsage,
+                                    'intlRoamUsageCharge' => $allocation1->intlRoamUsageCharge,
+                                    'intlRoamDataUsage' => $allocation1->intlRoamDataUsage,
+                                    'intlRoamVoiceUsage' => $allocation1->intlRoamVoiceUsage,
+                                    'intlRoamTextUsage' => $allocation1->intlRoamTextUsage,
+                                    'intlLDUsageCharge' => $allocation1->intlLDUsageCharge,
+                                    'intlLDVoiceUsage' => $allocation1->intlLDVoiceUsage,
+                                    'intlLDTextUsage' => $allocation1->intlLDTextUsage,
+                                    'etfCharge' => $allocation1->etfCharge,
+                                    'otherCarrierCharge' => $allocation1->otherCarrierCharge,
+                                    'deviceEsnImei' => $allocation1->deviceEsnImei,
+                                    'deviceSim' => $allocation1->deviceSim
                                 ],
                                 [
                                     'id' => 2,
@@ -3426,38 +3528,54 @@ class UsersApiTest extends TestCase
                                     'preAllocatedAmountDue' => $allocation2->preAllocatedAmountDue,
                                     'otherAdjustments' => $allocation2->otherAdjustments,
                                     'preAdjustedAccessCharge' => $allocation2->preAdjustedAccessCharge,
-                                    'adjustedAccessCost' => $allocation2->adjustedAccessCost,
-                                    'bBCost' => $allocation2->bBCost,
-                                    'pDACost' => $allocation2->pDACost,
-                                    'iPhoneCost' => $allocation2->iPhoneCost,
-                                    'featuresCost' => $allocation2->featuresCost,
-                                    'dataCardCost' => $allocation2->dataCardCost,
-                                    'lDCanadaCost' => $allocation2->lDCanadaCost,
-                                    'uSAddOnPlanCost' => $allocation2->uSAddOnPlanCost,
-                                    'uSLDAddOnPlanCost' => $allocation2->uSLDAddOnPlanCost,
-                                    'uSDataRoamingCost' => $allocation2->uSDataRoamingCost,
-                                    'nightAndWeekendAddOnCost' => $allocation2->nightAndWeekendAddOnCost,
-                                    'minuteAddOnCost' => $allocation2->minuteAddOnCost,
-                                    'servicePlanCharges' => $allocation2->servicePlanCharges,
-                                    'directConnectCost' => $allocation2->directConnectCost,
-                                    'textMessagingCost' => $allocation2->textMessagingCost,
-                                    'dataCost' => $allocation2->dataCost,
-                                    'intlRoamingCost' => $allocation2->intlRoamingCost,
-                                    'intlLongDistanceCost' => $allocation2->intlLongDistanceCost,
-                                    'directoryAssistanceCost' => $allocation2->directoryAssistanceCost,
-                                    'callForwardingCost' => $allocation2->callForwardingCost,
-                                    'airtimeCost' => $allocation2->airtimeCost,
-                                    'usageCharges' => $allocation2->usageCharges,
-                                    'equipmentCost' => $allocation2->equipmentCost,
-                                    'otherDiscountChargesCost' => $allocation2->otherDiscountChargesCost,
-                                    'taxes' => $allocation2->taxes,
-                                    'thirdPartyCost' => $allocation2->thirdPartyCost,
-                                    'otherCharges' => $allocation2->otherCharges,
+                                    'adjustedAccessCharge' => $allocation2->adjustedAccessCharge,
+                                    'bBCharge' => $allocation2->bBCharge,
+                                    'pDACharge' => $allocation2->pDACharge,
+                                    'iPhoneCharge' => $allocation2->iPhoneCharge,
+                                    'featuresCharge' => $allocation2->featuresCharge,
+                                    'dataCardCharge' => $allocation2->dataCardCharge,
+                                    'lDCanadaCharge' => $allocation2->lDCanadaCharge,
+                                    'uSAddOnPlanCharge' => $allocation2->uSAddOnPlanCharge,
+                                    'uSLDAddOnPlanCharge' => $allocation2->uSAddOnPlanCharge,
+                                    'uSDataRoamingCharge' => $allocation2->uSDataRoamingCharge,
+                                    'nightAndWeekendAddOnCharge' => $allocation2->nightAndWeekendAddOnCharge,
+                                    'minuteAddOnCharge' => $allocation2->minuteAddOnCharge,
+                                    'servicePlanCharge' => $allocation2->servicePlanCharge,
+                                    'directConnectCharge' => $allocation2->directConnectCharge,
+                                    'textMessagingCharge' => $allocation2->textMessagingCharge,
+                                    'dataCharge' => $allocation2->dataCharge,
+                                    'intlRoamingCharge' => $allocation2->intlRoamingCharge,
+                                    'intlLongDistanceCharge' => $allocation2->intlLongDistanceCharge,
+                                    'directoryAssistanceCharge' => $allocation2->directoryAssistanceCharge,
+                                    'callForwardingCharge' => $allocation2->callForwardingCharge,
+                                    'airtimeCharge' => $allocation2->airtimeCharge,
+                                    'usageCharge' => $allocation2->usageCharge,
+                                    'equipmentCharge' => $allocation2->equipmentCharge,
+                                    'otherDiscountCharge' => $allocation2->otherDiscountCharge,
+                                    'taxesCharge' => $allocation2->taxesCharge,
+                                    'thirdPartyCharge' => $allocation2->thirdPartyCharge,
+                                    'otherCharge' => $allocation2->otherCharge,
                                     'waFees' => $allocation2->waFees,
                                     'lineFees' => $allocation2->lineFees,
                                     'mobilityFees' => $allocation2->mobilityFees,
-                                    'fees' => $allocation2->fees,
-                                    'last_upgrade' => $allocation2->last_upgrade
+                                    'feesCharge' => $allocation2->feesCharge,
+                                    'last_upgrade' => $allocation2->last_upgrade,
+                                    'deviceType' => $allocation2->deviceType,
+                                    'domesticUsageCharge' => $allocation2->domesticUsageCharge,
+                                    'domesticDataUsage' => $allocation2->domesticDataUsage,
+                                    'domesticVoiceUsage' => $allocation2->domesticVoiceUsage,
+                                    'domesticTextUsage' => $allocation2->domesticTextUsage,
+                                    'intlRoamUsageCharge' => $allocation2->intlRoamUsageCharge,
+                                    'intlRoamDataUsage' => $allocation2->intlRoamDataUsage,
+                                    'intlRoamVoiceUsage' => $allocation2->intlRoamVoiceUsage,
+                                    'intlRoamTextUsage' => $allocation2->intlRoamTextUsage,
+                                    'intlLDUsageCharge' => $allocation2->intlLDUsageCharge,
+                                    'intlLDVoiceUsage' => $allocation2->intlLDVoiceUsage,
+                                    'intlLDTextUsage' => $allocation2->intlLDTextUsage,
+                                    'etfCharge' => $allocation2->etfCharge,
+                                    'otherCarrierCharge' => $allocation2->otherCarrierCharge,
+                                    'deviceEsnImei' => $allocation2->deviceEsnImei,
+                                    'deviceSim' => $allocation2->deviceSim
                                 ],
                                 [
                                     'id' => 0,
@@ -3470,38 +3588,54 @@ class UsersApiTest extends TestCase
                                     'preAllocatedAmountDue' => $allocation1->preAllocatedAmountDue,
                                     'otherAdjustments' => $allocation1->otherAdjustments,
                                     'preAdjustedAccessCharge' => $allocation1->preAdjustedAccessCharge,
-                                    'adjustedAccessCost' => $allocation1->adjustedAccessCost,
-                                    'bBCost' => $allocation1->bBCost,
-                                    'pDACost' => $allocation1->pDACost,
-                                    'iPhoneCost' => $allocation1->iPhoneCost,
-                                    'featuresCost' => $allocation1->featuresCost,
-                                    'dataCardCost' => $allocation1->dataCardCost,
-                                    'lDCanadaCost' => $allocation1->lDCanadaCost,
-                                    'uSAddOnPlanCost' => $allocation1->uSAddOnPlanCost,
-                                    'uSLDAddOnPlanCost' => $allocation1->uSLDAddOnPlanCost,
-                                    'uSDataRoamingCost' => $allocation1->uSDataRoamingCost,
-                                    'nightAndWeekendAddOnCost' => $allocation1->nightAndWeekendAddOnCost,
-                                    'minuteAddOnCost' => $allocation1->minuteAddOnCost,
-                                    'servicePlanCharges' => $allocation1->servicePlanCharges,
-                                    'directConnectCost' => $allocation2->directConnectCost,
-                                    'textMessagingCost' => $allocation2->textMessagingCost,
-                                    'dataCost' => $allocation2->dataCost,
-                                    'intlRoamingCost' => $allocation2->intlRoamingCost,
-                                    'intlLongDistanceCost' => $allocation2->intlLongDistanceCost,
-                                    'directoryAssistanceCost' => $allocation2->directoryAssistanceCost,
-                                    'callForwardingCost' => $allocation2->callForwardingCost,
-                                    'airtimeCost' => $allocation2->airtimeCost,
-                                    'usageCharges' => $allocation2->usageCharges,
-                                    'equipmentCost' => $allocation2->equipmentCost,
-                                    'otherDiscountChargesCost' => $allocation2->otherDiscountChargesCost,
-                                    'taxes' => $allocation2->taxes,
-                                    'thirdPartyCost' => $allocation2->thirdPartyCost,
-                                    'otherCharges' => $allocation2->otherCharges,
+                                    'adjustedAccessCharge' => $allocation1->adjustedAccessCharge,
+                                    'bBCharge' => $allocation1->bBCharge,
+                                    'pDACharge' => $allocation1->pDACharge,
+                                    'iPhoneCharge' => $allocation1->iPhoneCharge,
+                                    'featuresCharge' => $allocation1->featuresCharge,
+                                    'dataCardCharge' => $allocation1->dataCardCharge,
+                                    'lDCanadaCharge' => $allocation1->lDCanadaCharge,
+                                    'uSAddOnPlanCharge' => $allocation1->uSAddOnPlanCharge,
+                                    'uSLDAddOnPlanCharge' => $allocation1->uSAddOnPlanCharge,
+                                    'uSDataRoamingCharge' => $allocation1->uSDataRoamingCharge,
+                                    'nightAndWeekendAddOnCharge' => $allocation1->nightAndWeekendAddOnCharge,
+                                    'minuteAddOnCharge' => $allocation1->minuteAddOnCharge,
+                                    'servicePlanCharge' => $allocation1->servicePlanCharge,
+                                    'directConnectCharge' => $allocation2->directConnectCharge,
+                                    'textMessagingCharge' => $allocation2->textMessagingCharge,
+                                    'dataCharge' => $allocation2->dataCharge,
+                                    'intlRoamingCharge' => $allocation2->intlRoamingCharge,
+                                    'intlLongDistanceCharge' => $allocation2->intlLongDistanceCharge,
+                                    'directoryAssistanceCharge' => $allocation2->directoryAssistanceCharge,
+                                    'callForwardingCharge' => $allocation2->callForwardingCharge,
+                                    'airtimeCharge' => $allocation2->airtimeCharge,
+                                    'usageCharge' => $allocation2->usageCharge,
+                                    'equipmentCharge' => $allocation2->equipmentCharge,
+                                    'otherDiscountCharge' => $allocation2->otherDiscountCharge,
+                                    'taxesCharge' => $allocation2->taxesCharge,
+                                    'thirdPartyCharge' => $allocation2->thirdPartyCharge,
+                                    'otherCharge' => $allocation2->otherCharge,
                                     'waFees' => $allocation2->waFees,
                                     'lineFees' => $allocation2->lineFees,
                                     'mobilityFees' => $allocation2->mobilityFees,
-                                    'fees' => $allocation2->fees,
-                                    'last_upgrade' => $allocation2->last_upgrade
+                                    'feesCharge' => $allocation2->feesCharge,
+                                    'last_upgrade' => $allocation2->last_upgrade,
+                                    'deviceType' => $allocation2->deviceType,
+                                    'domesticUsageCharge' => $allocation2->domesticUsageCharge,
+                                    'domesticDataUsage' => $allocation2->domesticDataUsage,
+                                    'domesticVoiceUsage' => $allocation2->domesticVoiceUsage,
+                                    'domesticTextUsage' => $allocation2->domesticTextUsage,
+                                    'intlRoamUsageCharge' => $allocation2->intlRoamUsageCharge,
+                                    'intlRoamDataUsage' => $allocation2->intlRoamDataUsage,
+                                    'intlRoamVoiceUsage' => $allocation2->intlRoamVoiceUsage,
+                                    'intlRoamTextUsage' => $allocation2->intlRoamTextUsage,
+                                    'intlLDUsageCharge' => $allocation2->intlLDUsageCharge,
+                                    'intlLDVoiceUsage' => $allocation2->intlLDVoiceUsage,
+                                    'intlLDTextUsage' => $allocation2->intlLDTextUsage,
+                                    'etfCharge' => $allocation2->etfCharge,
+                                    'otherCarrierCharge' => $allocation2->otherCarrierCharge,
+                                    'deviceEsnImei' => $allocation2->deviceEsnImei,
+                                    'deviceSim' => $allocation2->deviceSim
                                 ]
                             ]
                         ],
@@ -3638,7 +3772,7 @@ class UsersApiTest extends TestCase
                                     ]
                                 ]
                             ],
-                            'devices' => [
+                            'devicevariations' => [
                                 'links' => [
                                     'self',
                                     'related'
@@ -3757,54 +3891,6 @@ class UsersApiTest extends TestCase
                             'type',
                             'id',
                             'attributes' => [
-                                'make',
-                                'model',
-                                'class',
-                                'deviceOS',
-                                'description',
-                                'statusId',
-                                'image'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        1 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'make',
-                                'model',
-                                'class',
-                                'deviceOS',
-                                'description',
-                                'statusId',
-                                'image'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        2 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'make',
-                                'model',
-                                'class',
-                                'deviceOS',
-                                'description',
-                                'statusId',
-                                'image'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        3 => [
-                            'type',
-                            'id',
-                            'attributes' => [
                                 'address',
                                 'city',
                                 'state',
@@ -3815,100 +3901,55 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
+                        1 => [
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'identification',
+                                'active',
+                                'statusId',
+                                'typeId',
+                                'externalId',
+                                'carrierId',
+                                'syncId'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        2 => [
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'identification',
+                                'active',
+                                'statusId',
+                                'typeId',
+                                'externalId',
+                                'carrierId',
+                                'syncId'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        3 => [
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'identification',
+                                'active',
+                                'statusId',
+                                'typeId',
+                                'externalId',
+                                'carrierId',
+                                'syncId'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
                         4 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'identification',
-                                'active',
-                                'statusId',
-                                'typeId',
-                                'externalId',
-                                'carrierId',
-                                'syncId'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        5 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'identification',
-                                'active',
-                                'statusId',
-                                'typeId',
-                                'externalId',
-                                'carrierId',
-                                'syncId'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        6 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'identification',
-                                'active',
-                                'statusId',
-                                'typeId',
-                                'externalId',
-                                'carrierId',
-                                'syncId'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        7 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'identification',
-                                'name',
-                                'properties',
-                                'externalId',
-                                'statusId',
-                                'syncId'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        8 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'identification',
-                                'name',
-                                'properties',
-                                'externalId',
-                                'statusId',
-                                'syncId'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        9 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'identification',
-                                'name',
-                                'properties',
-                                'externalId',
-                                'statusId',
-                                'syncId'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        10 => [
                             'type',
                             'id',
                             'attributes' => [
@@ -3925,11 +3966,99 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        11 => [
+                        5 => [
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'priceRetail',
+                                'price1',
+                                'price2',
+                                'priceOwn',
+                                'deviceId',
+                                'carrierId',
+                                'companyId'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        6 => [
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'priceRetail',
+                                'price1',
+                                'price2',
+                                'priceOwn',
+                                'deviceId',
+                                'carrierId',
+                                'companyId'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        7 => [
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'priceRetail',
+                                'price1',
+                                'price2',
+                                'priceOwn',
+                                'deviceId',
+                                'carrierId',
+                                'companyId'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        8 => [
                             'type',
                             'id',
                             'attributes' => [
                                 'name'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        9 => [
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'name'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        10 => [
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'name'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        11 => [
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'bill_month',
+                                'carrier',
+                                'mobile_number',
+                                'currency',
+                                'device',
+                                'allocated_charge',
+                                'service_plan_charge',
+                                'usage_charge',
+                                'other_charge',
+                                'fees_charge',
+                                'last_upgrade'
                             ],
                             'links' => [
                                 'self'
@@ -3939,7 +4068,17 @@ class UsersApiTest extends TestCase
                             'type',
                             'id',
                             'attributes' => [
-                                'name'
+                                'bill_month',
+                                'carrier',
+                                'mobile_number',
+                                'currency',
+                                'device',
+                                'allocated_charge',
+                                'service_plan_charge',
+                                'usage_charge',
+                                'other_charge',
+                                'fees_charge',
+                                'last_upgrade'
                             ],
                             'links' => [
                                 'self'
@@ -3949,7 +4088,17 @@ class UsersApiTest extends TestCase
                             'type',
                             'id',
                             'attributes' => [
-                                'name'
+                                'bill_month',
+                                'carrier',
+                                'mobile_number',
+                                'currency',
+                                'device',
+                                'allocated_charge',
+                                'service_plan_charge',
+                                'usage_charge',
+                                'other_charge',
+                                'fees_charge',
+                                'last_upgrade'
                             ],
                             'links' => [
                                 'self'
@@ -3959,17 +4108,10 @@ class UsersApiTest extends TestCase
                             'type',
                             'id',
                             'attributes' => [
-                                'bill_month',
-                                'carrier',
-                                'mobile_number',
-                                'currency',
-                                'device',
-                                'allocated_charge',
-                                'service_plan_charge',
-                                'usage_charge',
-                                'other_charge',
-                                'fees',
-                                'last_upgrade'
+                                'content',
+                                'active',
+                                'owner_type',
+                                'owner_id'
                             ],
                             'links' => [
                                 'self'
@@ -3979,17 +4121,10 @@ class UsersApiTest extends TestCase
                             'type',
                             'id',
                             'attributes' => [
-                                'bill_month',
-                                'carrier',
-                                'mobile_number',
-                                'currency',
-                                'device',
-                                'allocated_charge',
-                                'service_plan_charge',
-                                'usage_charge',
-                                'other_charge',
-                                'fees',
-                                'last_upgrade'
+                                'content',
+                                'active',
+                                'owner_type',
+                                'owner_id'
                             ],
                             'links' => [
                                 'self'
@@ -3999,17 +4134,10 @@ class UsersApiTest extends TestCase
                             'type',
                             'id',
                             'attributes' => [
-                                'bill_month',
-                                'carrier',
-                                'mobile_number',
-                                'currency',
-                                'device',
-                                'allocated_charge',
-                                'service_plan_charge',
-                                'usage_charge',
-                                'other_charge',
-                                'fees',
-                                'last_upgrade'
+                                'content',
+                                'active',
+                                'owner_type',
+                                'owner_id'
                             ],
                             'links' => [
                                 'self'
@@ -4019,10 +4147,8 @@ class UsersApiTest extends TestCase
                             'type',
                             'id',
                             'attributes' => [
-                                'content',
-                                'active',
-                                'owner_type',
-                                'owner_id'
+                                'udlId',
+                                'udlValue'
                             ],
                             'links' => [
                                 'self'
@@ -4032,51 +4158,14 @@ class UsersApiTest extends TestCase
                             'type',
                             'id',
                             'attributes' => [
-                                'content',
-                                'active',
-                                'owner_type',
-                                'owner_id'
+                                'udlId',
+                                'udlValue'
                             ],
                             'links' => [
                                 'self'
                             ]
                         ],
                         19 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'content',
-                                'active',
-                                'owner_type',
-                                'owner_id'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        20 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'udlId',
-                                'udlValue'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        21 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'udlId',
-                                'udlValue'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        22 => [
                             'type',
                             'id',
                             'attributes' => [
@@ -4090,7 +4179,6 @@ class UsersApiTest extends TestCase
                     ]
                 ]);
     }
-
     public function testDeleteUserIfExists()
     {
         // CREATE & DELETE
@@ -4100,12 +4188,11 @@ class UsersApiTest extends TestCase
         $responseGet = $this->call('GET', '/users/'.$user->id);
         $this->assertEquals(404, $responseGet->status());
     }
-
     public function testDeleteUserIfNoExists()
     {
         // DELETE NO EXISTING.
         $responseDel = $this->call('DELETE', '/users/1');
         $this->assertEquals(404, $responseDel->status());
-    }
 
+    }
 }

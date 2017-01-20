@@ -53,9 +53,9 @@ class CarriersController extends FilteredApiController
         DB::beginTransaction();
 
         try {
-            $data = $request->all()['data']['attributes'];
-            $data['id'] = $id;
-            $carrier = $this->carrier->update($data);
+            $data = $request->all()['data'];
+            $data['attributes']['id'] = $id;
+            $carrier = $this->carrier->update($data['attributes']);
 
             if ($carrier == 'notExist') {
                 DB::rollBack();
@@ -74,7 +74,7 @@ class CarriersController extends FilteredApiController
             DB::rollBack();
             $error['errors']['carriers'] = Lang::get('messages.NotOptionIncludeClass',
                 ['class' => 'Carrier', 'option' => 'updated', 'include' => '']);
-            //$error['errors']['carriersMessage'] = $e->getMessage();
+            $error['errors']['carriersMessage'] = $e->getMessage();
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
@@ -88,7 +88,7 @@ class CarriersController extends FilteredApiController
                         DB::rollBack();
                         $error['errors']['images'] = Lang::get('messages.NotOptionIncludeClass',
                             ['class' => 'Carrier', 'option' => 'created', 'include' => 'Images']);
-                        //$error['errors']['Message'] = $e->getMessage();
+                        $error['errors']['Message'] = $e->getMessage();
                         return response()->json($error)->setStatusCode($this->status_codes['conflict']);
                     }
                 }
@@ -118,8 +118,8 @@ class CarriersController extends FilteredApiController
         DB::beginTransaction();
 
         try {
-            $data = $request->all()['data']['attributes'];
-            $carrier = $this->carrier->create($data);
+            $data = $request->all()['data'];
+            $carrier = $this->carrier->create($data['attributes']);
         } catch (\Exception $e) {
             DB::rollBack();
             $error['errors']['carriers'] = Lang::get('messages.NotOptionIncludeClass',

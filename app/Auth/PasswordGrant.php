@@ -10,112 +10,83 @@ use League\OAuth2\Server\Entity\SessionEntity;
 use League\OAuth2\Server\Event;
 use League\OAuth2\Server\Exception;
 use League\OAuth2\Server\Util\SecureKey;
+use League\OAuth2\Server\Entities\ClientEntityInterface;
+use League\OAuth2\Server\Entities\UserEntityInterface;
+use League\OAuth2\Server\Exception\OAuthServerException;
+use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
+use League\OAuth2\Server\Repositories\UserRepositoryInterface;
+use League\OAuth2\Server\RequestEvent;
+use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use WA\DataStore\Scope\Scope;
+use DB;
+use WA\DataStore\User\User;
+use WA\DataStore\Permission\Permission;
+use WA\DataStore\Role\Role;
+
+use Log;
 
 /**
  * Password grant class.
  */
 class PasswordGrant extends PassGrant
 {
-    /**
-     * Complete the password grant.
-     *
-     * @return array
-     *
-     * @throws
+        /**
+     * {@inheritdoc}
      */
-    public function completeFlow()
-    {
-        // Get the required params
-        $clientId = $this->server->getRequest()->request->get('client_id', $this->server->getRequest()->getUser());
-        if (is_null($clientId)) {
-            throw new Exception\InvalidRequestException('client_id');
+    public function respondToAccessTokenRequest(
+        ServerRequestInterface $request,
+        ResponseTypeInterface $responseType,
+        \DateInterval $accessTokenTTL
+    ) {
+        // Validate request
+        $client = $this->validateClient($request);
+        $scopes = $this->validateScopes($this->getRequestParameter('scope', $request));
+        $user = $this->validateUser($request, $client);
+
+        if (!$this->thisUserHasTheCorrectScope($scopes, $user->getIdentifier())) {
+            $error['errors']['scopes'] = 'The User has not assigned the scope needed to complete the request.';
+            return response()->json($error)->setStatusCode('401');
         }
 
-        $clientSecret = $this->server->getRequest()->request->get('client_secret',
-            $this->server->getRequest()->getPassword());
-        if (is_null($clientSecret)) {
-            throw new Exception\InvalidRequestException('client_secret');
+        // Finalize the requested scopes
+        $scopes = $this->scopeRepository->finalizeScopes($scopes, $this->getIdentifier(), $client, $user->getIdentifier());
+
+        // Issue and persist new tokens
+        $accessToken = $this->issueAccessToken($accessTokenTTL, $client, $user->getIdentifier(), $scopes);
+        $refreshToken = $this->issueRefreshToken($accessToken);
+
+        // Inject tokens into response
+        $responseType->setAccessToken($accessToken);
+        $responseType->setRefreshToken($refreshToken);
+
+        return $responseType;
+    }
+
+    public function thisUserHasTheCorrectScope($scopes, $userId){
+       //ROLES of the USER Retrived From DB
+        $user = User::find($userId);
+
+        $roles = $user->roles;
+        
+        $perms = array();
+        foreach ($scopes as $scp) {
+           //SCOPES requested by Name         
+            $scope = Scope::getByName($scp->getIdentifier())[0];
+           // PERMISSIONS of the Scope
+            $scopePerms = $scope->permissions;
+            //PUSH the name of the Permissions into the Array
+            foreach ($scopePerms as $perm) {
+                array_push($perms, $perm->name);                            
+            }
         }
 
-        // Validate client ID and client secret
-        $client = $this->server->getClientStorage()->get(
-            $clientId,
-            $clientSecret,
-            null,
-            $this->getIdentifier()
-        );
-
-        if (($client instanceof ClientEntity) === false) {
-            $this->server->getEventEmitter()->emit(new Event\ClientAuthenticationFailedEvent($this->server->getRequest()));
-            throw new Exception\InvalidClientException();
+        // CHECK IF THE ROLES HAS THE PERMISSIONS
+        if($user->ability($roles, $perms)){
+            
+            return true;
         }
+        return false;
 
-        $username = $this->server->getRequest()->request->get('username', null);
-        if (is_null($username)) {
-            throw new Exception\InvalidRequestException('username');
-        }
-
-        $password = $this->server->getRequest()->request->get('password', null);
-        if (is_null($password)) {
-            throw new Exception\InvalidRequestException('password');
-        }
-
-        // Check if user's username and password are correct
-        $userId = call_user_func($this->getVerifyCredentialsCallback(), $username, $password);
-
-        if ($userId === false) {
-            $this->server->getEventEmitter()->emit(new Event\UserAuthenticationFailedEvent($this->server->getRequest()));
-            throw new Exception\InvalidCredentialsException();
-        }
-
-        // Validate any scopes that are in the request
-        $scopeParam = $this->server->getRequest()->request->get('scope', '');
-        $scopes = $this->validateScopes($scopeParam, $client);
-
-        // Create a new session
-        $session = new SessionEntity($this->server);
-        $session->setOwner('user', $userId);
-        $session->associateClient($client);
-
-        // Generate an access token
-        $accessToken = new AccessTokenEntity($this->server);
-        $accessToken->setId(SecureKey::generate());
-        $accessToken->setExpireTime($this->getAccessTokenTTL() + time());
-
-        // Associate scopes with the session and access token
-        foreach ($scopes as $scope) {
-            $session->associateScope($scope);
-        }
-
-        foreach ($session->getScopes() as $scope) {
-            $accessToken->associateScope($scope);
-        }
-
-        $this->server->getTokenType()->setSession($session);
-        $this->server->getTokenType()->setParam('access_token', $accessToken->getId());
-        $this->server->getTokenType()->setParam('expires_in', $this->getAccessTokenTTL());
-
-        // Associate a refresh token if set
-        if ($this->server->hasGrantType('refresh_token')) {
-            $refreshToken = new RefreshTokenEntity($this->server);
-            $refreshToken->setId(SecureKey::generate());
-            $refreshToken->setExpireTime($this->server->getGrantType('refresh_token')->getRefreshTokenTTL() + time());
-            $this->server->getTokenType()->setParam('refresh_token', $refreshToken->getId());
-        }
-
-        // Save everything
-        $session->save();
-        $accessToken->setSession($session);
-        $accessToken->save();
-
-        if ($this->server->hasGrantType('refresh_token')) {
-            $refreshToken->setAccessToken($accessToken);
-            $refreshToken->save();
-        }
-
-        $response = $this->server->getTokenType()->generateResponse();
-        $response['user_id'] = $userId;
-
-        return $response;
     }
 }

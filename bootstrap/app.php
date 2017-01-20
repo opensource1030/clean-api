@@ -86,8 +86,9 @@ $app->routeMiddleware([
     'role' => 'Zizaco\Entrust\Middleware\EntrustRole',
     'permission' => 'Zizaco\Entrust\Middleware\EntrustPermission',
     'ability' => 'Zizaco\Entrust\Middleware\EntrustAbility',
-    'oauth-user-instance' => \WA\Http\Middleware\OAuth2UserInstance::class
-    
+    'oauth-user-instance' => \WA\Http\Middleware\OAuth2UserInstance::class,
+    'scopes' => \Laravel\Passport\Http\Middleware\CheckScopes::class,
+    'scope' => \Laravel\Passport\Http\Middleware\CheckForAnyScope::class
 ]);
 
 /*
@@ -97,9 +98,11 @@ $app->routeMiddleware([
 |
 */
 $app->configure('api');
+$app->configure('cache');
 $app->configure('services');
 $app->configure('mail');
 $app->configure('saml2_settings');
+$app->configure('entrust');
 
 
 /*

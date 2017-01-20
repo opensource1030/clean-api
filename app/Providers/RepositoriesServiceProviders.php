@@ -24,7 +24,7 @@ class RepositoriesServiceProviders extends ServiceProvider
         $this->registerAsset();
         $this->registerDevice();
         $this->registerCarrier();
-
+        
         $this->registerDeviceCarrier();
         $this->registerCompany();
         $this->registerDeviceCompany();
@@ -32,7 +32,7 @@ class RepositoriesServiceProviders extends ServiceProvider
         $this->registerDeviceImage();
         $this->registerModification();
         $this->registerDeviceModification();
-        $this->registerPrice();
+        $this->registerDeviceVariation();
         $this->registerDeviceType();
         $this->registerUser();
         $this->registerJobStatus();
@@ -48,6 +48,7 @@ class RepositoriesServiceProviders extends ServiceProvider
         $this->registerEmailNotifications();
         $this->registerRole();
         $this->registerPermission();
+        $this->registerScope();
         $this->registerAllocation();
         $this->registerContent();
         $this->registerService();
@@ -60,5 +61,6 @@ class RepositoriesServiceProviders extends ServiceProvider
         $this->registerCondition();
         $this->registerConditionField();
         $this->registerConditionOperator();
+        $this->registerCurrentBillMonth();
     }
 }

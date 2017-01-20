@@ -38,42 +38,42 @@ class CreateAllocationsTable extends Migration
                 $table->decimal('preAdjustedAccessCharge');
 
                 // Service Plan Charges
-                $table->decimal('adjustedAccessCost');
-                $table->decimal('bBCost');
-                $table->decimal('pDACost');
-                $table->decimal('iPhoneCost');
-                $table->decimal('featuresCost');
-                $table->decimal('dataCardCost');
-                $table->decimal('lDCanadaCost');
-                $table->decimal('uSAddOnPlanCost');
-                $table->decimal('uSLDAddOnPlanCost');
-                $table->decimal('uSDataRoamingCost');
-                $table->decimal('nightAndWeekendAddOnCost');
-                $table->decimal('minuteAddOnCost');
+                $table->decimal('adjustedAccessCharge');
+                $table->decimal('bBCharge');
+                $table->decimal('pDACharge');
+                $table->decimal('iPhoneCharge');
+                $table->decimal('featuresCharge');
+                $table->decimal('dataCardCharge');
+                $table->decimal('lDCanadaCharge');
+                $table->decimal('uSAddOnPlanCharge');
+                $table->decimal('uSLDAddOnPlanCharge');
+                $table->decimal('uSDataRoamingCharge');
+                $table->decimal('nightAndWeekendAddOnCharge');
+                $table->decimal('minuteAddOnCharge');
 
-                $table->decimal('servicePlanCharges');
+                $table->decimal('servicePlanCharge');
 
                 //Usage Charges
-                $table->decimal('directConnectCost');
-                $table->decimal('textMessagingCost');
-                $table->decimal('dataCost');
-                $table->decimal('intlRoamingCost');
-                $table->decimal('intlLongDistanceCost');
-                $table->decimal('directoryAssistanceCost');
-                $table->decimal('callForwardingCost');
-                $table->decimal('airtimeCost');
+                $table->decimal('directConnectCharge');
+                $table->decimal('textMessagingCharge');
+                $table->decimal('dataCharge');
+                $table->decimal('intlRoamingCharge');
+                $table->decimal('intlLongDistanceCharge');
+                $table->decimal('directoryAssistanceCharge');
+                $table->decimal('callForwardingCharge');
+                $table->decimal('airtimeCharge');
 
                 // summation of usage charges
-                $table->decimal('usageCharges');
+                $table->decimal('usageCharge');
 
                 //Other Charges
-                $table->decimal('equipmentCost');
-                $table->decimal('otherDiscountChargesCost');
-                $table->decimal('taxes');
-                $table->decimal('thirdPartyCost');
+                $table->decimal('equipmentCharge');
+                $table->decimal('otherDiscountCharge');
+                $table->decimal('taxesCharge');
+                $table->decimal('thirdPartyCharge');
 
                 //summation of other charges
-                $table->decimal('otherCharges');
+                $table->decimal('otherCharge');
 
                 //Fees
                 $table->decimal('waFees');
@@ -81,10 +81,30 @@ class CreateAllocationsTable extends Migration
                 $table->decimal('mobilityFees');
 
                 //summation of fees
-                $table->decimal('fees');
+                $table->decimal('feesCharge');
 
                 //last upgrade date
                 $table->string('last_upgrade');
+
+                //Other charges and usage data
+                $table->string('deviceType');
+                $table->decimal('domesticUsageCharge');
+                $table->integer('domesticDataUsage');
+                $table->integer('domesticVoiceUsage');
+                $table->integer('domesticTextUsage');
+                $table->decimal('intlRoamUsageCharge');
+                $table->integer('intlRoamDataUsage');
+                $table->integer('intlRoamVoiceUsage');
+                $table->integer('intlRoamTextUsage');
+                $table->decimal('intlLDUsageCharge');
+                $table->integer('intlLDVoiceUsage');
+                $table->integer('intlLDTextUsage');
+                $table->decimal('etfCharge');
+                $table->decimal('otherCarrierCharge');
+                $table->string('deviceEsnImei');
+                $table->string('deviceSim');
+
+
             });
 
         Schema::table(

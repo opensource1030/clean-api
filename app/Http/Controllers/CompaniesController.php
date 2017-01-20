@@ -6,10 +6,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Lang;
 use WA\DataStore\Company\Company;
 use WA\DataStore\Company\CompanyTransformer;
-use WA\Repositories\Carrier\CarrierInterface;
 use WA\Repositories\Company\CompanyInterface;
 use WA\Repositories\Udl\UdlInterface;
-
+use DB;
 /**
  * Class CompaniesController.
  */
@@ -40,33 +39,12 @@ class CompaniesController extends FilteredApiController
      */
     public function __construct(
         CompanyInterface $company,
-        CarrierInterface $carrier,
         UdlInterface $udl,
         Request $request
     ) {
         parent::__construct($company, $request);
         $this->company = $company;
-        $this->carrier = $carrier;
         $this->udl = $udl;
-    }
-
-
-    /**
-     * Create a new company.
-     *
-     * @return \Dingo\Api\Http\Response
-     */
-    public function create(Request $request)
-    {
-        $data = $request->all();
-        $company = $this->company->create($data);
-        if (!$company) {
-            $error['errors']['post'] = 'Company could not be created. Please check your data';
-
-            return response()->json($error)->setStatusCode(403);
-        }
-
-        return $this->response()->item($company, new CompanyTransformer(), ['key' => 'companies']);
     }
 
     /**
@@ -78,23 +56,97 @@ class CompaniesController extends FilteredApiController
      */
     public function store($id, Request $request)
     {
-        $company = Company::find($id);
-        if (!isset($company)) {
-            $error['errors']['put'] = Lang::get('messages.NotExistClass', ['class' => 'Company']);
 
-            return response()->json($error)->setStatusCode(404);
-        }
-        $data = $request->all();
-        $data['id'] = $id;
-        $company = $this->company->update($data);
-        if (!$company) {
-            $error['errors']['put'] = 'Company could not be updated. Please check your data';
+         $success = true;
+        /*
+         * Checks if Json has data, data-type & data-attributes.
+         */
+        if (!$this->isJsonCorrect($request, 'companies')) {
+            $error['errors']['json'] = Lang::get('messages.InvalidJson');
 
-            return response()->json($error)->setStatusCode(403);
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
-        return $this->response()->item($company, new CompanyTransformer(), ['key' => 'companies']);
+        DB::beginTransaction();
+
+        try {
+            $data = $request->all()['data'];
+            $data['attributes']['id'] = $id;
+            $company = $this->company->update($data['attributes']);
+
+            if ($company == 'notExist') {
+                DB::rollBack();
+                $error['errors']['company'] = Lang::get('messages.NotExistClass', ['class' => 'Company']);
+                //$error['errors']['Message'] = $e->getMessage();
+                return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+            }
+
+            if ($company == 'notSaved') {
+                DB::rollBack();
+                $error['errors']['company'] = Lang::get('messages.NotSavedClass', ['class' => 'Company']);
+                //$error['errors']['Message'] = $e->getMessage();
+                return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $error['errors']['company'] = Lang::get('messages.NotOptionIncludeClass',
+                ['class' => 'Company', 'option' => 'updated', 'include' => '']);
+            //$error['errors']['Message'] = $e->getMessage();
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+        }
+
+        if ($success) {
+            DB::commit();
+
+            return $this->response()->item($company, new CompanyTransformer(),
+                ['key' => 'companies'])->setStatusCode($this->status_codes['created']);
+        } else {
+            DB::rollBack();
+
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+        }
     }
+    /**
+     * Create a new company.
+     *
+     * @return \Dingo\Api\Http\Response
+     */
+    public function create(Request $request)
+    {   
+        $success = true;
+       
+        if (!$this->isJsonCorrect($request, 'companies')) {
+            $error['errors']['json'] = Lang::get('messages.InvalidJson');
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+        }
+        else{
+            $data = $request->all()['data'];
+        }
+
+        DB::beginTransaction();
+
+        try {
+            
+            $company = $this->company->create($data['attributes']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $error['errors']['companies'] = Lang::get('messages.NotOptionIncludeClass',
+                ['class' => 'Company', 'option' => 'created', 'include' => '']);
+            $error['errors']['Message'] = $e->getMessage();
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+        }
+
+        if($success){
+        DB::commit();
+        return $this->response()->item($company, new CompanyTransformer(),
+            ['key' => 'companies'])->setStatusCode($this->status_codes['created']);
+        }
+        else {
+            DB::rollBack();
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+        }
+    }
+    
 
     /**
      * Delete a company.
@@ -106,17 +158,19 @@ class CompaniesController extends FilteredApiController
     public function deleteCompany($id)
     {
         $company = Company::find($id);
-        if (!isset($company)) {
-            $error['errors']['delete'] = 'Company selected does not exist';
-            return response()->json($error)->setStatusCode(404);
+        if ($company != null) {
+            $this->company->deleteById($id);
+        } else {
+            $error['errors']['delete'] = Lang::get('messages.NotExistClass', ['class' => 'Company']);
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
-        $this->company->delete($id);
         $company = Company::find($id);
-        if (!$company) {
-            return response()->json()->setStatusCode(204);
+        if ($company == null) {
+            return array("success" => true);
         } else {
-            return response()->json()->setStatusCode(202);
+            $error['errors']['delete'] = Lang::get('messages.NotDeletedClass', ['class' => 'Company']);
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
     }
 

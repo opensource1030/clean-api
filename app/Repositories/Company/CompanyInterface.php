@@ -71,7 +71,7 @@ interface CompanyInterface extends RepositoryInterface
      *
      * @param $id
      */
-    public function getCarriers($id);
+    //public function getCarriers($id);
 
     /**
      * Get a company's UDLs.
@@ -85,7 +85,13 @@ interface CompanyInterface extends RepositoryInterface
      *
      * @param $id
      */
-    public function getDevices($id);
+    //public function getDevices($id);
+
+    public function getPresets($id);
+    
+    public function getPackages($id);
+    
+    public function getDeviceVariations($id);
 
     /**
      * Get all active companies.

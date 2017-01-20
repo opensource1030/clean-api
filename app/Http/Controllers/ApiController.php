@@ -148,12 +148,25 @@ abstract class ApiController extends BaseController
         } else {
             $includes = substr($include, strlen($includesAux[0]) + 1);
 
-            $var = title_case(str_singular($includesAux[0]));
-            $transformer = "\\WA\\DataStore\\$var\\$var" . 'Transformer';
+            $transformer = $this->createTransformer($includesAux[0]);
             $newTransformer = new $transformer();
 
             return $this->includesAreCorrectInf($includes, $newTransformer);
         }
+    }
+
+    private function createTransformer($var) 
+    {
+        if($var === 'devicevariations') {
+            return "\\WA\\DataStore\\DeviceVariation\\DeviceVariationTransformer";
+        }
+
+        if($var === 'devicetypes') {
+            return "\\WA\\DataStore\\DeviceType\\DeviceTypeTransformer";
+        }        
+
+        $model = title_case(str_singular($var));
+        return "\\WA\\DataStore\\${model}\\${model}Transformer";
     }
 
     /**
@@ -180,4 +193,26 @@ abstract class ApiController extends BaseController
             $interface->deleteById($some);
         }
     }
+
+    /**
+     *  @param: $data = Information.
+     *  @param: $email = Email to Send.
+     *  @param: $type = Model Created.
+     */
+    /*
+    public function sendConfirmationEmail($data, $email, $type = '') {
+
+        try {
+            Mail::send('emails.employee.welcome', $data, 
+                function ($m) use ($email, $type) {
+                    $m->from(env('MAIL_FROM_ADDRESS'), 'Wireless Analytics');
+                    $m->to($email)->subject($type.' Created!');
+                    $m->cc(env('MAIL_CC_ADDRESS'));
+                }
+            );
+        } catch (\Exception $e) {
+            return false;
+        }
+        return true;        
+    }*/
 }

@@ -28,34 +28,28 @@ $factory->define(\WA\DataStore\DeviceType\DeviceType::class,
 $factory->define(\WA\DataStore\Device\Device::class,
     function (\Faker\Generator $faker) {
         $names = ['iPhone 5', 'iPhone 5S', 'iPhone 6', 'iPhone 6S', 'Samsung G6', 'Samsung G7', 'Huawei g620s'];
-
+        $currency = ['USD','EUR', 'GBP'];
+        $makes = ['Apple', 'Samsung', 'Blackberry'];
+        $models = ['Galaxy S7', 'IPhone SE', 'Q10', 'IPad Air'];
         return [
             'identification' => $faker->isbn13,
             'name' => $names[array_rand($names)],
             'properties' => 'properties',
-            //'externalId' => function () {
-            //    return factory(WA\DataStore\DeviceType::class)->create()->id;
-            //},
+            //'externalId' => 1,
+            'syncId' => 1,
+            'statusId' => 1,
+            'make' => $makes[array_rand($makes)],
+            'model' => $models[array_rand($models)],
+            'defaultPrice' => $faker->numberBetween(99, 501),
+            'currency' => $currency[array_rand($currency)],
             'deviceTypeId' => function () {
-                $makes = ['Apple', 'Samsung', 'Blackberry'];
-                $models = ['Galaxy S7', 'IPhone SE', 'Q10', 'IPad Air'];
-                $class = ['Phone', 'Tablet', 'M2M'];
-                $deviceOS = ['Android', 'iOS', 'BlackBerry OS', 'Windows Phone'];
+                $DTname = ['Smartphone', 'Sim Card', 'Tablet', 'Accessory'];
                 $deviceType = factory(\WA\DataStore\DeviceType\DeviceType::class)->make();
-                $deviceType->make = $makes[array_rand($makes)];
-                $deviceType->model = $models[array_rand($models)];
-                $deviceType->class = $class[array_rand($class)];
-                $deviceType->deviceOS = $deviceOS[array_rand($deviceOS)];
+                $deviceType->name = $DTname[array_rand($DTname)];
                 $deviceType->save();
 
-                return $deviceType->id;
-            }, //,
-            //'statusId' => function () {
-            //    return factory(WA\DataStore\DeviceType::class)->create()->id;
-            //},
-            //'syncId' => function () {
-            //    return factory(WA\DataStore\DeviceType::class)->create()->id;
-            //},
+                return $deviceType->id;}
+            
         ];
     }
 );

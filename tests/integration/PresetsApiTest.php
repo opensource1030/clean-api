@@ -20,6 +20,7 @@ class PresetsApiTest extends TestCase
                     'id',
                     'attributes' => [
                         'name',
+                        'companyId',
                         'created_at' => [
                             'date',
                             'timezone_type',
@@ -73,6 +74,7 @@ class PresetsApiTest extends TestCase
                 'id',
                 'attributes' => [
                     'name',
+                    'companyId',
                     'created_at' => [
                         'date',
                         'timezone_type',
@@ -100,21 +102,22 @@ class PresetsApiTest extends TestCase
         $this->assertEquals(404, $response->status());
     }
 
-    public function testGetPresetByIdandIncludesDevices()
+    public function testGetPresetByIdandIncludesDeviceVariations()
     {
         $preset = factory(\WA\DataStore\Category\Preset::class)->create();
 
-        $device = factory(\WA\DataStore\Device\Device::class)->create()->id;
+        $device = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create()->id;
 
-        $preset->devices()->sync(array($device));
+        $preset->deviceVariations()->sync(array($device));
 
-        $this->json('GET', 'presets/'.$preset->id.'?include=devices')
+        $this->json('GET', 'presets/'.$preset->id.'?include=devicevariations')
             ->seeJsonStructure([
                 'data' => [
                     'type',
                     'id',
                     'attributes' => [
                         'name',
+                        'companyId',
                         'created_at' => [
                             'date',
                             'timezone_type',
@@ -130,7 +133,7 @@ class PresetsApiTest extends TestCase
                         'self',
                     ],
                     'relationships' => [
-                        'devices' => [
+                        'devicevariations' => [
                             'links' => [
                                 'self',
                                 'related',
@@ -149,52 +152,23 @@ class PresetsApiTest extends TestCase
                         'type',
                         'id',
                         'attributes' => [
-                            'make',
-                            'model',
-                            'class',
-                            'deviceOS',
-                            'description',
-                            'statusId',
-                            'image',
+                            'priceRetail',
+                            'price1',
+                            'price2',
+                            'priceOwn',
+                            'deviceId',
+                            'carrierId',
+                            'companyId',
                         ],
                         'links' => [
                             'self',
-                        ],
-                    ],
-                    1 => [
-                        'type',
-                        'id',
-                        'attributes' => [
-                            'name',
-                            'properties',
-                            'statusId',
-                            'externalId',
-                            'identification',
-                            'syncId',
-                        ],
-                        'links' => [
-                            'self',
-                        ],
-                        'relationships' => [
-                            'devicetypes' => [
-                                'links' => [
-                                    'self',
-                                    'related',
-                                ],
-                                'data' => [
-                                    0 => [
-                                        'type',
-                                        'id',
-                                    ],
-                                ],
-                            ],
                         ],
                     ],
                 ],
             ]);
     }
 
-    public function testGetPresetByIdandIncludesImages()
+    /*public function testGetPresetByIdandIncludesImages()
     {
         $preset = factory(\WA\DataStore\Category\Preset::class)->create();
 
@@ -259,17 +233,15 @@ class PresetsApiTest extends TestCase
                     ],
                 ],
             ]);
-    }
+    }*/
 
     public function testCreatePreset()
     {
         $preset = factory(\WA\DataStore\Category\Preset::class)->create();
 
-        $device1 = factory(\WA\DataStore\Device\Device::class)->create()->id;
-        $device2 = factory(\WA\DataStore\Device\Device::class)->create()->id;
-
-        $image1 = factory(\WA\DataStore\Image\Image::class)->create()->id;
-        $image2 = factory(\WA\DataStore\Image\Image::class)->create()->id;
+        $device1 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create()->id;
+        $device2 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create()->id;
+        $company = factory(\WA\DataStore\Company\Company::class)->create()->id;
 
         $this->json('POST', 'presets',
             [
@@ -277,18 +249,18 @@ class PresetsApiTest extends TestCase
                     'type' => 'presets',
                     'attributes' => [
                         'name' => 'namePreset',
+                        'companyId' => $company,
                     ],
                     'relationships' => [
-                        'devices' => [
+                        'devicevariations' => [
                             'data' => [
-                                ['type' => 'devices', 'id' => $device1],
-                                ['type' => 'devices', 'id' => $device2],
+                                ['type' => 'devicevariations', 'id' => $device1],
+                                ['type' => 'devicevariations', 'id' => $device2],
                             ],
                         ],
-                        'images' => [
+                        'companies' => [
                             'data' => [
-                                ['type' => 'images', 'id' => $image1],
-                                ['type' => 'images', 'id' => $image2],
+                                ['type' => 'companies', 'id' => $company],
                             ],
                         ],
                     ],
@@ -298,6 +270,7 @@ class PresetsApiTest extends TestCase
             [
                 'type' => 'presets',
                 'name' => 'namePreset',
+                'companyId' => null,
             ]);
     }
 
@@ -327,6 +300,7 @@ class PresetsApiTest extends TestCase
                     'NoValid' => 'presets',
                     'attributes' => [
                         'name' => 'namePreset',
+                        'companyId' => 1,
                     ],
                 ],
 
@@ -349,6 +323,7 @@ class PresetsApiTest extends TestCase
                     'type' => 'presets',
                     'NoValid' => [
                         'name' => 'namePreset',
+                        'companyId' => 1,
                     ],
                 ],
             ]
@@ -369,12 +344,13 @@ class PresetsApiTest extends TestCase
                 'type' => 'presets',
                 'attributes' => [
                     'name' => 'namePreset',
+                    'companyId' => 1,
                 ],
                 'relationships' => [
                     'IgnoreType' => [
                         'data' => [
-                            ['type' => 'devices', 'id' => '1'],
-                            ['type' => 'devices', 'id' => '2'],
+                            ['type' => 'devicevariations', 'id' => '1'],
+                            ['type' => 'devicevariations', 'id' => '2'],
                         ],
                     ],
                 ],
@@ -384,6 +360,7 @@ class PresetsApiTest extends TestCase
         [
             'type' => 'presets',
             'name' => 'namePreset',
+            'companyId' => null,
         ]);
     }
 
@@ -395,12 +372,13 @@ class PresetsApiTest extends TestCase
                 'type' => 'presets',
                 'attributes' => [
                     'name' => 'namePreset',
+                    'companyId' => 1,
                 ],
                 'relationships' => [
-                    'devices' => [
+                    'devicevariations' => [
                         'IgnoreData' => [
-                            ['type' => 'devices', 'id' => '1'],
-                            ['type' => 'devices', 'id' => '2'],
+                            ['type' => 'devicevariations', 'id' => '1'],
+                            ['type' => 'devicevariations', 'id' => '2'],
                         ],
                     ],
                 ],
@@ -410,6 +388,7 @@ class PresetsApiTest extends TestCase
         [
             'type' => 'presets',
             'name' => 'namePreset',
+            'companyId' => null,
         ]);
     }
 
@@ -421,6 +400,7 @@ class PresetsApiTest extends TestCase
                 'type' => 'presets',
                 'attributes' => [
                     'name' => 'namePreset',
+                    'companyId' => 1,
                 ],
                 'relationships' => [
                     'apps' => [
@@ -436,6 +416,7 @@ class PresetsApiTest extends TestCase
         [
             'type' => 'presets',
             'name' => 'namePreset',
+            'companyId' => null,
         ]);
     }
 
@@ -447,12 +428,13 @@ class PresetsApiTest extends TestCase
                 'type' => 'presets',
                 'attributes' => [
                     'name' => 'namePreset',
+                    'companyId' => 1,
                 ],
                 'relationships' => [
-                    'apps' => [
+                    'devicevariations' => [
                         'data' => [
-                            ['type' => 'devices', 'aa' => '1'],
-                            ['type' => 'devices', 'aa' => '2'],
+                            ['type' => 'devicevariations', 'aa' => '1'],
+                            ['type' => 'devicevariations', 'aa' => '2'],
                         ],
                     ],
                 ],
@@ -462,6 +444,7 @@ class PresetsApiTest extends TestCase
         [
             'type' => 'presets',
             'name' => 'namePreset',
+            'companyId' => null,
         ]);
     }
 

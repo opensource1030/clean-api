@@ -43,9 +43,9 @@ class AppsController extends FilteredApiController
     {
         if ($this->isJsonCorrect($request, 'apps')) {
             try {
-                $data = $request->all()['data']['attributes'];
-                $data['id'] = $id;
-                $app = $this->app->update($data);
+                $data = $request->all()['data'];
+                $data['attributes']['id'] = $id;
+                $app = $this->app->update($data['attributes']);
 
                 if ($app == 'notExist') {
                     $error['errors']['app'] = Lang::get('messages.NotExistClass', ['class' => 'App']);

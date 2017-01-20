@@ -41,38 +41,6 @@ class Carrier extends BaseDataStore
             'updated_at', ];
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function users()
-    {
-        return $this->hasMany('WA\DataStore\User\User', 'userId');
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function companies()
-    {
-        return $this->belongsToMany('WA\DataStore\Carrier\Carrier', 'companies_carriers', 'carrierId', 'companyId');
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function assets()
-    {
-        return $this->hasMany('WA\DataStore\Asset\Asset', 'carrierId');
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function devices()
-    {
-        return $this->belongsToMany('WA\DataStore\Device\Device', 'device_carriers', 'deviceId', 'carrierId');
-    }
-
-    /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function location()
@@ -86,6 +54,27 @@ class Carrier extends BaseDataStore
     public function images()
     {
         return $this->belongsToMany('WA\DataStore\Image\Image', 'carrier_images', 'carrierId', 'imageId');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function services()
+    {
+        return $this->hasMany('WA\DataStore\Service\Service', 'carrierId');
+    }   
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function devicevariations()
+    {
+        return $this->hasMany('WA\DataStore\DeviceVariation\DeviceVariation', 'carrierId');
+    }
+    
+    public function allocations()
+    {
+        return $this->hasMany('WA\DataStore\Allocation\Allocation', 'carrier');
     }
 
     /**

@@ -22,29 +22,26 @@ class OrdersTableSeeder extends BaseTableSeeder
                 'status' => 'Denied',
                 'userId' => 1,
                 'packageId' => 1,
-                'deviceId' => 1,
-                'serviceId' => 1,
+                'serviceId' => 1
+
             ],
             [
                 'status' => 'Accepted',
                 'userId' => 2,
                 'packageId' => 2,
-                'deviceId' => 2,
-                'serviceId' => 2,
+                'serviceId' => 2
             ],
             [
                 'status' => 'Pending',
                 'userId' => 3,
                 'packageId' => 3,
-                'deviceId' => 3,
-                'serviceId' => 3,
+                'serviceId' => 3
             ],
             [
                 'status' => 'Accepted',
                 'userId' => 4,
                 'packageId' => 4,
-                'deviceId' => 4,
-                'serviceId' => 4,
+                'serviceId' => 4
             ],
         ];
 

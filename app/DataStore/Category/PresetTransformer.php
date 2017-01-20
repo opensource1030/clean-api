@@ -9,10 +9,9 @@ use WA\DataStore\FilterableTransformer;
  */
 class PresetTransformer extends FilterableTransformer
 {
-
     protected $availableIncludes = [
-        'devices',
-        'images',
+        'devicevariations',
+        'companies',
     ];
 
     /**
@@ -25,6 +24,7 @@ class PresetTransformer extends FilterableTransformer
         return [
             'id'         => $preset->id,
             'name'       => $preset->name,
+            'companyId'  => $preset->companyId,
             'created_at' => $preset->created_at,
             'updated_at' => $preset->updated_at,
         ];

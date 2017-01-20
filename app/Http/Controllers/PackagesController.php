@@ -152,8 +152,8 @@ class PackagesController extends FilteredApiController
         $dataConditions = $dataServices = $dataDevices = $dataApps = array();
 
         /*
-                                 * Checks if Json has data, data-type & data-attributes.
-        */
+         * Checks if Json has data, data-type & data-attributes.
+         */
         if (!$this->isJsonCorrect($request, 'packages')) {
             $error['errors']['json'] = Lang::get('messages.InvalidJson');
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
@@ -162,12 +162,12 @@ class PackagesController extends FilteredApiController
         DB::beginTransaction();
 
         /*
-                                 * Now we can create the Package.
-        */
+         * Now we can create the Package.
+         */
         try {
-            $data = $request->all()['data']['attributes'];
-            $data['id'] = $id;
-            $package = $this->package->update($data);
+            $data = $request->all()['data'];
+            $data['attributes']['id'] = $id;
+            $package = $this->package->update($data['attributes']);
 
             if ($package == 'notExist') {
                 DB::rollBack();
@@ -223,15 +223,15 @@ class PackagesController extends FilteredApiController
                 }
             }
 
-            if (isset($dataRelationships['devices'])) {
-                if (isset($dataRelationships['devices']['data'])) {
-                    $dataDevices = $this->parseJsonToArray($dataRelationships['devices']['data'], 'devices');
+            if (isset($dataRelationships['devicevariations'])) {
+                if (isset($dataRelationships['devicevariations']['data'])) {
+                    $dataDevices = $this->parseJsonToArray($dataRelationships['devicevariations']['data'], 'devicevariations');
                     try {
-                        $package->devices()->sync($dataDevices);
+                        $package->devicevariations()->sync($dataDevices);
                     } catch (\Exception $e) {
                         $success = false;
-                        $error['errors']['devices'] = Lang::get('messages.NotOptionIncludeClass',
-                            ['class' => 'Package', 'option' => 'updated', 'include' => 'Devices']);
+                        $error['errors']['devicevariations'] = Lang::get('messages.NotOptionIncludeClass',
+                            ['class' => 'Package', 'option' => 'updated', 'include' => 'DeviceVariations']);
                         //$error['errors']['Message'] = $e->getMessage();
                     }
                 }
@@ -280,15 +280,14 @@ class PackagesController extends FilteredApiController
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
-        $data = $request->all()['data']['attributes'];
-
         DB::beginTransaction();
 
         /*
-                                 * Now we can create the Package.
-        */
+         * Now we can create the Package.
+         */
         try {
-            $package = $this->package->create($data);
+            $data = $request->all()['data'];
+            $package = $this->package->create($data['attributes']);
         } catch (\Exception $e) {
             DB::rollBack();
             $error['errors']['packages'] = Lang::get('messages.NotOptionIncludeClass',
@@ -298,8 +297,8 @@ class PackagesController extends FilteredApiController
         }
 
         /*
-                                 * Check if Json has relationships to continue or if not and commit + return.
-        */
+         * Check if Json has relationships to continue or if not and commit + return.
+         */
         if (isset($data['relationships'])) {
             $dataRelationships = $data['relationships'];
 
@@ -330,16 +329,16 @@ class PackagesController extends FilteredApiController
                     }
                 }
             }
-
-            if (isset($dataRelationships['devices'])) {
-                if (isset($dataRelationships['devices']['data'])) {
-                    $dataDevices = $this->parseJsonToArray($dataRelationships['devices']['data'], 'devices');
+            
+            if (isset($dataRelationships['devicevariations'])) {
+                if (isset($dataRelationships['devicevariations']['data'])) {
+                    $dataDevices = $this->parseJsonToArray($dataRelationships['devicevariations']['data'], 'devicevariations');
                     try {
-                        $package->devices()->sync($dataDevices);
+                        $package->devicevariations()->sync($dataDevices);
                     } catch (\Exception $e) {
                         $success = false;
-                        $error['errors']['devices'] = Lang::get('messages.NotOptionIncludeClass',
-                            ['class' => 'Package', 'option' => 'created', 'include' => 'Devices']);
+                        $error['errors']['devicevariations'] = Lang::get('messages.NotOptionIncludeClass',
+                            ['class' => 'Package', 'option' => 'updated', 'include' => 'DeviceVariations']);
                         //$error['errors']['Message'] = $e->getMessage();
                     }
                 }

@@ -10,7 +10,7 @@ class CreateUserUdlsTable extends Migration
     public function up()
     {
         Schema::create(
-            'employee_udls',
+            'user_udls',
             function ($table) {
                 $table->increments('id');
 
@@ -25,6 +25,6 @@ class CreateUserUdlsTable extends Migration
      */
     public function down()
     {
-        Schema::drop('employee_udls');
+        Schema::drop('user_udls');
     }
 }

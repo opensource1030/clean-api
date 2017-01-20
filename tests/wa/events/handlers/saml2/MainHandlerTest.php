@@ -4,6 +4,7 @@ namespace WA\Testing\Auth;
 
 use WA\Auth\Login;
 use TestCase;
+use DB;
 
 /**
  * MainHandler - Gets the event received by the Single Sign On.
@@ -53,166 +54,16 @@ class MainHandlerTest extends TestCase
         // ASSERTS
         $this->assertArrayHasKey('email', $return);
         $this->assertInternalType('string', $return['email']);
-        $this->assertArrayHasKey('alternateEmail', $return);
-        $this->assertInternalType('string', $return['alternateEmail']);
-        $this->assertArrayHasKey('password', $return);
-        $this->assertInternalType('string', $return['password']);
-        $this->assertArrayHasKey('username', $return);
-        $this->assertInternalType('string', $return['username']);
-        $this->assertArrayHasKey('confirmation_code', $return);
-        $this->assertInternalType('string', $return['confirmation_code']);
-        $this->assertArrayHasKey('remember_token', $return);
-        $this->assertInternalType('null', $return['remember_token']);
-        $this->assertArrayHasKey('confirmed', $return);
-        $this->assertInternalType('integer', $return['confirmed']);
         $this->assertArrayHasKey('firstName', $return);
         $this->assertInternalType('string', $return['firstName']);
-        $this->assertArrayHasKey('alternateFirstName', $return);
-        $this->assertInternalType('null', $return['alternateFirstName']);
         $this->assertArrayHasKey('lastName', $return);
         $this->assertInternalType('string', $return['lastName']);
-        $this->assertArrayHasKey('supervisorEmail', $return);
-        $this->assertInternalType('string', $return['supervisorEmail']);
-        $this->assertArrayHasKey('companyUserIdentifier', $return);
-        $this->assertInternalType('string', $return['companyUserIdentifier']);
-        $this->assertArrayHasKey('isSupervisor', $return);
-        $this->assertInternalType('integer', $return['isSupervisor']);
-        $this->assertArrayHasKey('isValidator', $return);
-        $this->assertInternalType('integer', $return['isValidator']);
-        $this->assertArrayHasKey('isActive', $return);
-        $this->assertInternalType('integer', $return['isActive']);
-        $this->assertArrayHasKey('rgt ', $return);
-        $this->assertInternalType('null', $return['rgt ']);
-        $this->assertArrayHasKey('lft ', $return);
-        $this->assertInternalType('null', $return['lft ']);
-        $this->assertArrayHasKey('hierarchy', $return);
-        $this->assertInternalType('null', $return['hierarchy']);
-        $this->assertArrayHasKey('notes', $return);
-        $this->assertInternalType('string', $return['notes']);
         $this->assertArrayHasKey('companyId', $return);
-        $this->assertInternalType('integer', $return['companyId']);
-        $this->assertArrayHasKey('syncId', $return);
-        $this->assertInternalType('null', $return['syncId']);
-        $this->assertArrayHasKey('supervisorId', $return);
-        $this->assertInternalType('null', $return['supervisorId']);
-        $this->assertArrayHasKey('externalId', $return);
-        $this->assertInternalType('null', $return['externalId']);
-        $this->assertArrayHasKey('approverId', $return);
-        $this->assertInternalType('null', $return['approverId']);
-        $this->assertArrayHasKey('deleted_at', $return);
-        $this->assertInternalType('null', $return['deleted_at']);
-        $this->assertArrayHasKey('created_at', $return);
-        $this->assertInternalType('string', $return['created_at']);
-        $this->assertArrayHasKey('updated_at', $return);
-        $this->assertInternalType('null', $return['updated_at']);
-        $this->assertArrayHasKey('defaultLocationId', $return);
-        $this->assertInternalType('string', $return['defaultLocationId']);
-        $this->assertArrayHasKey('defaultLang', $return);
-        $this->assertInternalType('string', $return['defaultLang']);
-        $this->assertArrayHasKey('departmentId', $return);
-        $this->assertInternalType('null', $return['departmentId']);
-        $this->assertArrayHasKey('identification', $return);
-        $this->assertInternalType('string', $return['identification']);
-        $this->assertArrayHasKey('notify', $return);
-        $this->assertInternalType('integer', $return['notify']);
-        $this->assertArrayHasKey('apiToken', $return);
-        $this->assertInternalType('null', $return['apiToken']);
-        $this->assertArrayHasKey('level', $return);
-        $this->assertInternalType('integer', $return['level']);
     }
 
     public function testCreateUserSSO()
     {
         // @TODOSAML2 : TEST IF WORKS.
-    }
-
-    public function testCreateUserFacebookTest()
-    {
-        // CREATE CONSTANTS
-
-        // CREATE CLASS INSTANCE
-        $userForm = app()->make('WA\Services\Form\User\UserForm');
-        $handler = new \WA\Events\Handlers\Saml2\MainHandler($userForm);
-
-        // CREATE REFLECTOR & ACCESSIBLE
-        $reflector = new ReflectionClass($handler);
-        $method = $reflector->getMethod('createUserFacebookTest');
-        $method->setAccessible(true);
-
-        // CREATE ARGUMENTS
-
-        // CALL THE FUNCTION
-        $return = $method->invoke($handler);
-
-        // ASSERTS
-        $this->assertArrayHasKey('email', $return);
-        $this->assertInternalType('string', $return['email']);
-        $this->assertArrayHasKey('alternateEmail', $return);
-        $this->assertInternalType('string', $return['alternateEmail']);
-        $this->assertArrayHasKey('password', $return);
-        $this->assertInternalType('string', $return['password']);
-        $this->assertArrayHasKey('username', $return);
-        $this->assertInternalType('string', $return['username']);
-        $this->assertArrayHasKey('confirmation_code', $return);
-        $this->assertInternalType('string', $return['confirmation_code']);
-        $this->assertArrayHasKey('remember_token', $return);
-        $this->assertInternalType('null', $return['remember_token']);
-        $this->assertArrayHasKey('confirmed', $return);
-        $this->assertInternalType('integer', $return['confirmed']);
-        $this->assertArrayHasKey('firstName', $return);
-        $this->assertInternalType('string', $return['firstName']);
-        $this->assertArrayHasKey('alternateFirstName', $return);
-        $this->assertInternalType('null', $return['alternateFirstName']);
-        $this->assertArrayHasKey('lastName', $return);
-        $this->assertInternalType('string', $return['lastName']);
-        $this->assertArrayHasKey('supervisorEmail', $return);
-        $this->assertInternalType('string', $return['supervisorEmail']);
-        $this->assertArrayHasKey('companyUserIdentifier', $return);
-        $this->assertInternalType('string', $return['companyUserIdentifier']);
-        $this->assertArrayHasKey('isSupervisor', $return);
-        $this->assertInternalType('integer', $return['isSupervisor']);
-        $this->assertArrayHasKey('isValidator', $return);
-        $this->assertInternalType('integer', $return['isValidator']);
-        $this->assertArrayHasKey('isActive', $return);
-        $this->assertInternalType('integer', $return['isActive']);
-        $this->assertArrayHasKey('rgt ', $return);
-        $this->assertInternalType('null', $return['rgt ']);
-        $this->assertArrayHasKey('lft ', $return);
-        $this->assertInternalType('null', $return['lft ']);
-        $this->assertArrayHasKey('hierarchy', $return);
-        $this->assertInternalType('null', $return['hierarchy']);
-        $this->assertArrayHasKey('notes', $return);
-        $this->assertInternalType('string', $return['notes']);
-        $this->assertArrayHasKey('companyId', $return);
-        $this->assertInternalType('integer', $return['companyId']);
-        $this->assertArrayHasKey('syncId', $return);
-        $this->assertInternalType('null', $return['syncId']);
-        $this->assertArrayHasKey('supervisorId', $return);
-        $this->assertInternalType('null', $return['supervisorId']);
-        $this->assertArrayHasKey('externalId', $return);
-        $this->assertInternalType('null', $return['externalId']);
-        $this->assertArrayHasKey('approverId', $return);
-        $this->assertInternalType('null', $return['approverId']);
-        $this->assertArrayHasKey('deleted_at', $return);
-        $this->assertInternalType('null', $return['deleted_at']);
-        $this->assertArrayHasKey('created_at', $return);
-        $this->assertInternalType('string', $return['created_at']);
-        $this->assertArrayHasKey('updated_at', $return);
-        $this->assertInternalType('null', $return['updated_at']);
-        $this->assertArrayHasKey('defaultLocationId', $return);
-        $this->assertInternalType('string', $return['defaultLocationId']);
-        $this->assertArrayHasKey('defaultLang', $return);
-        $this->assertInternalType('string', $return['defaultLang']);
-        $this->assertArrayHasKey('departmentId', $return);
-        $this->assertInternalType('null', $return['departmentId']);
-        $this->assertArrayHasKey('identification', $return);
-        $this->assertInternalType('string', $return['identification']);
-        $this->assertArrayHasKey('notify', $return);
-        $this->assertInternalType('integer', $return['notify']);
-        $this->assertArrayHasKey('apiToken', $return);
-        $this->assertInternalType('null', $return['apiToken']);
-        $this->assertArrayHasKey('level', $return);
-        $this->assertInternalType('integer', $return['level']);
     }
 
     public function testGetUuidFromRequestRelayState()
@@ -278,8 +129,6 @@ class MainHandlerTest extends TestCase
 
     public function testGetEmailFromUserData()
     {
-        // CREATE CONSTANTS
-
         // CREATE CLASS INSTANCE
         $userForm = app()->make('WA\Services\Form\User\UserForm');
         $handler = new \WA\Events\Handlers\Saml2\MainHandler($userForm);
@@ -293,9 +142,10 @@ class MainHandlerTest extends TestCase
         $userData['attributes']['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'][0] = 'correo@electronico.com';
 
         // CALL THE FUNCTION
-        $returnUserData = $method->invokeArgs($handler, array($userData, 7));
+        $returnUserData = $method->invokeArgs($handler, array($userData, 9));
 
         // ASSERTS
         $this->assertStringStartsWith('correo@electronico.com', $returnUserData);
     }
+
 }

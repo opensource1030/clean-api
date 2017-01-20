@@ -43,7 +43,7 @@ class PresetsController extends FilteredApiController
     public function store($id, Request $request)
     {
         $success = true;
-
+        $datadevicevariations = array();
         /*
          * Checks if Json has data, data-type & data-attributes.
          */
@@ -56,9 +56,9 @@ class PresetsController extends FilteredApiController
         DB::beginTransaction();
 
         try {
-            $data = $request->all()['data']['attributes'];
-            $data['id'] = $id;
-            $preset = $this->preset->update($data);
+            $data = $request->all()['data'];
+            $data['attributes']['id'] = $id;
+            $preset = $this->preset->update($data['attributes']);
 
             if ($preset == 'notExist') {
                 DB::rollBack();
@@ -82,29 +82,16 @@ class PresetsController extends FilteredApiController
         }
 
         if (isset($data['relationships'])) {
-            if (isset($data['relationships']['images'])) {
-                if (isset($data['relationships']['images']['data'])) {
-                    try {
-                        $dataImages = $this->parseJsonToArray($data['relationships']['images']['data'], 'images');
-                        $preset->images()->sync($dataImages);
-                    } catch (\Exception $e) {
-                        $success = false;
-                        $error['errors']['images'] = Lang::get('messages.NotOptionIncludeClass',
-                            ['class' => 'Preset', 'option' => 'created', 'include' => 'Images']);
-                        //$error['errors']['Message'] = $e->getMessage();
-                    }
-                }
-            }
 
-            if (isset($data['relationships']['devices'])) {
-                if (isset($data['relationships']['devices']['data'])) {
+            if (isset($data['relationships']['devicevariations'])) {
+                if (isset($data['relationships']['devicevariations']['data'])) {
                     try {
-                        $dataDevices = $this->parseJsonToArray($data['relationships']['devices']['data'], 'devices');
-                        $preset->devices()->sync($dataDevices);
+                        $datadevicevariations = $this->parseJsonToArray($data['relationships']['devicevariations']['data'], 'devicevariations');
+                        $preset->devicevariations()->sync($datadevicevariations);
                     } catch (\Exception $e) {
                         $success = false;
-                        $error['errors']['devices'] = Lang::get('messages.NotOptionIncludeClass',
-                            ['class' => 'Preset', 'option' => 'created', 'include' => 'Devices']);
+                        $error['errors']['devicevariations'] = Lang::get('messages.NotOptionIncludeClass',
+                            ['class' => 'Preset', 'option' => 'created', 'include' => 'devicevariations']);
                         //$error['errors']['Message'] = $e->getMessage();
                     }
                 }
@@ -131,6 +118,7 @@ class PresetsController extends FilteredApiController
     public function create(Request $request)
     {
         $success = true;
+        $datadevicevariations = array();
         /*
          * Checks if Json has data, data-type & data-attributes.
          */
@@ -143,8 +131,8 @@ class PresetsController extends FilteredApiController
         DB::beginTransaction();
 
         try {
-            $data = $request->all()['data']['attributes'];
-            $preset = $this->preset->create($data);
+            $data = $request->all()['data'];
+            $preset = $this->preset->create($data['attributes']);
         } catch (\Exception $e) {
             DB::rollBack();
             $error['errors']['preset'] = Lang::get('messages.NotOptionIncludeClass',
@@ -152,31 +140,16 @@ class PresetsController extends FilteredApiController
             //$error['errors']['Message'] = $e->getMessage();
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
-
         if (isset($data['relationships'])) {
-            if (isset($data['relationships']['images'])) {
-                if (isset($data['relationships']['images']['data'])) {
+             if (isset($data['relationships']['devicevariations'])) {
+                if (isset($data['relationships']['devicevariations']['data'])) {
                     try {
-                        $dataImages = $this->parseJsonToArray($data['relationships']['images']['data'], 'images');
-                        $preset->images()->sync($dataImages);
+                        $datadevicevariations = $this->parseJsonToArray($data['relationships']['devicevariations']['data'], 'devicevariations');
+                        $preset->devicevariations()->sync($datadevicevariations);
                     } catch (\Exception $e) {
                         $success = false;
-                        $error['errors']['images'] = Lang::get('messages.NotOptionIncludeClass',
-                            ['class' => 'Preset', 'option' => 'created', 'include' => 'Images']);
-                        //$error['errors']['Message'] = $e->getMessage();
-                    }
-                }
-            }
-
-            if (isset($data['relationships']['devices'])) {
-                if (isset($data['relationships']['devices']['data'])) {
-                    try {
-                        $dataDevices = $this->parseJsonToArray($data['relationships']['devices']['data'], 'devices');
-                        $preset->devices()->sync($dataDevices);
-                    } catch (\Exception $e) {
-                        $success = false;
-                        $error['errors']['devices'] = Lang::get('messages.NotOptionIncludeClass',
-                            ['class' => 'Preset', 'option' => 'created', 'include' => 'Devices']);
+                        $error['errors']['devicevariations'] = Lang::get('messages.NotOptionIncludeClass',
+                            ['class' => 'Preset', 'option' => 'created', 'include' => 'devicevariations']);
                         //$error['errors']['Message'] = $e->getMessage();
                     }
                 }

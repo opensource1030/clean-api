@@ -14,17 +14,21 @@ dependencies:
   pre:
     - sed -i 's/^;//' ~/.phpenv/versions/$(phpenv global)/etc/conf.d/xdebug.ini
     - mkdir -p build/logs/coverage_html
+    # - curl https://raw.githubusercontent.com/pytlesk4/stoplight-todos/master/prism.sh | sh
+
 
   override:
     - composer install --prefer-source --no-interaction
     - bundle install
+    # - prism test -s https://api.stoplight.io/v1/versions/anvGNGR9siLLbDhR8/export/oas.json
+
 
 test:
   override:
     - cp .env.test .env
-    - php vendor/bin/phpunit -c phpunit.xml --exclude-group need-review --coverage-clover build/logs/clover.xml --coverage-html build/logs/coverage_html
+    - php vendor/bin/phpunit -c phpunit.xml --exclude-group need-review --coverage-clover build/logs/clover.xml 
   post:
-    - cp -r build/logs/{clover.xml,coverage_html} $CIRCLE_ARTIFACTS
+    - cp -r build/logs/clover.xml $CIRCLE_ARTIFACTS
     - php vendor/bin/coveralls -v
 
 deployment:
