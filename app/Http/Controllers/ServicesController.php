@@ -170,7 +170,7 @@ class ServicesController extends FilteredApiController
                 DB::rollBack();
                 $error['errors']['services'] = Lang::get('messages.NotOptionIncludeClass',
                     ['class' => 'Service', 'option' => 'created', 'include' => '']);
-                $error['errors']['Message'] = $e->getMessage();
+                //$error['errors']['Message'] = $e->getMessage();
                 return response()->json($error)->setStatusCode($this->status_codes['conflict']);
             }
 
@@ -200,7 +200,7 @@ class ServicesController extends FilteredApiController
                                 $serviceItemsInterface->create($item);    
                             } catch (\Exception $e) {
                                 DB::rollBack();
-                                $error['errors']['services'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Service', 'option' => 'created', 'include' => '']);
+                                $error['errors']['services'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Service', 'option' => 'created', 'include' => 'ServiceItems']);
                                 //$error['errors']['Message'] = $e->getMessage();
                                 return response()->json($error)->setStatusCode($this->status_codes['conflict']);
                                 
