@@ -54,7 +54,9 @@ class AuthServiceProvider extends PassportServiceProvider
             Passport::tokensCan($listScope);      
         }
 
-        Passport::tokensExpireIn(Carbon::now()->addDays(6));
+        $aux = 6;
+        if (env('TOKEN_EXPIRES_IN') != null) { $aux = env('TOKEN_EXPIRES_IN'); }
+        Passport::tokensExpireIn(Carbon::now()->addDays($aux));
         //Passport::refreshTokensExpireIn(Carbon::now()->addDays(30));
     }
 
