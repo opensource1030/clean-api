@@ -87,7 +87,7 @@ class ServicesApiTest extends TestCase
                 'planCode' => "$service->planCode",
                 'cost' => "$service->cost",
                 'description' => $service->description,
-                'currency' => 'USD',
+                'currency' => $service->currency,
                 'carrierId' => $service->carrierId,
             ])
             ->seeJsonStructure([

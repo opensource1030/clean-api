@@ -40,10 +40,10 @@ class DeviceTransformer extends FilterableTransformer
             'syncId'         => (int)$device->syncId,
             'make'           => $device->make,
             'model'          => $device->model,
+            'defaultPrice'   => (int)$device->defaultPrice,
+            'currency'       => $device->currency,
             'created_at'     => $device->created_at,
             'updated_at'     => $device->updated_at,
-            'defaultPrice'   => (int)$device->defaultPrice,
-            'currency'       => $device->currency
         ];
     }
 

@@ -37,6 +37,7 @@ class DatabaseSeeder extends Seeder
         $this->call(DeviceVariationsTableSeeder::class);
         $this->call(DeviceVariationsModificationsTableSeeder::class);
         $this->call(DevicesTableSeeder::class);
+        $this->call(DeviceTypeSeeder::class);
         //$this->call(DeviceTypeSeeder::class);
         $this->call(ImagesTableSeeder::class);
         $this->call(LocationsTableSeeder::class);

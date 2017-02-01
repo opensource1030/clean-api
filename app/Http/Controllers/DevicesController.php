@@ -122,21 +122,20 @@ class DevicesController extends FilteredApiController
                         try {    
                             $deviceVar = DeviceVariation::where('deviceId', $id)->get();
                                                    
-                            $helper = app()->make('WA\Http\Controllers\DeviceVariationsHelperController');
+                            $deviceVariationInterface = app()->make('WA\Repositories\DeviceVariation\DeviceVariationInterface');
+                            $this->deleteNotRequested($dataRelationships['devicevariations']['data'], $deviceVar, $deviceVariationInterface, 'devicevariations');
 
-                            
-        
-                            $this->deleteNotRequested($dataRelationships['devicevariations']['data'], $deviceVar, $helper, 'devicevariations');                                            
-                                    $success=$helper->store($dataRelationships['devicevariations'],$device->id);
-                                    if (!$success){ 
-                                        $error['errors']['devicevariations'] = Lang::get('messages.NotOptionIncludeClass',
-                                        ['class' => 'Device', 'option' => 'updated', 'include' => 'DeviceVariations']);
-                                    }
+                            $helper = app()->make('WA\Http\Controllers\DeviceVariationsHelperController');
+                            $success=$helper->store($dataRelationships['devicevariations'],$device->id);
+                            if (!$success){ 
+                                $error['errors']['devicevariations'] = Lang::get('messages.NotOptionIncludeClass',['class' => 'Device', 'option' => 'updated', 'include' => 'DeviceVariations']);
+                            }
                             
                         } catch (\Exception $e) {
                             $success = false;
                             $error['errors']['devicevariations'] = Lang::get('messages.NotOptionIncludeClass',
                                 ['class' => 'Device', 'option' => 'updated', 'include' => 'DeviceVariations']);
+                            $error['errors']['Message'] = $e->getMessage();
                         }
                     } else {
                         $success = false;
@@ -158,7 +157,6 @@ class DevicesController extends FilteredApiController
         }
     }
 
-    
     /**
      * Create a new device
      *

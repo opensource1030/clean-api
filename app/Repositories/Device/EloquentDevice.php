@@ -61,47 +61,65 @@ class EloquentDevice extends AbstractRepository implements DeviceInterface
      * @return Device | false
      */
     public function create(array $data){
+        
         if(isset($data['name']) && $data['name'] !== ''){
             $deviceData['name'] = $data['name'];
         } else {
-            return false;
+            $deviceData['name'] = null;
         }
+        
         if(isset($data['properties']) && $data['properties'] !== ''){
             $deviceData['properties'] = $data['properties'];
         } else {
-            return false;
+            $deviceData['properties'] = null;
         }
+        
         if(isset($data['deviceTypeId']) && $data['deviceTypeId'] !== ''){
             $deviceData['deviceTypeId'] = $data['deviceTypeId'];
-        } else {
-            return false;
         }
+        
         if(isset($data['statusId']) && $data['statusId'] !== ''){
             $deviceData['statusId'] = $data['statusId'];
         } else {
-            $deviceData['statusId']
-            = null;
+            $deviceData['statusId'] = null;
         }
+        
         if(isset($data['externalId']) && $data['externalId'] !== ''){
             $deviceData['externalId'] = $data['externalId'];
         } else {
             $deviceData['externalId'] = null;
         }
+        
         if(isset($data['syncId']) && $data['syncId'] !== ''){
             $deviceData['syncId'] = $data['syncId'];
         } else {
             $deviceData['syncId'] = null;
         }
+        
         if(isset($data['make']) && $data['make'] !== ''){
             $deviceData['make'] = $data['make'];
         } else {
             $deviceData['make'] = null;
         }
+        
         if(isset($data['model']) && $data['model'] !== ''){
             $deviceData['model'] = $data['model'];
         } else {
             $deviceData['model'] = null;
         }
+
+        if(isset($data['defaultPrice']) && $data['defaultPrice'] !== ''){
+            $deviceData['defaultPrice'] = $data['defaultPrice'];
+        } else {
+            $deviceData['defaultPrice'] = null;
+        }
+        
+        if(isset($data['currency']) && $data['currency'] !== ''){
+            $deviceData['currency'] = $data['currency'];
+        } else {
+            $deviceData['currency'] = null;
+        }
+
         if(isset($data['identification']) && $data['identification'] !== ''){
             $deviceData['identification'] = $data['identification'];
         } else {
@@ -349,10 +367,13 @@ class EloquentDevice extends AbstractRepository implements DeviceInterface
         $device->deviceTypeId = isset($data['deviceTypeId']) ? $data['deviceTypeId'] : $device->deviceTypeId;
         $device->statusId = isset($data['statusId']) ? $data['statusId'] : $device->statusId;
         $device->externalId = isset($data['externalId']) ? $data['externalId'] : $device->externalId;
-        $device->identification = isset($data['identification']) ? $data['identification'] : $device->identification;
+        //$device->identification = isset($data['identification']) ? $data['identification'] : $device->identification;
         $device->syncId = isset($data['syncId']) ? $data['syncId'] : $device->syncId;
         $device->make = isset($data['make']) ? $data['make'] : $device->make;
         $device->model = isset($data['model']) ? $data['model'] : $device->model;
+        $device->defaultPrice = isset($data['defaultPrice']) ? $data['defaultPrice'] : $device->defaultPrice;
+        $device->currency = isset($data['currency']) ? $data['currency'] : $device->currency;
+
 
         if (!$device->save()) {
             return 'notSaved';
