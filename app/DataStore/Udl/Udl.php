@@ -24,7 +24,7 @@ use WA\DataStore\BaseDataStore;
  */
 class Udl extends BaseDataStore
 {
-    protected $fillable = ['companyId', 'name', 'label'];
+    protected $fillable = ['companyId', 'name', 'inputType'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany

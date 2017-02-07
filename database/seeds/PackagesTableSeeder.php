@@ -21,23 +21,7 @@ class PackagesTableSeeder extends BaseTableSeeder
             [
                 'name'     => "Package1",
                 'companyId' => 1
-            ],
-            [
-                'name'     => "Package2",
-                'companyId' => 1
-            ],
-            [
-                'name'     => "Package3",
-                'companyId' => 1
-            ],
-            [
-                'name'     => "Package4",
-                'companyId' => 2
-            ],
-            [
-                'name'     => "Package5",
-                'companyId' => 1
-            ],
+            ]
         ];
 
         $this->loadTable($data);

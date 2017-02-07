@@ -19,88 +19,22 @@ class ConditionsTableSeeder extends BaseTableSeeder
         $data = [
 
             [
-                'typeCond' => 'Employee Profile',
-                'name' => 'Name',
-                'condition' => '',
-                'value' => '',
+                'packageId' => 1,
+                'name' => 'Supervisor?',
+                'condition' => 'equal',
+                'value' => 'No',
             ],
             [
-                'typeCond' => 'Employee Profile',
-                'name' => 'Email',
-                'condition' => '',
-                'value' => '',
+                'packageId' => 1,
+                'name' => 'Hierarchy',
+                'condition' => 'contains',
+                'value' => '1',
             ],
             [
-                'typeCond'  => "Employee Profile",
-                'name'      => "Position",
-                'condition' => "like",
-                'value'     => "Position5"
-            ],
-            [
-                'typeCond'  => "Employee Profile",
+                'packageId'  => 1,
                 'name'      => "Level",
-                'condition' => "like",
-                'value'     => "Level2"
-            ],
-            [
-                'typeCond'  => "Employee Profile",
-                'name'      => "Division",
-                'condition' => "like",
-                'value'     => "Division7"
-            ],
-            [
-                'typeCond'  => "Employee Profile",
-                'name'      => "Cost Center",
-                'condition' => "like",
-                'value'     => "Cost Center9"
-            ],
-            [
-                'typeCond'  => "Employee Profile",
-                'name'      => "Budget",
-                'condition' => "",
-                'value'     => ""
-            ],
-            [
-                'typeCond'  => "Location",
-                'name'      => "Country",
-                'condition' => "",
-                'value'     => ""
-            ],
-            [
-                'typeCond'  => "Employee Profile",
-                'name'      => "Country",
-                'condition' => "",
-                'value'     => ""
-            ],
-            [
-                'typeCond'  => "Employee Profile",
-                'name'      => "City",
-                'condition' => "",
-                'value'     => ""
-            ],
-            [
-                'typeCond'  => "Employee Profile",
-                'name'      => "Address",
-                'condition' => "",
-                'value'     => ""
-            ],
-            [
-                'typeCond'  => "Employee Profile",
-                'name'      => "Cost Center",
-                'condition' => "like",
-                'value'     => "Cost Center1"
-            ],
-            [
-                'typeCond'  => "Employee Profile",
-                'name'      => "Cost Center",
-                'condition' => "like",
-                'value'     => "Cost Center5"
-            ],
-            [
-                'typeCond'  => "Employee Profile",
-                'name'      => "Cost Center",
-                'condition' => "like",
-                'value'     => "Cost Center3"
+                'condition' => "greater than",
+                'value'     => "2"
             ]
         ];
 

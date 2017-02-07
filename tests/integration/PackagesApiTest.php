@@ -107,12 +107,8 @@ class PackageApiTest extends TestCase
     {
         $package = factory(\WA\DataStore\Package\Package::class)->create();
 
-        $condition1 = factory(\WA\DataStore\Condition\Condition::class)->create()->id;
-        $condition2 = factory(\WA\DataStore\Condition\Condition::class)->create()->id;
-
-        $dataConditions = array($condition1, $condition2);
-
-        $package->conditions()->sync($dataConditions);
+        $condition1 = factory(\WA\DataStore\Condition\Condition::class)->create(['packageId' => $package->id])->id;
+        $condition2 = factory(\WA\DataStore\Condition\Condition::class)->create(['packageId' => $package->id])->id;
 
         $this->json('GET', 'packages/'.$package->id.'?include=conditions')
             ->seeJsonStructure([
@@ -157,7 +153,7 @@ class PackageApiTest extends TestCase
                         'type',
                         'id',
                         'attributes' => [
-                            'typeCond',
+                            'packageId',
                             'name',
                             'condition',
                             'value',
@@ -401,9 +397,6 @@ class PackageApiTest extends TestCase
 
         $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
 
-        $condition1 = factory(\WA\DataStore\Condition\Condition::class)->create()->id;
-        $condition2 = factory(\WA\DataStore\Condition\Condition::class)->create()->id;
-
         $service1 = factory(\WA\DataStore\Service\Service::class)->create()->id;
         $service2 = factory(\WA\DataStore\Service\Service::class)->create()->id;
 
@@ -425,8 +418,31 @@ class PackageApiTest extends TestCase
                     'relationships' => [
                         'conditions' => [
                             'data' => [
-                                ['type' => 'conditions', 'id' => $condition1],
-                                ['type' => 'conditions', 'id' => $condition2],
+                                [
+                                    'id' => 0,
+                                    'type' => 'conditions',
+                                    'name' => 'Country',
+                                    'condition' => 'equal',
+                                    'value' => 'Catalonia',
+                                    'inputType' => 'string'
+                                ],
+                                [
+                                    'id' => 0,
+                                    'type' => 'conditions',
+                                    'name' => 'Level',
+                                    'condition' => 'greater than',
+                                    'value' => '3',
+                                    'inputType' => 'number'
+                                ],
+                                [
+                                    'id' => 0,
+                                    'type' => 'conditions',
+                                    'name' => 'Supervisor?',
+                                    'condition' => 'equal',
+                                    'value' => 'Yes',
+                                    'inputType' => 'boolean'
+                                ],
+                                
                             ],
                         ],
                         'services' => [

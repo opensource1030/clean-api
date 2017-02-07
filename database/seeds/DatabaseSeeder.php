@@ -48,7 +48,6 @@ class DatabaseSeeder extends Seeder
         $this->call(OrderAppsTableSeeder::class);
         $this->call(OrdersTableSeeder::class);
         $this->call(PackageAppsTableSeeder::class);
-        $this->call(PackageConditionsTableSeeder::class);
         $this->call(PackageDevicesTableSeeder::class);
         $this->call(PackageServicesTableSeeder::class);
         $this->call(PackagesTableSeeder::class);

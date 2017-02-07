@@ -38,11 +38,11 @@ class Package extends BaseDataStore
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function conditions()
     {
-        return $this->belongsToMany('WA\DataStore\Condition\Condition', 'package_conditions', 'packageId', 'conditionId');
+        return $this->hasMany('WA\DataStore\Condition\Condition', 'packageId');
     }
 
     /**

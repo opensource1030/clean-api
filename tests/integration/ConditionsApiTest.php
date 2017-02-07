@@ -20,7 +20,7 @@ class ConditionsApiTest extends TestCase
                         'type',
                         'id',
                         'attributes' => [
-                            'typeCond',
+                            'packageId',
                             'name',
                             'condition',
                             'value',
@@ -62,7 +62,7 @@ class ConditionsApiTest extends TestCase
         $res = $this->json('GET', 'conditions/'.$condition->id)
             ->seeJson([
                 'type' => 'conditions',
-                'typeCond' => $condition->typeCond,
+                'packageId' => $condition->packageId,
                 'name' => $condition->name,
                 'condition' => $condition->condition,
                 'value' => $condition->value,
@@ -76,7 +76,7 @@ class ConditionsApiTest extends TestCase
                 'data' => [
                     'type' => 'conditions',
                     'attributes' => [
-                        'typeCond' => 'ConditionType',
+                        'packageId' => 1,
                         'name' => 'ConditionNameLink',
                         'condition' => 'ConditionCondition',
                         'value' => 'ConditionValueLink',
@@ -85,7 +85,7 @@ class ConditionsApiTest extends TestCase
             ])
             ->seeJson([
                 'type' => 'conditions',
-                'typeCond' => 'ConditionType',
+                'packageId' => 1,
                 'name' => 'ConditionNameLink',
                 'condition' => 'ConditionCondition',
                 'value' => 'ConditionValueLink',
@@ -102,7 +102,7 @@ class ConditionsApiTest extends TestCase
         $this->json('GET', 'conditions/'.$condition1->id)
             ->seeJson([
                 'type' => 'conditions',
-                'typeCond' => $condition1->typeCond,
+                'packageId' => $condition1->packageId,
                 'name' => $condition1->name,
                 'condition' => $condition1->condition,
                 'value' => $condition1->value,
@@ -113,7 +113,7 @@ class ConditionsApiTest extends TestCase
                 'data' => [
                     'type' => 'conditions',
                     'attributes' => [
-                        'typeCond' => $condition2->typeCond,
+                        'packageId' => $condition2->packageId,
                         'name' => $condition2->name,
                         'condition' => $condition2->condition,
                         'value' => $condition2->value,
@@ -122,7 +122,7 @@ class ConditionsApiTest extends TestCase
             ])
             ->seeJson([
                 'id' => $condition1->id,
-                'typeCond' => $condition2->typeCond,
+                'packageId' => $condition2->packageId,
                 'name' => $condition2->name,
                 'condition' => $condition2->condition,
                 'value' => $condition2->value,
