@@ -19,7 +19,53 @@ class FilterParameterTest extends TestCase
 
     public function testInputViaConstructor()
     {
-        $filters = new Filters(['[name]=123']);
-        $this->assertEquals([0 => ['eq' => '[name]=123']], $filters->filtering());
+        $filterArray = ['name' => '123'];
+        $filters = new Filters($filterArray);
+        $this->assertEquals(['name' => ['eq' => '123']], $filters->filtering());
     }
+
+    public function testInputViaAddFilterMethod()
+    {
+        $filters = new Filters();
+        $filters->addFilter('name', 'eq', 'bob');
+        $this->assertEquals(['name' => ['eq' => 'bob']], $filters->filtering());
+    }
+
+    public function testWithMultipleFields()
+    {
+        $filterArray = ['name' => 'bob', 'label' => 'notbob'];
+        $filters = new Filters($filterArray);
+
+        $this->assertEquals([
+            'name'  => ['eq' => 'bob'],
+            'label' => ['eq' => 'notbob']
+        ], $filters->filtering());
+        $this->assertEquals(['name', 'label'], $filters->fields());
+    }
+
+    public function testWithMultipleCriteriaPerField()
+    {
+        $filterArray = ['cost' => ['lt' => '83', 'gt' => '50']];
+        $filters = new Filters($filterArray);
+        $this->assertEquals(['cost' => ['lt' => '83', 'gt' => '50']], $filters->filtering());
+    }
+
+    public function testWithMultipleCriteriaMultipleFields()
+    {
+        $filterArray = ['cost' => ['lt' => '83', 'gt' => '50'], 'name' => '123'];
+        $filters = new Filters($filterArray);
+        $this->assertEquals(['cost' => ['lt' => '83', 'gt' => '50'], 'name' => ['eq' => '123']], $filters->filtering());
+    }
+
+    public function testIsEmpty()
+    {
+        $filters = new Filters();
+        $this->assertEquals(true, $filters->isEmpty());
+
+        $filters->addFilter('name', 'eq', 'bob');
+
+        $this->assertEquals(false, $filters->isEmpty());
+    }
+
+
 }
