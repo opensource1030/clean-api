@@ -16,6 +16,7 @@ class ApiSortingTest extends TestCase
         factory(\WA\DataStore\Device\Device::class, 10)->create();
 
         $response = $this->call('GET', '/devices?sort=identification');
+        $this->assertEquals('application/json', $response->headers->get('Content-type'));
         $json = json_decode($response->getContent());
 
         $sorted = [];
