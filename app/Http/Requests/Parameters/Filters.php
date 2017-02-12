@@ -24,14 +24,20 @@ class Filters
         }
 
         foreach ($filters as $field => $criteria) {
-            if (is_string($criteria)) {
-                $op = 'eq';
-                $val = $criteria;
+            if (is_array($criteria)) {
+                foreach ($criteria as $op => $val) {
+                    $this->addFilter($field, $op, $val);
+                }
             } else {
-                $op = key($criteria);
-                $val = current($criteria);
+                if (is_string($criteria)) {
+                    $op = 'eq';
+                    $val = $criteria;
+                } else {
+                    $op = key($criteria);
+                    $val = current($criteria);
+                }
+                $this->addFilter($field, $op, $val);
             }
-            $this->addFilter($field, $op, $val);
         }
     }
 
@@ -82,7 +88,6 @@ class Filters
         if (!isset($this->filters[$field]) || !is_array($this->filters[$field])) {
             $this->filters[$field] = [];
         }
-
         $this->filters[$field][$op] = $value;
     }
 
