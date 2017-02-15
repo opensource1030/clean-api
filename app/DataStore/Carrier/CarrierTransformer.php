@@ -9,6 +9,7 @@ use WA\DataStore\FilterableTransformer;
  */
 class CarrierTransformer extends FilterableTransformer
 {
+    protected $returnEmptyResults = false;
 
     protected $availableIncludes = [
         'images',

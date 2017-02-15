@@ -154,7 +154,7 @@ class PackageApiTest extends TestCase
                         'id',
                         'attributes' => [
                             'packageId',
-                            'name',
+                            'nameCond',
                             'condition',
                             'value',
                         ],
@@ -421,7 +421,7 @@ class PackageApiTest extends TestCase
                                 [
                                     'id' => 0,
                                     'type' => 'conditions',
-                                    'name' => 'Country',
+                                    'nameCond' => 'Country',
                                     'condition' => 'equal',
                                     'value' => 'Catalonia',
                                     'inputType' => 'string'
@@ -429,7 +429,7 @@ class PackageApiTest extends TestCase
                                 [
                                     'id' => 0,
                                     'type' => 'conditions',
-                                    'name' => 'Level',
+                                    'nameCond' => 'Level',
                                     'condition' => 'greater than',
                                     'value' => '3',
                                     'inputType' => 'number'
@@ -437,7 +437,7 @@ class PackageApiTest extends TestCase
                                 [
                                     'id' => 0,
                                     'type' => 'conditions',
-                                    'name' => 'Supervisor?',
+                                    'nameCond' => 'Supervisor?',
                                     'condition' => 'equal',
                                     'value' => 'Yes',
                                     'inputType' => 'boolean'

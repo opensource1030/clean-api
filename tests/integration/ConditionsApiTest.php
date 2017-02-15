@@ -21,7 +21,7 @@ class ConditionsApiTest extends TestCase
                         'id',
                         'attributes' => [
                             'packageId',
-                            'name',
+                            'nameCond',
                             'condition',
                             'value',
                             'created_at' => [
@@ -63,7 +63,7 @@ class ConditionsApiTest extends TestCase
             ->seeJson([
                 'type' => 'conditions',
                 'packageId' => $condition->packageId,
-                'name' => $condition->name,
+                'nameCond' => $condition->name,
                 'condition' => $condition->condition,
                 'value' => $condition->value,
             ]);
@@ -77,7 +77,7 @@ class ConditionsApiTest extends TestCase
                     'type' => 'conditions',
                     'attributes' => [
                         'packageId' => 1,
-                        'name' => 'ConditionNameLink',
+                        'nameCond' => 'ConditionNameLink',
                         'condition' => 'ConditionCondition',
                         'value' => 'ConditionValueLink',
                     ],
@@ -86,7 +86,7 @@ class ConditionsApiTest extends TestCase
             ->seeJson([
                 'type' => 'conditions',
                 'packageId' => 1,
-                'name' => 'ConditionNameLink',
+                'nameCond' => 'ConditionNameLink',
                 'condition' => 'ConditionCondition',
                 'value' => 'ConditionValueLink',
             ]);
@@ -103,7 +103,7 @@ class ConditionsApiTest extends TestCase
             ->seeJson([
                 'type' => 'conditions',
                 'packageId' => $condition1->packageId,
-                'name' => $condition1->name,
+                'nameCond' => $condition1->name,
                 'condition' => $condition1->condition,
                 'value' => $condition1->value,
             ]);
@@ -114,7 +114,7 @@ class ConditionsApiTest extends TestCase
                     'type' => 'conditions',
                     'attributes' => [
                         'packageId' => $condition2->packageId,
-                        'name' => $condition2->name,
+                        'nameCond' => $condition2->name,
                         'condition' => $condition2->condition,
                         'value' => $condition2->value,
                     ],

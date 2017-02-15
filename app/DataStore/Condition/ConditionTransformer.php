@@ -20,7 +20,7 @@ class ConditionTransformer extends FilterableTransformer
 
             'id'         => (int)$condition->id,
             'packageId'  => (int)$condition->packageId,
-            'name'       => $condition->name,
+            'nameCond'   => $condition->name,
             'condition'  => $condition->condition,
             'value'      => $condition->value,
             'created_at' => $condition->created_at,
