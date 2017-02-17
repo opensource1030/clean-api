@@ -17,10 +17,12 @@ class ModifyConditionsTable extends Migration
      */
     public function up()
     {
-        Schema::table(
-            $this->tableName, function ($table) {
-                $table->dropColumn('typeCond');
-        });
+        if(Schema::hasColumn($this->tableName, 'typeCond')) {
+            Schema::table(
+                $this->tableName, function ($table) {
+                    $table->dropColumn('typeCond');
+            });    
+        }
 
         Schema::table(
             $this->tableName, function ($table) {
