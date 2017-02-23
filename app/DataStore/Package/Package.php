@@ -58,7 +58,7 @@ class Package extends BaseDataStore
      */
     public function devicevariations()
     {
-        return $this->belongsToMany('WA\DataStore\DeviceVariation\DeviceVariation', 'package_devices', 'packageId', 'deviceId');
+        return $this->belongsToMany('WA\DataStore\DeviceVariation\DeviceVariation', 'package_devices', 'packageId', 'deviceVariationId');
     }
 
     /**
