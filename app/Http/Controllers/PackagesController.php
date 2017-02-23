@@ -174,14 +174,14 @@ class PackagesController extends FilteredApiController
             if ($package == 'notExist') {
                 DB::rollBack();
                 $error['errors']['package'] = Lang::get('messages.NotExistClass', ['class' => 'Package']);
-                $error['errors']['Message'] = $e->getMessage();
+                //$error['errors']['Message'] = $e->getMessage();
                 return response()->json($error)->setStatusCode($this->status_codes['notexists']);
             }
 
             if ($package == 'notSaved') {
                 DB::rollBack();
                 $error['errors']['package'] = Lang::get('messages.NotSavedClass', ['class' => 'Package']);
-                $error['errors']['Message'] = $e->getMessage();
+                //$error['errors']['Message'] = $e->getMessage();
                 return response()->json($error)->setStatusCode($this->status_codes['conflict']);
             }
         } catch (\Exception $e) {
@@ -189,7 +189,7 @@ class PackagesController extends FilteredApiController
             $success = false;
             $error['errors']['packages'] = Lang::get('messages.NotOptionIncludeClass',
                 ['class' => 'Package', 'option' => 'updated', 'include' => '']);
-            $error['errors']['Message'] = $e->getMessage();
+            //$error['errors']['Message'] = $e->getMessage();
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
@@ -210,7 +210,7 @@ class PackagesController extends FilteredApiController
                         } catch (\Exception $e) {
                             $succes = false;
                             $error['errors']['conditions'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Package', 'option' => 'updated', 'include' => 'conditions']);
-                            $error['errors']['Message'] = $e->getMessage();
+                            //$error['errors']['Message'] = $e->getMessage();
                         }
 
                         if ($success) {
@@ -252,7 +252,7 @@ class PackagesController extends FilteredApiController
                     } catch (\Exception $e) {
                         $error['errors']['services'] = Lang::get('messages.NotOptionIncludeClass',
                             ['class' => 'Package', 'option' => 'updated', 'include' => 'Services']);
-                        $error['errors']['Message'] = $e->getMessage();
+                        //$error['errors']['Message'] = $e->getMessage();
                     }
                 }
             }
@@ -266,7 +266,7 @@ class PackagesController extends FilteredApiController
                         $success = false;
                         $error['errors']['devicevariations'] = Lang::get('messages.NotOptionIncludeClass',
                             ['class' => 'Package', 'option' => 'updated', 'include' => 'DeviceVariations']);
-                        $error['errors']['Message'] = $e->getMessage();
+                        //$error['errors']['Message'] = $e->getMessage();
                     }
                 }
             }
@@ -280,7 +280,7 @@ class PackagesController extends FilteredApiController
                         $success = false;
                         $error['errors']['apps'] = Lang::get('messages.NotOptionIncludeClass',
                             ['class' => 'Package', 'option' => 'updated', 'include' => 'Apps']);
-                        $error['errors']['Message'] = $e->getMessage();
+                        //$error['errors']['Message'] = $e->getMessage();
                     }
                 }
             }
