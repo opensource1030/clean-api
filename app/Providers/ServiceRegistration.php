@@ -9,7 +9,7 @@ use WA\DataStore\Asset\Asset;
 use WA\DataStore\Attribute;
 use WA\DataStore\Carrier\Carrier;
 use WA\DataStore\Category\CategoryApp;
-use WA\DataStore\Category\Preset;
+use WA\DataStore\Preset\Preset;
 use WA\DataStore\Company\Company;
 use WA\DataStore\Company\CompanyCurrentBillMonth;
 use WA\DataStore\Condition\Condition;

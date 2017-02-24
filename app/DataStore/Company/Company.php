@@ -55,7 +55,7 @@ class Company extends BaseDataStore
      */
     public function presets()
     {
-        return $this->hasMany('WA\DataStore\Category\Preset', 'companyId');
+        return $this->hasMany('WA\DataStore\Preset\Preset', 'companyId');
     }
     
     /**

@@ -5,8 +5,8 @@ namespace WA\Http\Controllers;
 use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Lang;
-use WA\DataStore\Category\Preset;
-use WA\DataStore\Category\PresetTransformer;
+use WA\DataStore\Preset\Preset;
+use WA\DataStore\Preset\PresetTransformer;
 use WA\Repositories\Category\PresetInterface;
 
 /**

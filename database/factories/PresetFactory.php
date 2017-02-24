@@ -1,6 +1,6 @@
 <?php
 
-$factory->define(WA\DataStore\Category\Preset::class, function (\Faker\Generator $faker) {
+$factory->define(WA\DataStore\Preset\Preset::class, function (\Faker\Generator $faker) {
 
     return [
         'name' => 'Preset'.random_int(1, 60),

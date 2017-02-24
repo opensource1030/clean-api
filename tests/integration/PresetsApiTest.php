@@ -9,7 +9,7 @@ class PresetsApiTest extends TestCase
 
     public function testGetPresets()
     {
-        factory(\WA\DataStore\Category\Preset::class, 40)->create();
+        factory(\WA\DataStore\Preset\Preset::class, 40)->create();
 
         $res = $this->json('GET', 'presets');
 
@@ -60,7 +60,7 @@ class PresetsApiTest extends TestCase
 
     public function testGetPresetByIdIfExists()
     {
-        $preset = factory(\WA\DataStore\Category\Preset::class)->create();
+        $preset = factory(\WA\DataStore\Preset\Preset::class)->create();
 
         $res = $this->json('GET', 'presets/'.$preset->id)
             ->seeJson([
@@ -95,7 +95,7 @@ class PresetsApiTest extends TestCase
 
     public function testGetPresetByIdIfNoExists()
     {
-        $presetId = factory(\WA\DataStore\Category\Preset::class)->create()->id;
+        $presetId = factory(\WA\DataStore\Preset\Preset::class)->create()->id;
         $presetId = $presetId + 10;
 
         $response = $this->call('GET', 'presets/'.$presetId);
@@ -104,7 +104,7 @@ class PresetsApiTest extends TestCase
 
     public function testGetPresetByIdandIncludesDeviceVariations()
     {
-        $preset = factory(\WA\DataStore\Category\Preset::class)->create();
+        $preset = factory(\WA\DataStore\Preset\Preset::class)->create();
 
         $device = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create()->id;
 
@@ -170,7 +170,7 @@ class PresetsApiTest extends TestCase
 
     /*public function testGetPresetByIdandIncludesImages()
     {
-        $preset = factory(\WA\DataStore\Category\Preset::class)->create();
+        $preset = factory(\WA\DataStore\Preset\Preset::class)->create();
 
         $image1 = factory(\WA\DataStore\Image\Image::class)->create()->id;
         $image2 = factory(\WA\DataStore\Image\Image::class)->create()->id;
@@ -237,7 +237,7 @@ class PresetsApiTest extends TestCase
 
     public function testCreatePreset()
     {
-        $preset = factory(\WA\DataStore\Category\Preset::class)->create();
+        $preset = factory(\WA\DataStore\Preset\Preset::class)->create();
 
         $device1 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create()->id;
         $device2 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create()->id;
@@ -450,10 +450,10 @@ class PresetsApiTest extends TestCase
 
     public function testUpdatePreset()
     {
-        $preset = factory(\WA\DataStore\Category\Preset::class)->create(
+        $preset = factory(\WA\DataStore\Preset\Preset::class)->create(
             ['name' => 'namePreset1']
         );
-        $presetAux = factory(\WA\DataStore\Category\Preset::class)->create(
+        $presetAux = factory(\WA\DataStore\Preset\Preset::class)->create(
             ['name' => 'namePreset2']
         );
 
@@ -479,7 +479,7 @@ class PresetsApiTest extends TestCase
     public function testDeletePresetIfExists()
     {
         // CREATE & DELETE
-        $preset = factory(\WA\DataStore\Category\Preset::class)->create();
+        $preset = factory(\WA\DataStore\Preset\Preset::class)->create();
         $responseDel = $this->call('DELETE', 'presets/'.$preset->id);
         $this->assertEquals(200, $responseDel->status());
         $responseGet = $this->call('GET', 'presets/'.$preset->id);

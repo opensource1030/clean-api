@@ -1,6 +1,6 @@
 <?php
 
-namespace WA\DataStore\Category;
+namespace WA\DataStore\Preset;
 
 use WA\DataStore\FilterableTransformer;
 

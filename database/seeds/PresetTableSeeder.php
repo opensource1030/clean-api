@@ -7,6 +7,6 @@ class PresetTableSeeder extends BaseTableSeeder
     public function run()
     {
         $this->deleteTable();
-        factory(\WA\DataStore\Category\Preset::class, 60)->create();
+        factory(\WA\DataStore\Preset\Preset::class, 60)->create();
     }
 }
