@@ -1,7 +1,7 @@
 <?php
 
 $factory->define(\WA\DataStore\Carrier\Carrier::class, function ($faker) {
-    $carriers = ['ATT', 'Verizon', 'T-Mobile', 'Sprint'];
+    $carriers = ['ATT', 'Verizon', 'T-Mobile', 'Sprint', 'iPass', 'Rogers', 'T-Mobile DE', 'US Cellular', 'System', 'BellCanada', 'VodafoneUK', 'VodafoneDE'];
 
     return [
         'presentation' => $name = $carriers[array_rand($carriers)],

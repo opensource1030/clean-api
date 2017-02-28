@@ -20,7 +20,7 @@ class UdlTransformer extends FilterableTransformer
             'id'    => $udl->id,
             'companyId'    => $udl->companyId,
             'name'  => $udl->name,
-            'label' => $udl->label,
+            'inputType' => $udl->inputType,
             'sections' => $udl->udlValues,
             'legacyUdlField' => $udl->legacyUdlField,
         ];

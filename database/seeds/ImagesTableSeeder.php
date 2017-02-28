@@ -84,6 +84,10 @@ class ImagesTableSeeder extends BaseTableSeeder
             ],
         ];
 
+        if(!file_exists('./storage/app/public/')) {
+            mkdir('./storage/app/public/');
+        }
+
         copy('./database/seeds/imagesseeder/phpFmndT1.png', './storage/app/public/phpFmndT1.png');
         copy('./database/seeds/imagesseeder/phps1pu40.jpg', './storage/app/public/phps1pu40.jpg');
         copy('./database/seeds/imagesseeder/phpQ3MhPB.png', './storage/app/public/phpQ3MhPB.png');

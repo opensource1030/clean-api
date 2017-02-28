@@ -4,7 +4,6 @@ namespace WA\Http\Controllers;
 
 use Dingo\Api\Http\Response;
 use Dingo\Api\Routing\Helpers;
-
 use Log;
 
 /**
@@ -199,20 +198,26 @@ abstract class ApiController extends BaseController
      *  @param: $email = Email to Send.
      *  @param: $type = Model Created.
      */
-    /*
-    public function sendConfirmationEmail($data, $email, $type = '') {
+    public function sendConfirmationEmail($userId, $type) {
 
         try {
-            Mail::send('emails.employee.welcome', $data, 
-                function ($m) use ($email, $type) {
-                    $m->from(env('MAIL_FROM_ADDRESS'), 'Wireless Analytics');
-                    $m->to($email)->subject($type.' Created!');
-                    $m->cc(env('MAIL_CC_ADDRESS'));
-                }
+            $res = \Illuminate\Support\Facades\Mail::send(
+                'emails.notifications.new_order_received', // VIEW NAME
+                [
+                    'userId' => $userId,
+                    'type' => $type
+                ], // PARAMETERS PASSED TO THE VIEW
+                function ($message) use ($type) {
+                    $message->subject('New '.$type.' Received');
+                    $message->from(env('MAIL_USERNAME_FROM'));
+                    $message->to(env('MAIL_USERNAME_TO'));
+                } // CALLABACK
             );
+
         } catch (\Exception $e) {
+            Log::debug("SendMailError: ".print_r($e->getMessage(), true));
             return false;
         }
         return true;        
-    }*/
+    }
 }

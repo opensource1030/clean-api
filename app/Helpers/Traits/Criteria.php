@@ -282,7 +282,7 @@ trait Criteria
                 $query->where($filterKey, '>=', $val);
                 break;
             case 'le':
-                $query->where($filterKey, '>=', $val);
+                $query->where($filterKey, '<=', $val);
                 break;
             case 'ne':
                 // Handle delimited lists

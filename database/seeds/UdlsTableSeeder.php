@@ -11,75 +11,69 @@ class UdlsTableSeeder extends BaseTableSeeder
         $data = [
             [
                 'companyId' => 1,
-                'name' => 'position',
-                'label' => 'Position',
-                'legacyUdlField' => null
+                'name' => 'Position',
+                'legacyUdlField' => null,
+                'inputType' => 'string'
             ],
             [
                 'companyId' => 1,
-                'name' => 'level',
-                'label' => 'Level',
-                'legacyUdlField' => null
+                'name' => 'Division',
+                'legacyUdlField' => null,
+                'inputType' => 'number'
             ],
             [
                 'companyId' => 1,
-                'name' => 'division',
-                'label' => 'Division',
-                'legacyUdlField' => null
-            ],
-            [
-                'companyId' => 1,
-                'name' => 'costcenter',
-                'label' => 'Cost Center',
-                'legacyUdlField' => null
+                'name' => 'Cost Center',
+                'legacyUdlField' => null,
+                'inputType' => 'string'
             ],
             [
                 'companyId' => 2,
-                'name' => 'sector',
-                'label' => 'Sector',
-                'legacyUdlField' => null
+                'name' => 'Sector',
+                'legacyUdlField' => null,
+                'inputType' => 'string'
             ],
             [
                 'companyId' => 2,
-                'name' => 'vehicle',
-                'label' => 'Vehicle',
-                'legacyUdlField' => null
+                'name' => 'Vehicle',
+                'legacyUdlField' => null,
+                'inputType' => 'string'
             ],
             [
                 'companyId' => 2,
-                'name' => 'radio',
-                'label' => 'Radio',
-                'legacyUdlField' => null
+                'name' => 'Radio',
+                'legacyUdlField' => null,
+                'inputType' => 'string'
             ],
             [
                 'companyId' => 2,
-                'name' => 'division',
-                'label' => 'Division',
-                'legacyUdlField' => null
+                'name' => 'Division',
+                'legacyUdlField' => null,
+                'inputType' => 'string'
             ],
             [
                 'companyId' => 3,
-                'name' => 'position',
-                'label' => 'Position',
-                'legacyUdlField' => null
+                'name' => 'Position',
+                'legacyUdlField' => null,
+                'inputType' => 'string'
             ],
             [
                 'companyId' => 3,
-                'name' => 'sector',
-                'label' => 'Sector',
-                'legacyUdlField' => null
+                'name' => 'Sector',
+                'legacyUdlField' => null,
+                'inputType' => 'string'
             ],
             [
                 'companyId' => 3,
-                'name' => 'vehicle',
-                'label' => 'Vehicle',
-                'legacyUdlField' => null
+                'name' => 'Vehicle',
+                'legacyUdlField' => null,
+                'inputType' => 'string'
             ],
             [
                 'companyId' => 3,
-                'name' => 'costcenter',
-                'label' => 'Cost Center',
-                'legacyUdlField' => null
+                'name' => 'Cost Center',
+                'legacyUdlField' => null,
+                'inputType' => 'string'
             ]
         ];
 

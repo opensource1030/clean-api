@@ -19,8 +19,8 @@ class ConditionTransformer extends FilterableTransformer
         return [
 
             'id'         => (int)$condition->id,
-            'typeCond'   => $condition->typeCond,
-            'name'       => $condition->name,
+            'packageId'  => (int)$condition->packageId,
+            'nameCond'   => $condition->name,
             'condition'  => $condition->condition,
             'value'      => $condition->value,
             'created_at' => $condition->created_at,

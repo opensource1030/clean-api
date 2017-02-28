@@ -9,6 +9,7 @@ use WA\DataStore\FilterableTransformer;
  */
 class CarrierTransformer extends FilterableTransformer
 {
+    protected $returnEmptyResults = false;
 
     protected $availableIncludes = [
         'images',
@@ -24,7 +25,7 @@ class CarrierTransformer extends FilterableTransformer
     public function transform(Carrier $carrier)
     {
         return [
-            'id'           => $carrier->id,
+            'id'           => (int)$carrier->id,
             'name'         => $carrier->name,
             'presentation' => $carrier->presentation,
             'active'       => $carrier->active,

@@ -14,6 +14,7 @@ use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvid
 use WA\Auth\PasswordGrant;
 use Log;
 use Schema;
+use Carbon\Carbon;
 
 class AuthServiceProvider extends PassportServiceProvider
 {
@@ -52,6 +53,11 @@ class AuthServiceProvider extends PassportServiceProvider
 
             Passport::tokensCan($listScope);      
         }
+
+        $aux = 6;
+        if (env('TOKEN_EXPIRES_IN') != null) { $aux = env('TOKEN_EXPIRES_IN'); }
+        Passport::tokensExpireIn(Carbon::now()->addDays($aux));
+        //Passport::refreshTokensExpireIn(Carbon::now()->addDays(30));
     }
 
     /**

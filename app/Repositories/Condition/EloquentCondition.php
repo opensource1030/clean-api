@@ -24,11 +24,11 @@ class EloquentCondition extends AbstractRepository implements ConditionInterface
             return 'notExist';
         }
 
-        if (isset($data['typeCond'])) {
-            $condition->typeCond = $data['typeCond'];
+        if (isset($data['packageId'])) {
+            $condition->packageId = $data['packageId'];
         }
-        if (isset($data['name'])) {
-            $condition->name = $data['name'];
+        if (isset($data['nameCond'])) {
+            $condition->name = $data['nameCond'];
         }
         if (isset($data['condition'])) {
             $condition->condition = $data['condition'];
@@ -66,8 +66,8 @@ class EloquentCondition extends AbstractRepository implements ConditionInterface
     public function create(array $data)
     {
         $conditionData = [
-            "typeCond" =>  isset($data['typeCond']) ? $data['typeCond'] : null ,
-            "name" => isset($data['name']) ? $data['name'] : null,
+            "packageId" =>  isset($data['packageId']) ? $data['packageId'] : null ,
+            "name" => isset($data['nameCond']) ? $data['nameCond'] : null,
             "condition" => isset($data['condition']) ? $data['condition'] : null,
             "value" => isset($data['value']) ? $data['value'] : null,
         ];

@@ -11,7 +11,7 @@ $factory->define(WA\DataStore\Service\Service::class, function ($faker) {
         'cost' => $faker->numberBetween(100, 199),
         'description' => $faker->paragraph,
         'currency' => $currency[array_rand($currency)],
-        'carrierId' => 1,
+        'carrierId' => $faker->numberBetween(1, 30),
         'created_at' => $faker->dateTime,
         'updated_at' => $faker->dateTime,
     ];

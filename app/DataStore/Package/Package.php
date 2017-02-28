@@ -38,11 +38,11 @@ class Package extends BaseDataStore
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function conditions()
     {
-        return $this->belongsToMany('WA\DataStore\Condition\Condition', 'package_conditions', 'packageId', 'conditionId');
+        return $this->hasMany('WA\DataStore\Condition\Condition', 'packageId');
     }
 
     /**
@@ -58,7 +58,7 @@ class Package extends BaseDataStore
      */
     public function devicevariations()
     {
-        return $this->belongsToMany('WA\DataStore\DeviceVariation\DeviceVariation', 'package_devices', 'packageId', 'deviceId');
+        return $this->belongsToMany('WA\DataStore\DeviceVariation\DeviceVariation', 'package_devices', 'packageId', 'deviceVariationId');
     }
 
     /**

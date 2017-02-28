@@ -82,7 +82,7 @@ class EloquentService extends AbstractRepository implements ServiceInterface
             "title" =>  isset($data['title']) ? $data['title'] : null ,
             "planCode" => isset($data['planCode']) ? $data['planCode'] : 0,
             "cost" =>  isset($data['cost']) ? $data['cost'] : 0,
-            "description" => isset($data['description']) ? $data['description'] : null,
+            "description" => isset($data['description']) ? $data['description'] : '',
             "currency" => isset($data['currency']) ? $data['currency'] : 'USD',
             "carrierId" =>  isset($data['carrierId']) ? $data['carrierId'] : null ,
         ];

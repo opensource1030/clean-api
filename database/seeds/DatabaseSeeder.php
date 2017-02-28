@@ -37,6 +37,7 @@ class DatabaseSeeder extends Seeder
         $this->call(DeviceVariationsTableSeeder::class);
         $this->call(DeviceVariationsModificationsTableSeeder::class);
         $this->call(DevicesTableSeeder::class);
+        $this->call(DeviceTypeSeeder::class);
         //$this->call(DeviceTypeSeeder::class);
         $this->call(ImagesTableSeeder::class);
         $this->call(LocationsTableSeeder::class);
@@ -47,7 +48,6 @@ class DatabaseSeeder extends Seeder
         $this->call(OrderAppsTableSeeder::class);
         $this->call(OrdersTableSeeder::class);
         $this->call(PackageAppsTableSeeder::class);
-        $this->call(PackageConditionsTableSeeder::class);
         $this->call(PackageDevicesTableSeeder::class);
         $this->call(PackageServicesTableSeeder::class);
         $this->call(PackagesTableSeeder::class);

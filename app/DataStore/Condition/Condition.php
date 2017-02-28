@@ -13,7 +13,7 @@ class Condition extends BaseDataStore
     protected $table = 'conditions';
 
     protected $fillable = [
-            'typeCond',
+            'packageId',
             'name',
             'condition',
             'value',
@@ -44,6 +44,6 @@ class Condition extends BaseDataStore
      */
     public function packages()
     {
-        return $this->belongsToMany('WA\DataStore\Package\Package', 'package_conditions', 'packageId', 'conditionsId');
+        return $this->belongsTo('WA\DataStore\Package\Package', 'packageId');
     }
 }

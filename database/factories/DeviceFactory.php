@@ -31,6 +31,7 @@ $factory->define(\WA\DataStore\Device\Device::class,
         $currency = ['USD','EUR', 'GBP'];
         $makes = ['Apple', 'Samsung', 'Blackberry'];
         $models = ['Galaxy S7', 'IPhone SE', 'Q10', 'IPad Air'];
+        $deviceTypeIds = [1,2,3,4,5,6];
         return [
             'identification' => $faker->isbn13,
             'name' => $names[array_rand($names)],
@@ -42,13 +43,7 @@ $factory->define(\WA\DataStore\Device\Device::class,
             'model' => $models[array_rand($models)],
             'defaultPrice' => $faker->numberBetween(99, 501),
             'currency' => $currency[array_rand($currency)],
-            'deviceTypeId' => function () {
-                $DTname = ['Smartphone', 'Sim Card', 'Tablet', 'Accessory'];
-                $deviceType = factory(\WA\DataStore\DeviceType\DeviceType::class)->make();
-                $deviceType->name = $DTname[array_rand($DTname)];
-                $deviceType->save();
-
-                return $deviceType->id;}
+            'deviceTypeId' => $deviceTypeIds[array_rand($deviceTypeIds)]
             
         ];
     }

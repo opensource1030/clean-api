@@ -77,7 +77,7 @@ class EloquentServiceItem extends AbstractRepository implements ServiceItemInter
         $itemData = [
             "serviceId" =>  isset($data['serviceId']) ? $data['serviceId'] : null ,
             "category" => isset($data['category']) ? $data['category'] : null,
-            "description" => isset($data['description']) ? $data['description'] : null,
+            "description" => isset($data['description']) ? $data['description'] : '',
             "value" =>  isset($data['value']) ? $data['value'] : null ,
             "unit" => isset($data['unit']) ? $data['unit'] : null,
             "cost" => isset($data['cost']) ? $data['cost'] : null,

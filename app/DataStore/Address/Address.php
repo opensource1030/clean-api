@@ -12,6 +12,9 @@ class Address extends BaseDataStore
     protected $table = 'address';
 
     protected $fillable = [
+            'name',
+            'attn',
+            'phone',
             'address',
             'city',
             'state',

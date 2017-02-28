@@ -7,34 +7,18 @@ class PresetDeviceVariationTableSeeder extends BaseTableSeeder
     public function run()
     {
         $this->deleteTable();
+        $i = 1;
+        while ($i < 1001) {
+            $data = [
+                [
+                    'presetId' => rand(1,60),
+                    'deviceVariationId' => $i
+                ]
+            ];
 
-        $data = [
-            [
-                'presetId' => 1,
-                'deviceVariationId' => 1
-            ],
-            [
-                'presetId' => 1,
-                'deviceVariationId' => 2
-            ],
-            [
-                'presetId' => 2,
-                'deviceVariationId' => 3
-            ],
-            [
-                'presetId' => 3,
-                'deviceVariationId' => 1
-            ],
-            [
-                'presetId' => 3,
-                'deviceVariationId' => 2
-            ],
-            [
-                'presetId' => 3,
-                'deviceVariationId' => 3
-            ],
-        ];
-
-        $this->loadTable($data);
+            $this->loadTable($data);
+            $i++;
+        }
+        
     }
 }

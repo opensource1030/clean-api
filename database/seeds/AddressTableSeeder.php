@@ -19,6 +19,9 @@ class AddressTableSeeder extends BaseTableSeeder
         $data = [
 
             [
+                'name' => 'Zeus',
+                'attn' => 'atentamente',
+                'phone' => '+34900020202',
                 'address' => 'address1',
                 'city' => 'city1',
                 'state' => 'state1',
@@ -26,6 +29,9 @@ class AddressTableSeeder extends BaseTableSeeder
                 'postalCode' => 'postalCode1',
             ],
             [
+                'name' => 'Ares',
+                'attn' => 'atentamente',
+                'phone' => '+34900020202',
                 'address' => 'address2',
                 'city' => 'city2',
                 'state' => 'state2',
@@ -33,6 +39,9 @@ class AddressTableSeeder extends BaseTableSeeder
                 'postalCode' => 'postalCode2',
             ],
             [
+                'name' => 'Hades',
+                'attn' => 'atentamente',
+                'phone' => '+34900020202',
                 'address' => 'address3',
                 'city' => 'city3',
                 'state' => 'state3',
@@ -40,6 +49,9 @@ class AddressTableSeeder extends BaseTableSeeder
                 'postalCode' => 'postalCode3',
             ],
             [
+                'name' => 'Poseidón',
+                'attn' => 'atentamente',
+                'phone' => '+34900020202',
                 'address' => 'address4',
                 'city' => 'city4',
                 'state' => 'state4',

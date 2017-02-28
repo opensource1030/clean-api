@@ -11,6 +11,8 @@ use WA\DataStore\Package\PackageTransformer;
 use WA\DataStore\User\User;
 use WA\Repositories\Package\PackageInterface;
 
+use Log;
+
 /**
  * Package resource.
  *
@@ -150,7 +152,6 @@ class PackagesController extends FilteredApiController
     {
         $success = true;
         $dataConditions = $dataServices = $dataDevices = $dataApps = array();
-
         /*
          * Checks if Json has data, data-type & data-attributes.
          */
@@ -158,6 +159,7 @@ class PackagesController extends FilteredApiController
             $error['errors']['json'] = Lang::get('messages.InvalidJson');
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
+
 
         DB::beginTransaction();
 
@@ -197,16 +199,48 @@ class PackagesController extends FilteredApiController
         if (isset($data['relationships'])) {
             $dataRelationships = $data['relationships'];
 
-            if (isset($dataRelationships['conditions'])) {
-                if (isset($dataRelationships['conditions']['data'])) {
-                    $dataConditions = $this->parseJsonToArray($dataRelationships['conditions']['data'], 'conditions');
-                    try {
-                        $package->conditions()->sync($dataConditions);
-                    } catch (\Exception $e) {
-                        $error['errors']['conditions'] = Lang::get('messages.NotOptionIncludeClass',
-                            ['class' => 'Package', 'option' => 'updated', 'include' => 'Conditions']);
-                        //$error['errors']['conditionsMessage'] = $e->getMessage();
+            if (isset($data['relationships']) && $success) {
+                if (isset($data['relationships']['conditions'])) {
+                    if (isset($data['relationships']['conditions']['data'])) {
+                        $data = $data['relationships']['conditions']['data'];
+
+                        try {
+                            $conditions = Condition::where('packageId', $id)->get();
+                            $conditionsInterface = app()->make('WA\Repositories\Condition\ConditionInterface');
+                        } catch (\Exception $e) {
+                            $succes = false;
+                            $error['errors']['conditions'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Package', 'option' => 'updated', 'include' => 'conditions']);
+                            //$error['errors']['Message'] = $e->getMessage();
+                        }
+
+                        if ($success) {
+                            $this->deleteNotRequested($data, $conditions, $conditionsInterface, 'conditions');
+
+                            foreach ($data as $item) {
+                                $item['packageId'] = $package->id;
+
+                                if (isset($item['id'])) {
+                                    if ($item['id'] == 0) {
+                                        $conditionsInterface->create($item);
+                                    } else {
+                                        if ($item['id'] > 0) {
+                                            $conditionsInterface->update($item);
+                                        } else {
+                                            $success = false;
+                                            $error['errors']['items'] = 'the Condition has an incorrect id';
+                                        }
+                                    }
+                                } else {
+                                    $success = false;
+                                    $error['errors']['conditions'] = 'the Condition has no id';
+                                }
+                            }
+                        }                    
                     }
+                }
+            } else {
+                foreach ($serviceItems as $item) {
+                    $serviceItemsInterface->deleteById($item['id']);
                 }
             }
 
@@ -302,16 +336,23 @@ class PackagesController extends FilteredApiController
         if (isset($data['relationships'])) {
             $dataRelationships = $data['relationships'];
 
-            if (isset($dataRelationships['conditions'])) {
-                if (isset($dataRelationships['conditions']['data'])) {
-                    $dataConditions = $this->parseJsonToArray($dataRelationships['conditions']['data'], 'conditions');
-                    try {
-                        $package->conditions()->sync($dataConditions);
-                    } catch (\Exception $e) {
-                        $success = false;
-                        $error['errors']['conditions'] = Lang::get('messages.NotOptionIncludeClass',
-                            ['class' => 'Package', 'option' => 'created', 'include' => 'Conditions']);
-                        //$error['errors']['Message'] = $e->getMessage();
+            if (isset($data['relationships']['conditions'])) {
+                if (isset($data['relationships']['conditions']['data'])) {
+                        
+                    $conditionsInterface = app()->make('WA\Repositories\Condition\ConditionInterface');
+                    $data = $data['relationships']['conditions']['data'];
+
+                    foreach ($data as $item) {
+                        try {
+                            $item['packageId'] = $package->id;
+                            $conditionsInterface->create($item);    
+                        } catch (\Exception $e) {
+                            DB::rollBack();
+                            $error['errors']['services'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Package', 'option' => 'created', 'include' => 'Conditions']);
+                            //$error['errors']['Message'] = $e->getMessage();
+                            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+                              
+                        }
                     }
                 }
             }
