@@ -96,6 +96,12 @@ $api->version('v1', function ($api) {
         'uses' => $ssoAuth . '@loginUser'
     ]);
 
+    $auth = 'WA\Auth\Auth';
+    $api->get('resetPassword/{email}', ['as' => 'reset.email.credentials', 'uses' => $auth . '@resetPassword']);
+    $api->get('resetPassword/{username}/{credentials}', ['as' => 'reset.password.credentials', 'uses' => $auth . '@getPasswordFromEmail']);
+
+
+
     /*
     $ssoAuth = 'WA\Http\Controllers\Auth\SSO';
     $api->get('doSSO/{email}', [

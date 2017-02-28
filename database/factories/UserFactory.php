@@ -12,7 +12,7 @@ $factory->define(WA\DataStore\User\User::class, function (Faker\Generator $faker
         'identification' => uniqid('WA-'),
         'email' => $email = $faker->safeEmail,
         'alternateEmail' => $faker->safeEmail,
-        'password' => bcrypt('user'),
+        'password' => 'user',
         'username' => explode('@', $email)[0],
         'confirmation_code' => md5(uniqid(mt_rand(), true)),
         'remember_token' => null,

@@ -22,6 +22,13 @@ class CompanyDomainsTableSeeder extends BaseTableSeeder
             'companyId' => 9,
         ];
 
+        $domainNoSSO = [
+            'domain' => 'example.com',
+            'active' => 1,
+            'companyId' => 5,
+        ];
+
         $this->loadTable($domainMicrosoft);
+        $this->loadTable($domainNoSSO);
     }
 }

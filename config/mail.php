@@ -80,7 +80,7 @@ return array(
     |
     */
 
-    'username' => env('MAIL_USERNAME_FROM'),
+    'username' => env('MAIL_USERNAME'),
 
     /*
     |--------------------------------------------------------------------------
@@ -93,6 +93,6 @@ return array(
     |
     */
 
-    'password' => env('MAIL_PASSWORD_FROM'),
+    'password' => env('MAIL_PASSWORD'),
 
 );
