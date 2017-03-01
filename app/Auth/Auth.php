@@ -3,7 +3,9 @@
 namespace WA\Auth;
 
 use Auth as IlluminateAuth;
+use Log;
 use Cache;
+use Validator;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
 use WA\Repositories\Company\CompanyInterface;
@@ -92,31 +94,47 @@ class Auth implements AuthInterface
      */
     public function resetPassword($email)
     {
-        $user = $this->findUserByEmail($email);
+        // email.
+        $email = trim($email);
+
+        $emailArray['email'] = $email;
+        $validator = Validator::make($emailArray, [
+            'email' => 'required|email',
+        ]);
+
+        if ($validator->fails()) {
+            Log::debug("not valid email");
+            $error['message'] = 'not valid email';
+            return response()->json($error)->setStatusCode(400);
+        }
+
 
         $idCompany = $this->company->getIdByUserEmail($email);
         if($idCompany <= 0) {
-            return 'Company Not Found';
+            Log::debug("company not found");
+            $error['message'] = 'company not found';
+            return response()->json($error)->setStatusCode(404);
+        }
+
+        $user = $this->findUserByEmail($email);
+        if ($user == null) {
+            Log::debug("user not found");
+            $error['message'] = 'user not found';
+            return response()->json($error)->setStatusCode(404);
         }
 
         $company = $this->company->byId($idCompany);
-
         if ($company->saml2Settings() != null) {
-            return 'Company has SSO';
-        }
-
-        if ($user == null) {
-            return 'User Null';
+            Log::debug("company has sso");
+            $error['message'] = 'company has sso';
+            return response()->json($error)->setStatusCode(409);
         }
 
         $code = bin2hex(random_bytes(64));
-
-        $identification = $user->identification;
-
-        $redirectPath = $identification.'/'.$code;
+        $redirectPath = $user->identification.'/'.$code;
 
         $data = [
-            'identification' => $identification,
+            'identification' => $user->identification,
             'redirectPath' => $redirectPath,
         ];
 
@@ -125,10 +143,11 @@ class Auth implements AuthInterface
             $m->to($email)->subject('Reset Password Requested by '.$user->username.' !');
         });
 
-        Cache::put('user_email_'.$code, $identification, 60);
-        Cache::put('user_code_'.$identification, $code, 60);
+        Cache::put('user_email_'.$code, $user->identification, 60);
+        Cache::put('user_code_'.$user->identification, $code, 60);
 
-        return 'Ok';
+        $message['message'] = 'email sent';
+        return response()->json($message)->setStatusCode(200);
     }
 
     private function findUserByEmail($email) {
@@ -145,6 +164,7 @@ class Auth implements AuthInterface
 
     public function getPasswordFromEmail($identification, $code) {
         $user = $this->findUserByIdentification($identification);
+        $statusCode = 200;
 
         if($this->request['password1'] == $this->request['password2']) {
             $identificationCache = Cache::get('user_email_'.$code);
@@ -165,13 +185,25 @@ class Auth implements AuthInterface
                         Cache::forget('user_email_'.$code);
                         Cache::forget('user_code_'.$identification);
 
-                        return 'Ok';
+                        $message['message'] = 'password changed';
+                    } else {
+                       $message['message'] = 'different identifications';
+                       $statusCode = 409;
                     }
+                } else {
+                   $message['message'] = 'different codes';
+                   $statusCode = 409;
                 }
+            } else {
+                $message['message'] = 'user not found';
+                $statusCode = 404;
             }
+        } else {
+            $message['message'] = 'different passwords';
+            $statusCode = 409;
         }
 
-        return 'Error';
+        return response()->json($message)->setStatusCode($statusCode);
     }
 
     /**

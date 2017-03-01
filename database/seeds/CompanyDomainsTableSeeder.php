@@ -23,9 +23,9 @@ class CompanyDomainsTableSeeder extends BaseTableSeeder
         ];
 
         $domainNoSSO = [
-            'domain' => 'example.com',
+            'domain' => 'testing.com',
             'active' => 1,
-            'companyId' => 5,
+            'companyId' => 20,
         ];
 
         $this->loadTable($domainMicrosoft);
