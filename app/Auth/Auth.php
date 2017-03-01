@@ -131,17 +131,23 @@ class Auth implements AuthInterface
         }
 
         $code = bin2hex(random_bytes(64));
-        $redirectPath = $user->identification.'/'.$code;
+        $url = $this->request['url'];
+        $redirectPath = $url.'/resetPassword/'.$user->identification.'/'.$code;
 
         $data = [
             'identification' => $user->identification,
             'redirectPath' => $redirectPath,
         ];
 
+        $email = 'projectes@dosaiguas.net';
         $mail = Mail::send('emails.auth.password', $data, function ($m) use ($email, $user) {
             $m->from(env('MAIL_FROM_ADDRESS'), 'Wireless Analytics');
             $m->to($email)->subject('Reset Password Requested by '.$user->username.' !');
         });
+
+        Log::debug("USER->IDENT: ".$user->identification);
+        Log::debug("CODE: ".$code);
+
 
         Cache::put('user_email_'.$code, $user->identification, 60);
         Cache::put('user_code_'.$user->identification, $code, 60);
@@ -165,8 +171,10 @@ class Auth implements AuthInterface
     public function getPasswordFromEmail($identification, $code) {
         $user = $this->findUserByIdentification($identification);
         $statusCode = 200;
+        $password1 = $this->request['password1'];
+        $password2 = $this->request['password2'];
 
-        if($this->request['password1'] == $this->request['password2']) {
+        if($this->isAGoodPassword($password1, $password2)) {
             $identificationCache = Cache::get('user_email_'.$code);
             $codeCache = Cache::get('user_code_'.$identification);
 
@@ -204,6 +212,13 @@ class Auth implements AuthInterface
         }
 
         return response()->json($message)->setStatusCode($statusCode);
+    }
+
+    private function isAGoodPassword($password1, $password2) {
+        if ($password1 == $password2  && $password1 != '' && $password2 != '') {
+            return true;
+        }
+        return false;
     }
 
     /**

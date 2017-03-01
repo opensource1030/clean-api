@@ -296,7 +296,7 @@
                                                           <tr style="vertical-align: top">
                                                             <td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;border-radius: 25px; -webkit-border-radius: 25px; -moz-border-radius: 25px; color: #ffffff; background-color: #C7702E; padding-top: 5px; padding-right: 20px; padding-bottom: 5px; padding-left: 20px; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;text-align: center" valign="middle">
                                                         <!--<![endif]-->
-                                                              <a style="display: inline-block;text-decoration: none;-webkit-text-size-adjust: none;text-align: center;background-color: #C7702E;color: #ffffff" href="{{ url('resetPassword/'.$redirectPath) }}" target="_blank">
+                                                              <a style="display: inline-block;text-decoration: none;-webkit-text-size-adjust: none;text-align: center;background-color: #C7702E;color: #ffffff" href="{{ $redirectPath }}" target="_blank">
                                                                 <span style="font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:16px;line-height:32px;">
                                                                   <span style="font-size: 14px; line-height: 28px;" data-mce-style="font-size: 14px;" mce-data-marked="1">
                                                                     Click here to reset password&nbsp;&#187;
