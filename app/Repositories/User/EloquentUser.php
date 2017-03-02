@@ -282,7 +282,7 @@ class EloquentUser extends AbstractRepository implements UserInterface
         }
 
         if(isset($data['password']) && $data['password'] !== ''){
-            $userData['password'] = $data['password'];
+            $userData['password'] = bcrypt($data['password']);
         } else {
             $userData['password'] = bcrypt($userData['identification']);
         }
@@ -535,7 +535,7 @@ class EloquentUser extends AbstractRepository implements UserInterface
         }
 
         if(isset($data['password']) && $data['password'] !== ''){
-            $user->password = $data['password'];
+            $user->password = bcrypt($data['password']);
         }
 
         if(isset($data['username']) && $data['username'] !== ''){

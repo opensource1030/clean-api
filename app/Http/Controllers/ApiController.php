@@ -209,9 +209,10 @@ abstract class ApiController extends BaseController
                 ], // PARAMETERS PASSED TO THE VIEW
                 function ($message) use ($type) {
                     $message->subject('New '.$type.' Received');
-                    $message->from(env('MAIL_USERNAME_FROM'));
+                    $message->from(env('MAIL_FROM_ADDRESS'));
                     $message->to(env('MAIL_USERNAME_TO'));
-                } // CALLABACK
+                    // @TODO: Send Mail To The Logged User who Made The Order.
+                } // CALLBACK
             );
 
         } catch (\Exception $e) {

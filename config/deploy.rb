@@ -72,7 +72,7 @@ namespace :laravel do
     desc "Run Laravel Artisan migrate task."
     task :migrate do
         on roles(:app), in: :sequence, wait: 5 do
-            execute "cd #{release_path} && php artisan migrate --force"
+            # execute "cd #{release_path} && php artisan migrate --force"
         end
     end
 

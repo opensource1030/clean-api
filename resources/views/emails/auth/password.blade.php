@@ -1,16 +1,15 @@
 
 <!DOCTYPE html "-//w3c//dtd xhtml 1.0 transitional //en" "http://www.w3.org/tr/xhtml1/dtd/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head>
-    <!--[if gte mso 9]><xml>
-        <o:OfficeDocumentSettings>
-            <o:AllowPNG/>
-            <o:PixelsPerInch>96</o:PixelsPerInch>
+  <!--[if gte mso 9]><xml>
+    <o:OfficeDocumentSettings>
+      <o:AllowPNG/>
+        <o:PixelsPerInch>96</o:PixelsPerInch>
         </o:OfficeDocumentSettings>
     </xml><![endif]-->
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <meta name="viewport" content="width=device-width">
-    <meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE">
-    <title>Template Base</title>
-
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width">
+  <meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE">
+  <title>Template Base</title>
 </head>
 <body style="width: 100% !important;min-width: 100%;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100% !important;margin: 0;padding: 0;background-color: #FFFFFF">
 <style id="media-query">
@@ -110,107 +109,205 @@
     }
 </style>
 <table class="body" style="border-spacing: 0;border-collapse: collapse;vertical-align: top;height: 100%;width: 100%;table-layout: fixed" cellpadding="0" cellspacing="0" width="100%" border="0">
-    <tbody><tr style="vertical-align: top">
-        <td class="center" style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;text-align: center;background-color: #FFFFFF" align="center" valign="top">
-
-            <table style="border-spacing: 0;border-collapse: collapse;vertical-align: top;background-color: #323341" cellpadding="0" cellspacing="0" align="center" width="100%" border="0">
-                <tbody><tr style="vertical-align: top">
-                    <td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top" width="100%">
-                        <!--[if gte mso 9]>
-                        <table id="outlookholder" border="0" cellspacing="0" cellpadding="0" align="center"><tr><td>
-                        <![endif]-->
-                        <!--[if (IE)]>
-                        <table width='500' align="center" cellpadding="0" cellspacing="0" border="0">
-                            <tr>
-                                <td>
-                        <![endif]-->
-                        <table class="container" style="border-spacing: 0;border-collapse: collapse;vertical-align: top;max-width: 500px;margin: 0 auto;text-align: inherit" cellpadding="0" cellspacing="0" align="center" width="100%" border="0"><tbody><tr style="vertical-align: top"><td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top" width="100%"><table class="block-grid" style="border-spacing: 0;border-collapse: collapse;vertical-align: top;width: 100%;max-width: 500px;color: #000000;background-color: transparent" cellpadding="0" cellspacing="0" width="100%" bgcolor="transparent"><tbody><tr style="vertical-align: top"><td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;text-align: center;font-size: 0"><!--[if (gte mso 9)|(IE)]><table width="100%" align="center" cellpadding="0" cellspacing="0" border="0"><tr><![endif]--><!--[if (gte mso 9)|(IE)]><td class='' valign="top" width='500'><![endif]--><div class="col num12" style="display: inline-block;vertical-align: top;width: 500px"><table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" cellpadding="0" cellspacing="0" align="center" width="100%" border="0"><tbody><tr style="vertical-align: top"><td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;background-color: transparent;padding-top: 0px;padding-right: 0px;padding-bottom: 0px;padding-left: 0px;border-top: 0px solid transparent;border-right: 0px solid transparent;border-bottom: 0px solid transparent;border-left: 0px solid transparent"><table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" align="center" width="100%" border="0" cellpadding="0" cellspacing="0">
-                                                                    <tbody><tr style="vertical-align: top">
-                                                                        <td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;padding-top: 10px;padding-right: 10px;padding-bottom: 10px;padding-left: 10px" align="center">
-                                                                            <div style="height: 10px;">
-                                                                                <table style="border-spacing: 0;border-collapse: collapse;vertical-align: top;border-top: 10px solid transparent;width: 100%" align="center" border="0" cellspacing="0">
-                                                                                    <tbody><tr style="vertical-align: top">
-                                                                                        <td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top" align="center"></td>
-                                                                                    </tr>
-                                                                                    </tbody></table>
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
-                                                                    </tbody></table><table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" cellpadding="0" cellspacing="0" width="100%">
-                                                                    <tbody><tr style="vertical-align: top">
-                                                                        <td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;padding-top: 30px;padding-right: 0px;padding-bottom: 30px;padding-left: 0px">
-                                                                            <div style="color:#ffffff;line-height:120%;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;">
-                                                                                <div style="font-size:14px;line-height:17px;text-align:center;color:#ffffff;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;"><p style="margin: 0;font-size: 14px;line-height: 17px;text-align: center"><strong><span style="font-size: 28px; line-height: 33px;" mce-data-marked="1">
-                                                                                    <img src="http://app.wirelessanalytics.com/assets/img/logo.jpg" width="80px" height="80px" /><br/><br/>
-                                                                                                Wireless Analytics CLEAN Platform
-                                                                                            </span></strong></p></div>
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
-                                                                    </tbody></table>
-                                                                <table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" align="center" width="100%" border="0" cellpadding="0" cellspacing="0">
-                                                                    <tbody><tr style="vertical-align: top">
-                                                                        <td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;padding-top: 10px;padding-right: 10px;padding-bottom: 10px;padding-left: 10px" align="center">
-                                                                            <div style="height: 10px;">
-                                                                                <table style="border-spacing: 0;border-collapse: collapse;vertical-align: top;border-top: 10px solid transparent;width: 100%" align="center" border="0" cellspacing="0">
-                                                                                    <tbody><tr style="vertical-align: top">
-                                                                                        <td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top" align="center"></td>
-                                                                                    </tr>
-                                                                                    </tbody></table>
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
-                                                                    </tbody></table></td></tr></tbody></table></div><!--[if (gte mso 9)|(IE)]></td><![endif]--><!--[if (gte mso 9)|(IE)]></td></tr></table><![endif]--></td></tr></tbody></table></td></tr></tbody></table>
-                        <!--[if mso]>
-                        </td></tr></table>
-                        <![endif]-->
-                        <!--[if (IE)]>
-                        </td></tr></table>
-                        <![endif]-->
-                    </td>
-                </tr>
-                </tbody></table>
-            <table style="border-spacing: 0;border-collapse: collapse;vertical-align: top;background-color: #61626F" cellpadding="0" cellspacing="0" align="center" width="100%" border="0">
-                <tbody><tr style="vertical-align: top">
-                    <td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top" width="100%">
-                        <!--[if gte mso 9]>
-                        <table id="outlookholder" border="0" cellspacing="0" cellpadding="0" align="center"><tr><td>
-                        <![endif]-->
-                        <!--[if (IE)]>
-                        <table width='500' align="center" cellpadding="0" cellspacing="0" border="0">
-                            <tr>
-                                <td>
-                        <![endif]-->
-                        <table class="container" style="border-spacing: 0;border-collapse: collapse;vertical-align: top;max-width: 500px;margin: 0 auto;text-align: inherit" cellpadding="0" cellspacing="0" align="center" width="100%" border="0"><tbody><tr style="vertical-align: top"><td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top" width="100%"><table class="block-grid" style="border-spacing: 0;border-collapse: collapse;vertical-align: top;width: 100%;max-width: 500px;color: #333;background-color: transparent" cellpadding="0" cellspacing="0" width="100%" bgcolor="transparent"><tbody><tr style="vertical-align: top"><td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;text-align: center;font-size: 0"><!--[if (gte mso 9)|(IE)]><table width="100%" align="center" cellpadding="0" cellspacing="0" border="0"><tr><![endif]--><!--[if (gte mso 9)|(IE)]><td class='' valign="top" width='500'><![endif]--><div class="col num12" style="display: inline-block;vertical-align: top;width: 500px"><table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" cellpadding="0" cellspacing="0" align="center" width="100%" border="0"><tbody><tr style="vertical-align: top"><td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;background-color: transparent;padding-top: 30px;padding-right: 0px;padding-bottom: 30px;padding-left: 0px;border-top: 0px solid transparent;border-right: 0px solid transparent;border-bottom: 0px solid transparent;border-left: 0px solid transparent"><table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" cellpadding="0" cellspacing="0" width="100%">
-                                                                    <tbody><tr style="vertical-align: top">
-                                                                        <td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;padding-top: 25px;padding-right: 10px;padding-bottom: 10px;padding-left: 10px">
-                                                                            <div style="color:#ffffff;line-height:120%;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;">
-                                                                                <div style="font-size:18px;line-height:22px;text-align:center;color:#ffffff;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;"><p style="margin: 0;font-size: 18px;line-height: 22px;text-align: center"><span style="font-size: 24px; line-height: 28px;" mce-data-marked="1"><strong>Reset Password</strong></span></p></div>
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
-                                                                    </tbody></table>
-                                                                <table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" cellpadding="0" cellspacing="0" width="100%">
-                                                                    <tbody><tr style="vertical-align: top">
-                                                                    <tbody><tr style="vertical-align: top"
-                                                                    <td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;padding-top: 0px;padding-right: 10px;padding-bottom: 10px;padding-left: 10px">
-                                                                        <div style="color:#B8B8C0;line-height:150%;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;">
-                                                                            <div style="font-size:14px;line-height:21px;text-align:center;color:#B8B8C0;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;"><p style="margin: 0;font-size: 14px;line-height: 21px;text-align: left"><span style="font-size: 14px; line-height: 21px;"></span><span style="font-size: 14px; line-height: 21px;">You have received this e-mail because you requested password change. </span></p></div>
-
-                                                                            <br />
-                                                                            <table style="border-spacing: 0;border-collapse: collapse;vertical-align: top;height: 42" width="100%" border="0" cellspacing="0" cellpadding="0">
-                                                                                <tbody><tr style="vertical-align: top"><td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;border-radius: 25px;                   -webkit-border-radius: 25px;                   -moz-border-radius: 25px;                  color: #ffffff;                  background-color: #C7702E;                  padding-top: 5px;                   padding-right: 20px;                  padding-bottom: 5px;                  padding-left: 20px;                  font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;text-align: center" valign="middle"><!--<![endif]-->
-                                                                                        @if(Input::get('legacy'))
-                                                                                            <a style="display: inline-block;text-decoration: none;-webkit-text-size-adjust: none;text-align: center;background-color: #C7702E;color: #ffffff" href="{{ url('reset_password/'.$token.'?legacy=true&legacy_dest='.Input::get('legacyDestination')) }}" target="_blank">
-                                                                                                <span style="font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:16px;line-height:32px;"><span style="font-size: 14px; line-height: 28px;" data-mce-style="font-size: 14px;" mce-data-marked="1">Click here to reset password&nbsp;&#187;</span></span>
-                                                                                            </a>
-                                                                                        @else
-                                                                                            <a style="display: inline-block;text-decoration: none;-webkit-text-size-adjust: none;text-align: center;background-color: #C7702E;color: #ffffff" href="{{ url('reset_password/'.$token) }}" target="_blank">
-                                                                                                <span style="font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:16px;line-height:32px;"><span style="font-size: 14px; line-height: 28px;" data-mce-style="font-size: 14px;" mce-data-marked="1">Click here to reset password&nbsp;&#187;</span></span>
-                                                                                            </a>
-                                                                                    @endif
-                                                                                    <!--[if !mso]><!- - --></td></tr></tbody></table>
-
+  <tbody>
+    <tr style="vertical-align: top">
+      <td class="center" style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;text-align: center;background-color: #FFFFFF" align="center" valign="top">
+        <table style="border-spacing: 0;border-collapse: collapse;vertical-align: top;background-color: #323341" cellpadding="0" cellspacing="0" align="center" width="100%" border="0">
+          <tbody>
+            <tr style="vertical-align: top">
+              <td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top" width="100%">
+                <!--[if gte mso 9]>
+                <table id="outlookholder" border="0" cellspacing="0" cellpadding="0" align="center"><tr><td>
+                <![endif]-->
+                <!--[if (IE)]>
+                <table width='500' align="center" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                <td>
+                <![endif]-->
+                <table class="container" style="border-spacing: 0;border-collapse: collapse;vertical-align: top;max-width: 500px;margin: 0 auto;text-align: inherit" cellpadding="0" cellspacing="0" align="center" width="100%" border="0">
+                  <tbody>
+                    <tr style="vertical-align: top">
+                      <td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top" width="100%">
+                        <table class="block-grid" style="border-spacing: 0;border-collapse: collapse;vertical-align: top;width: 100%;max-width: 500px;color: #000000;background-color: transparent" cellpadding="0" cellspacing="0" width="100%" bgcolor="transparent">
+                          <tbody>
+                            <tr style="vertical-align: top">
+                              <td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;text-align: center;font-size: 0">
+                                <!--[if (gte mso 9)|(IE)]><table width="100%" align="center" cellpadding="0" cellspacing="0" border="0"><tr><![endif]--><!--[if (gte mso 9)|(IE)]><td class='' valign="top" width='500'><![endif]-->
+                                <div class="col num12" style="display: inline-block;vertical-align: top;width: 500px">
+                                  <table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" cellpadding="0" cellspacing="0" align="center" width="100%" border="0">
+                                    <tbody>
+                                      <tr style="vertical-align: top">
+                                        <td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;background-color: transparent;padding-top: 0px;padding-right: 0px;padding-bottom: 0px;padding-left: 0px;border-top: 0px solid transparent;border-right: 0px solid transparent;border-bottom: 0px solid transparent;border-left: 0px solid transparent">
+                                          <table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" align="center" width="100%" border="0" cellpadding="0" cellspacing="0">
+                                            <tbody>
+                                              <tr style="vertical-align: top">
+                                                <td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;padding-top: 10px;padding-right: 10px;padding-bottom: 10px;padding-left: 10px" align="center">
+                                                  <div style="height: 10px;">
+                                                    <table style="border-spacing: 0;border-collapse: collapse;vertical-align: top;border-top: 10px solid transparent;width: 100%" align="center" border="0" cellspacing="0">
+                                                      <tbody>
+                                                        <tr style="vertical-align: top">
+                                                          <td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top" align="center">
+                                                          </td>
+                                                        </tr>
+                                                      </tbody>
+                                                    </table>
+                                                  </div>
+                                                </td>
+                                              </tr>
+                                            </tbody>
+                                          </table>
+                                          <table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" cellpadding="0" cellspacing="0" width="100%">
+                                            <tbody>
+                                              <tr style="vertical-align: top">
+                                                <td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;padding-top: 30px;padding-right: 0px;padding-bottom: 30px;padding-left: 0px">
+                                                  <div style="color:#ffffff;line-height:120%;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;">
+                                                    <div style="font-size:14px;line-height:17px;text-align:center;color:#ffffff;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;">
+                                                      <p style="margin: 0;font-size: 14px;line-height: 17px;text-align: center">
+                                                        <strong>
+                                                          <span style="font-size: 28px; line-height: 33px;" mce-data-marked="1">
+                                                            Wireless Analytics CLEAN Platform
+                                                          </span>
+                                                        </strong>
+                                                      </p>
+                                                    </div>
+                                                  </div>
+                                                </td>
+                                              </tr>
+                                            </tbody>
+                                          </table>
+                                          <table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" align="center" width="100%" border="0" cellpadding="0" cellspacing="0">
+                                            <tbody>
+                                              <tr style="vertical-align: top">
+                                                <td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;padding-top: 10px;padding-right: 10px;padding-bottom: 10px;padding-left: 10px" align="center">
+                                                  <div style="height: 10px;">
+                                                    <table style="border-spacing: 0;border-collapse: collapse;vertical-align: top;border-top: 10px solid transparent;width: 100%" align="center" border="0" cellspacing="0">
+                                                      <tbody>
+                                                        <tr style="vertical-align: top">
+                                                          <td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top" align="center">
+                                                          </td>
+                                                        </tr>
+                                                      </tbody>
+                                                    </table>
+                                                  </div>
+                                                </td>
+                                              </tr>
+                                            </tbody>
+                                          </table>
+                                        </td>
+                                      </tr>
+                                    </tbody>
+                                  </table>
+                                </div>
+                                <!--[if (gte mso 9)|(IE)]></td><![endif]--><!--[if (gte mso 9)|(IE)]></td></tr></table><![endif]-->
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <!--[if mso]>
+                </td></tr></table>
+                <![endif]-->
+                <!--[if (IE)]>
+                </td></tr></table>
+                <![endif]-->
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <table style="border-spacing: 0;border-collapse: collapse;vertical-align: top;background-color: #61626F" cellpadding="0" cellspacing="0" align="center" width="100%" border="0">
+          <tbody>
+            <tr style="vertical-align: top">
+              <td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top" width="100%">
+                <!--[if gte mso 9]>
+                <table id="outlookholder" border="0" cellspacing="0" cellpadding="0" align="center"><tr><td>
+                <![endif]-->
+                <!--[if (IE)]>
+                <table width='500' align="center" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                <td>
+                <![endif]-->
+                <table class="container" style="border-spacing: 0;border-collapse: collapse;vertical-align: top;max-width: 500px;margin: 0 auto;text-align: inherit" cellpadding="0" cellspacing="0" align="center" width="100%" border="0">
+                  <tbody>
+                    <tr style="vertical-align: top">
+                      <td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top" width="100%">
+                        <table class="block-grid" style="border-spacing: 0;border-collapse: collapse;vertical-align: top;width: 100%;max-width: 500px;color: #333;background-color: transparent" cellpadding="0" cellspacing="0" width="100%" bgcolor="transparent">  <tbody>
+                            <tr style="vertical-align: top">
+                              <td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;text-align: center;font-size: 0">
+                              <!--[if (gte mso 9)|(IE)]>
+                              <table width="100%" align="center" cellpadding="0" cellspacing="0" border="0">
+                              <tr>
+                              <![endif]-->
+                              <!--[if (gte mso 9)|(IE)]>
+                              <td class='' valign="top" width='500'><![endif]-->
+                              <div class="col num12" style="display: inline-block;vertical-align: top;width: 500px">
+                                <table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" cellpadding="0" cellspacing="0" align="center" width="100%" border="0">
+                                  <tbody>
+                                    <tr style="vertical-align: top">
+                                      <td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;background-color: transparent;padding-top: 30px;padding-right: 0px;padding-bottom: 30px;padding-left: 0px;border-top: 0px solid transparent;border-right: 0px solid transparent;border-bottom: 0px solid transparent;border-left: 0px solid transparent">
+                                        <table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" cellpadding="0" cellspacing="0" width="100%">
+                                          <tbody>
+                                            <tr style="vertical-align: top">
+                                              <td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;padding-top: 25px;padding-right: 10px;padding-bottom: 10px;padding-left: 10px">
+                                                <div style="color:#ffffff;line-height:120%;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;">
+                                                  <div style="font-size:18px;line-height:22px;text-align:center;color:#ffffff;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;">
+                                                    <p style="margin: 0;font-size: 18px;line-height: 22px;text-align: center">
+                                                      <span style="font-size: 24px; line-height: 28px;" mce-data-marked="1">
+                                                        <strong>Reset Password</strong>
+                                                      </span>
+                                                    </p>
+                                                  </div>
+                                                </div>
+                                              </td>
+                                            </tr>
+                                          </tbody>
+                                        </table>
+                                        <table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" cellpadding="0" cellspacing="0" width="100%">
+                                          <tbody>
+                                            <tr style="vertical-align: top">
+                                              <tbody>
+                                                <tr style="vertical-align: top">
+                                                  <td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;padding-top: 0px;padding-right: 10px;padding-bottom: 10px;padding-left: 10px">
+                                                    <div style="color:#B8B8C0;line-height:150%;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;">
+                                                      <div style="font-size:14px;line-height:21px;text-align:center;color:#B8B8C0;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;">
+                                                        <p style="margin: 0;font-size: 14px;line-height: 21px;">
+                                                          <span style="font-size: 14px; line-height: 21px;">
+                                                          </span>
+                                                          <span style="font-size: 14px; line-height: 21px;">
+                                                            You have received this e-mail because you requested password change.
+                                                          </span>
+                                                        </p>
+                                                      </div>
+                                                      <br />
+                                                      <div style="font-size:14px;line-height:21px;text-align:center;color:#B8B8C0;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;">
+                                                        <p style="margin: 0;font-size: 14px;line-height: 21px;">
+                                                          <span style="font-size: 14px; line-height: 21px;">
+                                                          </span>
+                                                          <span style="font-size: 14px; line-height: 21px;">
+                                                            This Link is only valid for 1 hour.
+                                                          </span>
+                                                        </p>
+                                                      </div>
+                                                      <br />
+                                                      <table style="border-spacing: 0;border-collapse: collapse;vertical-align: top;height: 42" width="100%" border="0" cellspacing="0" cellpadding="0">
+                                                        <tbody>
+                                                          <tr style="vertical-align: top">
+                                                            <td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;border-radius: 25px; -webkit-border-radius: 25px; -moz-border-radius: 25px; color: #ffffff; background-color: #C7702E; padding-top: 5px; padding-right: 20px; padding-bottom: 5px; padding-left: 20px; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;text-align: center" valign="middle">
+                                                        <!--<![endif]-->
+                                                              <a style="display: inline-block;text-decoration: none;-webkit-text-size-adjust: none;text-align: center;background-color: #C7702E;color: #ffffff" href="{{ $redirectPath }}" target="_blank">
+                                                                <span style="font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:16px;line-height:32px;">
+                                                                  <span style="font-size: 14px; line-height: 28px;" data-mce-style="font-size: 14px;" mce-data-marked="1">
+                                                                    Click here to reset password&nbsp;&#187;
+                                                                  </span>
+                                                                </span>
+                                                              </a>
+                                                            <!--[if !mso]><!- - -->
+                                                            </td>
+                                                          </tr>
+                                                        </tbody>
+                                                      </table>
                                                                         </div>
                                                                     </td>
                                                                     </tr>

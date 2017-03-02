@@ -139,6 +139,11 @@ class User extends BaseDataStore implements IlluminateCanResetPasswordContract, 
         return User::where('email', $email)->first();
     }
 
+    public function findForIdentification($identification)
+    {
+        return User::where('identification', $identification)->first();
+    }
+
     public function getAuthIdentifier()
     {
         return $this->id;
