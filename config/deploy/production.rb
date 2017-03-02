@@ -35,7 +35,7 @@ namespace :deploy do
 
   after :published, "composer:install"
   after :published, "laravel:permissions"
-  after :published, "laravel:migrate"
+  # after :published, "laravel:migrate"
   
   after :published, "ops:reset_app"
   # after :published, "laravel:restart_queue"
