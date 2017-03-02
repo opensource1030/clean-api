@@ -17,18 +17,6 @@ class DeletePackageConditionsTable extends Migration
      */
     public function up()
     {
-        Schema::table(
-            $this->tableName, function ($table) {
-                $table->dropForeign('package_conditions_packageid_foreign');
-                $table->dropColumn('packageId');
-        });
-
-        Schema::table(
-            $this->tableName, function ($table) {
-                $table->dropForeign('package_conditions_conditionid_foreign');
-                $table->dropColumn('conditionId');
-        });
-
         $this->forceDropTable($this->tableName);
     }
 
