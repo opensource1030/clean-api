@@ -51,16 +51,16 @@ class SSO extends ApiController
             'email' => 'required|email',
         ]);
 
-        // IF VALIDATOR OK => EMAIL OK!
+        // IF VALIDATOR EMAIL OK => EMAIL OK!
         if (!$validator->fails()) {
             // THIS EMAIL HAS COMPANY RELATED?
             $idCompany = $this->company->getIdByUserEmail($email);
-
+            
             if ($idCompany > 0)   {
                 $company = $this->company->byId($idCompany);
             } else {
                 return response()
-                    ->json(['error' => 'User Not Found, Register Required', 'message' => 'Please, register a new user.'])
+                    ->json(['error' => 'Company Not Found', 'message' => 'Please, contact with the administrator of your company.'])
                     ->setStatusCode($this->status_codes['conflict']);
             }
 

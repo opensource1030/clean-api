@@ -20,7 +20,7 @@ class UsersTableSeeder extends BaseTableSeeder
             'lastName' => 'Developers',
             'username' => 'sirion',
             'defaultLang' => 'en',
-            'supervisorId' => 4,
+            'supervisorId' => null,
             'notify' => 0,
             'approverId' => 3,
             'defaultLocationId' => 'location',
@@ -42,7 +42,7 @@ class UsersTableSeeder extends BaseTableSeeder
             'lastName' => 'LastName2',
             'username' => 'Username2',
             'defaultLang' => 'en',
-            'supervisorId' => 4,
+            'supervisorId' => 1,
             'notify' => 0,
             'approverId' => 3,
             'defaultLocationId' => 'location',
@@ -64,7 +64,7 @@ class UsersTableSeeder extends BaseTableSeeder
             'lastName' => 'LastName3',
             'username' => 'Username3',
             'defaultLang' => 'en',
-            'supervisorId' => 4,
+            'supervisorId' => 1,
             'notify' => 0,
             'approverId' => 3,
             'defaultLocationId' => 'location',
@@ -86,11 +86,33 @@ class UsersTableSeeder extends BaseTableSeeder
             'lastName' => 'Developers',
             'username' => 'sirion',
             'defaultLang' => 'en',
-            'supervisorId' => 4,
+            'supervisorId' => 1,
             'notify' => 0,
             'approverId' => 3,
             'defaultLocationId' => 'location',
             'companyId' => 5,
+            'addressId' => 4
+        ];
+
+        $this->loadTable($dataUserLogin);
+
+        $dataUserLogin = [
+            'identification' => uniqid('Test-'),
+            'uuid' => 'testinguuid',
+            'email' => 'email@testing.com',
+            'supervisorEmail' => null,
+            'password' => bcrypt('user'),
+            'confirmation_code' => md5(uniqid(mt_rand(), true)),
+            'confirmed' => 1,
+            'firstName' => 'Testing',
+            'lastName' => 'Developers',
+            'username' => 'testing',
+            'defaultLang' => 'en',
+            'supervisorId' => 1,
+            'notify' => 0,
+            'approverId' => 3,
+            'defaultLocationId' => 'location',
+            'companyId' => 20,
             'addressId' => 4
         ];
 

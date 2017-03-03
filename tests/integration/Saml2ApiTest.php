@@ -11,22 +11,68 @@ class Saml2ApiTest extends TestCase
 {
     use DatabaseMigrations;
 
-    public function testApiDoSSOEmailRegisterDomainDoesNotExist()
+    /*
+    return response()
+        ->json(['error' => 'Invalid Email', 'message' => 'Please, enter a valid Email Address.'])
+        ->setStatusCode($this->status_codes['conflict']);
+    */
+    public function testApiDoSSOInvalidEmail()
     {
-         
         // CREATE ARGUMENTS
-        $emailRegister = 'dev@algo.com';
+        $emailInvalidEmail = 'dev@a';
 
         // CALL THE API ROUTE + ASSERTS
-        $returnRegister = $this->json('GET', 'doSSO/'.$emailRegister)->seeJson([
+        $returnNoValid = $this->json('GET', 'doSSO/'.$emailInvalidEmail)->seeJson([
+            'error' => 'Invalid Email',
+            'message' => 'Please, enter a valid Email Address.',
+        ]);
+    }
+
+    /*
+    return response()
+            ->json(['error' => 'Company Not Found', 'message' => 'Please, contact with the administrator of your company.'])
+            ->setStatusCode($this->status_codes['conflict']);
+    */
+    public function testApiDoSSOCompanyNotExist() 
+    {
+        // CREATE ARGUMENTS
+        $emailCompanyNotExist = 'dev@testing.com';
+
+        // CALL THE API ROUTE + ASSERTS
+        $returnNoValid = $this->json('GET', 'doSSO/'.$emailCompanyNotExist)->seeJson([
+            'error' => 'Company Not Found',
+            'message' => 'Please, contact with the administrator of your company.',
+        ]);
+    }
+
+    /*
+    return response()
+        ->json(['error' => 'User Not Found, Register Required', 'message' => 'Please, register a new user.'])
+        ->setStatusCode($this->status_codes['conflict']);
+    */
+    public function testApiDoSSOUserNotExist()
+    {
+        $emailUserNotExist = 'dev@testing.com';
+        $redirectToUrl = 'http://google.es';
+
+        // CREATE COMPANY and COMPANY DOMAIN
+        $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
+        $companyDomains = factory(\WA\DataStore\Company\CompanyDomains::class)->create(['companyId' => $companyId, 'domain' => 'testing.com']);
+
+        // CALL THE API ROUTE + ASSERTS
+        $returnPassword = $this->json('GET', 'doSSO/'.$emailUserNotExist.'?redirectToUrl='.$redirectToUrl)->seeJson([
             'error' => 'User Not Found, Register Required',
             'message' => 'Please, register a new user.',
         ]);
     }
 
+    /*
+    return response()
+        ->json(['error' => 'User Found, Password Required', 'message' => 'Please, enter your password.'])
+        ->setStatusCode($this->status_codes['conflict']);
+    */
     public function testApiDoSSOEmailPassword()
     {
-
         $email = 'dev@withpassword.com';
         $redirectToUrl = 'http://google.es';
 
@@ -43,26 +89,13 @@ class Saml2ApiTest extends TestCase
         ]);
     }
 
-    public function testApiDoSSOEmailRegisterUserDoesNotExist()
-    {
-
-        $email = 'dev@withpassword.com';
-        $redirectToUrl = 'http://google.es';
-
-        // CREATE COMPANY and COMPANY DOMAIN
-        $company = factory(\WA\DataStore\Company\Company::class)->create()->id;
-        $companyDomains = factory(\WA\DataStore\Company\CompanyDomains::class)->create(['companyId' => $company, 'domain' => 'withpassword.com']);
-
-        // CALL THE API ROUTE + ASSERTS
-        $returnPassword = $this->json('GET', 'doSSO/'.$email.'?redirectToUrl='.$redirectToUrl)->seeJson([
-            'error' => 'User Not Found, Register Required',
-            'message' => 'Please, register a new user.',
-        ]);
-    }
-
+    /*
+    return response()
+        ->json(['error' => 'URL Not Found', 'message' => 'Url to redirect not found.'])
+        ->setStatusCode($this->status_codes['conflict']);
+    */
     public function testApiDoSSOEmailMicrosoftFail()
     {
-
         // CREATE ARGUMENTS
         $emailMicrosoft = 'dev@wirelessanalytics.com';
 
@@ -83,7 +116,6 @@ class Saml2ApiTest extends TestCase
 
     public function testApiDoSSOEmailMicrosoftSaml2()
     {
-
         // CREATE ARGUMENTS
         $emailMicrosoft = 'dev@wirelessanalytics.com';
         $redirectToUrl = 'http://google.es';
@@ -101,23 +133,8 @@ class Saml2ApiTest extends TestCase
         $this->assertStringStartsWith('https://login.microsoftonline.com', $returnMicrosoftArray['data']['redirectUrl']);
     }
 
-    public function testApiDoSSOEmailNoValid()
-    {
-       
-        // CREATE ARGUMENTS
-        $emailNoValid = 'dev';
-
-        // CALL THE API ROUTE + ASSERTS
-        $returnNoValid = $this->json('GET', 'doSSO/'.$emailNoValid)->seeJson([
-            'error' => 'Invalid Email',
-            'message' => 'Please, enter a valid Email Address.',
-        ]);
-    }
-
     public function testApiDoSSOLoginUuid()
     {
-
-        
         // CREATE ARGUMENTS ERROR
         $uuid = 'siriondevelopers';
 
