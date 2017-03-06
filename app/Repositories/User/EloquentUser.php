@@ -356,7 +356,7 @@ class EloquentUser extends AbstractRepository implements UserInterface
         if(isset($data['isActive']) && $data['isActive'] !== ''){
             $userData['isActive'] = $data['isActive'];
         } else {
-            $userData['isActive'] = 1;
+            $userData['isActive'] = 0;
         }
 
         if(isset($data['rgt']) && $data['rgt'] !== ''){

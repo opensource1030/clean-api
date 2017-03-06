@@ -81,14 +81,18 @@ class SSO extends ApiController
 
                 // EMPLOYEE != NULL
                 } else {
-                    //echo 'ENTER PASSWORD OPTION';
-                    // URL : http://clean.local/api/doSSO/dariana.donnelly@example.com
-
-                    return response()
-                        ->json(['error' => 'User Found, Password Required', 'message' => 'Please, enter your password.'])
-                        ->setStatusCode($this->status_codes['conflict']);
+                    if ($user->isActive == 0) {
+                        //echo 'ENTER PASSWORD OPTION';
+                        // URL : http://clean.local/api/doSSO/dariana.donnelly@example.com
+                        return response()
+                            ->json(['error' => 'User not Active', 'message' => 'Please, ask your administrator or check your email if you have registered it before.'])
+                            ->setStatusCode($this->status_codes['conflict']);
+                    } else {
+                        return response()
+                           ->json(['error' => 'User Found, Password Required', 'message' => 'Please, enter your password.'])
+                            ->setStatusCode($this->status_codes['conflict']);
+                    }
                 }
-
             // SSO COMPANY == NUMBER -> CONTINUE DOSSO
             } else {
                 //echo 'SINGLE SIGN ON OPTION';

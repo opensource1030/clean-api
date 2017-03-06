@@ -3,7 +3,6 @@
 namespace WA\Auth;
 
 use Auth as IlluminateAuth;
-use Log;
 use Cache;
 use Validator;
 use Illuminate\Support\Facades\Mail;
@@ -103,7 +102,6 @@ class Auth implements AuthInterface
         ]);
 
         if ($validator->fails()) {
-            Log::debug("not valid email");
             $error['message'] = 'not valid email';
             return response()->json($error)->setStatusCode(400);
         }
@@ -111,21 +109,18 @@ class Auth implements AuthInterface
 
         $idCompany = $this->company->getIdByUserEmail($email);
         if($idCompany <= 0) {
-            Log::debug("company not found");
             $error['message'] = 'company not found';
             return response()->json($error)->setStatusCode(404);
         }
 
         $user = $this->findUserByEmail($email);
         if ($user == null) {
-            Log::debug("user not found");
             $error['message'] = 'user not found';
             return response()->json($error)->setStatusCode(404);
         }
 
         $company = $this->company->byId($idCompany);
         if ($company->saml2Settings() != null) {
-            Log::debug("company has sso");
             $error['message'] = 'company has sso';
             return response()->json($error)->setStatusCode(409);
         }
@@ -139,15 +134,10 @@ class Auth implements AuthInterface
             'redirectPath' => $redirectPath,
         ];
 
-        $email = 'projectes@dosaiguas.net';
         $mail = Mail::send('emails.auth.password', $data, function ($m) use ($email, $user) {
             $m->from(env('MAIL_FROM_ADDRESS'), 'Wireless Analytics');
             $m->to($email)->subject('Reset Password Requested by '.$user->username.' !');
         });
-
-        Log::debug("USER->IDENT: ".$user->identification);
-        Log::debug("CODE: ".$code);
-
 
         Cache::put('user_email_'.$code, $user->identification, 60);
         Cache::put('user_code_'.$user->identification, $code, 60);
@@ -212,6 +202,40 @@ class Auth implements AuthInterface
         }
 
         return response()->json($message)->setStatusCode($statusCode);
+    }
+
+    public function acceptUser($identification, $code) {
+        $statusCode = 200;
+        $identificationCache = Cache::pull('user_email_'.$code);
+        $codeCache = Cache::pull('user_code_'.$identification);
+        $user = $this->findUserByIdentification($identification);
+
+        if($user != null) {
+            if($code == $codeCache) {
+                if ($identification == $identificationCache) {
+
+                    $data = [
+                        'id' => $user->id,
+                        'isActive' => true
+                    ];
+
+                    $userInterface = app()->make('WA\Repositories\User\UserInterface');
+                    $userUpdated = $userInterface->update($data);
+
+                    $message['message'] = 'user activated';
+                } else {
+                    $message['message'] = 'different identifications';
+                    $statusCode = 409;
+                }
+            } else {
+                $message['message'] = 'different codes';
+                $statusCode = 409;
+            }
+        } else {
+            $message['message'] = 'user not found';
+            $statusCode = 404;
+        }
+        return response()->json($message)->setStatusCode(200);
     }
 
     private function isAGoodPassword($password1, $password2) {
