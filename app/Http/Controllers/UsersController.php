@@ -19,6 +19,9 @@ use WA\DataStore\Content\Content;
 
 use DB;
 use Log;
+use Cache;
+
+use Illuminate\Support\Facades\Mail;
 
 /**
  * Users resource.
@@ -423,10 +426,15 @@ class UsersController extends FilteredApiController
          */
         try {
             $data = $request->all()['data'];
-            $user = $this->user->create($data['attributes']);
 
+            if($this->user->byEmail($data['attributes']['email'])['id'] > 0) {
+                $error['errors']['User'] = 'The User can not be created, there are other user with the same email.';
+                return response()->json($error)->setStatusCode(409);
+            }
+
+            $user = $this->user->create($data['attributes']);
             if(!$user){
-                $error['errors']['User'] = 'The User has not been created, some data information is wrong, may be the Email.';
+                $error['errors']['users'] = 'The User has not been created, some data information is wrong, may be the Email.';
                 return response()->json($error)->setStatusCode(409);
             }
         } catch (\Exception $e) {
@@ -587,10 +595,27 @@ class UsersController extends FilteredApiController
         }
 
         if ($success) {
-            DB::commit();
+            $code = bin2hex(random_bytes(64));
+            $url = $this->request['url'];
+            $redirectPath = $url.'/acceptUser/'.$user->identification.'/'.$code;
 
+            $data = [
+                'identification' => $user->identification,
+                'redirectPath' => $redirectPath,
+            ];
+
+            Log::debug("MAIL TO EMAIL ADDRESS: ".print_r($user->email, true));
+
+            $mail = Mail::send('emails.auth.register', $data, function ($m) use ($user) {
+                $m->from(env('MAIL_FROM_ADDRESS'), 'Wireless Analytics');
+                $m->to($user->email)->subject('New User '.$user->username.' !');
+            });
+
+            DB::commit();
+            Cache::put('user_email_'.$code, $user->identification, 60);
+            Cache::put('user_code_'.$user->identification, $code, 60);
             return $this->response()->item($user, new UserTransformer(), ['key' => 'users'])
-                        ->setStatusCode($this->status_codes['created']);
+                ->setStatusCode($this->status_codes['created']);    
         } else {
             DB::rollBack();
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);

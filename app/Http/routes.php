@@ -98,7 +98,8 @@ $api->version('v1', function ($api) {
 
     $auth = 'WA\Auth\Auth';
     $api->get('resetPassword/{email}', ['as' => 'reset.email.credentials', 'uses' => $auth . '@resetPassword']);
-    $api->get('resetPassword/{username}/{credentials}', ['as' => 'reset.password.credentials', 'uses' => $auth . '@getPasswordFromEmail']);
+    $api->get('resetPassword/{identification}/{code}', ['as' => 'reset.password.credentials', 'uses' => $auth . '@getPasswordFromEmail']);
+    $api->get('acceptUser/{identification}/{code}', ['as' => 'activate.email.credentials', 'uses' => $auth . '@acceptUser']);
 
 
 

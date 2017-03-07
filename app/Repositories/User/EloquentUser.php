@@ -356,7 +356,7 @@ class EloquentUser extends AbstractRepository implements UserInterface
         if(isset($data['isActive']) && $data['isActive'] !== ''){
             $userData['isActive'] = $data['isActive'];
         } else {
-            $userData['isActive'] = 1;
+            $userData['isActive'] = 0;
         }
 
         if(isset($data['rgt']) && $data['rgt'] !== ''){
@@ -582,6 +582,8 @@ class EloquentUser extends AbstractRepository implements UserInterface
             $user->isValidator = $data['isValidator'];
         }
 
+
+        Log::debug("isActive: ".print_r($data['isActive'], true));
         if(isset($data['isActive']) && $data['isActive'] !== ''){
             $user->isActive = $data['isActive'];
         }

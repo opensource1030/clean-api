@@ -1163,9 +1163,10 @@ class UsersApiTest extends TestCase
     public function testCreateUser()
     {
         $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
+        $companyDomain = factory(\WA\DataStore\Company\CompanyDomains::class)->create(['domain' => 'email.com', 'companyId' => $companyId]);
         $addressId = factory(\WA\DataStore\Address\Address::class)->create()->id;
         $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId, 'addressId' => $addressId]);
- 
+
         $asset1 = factory(\WA\DataStore\Asset\Asset::class)->create()->id;
         $asset2 = factory(\WA\DataStore\Asset\Asset::class)->create()->id;
         
@@ -1204,7 +1205,7 @@ class UsersApiTest extends TestCase
                     'type' => 'users',
                     'attributes' => [
                         'uuid' => $user->uuid,
-                        'email' => $user->email,
+                        'email' => 'user@email.com',
                         'alternateEmail' => $user->alternateEmail,
                         'password' => $user->password,
                         'username' => $user->username,
@@ -1411,7 +1412,6 @@ class UsersApiTest extends TestCase
             ->seeJson(
                 [
                     'uuid' => $user->uuid,
-                    'email' => $user->email,
                     'alternateEmail' => $user->alternateEmail,
                     'username' => $user->username,
                     'confirmation_code' => $user->confirmation_code,
@@ -1838,6 +1838,7 @@ class UsersApiTest extends TestCase
     public function testCreateUserReturnRelationshipNoExists()
     {
         $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
+        $companyDomain = factory(\WA\DataStore\Company\CompanyDomains::class)->create(['domain' => 'email.com', 'companyId' => $companyId]);
         $addressId = factory(\WA\DataStore\Address\Address::class)->create()->id;
         $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId, 'addressId' => $addressId]);
         $res = $this->json('POST', '/users?include=assets',
@@ -1846,7 +1847,7 @@ class UsersApiTest extends TestCase
                     'type' => 'users',
                     'attributes' => [
                         'uuid' => $user->uuid,
-                        'email' => $user->email,
+                        'email' => 'user@email.com',
                         'alternateEmail' => $user->alternateEmail,
                         'password' => $user->password,
                         'username' => $user->username,
@@ -1891,7 +1892,6 @@ class UsersApiTest extends TestCase
             ->seeJson(
                 [
                     'uuid' => $user->uuid,
-                    'email' => $user->email,
                     'alternateEmail' => $user->alternateEmail,
                     'username' => $user->username,
                     'confirmation_code' => $user->confirmation_code,
@@ -2006,6 +2006,7 @@ class UsersApiTest extends TestCase
     public function testCreateUserReturnRelationshipNoExistsInclude()
     {
         $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
+        $companyDomain = factory(\WA\DataStore\Company\CompanyDomains::class)->create(['domain' => 'email.com', 'companyId' => $companyId]);
         $addressId = factory(\WA\DataStore\Address\Address::class)->create()->id;
         $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId, 'addressId' => $addressId]);
         $res = $this->json('POST', '/users?include=assets',
@@ -2014,7 +2015,7 @@ class UsersApiTest extends TestCase
                     'type' => 'users',
                     'attributes' => [
                         'uuid' => $user->uuid,
-                        'email' => $user->email,
+                        'email' => 'user@email.com',
                         'alternateEmail' => $user->alternateEmail,
                         'password' => $user->password,
                         'username' => $user->username,
@@ -2059,7 +2060,6 @@ class UsersApiTest extends TestCase
             ->seeJson(
                 [
                     'uuid' => $user->uuid,
-                    'email' => $user->email,
                     'alternateEmail' => $user->alternateEmail,
                     'username' => $user->username,
                     'confirmation_code' => $user->confirmation_code,
@@ -2174,6 +2174,7 @@ class UsersApiTest extends TestCase
     public function testCreateUserReturnRelationshipNoData()
     {
         $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
+        $companyDomain = factory(\WA\DataStore\Company\CompanyDomains::class)->create(['domain' => 'email.com', 'companyId' => $companyId]);
         $addressId = factory(\WA\DataStore\Address\Address::class)->create()->id;
         $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId, 'addressId' => $addressId]);
         $res = $this->json('POST', '/users?include=assets',
@@ -2182,7 +2183,7 @@ class UsersApiTest extends TestCase
                     'type' => 'users',
                     'attributes' => [
                         'uuid' => $user->uuid,
-                        'email' => $user->email,
+                        'email' => 'user@email.com',
                         'alternateEmail' => $user->alternateEmail,
                         'password' => $user->password,
                         'username' => $user->username,
@@ -2227,7 +2228,6 @@ class UsersApiTest extends TestCase
             ->seeJson(
                 [
                     'uuid' => $user->uuid,
-                    'email' => $user->email,
                     'alternateEmail' => $user->alternateEmail,
                     'username' => $user->username,
                     'confirmation_code' => $user->confirmation_code,
@@ -2343,6 +2343,7 @@ class UsersApiTest extends TestCase
     public function testCreateUserReturnRelationshipNoCorrectType()
     {
         $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
+        $companyDomain = factory(\WA\DataStore\Company\CompanyDomains::class)->create(['domain' => 'email.com', 'companyId' => $companyId]);
         $addressId = factory(\WA\DataStore\Address\Address::class)->create()->id;
         $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId, 'addressId' => $addressId]);
         $res = $this->json('POST', '/users?include=assets',
@@ -2351,7 +2352,7 @@ class UsersApiTest extends TestCase
                     'type' => 'users',
                     'attributes' => [
                         'uuid' => $user->uuid,
-                        'email' => $user->email,
+                        'email' => 'user@email.com',
                         'alternateEmail' => $user->alternateEmail,
                         'password' => $user->password,
                         'username' => $user->username,
@@ -2396,7 +2397,6 @@ class UsersApiTest extends TestCase
             ->seeJson(
                 [
                     'uuid' => $user->uuid,
-                    'email' => $user->email,
                     'alternateEmail' => $user->alternateEmail,
                     'username' => $user->username,
                     'confirmation_code' => $user->confirmation_code,
@@ -2512,6 +2512,7 @@ class UsersApiTest extends TestCase
     public function testCreateUserReturnRelationshipNoIdExists()
     {
         $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
+        $companyDomain = factory(\WA\DataStore\Company\CompanyDomains::class)->create(['domain' => 'email.com', 'companyId' => $companyId]);
         $addressId = factory(\WA\DataStore\Address\Address::class)->create()->id;
         $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId, 'addressId' => $addressId]);
         $res = $this->json('POST', '/users?include=assets',
@@ -2520,7 +2521,7 @@ class UsersApiTest extends TestCase
                     'type' => 'users',
                     'attributes' => [
                         'uuid' => $user->uuid,
-                        'email' => $user->email,
+                        'email' => 'user@email.com',
                         'alternateEmail' => $user->alternateEmail,
                         'password' => $user->password,
                         'username' => $user->username,
@@ -2565,7 +2566,6 @@ class UsersApiTest extends TestCase
             ->seeJson(
                 [
                     'uuid' => $user->uuid,
-                    'email' => $user->email,
                     'alternateEmail' => $user->alternateEmail,
                     'username' => $user->username,
                     'confirmation_code' => $user->confirmation_code,
