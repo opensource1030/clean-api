@@ -28,7 +28,14 @@ class CompanyDomainsTableSeeder extends BaseTableSeeder
             'companyId' => 20,
         ];
 
+        $domainMailUser = [
+            'domain' => 'siriondev.com',
+            'active' => 1,
+            'companyId' => 20,
+        ];
+
         $this->loadTable($domainMicrosoft);
         $this->loadTable($domainNoSSO);
+        $this->loadTable($domainMailUser);
     }
 }

@@ -3,6 +3,7 @@
 namespace WA\Auth;
 
 use Auth as IlluminateAuth;
+use Log;
 use Cache;
 use Validator;
 use Illuminate\Support\Facades\Mail;
@@ -206,36 +207,46 @@ class Auth implements AuthInterface
 
     public function acceptUser($identification, $code) {
         $statusCode = 200;
-        $identificationCache = Cache::pull('user_email_'.$code);
-        $codeCache = Cache::pull('user_code_'.$identification);
+        $identificationCache = Cache::get('user_email_'.$code);
+        $codeCache = Cache::get('user_code_'.$identification);
         $user = $this->findUserByIdentification($identification);
 
+        Log::debug("identificationCache: ".print_r($identificationCache, true));
+        Log::debug("codeCache: ".print_r($codeCache, true));
+        Log::debug("identification: ".print_r($identification, true));
+        Log::debug("code: ".print_r($code, true));
+
         if($user != null) {
-            if($code == $codeCache) {
-                if ($identification == $identificationCache) {
+            if($user->isActive == 0) {
+                if($code == $codeCache) {
+                    if ($identification == $identificationCache) {
 
-                    $data = [
-                        'id' => $user->id,
-                        'isActive' => true
-                    ];
+                        $data = [
+                            'id' => $user->id,
+                            'isActive' => 1
+                        ];
 
-                    $userInterface = app()->make('WA\Repositories\User\UserInterface');
-                    $userUpdated = $userInterface->update($data);
+                        $userInterface = app()->make('WA\Repositories\User\UserInterface');
+                        $userUpdated = $userInterface->update($data);
 
-                    $message['message'] = 'user activated';
+                        $message['message'] = 'user activated';
+                    } else {
+                        $message['message'] = 'different identifications';
+                        $statusCode = 409;
+                    }
                 } else {
-                    $message['message'] = 'different identifications';
+                    $message['message'] = 'different codes';
                     $statusCode = 409;
                 }
             } else {
-                $message['message'] = 'different codes';
+                $message['message'] = 'User is already Active';
                 $statusCode = 409;
             }
         } else {
             $message['message'] = 'user not found';
             $statusCode = 404;
         }
-        return response()->json($message)->setStatusCode(200);
+        return response()->json($message)->setStatusCode($statusCode);
     }
 
     private function isAGoodPassword($password1, $password2) {
