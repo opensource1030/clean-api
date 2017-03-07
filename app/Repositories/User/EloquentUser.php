@@ -582,6 +582,8 @@ class EloquentUser extends AbstractRepository implements UserInterface
             $user->isValidator = $data['isValidator'];
         }
 
+
+        Log::debug("isActive: ".print_r($data['isActive'], true));
         if(isset($data['isActive']) && $data['isActive'] !== ''){
             $user->isActive = $data['isActive'];
         }

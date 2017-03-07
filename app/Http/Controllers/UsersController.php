@@ -18,6 +18,7 @@ use WA\DataStore\Allocation\Allocation;
 use WA\DataStore\Content\Content;
 
 use DB;
+use Log;
 use Cache;
 
 use Illuminate\Support\Facades\Mail;
@@ -602,6 +603,8 @@ class UsersController extends FilteredApiController
                 'identification' => $user->identification,
                 'redirectPath' => $redirectPath,
             ];
+
+            Log::debug("MAIL TO EMAIL ADDRESS: ".print_r($user->email, true));
 
             $mail = Mail::send('emails.auth.register', $data, function ($m) use ($user) {
                 $m->from(env('MAIL_FROM_ADDRESS'), 'Wireless Analytics');
