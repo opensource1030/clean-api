@@ -187,27 +187,27 @@ return $settings = array(
         // Set to false and no AuthContext will be sent in the AuthNRequest,
         // Set true or don't present thi parameter and you will get an AuthContext 'exact' 'urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport'
         // Set an array with the possible auth context values: array ('urn:oasis:names:tc:SAML:2.0:ac:classes:Password', 'urn:oasis:names:tc:SAML:2.0:ac:classes:X509'),
-        'requestedAuthnContext' => true,
+        'requestedAuthnContext' => false,
     ),
 
     // Contact information template, it is recommended to suply a technical and support contacts
     'contactPerson' => array(
         'technical' => array(
-            'givenName' => 'name',
-            'emailAddress' => 'no@reply.com'
+            'givenName' => 'Technical Support',
+            'emailAddress' => 'devsupport@wirelessanalytics.com'
         ),
         'support' => array(
             'givenName' => 'Support',
-            'emailAddress' => 'no@reply.com'
+            'emailAddress' => 'support@wirelessanalytics.com'
         ),
     ),
 
     // Organization information template, the info in en_US lang is recomended, add more if required
     'organization' => array(
         'en-US' => array(
-            'name' => 'Name',
-            'displayname' => 'Display Name',
-            'url' => 'http://url'
+            'name' => 'Wireless Analytics, LLC',
+            'displayname' => 'Wireless Analytics',
+            'url' => 'http://www.wirelessanalytics.com'
         ),
     ),
 
