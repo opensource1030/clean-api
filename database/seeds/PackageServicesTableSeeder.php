@@ -34,6 +34,70 @@ class PackageServicesTableSeeder extends BaseTableSeeder
                 'packageId' => 1,
                 'serviceId' => 11,
             ],
+            [
+                'packageId' => 2,
+                'serviceId' => 4,
+            ],
+            [
+                'packageId' => 2,
+                'serviceId' => 6,
+            ],
+            [
+                'packageId' => 2,
+                'serviceId' => 7,
+            ],
+            [
+                'packageId' => 2,
+                'serviceId' => 8,
+            ],
+            [
+                'packageId' => 2,
+                'serviceId' => 12,
+            ],
+            [
+                'packageId' => 2,
+                'serviceId' => 14,
+            ],
+            [
+                'packageId' => 2,
+                'serviceId' => 15,
+            ],
+            [
+                'packageId' => 3,
+                'serviceId' => 8,
+            ],
+            [
+                'packageId' => 3,
+                'serviceId' => 4,
+            ],
+            [
+                'packageId' => 3,
+                'serviceId' => 6,
+            ],
+            [
+                'packageId' => 3,
+                'serviceId' => 7,
+            ],
+            [
+                'packageId' => 3,
+                'serviceId' => 8,
+            ],
+            [
+                'packageId' => 4,
+                'serviceId' => 4,
+            ],
+            [
+                'packageId' => 4,
+                'serviceId' => 6,
+            ],
+            [
+                'packageId' => 4,
+                'serviceId' => 7,
+            ],
+            [
+                'packageId' => 4,
+                'serviceId' => 8,
+            ],
         ];
 
         $this->loadTable($data);

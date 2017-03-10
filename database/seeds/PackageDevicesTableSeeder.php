@@ -34,6 +34,50 @@ class PackageDevicesTableSeeder extends BaseTableSeeder
                 'packageId' => 1,
                 'deviceVariationId' => 4,
             ],
+            [
+                'packageId' => 2,
+                'deviceVariationId' => 5,
+            ],
+            [
+                'packageId' => 2,
+                'deviceVariationId' => 6,
+            ],
+            [
+                'packageId' => 2,
+                'deviceVariationId' => 7,
+            ],
+            [
+                'packageId' => 2,
+                'deviceVariationId' => 8,
+            ],
+            [
+                'packageId' => 5,
+                'deviceVariationId' => 2,
+            ],
+            [
+                'packageId' => 5,
+                'deviceVariationId' => 3,
+            ],
+            [
+                'packageId' => 5,
+                'deviceVariationId' => 4,
+            ],
+            [
+                'packageId' => 5,
+                'deviceVariationId' => 5,
+            ],
+            [
+                'packageId' => 5,
+                'deviceVariationId' => 6,
+            ],
+            [
+                'packageId' => 5,
+                'deviceVariationId' => 7,
+            ],
+            [
+                'packageId' => 5,
+                'deviceVariationId' => 8,
+            ],
         ];
 
         $this->loadTable($data);
