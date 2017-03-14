@@ -33,11 +33,27 @@ class Address extends BaseDataStore
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function users()
     {
-        return $this->hasMany('WA\DataStore\User\User', 'addressId');
+        return $this->belongsToMany('WA\DataStore\User\User', 'user_address', 'userId', 'addressId');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function companies()
+    {
+        return $this->belongsToMany('WA\DataStore\Company\Company', 'company_address', 'companyId', 'addressId');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function packages()
+    {
+        return $this->belongsToMany('WA\DataStore\Package\Package', 'package_address', 'packageId', 'addressId');
     }
 
     /**

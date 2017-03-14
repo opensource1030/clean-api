@@ -284,6 +284,20 @@ class PackagesController extends FilteredApiController
                     }
                 }
             }
+
+            if (isset($dataRelationships['address']) && $success) {
+                if (isset($dataRelationships['address']['data'])) {
+                    $dataAddress = $this->parseJsonToArray($dataRelationships['address']['data'], 'address');
+                    try {
+                        $package->address()->sync($dataAddress);
+                    } catch (\Exception $e) {
+                        $success = false;
+                        $error['errors']['address'] = Lang::get('messages.NotOptionIncludeClass',
+                            ['class' => 'Package', 'option' => 'created', 'include' => 'Address']);
+                        //$error['errors']['Message'] = $e->getMessage();
+                    }
+                }
+            }
         }
 
         if ($success) {
@@ -394,6 +408,20 @@ class PackagesController extends FilteredApiController
                         $success = false;
                         $error['errors']['apps'] = Lang::get('messages.NotOptionIncludeClass',
                             ['class' => 'Package', 'option' => 'created', 'include' => 'Apps']);
+                        //$error['errors']['Message'] = $e->getMessage();
+                    }
+                }
+            }
+
+            if (isset($dataRelationships['address']) && $success) {
+                if (isset($dataRelationships['address']['data'])) {
+                    $dataAddress = $this->parseJsonToArray($dataRelationships['address']['data'], 'address');
+                    try {
+                        $package->address()->sync($dataAddress);
+                    } catch (\Exception $e) {
+                        $success = false;
+                        $error['errors']['address'] = Lang::get('messages.NotOptionIncludeClass',
+                            ['class' => 'Package', 'option' => 'created', 'include' => 'Address']);
                         //$error['errors']['Message'] = $e->getMessage();
                     }
                 }

@@ -23,7 +23,8 @@ class CompanyTransformer extends FilterableTransformer
         'currentBillMonths',
         'packages',
         'presets',
-        'users'
+        'users',
+        'address'
     ];
 
     /**
@@ -42,7 +43,7 @@ class CompanyTransformer extends FilterableTransformer
             'isCensus'         => $company->isCensus,
             'udlPathRule'      => $company->udlPathRule,
             'assetPath'        => $company->assetPath,
-             'shortName'        => $company->shortName,
+            'shortName'        => $company->shortName,
             'currentBillMonth' => $company->currentBillMonth,
             'defaultLocation'  => $company->defaultLocation
         ];

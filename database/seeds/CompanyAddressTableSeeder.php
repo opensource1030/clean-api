@@ -1,0 +1,24 @@
+<?php
+
+class CompanyAddressTableSeeder extends BaseTableSeeder
+{
+    protected $table = 'company_address';
+
+    public function run()
+    {
+        $this->deleteTable();
+        $i = 1;
+        while ($i < 20) {
+            $data = [
+                [
+                    'companyId' => 1,
+                    'addressId' => $i
+                ]
+            ];
+
+            $this->loadTable($data);
+            $i++;
+        }
+        
+    }
+}

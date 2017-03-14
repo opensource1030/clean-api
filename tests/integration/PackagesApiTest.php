@@ -242,16 +242,15 @@ class PackageApiTest extends TestCase
                 ],
             ]);
     }
-/*  @TODO: DeviceVariations
+
     public function testGetPackageByIdandIncludesDevices()
     {
         $package = factory(\WA\DataStore\Package\Package::class)->create();
+        $devvar = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create()->id;
+        $package->devicevariations()->sync([$devvar]);
 
-        //$device = factory(\WA\DataStore\Device\Device::class)->create()->id;
-
-        //$package->devices()->sync(array($device));
-
-        $res = $this->json('GET', 'packages/'.$package->id.'?include=devices')
+        $res = $this->json('GET', 'packages/'.$package->id.'?include=devicevariations')
+        //Log::debug("testGetPackageByIdandIncludesDevices: ".print_r($res->response->getContent(), true));
             ->seeJsonStructure([
                 'data' => [
                     'type',
@@ -275,7 +274,7 @@ class PackageApiTest extends TestCase
                         'self',
                     ],
                     'relationships' => [
-                        'devices' => [
+                        'devicevariations' => [
                             'links' => [
                                 'self',
                                 'related',
@@ -290,40 +289,26 @@ class PackageApiTest extends TestCase
                     ],
                 ],
                 'included' => [
-                    1 => [
+                    0 => [
                         'type',
                         'id',
                         'attributes' => [
-                            'name',
-                            'properties',
-                            'statusId',
-                            'externalId',
-                            'identification',
-                            'syncId',
+                            'priceRetail',
+                            'price1',
+                            'price2',
+                            'priceOwn',
+                            'deviceId',
+                            'carrierId',
+                            'companyId',
                         ],
                         'links' => [
                             'self',
-                        ],
-                        'relationships' => [
-                            'devicetypes' => [
-                                'links' => [
-                                    'self',
-                                    'related',
-                                ],
-                                'data' => [
-                                    0 => [
-                                        'type',
-                                        'id',
-                                    ],
-                                ],
-                            ],
-                        ],
-                    ],
-
-                ],
+                        ]
+                    ]
+                ]
             ]);
     }
-*/
+
     public function testGetPackageByIdandIncludesApps()
     {
         $package = factory(\WA\DataStore\Package\Package::class)->create();
@@ -381,6 +366,76 @@ class PackageApiTest extends TestCase
                             'type',
                             'image',
                             'description',
+                        ],
+                        'links' => [
+                            'self',
+                        ],
+                    ],
+
+                ],
+            ]);
+    }
+
+    public function testGetPackageByIdandIncludesAddess()
+    {
+        $package = factory(\WA\DataStore\Package\Package::class)->create();
+
+        $address1 = factory(\WA\DataStore\Address\Address::class)->create()->id;
+        $address2 = factory(\WA\DataStore\Address\Address::class)->create()->id;
+
+        $package->address()->sync([$address1, $address2]);
+
+        $this->json('GET', 'packages/'.$package->id.'?include=address')
+            ->seeJsonStructure([
+                'data' => [
+                    'type',
+                    'id',
+                    'attributes' => [
+                        'name',
+                        'companyId',
+                        'addressId',
+                        'created_at' => [
+                            'date',
+                            'timezone_type',
+                            'timezone',
+                        ],
+                        'updated_at' => [
+                            'date',
+                            'timezone_type',
+                            'timezone',
+                        ],
+                    ],
+                    'links' => [
+                        'self',
+                    ],
+                    'relationships' => [
+                        'address' => [
+                            'links' => [
+                                'self',
+                                'related',
+                            ],
+                            'data' => [
+                                0 => [
+                                    'type',
+                                    'id',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                'included' => [
+                    0 => [
+                        'type',
+                        'id',
+                        'attributes' => [
+                            'name',
+                            'attn',
+                            'phone',
+                            'address',
+                            'city',
+                            'state',
+                            'country',
+                            'postalCode'
                         ],
                         'links' => [
                             'self',
