@@ -8,10 +8,10 @@ class CompanyAddressTableSeeder extends BaseTableSeeder
     {
         $this->deleteTable();
         $i = 1;
-        while ($i < 20) {
+        while ($i < 100) {
             $data = [
                 [
-                    'companyId' => 1,
+                    'companyId' => rand(1,5),
                     'addressId' => $i
                 ]
             ];
@@ -19,6 +19,5 @@ class CompanyAddressTableSeeder extends BaseTableSeeder
             $this->loadTable($data);
             $i++;
         }
-        
     }
 }

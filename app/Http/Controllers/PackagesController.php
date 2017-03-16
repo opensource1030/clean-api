@@ -328,6 +328,8 @@ class PackagesController extends FilteredApiController
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
+        Log::debug("HERE1");
+
         DB::beginTransaction();
 
         /*
@@ -340,16 +342,17 @@ class PackagesController extends FilteredApiController
             DB::rollBack();
             $error['errors']['packages'] = Lang::get('messages.NotOptionIncludeClass',
                 ['class' => 'Package', 'option' => 'created', 'include' => '']);
-            //$error['errors']['Message'] = $e->getMessage();
+            Log::debug($e->getMessage());
+            $error['errors']['Message'] = $e->getMessage();
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
-
+Log::debug("HERE2");
         /*
          * Check if Json has relationships to continue or if not and commit + return.
          */
         if (isset($data['relationships'])) {
             $dataRelationships = $data['relationships'];
-
+Log::debug("HERE3");
             if (isset($data['relationships']['conditions'])) {
                 if (isset($data['relationships']['conditions']['data'])) {
                         
@@ -363,7 +366,7 @@ class PackagesController extends FilteredApiController
                         } catch (\Exception $e) {
                             DB::rollBack();
                             $error['errors']['services'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Package', 'option' => 'created', 'include' => 'Conditions']);
-                            //$error['errors']['Message'] = $e->getMessage();
+                            $error['errors']['Message'] = $e->getMessage();
                             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
                               
                         }
@@ -380,7 +383,7 @@ class PackagesController extends FilteredApiController
                         $success = false;
                         $error['errors']['services'] = Lang::get('messages.NotOptionIncludeClass',
                             ['class' => 'Package', 'option' => 'created', 'include' => 'Services']);
-                        //$error['errors']['Message'] = $e->getMessage();
+                        $error['errors']['Message'] = $e->getMessage();
                     }
                 }
             }
@@ -394,7 +397,7 @@ class PackagesController extends FilteredApiController
                         $success = false;
                         $error['errors']['devicevariations'] = Lang::get('messages.NotOptionIncludeClass',
                             ['class' => 'Package', 'option' => 'updated', 'include' => 'DeviceVariations']);
-                        //$error['errors']['Message'] = $e->getMessage();
+                        $error['errors']['Message'] = $e->getMessage();
                     }
                 }
             }
@@ -408,7 +411,7 @@ class PackagesController extends FilteredApiController
                         $success = false;
                         $error['errors']['apps'] = Lang::get('messages.NotOptionIncludeClass',
                             ['class' => 'Package', 'option' => 'created', 'include' => 'Apps']);
-                        //$error['errors']['Message'] = $e->getMessage();
+                        $error['errors']['Message'] = $e->getMessage();
                     }
                 }
             }
@@ -422,7 +425,7 @@ class PackagesController extends FilteredApiController
                         $success = false;
                         $error['errors']['address'] = Lang::get('messages.NotOptionIncludeClass',
                             ['class' => 'Package', 'option' => 'created', 'include' => 'Address']);
-                        //$error['errors']['Message'] = $e->getMessage();
+                        $error['errors']['Message'] = $e->getMessage();
                     }
                 }
             }
