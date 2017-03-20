@@ -185,7 +185,8 @@ class EloquentUser extends AbstractRepository implements UserInterface
                 'lastName', 'email',
                 'supervisorEmail',
                 'c.name as companyName',
-                'identification'
+                'identification',
+                'isSupervisor'
             )
             ->join('companies as c', 'c.id', '=', $ownTable.'.companyId')
             ->where('companyId', $companyId)
@@ -829,7 +830,7 @@ class EloquentUser extends AbstractRepository implements UserInterface
                 ->first();
     }
 
-    /**em,p
+    /**
      * Get Udls values for employeeId
      *
      * @return Object with employee specific UDLs
@@ -837,6 +838,18 @@ class EloquentUser extends AbstractRepository implements UserInterface
     public function getUdls($userId)
     {
         $udls = $this->model->find($userId)->udlValues()->get();
+
+        return $udls;
+    }
+
+    /**
+     * Get Address for employeeId
+     *
+     * @return Object with employee specific Address
+     */
+    public function getAddress($userId)
+    {
+        $udls = $this->model->find($userId)->address()->get();
 
         return $udls;
     }

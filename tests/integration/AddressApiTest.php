@@ -110,8 +110,8 @@ class AddressApiTest extends TestCase
 
     public function testUpdateAddress()
     {
-        $address1 = factory(\WA\DataStore\Address\Address::class)->create();
-        $address2 = factory(\WA\DataStore\Address\Address::class)->create();
+        $address1 = factory(\WA\DataStore\Address\Address::class)->create(['address' => 'address1', 'city' => 'city1', 'state' => 'state1', 'country' => 'country1', 'postalCode' => 'postalCode1']);
+        $address2 = factory(\WA\DataStore\Address\Address::class)->create(['address' => 'address2', 'city' => 'city2', 'state' => 'state2', 'country' => 'country2', 'postalCode' => 'postalCode2']);
 
         $this->assertNotEquals($address1->id, $address2->id);
         $this->assertNotEquals($address1->address, $address2->address);
