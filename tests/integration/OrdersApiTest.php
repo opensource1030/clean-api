@@ -180,21 +180,7 @@ class OrdersApiTest extends TestCase
                 ],
             //]);
                 'included' => [
-                    0 => [ // ADDRESS
-                        'type',
-                        'id',
-                        'attributes' => [
-                            'address',
-                            'city',
-                            'state',
-                            'country',
-                            'postalCode'
-                        ],
-                        'links' => [
-                            'self'
-                        ]
-                    ],
-                    1 => [ // USERS
+                    0 => [ // USERS
                         'type',
                         'id',
                         'attributes' => [
@@ -209,7 +195,7 @@ class OrdersApiTest extends TestCase
                             'self'
                         ]
                     ],
-                    2 => [ // PACKAGE
+                    1 => [ // PACKAGE
                         'type',
                         'id',
                         'attributes' => [
@@ -221,7 +207,7 @@ class OrdersApiTest extends TestCase
                             'self'
                         ]
                     ],
-                    3 => [ // SERVICE
+                    2 => [ // SERVICE
                         'type',
                         'id',
                         'attributes' => [
@@ -231,6 +217,18 @@ class OrdersApiTest extends TestCase
                             'cost',
                             'description',
                             'carrierId'
+                        ],
+                        'links' => [
+                            'self'
+                        ]
+                    ],
+                    3 => [ // APP
+                        'type',
+                        'id',
+                        'attributes' => [
+                            'type',
+                            'image',
+                            'description'
                         ],
                         'links' => [
                             'self'
@@ -248,19 +246,7 @@ class OrdersApiTest extends TestCase
                             'self'
                         ]
                     ],
-                    5 => [ // APP
-                        'type',
-                        'id',
-                        'attributes' => [
-                            'type',
-                            'image',
-                            'description'
-                        ],
-                        'links' => [
-                            'self'
-                        ]
-                    ],
-                    6 => [ // DEVICEVARIATIONS
+                    5 => [ // DEVICEVARIATIONS
                         'type',
                         'id',
                         'attributes' => [
@@ -276,7 +262,7 @@ class OrdersApiTest extends TestCase
                             'self'
                         ]
                     ],
-                    7 => [ // DEVICEVARIATIONS
+                    6 => [ // DEVICEVARIATIONS
                         'type',
                         'id',
                         'attributes' => [
@@ -432,21 +418,7 @@ class OrdersApiTest extends TestCase
                         ]
                     ],
                     'included' => [
-                        0 => [ // ADDRESS
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'address',
-                                'city',
-                                'state',
-                                'country',
-                                'postalCode'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        1 => [ // USER
+                        0 => [ // USER
                             'type',
                             'id',
                             'attributes' => [
@@ -461,7 +433,7 @@ class OrdersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        2 => [ // PACKAGE
+                        1 => [ // PACKAGE
                             'type',
                             'id',
                             'attributes' => [
@@ -473,7 +445,7 @@ class OrdersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        3 => [ // SERVICE
+                        2 => [ // SERVICE
                             'type',
                             'id',
                             'attributes' => [
@@ -483,6 +455,18 @@ class OrdersApiTest extends TestCase
                                 'cost',
                                 'description',
                                 'carrierId'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        3 => [ // APP
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'type',
+                                'image',
+                                'description'
                             ],
                             'links' => [
                                 'self'
@@ -500,19 +484,7 @@ class OrdersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        5 => [ // APP
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'type',
-                                'image',
-                                'description'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        6 => [ // DEVICEVARIATIONS
+                        5 => [ // DEVICEVARIATIONS
                             'type',
                             'id',
                             'attributes' => [
@@ -528,7 +500,7 @@ class OrdersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        7 => [ // DEVICEVARIATIONS
+                        6 => [ // DEVICEVARIATIONS
                             'type',
                             'id',
                             'attributes' => [
@@ -718,21 +690,7 @@ class OrdersApiTest extends TestCase
                         ]
                     ],
                     'included' => [
-                        0 => [ // ADDRESS
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'address',
-                                'city',
-                                'state',
-                                'country',
-                                'postalCode'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        1 => [ // USER
+                        0 => [ // USER
                             'type',
                             'id',
                             'attributes' => [
@@ -747,7 +705,7 @@ class OrdersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        2 => [ // PACKAGE
+                        1 => [ // PACKAGE
                             'type',
                             'id',
                             'attributes' => [
@@ -759,7 +717,7 @@ class OrdersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        3 => [ // SERVICE
+                        2 => [ // SERVICE
                             'type',
                             'id',
                             'attributes' => [
@@ -774,7 +732,7 @@ class OrdersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        4 => [ // APP
+                        3 => [ // APP
                             'type',
                             'id',
                             'attributes' => [
@@ -786,7 +744,7 @@ class OrdersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        5 => [ // DEVICEVARIATIONS
+                        4 => [ // DEVICEVARIATIONS
                             'type',
                             'id',
                             'attributes' => [
@@ -968,21 +926,7 @@ class OrdersApiTest extends TestCase
                         ]
                     ],
                     'included' => [
-                        0 => [ // ADDRESS
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'address',
-                                'city',
-                                'state',
-                                'country',
-                                'postalCode'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        1 => [ // USER
+                        0 => [ // USER
                             'type',
                             'id',
                             'attributes' => [
@@ -997,7 +941,7 @@ class OrdersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        2 => [ // PACKAGE
+                        1 => [ // PACKAGE
                             'type',
                             'id',
                             'attributes' => [
@@ -1009,7 +953,7 @@ class OrdersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        3 => [ // SERVICE
+                        2 => [ // SERVICE
                             'type',
                             'id',
                             'attributes' => [
@@ -1019,6 +963,18 @@ class OrdersApiTest extends TestCase
                                 'cost',
                                 'description',
                                 'carrierId'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        3 => [ // APP
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'type',
+                                'image',
+                                'description'
                             ],
                             'links' => [
                                 'self'
@@ -1048,13 +1004,17 @@ class OrdersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        6 => [ // APP
+                        6 => [ // DEVICEVARIATIONS
                             'type',
                             'id',
                             'attributes' => [
-                                'type',
-                                'image',
-                                'description'
+                                'priceRetail',
+                                'price1',
+                                'price2',
+                                'priceOwn',
+                                'deviceId',
+                                'carrierId',
+                                'companyId'
                             ],
                             'links' => [
                                 'self'
@@ -1077,22 +1037,6 @@ class OrdersApiTest extends TestCase
                             ]
                         ],
                         8 => [ // DEVICEVARIATIONS
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'priceRetail',
-                                'price1',
-                                'price2',
-                                'priceOwn',
-                                'deviceId',
-                                'carrierId',
-                                'companyId'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        9 => [ // DEVICEVARIATIONS
                             'type',
                             'id',
                             'attributes' => [

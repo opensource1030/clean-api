@@ -16,6 +16,7 @@ use WA\Repositories\User\UserInterface;
 
 use WA\DataStore\Allocation\Allocation;
 use WA\DataStore\Content\Content;
+use WA\DataStore\Asset\Asset;
 
 use DB;
 use Log;
@@ -257,6 +258,20 @@ class UsersController extends FilteredApiController
                 }
             }
 
+            if (isset($dataRelationships['address']) && $success) {
+                if (isset($dataRelationships['address']['data'])) {
+                    $dataAddress = $this->parseJsonToArray($dataRelationships['address']['data'], 'address');
+                    try {
+                        $user->address()->sync($dataAddress);
+                    } catch (\Exception $e) {
+                        $success = false;
+                        $error['errors']['address'] = Lang::get('messages.NotOptionIncludeClass',
+                            ['class' => 'User', 'option' => 'updated', 'include' => 'Address']);
+                        //$error['errors']['Message'] = $e->getMessage();
+                    }
+                }
+            }
+
             if (isset($dataRelationships['allocations']) && $success) {
                 if (isset($dataRelationships['allocations']['data'])) {
                     $data = $dataRelationships['allocations']['data'];
@@ -450,25 +465,6 @@ class UsersController extends FilteredApiController
         if (isset($data['relationships']) && $success) {
             $dataRelationships = $data['relationships'];
 
-            if (isset($dataRelationships['address'])) {
-                if (isset($dataRelationships['address']['data'])) {
-                    $dataAddress = $dataRelationships['address']['data'];
-                    try {
-                        $interfaceAd = app()->make('WA\Repositories\Address\AddressInterface');
-                        $addressId = $interfaceAd->create($dataAddress)->getAttributes()['id'];
-                        $data['attributes']['addressId'] = $addressId;
-                        $data['attributes']['id'] = $user->id;   
-
-                        $user = $this->user->update($data['attributes']);
-                    } catch (\Exception $e) {
-                        $success = false;
-                        $error['errors']['address'] = Lang::get('messages.NotOptionIncludeClass',
-                            ['class' => 'User', 'option' => 'created', 'include' => 'Address']);
-                        //$error['errors']['Message'] = $e->getMessage();
-                    }
-                }
-            }
-
             if (isset($dataRelationships['devicevariations']) && $success) {
                 if (isset($dataRelationships['devicevariations']['data'])) {
                     $dataDeviceVariations = $this->parseJsonToArray($dataRelationships['devicevariations']['data'], 'devicevariations');
@@ -506,6 +502,20 @@ class UsersController extends FilteredApiController
                         $success = false;
                         $error['errors']['udls'] = Lang::get('messages.NotOptionIncludeClass',
                             ['class' => 'User', 'option' => 'created', 'include' => 'Udls']);
+                        //$error['errors']['Message'] = $e->getMessage();
+                    }
+                }
+            }
+
+            if (isset($dataRelationships['address']) && $success) {
+                if (isset($dataRelationships['address']['data'])) {
+                    $dataAddress = $this->parseJsonToArray($dataRelationships['address']['data'], 'address');
+                    try {
+                        $user->address()->sync($dataAddress);
+                    } catch (\Exception $e) {
+                        $success = false;
+                        $error['errors']['address'] = Lang::get('messages.NotOptionIncludeClass',
+                            ['class' => 'User', 'option' => 'created', 'include' => 'Address']);
                         //$error['errors']['Message'] = $e->getMessage();
                     }
                 }
@@ -603,8 +613,6 @@ class UsersController extends FilteredApiController
                 'identification' => $user->identification,
                 'redirectPath' => $redirectPath,
             ];
-
-            Log::debug("MAIL TO EMAIL ADDRESS: ".print_r($user->email, true));
 
             $mail = Mail::send('emails.auth.register', $data, function ($m) use ($user) {
                 $m->from(env('MAIL_FROM_ADDRESS'), 'Wireless Analytics');

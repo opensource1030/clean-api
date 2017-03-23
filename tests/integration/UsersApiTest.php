@@ -53,46 +53,11 @@ class UsersApiTest extends TestCase
                             'externalId',
                             'approverId',
                             'defaultLocationId',
-                            'addressId'
                         ],
                         'links' => [
                             'self',
-                        ],
-                        'relationships' =>  [
-                            'address' => [
-                                'links' => [
-                                    'self',
-                                    'related'
-                                ],
-                                'data' => [
-                                    0 => [
-                                        'type',
-                                        'id'
-                                    ]
-                                ]
-                            ]
                         ]
                     ],
-                ],
-                'included' => [
-                    0 => [
-                        'type',
-                        'id',
-                        'attributes' => [
-                            'name',
-                            'attn',
-                            'phone',
-                            'address',
-                            'city',
-                            'state',
-                            'country',
-                            'postalCode'
-                        ],
-                        'links' => [
-                            'self'
-                        ]
-                    ]
-                    
                 ],
                 'meta' => [
                     'sort',
@@ -149,8 +114,7 @@ class UsersApiTest extends TestCase
                     'supervisorId' => "$user->supervisorId",
                     'externalId' => $user->externalId,
                     'approverId' => "$user->approverId",
-                    'defaultLocationId' => "$user->defaultLocationId",
-                    'addressId' => "$user->addressId"
+                    'defaultLocationId' => "$user->defaultLocationId"
                 ])
             ->seeJsonStructure([
                 'data' => [
@@ -186,46 +150,10 @@ class UsersApiTest extends TestCase
                         'supervisorId',
                         'externalId',
                         'approverId',
-                        'defaultLocationId',
-                        'addressId'
+                        'defaultLocationId'
                     ],
                     'links' => [
                         'self',
-                    ],
-                    'relationships' =>  [
-                        'address' => [
-                            'links' => [
-                                'self',
-                                'related'
-                            ],
-                            'data' => [
-                                0 => [
-                                    'type',
-                                    'id'
-                                ]
-                            ]
-                        ]
-                    ]
-                ],
-                'included' => [
-                    0 => [
-                        'type',
-                        'id',
-                        'attributes' => [
-                            'name',
-                            'attn',
-                            'phone',
-                            'address',
-                            'city',
-                            'state',
-                            'country',
-                            'postalCode',
-                            'created_at',
-                            'updated_at'
-                        ],
-                        'links' => [
-                            'self'
-                        ]
                     ]
                 ],
                 'meta' => [
@@ -320,7 +248,6 @@ class UsersApiTest extends TestCase
         $this->assertEquals($resArray['supervisorId'], $user->supervisorId);
         $this->assertEquals($resArray['approverId'], $user->approverId);
         $this->assertEquals($resArray['defaultLocationId'], $user->defaultLocationId);
-        $this->assertEquals($resArray['addressId'], $user->addressId);
     }
     public function testGetUserByIdandIncludesAssets()
     {
@@ -363,8 +290,7 @@ class UsersApiTest extends TestCase
                         'supervisorId',
                         'externalId',
                         'approverId',
-                        'defaultLocationId',
-                        'addressId'
+                        'defaultLocationId'
                     ],
                     'links' => [
                         'self',
@@ -381,42 +307,11 @@ class UsersApiTest extends TestCase
                                     'id',
                                 ],
                             ],
-                        ],
-                        'address' => [
-                            'links' => [
-                                'self',
-                                'related',
-                            ],
-                            'data' => [
-                                0 => [
-                                    'type',
-                                    'id',
-                                ],
-                            ],
-                        ],
+                        ]
                     ],
                 ],
                 'included' => [
                     0 => [
-                        'type',
-                        'id',
-                        'attributes' => [
-                            'name',
-                            'attn',
-                            'phone',
-                            'address',
-                            'city',
-                            'state',
-                            'country',
-                            'postalCode',
-                            'created_at',
-                            'updated_at'
-                        ],
-                        'links' => [
-                            'self'
-                        ]
-                    ],
-                    1 => [
                         'type',
                         'id',
                         'attributes' => [
@@ -481,25 +376,12 @@ class UsersApiTest extends TestCase
                         'supervisorId',
                         'externalId',
                         'approverId',
-                        'defaultLocationId',
-                        'addressId'
+                        'defaultLocationId'
                     ],
                     'links' => [
                         'self',
                     ],
                     'relationships' => [
-                        'address' => [
-                            'links' => [
-                                'self',
-                                'related',
-                            ],
-                            'data' => [
-                                0 => [
-                                    'type',
-                                    'id',
-                                ],
-                            ],
-                        ],
                         'devicevariations' => [
                             'links' => [
                                 'self',
@@ -523,25 +405,6 @@ class UsersApiTest extends TestCase
                         'type',
                         'id',
                         'attributes' => [
-                            'name',
-                            'attn',
-                            'phone',
-                            'address',
-                            'city',
-                            'state',
-                            'country',
-                            'postalCode',
-                            'created_at',
-                            'updated_at'
-                        ],
-                        'links' => [
-                            'self'
-                        ]
-                    ],
-                    1 => [
-                        'type',
-                        'id',
-                        'attributes' => [
                             'priceRetail',
                             'price1',
                             'price2',
@@ -554,7 +417,7 @@ class UsersApiTest extends TestCase
                             'self',
                         ],
                     ],
-                    2 => [
+                    1 => [
                         'type',
                         'id',
                         'attributes' => [
@@ -617,25 +480,12 @@ class UsersApiTest extends TestCase
                         'supervisorId',
                         'externalId',
                         'approverId',
-                        'defaultLocationId',
-                        'addressId'
+                        'defaultLocationId'
                     ],
                     'links' => [
                         'self',
                     ],
                     'relationships' => [
-                        'address' => [
-                            'links' => [
-                                'self',
-                                'related',
-                            ],
-                            'data' => [
-                                0 => [
-                                    'type',
-                                    'id',
-                                ]
-                            ]
-                        ],
                         'roles' => [
                             'links' => [
                                 'self',
@@ -659,32 +509,13 @@ class UsersApiTest extends TestCase
                         'type',
                         'id',
                         'attributes' => [
-                            'name',
-                            'attn',
-                            'phone',
-                            'address',
-                            'city',
-                            'state',
-                            'country',
-                            'postalCode',
-                            'created_at',
-                            'updated_at'
-                        ],
-                        'links' => [
-                            'self'
-                        ]
-                    ],
-                    1 => [
-                        'type',
-                        'id',
-                        'attributes' => [
                             'name'
                         ],
                         'links' => [
                             'self',
                         ],
                     ],
-                    2 => [
+                    1 => [
                         'type',
                         'id',
                         'attributes' => [
@@ -745,25 +576,12 @@ class UsersApiTest extends TestCase
                         'supervisorId',
                         'externalId',
                         'approverId',
-                        'defaultLocationId',
-                        'addressId'
+                        'defaultLocationId'
                     ],
                     'links' => [
                         'self',
                     ],
                     'relationships' => [
-                        'address' => [
-                            'links' => [
-                                'self',
-                                'related',
-                            ],
-                            'data' => [
-                                0 => [
-                                    'type',
-                                    'id',
-                                ],
-                            ],
-                        ],
                         'udls' => [
                             'links' => [
                                 'self',
@@ -780,23 +598,6 @@ class UsersApiTest extends TestCase
                 ],
                 'included' => [
                     0 => [
-                        'type',
-                        'id',
-                        'attributes' => [
-                            'name',
-                            'attn',
-                            'phone',
-                            'address',
-                            'city',
-                            'state',
-                            'country',
-                            'postalCode'
-                        ],
-                        'links' => [
-                            'self'
-                        ]
-                    ],
-                    1 => [
                         'type',
                         'id',
                         'attributes' => [
@@ -851,25 +652,12 @@ class UsersApiTest extends TestCase
                         'supervisorId',
                         'externalId',
                         'approverId',
-                        'defaultLocationId',
-                        'addressId'
+                        'defaultLocationId'
                     ],
                     'links' => [
                         'self',
                     ],
                     'relationships' => [
-                        'address' => [
-                            'links' => [
-                                'self',
-                                'related',
-                            ],
-                            'data' => [
-                                0 => [
-                                    'type',
-                                    'id',
-                                ],
-                            ],
-                        ],
                         'companies' => [
                             'links' => [
                                 'self',
@@ -886,25 +674,6 @@ class UsersApiTest extends TestCase
                 ],
                 'included' => [
                     0 => [
-                        'type',
-                        'id',
-                        'attributes' => [
-                            'name',
-                            'attn',
-                            'phone',
-                            'address',
-                            'city',
-                            'state',
-                            'country',
-                            'postalCode',
-                            'created_at',
-                            'updated_at'
-                        ],
-                        'links' => [
-                            'self'
-                        ]
-                    ],
-                    1 => [
                         'type',
                         'id',
                         'attributes' => [
@@ -972,25 +741,12 @@ class UsersApiTest extends TestCase
                         'supervisorId',
                         'externalId',
                         'approverId',
-                        'defaultLocationId',
-                        'addressId'
+                        'defaultLocationId'
                     ],
                     'links' => [
                         'self',
                     ],
                     'relationships' => [
-                        'address' => [
-                            'links' => [
-                                'self',
-                                'related',
-                            ],
-                            'data' => [
-                                0 => [
-                                    'type',
-                                    'id',
-                                ],
-                            ],
-                        ],
                         'allocations' => [
                             'links' => [
                                 'self',
@@ -1007,25 +763,6 @@ class UsersApiTest extends TestCase
                 ],
                 'included' => [
                     0 => [
-                        'type',
-                        'id',
-                        'attributes' => [
-                            'name',
-                            'attn',
-                            'phone',
-                            'address',
-                            'city',
-                            'state',
-                            'country',
-                            'postalCode',
-                            'created_at',
-                            'updated_at'
-                        ],
-                        'links' => [
-                            'self'
-                        ]
-                    ],
-                    1 => [
                         'type',
                         'id',
                         'attributes' => [
@@ -1090,25 +827,12 @@ class UsersApiTest extends TestCase
                         'supervisorId',
                         'externalId',
                         'approverId',
-                        'defaultLocationId',
-                        'addressId'
+                        'defaultLocationId'
                     ],
                     'links' => [
                         'self',
                     ],
                     'relationships' => [
-                        'address' => [
-                            'links' => [
-                                'self',
-                                'related',
-                            ],
-                            'data' => [
-                                0 => [
-                                    'type',
-                                    'id',
-                                ],
-                            ],
-                        ],
                         'contents' => [
                             'links' => [
                                 'self',
@@ -1125,25 +849,6 @@ class UsersApiTest extends TestCase
                 ],
                 'included' => [
                     0 => [
-                        'type',
-                        'id',
-                        'attributes' => [
-                            'name',
-                            'attn',
-                            'phone',
-                            'address',
-                            'city',
-                            'state',
-                            'country',
-                            'postalCode',
-                            'created_at',
-                            'updated_at'
-                        ],
-                        'links' => [
-                            'self'
-                        ]
-                    ],
-                    1 => [
                         'type',
                         'id',
                         'attributes' => [
@@ -1164,8 +869,10 @@ class UsersApiTest extends TestCase
     {
         $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
         $companyDomain = factory(\WA\DataStore\Company\CompanyDomains::class)->create(['domain' => 'email.com', 'companyId' => $companyId]);
+        
+        $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId]);
+
         $addressId = factory(\WA\DataStore\Address\Address::class)->create()->id;
-        $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId, 'addressId' => $addressId]);
 
         $asset1 = factory(\WA\DataStore\Asset\Asset::class)->create()->id;
         $asset2 = factory(\WA\DataStore\Asset\Asset::class)->create()->id;
@@ -1199,7 +906,7 @@ class UsersApiTest extends TestCase
         $service2 = factory(\WA\DataStore\Service\Service::class)->create();
 
 
-        $res = $this->json('POST', '/users?include=assets,devicevariations,roles,udls,allocations,companies,contents',
+        $res = $this->json('POST', '/users?include=assets,devicevariations,roles,udls,allocations,companies,contents,address',
             [
                 'data' => [
                     'type' => 'users',
@@ -1232,10 +939,14 @@ class UsersApiTest extends TestCase
                         'supervisorId' => $user->supervisorId,
                         'externalId' => $user->externalId,
                         'approverId' => $user->approverId,
-                        'defaultLocationId' => $user->defaultLocationId,
-                        'addressId' => $user->addressId,
+                        'defaultLocationId' => $user->defaultLocationId
                     ],
                     'relationships' => [
+                        'address' => [
+                            'data' => [
+                                ['type' => 'address', 'id' => $addressId]
+                            ],
+                        ],
                         'assets' => [
                             'data' => [
                                 ['type' => 'assets', 'id' => $asset1],
@@ -1437,8 +1148,7 @@ class UsersApiTest extends TestCase
                     'supervisorId' => $user->supervisorId,
                     'externalId' => $user->externalId,
                     'approverId' => $user->approverId,
-                    'defaultLocationId' => $user->defaultLocationId,
-                    'addressId' => $user->addressId,
+                    'defaultLocationId' => $user->defaultLocationId
                 ])
             ->seeJsonStructure(
                 [
@@ -1474,8 +1184,7 @@ class UsersApiTest extends TestCase
                             'supervisorId',
                             'externalId',
                             'approverId',
-                            'defaultLocationId',
-                            'addressId',
+                            'defaultLocationId'
                         ],
                         'links' => [
                             'self'
@@ -1596,24 +1305,7 @@ class UsersApiTest extends TestCase
                         ]
                     ],
                     'included' => [
-                        0 => [ // ADDRESS
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'name',
-                                'attn',
-                                'phone',
-                                'address',
-                                'city',
-                                'state',
-                                'country',
-                                'postalCode'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        1 => [ // COMPANIES
+                        0 => [ // COMPANIES
                             'type',
                             'id',
                             'attributes' => [
@@ -1625,6 +1317,22 @@ class UsersApiTest extends TestCase
                                 'udlPathRule',
                                 'assetPath',
                                 'currentBillMonth'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        1 => [ // DEVICEVARIANTS
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'priceRetail',
+                                'price1',
+                                'price2',
+                                'priceOwn',
+                                'deviceId',
+                                'carrierId',
+                                'companyId'
                             ],
                             'links' => [
                                 'self'
@@ -1646,17 +1354,11 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        3 => [ // DEVICEVARIANTS
+                        3 => [ // ROLES
                             'type',
                             'id',
                             'attributes' => [
-                                'priceRetail',
-                                'price1',
-                                'price2',
-                                'priceOwn',
-                                'deviceId',
-                                'carrierId',
-                                'companyId'
+                                'name'
                             ],
                             'links' => [
                                 'self'
@@ -1672,11 +1374,21 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        5 => [ // ROLES
+                        5 => [ // ALLOCATIONS
                             'type',
                             'id',
                             'attributes' => [
-                                'name'
+                                'bill_month',
+                                'carrier',
+                                'mobile_number',
+                                'currency',
+                                'device',
+                                'allocated_charge',
+                                'service_plan_charge',
+                                'usage_charge',
+                                'other_charge',
+                                'fees_charge',
+                                'last_upgrade'
                             ],
                             'links' => [
                                 'self'
@@ -1702,27 +1414,7 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        7 => [ // ALLOCATIONS
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'bill_month',
-                                'carrier',
-                                'mobile_number',
-                                'currency',
-                                'device',
-                                'allocated_charge',
-                                'service_plan_charge',
-                                'usage_charge',
-                                'other_charge',
-                                'fees_charge',
-                                'last_upgrade'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        8 => [  // CONTENTS
+                        7 => [  // CONTENTS
                             'type',
                             'id',
                             'attributes' => [
@@ -1735,7 +1427,7 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        9 => [ // CONTENTS
+                        8 => [ // CONTENTS
                             'type',
                             'id',
                             'attributes' => [
@@ -1743,6 +1435,17 @@ class UsersApiTest extends TestCase
                                 'active',
                                 'owner_type',
                                 'owner_id'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        9 => [ // UDLS
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'udlId',
+                                'udlValue'
                             ],
                             'links' => [
                                 'self'
@@ -1759,12 +1462,18 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        11 => [ // UDLS
+                        11 => [ // ADDRESS
                             'type',
                             'id',
                             'attributes' => [
-                                'udlId',
-                                'udlValue'
+                                'name',
+                                'attn',
+                                'phone',
+                                'address',
+                                'city',
+                                'state',
+                                'country',
+                                'postalCode'
                             ],
                             'links' => [
                                 'self'
@@ -1839,8 +1548,8 @@ class UsersApiTest extends TestCase
     {
         $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
         $companyDomain = factory(\WA\DataStore\Company\CompanyDomains::class)->create(['domain' => 'email.com', 'companyId' => $companyId]);
-        $addressId = factory(\WA\DataStore\Address\Address::class)->create()->id;
-        $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId, 'addressId' => $addressId]);
+        $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId]);
+
         $res = $this->json('POST', '/users?include=assets',
             [
                 'data' => [
@@ -1874,8 +1583,7 @@ class UsersApiTest extends TestCase
                         'supervisorId' => $user->supervisorId,
                         'externalId' => $user->externalId,
                         'approverId' => $user->approverId,
-                        'defaultLocationId' => $user->defaultLocationId,
-                        'addressId' => $user->addressId,
+                        'defaultLocationId' => $user->defaultLocationId
                     ],
                     'NoRelationships' => [
                         'assets' => [
@@ -1917,8 +1625,7 @@ class UsersApiTest extends TestCase
                     'supervisorId' => $user->supervisorId,
                     'externalId' => $user->externalId,
                     'approverId' => $user->approverId,
-                    'defaultLocationId' => $user->defaultLocationId,
-                    'addressId' => $user->addressId,
+                    'defaultLocationId' => $user->defaultLocationId
                 ])
             ->seeJsonStructure(
                 [
@@ -1954,50 +1661,18 @@ class UsersApiTest extends TestCase
                             'supervisorId',
                             'externalId',
                             'approverId',
-                            'defaultLocationId',
-                            'addressId',
+                            'defaultLocationId'
                         ],
                         'links' => [
                             'self'
                         ],
                         'relationships' => [
-                            'address' => [
-                                'links' => [
-                                    'self',
-                                    'related'
-                                ],
-                                'data' => [
-                                    0 => [
-                                        'type',
-                                        'id'
-                                    ]
-                                ]
-                            ],
                             'assets' => [
                                 'links' => [
                                     'self',
                                     'related'
                                 ],
                                 'data' => []
-                            ]
-                        ]
-                    ],
-                    'included' => [
-                        0 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'name',
-                                'attn',
-                                'phone',
-                                'address',
-                                'city',
-                                'state',
-                                'country',
-                                'postalCode'
-                            ],
-                            'links' => [
-                                'self'
                             ]
                         ]
                     ]
@@ -2007,8 +1682,9 @@ class UsersApiTest extends TestCase
     {
         $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
         $companyDomain = factory(\WA\DataStore\Company\CompanyDomains::class)->create(['domain' => 'email.com', 'companyId' => $companyId]);
-        $addressId = factory(\WA\DataStore\Address\Address::class)->create()->id;
-        $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId, 'addressId' => $addressId]);
+
+        $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId]);
+
         $res = $this->json('POST', '/users?include=assets',
             [
                 'data' => [
@@ -2042,8 +1718,7 @@ class UsersApiTest extends TestCase
                         'supervisorId' => $user->supervisorId,
                         'externalId' => $user->externalId,
                         'approverId' => $user->approverId,
-                        'defaultLocationId' => $user->defaultLocationId,
-                        'addressId' => $user->addressId,
+                        'defaultLocationId' => $user->defaultLocationId
                     ],
                     'relationships' => [
                         'NoAssets' => [
@@ -2085,8 +1760,7 @@ class UsersApiTest extends TestCase
                     'supervisorId' => $user->supervisorId,
                     'externalId' => $user->externalId,
                     'approverId' => $user->approverId,
-                    'defaultLocationId' => $user->defaultLocationId,
-                    'addressId' => $user->addressId,
+                    'defaultLocationId' => $user->defaultLocationId
                 ])
             ->seeJsonStructure(
                 [
@@ -2122,50 +1796,18 @@ class UsersApiTest extends TestCase
                             'supervisorId',
                             'externalId',
                             'approverId',
-                            'defaultLocationId',
-                            'addressId',
+                            'defaultLocationId'
                         ],
                         'links' => [
                             'self'
                         ],
                         'relationships' => [
-                            'address' => [
-                                'links' => [
-                                    'self',
-                                    'related'
-                                ],
-                                'data' => [
-                                    0 => [
-                                        'type',
-                                        'id'
-                                    ]
-                                ]
-                            ],
                             'assets' => [
                                 'links' => [
                                     'self',
                                     'related'
                                 ],
                                 'data' => []
-                            ]
-                        ]
-                    ],
-                    'included' => [
-                        0 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'name',
-                                'attn',
-                                'phone',
-                                'address',
-                                'city',
-                                'state',
-                                'country',
-                                'postalCode'
-                            ],
-                            'links' => [
-                                'self'
                             ]
                         ]
                     ]
@@ -2175,8 +1817,9 @@ class UsersApiTest extends TestCase
     {
         $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
         $companyDomain = factory(\WA\DataStore\Company\CompanyDomains::class)->create(['domain' => 'email.com', 'companyId' => $companyId]);
-        $addressId = factory(\WA\DataStore\Address\Address::class)->create()->id;
-        $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId, 'addressId' => $addressId]);
+
+        $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId]);
+
         $res = $this->json('POST', '/users?include=assets',
             [
                 'data' => [
@@ -2210,8 +1853,7 @@ class UsersApiTest extends TestCase
                         'supervisorId' => $user->supervisorId,
                         'externalId' => $user->externalId,
                         'approverId' => $user->approverId,
-                        'defaultLocationId' => $user->defaultLocationId,
-                        'addressId' => $user->addressId,
+                        'defaultLocationId' => $user->defaultLocationId
                     ],
                     'relationships' => [
                         'assets' => [
@@ -2253,8 +1895,7 @@ class UsersApiTest extends TestCase
                     'supervisorId' => $user->supervisorId,
                     'externalId' => $user->externalId,
                     'approverId' => $user->approverId,
-                    'defaultLocationId' => $user->defaultLocationId,
-                    'addressId' => $user->addressId,
+                    'defaultLocationId' => $user->defaultLocationId
                 ])
             ->seeJsonStructure(
                 [
@@ -2290,50 +1931,18 @@ class UsersApiTest extends TestCase
                             'supervisorId',
                             'externalId',
                             'approverId',
-                            'defaultLocationId',
-                            'addressId',
+                            'defaultLocationId'
                         ],
                         'links' => [
                             'self'
                         ],
                         'relationships' => [
-                            'address' => [
-                                'links' => [
-                                    'self',
-                                    'related'
-                                ],
-                                'data' => [
-                                    0 => [
-                                        'type',
-                                        'id'
-                                    ]
-                                ]
-                            ],
                             'assets' => [
                                 'links' => [
                                     'self',
                                     'related'
                                 ],
                                 'data' => []
-                            ]
-                        ]
-                    ],
-                    'included' => [
-                        0 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'name',
-                                'attn',
-                                'phone',
-                                'address',
-                                'city',
-                                'state',
-                                'country',
-                                'postalCode'
-                            ],
-                            'links' => [
-                                'self'
                             ]
                         ]
                     ]
@@ -2344,8 +1953,9 @@ class UsersApiTest extends TestCase
     {
         $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
         $companyDomain = factory(\WA\DataStore\Company\CompanyDomains::class)->create(['domain' => 'email.com', 'companyId' => $companyId]);
-        $addressId = factory(\WA\DataStore\Address\Address::class)->create()->id;
-        $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId, 'addressId' => $addressId]);
+
+        $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId]);
+
         $res = $this->json('POST', '/users?include=assets',
             [
                 'data' => [
@@ -2379,8 +1989,7 @@ class UsersApiTest extends TestCase
                         'supervisorId' => $user->supervisorId,
                         'externalId' => $user->externalId,
                         'approverId' => $user->approverId,
-                        'defaultLocationId' => $user->defaultLocationId,
-                        'addressId' => $user->addressId,
+                        'defaultLocationId' => $user->defaultLocationId
                     ],
                     'relationships' => [
                         'assets' => [
@@ -2422,8 +2031,7 @@ class UsersApiTest extends TestCase
                     'supervisorId' => $user->supervisorId,
                     'externalId' => $user->externalId,
                     'approverId' => $user->approverId,
-                    'defaultLocationId' => $user->defaultLocationId,
-                    'addressId' => $user->addressId,
+                    'defaultLocationId' => $user->defaultLocationId
                 ])
             ->seeJsonStructure(
                 [
@@ -2459,50 +2067,18 @@ class UsersApiTest extends TestCase
                             'supervisorId',
                             'externalId',
                             'approverId',
-                            'defaultLocationId',
-                            'addressId',
+                            'defaultLocationId'
                         ],
                         'links' => [
                             'self'
                         ],
                         'relationships' => [
-                            'address' => [
-                                'links' => [
-                                    'self',
-                                    'related'
-                                ],
-                                'data' => [
-                                    0 => [
-                                        'type',
-                                        'id'
-                                    ]
-                                ]
-                            ],
                             'assets' => [
                                 'links' => [
                                     'self',
                                     'related'
                                 ],
                                 'data' => []
-                            ]
-                        ]
-                    ],
-                    'included' => [
-                        0 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'name',
-                                'attn',
-                                'phone',
-                                'address',
-                                'city',
-                                'state',
-                                'country',
-                                'postalCode'
-                            ],
-                            'links' => [
-                                'self'
                             ]
                         ]
                     ]
@@ -2513,8 +2089,9 @@ class UsersApiTest extends TestCase
     {
         $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
         $companyDomain = factory(\WA\DataStore\Company\CompanyDomains::class)->create(['domain' => 'email.com', 'companyId' => $companyId]);
-        $addressId = factory(\WA\DataStore\Address\Address::class)->create()->id;
-        $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId, 'addressId' => $addressId]);
+
+        $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId]);
+
         $res = $this->json('POST', '/users?include=assets',
             [
                 'data' => [
@@ -2548,8 +2125,7 @@ class UsersApiTest extends TestCase
                         'supervisorId' => $user->supervisorId,
                         'externalId' => $user->externalId,
                         'approverId' => $user->approverId,
-                        'defaultLocationId' => $user->defaultLocationId,
-                        'addressId' => $user->addressId,
+                        'defaultLocationId' => $user->defaultLocationId
                     ],
                     'relationships' => [
                         'assets' => [
@@ -2558,7 +2134,7 @@ class UsersApiTest extends TestCase
                                 ['type' => 'assets', 'NoId' => 2],
                             ],
                         ]
-                    ],
+                    ]
                 ],
             ]
             )
@@ -2591,8 +2167,7 @@ class UsersApiTest extends TestCase
                     'supervisorId' => $user->supervisorId,
                     'externalId' => $user->externalId,
                     'approverId' => $user->approverId,
-                    'defaultLocationId' => $user->defaultLocationId,
-                    'addressId' => $user->addressId,
+                    'defaultLocationId' => $user->defaultLocationId
                 ])
             ->seeJsonStructure(
                 [
@@ -2628,25 +2203,12 @@ class UsersApiTest extends TestCase
                             'supervisorId',
                             'externalId',
                             'approverId',
-                            'defaultLocationId',
-                            'addressId',
+                            'defaultLocationId'
                         ],
                         'links' => [
                             'self'
                         ],
                         'relationships' => [
-                            'address' => [
-                                'links' => [
-                                    'self',
-                                    'related'
-                                ],
-                                'data' => [
-                                    0 => [
-                                        'type',
-                                        'id'
-                                    ]
-                                ]
-                            ],
                             'assets' => [
                                 'links' => [
                                     'self',
@@ -2655,34 +2217,15 @@ class UsersApiTest extends TestCase
                                 'data' => []
                             ]
                         ]
-                    ],
-                    'included' => [
-                        0 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'name',
-                                'attn',
-                                'phone',
-                                'address',
-                                'city',
-                                'state',
-                                'country',
-                                'postalCode'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ]
                     ]
                 ]);
     }
     public function testUpdateUser()
     {
         $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
-        $addressId = factory(\WA\DataStore\Address\Address::class)->create()->id;
-        $user1 = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId, 'addressId' => $addressId]);
-        $user2 = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId, 'addressId' => $addressId]);
+
+        $user1 = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId]);
+        $user2 = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId]);
         
         $res = $this->json('PATCH', '/users/'.$user2->id,
             [
@@ -2717,8 +2260,7 @@ class UsersApiTest extends TestCase
                         'supervisorId' => $user1->supervisorId,
                         'externalId' => $user1->externalId,
                         'approverId' => $user1->approverId,
-                        'defaultLocationId' => $user1->defaultLocationId,
-                        'addressId' => $user1->addressId,
+                        'defaultLocationId' => $user1->defaultLocationId
                     ]
                 ]
             ]
@@ -2753,8 +2295,7 @@ class UsersApiTest extends TestCase
                     'supervisorId' => $user1->supervisorId,
                     'externalId' => $user1->externalId,
                     'approverId' => $user1->approverId,
-                    'defaultLocationId' => $user1->defaultLocationId,
-                    'addressId' => $user1->addressId,
+                    'defaultLocationId' => $user1->defaultLocationId
                 ])
             ->seeJsonStructure(
                 [
@@ -2790,44 +2331,10 @@ class UsersApiTest extends TestCase
                             'supervisorId',
                             'externalId',
                             'approverId',
-                            'defaultLocationId',
-                            'addressId',
+                            'defaultLocationId'
                         ],
                         'links' => [
                             'self'
-                        ],
-                        'relationships' => [
-                            'address' => [
-                                'links' => [
-                                    'self',
-                                    'related'
-                                ],
-                                'data' => [
-                                    0 => [
-                                        'type',
-                                        'id'
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ],
-                    'included' => [
-                        0 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'name',
-                                'attn',
-                                'phone',
-                                'address',
-                                'city',
-                                'state',
-                                'country',
-                                'postalCode'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
                         ]
                     ]
                 ]);
@@ -2835,8 +2342,10 @@ class UsersApiTest extends TestCase
     public function testUpdateUserIncludeAllDeleteRelationships()
     {
         $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
+        $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId]);
+
+        // ADDRESS
         $addressId = factory(\WA\DataStore\Address\Address::class)->create()->id;
-        $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId, 'addressId' => $addressId]);
  
         // ASSETS
         $asset1 = factory(\WA\DataStore\Asset\Asset::class)->create(['userId' => $user->id]);
@@ -2917,6 +2426,7 @@ class UsersApiTest extends TestCase
         $this->assertEquals($role2DB->name, $role2->name);
         $this->assertEquals($role2DB->display_name, $role2->display_name);
         $this->assertEquals($role2DB->description, $role2->description);
+
         // UDLVALUES
         $udl1 = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $companyId]);
         $udl2 = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $companyId]);
@@ -2941,6 +2451,7 @@ class UsersApiTest extends TestCase
         $this->assertEquals($udlV2DB->name, $udlV2->name);
         $this->assertEquals($udlV2DB->udlId, $udlV2->udlId);
         $this->assertEquals($udlV2DB->externalId, $udlV2->externalId);
+
         // ALLOCATIONS
         $carrier = factory(\WA\DataStore\Carrier\Carrier::class)->create();
         $allocation1 = factory(\WA\DataStore\Allocation\Allocation::class)->create(['userId' => $user->id]);
@@ -2953,7 +2464,8 @@ class UsersApiTest extends TestCase
 
         $content1 = factory(\WA\DataStore\Content\Content::class)->create(['owner_id' => $user->id, 'owner_type' => 'users']);
         $content2 = factory(\WA\DataStore\Content\Content::class)->create(['owner_id' => $user->id, 'owner_type' => 'users']);
-        $res = $this->json('PATCH', '/users/'.$user->id.'?include=assets,devicevariations,roles,udls,allocations,companies,contents',
+
+        $res = $this->json('PATCH', '/users/'.$user->id.'?include=assets,devicevariations,roles,udls,allocations,companies,contents,address',
             [
                 'data' => [
                     'type' => 'users',
@@ -2986,10 +2498,14 @@ class UsersApiTest extends TestCase
                         'supervisorId' => $user->supervisorId,
                         'externalId' => $user->externalId,
                         'approverId' => $user->approverId,
-                        'defaultLocationId' => $user->defaultLocationId,
-                        'addressId' => $user->addressId,
+                        'defaultLocationId' => $user->defaultLocationId
                     ],
                     'relationships' => [
+                        'address' => [
+                            'data' => [
+                                ['type' => 'address', 'id' => $addressId]
+                            ],
+                        ],
                         'assets' => [
                             'data' => [
                                 ['type' => 'assets', 'id' => $asset1->id]
@@ -3102,8 +2618,7 @@ class UsersApiTest extends TestCase
                     'supervisorId' => $user->supervisorId,
                     'externalId' => $user->externalId,
                     'approverId' => $user->approverId,
-                    'defaultLocationId' => $user->defaultLocationId,
-                    'addressId' => $user->addressId,
+                    'defaultLocationId' => $user->defaultLocationId
                 ])
             ->seeJsonStructure(
                 [
@@ -3139,25 +2654,12 @@ class UsersApiTest extends TestCase
                             'supervisorId',
                             'externalId',
                             'approverId',
-                            'defaultLocationId',
-                            'addressId',
+                            'defaultLocationId'
                         ],
                         'links' => [
                             'self'
                         ],
                         'relationships' => [
-                            'address' => [
-                                'links' => [
-                                    'self',
-                                    'related'
-                                ],
-                                'data' => [
-                                    0 => [
-                                        'type',
-                                        'id'
-                                    ]
-                                ]
-                            ],
                             'assets' => [
                                 'links' => [
                                     'self',
@@ -3245,22 +2747,33 @@ class UsersApiTest extends TestCase
                                         'id'
                                     ]
                                 ]
+                            ],
+                            'address' => [
+                                'links' => [
+                                    'self',
+                                    'related'
+                                ],
+                                'data' => [
+                                    0 => [
+                                        'type',
+                                        'id'
+                                    ]
+                                ]
                             ]
                         ]
                     ],
                     'included' => [
-                        0 => [ // ADDRESS
+                        0 => [ // ASSETS
                             'type',
                             'id',
                             'attributes' => [
-                                'name',
-                                'attn',
-                                'phone',
-                                'address',
-                                'city',
-                                'state',
-                                'country',
-                                'postalCode'
+                                'identification',
+                                'active',
+                                'statusId',
+                                'typeId',
+                                'externalId',
+                                'carrierId',
+                                'syncId'
                             ],
                             'links' => [
                                 'self'
@@ -3282,23 +2795,7 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        2 => [ // ASSETS
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'identification',
-                                'active',
-                                'statusId',
-                                'typeId',
-                                'externalId',
-                                'carrierId',
-                                'syncId'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        3 => [ // COMPANIES
+                        2 => [ // COMPANIES
                             'type',
                             'id',
                             'attributes' => [
@@ -3315,7 +2812,7 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        4 => [ // DEVICEVARIATIONS
+                        3 => [ // DEVICEVARIATIONS
                             'type',
                             'id',
                             'attributes' => [
@@ -3332,7 +2829,7 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        5 => [ // ROLES
+                        4 => [ // ROLES
                             'type',
                             'id',
                             'attributes' => [
@@ -3342,7 +2839,7 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        6 => [ // ALLOCATIONS
+                        5 => [ // ALLOCATIONS
                             'type',
                             'id',
                             'attributes' => [
@@ -3362,7 +2859,7 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        7 => [ // CONTENTS
+                        6 => [ // CONTENTS
                             'type',
                             'id',
                             'attributes' => [
@@ -3375,12 +2872,29 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        8 => [ // UDLVALUES
+                        7 => [ // UDLVALUES
                             'type',
                             'id',
                             'attributes' => [
                                 'udlId',
                                 'udlValue'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        8 => [ // ADDRESS
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'name',
+                                'attn',
+                                'phone',
+                                'address',
+                                'city',
+                                'state',
+                                'country',
+                                'postalCode'
                             ],
                             'links' => [
                                 'self'
@@ -3392,25 +2906,32 @@ class UsersApiTest extends TestCase
     public function testUpdateUserIncludeAllAddRelationships()
     {
         $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
+        $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId]);
+
+        // ADDRESS
         $addressId = factory(\WA\DataStore\Address\Address::class)->create()->id;
-        $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId, 'addressId' => $addressId]);
+        $user->address()->sync([$addressId]);
  
+        // ASSET
         $asset1 = factory(\WA\DataStore\Asset\Asset::class)->create(['userId' => $user->id])->id;
         $asset2 = factory(\WA\DataStore\Asset\Asset::class)->create(['userId' => $user->id])->id;
         $asset3 = factory(\WA\DataStore\Asset\Asset::class)->create()->id;
         
+        // DEVICE VARIATIONS
         $deviceVariation1 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create()->id;
         $deviceVariation2 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create()->id;
         $arrayD = array($deviceVariation1, $deviceVariation2);
         $user->devicevariations()->sync($arrayD);
         $deviceVariation3 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create()->id;
         
+        // ROLES
         $role1 = factory(\WA\DataStore\Role\Role::class)->create()->id;
         $role2 = factory(\WA\DataStore\Role\Role::class)->create()->id;
         $arrayR = array($role1, $role2);
         $user->roles()->sync($arrayR);
         $role3 = factory(\WA\DataStore\Role\Role::class)->create()->id;
         
+        // UDL VALUES
         $udl1 = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $companyId])->id;
         $udl2 = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $companyId])->id;
         $udlV1 = factory(\WA\DataStore\UdlValue\UdlValue::class)->create(['udlId' => $udl1])->id;
@@ -3420,8 +2941,10 @@ class UsersApiTest extends TestCase
         $udl3 = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $companyId])->id;
         $udlV3 = factory(\WA\DataStore\UdlValue\UdlValue::class)->create(['udlId' => $udl2])->id;
 
+        // CARRIER
         $carrier = factory(\WA\DataStore\Carrier\Carrier::class)->create();
 
+        // ALLOCATION
         $allocation1 = factory(\WA\DataStore\Allocation\Allocation::class)->create(['userId' => $user->id]);
         $allocation1->carriers()->associate($carrier);
         $allocation1->save();
@@ -3429,10 +2952,11 @@ class UsersApiTest extends TestCase
         $allocation2->carriers()->associate($carrier);
         $allocation2->save();
         
+        // CONTENT
         $content1 = factory(\WA\DataStore\Content\Content::class)->create(['owner_id' => $user->id, 'owner_type' => 'users']);
         $content2 = factory(\WA\DataStore\Content\Content::class)->create(['owner_id' => $user->id, 'owner_type' => 'users']);
         
-        $res = $this->json('PATCH', '/users/'.$user->id.'?include=assets,devicevariations,roles,udls,allocations,companies,contents',
+        $res = $this->json('PATCH', '/users/'.$user->id.'?include=assets,devicevariations,roles,udls,allocations,companies,contents,address',
             [
                 'data' => [
                     'type' => 'users',
@@ -3465,10 +2989,14 @@ class UsersApiTest extends TestCase
                         'supervisorId' => $user->supervisorId,
                         'externalId' => $user->externalId,
                         'approverId' => $user->approverId,
-                        'defaultLocationId' => $user->defaultLocationId,
-                        'addressId' => $user->addressId,
+                        'defaultLocationId' => $user->defaultLocationId
                     ],
                     'relationships' => [
+                        'address' => [
+                            'data' => [
+                                ['type' => 'address', 'id' => $addressId]
+                            ],
+                        ],
                         'assets' => [
                             'data' => [
                                 ['type' => 'assets', 'id' => $asset1],
@@ -3737,8 +3265,7 @@ class UsersApiTest extends TestCase
                     'supervisorId' => $user->supervisorId,
                     'externalId' => $user->externalId,
                     'approverId' => $user->approverId,
-                    'defaultLocationId' => $user->defaultLocationId,
-                    'addressId' => $user->addressId,
+                    'defaultLocationId' => $user->defaultLocationId
                 ])
             ->seeJsonStructure(
                 [
@@ -3747,6 +3274,7 @@ class UsersApiTest extends TestCase
                         'id',
                         'attributes' => [
                             'uuid',
+                            'identification',
                             'email',
                             'alternateEmail',
                             'password',
@@ -3774,25 +3302,12 @@ class UsersApiTest extends TestCase
                             'supervisorId',
                             'externalId',
                             'approverId',
-                            'defaultLocationId',
-                            'addressId',
+                            'defaultLocationId'
                         ],
                         'links' => [
                             'self'
                         ],
                         'relationships' => [
-                            'address' => [
-                                'links' => [
-                                    'self',
-                                    'related'
-                                ],
-                                'data' => [
-                                    0 => [
-                                        'type',
-                                        'id'
-                                    ]
-                                ]
-                            ],
                             'assets' => [
                                 'links' => [
                                     'self',
@@ -3804,10 +3319,6 @@ class UsersApiTest extends TestCase
                                         'id'
                                     ],
                                     1 => [
-                                        'type',
-                                        'id'
-                                    ],
-                                    2 => [
                                         'type',
                                         'id'
                                     ]
@@ -3924,11 +3435,287 @@ class UsersApiTest extends TestCase
                                         'id'
                                     ]
                                 ]
+                            ],
+                            'address' => [
+                                'links' => [
+                                    'self',
+                                    'related'
+                                ],
+                                'data' => [
+                                    0 => [
+                                        'type',
+                                        'id'
+                                    ]
+                                ]
                             ]
                         ]
                     ],
                     'included' => [
-                        0 => [
+                        0 => [ // ASSETS
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'identification',
+                                'active',
+                                'statusId',
+                                'typeId',
+                                'externalId',
+                                'carrierId',
+                                'syncId'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        1 => [ // ASSETS
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'identification',
+                                'active',
+                                'statusId',
+                                'typeId',
+                                'externalId',
+                                'carrierId',
+                                'syncId'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        2 => [ // COMPANIES
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'name',
+                                'label',
+                                'active',
+                                'udlpath',
+                                'isCensus',
+                                'udlPathRule',
+                                'assetPath',
+                                'shortName',
+                                'currentBillMonth',
+                                'defaultLocation'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        3 => [ // DEVICEVARIATIONS
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'priceRetail',
+                                'price1',
+                                'price2',
+                                'priceOwn',
+                                'deviceId',
+                                'carrierId',
+                                'companyId'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        4 => [ // DEVICEVARIATIONS
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'priceRetail',
+                                'price1',
+                                'price2',
+                                'priceOwn',
+                                'deviceId',
+                                'carrierId',
+                                'companyId'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        5 => [ // DEVICEVARIATIONS
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'priceRetail',
+                                'price1',
+                                'price2',
+                                'priceOwn',
+                                'deviceId',
+                                'carrierId',
+                                'companyId'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        6 => [ // ROLES
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'name'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        7 => [ // ROLES
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'name'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        8 => [ // ROLES
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'name'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        9 => [ // ALLOCATIONS
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'bill_month',
+                                'carrier',
+                                'mobile_number',
+                                'currency',
+                                'device',
+                                'allocated_charge',
+                                'service_plan_charge',
+                                'usage_charge',
+                                'other_charge',
+                                'fees_charge',
+                                'last_upgrade'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        10 => [ // ALLOCATIONS
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'bill_month',
+                                'carrier',
+                                'mobile_number',
+                                'currency',
+                                'device',
+                                'allocated_charge',
+                                'service_plan_charge',
+                                'usage_charge',
+                                'other_charge',
+                                'fees_charge',
+                                'last_upgrade'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        11 => [ // ALLOCATIONS
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'bill_month',
+                                'carrier',
+                                'mobile_number',
+                                'currency',
+                                'device',
+                                'allocated_charge',
+                                'service_plan_charge',
+                                'usage_charge',
+                                'other_charge',
+                                'fees_charge',
+                                'last_upgrade'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        12 => [ // CONTENTS
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'content',
+                                'active',
+                                'owner_type',
+                                'owner_id'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        13 => [ // CONTENTS
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'content',
+                                'active',
+                                'owner_type',
+                                'owner_id'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        14 => [ // CONTENTS
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'content',
+                                'active',
+                                'owner_type',
+                                'owner_id'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        15 => [ // UDLVALUES
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'udlId',
+                                'udlName',
+                                'udlValue'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        16 => [ // UDLVALUES
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'udlId',
+                                'udlName',
+                                'udlValue'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        17 => [ // UDLVALUES
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'udlId',
+                                'udlName',
+                                'udlValue'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        18 => [ // ADDRESS
                             'type',
                             'id',
                             'attributes' => [
@@ -3940,281 +3727,6 @@ class UsersApiTest extends TestCase
                                 'state',
                                 'country',
                                 'postalCode'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        1 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'identification',
-                                'active',
-                                'statusId',
-                                'typeId',
-                                'externalId',
-                                'carrierId',
-                                'syncId'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        2 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'identification',
-                                'active',
-                                'statusId',
-                                'typeId',
-                                'externalId',
-                                'carrierId',
-                                'syncId'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        3 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'identification',
-                                'active',
-                                'statusId',
-                                'typeId',
-                                'externalId',
-                                'carrierId',
-                                'syncId'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        4 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'name',
-                                'label',
-                                'active',
-                                'udlpath',
-                                'isCensus',
-                                'udlPathRule',
-                                'assetPath',
-                                'currentBillMonth'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        5 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'priceRetail',
-                                'price1',
-                                'price2',
-                                'priceOwn',
-                                'deviceId',
-                                'carrierId',
-                                'companyId'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        6 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'priceRetail',
-                                'price1',
-                                'price2',
-                                'priceOwn',
-                                'deviceId',
-                                'carrierId',
-                                'companyId'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        7 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'priceRetail',
-                                'price1',
-                                'price2',
-                                'priceOwn',
-                                'deviceId',
-                                'carrierId',
-                                'companyId'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        8 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'name'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        9 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'name'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        10 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'name'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        11 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'bill_month',
-                                'carrier',
-                                'mobile_number',
-                                'currency',
-                                'device',
-                                'allocated_charge',
-                                'service_plan_charge',
-                                'usage_charge',
-                                'other_charge',
-                                'fees_charge',
-                                'last_upgrade'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        12 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'bill_month',
-                                'carrier',
-                                'mobile_number',
-                                'currency',
-                                'device',
-                                'allocated_charge',
-                                'service_plan_charge',
-                                'usage_charge',
-                                'other_charge',
-                                'fees_charge',
-                                'last_upgrade'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        13 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'bill_month',
-                                'carrier',
-                                'mobile_number',
-                                'currency',
-                                'device',
-                                'allocated_charge',
-                                'service_plan_charge',
-                                'usage_charge',
-                                'other_charge',
-                                'fees_charge',
-                                'last_upgrade'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        14 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'content',
-                                'active',
-                                'owner_type',
-                                'owner_id'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        15 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'content',
-                                'active',
-                                'owner_type',
-                                'owner_id'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        16 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'content',
-                                'active',
-                                'owner_type',
-                                'owner_id'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        17 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'udlId',
-                                'udlValue'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        18 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'udlId',
-                                'udlValue'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        19 => [
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'udlId',
-                                'udlValue'
                             ],
                             'links' => [
                                 'self'

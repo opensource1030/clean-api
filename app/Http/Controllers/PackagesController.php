@@ -10,7 +10,9 @@ use WA\DataStore\Package\Package;
 use WA\DataStore\Package\PackageTransformer;
 use WA\DataStore\User\User;
 use WA\Repositories\Package\PackageInterface;
+use WA\Repositories\User\UserInterface;
 
+use Authorizer;
 use Log;
 
 /**
@@ -31,114 +33,228 @@ class PackagesController extends FilteredApiController
      * @param PackageInterface $package
      * @param Request $request
      */
-    public function __construct(PackageInterface $package, Request $request)
+    public function __construct(UserInterface $user, PackageInterface $package, Request $request)
     {
         parent::__construct($package, $request);
         $this->package = $package;
+        $this->userInterface = $user;
     }
 
     public function userPackages(Request $request)
     {
-        $user = $this->retrieveUserInfoFromAuthorizer();
-        $info = $this->retrieveInfoFromUser($user);
+        $req = $request->all();
 
-        // Retrieve all the packages that have the same companyId as the user.
-        $packages = Package::where('companyId', $user->companyId);
-        $packagesAux = $packages->get();
+        if (!isset($req['data'])) {
+            $error['errors']['data'] = Lang::get('messages.InvalidJson');
+            //Log::debug("JSON NO VALID - data");
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+        } else {
+            $data = $request['data'];
+            if (!isset($data['companyId'])) {
+                $error['errors']['companyId'] = Lang::get('messages.InvalidJson');
+                //Log::debug("JSON NO VALID - companyId");
+                return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+            } 
 
-        $packages->where(function ($query) use ($info, $packagesAux) {
-            foreach ($packagesAux as $package) {
-                $conditions = $package->conditions;
-                $ok = true;
+            if (!isset($data['conditions'])) {
+                $error['errors']['conditions'] = Lang::get('messages.InvalidJson');
+                //Log::debug("JSON NO VALID - conditions");
+                return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+            }
+        }
 
-                if ($conditions != null) {
-                    foreach ($conditions as $condition) {
-                        foreach ($info as $i) {
-                            if ($condition->name == $i['label'] && $ok) {
-                                switch ($condition->condition) {
-                                    case 'like':
-                                        $ok = $ok && strpos($i['value'], $condition->value) !== false;
-                                        break;
-                                    case 'gt':
-                                        $ok = $ok && ($i['value'] > $condition->value) ? true : false;
-                                        break;
-                                    case 'lt':
-                                        $ok = $ok && ($i['value'] < $condition->value) ? true : false;
-                                        break;
-                                    case 'gte':
-                                        $ok = $ok && ($i['value'] >= $condition->value) ? true : false;
-                                        break;
-                                    case 'lte':
-                                        $ok = $ok && ($i['value'] <= $condition->value) ? true : false;
-                                        break;
-                                    case 'ne':
-                                        $ok = $ok && ($i['value'] != $condition->value) ? true : false;
-                                        break;
-                                    case 'eq':
-                                        $ok = $ok && ($i['value'] == $condition->value) ? true : false;
-                                        break;
-                                    default:
-                                        $ok = $ok && true;
-                                }
-                            }
+        $info = $req['data'];
+        $companyId = $info['companyId'];
+        $conditions = $info['conditions'];
+
+        $users = $this->userInterface->byCompanyId($companyId)->all();
+
+        $numberUsers = 0;
+        foreach ($users as $user) {
+            $userInfo = User::find($user->id);
+            $address = $userInfo->address;
+            $udlValues = $this->getUdlValuesFromUser($userInfo);
+
+            $isOk = true;
+            //Log::debug("user: ".print_r($user, true));
+            $isOk = $isOk && $this->checkIfIsSupervisor($userInfo->isSupervisor, $conditions);
+            //Log::debug("isOk IsSupervisor: ".print_r($isOk, true));
+            $isOk = $isOk && $this->checkIfHasAnyAddress($address, $conditions);
+            //Log::debug("isOk Address: ".print_r($isOk, true));
+            foreach ($udlValues as $udl) {
+                $isOk = $isOk && $this->checkIfHasAnyUdl($udl, $conditions);
+                //Log::debug("isOk: ".print_r($isOk, true));
+            }
+
+            if ($isOk) {
+                $numberUsers ++;
+                Log::debug("numberUsers: ".print_r($numberUsers, true));
+            }
+        }
+
+        $result['number'] = $numberUsers;
+        return response()->json($result)->setStatusCode($this->status_codes['ok']);
+    }
+
+    private function getUdlValuesFromUser($user) {
+        $udlV = $user->udlValues;
+        $arrayAux = [];
+        foreach ($udlV as $uv) {
+            $aux['udlName'] = $uv->udl->name;
+            $aux['udlValue'] = $uv->name;
+            array_push($arrayAux, $aux);
+            //Log::debug("getUdlValuesFromUser: uv->name: ".print_r($uv->name, true));
+            //Log::debug("getUdlValuesFromUser: uv->udl->name: ".print_r($uv->udl->name, true));
+        }
+
+        //Log::debug("getUdlValuesFromUser: arrayAux: ".print_r($arrayAux, true));
+        return $arrayAux;
+    }
+
+    private function checkIfIsSupervisor($supervisor, $conditions) {
+        if (count($conditions) > 0) {
+            foreach ($conditions as $cond) {
+                if ($cond['nameCond'] == 'Supervisor?') {
+                    if (strtolower($cond['value']) == strtolower('Yes')) {
+                        if ($supervisor == 1) {
+                            return true;
                         }
+                    } else if (strtolower($cond['value']) == strtolower('No')) {
+                        if ($supervisor == 0) {
+                            return true;
+                        }
+                    } else {
+                        // NOTHING.   
                     }
+                    return false;
                 }
+            }    
+        }        
 
+        return true;
+    }
+
+    private function checkIfHasAnyAddress($address, $conditions) {
+        //Log::debug("Count conditions: ".print_r(count($conditions), true));
+        //Log::debug("Count address: ".print_r(count($address), true));
+        if (count($conditions) > 0) {
+            foreach ($address as $add) {
+                $ok = true;
+                $ok = $ok && $this->checkIfHasAnyInfo($add->city, $conditions, 'City');
+                //Log::debug("ok City: ".print_r($ok, true));
+                $ok = $ok && $this->checkIfHasAnyInfo($add->state, $conditions, 'State');
+                //Log::debug("ok State: ".print_r($ok, true));
+                $ok = $ok && $this->checkIfHasAnyInfo($add->country, $conditions, 'Country');
+                //Log::debug("ok Country: ".print_r($ok, true));
                 if ($ok) {
-                    $query = $query->orWhere('id', $package->id);
+                    return true;
                 }
             }
-        });
-
-        $packageTransformer = new PackageTransformer();
-
-        if (!$this->includesAreCorrect($request, $packageTransformer)) {
-            $error['errors']['getincludes'] = Lang::get('messages.NotExistInclude');
-            return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
+            if(count($address) > 0) {
+                return false;
+            }
         }
-
-        return $this->response()->withPaginator($packages->paginate(25), $packageTransformer,
-            ['key' => 'packages'])->setStatusCode($this->status_codes['created']);
+        return true;
     }
 
-    private function retrieveUserInfoFromAuthorizer()
-    {
-        // Retrieve the current user.
-        $id = Authorizer::getResourceOwnerId();
-        return User::find($id);
+    private function checkIfHasAnyInfo($val, $conditions, $type){
+        $conditionsOK = true;
+        foreach ($conditions as $cond) {
+            if ($cond['nameCond'] == $type) {
+                if ($cond['condition'] == 'contains') {
+                    //Log::debug("Value: ".print_r($cond['value'], true));
+                    //Log::debug("val: ".print_r($val, true));
+                    //Log::debug("Strpos: ".print_r(strpos($cond['value'], $val), true));
+                    if (strpos(strtolower($val), strtolower($cond['value'])) !== false) {
+                        $conditionsOK = $conditionsOK && true;
+                    } else {
+                        $conditionsOK = $conditionsOK && false;
+                    }
+                } else if ($cond['condition'] == 'equal') {
+                    if (strtolower($cond['value']) == strtolower($val)) {
+                        $conditionsOK = $conditionsOK && true;
+                    } else {
+                        $conditionsOK = $conditionsOK && false;
+                    }
+                } else if ($cond['condition'] == 'not equal') {
+                    if (strtolower($cond['value']) != strtolower($val)) {
+                        $conditionsOK = $conditionsOK && true;
+                    } else {
+                        $conditionsOK = $conditionsOK && false;
+                    }
+                } else {
+                    // NOTHING
+                }
+            }
+        }
+        if ($conditionsOK) {
+            return true;
+        }
+        return false;
     }
-
-    private function retrieveInfoFromUser($user)
-    {
-        $udlValues = $user->UdlValues;
-
-        // Retrieve the user information that will be compared.
-        $info = array();
-        $auxName = ['value' => $user->username, 'name' => 'name', 'label' => 'Name'];
-        array_push($info, $auxName);
-        $auxEmail = ['value' => $user->email, 'name' => 'email', 'label' => 'Email'];
-        array_push($info, $auxEmail);
-        $auxBudget = ['value' => '', 'name' => 'budget', 'label' => 'Budget'];
-        array_push($info, $auxBudget);
-
-        foreach ($udlValues as $uv) {
-            $aux = ['value' => $uv->name, 'name' => $uv->udl->name, 'label' => $uv->udl->label];
-            array_push($info, $aux);
+    // allConditions: ['contains', 'greater than', 'greater or equal', 'less than', 'less or equal', 'equal', 'not equal'],
+    private function checkIfHasAnyUdl($udl, $conditions) {
+        $conditionsOK = true;
+        Log::debug("conditions: ".print_r($conditions, true));
+        foreach ($conditions as $cond) {
+            Log::debug("COND: ".print_r($cond, true));
+            Log::debug("UDL: ".print_r($udl, true));
+            
+            if ($cond['nameCond'] == $udl['udlName']) {
+                Log::debug("udl[udlValue]: ".print_r($udl['udlValue'], true));
+                Log::debug("cond[value]: ".print_r($cond['value'], true));
+                if ($cond['condition'] == 'contains') {
+                    if (strpos(strtolower($udl['udlValue']), strtolower($cond['value'])) !== false) {
+                        $conditionsOK = $conditionsOK && true;
+                    } else {
+                        $conditionsOK = $conditionsOK && false;
+                    }
+                } else if ($cond['condition'] == 'equal') {
+                    if (strtolower($udl['udlValue']) == strtolower($cond['value'])) {
+                        $conditionsOK = $conditionsOK && true;
+                    } else {
+                        $conditionsOK = $conditionsOK && false;
+                    }
+                } else if ($cond['condition'] == 'not equal') {
+                    if (strtolower($udl['udlValue']) != strtolower($cond['value'])) {
+                        $conditionsOK = $conditionsOK && true;
+                    } else {
+                        $conditionsOK = $conditionsOK && false;
+                    }
+                } else if ($cond['condition'] == 'greater than') {
+                    if (strtolower($udl['udlValue']) > strtolower($cond['value'])) {
+                        $conditionsOK = $conditionsOK && true;
+                    } else {
+                        $conditionsOK = $conditionsOK && false;
+                    }
+                } else if ($cond['condition'] == 'greater or equal') {
+                    if (strtolower($udl['udlValue']) >= strtolower($cond['value'])) {
+                        $conditionsOK = $conditionsOK && true;
+                    } else {
+                        $conditionsOK = $conditionsOK && false;
+                    }
+                } else if ($cond['condition'] == 'less than') {
+                    if (strtolower($udl['udlValue']) < strtolower($cond['value'])){
+                        $conditionsOK = $conditionsOK && true;
+                    } else {
+                        $conditionsOK = $conditionsOK && false;
+                    }
+                } else if ($cond['condition'] == 'less or equal') {
+                    if (strtolower($udl['udlValue']) <= strtolower($cond['value'])) {
+                        $conditionsOK = $conditionsOK && true;
+                    } else {
+                        $conditionsOK = $conditionsOK && false;
+                    }
+                } else {
+                    // NOTHING
+                }
+            }
         }
 
-        $auxBudget = ['value' => '', 'name' => 'budget', 'label' => 'Budget'];
-        array_push($info, $auxBudget);
-        $auxCountry1 = ['value' => '', 'name' => 'country', 'label' => 'Country'];
-        array_push($info, $auxCountry1);
-        $auxCountry2 = ['value' => '', 'name' => 'country', 'label' => 'Country'];
-        array_push($info, $auxCountry2);
-        $auxCity = ['value' => '', 'name' => 'city', 'label' => 'City'];
-        array_push($info, $auxCity);
-        $auxAddress = ['value' => '', 'name' => 'address', 'label' => 'Address'];
-        array_push($info, $auxAddress);
-
-        return $info;
+        if ($conditionsOK) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -284,6 +400,20 @@ class PackagesController extends FilteredApiController
                     }
                 }
             }
+
+            if (isset($dataRelationships['address']) && $success) {
+                if (isset($dataRelationships['address']['data'])) {
+                    $dataAddress = $this->parseJsonToArray($dataRelationships['address']['data'], 'address');
+                    try {
+                        $package->address()->sync($dataAddress);
+                    } catch (\Exception $e) {
+                        $success = false;
+                        $error['errors']['address'] = Lang::get('messages.NotOptionIncludeClass',
+                            ['class' => 'Package', 'option' => 'created', 'include' => 'Address']);
+                        //$error['errors']['Message'] = $e->getMessage();
+                    }
+                }
+            }
         }
 
         if ($success) {
@@ -326,7 +456,8 @@ class PackagesController extends FilteredApiController
             DB::rollBack();
             $error['errors']['packages'] = Lang::get('messages.NotOptionIncludeClass',
                 ['class' => 'Package', 'option' => 'created', 'include' => '']);
-            //$error['errors']['Message'] = $e->getMessage();
+            //Log::debug($e->getMessage());
+            $error['errors']['Message'] = $e->getMessage();
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
@@ -349,7 +480,7 @@ class PackagesController extends FilteredApiController
                         } catch (\Exception $e) {
                             DB::rollBack();
                             $error['errors']['services'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Package', 'option' => 'created', 'include' => 'Conditions']);
-                            //$error['errors']['Message'] = $e->getMessage();
+                            $error['errors']['Message'] = $e->getMessage();
                             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
                               
                         }
@@ -366,7 +497,7 @@ class PackagesController extends FilteredApiController
                         $success = false;
                         $error['errors']['services'] = Lang::get('messages.NotOptionIncludeClass',
                             ['class' => 'Package', 'option' => 'created', 'include' => 'Services']);
-                        //$error['errors']['Message'] = $e->getMessage();
+                        $error['errors']['Message'] = $e->getMessage();
                     }
                 }
             }
@@ -380,7 +511,7 @@ class PackagesController extends FilteredApiController
                         $success = false;
                         $error['errors']['devicevariations'] = Lang::get('messages.NotOptionIncludeClass',
                             ['class' => 'Package', 'option' => 'updated', 'include' => 'DeviceVariations']);
-                        //$error['errors']['Message'] = $e->getMessage();
+                        $error['errors']['Message'] = $e->getMessage();
                     }
                 }
             }
@@ -394,7 +525,21 @@ class PackagesController extends FilteredApiController
                         $success = false;
                         $error['errors']['apps'] = Lang::get('messages.NotOptionIncludeClass',
                             ['class' => 'Package', 'option' => 'created', 'include' => 'Apps']);
-                        //$error['errors']['Message'] = $e->getMessage();
+                        $error['errors']['Message'] = $e->getMessage();
+                    }
+                }
+            }
+
+            if (isset($dataRelationships['address']) && $success) {
+                if (isset($dataRelationships['address']['data'])) {
+                    $dataAddress = $this->parseJsonToArray($dataRelationships['address']['data'], 'address');
+                    try {
+                        $package->address()->sync($dataAddress);
+                    } catch (\Exception $e) {
+                        $success = false;
+                        $error['errors']['address'] = Lang::get('messages.NotOptionIncludeClass',
+                            ['class' => 'Package', 'option' => 'created', 'include' => 'Address']);
+                        $error['errors']['Message'] = $e->getMessage();
                     }
                 }
             }

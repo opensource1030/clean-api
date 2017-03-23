@@ -86,10 +86,10 @@ class Package extends BaseDataStore
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function address()
     {
-        return $this->belongsTo('WA\DataStore\Address\Address', 'addressId');
+        return $this->belongsToMany('WA\DataStore\Address\Address', 'package_address', 'packageId', 'addressId');
     }
 }

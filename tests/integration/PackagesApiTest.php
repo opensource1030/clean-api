@@ -21,7 +21,6 @@ class PackageApiTest extends TestCase
                     'attributes' => [
                         'name',
                         'companyId',
-                        'addressId',
                         'created_at' => [
                             'date',
                             'timezone_type',
@@ -75,7 +74,6 @@ class PackageApiTest extends TestCase
                 'id',
                 'attributes' => [
                     'name',
-                    'addressId',
                     'created_at' => [
                         'date',
                         'timezone_type',
@@ -118,7 +116,6 @@ class PackageApiTest extends TestCase
                     'attributes' => [
                         'name',
                         'companyId',
-                        'addressId',
                         'created_at' => [
                             'date',
                             'timezone_type',
@@ -188,7 +185,6 @@ class PackageApiTest extends TestCase
                     'attributes' => [
                         'name',
                         'companyId',
-                        'addressId',
                         'created_at' => [
                             'date',
                             'timezone_type',
@@ -242,16 +238,15 @@ class PackageApiTest extends TestCase
                 ],
             ]);
     }
-/*  @TODO: DeviceVariations
+
     public function testGetPackageByIdandIncludesDevices()
     {
         $package = factory(\WA\DataStore\Package\Package::class)->create();
+        $devvar = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create()->id;
+        $package->devicevariations()->sync([$devvar]);
 
-        //$device = factory(\WA\DataStore\Device\Device::class)->create()->id;
-
-        //$package->devices()->sync(array($device));
-
-        $res = $this->json('GET', 'packages/'.$package->id.'?include=devices')
+        $res = $this->json('GET', 'packages/'.$package->id.'?include=devicevariations')
+        //Log::debug("testGetPackageByIdandIncludesDevices: ".print_r($res->response->getContent(), true));
             ->seeJsonStructure([
                 'data' => [
                     'type',
@@ -259,7 +254,6 @@ class PackageApiTest extends TestCase
                     'attributes' => [
                         'name',
                         'companyId',
-                        'addressId',
                         'created_at' => [
                             'date',
                             'timezone_type',
@@ -275,7 +269,7 @@ class PackageApiTest extends TestCase
                         'self',
                     ],
                     'relationships' => [
-                        'devices' => [
+                        'devicevariations' => [
                             'links' => [
                                 'self',
                                 'related',
@@ -290,40 +284,26 @@ class PackageApiTest extends TestCase
                     ],
                 ],
                 'included' => [
-                    1 => [
+                    0 => [
                         'type',
                         'id',
                         'attributes' => [
-                            'name',
-                            'properties',
-                            'statusId',
-                            'externalId',
-                            'identification',
-                            'syncId',
+                            'priceRetail',
+                            'price1',
+                            'price2',
+                            'priceOwn',
+                            'deviceId',
+                            'carrierId',
+                            'companyId',
                         ],
                         'links' => [
                             'self',
-                        ],
-                        'relationships' => [
-                            'devicetypes' => [
-                                'links' => [
-                                    'self',
-                                    'related',
-                                ],
-                                'data' => [
-                                    0 => [
-                                        'type',
-                                        'id',
-                                    ],
-                                ],
-                            ],
-                        ],
-                    ],
-
-                ],
+                        ]
+                    ]
+                ]
             ]);
     }
-*/
+
     public function testGetPackageByIdandIncludesApps()
     {
         $package = factory(\WA\DataStore\Package\Package::class)->create();
@@ -343,7 +323,6 @@ class PackageApiTest extends TestCase
                     'attributes' => [
                         'name',
                         'companyId',
-                        'addressId',
                         'created_at' => [
                             'date',
                             'timezone_type',
@@ -381,6 +360,75 @@ class PackageApiTest extends TestCase
                             'type',
                             'image',
                             'description',
+                        ],
+                        'links' => [
+                            'self',
+                        ],
+                    ],
+
+                ],
+            ]);
+    }
+
+    public function testGetPackageByIdandIncludesAddess()
+    {
+        $package = factory(\WA\DataStore\Package\Package::class)->create();
+
+        $address1 = factory(\WA\DataStore\Address\Address::class)->create()->id;
+        $address2 = factory(\WA\DataStore\Address\Address::class)->create()->id;
+
+        $package->address()->sync([$address1, $address2]);
+
+        $this->json('GET', 'packages/'.$package->id.'?include=address')
+            ->seeJsonStructure([
+                'data' => [
+                    'type',
+                    'id',
+                    'attributes' => [
+                        'name',
+                        'companyId',
+                        'created_at' => [
+                            'date',
+                            'timezone_type',
+                            'timezone',
+                        ],
+                        'updated_at' => [
+                            'date',
+                            'timezone_type',
+                            'timezone',
+                        ],
+                    ],
+                    'links' => [
+                        'self',
+                    ],
+                    'relationships' => [
+                        'address' => [
+                            'links' => [
+                                'self',
+                                'related',
+                            ],
+                            'data' => [
+                                0 => [
+                                    'type',
+                                    'id',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                'included' => [
+                    0 => [
+                        'type',
+                        'id',
+                        'attributes' => [
+                            'name',
+                            'attn',
+                            'phone',
+                            'address',
+                            'city',
+                            'state',
+                            'country',
+                            'postalCode'
                         ],
                         'links' => [
                             'self',
@@ -545,7 +593,6 @@ class PackageApiTest extends TestCase
                 'type' => 'packages',
                 'attributes' => [
                     'name' => 'namePackage',
-                    'addressId' => $address,
                     'companyId' => $companyId
                 ],
                 'relationships' => [
@@ -562,7 +609,6 @@ class PackageApiTest extends TestCase
         [
             'type' => 'packages',
             'name' => 'namePackage',
-            'addressId' => $address,
         ]);
     }
 
@@ -576,8 +622,7 @@ class PackageApiTest extends TestCase
             'data' => [
                 'type' => 'packages',
                 'attributes' => [
-                    'name' => 'namePackage',
-                    'addressId' => $address,
+                    'name' => 'namePackage',    
                     'companyId' => $companyId
                 ],
                 'relationships' => [
@@ -594,7 +639,6 @@ class PackageApiTest extends TestCase
         [
             'type' => 'packages',
             'name' => 'namePackage',
-            'addressId' => $address,
         ]);
     }
 
@@ -608,8 +652,7 @@ class PackageApiTest extends TestCase
             'data' => [
                 'type' => 'packages',
                 'attributes' => [
-                    'name' => 'namePackage',
-                    'addressId' => $address,
+                    'name' => 'namePackage',    
                     'companyId' => $companyId
                 ],
                 'relationships' => [
@@ -626,7 +669,6 @@ class PackageApiTest extends TestCase
         [
             'type' => 'packages',
             'name' => 'namePackage',
-            'addressId' => $address,
         ]);
     }
 
@@ -640,8 +682,7 @@ class PackageApiTest extends TestCase
             'data' => [
                 'type' => 'packages',
                 'attributes' => [
-                    'name' => 'namePackage',
-                    'addressId' => $address,
+                    'name' => 'namePackage',    
                     'companyId' => $companyId
                 ],
                 'relationships' => [
@@ -658,7 +699,6 @@ class PackageApiTest extends TestCase
         [
             'type' => 'packages',
             'name' => 'namePackage',
-            'addressId' => $address,
         ]);
     }
 
@@ -673,7 +713,6 @@ class PackageApiTest extends TestCase
 
         $this->assertNotEquals($package->id, $packageAux->id);
         $this->assertNotEquals($package->name, $packageAux->name);
-        $this->assertNotEquals($package->addressId, $packageAux->addressId);
 
         $this->PATCH('/packages/'.$package->id,
             [
@@ -681,7 +720,6 @@ class PackageApiTest extends TestCase
                     'type' => 'packages',
                     'attributes' => [
                         'name' => $packageAux->name,
-                        'addressId' => $packageAux->addressId,
                     ],
                 ],
             ])
@@ -689,7 +727,6 @@ class PackageApiTest extends TestCase
             [
                 'type' => 'packages',
                 'name' => $packageAux->name,
-                'addressId' => $packageAux->addressId,
             ]);
     }
 
@@ -708,5 +745,513 @@ class PackageApiTest extends TestCase
         // DELETE NO EXISTING.
         $responseDel = $this->call('DELETE', '/packages/1');
         $this->assertEquals(404, $responseDel->status());
+    }
+
+    public function testUserPackagesCheckAttributes() 
+    {
+        $company = factory(\WA\DataStore\Company\Company::class)->create();
+        $user1 = factory(\WA\DataStore\User\User::class)->create(['companyId' => $company->id, 'isSupervisor' => 1]);
+        $user2 = factory(\WA\DataStore\User\User::class)->create(['companyId' => $company->id, 'isSupervisor' => 1]);
+        $user3 = factory(\WA\DataStore\User\User::class)->create(['companyId' => $company->id, 'isSupervisor' => 0]);
+
+        $res1 = $this->json('POST', '/packages/forUser',
+            [
+                'data' => [
+                    'companyId' => $company->id,
+                    'conditions' => [
+                        ['nameCond' => 'Supervisor?', 'condition' => 'equal', 'value' => 'No']
+                    ]
+                ]
+            ])->seeJson([
+                    'number' => 1
+            ]);
+        
+        $res2 = $this->json('POST', '/packages/forUser',
+            [
+                'data' => [
+                    'companyId' => $company->id,
+                    'conditions' => [
+                        ['nameCond' => 'Supervisor?', 'condition' => 'equal', 'value' => 'Yes']
+                    ]
+                ]
+            ])->seeJson([
+                    'number' => 2
+            ]);
+
+        $res3 = $this->json('POST', '/packages/forUser',
+            [
+                'data' => [
+                    'companyId' => $company->id,
+                    'conditions' => []
+                ]
+            ])->seeJson([
+                    'number' => 3
+            ]);
+    }
+
+    public function testUserPackagesCheckAddressEqual() 
+    {
+        $company = factory(\WA\DataStore\Company\Company::class)->create();
+        $user1 = factory(\WA\DataStore\User\User::class)->create(['companyId' => $company->id]);
+        $user2 = factory(\WA\DataStore\User\User::class)->create(['companyId' => $company->id]);
+        $user3 = factory(\WA\DataStore\User\User::class)->create(['companyId' => $company->id]);
+        $user4 = factory(\WA\DataStore\User\User::class)->create(['companyId' => $company->id]);
+
+        $address1 = factory(\WA\DataStore\Address\Address::class)->create(['city' => 'city', 'state' => 'state', 'country' => 'country']);
+        $address2 = factory(\WA\DataStore\Address\Address::class)->create(['city' => 'city', 'state' => 'state', 'country' => 'country']);
+        $address3 = factory(\WA\DataStore\Address\Address::class)->create(['city' => 'city', 'state' => 'state', 'country' => 'country']);
+
+        $address5 = factory(\WA\DataStore\Address\Address::class)->create(['city' => 'Madrid', 'state' => 'Madrid', 'country' => 'Spain']);
+        $address6 = factory(\WA\DataStore\Address\Address::class)->create(['city' => 'Girona', 'state' => 'Girona', 'country' => 'Catalonia']);
+        $address7 = factory(\WA\DataStore\Address\Address::class)->create(['city' => 'Rubi', 'state' => 'Barcelona', 'country' => 'Catalonia']);
+        $address8 = factory(\WA\DataStore\Address\Address::class)->create(['city' => 'Barcelona', 'state' => 'Barcelona', 'country' => 'Catalonia']);
+
+        $user1Address5 = factory(\WA\DataStore\User\UserAddress::class)->create(['userId' => $user1->id, 'addressId' => $address5->id]);
+        $user1Address1 = factory(\WA\DataStore\User\UserAddress::class)->create(['userId' => $user1->id, 'addressId' => $address1->id]);
+        $user1Address2 = factory(\WA\DataStore\User\UserAddress::class)->create(['userId' => $user1->id, 'addressId' => $address2->id]);
+        $user1Address3 = factory(\WA\DataStore\User\UserAddress::class)->create(['userId' => $user1->id, 'addressId' => $address3->id]);
+
+        $user2Address1 = factory(\WA\DataStore\User\UserAddress::class)->create(['userId' => $user2->id, 'addressId' => $address1->id]);
+        $user2Address6 = factory(\WA\DataStore\User\UserAddress::class)->create(['userId' => $user2->id, 'addressId' => $address6->id]);
+        $user2Address2 = factory(\WA\DataStore\User\UserAddress::class)->create(['userId' => $user2->id, 'addressId' => $address2->id]);
+        $user2Address3 = factory(\WA\DataStore\User\UserAddress::class)->create(['userId' => $user2->id, 'addressId' => $address3->id]);
+        
+        $user3Address1 = factory(\WA\DataStore\User\UserAddress::class)->create(['userId' => $user3->id, 'addressId' => $address1->id]);
+        $user3Address2 = factory(\WA\DataStore\User\UserAddress::class)->create(['userId' => $user3->id, 'addressId' => $address2->id]);
+        $user3Address7 = factory(\WA\DataStore\User\UserAddress::class)->create(['userId' => $user3->id, 'addressId' => $address7->id]);
+        $user3Address3 = factory(\WA\DataStore\User\UserAddress::class)->create(['userId' => $user3->id, 'addressId' => $address3->id]);
+
+        $user4Address1 = factory(\WA\DataStore\User\UserAddress::class)->create(['userId' => $user4->id, 'addressId' => $address1->id]);
+        $user4Address2 = factory(\WA\DataStore\User\UserAddress::class)->create(['userId' => $user4->id, 'addressId' => $address2->id]);
+        $user4Address3 = factory(\WA\DataStore\User\UserAddress::class)->create(['userId' => $user4->id, 'addressId' => $address3->id]);
+        $user4Address8 = factory(\WA\DataStore\User\UserAddress::class)->create(['userId' => $user4->id, 'addressId' => $address8->id]);
+
+        $res1 = $this->json('POST', '/packages/forUser',
+            [
+                'data' => [
+                    'companyId' => $company->id,
+                    'conditions' => [
+                        ['nameCond' => 'Country', 'condition' => 'equal', 'value' => 'Catalonia'],
+                        ['nameCond' => 'State', 'condition' => 'equal', 'value' => 'Barcelona'],
+                        ['nameCond' => 'City', 'condition' => 'equal', 'value' => 'Barcelona']
+                    ]
+                ]
+            ])->seeJson([
+                    'number' => 1
+            ]);
+
+        $res2 = $this->json('POST', '/packages/forUser',
+            [
+                'data' => [
+                    'companyId' => $company->id,
+                    'conditions' => [
+                        ['nameCond' => 'Country', 'condition' => 'equal', 'value' => 'Catalonia'],
+                        ['nameCond' => 'State', 'condition' => 'equal', 'value' => 'Barcelona'],
+                    ]
+                ]
+            ])->seeJson([
+                    'number' => 2
+            ]);
+
+        $res3 = $this->json('POST', '/packages/forUser',
+            [
+                'data' => [
+                    'companyId' => $company->id,
+                    'conditions' => [
+                        ['nameCond' => 'Country', 'condition' => 'equal', 'value' => 'Catalonia'],
+                    ]
+                ]
+            ])->seeJson([
+                    'number' => 3
+            ]);
+
+        $res4 = $this->json('POST', '/packages/forUser',
+            [
+                'data' => [
+                    'companyId' => $company->id,
+                    'conditions' => []
+                ]
+            ])->seeJson([
+                    'number' => 4
+            ]);
+
+    }
+    public function testUserPackagesCheckAddressNotEqual() 
+    {
+        $company = factory(\WA\DataStore\Company\Company::class)->create();
+        $user1 = factory(\WA\DataStore\User\User::class)->create(['companyId' => $company->id]);
+        $user2 = factory(\WA\DataStore\User\User::class)->create(['companyId' => $company->id]);
+        $user3 = factory(\WA\DataStore\User\User::class)->create(['companyId' => $company->id]);
+        $user4 = factory(\WA\DataStore\User\User::class)->create(['companyId' => $company->id]);
+
+        $address1 = factory(\WA\DataStore\Address\Address::class)->create(['city' => 'Madrid', 'state' => 'Madrid', 'country' => 'Spain']);
+        $address2 = factory(\WA\DataStore\Address\Address::class)->create(['city' => 'Girona', 'state' => 'Girona', 'country' => 'Catalonia']);
+        $address3 = factory(\WA\DataStore\Address\Address::class)->create(['city' => 'Rubi', 'state' => 'Barcelona', 'country' => 'Catalonia']);
+        $address4 = factory(\WA\DataStore\Address\Address::class)->create(['city' => 'Barcelona', 'state' => 'Barcelona', 'country' => 'Catalonia']);
+
+        $userAddress1 = factory(\WA\DataStore\User\UserAddress::class)->create(['userId' => $user1->id, 'addressId' => $address1->id]);
+        $userAddress2 = factory(\WA\DataStore\User\UserAddress::class)->create(['userId' => $user2->id, 'addressId' => $address2->id]);
+        $userAddress3 = factory(\WA\DataStore\User\UserAddress::class)->create(['userId' => $user3->id, 'addressId' => $address3->id]);
+        $userAddress4 = factory(\WA\DataStore\User\UserAddress::class)->create(['userId' => $user4->id, 'addressId' => $address4->id]);
+
+        $res1 = $this->json('POST', '/packages/forUser',
+            [
+                'data' => [
+                    'companyId' => $company->id,
+                    'conditions' => [
+                        ['nameCond' => 'Country', 'condition' => 'equal', 'value' => 'Catalonia'],
+                        ['nameCond' => 'State', 'condition' => 'equal', 'value' => 'Barcelona'],
+                        ['nameCond' => 'City', 'condition' => 'not equal', 'value' => 'Barcelona']
+                    ]
+                ]
+            ])->seeJson([
+                    'number' => 1
+            ]);
+
+        $res2 = $this->json('POST', '/packages/forUser',
+            [
+                'data' => [
+                    'companyId' => $company->id,
+                    'conditions' => [
+                        ['nameCond' => 'Country', 'condition' => 'equal', 'value' => 'Catalonia'],
+                        ['nameCond' => 'State', 'condition' => 'not equal', 'value' => 'Barcelona'],
+                    ]
+                ]
+            ])->seeJson([
+                    'number' => 1
+            ]);
+
+        $res3 = $this->json('POST', '/packages/forUser',
+            [
+                'data' => [
+                    'companyId' => $company->id,
+                    'conditions' => [
+                        ['nameCond' => 'Country', 'condition' => 'not equal', 'value' => 'Catalonia'],
+                    ]
+                ]
+            ])->seeJson([
+                    'number' => 1
+            ]);
+
+        $res4 = $this->json('POST', '/packages/forUser',
+            [
+                'data' => [
+                    'companyId' => $company->id,
+                    'conditions' => []
+                ]
+            ])->seeJson([
+                    'number' => 4
+            ]);
+
+    }
+
+    public function testUserPackagesCheckAddressContains() 
+    {
+        $company = factory(\WA\DataStore\Company\Company::class)->create();
+        $user1 = factory(\WA\DataStore\User\User::class)->create(['companyId' => $company->id]);
+        $user2 = factory(\WA\DataStore\User\User::class)->create(['companyId' => $company->id]);
+        $user3 = factory(\WA\DataStore\User\User::class)->create(['companyId' => $company->id]);
+        $user4 = factory(\WA\DataStore\User\User::class)->create(['companyId' => $company->id]);
+
+        $address1 = factory(\WA\DataStore\Address\Address::class)->create(['city' => 'Madrid', 'state' => 'Madrid', 'country' => 'Spain']);
+        $address2 = factory(\WA\DataStore\Address\Address::class)->create(['city' => 'Girona', 'state' => 'Girona', 'country' => 'Catalonia']);
+        $address3 = factory(\WA\DataStore\Address\Address::class)->create(['city' => 'Rubi', 'state' => 'Barcelona', 'country' => 'Catalonia']);
+        $address4 = factory(\WA\DataStore\Address\Address::class)->create(['city' => 'Barcelona', 'state' => 'Barcelona', 'country' => 'Catalonia']);
+
+        $userAddress1 = factory(\WA\DataStore\User\UserAddress::class)->create(['userId' => $user1->id, 'addressId' => $address1->id]);
+        $userAddress2 = factory(\WA\DataStore\User\UserAddress::class)->create(['userId' => $user2->id, 'addressId' => $address2->id]);
+        $userAddress3 = factory(\WA\DataStore\User\UserAddress::class)->create(['userId' => $user3->id, 'addressId' => $address3->id]);
+        $userAddress4 = factory(\WA\DataStore\User\UserAddress::class)->create(['userId' => $user4->id, 'addressId' => $address4->id]);
+
+        $res1 = $this->json('POST', '/packages/forUser',
+            [
+                'data' => [
+                    'companyId' => $company->id,
+                    'conditions' => [
+                        ['nameCond' => 'Country', 'condition' => 'equal', 'value' => 'Catalonia'],
+                        ['nameCond' => 'State', 'condition' => 'equal', 'value' => 'Barcelona'],
+                        ['nameCond' => 'City', 'condition' => 'contains', 'value' => 'Barcelona']
+                    ]
+                ]
+            ])->seeJson([
+                    'number' => 1
+            ]);
+
+        $res2 = $this->json('POST', '/packages/forUser',
+            [
+                'data' => [
+                    'companyId' => $company->id,
+                    'conditions' => [
+                        ['nameCond' => 'Country', 'condition' => 'equal', 'value' => 'Catalonia'],
+                        ['nameCond' => 'State', 'condition' => 'contains', 'value' => 'Barcelona'],
+                    ]
+                ]
+            ])->seeJson([
+                    'number' => 2
+            ]);
+
+        $res3 = $this->json('POST', '/packages/forUser',
+            [
+                'data' => [
+                    'companyId' => $company->id,
+                    'conditions' => [
+                        ['nameCond' => 'Country', 'condition' => 'contains', 'value' => 'Catalonia'],
+                    ]
+                ]
+            ])->seeJson([
+                    'number' => 3
+            ]);
+
+        $res4 = $this->json('POST', '/packages/forUser',
+            [
+                'data' => [
+                    'companyId' => $company->id,
+                    'conditions' => []
+                ]
+            ])->seeJson([
+                    'number' => 4
+            ]);
+
+        $res5 = $this->json('POST', '/packages/forUser',
+            [
+                'data' => [
+                    'companyId' => $company->id,
+                    'conditions' => [
+                        ['nameCond' => 'Country', 'condition' => 'equal', 'value' => 'Catalonia'],
+                        ['nameCond' => 'State', 'condition' => 'equal', 'value' => 'Barcelona'],
+                        ['nameCond' => 'City', 'condition' => 'contains', 'value' => 'ona']
+                    ]
+                ]
+            ])->seeJson([
+                    'number' => 1
+            ]);
+
+        $res6 = $this->json('POST', '/packages/forUser',
+            [
+                'data' => [
+                    'companyId' => $company->id,
+                    'conditions' => [
+                        ['nameCond' => 'Country', 'condition' => 'equal', 'value' => 'Catalonia'],
+                        ['nameCond' => 'City', 'condition' => 'contains', 'value' => 'ona'],
+                    ]
+                ]
+            ])->seeJson([
+                    'number' => 2
+            ]);
+
+        $res7 = $this->json('POST', '/packages/forUser',
+            [
+                'data' => [
+                    'companyId' => $company->id,
+                    'conditions' => [
+                        ['nameCond' => 'City', 'condition' => 'contains', 'value' => 'ona'],
+                    ]
+                ]
+            ])->seeJson([
+                    'number' => 2
+            ]);
+
+        $res8 = $this->json('POST', '/packages/forUser',
+            [
+                'data' => [
+                    'companyId' => $company->id,
+                    'conditions' => [
+                        ['nameCond' => 'Country', 'condition' => 'contains', 'value' => 'cat']
+                    ]
+                ]
+            ])->seeJson([
+                    'number' => 3
+            ]);
+
+        $res9 = $this->json('POST', '/packages/forUser',
+            [
+                'data' => [
+                    'companyId' => $company->id,
+                    'conditions' => [
+                        ['nameCond' => 'Country', 'condition' => 'contains', 'value' => 'cat'],
+                        ['nameCond' => 'Country', 'condition' => 'contains', 'value' => 'alo'],
+                        ['nameCond' => 'Country', 'condition' => 'contains', 'value' => 'nia']
+                    ]
+                ]
+            ])->seeJson([
+                    'number' => 3
+            ]);
+
+        $res9 = $this->json('POST', '/packages/forUser',
+            [
+                'data' => [
+                    'companyId' => $company->id,
+                    'conditions' => [
+                        ['nameCond' => 'Country', 'condition' => 'contains', 'value' => 'cat'],
+                        ['nameCond' => 'Country', 'condition' => 'contains', 'value' => 'alo'],
+                        ['nameCond' => 'Country', 'condition' => 'contains', 'value' => 'nian']
+                    ]
+                ]
+            ])->seeJson([
+                    'number' => 0
+            ]);
+
+    }
+
+    public function testUserPackagesCheckUdls() 
+    {
+        
+        $company = factory(\WA\DataStore\Company\Company::class)->create();
+
+        $udl1 = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $company->id, 'name' => 'Position']);
+        $udl2 = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $company->id, 'name' => 'Car']);
+        $udl3 = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $company->id, 'name' => 'Level']);
+
+        $udl1Value1 = factory(\WA\DataStore\UdlValue\UdlValue::class)->create(['name' => 'Engineer', 'udlId' => $udl1->id]);
+        $udl1Value2 = factory(\WA\DataStore\UdlValue\UdlValue::class)->create(['name' => 'Administrative', 'udlId' => $udl1->id]);
+        $udl1Value3 = factory(\WA\DataStore\UdlValue\UdlValue::class)->create(['name' => 'Boss', 'udlId' => $udl1->id]);
+
+        $udl2Value1 = factory(\WA\DataStore\UdlValue\UdlValue::class)->create(['name' => 'BMW', 'udlId' => $udl2->id]);
+        $udl2Value2 = factory(\WA\DataStore\UdlValue\UdlValue::class)->create(['name' => 'Audi', 'udlId' => $udl2->id]);
+        $udl2Value3 = factory(\WA\DataStore\UdlValue\UdlValue::class)->create(['name' => 'Ferrari', 'udlId' => $udl2->id]);
+        
+        $udl3Value1 = factory(\WA\DataStore\UdlValue\UdlValue::class)->create(['name' => '1', 'udlId' => $udl3->id]);
+        $udl3Value2 = factory(\WA\DataStore\UdlValue\UdlValue::class)->create(['name' => '3', 'udlId' => $udl3->id]);
+        $udl3Value3 = factory(\WA\DataStore\UdlValue\UdlValue::class)->create(['name' => '5', 'udlId' => $udl3->id]);
+
+        $user1 = factory(\WA\DataStore\User\User::class)->create(['companyId' => $company->id]);
+        $user2 = factory(\WA\DataStore\User\User::class)->create(['companyId' => $company->id]);
+        $user3 = factory(\WA\DataStore\User\User::class)->create(['companyId' => $company->id]);
+
+        $user1UV1 = factory(\WA\DataStore\User\UserUdlValue::class)->create(['userId' => $user1->id, 'udlValueId' => $udl1Value1->id]);
+        $user1UV2 = factory(\WA\DataStore\User\UserUdlValue::class)->create(['userId' => $user1->id, 'udlValueId' => $udl2Value2->id]);
+        $user1UV3 = factory(\WA\DataStore\User\UserUdlValue::class)->create(['userId' => $user1->id, 'udlValueId' => $udl3Value3->id]);
+
+        $user2UV1 = factory(\WA\DataStore\User\UserUdlValue::class)->create(['userId' => $user2->id, 'udlValueId' => $udl1Value1->id]);
+        $user2UV2 = factory(\WA\DataStore\User\UserUdlValue::class)->create(['userId' => $user2->id, 'udlValueId' => $udl2Value2->id]);
+        $user2UV3 = factory(\WA\DataStore\User\UserUdlValue::class)->create(['userId' => $user2->id, 'udlValueId' => $udl3Value2->id]);
+
+        $user3UV1 = factory(\WA\DataStore\User\UserUdlValue::class)->create(['userId' => $user3->id, 'udlValueId' => $udl1Value2->id]);
+        $user3UV2 = factory(\WA\DataStore\User\UserUdlValue::class)->create(['userId' => $user3->id, 'udlValueId' => $udl2Value3->id]);
+        $user3UV3 = factory(\WA\DataStore\User\UserUdlValue::class)->create(['userId' => $user3->id, 'udlValueId' => $udl3Value1->id]);
+
+        $res1 = $this->json('POST', '/packages/forUser',
+            [
+                'data' => [
+                    'companyId' => $company->id,
+                    'conditions' => [
+                        ['nameCond' => 'Position', 'condition' => 'equal', 'value' => 'Engineer']
+                    ]
+                ]
+            ])->seeJson([
+                    'number' => 2
+            ]);
+
+        $res2 = $this->json('POST', '/packages/forUser',
+            [
+                'data' => [
+                    'companyId' => $company->id,
+                    'conditions' => [
+                        ['nameCond' => 'Position', 'condition' => 'equal', 'value' => 'Administrative']
+                    ]
+                ]
+            ])->seeJson([
+                    'number' => 1
+            ]);
+
+        $res3 = $this->json('POST', '/packages/forUser',
+            [
+                'data' => [
+                    'companyId' => $company->id,
+                    'conditions' => [
+                        ['nameCond' => 'Position', 'condition' => 'equal', 'value' => 'Boss']
+                    ]
+                ]
+            ])->seeJson([
+                    'number' => 0
+            ]);
+
+        $res4 = $this->json('POST', '/packages/forUser',
+            [
+                'data' => [
+                    'companyId' => $company->id,
+                    'conditions' => [
+                        ['nameCond' => 'Position', 'condition' => 'equal', 'value' => 'Engineer'],
+                        ['nameCond' => 'Car', 'condition' => 'contains', 'value' => 'audi']
+                    ]
+                ]
+            ])->seeJson([
+                    'number' => 2
+            ]);
+
+        $res5 = $this->json('POST', '/packages/forUser',
+            [
+                'data' => [
+                    'companyId' => $company->id,
+                    'conditions' => [
+                        ['nameCond' => 'Position', 'condition' => 'equal', 'value' => 'Engineer'],
+                        ['nameCond' => 'Car', 'condition' => 'not equal', 'value' => 'audi']
+                    ]
+                ]
+            ])->seeJson([
+                    'number' => 0
+            ]);
+
+        $res6 = $this->json('POST', '/packages/forUser',
+            [
+                'data' => [
+                    'companyId' => $company->id,
+                    'conditions' => [
+                        ['nameCond' => 'Level', 'condition' => 'greater than', 'value' => '3']
+                    ]
+                ]
+            ])->seeJson([
+                    'number' => 1
+            ]);
+
+        $res7 = $this->json('POST', '/packages/forUser',
+            [
+                'data' => [
+                    'companyId' => $company->id,
+                    'conditions' => [
+                        ['nameCond' => 'Level', 'condition' => 'greater or equal', 'value' => '3']
+                    ]
+                ]
+            ])->seeJson([
+                    'number' => 2
+            ]);
+
+        $res8 = $this->json('POST', '/packages/forUser',
+            [
+                'data' => [
+                    'companyId' => $company->id,
+                    'conditions' => [
+                        ['nameCond' => 'Level', 'condition' => 'less than', 'value' => '3']
+                    ]
+                ]
+            ])->seeJson([
+                    'number' => 1
+            ]);
+
+        $res9 = $this->json('POST', '/packages/forUser',
+            [
+                'data' => [
+                    'companyId' => $company->id,
+                    'conditions' => [
+                        ['nameCond' => 'Level', 'condition' => 'less or equal', 'value' => '3']
+                    ]
+                ]
+            ])->seeJson([
+                    'number' => 2
+            ]);
+
+        $res10 = $this->json('POST', '/packages/forUser',
+            [
+                'data' => [
+                    'companyId' => $company->id,
+                    'conditions' => [
+                        ['nameCond' => 'Position', 'condition' => 'contains', 'value' => 'eer'],
+                        ['nameCond' => 'Position', 'condition' => 'contains', 'value' => 'eng'],
+                        ['nameCond' => 'Position', 'condition' => 'contains', 'value' => 'neeer'],
+                    ]
+                ]
+            ])->seeJson([
+                    'number' => 0
+            ]);
     }
 }

@@ -56,8 +56,8 @@ class CompaniesController extends FilteredApiController
      */
     public function store($id, Request $request)
     {
+        $success = true;
 
-         $success = true;
         /*
          * Checks if Json has data, data-type & data-attributes.
          */
@@ -95,6 +95,27 @@ class CompaniesController extends FilteredApiController
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
+        /*
+         * Check if Json has relationships to continue or if not and commit + return.
+         */
+        if (isset($data['relationships']) && $success) {
+            $dataRelationships = $data['relationships'];
+
+            if (isset($dataRelationships['address']) && $success) {
+                if (isset($dataRelationships['address']['data'])) {
+                    $dataAddress = $this->parseJsonToArray($dataRelationships['address']['data'], 'address');
+                    try {
+                        $company->address()->sync($dataAddress);
+                    } catch (\Exception $e) {
+                        $success = false;
+                        $error['errors']['address'] = Lang::get('messages.NotOptionIncludeClass',
+                            ['class' => 'Company', 'option' => 'created', 'include' => 'Address']);
+                        //$error['errors']['Message'] = $e->getMessage();
+                    }
+                }
+            }
+        }
+
         if ($success) {
             DB::commit();
 
@@ -126,7 +147,6 @@ class CompaniesController extends FilteredApiController
         DB::beginTransaction();
 
         try {
-            
             $company = $this->company->create($data['attributes']);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -136,12 +156,32 @@ class CompaniesController extends FilteredApiController
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
-        if($success){
-        DB::commit();
-        return $this->response()->item($company, new CompanyTransformer(),
-            ['key' => 'companies'])->setStatusCode($this->status_codes['created']);
+        /*
+         * Check if Json has relationships to continue or if not and commit + return.
+         */
+        if (isset($data['relationships']) && $success) {
+            $dataRelationships = $data['relationships'];
+
+            if (isset($dataRelationships['address']) && $success) {
+                if (isset($dataRelationships['address']['data'])) {
+                    $dataAddress = $this->parseJsonToArray($dataRelationships['address']['data'], 'address');
+                    try {
+                        $company->address()->sync($dataAddress);
+                    } catch (\Exception $e) {
+                        $success = false;
+                        $error['errors']['address'] = Lang::get('messages.NotOptionIncludeClass',
+                            ['class' => 'Company', 'option' => 'created', 'include' => 'Address']);
+                        //$error['errors']['Message'] = $e->getMessage();
+                    }
+                }
+            }
         }
-        else {
+
+        if($success){
+            DB::commit();
+            return $this->response()->item($company, new CompanyTransformer(),
+                ['key' => 'companies'])->setStatusCode($this->status_codes['created']);
+        } else {
             DB::rollBack();
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }

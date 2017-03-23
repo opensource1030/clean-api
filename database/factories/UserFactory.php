@@ -40,9 +40,6 @@ $factory->define(WA\DataStore\User\User::class, function (Faker\Generator $faker
         'defaultLocationId' => function () {
             return factory(\WA\DataStore\Location\Location::class)->create()->id;
         },
-        'addressId' => function () {
-            return factory(\WA\DataStore\Address\Address::class)->create()->id;
-        },
         'deleted_at' => null,
         'created_at' => null,
         'updated_at' => null
