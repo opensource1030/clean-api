@@ -12,7 +12,6 @@ use WA\DataStore\UdlValue\UdlValueTransformer;
  */
 class UserTransformer extends FilterableTransformer
 {
-
     protected $availableIncludes = [
         'assets',
         'services',
@@ -23,9 +22,6 @@ class UserTransformer extends FilterableTransformer
         'allocations',
         'contents',
         'udls',
-    ];
-
-    protected $defaultIncludes = [
         'address'
     ];
 
@@ -68,7 +64,6 @@ class UserTransformer extends FilterableTransformer
             'externalId'            => $user->externalId,
             'approverId'            => $user->approverId,
             'defaultLocationId'     => $user->defaultLocationId,
-            'addressId'             => $user->addressId,
             'deleted_at'            => $user->deleted_at,
             'created_at'            => $user->created_at,
             'updated_at'            => $user->updated_at
