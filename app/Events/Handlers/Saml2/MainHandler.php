@@ -74,7 +74,7 @@ class MainHandler extends BaseHandler
 
     private function parseRequestedInfoFromIdp($userData, $idCompany)
     {
-        //return array('email' => 'dev@testing.com'); // TESTING
+        //return array('email' => 'dev@testsaml2.com'); // TESTING
 
         switch ($idCompany) {
             default: // MICROSOFT
@@ -115,6 +115,6 @@ class MainHandler extends BaseHandler
         //if (isset($userData['attributes'][$this->userEmail][0])) { // TESTING
             return $userData['attributes'][$this->userEmail][0];
         //}
-        //return 'dev@testing.com';
+        //return 'dev@testsaml2.com';
     }
 }

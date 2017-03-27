@@ -4,7 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "c71d4a967480c756d9e9267b92fb1f8f",
+    "hash": "1ddc99ea31ca2493925085b5024dde27",
+    "content-hash": "9462ff1e54bd799e766191ec73bee804",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -52,7 +53,7 @@
                 "onelogin",
                 "saml"
             ],
-            "time": "2016-08-08T15:22:42+00:00"
+            "time": "2016-08-08 15:22:42"
         },
         {
             "name": "baum/baum",
@@ -107,7 +108,7 @@
                 "laravel 5",
                 "nested set"
             ],
-            "time": "2015-03-04T12:07:54+00:00"
+            "time": "2015-03-04 12:07:54"
         },
         {
             "name": "dingo/api",
@@ -182,7 +183,7 @@
                 "laravel",
                 "restful"
             ],
-            "time": "2016-08-30T03:57:04+00:00"
+            "time": "2016-08-30 03:57:04"
         },
         {
             "name": "dingo/blueprint",
@@ -238,7 +239,7 @@
                 "docs",
                 "laravel"
             ],
-            "time": "2016-10-18T15:22:36+00:00"
+            "time": "2016-10-18 15:22:36"
         },
         {
             "name": "doctrine/annotations",
@@ -306,7 +307,7 @@
                 "docblock",
                 "parser"
             ],
-            "time": "2015-08-31T12:32:49+00:00"
+            "time": "2015-08-31 12:32:49"
         },
         {
             "name": "doctrine/cache",
@@ -375,7 +376,7 @@
                 "cache",
                 "caching"
             ],
-            "time": "2016-10-29T11:43:38+00:00"
+            "time": "2016-10-29 11:43:38"
         },
         {
             "name": "doctrine/collections",
@@ -441,7 +442,7 @@
                 "collections",
                 "iterator"
             ],
-            "time": "2016-09-01T10:39:08+00:00"
+            "time": "2016-09-01 10:39:08"
         },
         {
             "name": "doctrine/common",
@@ -514,7 +515,7 @@
                 "persistence",
                 "spl"
             ],
-            "time": "2016-10-06T03:17:04+00:00"
+            "time": "2016-10-06 03:17:04"
         },
         {
             "name": "doctrine/dbal",
@@ -586,7 +587,7 @@
                 "persistence",
                 "queryobject"
             ],
-            "time": "2016-11-06T12:49:02+00:00"
+            "time": "2016-11-06 12:49:02"
         },
         {
             "name": "doctrine/inflector",
@@ -653,7 +654,7 @@
                 "singularize",
                 "string"
             ],
-            "time": "2016-05-12T17:23:41+00:00"
+            "time": "2016-05-12 17:23:41"
         },
         {
             "name": "doctrine/lexer",
@@ -707,7 +708,7 @@
                 "lexer",
                 "parser"
             ],
-            "time": "2014-09-09T13:34:57+00:00"
+            "time": "2014-09-09 13:34:57"
         },
         {
             "name": "dusterio/lumen-passport",
@@ -753,7 +754,7 @@
                 "lumen",
                 "php"
             ],
-            "time": "2016-10-21T12:30:16+00:00"
+            "time": "2016-10-21 12:30:16"
         },
         {
             "name": "firebase/php-jwt",
@@ -796,7 +797,7 @@
             ],
             "description": "A simple library to encode and decode JSON Web Tokens (JWT) in PHP. Should conform to the current spec.",
             "homepage": "https://github.com/firebase/php-jwt",
-            "time": "2016-07-18T04:51:16+00:00"
+            "time": "2016-07-18 04:51:16"
         },
         {
             "name": "graham-campbell/flysystem",
@@ -885,7 +886,7 @@
                 "laravel",
                 "s3"
             ],
-            "time": "2016-08-28T09:18:27+00:00"
+            "time": "2016-08-28 09:18:27"
         },
         {
             "name": "graham-campbell/manager",
@@ -944,7 +945,7 @@
                 "laravel",
                 "manager"
             ],
-            "time": "2016-08-04T11:12:46+00:00"
+            "time": "2016-08-04 11:12:46"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -1006,7 +1007,7 @@
                 "rest",
                 "web service"
             ],
-            "time": "2016-03-21T20:02:09+00:00"
+            "time": "2016-03-21 20:02:09"
         },
         {
             "name": "guzzlehttp/promises",
@@ -1057,7 +1058,7 @@
             "keywords": [
                 "promise"
             ],
-            "time": "2016-11-18T17:47:58+00:00"
+            "time": "2016-11-18 17:47:58"
         },
         {
             "name": "guzzlehttp/psr7",
@@ -1122,7 +1123,7 @@
                 "uri",
                 "url"
             ],
-            "time": "2016-11-02T14:11:11+00:00"
+            "time": "2016-11-02 14:11:11"
         },
         {
             "name": "illuminate/auth",
@@ -1173,7 +1174,7 @@
             ],
             "description": "The Illuminate Auth package.",
             "homepage": "https://laravel.com",
-            "time": "2016-11-18T07:50:44+00:00"
+            "time": "2016-11-18 07:50:44"
         },
         {
             "name": "illuminate/broadcasting",
@@ -1220,7 +1221,7 @@
             ],
             "description": "The Illuminate Broadcasting package.",
             "homepage": "https://laravel.com",
-            "time": "2016-11-16T18:44:22+00:00"
+            "time": "2016-11-16 18:44:22"
         },
         {
             "name": "illuminate/bus",
@@ -1265,7 +1266,7 @@
             ],
             "description": "The Illuminate Bus package.",
             "homepage": "https://laravel.com",
-            "time": "2016-10-08T20:07:21+00:00"
+            "time": "2016-10-08 20:07:21"
         },
         {
             "name": "illuminate/cache",
@@ -1315,7 +1316,7 @@
             ],
             "description": "The Illuminate Cache package.",
             "homepage": "https://laravel.com",
-            "time": "2016-10-05T14:39:34+00:00"
+            "time": "2016-10-05 14:39:34"
         },
         {
             "name": "illuminate/config",
@@ -1360,7 +1361,7 @@
             ],
             "description": "The Illuminate Config package.",
             "homepage": "https://laravel.com",
-            "time": "2016-08-05T14:48:10+00:00"
+            "time": "2016-08-05 14:48:10"
         },
         {
             "name": "illuminate/console",
@@ -1411,7 +1412,7 @@
             ],
             "description": "The Illuminate Console package.",
             "homepage": "https://laravel.com",
-            "time": "2016-11-14T18:53:23+00:00"
+            "time": "2016-11-14 18:53:23"
         },
         {
             "name": "illuminate/container",
@@ -1454,7 +1455,7 @@
             ],
             "description": "The Illuminate Container package.",
             "homepage": "https://laravel.com",
-            "time": "2016-10-02T01:14:30+00:00"
+            "time": "2016-10-02 01:14:30"
         },
         {
             "name": "illuminate/contracts",
@@ -1496,7 +1497,7 @@
             ],
             "description": "The Illuminate Contracts package.",
             "homepage": "https://laravel.com",
-            "time": "2016-09-26T20:36:27+00:00"
+            "time": "2016-09-26 20:36:27"
         },
         {
             "name": "illuminate/database",
@@ -1556,7 +1557,7 @@
                 "orm",
                 "sql"
             ],
-            "time": "2016-11-21T14:52:43+00:00"
+            "time": "2016-11-21 14:52:43"
         },
         {
             "name": "illuminate/encryption",
@@ -1603,7 +1604,7 @@
             ],
             "description": "The Illuminate Encryption package.",
             "homepage": "https://laravel.com",
-            "time": "2016-08-05T14:48:10+00:00"
+            "time": "2016-08-05 14:48:10"
         },
         {
             "name": "illuminate/events",
@@ -1648,7 +1649,7 @@
             ],
             "description": "The Illuminate Events package.",
             "homepage": "https://laravel.com",
-            "time": "2016-08-12T14:24:30+00:00"
+            "time": "2016-08-12 14:24:30"
         },
         {
             "name": "illuminate/filesystem",
@@ -1698,7 +1699,7 @@
             ],
             "description": "The Illuminate Filesystem package.",
             "homepage": "https://laravel.com",
-            "time": "2016-11-07T22:09:46+00:00"
+            "time": "2016-11-07 22:09:46"
         },
         {
             "name": "illuminate/hashing",
@@ -1742,7 +1743,7 @@
             ],
             "description": "The Illuminate Hashing package.",
             "homepage": "https://laravel.com",
-            "time": "2016-08-05T14:48:10+00:00"
+            "time": "2016-08-05 14:48:10"
         },
         {
             "name": "illuminate/http",
@@ -1788,7 +1789,7 @@
             ],
             "description": "The Illuminate Http package.",
             "homepage": "https://laravel.com",
-            "time": "2016-09-22T13:54:12+00:00"
+            "time": "2016-09-22 13:54:12"
         },
         {
             "name": "illuminate/mail",
@@ -1840,7 +1841,7 @@
             ],
             "description": "The Illuminate Mail package.",
             "homepage": "https://laravel.com",
-            "time": "2016-08-17T14:13:04+00:00"
+            "time": "2016-08-17 14:13:04"
         },
         {
             "name": "illuminate/pagination",
@@ -1884,7 +1885,7 @@
             ],
             "description": "The Illuminate Pagination package.",
             "homepage": "https://laravel.com",
-            "time": "2016-10-13T14:42:03+00:00"
+            "time": "2016-10-13 14:42:03"
         },
         {
             "name": "illuminate/pipeline",
@@ -1928,7 +1929,7 @@
             ],
             "description": "The Illuminate Pipeline package.",
             "homepage": "https://laravel.com",
-            "time": "2016-08-07T17:26:10+00:00"
+            "time": "2016-08-07 17:26:10"
         },
         {
             "name": "illuminate/queue",
@@ -1982,7 +1983,7 @@
             ],
             "description": "The Illuminate Queue package.",
             "homepage": "https://laravel.com",
-            "time": "2016-11-18T17:46:01+00:00"
+            "time": "2016-11-18 17:46:01"
         },
         {
             "name": "illuminate/routing",
@@ -2038,7 +2039,7 @@
             ],
             "description": "The Illuminate Routing package.",
             "homepage": "https://laravel.com",
-            "time": "2016-11-19T13:54:50+00:00"
+            "time": "2016-11-19 13:54:50"
         },
         {
             "name": "illuminate/session",
@@ -2088,7 +2089,7 @@
             ],
             "description": "The Illuminate Session package.",
             "homepage": "https://laravel.com",
-            "time": "2016-11-19T09:30:07+00:00"
+            "time": "2016-11-19 09:30:07"
         },
         {
             "name": "illuminate/support",
@@ -2145,7 +2146,7 @@
             ],
             "description": "The Illuminate Support package.",
             "homepage": "https://laravel.com",
-            "time": "2016-11-20T15:56:49+00:00"
+            "time": "2016-11-20 15:56:49"
         },
         {
             "name": "illuminate/translation",
@@ -2190,7 +2191,7 @@
             ],
             "description": "The Illuminate Translation package.",
             "homepage": "https://laravel.com",
-            "time": "2016-11-02T13:15:46+00:00"
+            "time": "2016-11-02 13:15:46"
         },
         {
             "name": "illuminate/validation",
@@ -2240,7 +2241,7 @@
             ],
             "description": "The Illuminate Validation package.",
             "homepage": "https://laravel.com",
-            "time": "2016-11-21T16:03:28+00:00"
+            "time": "2016-11-21 16:03:28"
         },
         {
             "name": "illuminate/view",
@@ -2288,7 +2289,51 @@
             ],
             "description": "The Illuminate View package.",
             "homepage": "https://laravel.com",
-            "time": "2016-11-21T21:24:01+00:00"
+            "time": "2016-11-21 21:24:01"
+        },
+        {
+            "name": "jakubkratina/lumen-dingo-route-list",
+            "version": "0.9.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jakubkratina/lumen-dingo-route-list.git",
+                "reference": "84a47c1350071d23d0e4b7f402019223ecb3aee1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/jakubkratina/lumen-dingo-route-list/zipball/84a47c1350071d23d0e4b7f402019223ecb3aee1",
+                "reference": "84a47c1350071d23d0e4b7f402019223ecb3aee1",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5.9"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/RouteListCommand.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jakub Kratina",
+                    "email": "me@jakubkratina.cz"
+                }
+            ],
+            "description": "Route:list command support at Lumen framework application with Dingo API framework",
+            "keywords": [
+                "api",
+                "command",
+                "dingo",
+                "list",
+                "lumen",
+                "route"
+            ],
+            "time": "2016-05-20 20:31:17"
         },
         {
             "name": "laravel/lumen-framework",
@@ -2371,7 +2416,7 @@
                 "laravel",
                 "lumen"
             ],
-            "time": "2016-10-05T22:29:03+00:00"
+            "time": "2016-10-05 22:29:03"
         },
         {
             "name": "laravel/passport",
@@ -2435,7 +2480,7 @@
                 "oauth",
                 "passport"
             ],
-            "time": "2016-11-18T18:05:35+00:00"
+            "time": "2016-11-18 18:05:35"
         },
         {
             "name": "lcobucci/jwt",
@@ -2493,7 +2538,7 @@
                 "JWS",
                 "jwt"
             ],
-            "time": "2016-10-31T20:12:20+00:00"
+            "time": "2016-10-31 20:12:20"
         },
         {
             "name": "league/event",
@@ -2543,7 +2588,7 @@
                 "event",
                 "listener"
             ],
-            "time": "2016-07-23T09:33:29+00:00"
+            "time": "2016-07-23 09:33:29"
         },
         {
             "name": "league/flysystem",
@@ -2626,7 +2671,7 @@
                 "sftp",
                 "storage"
             ],
-            "time": "2016-11-16T08:56:22+00:00"
+            "time": "2016-11-16 08:56:22"
         },
         {
             "name": "league/fractal",
@@ -2689,7 +2734,7 @@
                 "league",
                 "rest"
             ],
-            "time": "2016-08-29T18:01:47+00:00"
+            "time": "2016-08-29 18:01:47"
         },
         {
             "name": "league/oauth2-server",
@@ -2765,7 +2810,7 @@
                 "secure",
                 "server"
             ],
-            "time": "2016-10-12T14:08:15+00:00"
+            "time": "2016-10-12 14:08:15"
         },
         {
             "name": "monolog/monolog",
@@ -2843,7 +2888,7 @@
                 "logging",
                 "psr-3"
             ],
-            "time": "2016-11-17T11:01:44+00:00"
+            "time": "2016-11-17 11:01:44"
         },
         {
             "name": "mtdowling/cron-expression",
@@ -2887,7 +2932,7 @@
                 "cron",
                 "schedule"
             ],
-            "time": "2016-01-26T21:23:30+00:00"
+            "time": "2016-01-26 21:23:30"
         },
         {
             "name": "nesbot/carbon",
@@ -2940,7 +2985,7 @@
                 "datetime",
                 "time"
             ],
-            "time": "2016-07-22T14:20:35+00:00"
+            "time": "2016-07-22 14:20:35"
         },
         {
             "name": "nikic/fast-route",
@@ -2983,7 +3028,7 @@
                 "router",
                 "routing"
             ],
-            "time": "2016-06-12T19:08:51+00:00"
+            "time": "2016-06-12 19:08:51"
         },
         {
             "name": "nstapelbroek/culpa",
@@ -3044,7 +3089,7 @@
                 "laravel",
                 "updated-by"
             ],
-            "time": "2016-01-08T15:17:15+00:00"
+            "time": "2016-01-08 15:17:15"
         },
         {
             "name": "onelogin/php-saml",
@@ -3098,7 +3143,7 @@
                 "onelogin",
                 "saml"
             ],
-            "time": "2016-07-19T17:14:29+00:00"
+            "time": "2016-07-19 17:14:29"
         },
         {
             "name": "paragonie/random_compat",
@@ -3146,7 +3191,7 @@
                 "pseudorandom",
                 "random"
             ],
-            "time": "2016-11-07T23:38:38+00:00"
+            "time": "2016-11-07 23:38:38"
         },
         {
             "name": "phpdocumentor/reflection-common",
@@ -3200,7 +3245,7 @@
                 "reflection",
                 "static analysis"
             ],
-            "time": "2015-12-27T11:43:31+00:00"
+            "time": "2015-12-27 11:43:31"
         },
         {
             "name": "phpdocumentor/reflection-docblock",
@@ -3245,7 +3290,7 @@
                 }
             ],
             "description": "With this component, a library can provide support for annotations via DocBlocks or otherwise retrieve information that is embedded in a DocBlock.",
-            "time": "2016-09-30T07:12:33+00:00"
+            "time": "2016-09-30 07:12:33"
         },
         {
             "name": "phpdocumentor/type-resolver",
@@ -3292,7 +3337,7 @@
                     "email": "me@mikevanriel.com"
                 }
             ],
-            "time": "2016-06-10T07:14:17+00:00"
+            "time": "2016-06-10 07:14:17"
         },
         {
             "name": "phpseclib/phpseclib",
@@ -3384,7 +3429,7 @@
                 "x.509",
                 "x509"
             ],
-            "time": "2016-11-21T00:13:41+00:00"
+            "time": "2016-11-21 00:13:41"
         },
         {
             "name": "psr/http-message",
@@ -3434,7 +3479,7 @@
                 "request",
                 "response"
             ],
-            "time": "2016-08-06T14:39:51+00:00"
+            "time": "2016-08-06 14:39:51"
         },
         {
             "name": "psr/log",
@@ -3481,7 +3526,7 @@
                 "psr",
                 "psr-3"
             ],
-            "time": "2016-10-10T12:19:37+00:00"
+            "time": "2016-10-10 12:19:37"
         },
         {
             "name": "sofa/eloquence",
@@ -3537,7 +3582,7 @@
                 "mutable",
                 "searchable"
             ],
-            "time": "2016-10-25T06:56:59+00:00"
+            "time": "2016-10-25 06:56:59"
         },
         {
             "name": "sofa/hookable",
@@ -3583,7 +3628,7 @@
                 "eloquent",
                 "laravel"
             ],
-            "time": "2016-08-26T13:37:29+00:00"
+            "time": "2016-08-26 13:37:29"
         },
         {
             "name": "swiftmailer/swiftmailer",
@@ -3636,7 +3681,7 @@
                 "mail",
                 "mailer"
             ],
-            "time": "2016-11-13T15:37:50+00:00"
+            "time": "2016-11-13 15:37:50"
         },
         {
             "name": "symfony/console",
@@ -3697,7 +3742,7 @@
             ],
             "description": "Symfony Console Component",
             "homepage": "https://symfony.com",
-            "time": "2016-11-16T22:17:09+00:00"
+            "time": "2016-11-16 22:17:09"
         },
         {
             "name": "symfony/debug",
@@ -3754,7 +3799,7 @@
             ],
             "description": "Symfony Debug Component",
             "homepage": "https://symfony.com",
-            "time": "2016-11-15T12:55:20+00:00"
+            "time": "2016-11-15 12:55:20"
         },
         {
             "name": "symfony/event-dispatcher",
@@ -3762,12 +3807,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/event-dispatcher.git",
-                "reference": "25c576abd4e0f212e678fe8b2bd9a9a98c7ea934"
+                "reference": "cd88acb5563c690bb02c21b5d7aa801af2520095"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/event-dispatcher/zipball/25c576abd4e0f212e678fe8b2bd9a9a98c7ea934",
-                "reference": "25c576abd4e0f212e678fe8b2bd9a9a98c7ea934",
+                "url": "https://api.github.com/repos/symfony/event-dispatcher/zipball/cd88acb5563c690bb02c21b5d7aa801af2520095",
+                "reference": "cd88acb5563c690bb02c21b5d7aa801af2520095",
                 "shasum": ""
             },
             "require": {
@@ -3775,7 +3820,7 @@
             },
             "require-dev": {
                 "psr/log": "~1.0",
-                "symfony/config": "~2.0,>=2.0.5|~3.0.0",
+                "symfony/config": "^2.0.5|~3.0.0",
                 "symfony/dependency-injection": "~2.6|~3.0.0",
                 "symfony/expression-language": "~2.6|~3.0.0",
                 "symfony/stopwatch": "~2.3|~3.0.0"
@@ -3814,7 +3859,7 @@
             ],
             "description": "Symfony EventDispatcher Component",
             "homepage": "https://symfony.com",
-            "time": "2016-10-13T01:43:15+00:00"
+            "time": "2017-03-21 21:39:01"
         },
         {
             "name": "symfony/finder",
@@ -3863,7 +3908,7 @@
             ],
             "description": "Symfony Finder Component",
             "homepage": "https://symfony.com",
-            "time": "2016-11-03T08:04:31+00:00"
+            "time": "2016-11-03 08:04:31"
         },
         {
             "name": "symfony/http-foundation",
@@ -3916,7 +3961,7 @@
             ],
             "description": "Symfony HttpFoundation Component",
             "homepage": "https://symfony.com",
-            "time": "2016-11-16T22:17:09+00:00"
+            "time": "2016-11-16 22:17:09"
         },
         {
             "name": "symfony/http-kernel",
@@ -3998,7 +4043,7 @@
             ],
             "description": "Symfony HttpKernel Component",
             "homepage": "https://symfony.com",
-            "time": "2016-11-21T03:12:53+00:00"
+            "time": "2016-11-21 03:12:53"
         },
         {
             "name": "symfony/polyfill-mbstring",
@@ -4057,7 +4102,7 @@
                 "portable",
                 "shim"
             ],
-            "time": "2016-11-14T01:06:16+00:00"
+            "time": "2016-11-14 01:06:16"
         },
         {
             "name": "symfony/process",
@@ -4106,7 +4151,7 @@
             ],
             "description": "Symfony Process Component",
             "homepage": "https://symfony.com",
-            "time": "2016-09-29T14:13:09+00:00"
+            "time": "2016-09-29 14:13:09"
         },
         {
             "name": "symfony/psr-http-message-bridge",
@@ -4166,7 +4211,7 @@
                 "http-message",
                 "psr-7"
             ],
-            "time": "2016-09-14T18:37:20+00:00"
+            "time": "2016-09-14 18:37:20"
         },
         {
             "name": "symfony/routing",
@@ -4241,7 +4286,7 @@
                 "uri",
                 "url"
             ],
-            "time": "2016-08-16T14:58:24+00:00"
+            "time": "2016-08-16 14:58:24"
         },
         {
             "name": "symfony/translation",
@@ -4305,7 +4350,7 @@
             ],
             "description": "Symfony Translation Component",
             "homepage": "https://symfony.com",
-            "time": "2016-11-18T21:15:08+00:00"
+            "time": "2016-11-18 21:15:08"
         },
         {
             "name": "venturecraft/revisionable",
@@ -4353,7 +4398,7 @@
                 "model",
                 "revision"
             ],
-            "time": "2016-08-02T02:32:00+00:00"
+            "time": "2016-08-02 02:32:00"
         },
         {
             "name": "vlucas/phpdotenv",
@@ -4403,7 +4448,7 @@
                 "env",
                 "environment"
             ],
-            "time": "2016-09-01T10:05:43+00:00"
+            "time": "2016-09-01 10:05:43"
         },
         {
             "name": "webmozart/assert",
@@ -4453,7 +4498,7 @@
                 "check",
                 "validate"
             ],
-            "time": "2016-10-17T06:50:33+00:00"
+            "time": "2016-10-17 06:50:33"
         },
         {
             "name": "webpatser/laravel-uuid",
@@ -4500,7 +4545,7 @@
             "keywords": [
                 "UUID RFC4122"
             ],
-            "time": "2016-05-09T09:22:18+00:00"
+            "time": "2016-05-09 09:22:18"
         },
         {
             "name": "zendframework/zend-diactoros",
@@ -4550,7 +4595,7 @@
                 "psr",
                 "psr-7"
             ],
-            "time": "2016-10-11T13:28:06+00:00"
+            "time": "2016-10-11 13:28:06"
         },
         {
             "name": "zizaco/entrust",
@@ -4618,7 +4663,7 @@
                 "permission",
                 "roles"
             ],
-            "time": "2016-11-04T16:23:22+00:00"
+            "time": "2016-11-04 16:23:22"
         }
     ],
     "packages-dev": [
@@ -4686,7 +4731,7 @@
                 "phpstorm",
                 "sublime"
             ],
-            "time": "2016-11-15T08:21:23+00:00"
+            "time": "2016-11-15 08:21:23"
         },
         {
             "name": "barryvdh/reflection-docblock",
@@ -4735,7 +4780,7 @@
                     "email": "mike.vanriel@naenius.com"
                 }
             ],
-            "time": "2016-06-13T19:28:20+00:00"
+            "time": "2016-06-13 19:28:20"
         },
         {
             "name": "doctrine/instantiator",
@@ -4789,7 +4834,7 @@
                 "constructor",
                 "instantiate"
             ],
-            "time": "2016-03-31T10:24:22+00:00"
+            "time": "2016-03-31 10:24:22"
         },
         {
             "name": "fzaninotto/faker",
@@ -4839,7 +4884,7 @@
                 "faker",
                 "fixtures"
             ],
-            "time": "2016-11-09T08:42:27+00:00"
+            "time": "2016-11-09 08:42:27"
         },
         {
             "name": "guzzle/guzzle",
@@ -4935,7 +4980,7 @@
                 "web service"
             ],
             "abandoned": "guzzlehttp/guzzle",
-            "time": "2016-10-26T18:22:07+00:00"
+            "time": "2016-10-26 18:22:07"
         },
         {
             "name": "myclabs/deep-copy",
@@ -4977,7 +5022,7 @@
                 "object",
                 "object graph"
             ],
-            "time": "2016-10-31T17:19:45+00:00"
+            "time": "2016-10-31 17:19:45"
         },
         {
             "name": "phpspec/prophecy",
@@ -5040,7 +5085,7 @@
                 "spy",
                 "stub"
             ],
-            "time": "2016-11-21T14:58:47+00:00"
+            "time": "2016-11-21 14:58:47"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -5103,7 +5148,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2016-05-27T16:24:29+00:00"
+            "time": "2016-05-27 16:24:29"
         },
         {
             "name": "phpunit/php-file-iterator",
@@ -5150,7 +5195,7 @@
                 "filesystem",
                 "iterator"
             ],
-            "time": "2016-10-03T07:40:28+00:00"
+            "time": "2016-10-03 07:40:28"
         },
         {
             "name": "phpunit/php-text-template",
@@ -5191,7 +5236,7 @@
             "keywords": [
                 "template"
             ],
-            "time": "2015-06-21T13:50:34+00:00"
+            "time": "2015-06-21 13:50:34"
         },
         {
             "name": "phpunit/php-timer",
@@ -5235,7 +5280,7 @@
             "keywords": [
                 "timer"
             ],
-            "time": "2016-05-12T18:03:57+00:00"
+            "time": "2016-05-12 18:03:57"
         },
         {
             "name": "phpunit/php-token-stream",
@@ -5284,7 +5329,7 @@
             "keywords": [
                 "tokenizer"
             ],
-            "time": "2016-11-15T14:06:22+00:00"
+            "time": "2016-11-15 14:06:22"
         },
         {
             "name": "phpunit/phpunit",
@@ -5359,7 +5404,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2016-11-22T10:00:35+00:00"
+            "time": "2016-11-22 10:00:35"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
@@ -5415,7 +5460,7 @@
                 "mock",
                 "xunit"
             ],
-            "time": "2016-05-26T06:15:11+00:00"
+            "time": "2016-05-26 06:15:11"
         },
         {
             "name": "raveren/kint",
@@ -5466,7 +5511,7 @@
                 "kint",
                 "php"
             ],
-            "time": "2016-10-05T07:38:36+00:00"
+            "time": "2016-10-05 07:38:36"
         },
         {
             "name": "satooshi/php-coveralls",
@@ -5524,7 +5569,7 @@
                 "github",
                 "test"
             ],
-            "time": "2016-01-20T17:35:46+00:00"
+            "time": "2016-01-20 17:35:46"
         },
         {
             "name": "sebastian/code-unit-reverse-lookup",
@@ -5569,7 +5614,7 @@
             ],
             "description": "Looks up which function or method a line of code belongs to",
             "homepage": "https://github.com/sebastianbergmann/code-unit-reverse-lookup/",
-            "time": "2016-10-03T07:37:58+00:00"
+            "time": "2016-10-03 07:37:58"
         },
         {
             "name": "sebastian/comparator",
@@ -5633,7 +5678,7 @@
                 "compare",
                 "equality"
             ],
-            "time": "2016-11-19T09:18:40+00:00"
+            "time": "2016-11-19 09:18:40"
         },
         {
             "name": "sebastian/diff",
@@ -5685,7 +5730,7 @@
             "keywords": [
                 "diff"
             ],
-            "time": "2016-10-03T07:45:03+00:00"
+            "time": "2016-10-03 07:45:03"
         },
         {
             "name": "sebastian/environment",
@@ -5735,7 +5780,7 @@
                 "environment",
                 "hhvm"
             ],
-            "time": "2016-08-18T05:49:44+00:00"
+            "time": "2016-08-18 05:49:44"
         },
         {
             "name": "sebastian/exporter",
@@ -5802,7 +5847,7 @@
                 "export",
                 "exporter"
             ],
-            "time": "2016-10-03T07:44:30+00:00"
+            "time": "2016-10-03 07:44:30"
         },
         {
             "name": "sebastian/global-state",
@@ -5853,7 +5898,7 @@
             "keywords": [
                 "global state"
             ],
-            "time": "2015-10-12T03:26:01+00:00"
+            "time": "2015-10-12 03:26:01"
         },
         {
             "name": "sebastian/object-enumerator",
@@ -5899,7 +5944,7 @@
             ],
             "description": "Traverses array structures and object graphs to enumerate all referenced objects",
             "homepage": "https://github.com/sebastianbergmann/object-enumerator/",
-            "time": "2016-10-03T07:42:27+00:00"
+            "time": "2016-10-03 07:42:27"
         },
         {
             "name": "sebastian/recursion-context",
@@ -5952,7 +5997,7 @@
             ],
             "description": "Provides functionality to recursively process PHP variables",
             "homepage": "http://www.github.com/sebastianbergmann/recursion-context",
-            "time": "2016-10-03T07:41:43+00:00"
+            "time": "2016-10-03 07:41:43"
         },
         {
             "name": "sebastian/resource-operations",
@@ -5994,7 +6039,7 @@
             ],
             "description": "Provides a list of PHP built-in functions that operate on resources",
             "homepage": "https://www.github.com/sebastianbergmann/resource-operations",
-            "time": "2016-10-03T07:43:09+00:00"
+            "time": "2016-10-03 07:43:09"
         },
         {
             "name": "sebastian/version",
@@ -6037,7 +6082,7 @@
             ],
             "description": "Library that helps with managing the version number of Git-hosted PHP projects",
             "homepage": "https://github.com/sebastianbergmann/version",
-            "time": "2016-10-03T07:35:21+00:00"
+            "time": "2016-10-03 07:35:21"
         },
         {
             "name": "symfony/class-loader",
@@ -6093,7 +6138,7 @@
             ],
             "description": "Symfony ClassLoader Component",
             "homepage": "https://symfony.com",
-            "time": "2016-11-19T20:35:20+00:00"
+            "time": "2016-11-19 20:35:20"
         },
         {
             "name": "symfony/config",
@@ -6149,7 +6194,7 @@
             ],
             "description": "Symfony Config Component",
             "homepage": "https://symfony.com",
-            "time": "2016-11-19T20:35:20+00:00"
+            "time": "2016-11-19 20:35:20"
         },
         {
             "name": "symfony/css-selector",
@@ -6202,7 +6247,7 @@
             ],
             "description": "Symfony CssSelector Component",
             "homepage": "https://symfony.com",
-            "time": "2016-11-03T08:04:31+00:00"
+            "time": "2016-11-03 08:04:31"
         },
         {
             "name": "symfony/dom-crawler",
@@ -6258,7 +6303,7 @@
             ],
             "description": "Symfony DomCrawler Component",
             "homepage": "https://symfony.com",
-            "time": "2016-11-14T16:20:02+00:00"
+            "time": "2016-11-14 16:20:02"
         },
         {
             "name": "symfony/filesystem",
@@ -6307,7 +6352,7 @@
             ],
             "description": "Symfony Filesystem Component",
             "homepage": "https://symfony.com",
-            "time": "2016-11-19T20:35:20+00:00"
+            "time": "2016-11-19 20:35:20"
         },
         {
             "name": "symfony/stopwatch",
@@ -6356,7 +6401,7 @@
             ],
             "description": "Symfony Stopwatch Component",
             "homepage": "https://symfony.com",
-            "time": "2016-11-19T20:35:20+00:00"
+            "time": "2016-11-19 20:35:20"
         },
         {
             "name": "symfony/yaml",
@@ -6411,7 +6456,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2016-11-19T20:35:20+00:00"
+            "time": "2016-11-19 20:35:20"
         }
     ],
     "aliases": [],

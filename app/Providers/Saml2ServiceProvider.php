@@ -17,6 +17,7 @@ use Illuminate\Support\ServiceProvider;
 use Session;
 use Illuminate\Support\Facades\Route;
 use Request;
+use WA\DataStore\Company\CompanySaml2;
 
 class Saml2ServiceProvider extends Saml2SP
 {
@@ -35,31 +36,26 @@ class Saml2ServiceProvider extends Saml2SP
                     $routeSaml2Controller = 'WA\Http\Controllers\Auth\Saml2Controller';
                     $app->get('logout', ['as' => 'saml_logout', function () use ($routeSaml2Controller, $app) {
                         $controller = $app->make($routeSaml2Controller);
-
                         return $controller->logout();
                     }]);
 
                     $app->get('login', ['as' => 'saml_login', function () use ($routeSaml2Controller, $app) {
                         $controller = $app->make($routeSaml2Controller);
-
                         return $controller->login();
                     }]);
 
                     $app->get('metadata', ['as' => 'saml_metadata', function () use ($routeSaml2Controller, $app) {
                         $controller = $app->make($routeSaml2Controller);
-
                         return $controller->metadata();
                     }]);
 
                     $app->post('acs', ['as' => 'saml_acs', function () use ($routeSaml2Controller, $app) {
                         $controller = $app->make($routeSaml2Controller);
-
                         return $controller->acs();
                     }]);
 
                     $app->get('sls', ['as' => 'saml_sls', function () use ($routeSaml2Controller, $app) {
                         $controller = $app->make($routeSaml2Controller);
-
                         return $controller->sls();
                     }]);
                 }
@@ -77,22 +73,35 @@ class Saml2ServiceProvider extends Saml2SP
      */
     public function register()
     {
+        //Log::debug("HERE register!");
         $this->app->singleton('WA\Auth\Saml2\Saml2Auth', function ($app) {
             $config = config('saml2_settings');
-
             $method = Request::getMethod();
             $pathInfo = Request::getPathInfo();
-            $route = $app->getRoutes();
 
             if (stripos($pathInfo, 'doSSO') > 0) {
                 $parts = explode('/', $pathInfo);
                 $email = $parts[count($parts)-1];
                 $idCompany = Cache::get('saml2_idcompany_'.$email);
             } else {
-                $idCompany = app('request')->get('idCompany');
+                $samlResponse = base64_decode(app('request')->get('SAMLResponse'));
+
+                // Retrieve the EntityId from XML.
+                $xmlEntityId = simplexml_load_string($samlResponse, "SimpleXMLElement", LIBXML_NOCDATA, 'saml', true);
+                $jsonEntityId = json_encode($xmlEntityId);
+                $arrayEntityId = json_decode($jsonEntityId,TRUE);
+                $entityId = $arrayEntityId['Issuer'];
+
+                // Retrieve the X509Cert from XML.
+                $xmlX509Cert = simplexml_load_string($samlResponse, "SimpleXMLElement", LIBXML_NOCDATA, 'ds', true);
+                $jsonX509Cert = json_encode($xmlX509Cert);
+                $arrayX509Cert = json_decode($jsonX509Cert,TRUE);
+                $x509Cert = $arrayX509Cert['Signature']['KeyInfo']['X509Data']['X509Certificate'];
+
+                $companySaml = CompanySaml2::where('entityId', $entityId)->first();
+                $idCompany = $companySaml['companyId'];
             }
 
-            //Log::info("IDCOMPANY: ".print_r($idCompany, true));
             if (!isset($idCompany)) {
                 abort(404);
             }
@@ -107,33 +116,24 @@ class Saml2ServiceProvider extends Saml2SP
             $saml2Settings = $companyByID->saml2Settings();
 
             // Route information
-            $config['sp']['entityId'] =
-                URL::route('saml_metadata').'?idCompany='.$idCompany;
-
-            $config['sp']['assertionConsumerService']['url'] =
-                URL::route('saml_acs').'?idCompany='.$idCompany;
-
-            $config['sp']['singleLogoutService']['url'] =
-                URL::route('saml_sls').'?idCompany='.$idCompany;
+            $config['sp']['entityId'] = URL::route('saml_metadata');
+            $config['sp']['assertionConsumerService']['url'] = URL::route('saml_acs');
+            $config['sp']['singleLogoutService']['url'] = URL::route('saml_sls');
 
             // Saml2_Settings Information.
-            $config['idp']['entityId'] =
-                  $saml2Settings['attributes']['entityId'];
+            $config['idp']['entityId'] = $saml2Settings['attributes']['entityId'];
 
-            $config['idp']['singleSignOnService']['url'] =
-                  $saml2Settings['attributes']['singleSignOnServiceUrl'];
+            $config['idp']['singleSignOnService']['url'] = $saml2Settings['attributes']['singleSignOnServiceUrl'];
 
-            $config['idp']['singleSignOnService']['binding'] =
-                  $saml2Settings['attributes']['singleSignOnServiceBinding'];
+            $config['idp']['singleSignOnService']['binding'] = $saml2Settings['attributes']['singleSignOnServiceBinding'];
 
-            $config['idp']['singleLogoutService']['url'] =
-                  $saml2Settings['attributes']['singleLogoutServiceUrl'];
+            $config['idp']['singleLogoutService']['url'] = $saml2Settings['attributes']['singleLogoutServiceUrl'];
 
-            $config['idp']['singleLogoutService']['binding'] =
-                  $saml2Settings['attributes']['singleLogoutServiceBinding'];
+            $config['idp']['singleLogoutService']['binding'] = $saml2Settings['attributes']['singleLogoutServiceBinding'];
 
-            $config['idp']['x509cert'] =
-                  $saml2Settings['attributes']['x509cert'];
+            $config['idp']['x509cert'] = $saml2Settings['attributes']['x509cert'];
+
+            //Log::debug("config : ".print_r($config, true));
 
             $auth = new OneLogin_Saml2_Auth($config);
 

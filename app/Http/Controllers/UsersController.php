@@ -19,7 +19,6 @@ use WA\DataStore\Content\Content;
 use WA\DataStore\Asset\Asset;
 
 use DB;
-use Log;
 use Cache;
 
 use Illuminate\Support\Facades\Mail;
