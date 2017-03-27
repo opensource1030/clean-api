@@ -11,6 +11,12 @@ abstract class FilterableTransformer extends TransformerAbstract
 {
     use Criteria;
 
+    /**
+     * @var bool
+     */
+    public $returnEmptyResults = false;
+
+
     public function __call($method, $parameters)
     {
         if (Str::startsWith($method, 'include')) {

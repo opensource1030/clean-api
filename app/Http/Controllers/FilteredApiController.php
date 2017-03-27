@@ -38,6 +38,13 @@ abstract class FilteredApiController extends ApiController
      */
     protected $request = null;
 
+
+    /**
+     * @var bool
+     */
+    protected $returnEmptyResults = false;
+
+
     /**
      * FilteredApiController constructor.
      *

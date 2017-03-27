@@ -22,6 +22,8 @@ class EloquentDevice extends AbstractRepository implements DeviceInterface
      */
     protected $status;
 
+    public $returnEmptyResults = true;
+
     /**
      * @param Model           $model
      * @param StatusInterface $status
