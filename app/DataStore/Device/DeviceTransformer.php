@@ -23,6 +23,8 @@ class DeviceTransformer extends FilterableTransformer
         'devicetypes'
     ];
 
+    public $returnEmptyResults = true;
+
     /**
      * @param Device $device
      *

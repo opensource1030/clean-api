@@ -60,8 +60,6 @@ trait Criteria
 
     protected $isInclude = false;
 
-    protected $returnEmptyResults = false;
-
     /**
      * We have to map some table names / model names because they aren't totally named right
      *
@@ -97,9 +95,9 @@ trait Criteria
             if ($criteriaModel instanceof Relation) {
                 $this->criteriaQuery = $criteriaModel;
                 $this->criteriaModelName = $criteriaModel->getRelated()->getTable();
-                if(method_exists( $criteriaModel->getRelated() , 'getTableColumns' )){
-                    $this->criteriaModelColumns = $criteriaModel->getRelated()->getTableColumns();    
-                }                
+                if (method_exists($criteriaModel->getRelated(), 'getTableColumns')) {
+                    $this->criteriaModelColumns = $criteriaModel->getRelated()->getTableColumns();
+                }
             } elseif ($criteriaModel instanceof BaseDataStore) {
                 $this->criteriaQuery = $criteriaModel->newQuery();
                 $this->criteriaModelName = $criteriaModel->getTable();
@@ -189,8 +187,13 @@ trait Criteria
      * @param null $modelMap Optional model table-name mapping for non-standard table names
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    protected function applyCriteria($criteriaModel, $criteria = null, $isInclude = false, $modelMap = null, $returnEmptyResults = false)
-    {
+    protected function applyCriteria(
+        $criteriaModel,
+        $criteria = null,
+        $isInclude = false,
+        $modelMap = null,
+        $returnEmptyResults = false
+    ) {
         if ($criteria !== null) {
             $this->setCriteria($criteria);
         }
@@ -230,11 +233,24 @@ trait Criteria
                 $relColumn = substr($filterKey, strpos($filterKey, '.') + 1);
 
                 if (is_array($this->modelMap) && isset($this->modelMap[$relKey])) {
-                    $filterKey = $this->modelMap[$relKey];
+                    $relKey = $this->modelMap[$relKey];
                 }
 
-                if ($filterKey !== $criteriaModelName) {
+                if ($relKey !== $criteriaModelName) {
+
+                    /*$dbt = debug_backtrace();
+                    for ($i = 0; $i < 7; $i++) {
+                        $bt = $dbt[$i];
+                        $file = isset($bt['file']) ? $bt['file'] : '(no file)';
+                        $line = isset($bt['line']) ? $bt['line'] : '(no line)';
+                        $class = isset($bt['class']) ? $bt['class'] : '(no class)';
+                        $function = isset($bt['function']) ? $bt['function'] : '(no function)';
+                        echo "$file ($line): $class \\ $function<br>\n";
+                    }*/
+
                     if ($this->returnEmptyResults === true) {
+
+                        var_dump($filterKey, $relKey);
                         $op = strtolower(key($filterVal));
                         $val = current($filterVal);
                         $this->criteriaQuery->whereHas($relKey,
@@ -244,6 +260,7 @@ trait Criteria
                     }
                     continue;
                 }
+
                 $filterKey = $relColumn;
             } elseif ($this->isInclude) {
                 continue;
@@ -304,6 +321,7 @@ trait Criteria
                 break;
             case 'like':
                 $val = str_replace('*', '%', $val);
+                $vals = explode(',', $val);
                 $query->where($filterKey, 'LIKE', $val);
                 break;
             default:
@@ -400,4 +418,6 @@ trait Criteria
         $fields = new Fields(\Request::get('fields', null));
         return $fields;
     }
+
 }
+

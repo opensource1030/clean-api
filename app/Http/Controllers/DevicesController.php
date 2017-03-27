@@ -22,6 +22,8 @@ class DevicesController extends FilteredApiController
      */
     protected $device;
 
+    public $returnEmptyResults = true;
+
     /**
      * Package Controller constructor
      *
