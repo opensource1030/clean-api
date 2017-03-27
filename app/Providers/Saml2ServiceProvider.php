@@ -133,8 +133,6 @@ class Saml2ServiceProvider extends Saml2SP
 
             $config['idp']['x509cert'] = $saml2Settings['attributes']['x509cert'];
 
-            //Log::debug("config : ".print_r($config, true));
-
             $auth = new OneLogin_Saml2_Auth($config);
 
             return new \WA\Auth\Saml2\Saml2Auth($auth);
