@@ -53,13 +53,11 @@ class MainHandler extends BaseHandler
         $userData = $this->getUserDataFromSaml2User($event);
         Log::debug("MainHandler@saml2LoginUser - userData: " . print_r(json_encode($userData), true));
 
-        $arrayEntityId = $this->retrieveEntityIdFromAssertion($userData['assertion']);
-
-        if(!isset($arrayEntityId['Issuer'])) {
-            abort(404);
-        }
-
-        $entityId = $arrayEntityId['Issuer'];
+        $samlResponse = base64_decode(app('request')->get('SAMLResponse'));
+        $xml = new \SimpleXMLElement($samlResponse);                
+        $entityIdNode = $xml->xpath("/*[local-name()='Response']/*[local-name()='Issuer']");
+        $entityId = $entityIdNode[0]->__toString();
+        
         $companySaml = CompanySaml2::where('entityId', $entityId)->first();
         $idCompany = $companySaml['companyId'];
 
@@ -135,14 +133,5 @@ class MainHandler extends BaseHandler
             'attributes' => $user->getAttributes(),
             'assertion' => $user->getRawSamlAssertion()
         ];
-    }
-
-    private function retrieveEntityIdFromAssertion($value) {
-        $samlResponse = base64_decode($value);
-
-        // Retrieve the EntityId from XML.
-        $xmlEntityId = simplexml_load_string($samlResponse, "SimpleXMLElement", LIBXML_NOCDATA, 'saml', true);
-        $jsonEntityId = json_encode($xmlEntityId);
-        return json_decode($jsonEntityId,TRUE);
     }
 }
