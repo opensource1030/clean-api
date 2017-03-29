@@ -27,11 +27,6 @@ class MainHandlerTest extends TestCase
 
     public function testParseRequestedInfoFromIdp()
     {
-        // CREATE CONSTANTS
-        define('USER_EMAIL', 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name');
-        define('USER_LASTNAME', 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname');
-        define('USER_FIRSTNAME', 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname');
-
         // CREATE CLASS INSTANCE
         $userForm = app()->make('WA\Services\Form\User\UserForm');
         $handler = new \WA\Events\Handlers\Saml2\MainHandler($userForm);
@@ -42,11 +37,16 @@ class MainHandlerTest extends TestCase
         $method->setAccessible(true);
 
         // CREATE ARGUMENTS
-        $userData['attributes']['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'][0] = 'correo@electronico.com';
-        $userData['attributes']['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'][0][0] = 'correo';
+        $userData['attributes']['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'][0] = 'correo@electronico.com';
         $userData['attributes']['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname'][0] = 'prueba';
+        $userData['attributes']['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'][0] = 'correo';
+        $userData['attributes']['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn'][0] = 'upn';
         $userData['attributes']['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname'][0] = 'test';
-        $userData['attributes']['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'][0] = 'supervisor@email.com';
+        $userData['attributes']['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/privatepersonalidentifier'][0] = 'privatepersonalidentifier';
+        $userData['attributes']['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'][0] = 'nameidentifier';
+        $userData['attributes']['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/denyonlysid'][0] = 'denyonlysid';
+        $userData['attributes']['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/rsa'][0] = 'rsa';
+        $userData['attributes']['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/thumbprint'][0] = 'thumbprint';
 
         // CALL THE FUNCTION
         $return = $method->invokeArgs($handler, array($userData, 9));
@@ -56,9 +56,24 @@ class MainHandlerTest extends TestCase
         $this->assertInternalType('string', $return['email']);
         $this->assertArrayHasKey('firstName', $return);
         $this->assertInternalType('string', $return['firstName']);
-        $this->assertArrayHasKey('lastName', $return);
-        $this->assertInternalType('string', $return['lastName']);
         $this->assertArrayHasKey('companyId', $return);
+        $this->assertInternalType('integer', $return['companyId']);
+        $this->assertArrayHasKey('isActive', $return);
+        $this->assertInternalType('integer', $return['isActive']);
+        $this->assertArrayHasKey('givenName', $return);
+        $this->assertInternalType('string', $return['givenName']);
+        $this->assertArrayHasKey('upn', $return);
+        $this->assertInternalType('string', $return['upn']);
+        $this->assertArrayHasKey('surname', $return);
+        $this->assertInternalType('string', $return['surname']);
+        $this->assertArrayHasKey('personalIdentifier', $return);
+        $this->assertInternalType('string', $return['personalIdentifier']);
+        $this->assertArrayHasKey('denyonlysid', $return);
+        $this->assertInternalType('string', $return['denyonlysid']);
+        $this->assertArrayHasKey('rsa', $return);
+        $this->assertInternalType('string', $return['rsa']);
+        $this->assertArrayHasKey('thumb', $return);
+        $this->assertInternalType('string', $return['thumb']);
     }
 
     public function testCreateUserSSO()
@@ -126,26 +141,4 @@ class MainHandlerTest extends TestCase
         $this->assertArrayHasKey('assertion', $return);
         $this->assertInternalType('null', $return['assertion']);
     }
-
-    public function testGetEmailFromUserData()
-    {
-        // CREATE CLASS INSTANCE
-        $userForm = app()->make('WA\Services\Form\User\UserForm');
-        $handler = new \WA\Events\Handlers\Saml2\MainHandler($userForm);
-
-        // CREATE REFLECTOR & ACCESSIBLE
-        $reflector = new ReflectionClass($handler);
-        $method = $reflector->getMethod('getEmailFromUserData');
-        $method->setAccessible(true);
-
-        // CREATE ARGUMENTS
-        $userData['attributes']['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'][0] = 'correo@electronico.com';
-
-        // CALL THE FUNCTION
-        $returnUserData = $method->invokeArgs($handler, array($userData, 9));
-
-        // ASSERTS
-        $this->assertStringStartsWith('correo@electronico.com', $returnUserData);
-    }
-
 }

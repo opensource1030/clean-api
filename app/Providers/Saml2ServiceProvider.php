@@ -9,15 +9,16 @@
 namespace WA\Providers;
 
 use Aacotroneo\Saml2\Saml2ServiceProvider as Saml2SP;
-use Log;
-use Cache;
-use URL;
-use OneLogin_Saml2_Auth;
-use Illuminate\Support\ServiceProvider;
-use Session;
 use Illuminate\Support\Facades\Route;
-use Request;
+use Illuminate\Support\ServiceProvider;
 use WA\DataStore\Company\CompanySaml2;
+
+use Cache;
+use OneLogin_Saml2_Auth;
+use Log;
+use Request;
+use Session;
+use URL;
 
 class Saml2ServiceProvider extends Saml2SP
 {
@@ -73,7 +74,6 @@ class Saml2ServiceProvider extends Saml2SP
      */
     public function register()
     {
-        //Log::debug("HERE register!");
         $this->app->singleton('WA\Auth\Saml2\Saml2Auth', function ($app) {
             $config = config('saml2_settings');
             $method = Request::getMethod();
@@ -86,17 +86,10 @@ class Saml2ServiceProvider extends Saml2SP
             } else {
                 $samlResponse = base64_decode(app('request')->get('SAMLResponse'));
 
-                // Retrieve the EntityId from XML.
-                $xmlEntityId = simplexml_load_string($samlResponse, "SimpleXMLElement", LIBXML_NOCDATA, 'saml', true);
-                $jsonEntityId = json_encode($xmlEntityId);
-                $arrayEntityId = json_decode($jsonEntityId,TRUE);
-                $entityId = $arrayEntityId['Issuer'];
-
-                // Retrieve the X509Cert from XML.
-                $xmlX509Cert = simplexml_load_string($samlResponse, "SimpleXMLElement", LIBXML_NOCDATA, 'ds', true);
-                $jsonX509Cert = json_encode($xmlX509Cert);
-                $arrayX509Cert = json_decode($jsonX509Cert,TRUE);
-                $x509Cert = $arrayX509Cert['Signature']['KeyInfo']['X509Data']['X509Certificate'];
+                $xml = new \SimpleXMLElement($samlResponse);                
+                $entityIdNode = $xml->xpath("/*[local-name()='Response']/*[local-name()='Issuer']");
+                $entityId = $entityIdNode[0]->__toString();
+                Log::debug("Saml2ServiceProvider@register - entityId: " . print_r($entityId, true));
 
                 $companySaml = CompanySaml2::where('entityId', $entityId)->first();
                 $idCompany = $companySaml['companyId'];
