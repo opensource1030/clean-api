@@ -54,8 +54,8 @@ class MainHandlerTest extends TestCase
         // ASSERTS
         $this->assertArrayHasKey('email', $return);
         $this->assertInternalType('string', $return['email']);
-        $this->assertArrayHasKey('firstName', $return);
-        $this->assertInternalType('string', $return['firstName']);
+        $this->assertArrayHasKey('name', $return);
+        $this->assertInternalType('string', $return['name']);
         $this->assertArrayHasKey('companyId', $return);
         $this->assertInternalType('integer', $return['companyId']);
         $this->assertArrayHasKey('isActive', $return);

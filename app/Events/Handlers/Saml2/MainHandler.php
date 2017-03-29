@@ -71,7 +71,15 @@ class MainHandler extends BaseHandler
 
                 // CREATE USER
                 $userInterface = app()->make('WA\Repositories\User\UserInterface');
-                $laravelUser = $userInterface->create(array('email' => $infoUser['email'], 'companyId' => $idCompany));
+                $laravelUser = $userInterface->create(
+                    array(
+                        'email' => $infoUser['name'],
+                        'firstName' => $infoUser['givenName'],
+                        'lastName' => $infoUser['surname'],
+                        'isActive' => 1,
+                        'companyId' => $idCompany
+                        )
+                    );
             }
 
             // Get the UUID from url.
@@ -97,7 +105,7 @@ class MainHandler extends BaseHandler
             default: // MICROSOFT
                 $user = array(
                     'email' => isset($userData['attributes'][$this->userEmail][0]) ? $userData['attributes'][$this->userEmail][0] : '',
-                    'firstName' => isset($userData['attributes'][$this->userName][0]) ? $userData['attributes'][$this->userName][0] : '',
+                    'name' => isset($userData['attributes'][$this->userName][0]) ? $userData['attributes'][$this->userName][0] : '',
                     'companyId' => $idCompany,
                     'isActive' => 1,
                     'givenName' => isset($userData['attributes'][$this->userGivenName][0]) ? $userData['attributes'][$this->userGivenName][0] : '',
