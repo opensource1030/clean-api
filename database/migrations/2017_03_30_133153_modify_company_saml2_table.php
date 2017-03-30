@@ -20,9 +20,9 @@ class ModifyCompanySaml2Table extends Migration
         Schema::table(
             $this->tableName,
             function ($table) {
-                $table->string('emailAttribute');
-                $table->string('firstNameAttribute');
-                $table->string('lastNameAttribute');
+                $table->string('emailAttribute')->default('');
+                $table->string('firstNameAttribute')->default('');
+                $table->string('lastNameAttribute')->default('');
             }
         );
     }
@@ -35,9 +35,18 @@ class ModifyCompanySaml2Table extends Migration
     public function down()
     {
         Schema::table(
-            $this->tableName, function ($table) {
+            $this->tableName, 
+            function ($table) {
                 $table->dropColumn('emailAttribute');
+        });
+        Schema::table(
+            $this->tableName, 
+            function ($table) {
                 $table->dropColumn('firstNameAttribute');
+        });
+        Schema::table(
+            $this->tableName, 
+            function ($table) {
                 $table->dropColumn('lastNameAttribute');
         });
     }
