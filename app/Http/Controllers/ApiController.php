@@ -216,7 +216,6 @@ abstract class ApiController extends BaseController
             );
 
         } catch (\Exception $e) {
-            Log::debug("SendMailError: ".print_r($e->getMessage(), true));
             return false;
         }
         return true;        

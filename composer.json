@@ -18,9 +18,9 @@
     "doctrine/dbal": "~2.3",
     "illuminate/config": "5.3.0",
     "dusterio/lumen-passport": "~0.1",
-     "dingo/blueprint": "0.2.*",
-     "doctrine/annotations": "1.2.*"
-     
+    "dingo/blueprint": "0.2.*",
+    "doctrine/annotations": "1.2.*",
+    "jakubkratina/lumen-dingo-route-list": "^0.9.5"
   },
   "require-dev": {
     "fzaninotto/faker": "~1.4",

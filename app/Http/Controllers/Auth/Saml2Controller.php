@@ -29,7 +29,6 @@ class Saml2Controller extends Saml2C
         $errors = $this->saml2Auth->acs();
 
         if (!empty($errors)) {
-            //return redirect(config('saml2_settings.errorRoute'));
             return $errors;
         }
 

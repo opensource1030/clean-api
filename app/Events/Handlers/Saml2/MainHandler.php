@@ -8,30 +8,39 @@
 
 namespace WA\Events\Handlers\Saml2;
 
-use Illuminate\Contracts\Events\Dispatcher;
-use WA\DataStore\CarrierDestinationMap;
-use WA\Events\Handlers\BaseHandler;
-
-use Auth;
-use WA\Events\PodcastWasPurchased;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Aacotroneo\Saml2\Events\Saml2LoginEvent;
 
+use Illuminate\Contracts\Events\Dispatcher;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Queue\InteractsWithQueue;
+
+use WA\DataStore\CarrierDestinationMap;
+use WA\DataStore\Company\CompanySaml2;
 use WA\DataStore\User\User;
 
-use Cache;
+use WA\Events\Handlers\BaseHandler;
+use WA\Events\PodcastWasPurchased;
 
+use Auth;
+use Cache;
 use Carbon\Carbon;
+use Log;
 
 /**
  * Class MainHandler.
  */
 class MainHandler extends BaseHandler
 {
-    protected $userEmail = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name';
-    protected $userLastName = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname';
-    protected $userFirstName = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname';
+    protected $userEmail = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress';
+    protected $userGivenName = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname';
+    protected $userName = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name';
+    protected $userUPN = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn';
+    protected $userSurname = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname';
+    protected $userPersonalIdentifier = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/privatepersonalidentifier';
+    protected $userNameIdentifier = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier';
+    protected $userDenyonlysid = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/denyonlysid';
+    protected $userRSA = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/rsa';
+    protected $userThumb = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/thumbprint';
 
     /**
      * @param $data
@@ -40,25 +49,41 @@ class MainHandler extends BaseHandler
      */
     public function saml2LoginUser($event)
     {
-        // Get the UUID from url.
-        $uuid = $this->getUuidFromRequestRelayState();
-
         // Get the User Data Info from the Saml2 User.
         $userData = $this->getUserDataFromSaml2User($event);
+        Log::debug("MainHandler@saml2LoginUser - userData: " . print_r(json_encode($userData), true));
 
-        // Id Company from Request.
-        $idCompany = app('request')->get('idCompany');
+        $samlResponse = base64_decode(app('request')->get('SAMLResponse'));
+        $xml = new \SimpleXMLElement($samlResponse);                
+        $entityIdNode = $xml->xpath("/*[local-name()='Response']/*[local-name()='Issuer']");
+        $entityId = $entityIdNode[0]->__toString();
+        
+        $companySaml = CompanySaml2::where('entityId', $entityId)->first();
+        $idCompany = $companySaml['companyId'];
+
+        $infoUser = $this->parseRequestedInfoFromIdp($userData, $idCompany);
+        Log::debug("MainHandler@saml2LoginUser - infoUser: " . print_r($infoUser, true));
 
         // Get IDP user Email from User Data Info
-        $email = $this->getEmailFromUserData($userData, $idCompany);
-        if (isset($email)) {
-            $laravelUser = User::where('email', $email)->first();
+        if (isset($infoUser['email'])) {
+            $laravelUser = User::where('email', $infoUser['name'])->first();
             if (!isset($laravelUser)) {
+
                 // CREATE USER
-                $infoUser = $this->parseRequestedInfoFromIdp($userData, $idCompany);
                 $userInterface = app()->make('WA\Repositories\User\UserInterface');
-                $laravelUser = $userInterface->create(array('email' => $infoUser['email'], 'companyId' => $idCompany));
+                $laravelUser = $userInterface->create(
+                    array(
+                        'email' => $infoUser['name'],
+                        'firstName' => $infoUser['givenName'],
+                        'lastName' => $infoUser['surname'],
+                        'isActive' => 1,
+                        'companyId' => $idCompany
+                        )
+                    );
             }
+
+            // Get the UUID from url.
+            $uuid = $this->getUuidFromRequestRelayState();
             Cache::put('saml2user_'.$uuid, $laravelUser, 15);
         }
         return true;
@@ -74,15 +99,23 @@ class MainHandler extends BaseHandler
 
     private function parseRequestedInfoFromIdp($userData, $idCompany)
     {
-        //return array('email' => 'dev@testing.com'); // TESTING
+        //return array('email' => 'dev@testsaml2.com', 'firstName' => 'Sirion', 'lastName' => 'Developers', 'isActive' => 1); // TESTING
 
         switch ($idCompany) {
             default: // MICROSOFT
                 $user = array(
-                    'email' => $userData['attributes'][$this->userEmail][0],
-                    'firstName' => $userData['attributes'][$this->userFirstName][0],
-                    'lastName' => $userData['attributes'][$this->userLastName][0],
+                    'email' => isset($userData['attributes'][$this->userEmail][0]) ? $userData['attributes'][$this->userEmail][0] : '',
+                    'name' => isset($userData['attributes'][$this->userName][0]) ? $userData['attributes'][$this->userName][0] : '',
                     'companyId' => $idCompany,
+                    'isActive' => 1,
+                    'givenName' => isset($userData['attributes'][$this->userGivenName][0]) ? $userData['attributes'][$this->userGivenName][0] : '',
+                    'upn' => isset($userData['attributes'][$this->userUPN][0]) ? $userData['attributes'][$this->userUPN][0] : '',
+                    'surname' => isset($userData['attributes'][$this->userSurname][0]) ? $userData['attributes'][$this->userSurname][0] : '',
+                    'personalIdentifier' => isset($userData['attributes'][$this->userPersonalIdentifier][0]) ? $userData['attributes'][$this->userPersonalIdentifier][0] : '',
+                    'nameIdentifier' => isset($userData['attributes'][$this->userNameIdentifier][0]) ? $userData['attributes'][$this->userNameIdentifier][0] : '',
+                    'denyonlysid' => isset($userData['attributes'][$this->userDenyonlysid][0]) ? $userData['attributes'][$this->userDenyonlysid][0] : '',
+                    'rsa' => isset($userData['attributes'][$this->userRSA][0]) ? $userData['attributes'][$this->userRSA][0] : '',
+                    'thumb' => isset($userData['attributes'][$this->userThumb][0]) ? $userData['attributes'][$this->userThumb][0] : '',
                     );
 
                 return $user;
@@ -108,13 +141,5 @@ class MainHandler extends BaseHandler
             'attributes' => $user->getAttributes(),
             'assertion' => $user->getRawSamlAssertion()
         ];
-    }
-
-    private function getEmailFromUserData($userData, $idCompany)
-    {
-        //if (isset($userData['attributes'][$this->userEmail][0])) { // TESTING
-            return $userData['attributes'][$this->userEmail][0];
-        //}
-        //return 'dev@testing.com';
     }
 }

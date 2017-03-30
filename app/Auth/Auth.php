@@ -211,11 +211,6 @@ class Auth implements AuthInterface
         $codeCache = Cache::get('user_code_'.$identification);
         $user = $this->findUserByIdentification($identification);
 
-        Log::debug("identificationCache: ".print_r($identificationCache, true));
-        Log::debug("codeCache: ".print_r($codeCache, true));
-        Log::debug("identification: ".print_r($identification, true));
-        Log::debug("code: ".print_r($code, true));
-
         if($user != null) {
             if($user->isActive == 0) {
                 if($code == $codeCache) {

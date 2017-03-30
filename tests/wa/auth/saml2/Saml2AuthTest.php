@@ -11,11 +11,11 @@ class Saml2AuthTest extends TestCase
     public function testLogin()
     {
         // Route information
-        $config['sp']['entityId'] = 'http://clean.local/saml2/metadata?idCompany=9';
+        $config['sp']['entityId'] = 'http://clean.local/saml2/metadata';
 
-        $config['sp']['assertionConsumerService']['url'] = 'http://clean.local/saml2/acs?idCompany=9';
+        $config['sp']['assertionConsumerService']['url'] = 'http://clean.local/saml2/acs';
 
-        $config['sp']['singleLogoutService']['url'] = 'http://clean.local/saml2/sls?idCompany=9';
+        $config['sp']['singleLogoutService']['url'] = 'http://clean.local/saml2/sls';
 
         // Saml2_Settings Information.
         $config['idp']['entityId'] =

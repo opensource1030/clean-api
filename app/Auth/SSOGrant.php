@@ -40,10 +40,6 @@ class SSOGrant extends AbstractGrant
         RefreshTokenRepositoryInterface $refreshTokenRepository
     )
     {
-        /*Log::debug("test1: ".print_r($this->setUserRepository($userRepository), true));
-        
-            Log::debug("test2: ".print_r( $this->setRefreshTokenRepository($refreshTokenRepository), true));
-            dd("END");*/
         $this->setUserRepository($userRepository);
         $this->setRefreshTokenRepository($refreshTokenRepository);
         $this->refreshTokenTTL = new \DateInterval('P1M');

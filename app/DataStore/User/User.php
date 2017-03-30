@@ -11,6 +11,7 @@ use Illuminate\Contracts\Auth\CanResetPassword as IlluminateCanResetPasswordCont
 use Illuminate\Http\Request;
 use Laravel\Passport\HasApiTokens;
 use WA\DataStore\BaseDataStore;
+use League\OAuth2\Server\Exception\OAuthServerException;
 
 /**
  * Class User.
@@ -304,7 +305,7 @@ class User extends BaseDataStore implements IlluminateCanResetPasswordContract, 
     public function SSOGrantVerify(Request $request)
     {
         $uuid = $request->input('uuid');
-        $laravelUser = Cache::get('saml2user_' . $uuid);
+        $laravelUser = Cache::get('saml2user_' . $uuid['uuid']);
         if (!isset($laravelUser)) {
             return null;
         } else {

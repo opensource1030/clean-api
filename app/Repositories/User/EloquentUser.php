@@ -732,7 +732,6 @@ class EloquentUser extends AbstractRepository implements UserInterface
             return true;
         } catch (\Exception $e) {
             Log::error("There was an issue assigning employee:  $user->email  to $supervisor->email  <<>>".$e->getMessage());
-
             return;
         }
     }
