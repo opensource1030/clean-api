@@ -42,17 +42,19 @@ class MainHandler extends BaseHandler
         $userData = $this->getUserDataFromSaml2User($event);
         Log::debug("MainHandler@saml2LoginUser - userData: " . print_r(json_encode($userData), true));
 
+        // Get the information of the company from company_saml2 table using the entityId.
         $companySaml = $this->getCompanySamlFromRequest();
         Log::debug("MainHandler@saml2LoginUser - companySaml: " . print_r($companySaml, true));
 
+        // Request the information of the user using the requested data from the event and the attributes retrieved from the company_saml2 table.
         $infoUser = $this->parseRequestedInfoFromIdp($userData, $companySaml);
         Log::debug("MainHandler@saml2LoginUser - infoUser: " . print_r($infoUser, true));
 
         // Get IDP user Email from User Data Info
-        if (isset($infoUser['email'])) {
+        if ($infoUser['email'] != '') {
             $laravelUser = User::where('email', $infoUser['email'])->first();
+            
             if (!isset($laravelUser)) {
-
                 // CREATE USER
                 $userInterface = app()->make('WA\Repositories\User\UserInterface');
                 $laravelUser = $userInterface->create(
@@ -81,39 +83,13 @@ class MainHandler extends BaseHandler
         $events->listen('Aacotroneo\Saml2\Events\Saml2LoginEvent', 'WA\Events\Handlers\Saml2\MainHandler@saml2LoginUser');
     }
 
-    private function parseRequestedInfoFromIdp($userData, $companySaml)
-    {
-        //return array('email' => 'dev@testsaml2.com', 'firstName' => 'Sirion', 'lastName' => 'Developers', 'isActive' => 1, 'companyId' => 9,); // TESTING
-
-        return array(
-            'email' => isset($userData['attributes'][$companySaml['emailAttribute']]) ? 
-                $userData['attributes'][$companySaml['emailAttribute']][0] : '',
-            'firstName' => isset($userData['attributes'][$companySaml['firstNameAttribute']]) ? 
-                $userData['attributes'][$companySaml['firstNameAttribute']][0] : '',
-            'lastName' => isset($userData['attributes'][$companySaml['lastNameAttribute']]) ? 
-                $userData['attributes'][$companySaml['lastNameAttribute']][0] : ''
-        );
-    }
-
-    private function getCompanySamlFromRequest() {
-        $samlResponse = base64_decode(app('request')->get('SAMLResponse'));
-        $xml = new \SimpleXMLElement($samlResponse);
-        $entityIdNode = $xml->xpath("/*[local-name()='Response']/*[local-name()='Issuer']");
-        $entityId = $entityIdNode[0]->__toString();
-
-        return CompanySaml2::where('entityId', $entityId)->first();
-    }
-
-
-
-    private function getUuidFromRequestRelayState()
-    {
-        $relayState = app('request')->input('RelayState');
-        $path_parts = explode('/', $relayState);
-
-        return $path_parts[count($path_parts) - 1];
-    }
-
+    /*
+     * @getUserDataFromSaml2User
+     * @event: the requested event that allow to retrieve the information of the User.
+     *
+     * @return: the user id, attributes and the saml assertion raw.
+     *
+     */
     private function getUserDataFromSaml2User($event)
     {
         // Get Saml2 User from $Event.
@@ -125,5 +101,56 @@ class MainHandler extends BaseHandler
             'attributes' => $user->getAttributes(),
             'assertion' => $user->getRawSamlAssertion()
         ];
+    }
+
+    /*
+     * @getCompanySamlFromRequest
+     *
+     * @return: the companysaml2 information retrieved using the entityId from the request.
+     *
+     */
+    private function getCompanySamlFromRequest() {
+        $samlResponse = base64_decode(app('request')->get('SAMLResponse'));
+        $xml = new \SimpleXMLElement($samlResponse);
+        $entityIdNode = $xml->xpath("/*[local-name()='Response']/*[local-name()='Issuer']");
+        $entityId = $entityIdNode[0]->__toString();
+
+        return CompanySaml2::where('entityId', $entityId)->first();
+    }
+
+    /*
+     * @parseRequestedInfoFromIdp
+     * @userData: the user information retrieved using the getUserDataFromSaml2User() function.
+     * @companySaml: the companysaml2 information retrieved using the getCompanySamlFromRequest() function.
+     *
+     * @return: the user information from the attributes.
+     *
+     */
+    private function parseRequestedInfoFromIdp($userData, $companySaml)
+    {
+        //return array('email' => 'dev@testsaml.com', 'firstName' => 'Sirion', 'lastName' => 'Developers', 'isActive' => 1, 'companyId' => 9,); // TESTING
+
+        return array(
+            'email' => isset($userData['attributes'][$companySaml['emailAttribute']]) ? 
+                $userData['attributes'][$companySaml['emailAttribute']][0] : '',
+            'firstName' => isset($userData['attributes'][$companySaml['firstNameAttribute']]) ? 
+                $userData['attributes'][$companySaml['firstNameAttribute']][0] : '',
+            'lastName' => isset($userData['attributes'][$companySaml['lastNameAttribute']]) ? 
+                $userData['attributes'][$companySaml['lastNameAttribute']][0] : ''
+        );
+    }
+
+    /*
+     * @getUuidFromRequestRelayState
+     *
+     * @return: the uuid retrieved from the url.
+     *
+     */
+    private function getUuidFromRequestRelayState()
+    {
+        $relayState = app('request')->input('RelayState');
+        $path_parts = explode('/', $relayState);
+
+        return $path_parts[count($path_parts) - 1];
     }
 }
