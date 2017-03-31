@@ -53,7 +53,6 @@ class MainHandler extends BaseHandler
         // Get IDP user Email from User Data Info
         if ($infoUser['email'] != '') {
             $laravelUser = User::where('email', $infoUser['email'])->first();
-            
             if (!isset($laravelUser)) {
                 // CREATE USER
                 $userInterface = app()->make('WA\Repositories\User\UserInterface');
