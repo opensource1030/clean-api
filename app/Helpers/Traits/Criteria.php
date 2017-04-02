@@ -185,6 +185,7 @@ trait Criteria
      * @param null $criteria Optional criteria
      * @param bool $isInclude Optional Is this an include?
      * @param null $modelMap Optional model table-name mapping for non-standard table names
+     * @param bool $returnEmptyResults Whether to return empty children result-sets or not
      * @return \Illuminate\Database\Eloquent\Builder
      */
     protected function applyCriteria(
@@ -205,7 +206,7 @@ trait Criteria
 
         $this->getQuery($criteriaModel, true);
 
-        $this->sort()->filter();
+        $this->sort()->filter($returnEmptyResults);
 
         return $this->criteriaQuery;
     }
@@ -218,7 +219,7 @@ trait Criteria
      *
      * @throws BadCriteriaException
      */
-    protected function filter()
+    protected function filter($returnEmptyResults = false)
     {
         if ($this->filterCriteria === null) {
             return $this;
@@ -237,19 +238,7 @@ trait Criteria
                 }
 
                 if ($relKey !== $criteriaModelName) {
-
-                    /*$dbt = debug_backtrace();
-                    for ($i = 0; $i < 7; $i++) {
-                        $bt = $dbt[$i];
-                        $file = isset($bt['file']) ? $bt['file'] : '(no file)';
-                        $line = isset($bt['line']) ? $bt['line'] : '(no line)';
-                        $class = isset($bt['class']) ? $bt['class'] : '(no class)';
-                        $function = isset($bt['function']) ? $bt['function'] : '(no function)';
-                        echo "$file ($line): $class \\ $function<br>\n";
-                    }*/
-
-                    if ($this->returnEmptyResults === true) {
-
+                    if ($returnEmptyResults === true) {
                         var_dump($filterKey, $relKey);
                         $op = strtolower(key($filterVal));
                         $val = current($filterVal);
@@ -267,9 +256,15 @@ trait Criteria
             }
 
             if (in_array($filterKey, $criteriaModelColumns)) {
-                $op = strtolower(key($filterVal));
-                $val = current($filterVal);
-                $this->criteriaQuery = $this->executeCriteria($this->criteriaQuery, $filterKey, $op, $val);
+                if (is_array($filterVal)) {
+                    foreach ($filterVal as $op => $val) {
+                        $this->criteriaQuery = $this->executeCriteria($this->criteriaQuery, $filterKey, $op, $val);
+                    }
+                } else {
+                    $op = strtolower(key($filterVal));
+                    $val = current($filterVal);
+                    $this->criteriaQuery = $this->executeCriteria($this->criteriaQuery, $filterKey, $op, $val);
+                }
             } else {
                 throw new BadCriteriaException('Invalid filter criteria');
             }
@@ -320,9 +315,16 @@ trait Criteria
                 $query->whereIn($filterKey, $vals);
                 break;
             case 'like':
-                $val = str_replace('*', '%', $val);
+                // Handle delimited lists
                 $vals = explode(',', $val);
-                $query->where($filterKey, 'LIKE', $val);
+                $vals = $this->extractAdvancedCriteria($vals);
+                foreach ($vals as $v) {
+                    $v = str_replace('*', '%', $v);
+                    if (strpos($v, '%') === false) {
+                        $v = '%' . $v . '%';
+                    }
+                    $query->orWhere($filterKey, 'LIKE', $v);
+                }
                 break;
             default:
                 throw new BadCriteriaException('Invalid filter operator');
@@ -388,6 +390,7 @@ trait Criteria
         $this->criteria['filters'] = $filters;
         $this->criteria['sort'] = $sort;
         $this->criteria['fields'] = $fields;
+
         return $this->criteria;
     }
 
