@@ -290,8 +290,10 @@ trait Criteria
                 $query->where($filterKey, '<', $val);
                 break;
             case 'ge':
+            case 'gte':
                 $query->where($filterKey, '>=', $val);
                 break;
+            case 'lte':
             case 'le':
                 $query->where($filterKey, '<=', $val);
                 break;
