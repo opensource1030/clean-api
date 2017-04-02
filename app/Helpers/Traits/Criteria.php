@@ -238,8 +238,7 @@ trait Criteria
                 }
 
                 if ($relKey !== $criteriaModelName) {
-                    if ($returnEmptyResults === true) {
-                        var_dump($filterKey, $relKey);
+                    if ($returnEmptyResults === false) {
                         $op = strtolower(key($filterVal));
                         $val = current($filterVal);
                         $this->criteriaQuery->whereHas($relKey,
