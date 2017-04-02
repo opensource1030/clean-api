@@ -38,13 +38,6 @@ abstract class AbstractRepository implements RepositoryInterface
      */
     protected $filterCriteria = null;
 
-
-    /**
-     * @var bool
-     */
-    public $returnEmptyResults = false;
-
-
     /**
      * AbstractRepository constructor.
      *
