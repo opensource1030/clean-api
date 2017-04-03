@@ -37,43 +37,20 @@ class MainHandlerTest extends TestCase
         $method->setAccessible(true);
 
         // CREATE ARGUMENTS
-        $userData['attributes']['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'][0] = 'correo@electronico.com';
-        $userData['attributes']['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname'][0] = 'prueba';
-        $userData['attributes']['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'][0] = 'correo';
-        $userData['attributes']['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn'][0] = 'upn';
-        $userData['attributes']['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname'][0] = 'test';
-        $userData['attributes']['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/privatepersonalidentifier'][0] = 'privatepersonalidentifier';
-        $userData['attributes']['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'][0] = 'nameidentifier';
-        $userData['attributes']['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/denyonlysid'][0] = 'denyonlysid';
-        $userData['attributes']['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/rsa'][0] = 'rsa';
-        $userData['attributes']['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/thumbprint'][0] = 'thumbprint';
-
+        $companySaml['emailAttribute'] = 'correo@electronico.com';
+        $companySaml['firstNameAttribute'] = 'prueba';
+        $companySaml['lastNameAttribute'] = 'correo';
+        
         // CALL THE FUNCTION
-        $return = $method->invokeArgs($handler, array($userData, 9));
+        $return = $method->invokeArgs($handler, array($companySaml, 9));
 
         // ASSERTS
         $this->assertArrayHasKey('email', $return);
         $this->assertInternalType('string', $return['email']);
-        $this->assertArrayHasKey('name', $return);
-        $this->assertInternalType('string', $return['name']);
-        $this->assertArrayHasKey('companyId', $return);
-        $this->assertInternalType('integer', $return['companyId']);
-        $this->assertArrayHasKey('isActive', $return);
-        $this->assertInternalType('integer', $return['isActive']);
-        $this->assertArrayHasKey('givenName', $return);
-        $this->assertInternalType('string', $return['givenName']);
-        $this->assertArrayHasKey('upn', $return);
-        $this->assertInternalType('string', $return['upn']);
-        $this->assertArrayHasKey('surname', $return);
-        $this->assertInternalType('string', $return['surname']);
-        $this->assertArrayHasKey('personalIdentifier', $return);
-        $this->assertInternalType('string', $return['personalIdentifier']);
-        $this->assertArrayHasKey('denyonlysid', $return);
-        $this->assertInternalType('string', $return['denyonlysid']);
-        $this->assertArrayHasKey('rsa', $return);
-        $this->assertInternalType('string', $return['rsa']);
-        $this->assertArrayHasKey('thumb', $return);
-        $this->assertInternalType('string', $return['thumb']);
+        $this->assertArrayHasKey('firstName', $return);
+        $this->assertInternalType('string', $return['firstName']);
+        $this->assertArrayHasKey('lastName', $return);
+        $this->assertInternalType('string', $return['lastName']);
     }
 
     public function testCreateUserSSO()

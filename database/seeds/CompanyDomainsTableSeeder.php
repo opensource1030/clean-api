@@ -25,7 +25,7 @@ class CompanyDomainsTableSeeder extends BaseTableSeeder
         $domainNoSSO = [
             'domain' => 'testing.com',
             'active' => 1,
-            'companyId' => 20,
+            'companyId' => 1,
         ];
 
         $domainMailUser = [
@@ -34,8 +34,15 @@ class CompanyDomainsTableSeeder extends BaseTableSeeder
             'companyId' => 20,
         ];
 
+        $domainSamlSSO = [
+            'domain' => 'testsaml.com',
+            'active' => 1,
+            'companyId' => 2,
+        ];
+
         $this->loadTable($domainMicrosoft);
         $this->loadTable($domainNoSSO);
         $this->loadTable($domainMailUser);
+        $this->loadTable($domainSamlSSO);
     }
 }

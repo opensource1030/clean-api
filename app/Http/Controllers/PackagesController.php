@@ -195,14 +195,14 @@ class PackagesController extends FilteredApiController
     // allConditions: ['contains', 'greater than', 'greater or equal', 'less than', 'less or equal', 'equal', 'not equal'],
     private function checkIfHasAnyUdl($udl, $conditions) {
         $conditionsOK = true;
-        Log::debug("conditions: ".print_r($conditions, true));
+        //Log::debug("conditions: ".print_r($conditions, true));
         foreach ($conditions as $cond) {
-            Log::debug("COND: ".print_r($cond, true));
-            Log::debug("UDL: ".print_r($udl, true));
+            //Log::debug("COND: ".print_r($cond, true));
+            //Log::debug("UDL: ".print_r($udl, true));
             
             if ($cond['nameCond'] == $udl['udlName']) {
-                Log::debug("udl[udlValue]: ".print_r($udl['udlValue'], true));
-                Log::debug("cond[value]: ".print_r($cond['value'], true));
+                //Log::debug("udl[udlValue]: ".print_r($udl['udlValue'], true));
+                //Log::debug("cond[value]: ".print_r($cond['value'], true));
                 if ($cond['condition'] == 'contains') {
                     if (strpos(strtolower($udl['udlValue']), strtolower($cond['value'])) !== false) {
                         $conditionsOK = $conditionsOK && true;
