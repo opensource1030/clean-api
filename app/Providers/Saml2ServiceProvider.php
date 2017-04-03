@@ -89,7 +89,6 @@ class Saml2ServiceProvider extends Saml2SP
                 $xml = new \SimpleXMLElement($samlResponse);                
                 $entityIdNode = $xml->xpath("/*[local-name()='Response']/*[local-name()='Issuer']");
                 $entityId = $entityIdNode[0]->__toString();
-                Log::debug("Saml2ServiceProvider@register - entityId: " . print_r($entityId, true));
 
                 $companySaml = CompanySaml2::where('entityId', $entityId)->first();
                 $idCompany = $companySaml['companyId'];

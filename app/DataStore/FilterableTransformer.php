@@ -11,6 +11,16 @@ abstract class FilterableTransformer extends TransformerAbstract
 {
     use Criteria;
 
+    /**
+     * Array of includes that should return empty result-sets.  The default behavior is to NOT include results where
+     * the child query (include) has 0 results.  Override the default by putting the include name here.
+     *
+     * @var array
+     */
+    protected $emptyResults = [
+
+    ];
+
     public function __call($method, $parameters)
     {
         if (Str::startsWith($method, 'include')) {
@@ -25,14 +35,19 @@ abstract class FilterableTransformer extends TransformerAbstract
         $this->criteria = $this->getRequestCriteria();
         $finder = strtolower(substr($method, 7));
         $resource = $parameters[0];
-        $transformer = $this->createTransformer($finder);
+        $returnEmptyResults = false;
 
-        
+        $transformer = $this->createTransformer($finder);
         
         if (!class_exists($transformer)) {
             throw new \BadMethodCallException("Unable to create $transformer");
         }
-        $include = $this->applyCriteria($resource->$finder(), $this->criteria, true);
+
+        if (in_array($finder,$this->emptyResults)) {
+            $returnEmptyResults = true;
+        }
+
+        $include = $this->applyCriteria($resource->$finder(), $this->criteria, true, null, $returnEmptyResults);
         return new ResourceCollection($include->get(), new $transformer(), $finder);
 
     }

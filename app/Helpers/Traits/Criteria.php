@@ -60,8 +60,6 @@ trait Criteria
 
     protected $isInclude = false;
 
-    protected $returnEmptyResults = false;
-
     /**
      * We have to map some table names / model names because they aren't totally named right
      *
@@ -97,9 +95,9 @@ trait Criteria
             if ($criteriaModel instanceof Relation) {
                 $this->criteriaQuery = $criteriaModel;
                 $this->criteriaModelName = $criteriaModel->getRelated()->getTable();
-                if(method_exists( $criteriaModel->getRelated() , 'getTableColumns' )){
-                    $this->criteriaModelColumns = $criteriaModel->getRelated()->getTableColumns();    
-                }                
+                if (method_exists($criteriaModel->getRelated(), 'getTableColumns')) {
+                    $this->criteriaModelColumns = $criteriaModel->getRelated()->getTableColumns();
+                }
             } elseif ($criteriaModel instanceof BaseDataStore) {
                 $this->criteriaQuery = $criteriaModel->newQuery();
                 $this->criteriaModelName = $criteriaModel->getTable();
@@ -187,10 +185,16 @@ trait Criteria
      * @param null $criteria Optional criteria
      * @param bool $isInclude Optional Is this an include?
      * @param null $modelMap Optional model table-name mapping for non-standard table names
+     * @param bool $returnEmptyResults Whether to return empty children result-sets or not
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    protected function applyCriteria($criteriaModel, $criteria = null, $isInclude = false, $modelMap = null, $returnEmptyResults = false)
-    {
+    protected function applyCriteria(
+        $criteriaModel,
+        $criteria = null,
+        $isInclude = false,
+        $modelMap = null,
+        $returnEmptyResults = false
+    ) {
         if ($criteria !== null) {
             $this->setCriteria($criteria);
         }
@@ -202,7 +206,7 @@ trait Criteria
 
         $this->getQuery($criteriaModel, true);
 
-        $this->sort()->filter();
+        $this->sort()->filter($returnEmptyResults);
 
         return $this->criteriaQuery;
     }
@@ -215,7 +219,7 @@ trait Criteria
      *
      * @throws BadCriteriaException
      */
-    protected function filter()
+    protected function filter($returnEmptyResults = false)
     {
         if ($this->filterCriteria === null) {
             return $this;
@@ -230,11 +234,11 @@ trait Criteria
                 $relColumn = substr($filterKey, strpos($filterKey, '.') + 1);
 
                 if (is_array($this->modelMap) && isset($this->modelMap[$relKey])) {
-                    $filterKey = $this->modelMap[$relKey];
+                    $relKey = $this->modelMap[$relKey];
                 }
 
-                if ($filterKey !== $criteriaModelName) {
-                    if ($this->returnEmptyResults === true) {
+                if ($relKey !== $criteriaModelName) {
+                    if ($returnEmptyResults === false) {
                         $op = strtolower(key($filterVal));
                         $val = current($filterVal);
                         $this->criteriaQuery->whereHas($relKey,
@@ -244,15 +248,22 @@ trait Criteria
                     }
                     continue;
                 }
+
                 $filterKey = $relColumn;
             } elseif ($this->isInclude) {
                 continue;
             }
 
             if (in_array($filterKey, $criteriaModelColumns)) {
-                $op = strtolower(key($filterVal));
-                $val = current($filterVal);
-                $this->criteriaQuery = $this->executeCriteria($this->criteriaQuery, $filterKey, $op, $val);
+                if (is_array($filterVal)) {
+                    foreach ($filterVal as $op => $val) {
+                        $this->criteriaQuery = $this->executeCriteria($this->criteriaQuery, $filterKey, $op, $val);
+                    }
+                } else {
+                    $op = strtolower(key($filterVal));
+                    $val = current($filterVal);
+                    $this->criteriaQuery = $this->executeCriteria($this->criteriaQuery, $filterKey, $op, $val);
+                }
             } else {
                 throw new BadCriteriaException('Invalid filter criteria');
             }
@@ -303,8 +314,16 @@ trait Criteria
                 $query->whereIn($filterKey, $vals);
                 break;
             case 'like':
-                $val = str_replace('*', '%', $val);
-                $query->where($filterKey, 'LIKE', $val);
+                // Handle delimited lists
+                $vals = explode(',', $val);
+                $vals = $this->extractAdvancedCriteria($vals);
+                foreach ($vals as $v) {
+                    $v = str_replace('*', '%', $v);
+                    if (strpos($v, '%') === false) {
+                        $v = '%' . $v . '%';
+                    }
+                    $query->orWhere($filterKey, 'LIKE', $v);
+                }
                 break;
             default:
                 throw new BadCriteriaException('Invalid filter operator');
@@ -370,6 +389,7 @@ trait Criteria
         $this->criteria['filters'] = $filters;
         $this->criteria['sort'] = $sort;
         $this->criteria['fields'] = $fields;
+
         return $this->criteria;
     }
 
@@ -400,4 +420,6 @@ trait Criteria
         $fields = new Fields(\Request::get('fields', null));
         return $fields;
     }
+
 }
+
