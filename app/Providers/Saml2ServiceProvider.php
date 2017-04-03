@@ -86,20 +86,20 @@ class Saml2ServiceProvider extends Saml2SP
             } else {
                 $samlResponse = base64_decode(app('request')->get('SAMLResponse'));
 
-                $xml = new \SimpleXMLElement($samlResponse);                
-                $entityIdNode = $xml->xpath("/*[local-name()='Response']/*[local-name()='Issuer']");
-                $entityId = $entityIdNode[0]->__toString();
+                if($samlResponse != '' || $samlResponse != null) {
+                    $xml = new \SimpleXMLElement($samlResponse);
+                    $entityIdNode = $xml->xpath("/*[local-name()='Response']/*[local-name()='Issuer']");
+                    $entityId = $entityIdNode[0]->__toString();
 
-                $companySaml = CompanySaml2::where('entityId', $entityId)->first();
-                $idCompany = $companySaml['companyId'];
-            }
-
-            if (!isset($idCompany)) {
-                abort(404);
+                    $companySaml = CompanySaml2::where('entityId', $entityId)->first();
+                } else {
+                    $companySaml = CompanySaml2::first();
+                }
             }
 
             // Load Saml2Settings from IdCompany.
             $company = app()->make('WA\Repositories\Company\CompanyInterface');
+            $idCompany = $companySaml['companyId'];
             $companyByID = $company->byId($idCompany);
             if (!isset($companyByID)) {
                 abort(404);
@@ -114,15 +114,10 @@ class Saml2ServiceProvider extends Saml2SP
 
             // Saml2_Settings Information.
             $config['idp']['entityId'] = $saml2Settings['attributes']['entityId'];
-
             $config['idp']['singleSignOnService']['url'] = $saml2Settings['attributes']['singleSignOnServiceUrl'];
-
             $config['idp']['singleSignOnService']['binding'] = $saml2Settings['attributes']['singleSignOnServiceBinding'];
-
             $config['idp']['singleLogoutService']['url'] = $saml2Settings['attributes']['singleLogoutServiceUrl'];
-
             $config['idp']['singleLogoutService']['binding'] = $saml2Settings['attributes']['singleLogoutServiceBinding'];
-
             $config['idp']['x509cert'] = $saml2Settings['attributes']['x509cert'];
 
             $auth = new OneLogin_Saml2_Auth($config);
