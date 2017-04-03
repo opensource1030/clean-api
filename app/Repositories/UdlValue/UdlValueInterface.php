@@ -2,7 +2,12 @@
 
 namespace WA\Repositories\UdlValue;
 
-interface UdlValueInterface
+use WA\Repositories\RepositoryInterface;
+
+/**
+ * Interface UdlValueInterface.
+ */
+interface UdlValueInterface extends RepositoryInterface
 {
     /**
      * Creates a new UDL value.
@@ -11,7 +16,16 @@ interface UdlValueInterface
      *
      * @return bool
      */
-    public function create($data);
+    public function create(array $data);
+
+    /**
+     * Update a UDL value.
+     *
+     * @param $data
+     *
+     * @return bool
+     */
+    public function update(array $data);
 
     /**
      * Get the UDL value that matches the name.

@@ -2,7 +2,12 @@
 
 namespace WA\Repositories\Udl;
 
-interface UdlInterface
+use WA\Repositories\RepositoryInterface;
+
+/**
+ * Interface UdlInterface.
+ */
+interface UdlInterface extends RepositoryInterface
 {
     /**
      * UDL by the id.
@@ -42,34 +47,22 @@ interface UdlInterface
     public function byUDLValue($id);
 
     /**
-     * Update a UDL value.
+     * Update a UDL.
      *
-     * @param int   $id
-     * @param array $data
+     * @param $data
      *
      * @return bool
      */
-    public function update($id, array $data);
+    public function update(array $data);
 
     /**
-     * Delete a UDL (soft deletes).
+     * Create UDL.
      *
-     * @param int $id of the UDL
-     *
-     * @return bool
-     */
-    public function delete($id);
-
-    /**
-     * Create udl values for companies.
-     *
-     * @param string $name
-     * @param int    $companyId
-     * @param string $label
+     * @param $data
      *
      * @return bool
      */
-    public function create($name, $companyId, $label);
+    public function create(array $data);
 
     /**
      * Get UDL by Company ID.
