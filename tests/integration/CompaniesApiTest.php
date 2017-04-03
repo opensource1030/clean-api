@@ -2596,8 +2596,93 @@ class CompaniesTest extends TestCase
                         ]
                     ]
                 ]
-            ]);
+            ])
             //Log::debug("testUpdateCompanyIncludeUpdateUdlsUpdateUdlValue: ".print_r($res->response->getContent(), true));
+            ->seeJsonStructure(
+            [
+                'data' => [
+                    'type',
+                    'id',
+                    'attributes' => [
+                        'name',
+                        'label',
+                        'active',
+                        'udlpath',
+                        'isCensus',
+                        'udlPathRule',
+                        'assetPath',
+                        'shortName',
+                        'currentBillMonth',
+                        'defaultLocation'
+                    ],
+                    'links' => [
+                        'self',
+                    ],
+                    'relationships' => [
+                        'udls' => [
+                            'links' => [
+                                'self',
+                                'related',
+                            ],
+                            'data' => [
+                                0 => [
+                                    'type',
+                                    'id',
+                                ]
+                            ],
+                        ],
+                    ],
+                ],
+                'included' => [
+                    0 => [ // UDLVALUES
+                        'type',
+                        'id',
+                        'attributes' => [
+                            'udlId',
+                            'udlName',
+                            'udlValue',
+                        ],
+                        'links' => [
+                            'self',
+                        ],
+                    ],
+                    1 => [ // UDLS
+                        'type',
+                        'id',
+                        'attributes' => [
+                            "companyId",
+                            "name",
+                            "inputType",
+                            "sections" => [
+                              [
+                                "id",
+                                "name",
+                                "udlId",
+                                "externalId",
+                              ]
+                            ],
+                            "legacyUdlField"
+                        ],
+                        'links' => [
+                            'self',
+                        ],
+                        'relationships' => [
+                            'udlvalues' => [
+                                'data' => [
+                                    [
+                                        'type',
+                                        'id'
+                                    ]                                    
+                                ],
+                                'links' => [
+                                    'self',
+                                    'related'
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]);
 
             $udlsFinal = DB::table('udls')->where('companyId', $company->id)->get();
             $this->assertCount(1, $udls);
@@ -2616,7 +2701,7 @@ class CompaniesTest extends TestCase
 
         $udl = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $company->id]);
 
-        $udlvalue1 = factory(\WA\DataStore\UdlValue\UdlValue::class)->create(['udlId' => $udl->id]);
+        $udlvalue = factory(\WA\DataStore\UdlValue\UdlValue::class)->create(['udlId' => $udl->id]);
 
         $udls = DB::table('udls')->where('companyId', $company->id)->get();
         $this->assertCount(1, $udls);
@@ -2624,8 +2709,8 @@ class CompaniesTest extends TestCase
 
         $udlvalues = DB::table('udl_values')->where('udlId', $udl->id)->orderBy('id')->get();
         $this->assertCount(1, $udlvalues);
-        $this->assertEquals($udlvalues[0]->id, $udlvalue1->id);
-        $this->assertEquals($udlvalues[0]->name, $udlvalue1->name);
+        $this->assertEquals($udlvalues[0]->id, $udlvalue->id);
+        $this->assertEquals($udlvalues[0]->name, $udlvalue->name);
 
         // ADD ONE UDL
         $res = $this->json('PATCH', 'companies/'.$company->id.'?include=udls,udls.udlvalues',
@@ -2657,7 +2742,7 @@ class CompaniesTest extends TestCase
                                     "relationships" => [
                                         "udlvalues" => [
                                             "data" => [
-                                                ["type" => "no valid", "id" => $udlvalue1->id, "name" => "Updated Name UDLVALUE"]
+                                                ["type" => "no valid", "id" => $udlvalue->id, "name" => "Updated Name UDLVALUE"]
                                             ]
                                         ]
                                     ]
@@ -2666,18 +2751,30 @@ class CompaniesTest extends TestCase
                         ]
                     ]
                 ]
+            ])
+            //Log::debug("testUpdateCompanyIncludeUpdateUdlsUpdateUdlValueNoJsonUdlValueType: ".print_r($res->response->getContent(), true));
+            ->seeJson(
+            [
+                'udls'      => 'the Udl  has not been updated'
+            ])
+            ->seeJsonStructure(
+            [
+                'errors' => [
+                    'udls'
+                ]
             ]);
-            //Log::debug("testUpdateCompanyIncludeUpdateUdlsUpdateUdlValue: ".print_r($res->response->getContent(), true));
 
             $udlsFinal = DB::table('udls')->where('companyId', $company->id)->get();
             //Log::debug("udlsFinal: ".print_r($udlsFinal, true));
-            $this->assertCount(1, $udls);
+            $this->assertCount(1, $udlsFinal);
             $this->assertEquals($udlsFinal[0]->id, $udl->id);
-            $this->assertEquals($udlsFinal[0]->name, 'Updated Name UDL');
+            $this->assertEquals($udlsFinal[0]->name, $udl->name);
 
             $udlvaluesFinal = DB::table('udl_values')->where('udlId', $udl->id)->orderBy('id')->get();
             //Log::debug("udlvaluesFinal: ".print_r($udlvaluesFinal, true));
-            //$this->assertCount(0, $udlvaluesFinal);
+            $this->assertCount(1, $udlvaluesFinal);
+            $this->assertEquals($udlvaluesFinal[0]->id, $udlvalue->id);
+            $this->assertEquals($udlvaluesFinal[0]->name, $udlvalue->name);
     }
 
     public function testDeleteCompanyIfExists()

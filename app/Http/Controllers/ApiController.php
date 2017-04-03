@@ -181,9 +181,11 @@ abstract class ApiController extends BaseController
     public function deleteNotRequested($data, $databaseinformation, $interface, $type) {
         $arrayFromData = array();
         foreach ($data as $any) {
-            //if($any['type'] == $type) {
+            if(isset($any['type']) && $any['type'] == $type) {
                 array_push($arrayFromData, $any['id']);
-            //}
+            } else {
+                throw new \Exception('Invalid Json');
+            }
         }
         
         $arrayFromDB = array();
