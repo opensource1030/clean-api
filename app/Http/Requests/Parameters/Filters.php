@@ -49,13 +49,25 @@ class Filters
     public function get()
     {
         $get = [];
+
+        // @TODO: This could be made recursive to save 6 lines of code.
         foreach ($this->filters as $field => $criteria) {
-            $op = key($criteria);
-            $val = current($criteria);
-            if ($op == 'eq') {
-                $get[] = "[$field]=$val";
+            if (is_array($criteria)) {
+                foreach ($criteria as $op => $val) {
+                    if ($op == 'eq') {
+                        $get[] = "[$field]=$val";
+                    } else {
+                        $get[] = "[$field][$op]=$val";
+                    }
+                }
             } else {
-                $get[] = "[$field][$op]=$val";
+                $op = key($criteria);
+                $val = current($criteria);
+                if ($op == 'eq') {
+                    $get[] = "[$field]=$val";
+                } else {
+                    $get[] = "[$field][$op]=$val";
+                }
             }
         }
 

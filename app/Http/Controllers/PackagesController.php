@@ -202,7 +202,7 @@ class PackagesController extends FilteredApiController
             
             if ($cond['nameCond'] == $udl['udlName']) {
                 //Log::debug("udl[udlValue]: ".print_r($udl['udlValue'], true));
-                //sLog::debug("cond[value]: ".print_r($cond['value'], true));
+                //Log::debug("cond[value]: ".print_r($cond['value'], true));
                 if ($cond['condition'] == 'contains') {
                     if (strpos(strtolower($udl['udlValue']), strtolower($cond['value'])) !== false) {
                         $conditionsOK = $conditionsOK && true;

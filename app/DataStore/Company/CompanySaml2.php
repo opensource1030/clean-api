@@ -13,5 +13,5 @@ class CompanySaml2 extends BaseDataStore
 {
     protected $table = 'company_saml2';
 
-    protected $fillable = ['entityId', 'singleSignOnServiceUrl', 'singleSignOnServiceBinding', 'singleLogoutServiceUrl', 'singleLogoutServiceBinding', 'companyId'];
+    protected $fillable = ['entityId', 'singleSignOnServiceUrl', 'singleSignOnServiceBinding', 'singleLogoutServiceUrl', 'singleLogoutServiceBinding', 'companyId', 'emailAttribute', 'firstNameAttribute', 'lastNameAttribute'];
 }
