@@ -6,9 +6,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Lang;
 use WA\DataStore\Company\Company;
 use WA\DataStore\Company\CompanyTransformer;
+use WA\DataStore\Udl\Udl;
+use WA\DataStore\Udl\UdlTransformer;
 use WA\Repositories\Company\CompanyInterface;
 use WA\Repositories\Udl\UdlInterface;
 use DB;
+use Log;
+
 /**
  * Class CompaniesController.
  */
@@ -114,16 +118,38 @@ class CompaniesController extends FilteredApiController
                     }
                 }
             }
+
+            if (isset($dataRelationships['udls'])) {
+                if (isset($dataRelationships['udls']['data'])) {
+
+                    try {
+                        $udl = Udl::where('companyId', $company->id)->get();
+
+                        $udlInterface = app()->make('WA\Repositories\Udl\UdlInterface');
+                        $this->deleteNotRequested($dataRelationships['udls']['data'], $udl, $udlInterface, 'udls');
+
+                        $helper = app()->make('WA\Http\Controllers\UdlsHelperController');
+                        $success = $helper->create($dataRelationships['udls'], $company->id);
+
+                        if (!$success){
+                            $error['errors']['udls'] = Lang::get('messages.NotOptionIncludeClass',['class' => 'Udl', 'option' => 'updated', 'include' => '']);
+                        }
+
+                    } catch (\Exception $e) {
+                        $success = false;
+                        $error['errors']['udls'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Udl', 'option' => 'updated', 'include' => '']);
+                        //$error['errors']['Message'] = $e->getMessage();
+                    }
+                }
+            }
         }
 
         if ($success) {
             DB::commit();
-
             return $this->response()->item($company, new CompanyTransformer(),
                 ['key' => 'companies'])->setStatusCode($this->status_codes['created']);
         } else {
             DB::rollBack();
-
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
     }
@@ -171,6 +197,26 @@ class CompaniesController extends FilteredApiController
                         $success = false;
                         $error['errors']['address'] = Lang::get('messages.NotOptionIncludeClass',
                             ['class' => 'Company', 'option' => 'created', 'include' => 'Address']);
+                        //$error['errors']['Message'] = $e->getMessage();
+                    }
+                }
+            }
+
+            if (isset($dataRelationships['udls'])) {
+                if (isset($dataRelationships['udls']['data'])) {
+
+                    try {
+
+                        $helper = app()->make('WA\Http\Controllers\UdlsHelperController');
+                        $success = $helper->create($dataRelationships['udls'], $company->id);
+
+                        if (!$success){
+                            $error['errors']['udls'] = Lang::get('messages.NotOptionIncludeClass',['class' => 'Udl', 'option' => 'created', 'include' => '']);
+                        }
+
+                    } catch (\Exception $e) {
+                        $success = false;
+                        $error['errors']['udls'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Udl', 'option' => 'created', 'include' => '']);
                         //$error['errors']['Message'] = $e->getMessage();
                     }
                 }

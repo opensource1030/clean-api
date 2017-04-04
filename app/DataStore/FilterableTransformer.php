@@ -60,7 +60,11 @@ abstract class FilterableTransformer extends TransformerAbstract
 
         if($finder === 'devicetypes') {
             return "\\WA\\DataStore\\DeviceType\\DeviceTypeTransformer";
-        }        
+        }
+
+        if($finder === 'udlvalues') {
+            return "\\WA\\DataStore\\UdlValue\\UdlValueTransformer";
+        }
 
         $model = title_case(str_singular($finder));
         return "\\WA\\DataStore\\${model}\\${model}Transformer";

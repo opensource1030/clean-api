@@ -977,6 +977,7 @@ class UsersApiTest extends TestCase
                             'data' => [
                                 [
                                     'id' => $allocation1->id,
+                                    'type' => 'allocations',
                                     'billMonth' => $allocation1->billMonth,
                                     'mobileNumber' => $allocation1->mobileNumber,
                                     'carrier' => $allocation1->carrier,
@@ -1037,6 +1038,7 @@ class UsersApiTest extends TestCase
                                 ],
                                 [
                                     'id' => $allocation2->id,
+                                    'type' => 'allocations',
                                     'billMonth' => $allocation2->billMonth,
                                     'mobileNumber' => $allocation2->mobileNumber,
                                     'carrier' => $allocation2->carrier,
@@ -1100,11 +1102,13 @@ class UsersApiTest extends TestCase
                         'contents' => [
                             'data' => [
                                 [
+                                    'type' => 'contents',
                                     'content' => $content1->content,
                                     'active' => $content1->active,
                                     'owner_type' => $content1->owner_type
                                 ],
                                 [
+                                    'type' => 'contents',
                                     'content' => $content2->content,
                                     'active' => $content2->active,
                                     'owner_type' => $content2->owner_type
@@ -2526,6 +2530,7 @@ class UsersApiTest extends TestCase
                             'data' => [
                                 [
                                     'id' => $allocation1->id,
+                                    'type' => 'allocations',
                                     'billMonth' => $allocation1->billMonth,
                                     'mobileNumber' => $allocation1->mobileNumber,
                                     'carrier' => $allocation1->carrier,
@@ -2574,6 +2579,7 @@ class UsersApiTest extends TestCase
                             'data' => [
                                 [
                                     'id' => $content1->id,
+                                    'type' => 'contents',
                                     'content' => $content1->content,
                                     'active' => $content1->active,
                                     'owner_type' => $content1->owner_type
@@ -3025,6 +3031,7 @@ class UsersApiTest extends TestCase
                             'data' => [
                                 [
                                     'id' => 1,
+                                    'type' => 'allocations',
                                     'billMonth' => $allocation1->billMonth,
                                     'mobileNumber' => $allocation1->mobileNumber,
                                     'carrier' => $allocation1->carrier,
@@ -3085,6 +3092,7 @@ class UsersApiTest extends TestCase
                                 ],
                                 [
                                     'id' => 2,
+                                    'type' => 'allocations',
                                     'billMonth' => $allocation2->billMonth,
                                     'mobileNumber' => $allocation2->mobileNumber,
                                     'carrier' => $allocation2->carrier,
@@ -3145,6 +3153,7 @@ class UsersApiTest extends TestCase
                                 ],
                                 [
                                     'id' => 0,
+                                    'type' => 'allocations',
                                     'billMonth' => $allocation1->billMonth,
                                     'mobileNumber' => $allocation1->mobileNumber,
                                     'carrier' => $allocation1->carrier,
@@ -3209,18 +3218,21 @@ class UsersApiTest extends TestCase
                             'data' => [
                                 [
                                     'id' => 1,
+                                    'type' => 'contents',
                                     'content' => $content1->content,
                                     'active' => $content1->active,
                                     'owner_type' => $content1->owner_type
                                 ],
                                 [
                                     'id' => 2,
+                                    'type' => 'contents',
                                     'content' => $content2->content,
                                     'active' => $content2->active,
                                     'owner_type' => $content2->owner_type
                                 ],
                                 [
                                     'id' => 0,
+                                    'type' => 'contents',
                                     'content' => $content2->content,
                                     'active' => $content1->active,
                                     'owner_type' => $content2->owner_type

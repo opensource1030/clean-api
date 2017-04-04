@@ -3,8 +3,9 @@
 namespace WA\Repositories\UdlValue;
 
 use Illuminate\Database\Eloquent\Model;
+use WA\Repositories\AbstractRepository;
 
-class EloquentUdlValue implements UdlValueInterface
+class EloquentUdlValue extends AbstractRepository implements UdlValueInterface
 {
     /**
      * @var \Illuminate\Database\Eloquent\Model
@@ -84,9 +85,35 @@ class EloquentUdlValue implements UdlValueInterface
      *
      * @return bool
      */
-    public function create($data)
+    public function create(array $data)
     {
-        return $this->model->create($data);
+        return
+            $this->model->firstOrCreate(
+                [
+                    'name' => $data['name'],
+                    'udlId' => $data['udlId'],
+                    'externalId' => isset($data['externalId']) ? $data['externalId'] : null,
+                ]
+            );
+    }
+
+    public function update(array $data)
+    {
+        $udlValue = $this->model->find($data['id']);
+
+        if (!$udlValue) {
+            return 'notExist';
+        }
+
+        $udlValue->name = isset($data['name']) ? $data['name'] : $udlValue->name;
+        $udlValue->udlId = isset($data['udlId']) ? $data['udlId'] : $udlValue->udlId;
+        $udlValue->externalId = isset($data['externalId']) ? $data['externalId'] : $udlValue->externalId;
+
+        if (!$udlValue->save()) {
+            return 'notSaved';
+        }
+
+        return $udlValue;
     }
 
     /**

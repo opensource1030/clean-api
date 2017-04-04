@@ -162,7 +162,11 @@ abstract class ApiController extends BaseController
 
         if($var === 'devicetypes') {
             return "\\WA\\DataStore\\DeviceType\\DeviceTypeTransformer";
-        }        
+        }
+
+        if($var === 'udlvalues') {
+            return "\\WA\\DataStore\\UdlValue\\UdlValueTransformer";
+        }
 
         $model = title_case(str_singular($var));
         return "\\WA\\DataStore\\${model}\\${model}Transformer";
@@ -175,10 +179,13 @@ abstract class ApiController extends BaseController
      *  @param: $type = The name of the include.
      */
     public function deleteNotRequested($data, $databaseinformation, $interface, $type) {
-
         $arrayFromData = array();
         foreach ($data as $any) {
-            array_push($arrayFromData, $any['id']);
+            if(isset($any['type']) && $any['type'] == $type) {
+                array_push($arrayFromData, $any['id']);
+            } else {
+                throw new \Exception('Invalid Json');
+            }
         }
         
         $arrayFromDB = array();

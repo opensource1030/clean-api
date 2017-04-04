@@ -4,8 +4,9 @@ namespace WA\Repositories\Udl;
 
 use Illuminate\Database\Eloquent\Model;
 use WA\Repositories\UdlValue\UdlValueInterface;
+use WA\Repositories\AbstractRepository;
 
-class EloquentUdl implements UdlInterface
+class EloquentUdl extends AbstractRepository implements UdlInterface
 {
     /**
      * @var \Illuminate\Database\Eloquent\Model
@@ -70,21 +71,23 @@ class EloquentUdl implements UdlInterface
      *
      * @return bool
      */
-    public function update($id, array $data)
+    public function update(array $data)
     {
-        // TODO: Implement update() method.
-    }
+        $udl = $this->model->find($data['id']);
 
-    /**
-     * Delete a UDL (soft deletes).
-     *
-     * @param int $id of the UDL
-     *
-     * @return bool
-     */
-    public function delete($id)
-    {
-        // TODO: Implement delete() method.
+        if (!$udl) {
+            return 'notExist';
+        }
+
+        $udl->name = isset($data['name']) ? $data['name'] : $device->name;
+        $udl->companyId = isset($data['companyId']) ? $data['companyId'] : $device->companyId;
+        $udl->inputType = isset($data['inputType']) ? $data['inputType'] : $device->inputType;
+
+        if (!$udl->save()) {
+            return 'notSaved';
+        }
+
+        return $udl;
     }
 
     /**
@@ -96,14 +99,13 @@ class EloquentUdl implements UdlInterface
      *
      * @return bool
      */
-    public function create($name, $companyId, $label)
+    public function create(array $data)
     {
-        return
-            $this->model->firstOrCreate(
+        return $this->model->firstOrCreate(
                 [
-                    'name' => $name,
-                    'companyId' => $companyId,
-                    'label' => $label,
+                    'name' => $data['name'],
+                    'companyId' => $data['companyId'],
+                    'inputType' => $data['inputType'],
                 ]
             );
     }
