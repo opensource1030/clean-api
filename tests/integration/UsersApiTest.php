@@ -170,13 +170,9 @@ class UsersApiTest extends TestCase
         $response = $this->call('GET', '/users/'.$userId);
         $this->assertEquals(404, $response->status());
     }
+
     public function testGetLoggedInUser()
     {
-
-        $this->markTestSkipped(
-              '.'
-            );
-
         $grantType = 'password';
         $password = 'user';
         $user = factory(\WA\DataStore\User\User::class)->create([
