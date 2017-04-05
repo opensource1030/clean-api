@@ -6,6 +6,7 @@ use Laravel\Lumen\Testing\DatabaseMigrations;
 use WA\Auth\Login;
 use TestCase;
 use Cache;
+use Log;
 
 class Saml2ApiTest extends TestCase
 {
@@ -128,6 +129,8 @@ class Saml2ApiTest extends TestCase
         // CALL THE API ROUTE + ASSERTS
         $returnMicrosoft = $this->call('GET', 'doSSO/'.$emailMicrosoft.'?redirectToUrl='.$redirectToUrl, array(), array(), array(), array(), array());
         $returnMicrosoftArray = json_decode($returnMicrosoft->content(), true);
+        Log::debug("I cannot replicate the issue related to the phpunit test fail.");
+        Log::debug("Return Microsoft Array : ".print_r($returnMicrosoftArray, true));
         $this->assertArrayHasKey('data', $returnMicrosoftArray);
         $this->assertArrayHasKey('redirectUrl', $returnMicrosoftArray['data']);
         $this->assertStringStartsWith('https://login.microsoftonline.com', $returnMicrosoftArray['data']['redirectUrl']);

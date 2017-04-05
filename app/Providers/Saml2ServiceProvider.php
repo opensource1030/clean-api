@@ -95,11 +95,12 @@ class Saml2ServiceProvider extends Saml2SP
                 } else {
                     $companySaml = CompanySaml2::first();
                 }
+
+                $idCompany = $companySaml['companyId'];
             }
 
             // Load Saml2Settings from IdCompany.
             $company = app()->make('WA\Repositories\Company\CompanyInterface');
-            $idCompany = $companySaml['companyId'];
             $companyByID = $company->byId($idCompany);
             if (!isset($companyByID)) {
                 abort(404);
