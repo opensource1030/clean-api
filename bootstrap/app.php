@@ -134,7 +134,8 @@ $app->register(Dusterio\LumenPassport\PassportServiceProvider::class);
 $app->register(\WA\Providers\SSOGrantProvider::class);
 app('Dingo\Api\Transformer\Factory')->setAdapter(function ($app) {
     $base_url = env('API_DOMAIN', 'api.wirelessanalytics.com');
-    $serializer = new \League\Fractal\Serializer\JsonApiSerializer($base_url);
+    // $serializer = new \League\Fractal\Serializer\JsonApiSerializer($base_url);
+    $serializer = new \WA\Http\Responses\JsonApiSerializer($base_url);
     $fractal = new League\Fractal\Manager;
     $fractal->setSerializer($serializer);
     return new Dingo\Api\Transformer\Adapter\Fractal($fractal, 'include', ',');
