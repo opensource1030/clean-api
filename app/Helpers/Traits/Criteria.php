@@ -229,6 +229,7 @@ trait Criteria
         $criteriaModelColumns = $this->criteriaModelColumns;
 
         foreach ($this->filterCriteria->filtering() as $filterKey => $filterVal) {
+
             if (strpos($filterKey, '.')) {
                 $relKey = substr($filterKey, 0, strpos($filterKey, '.'));
                 $relColumn = substr($filterKey, strpos($filterKey, '.') + 1);
@@ -242,8 +243,8 @@ trait Criteria
                         $op = strtolower(key($filterVal));
                         $val = current($filterVal);
                         $this->criteriaQuery->whereHas($relKey,
-                            function ($query) use ($relColumn, $op, $val) {
-                                return $query = $this->executeCriteria($query, $relColumn, $op, $val);
+                            function ($query) use ($relKey, $relColumn, $op, $val) {
+                                return $query = $this->executeCriteria($query, $relKey . "." . $relColumn, $op, $val);
                             });
                     }
                     continue;
@@ -253,6 +254,8 @@ trait Criteria
             } elseif ($this->isInclude) {
                 continue;
             }
+
+
 
             if (in_array($filterKey, $criteriaModelColumns)) {
                 if (is_array($filterVal)) {
@@ -319,13 +322,20 @@ trait Criteria
                 // Handle delimited lists
                 $vals = explode(',', $val);
                 $vals = $this->extractAdvancedCriteria($vals);
-                foreach ($vals as $v) {
-                    $v = str_replace('*', '%', $v);
-                    if (strpos($v, '%') === false) {
-                        $v = '%' . $v . '%';
-                    }
-                    $query->orWhere($filterKey, 'LIKE', $v);
+                if (count($vals) === 0) {
+                    continue;
                 }
+
+                $query->where(function ($query) use ($vals, $filterKey) {
+                    foreach ($vals as $v) {
+                        $v = str_replace('*', '%', $v);
+                        if (strpos($v, '%') === false) {
+                            $v = '%' . $v . '%';
+                        }
+                        $query->orWhere($filterKey, 'LIKE', $v);
+                    }
+                });
+
                 break;
             default:
                 throw new BadCriteriaException('Invalid filter operator');

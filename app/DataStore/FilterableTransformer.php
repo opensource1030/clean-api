@@ -48,6 +48,7 @@ abstract class FilterableTransformer extends TransformerAbstract
         }
 
         $include = $this->applyCriteria($resource->$finder(), $this->criteria, true, null, $returnEmptyResults);
+
         return new ResourceCollection($include->get(), new $transformer(), $finder);
 
     }
