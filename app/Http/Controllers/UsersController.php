@@ -6,13 +6,18 @@ use Cartalyst\DataGrid\Laravel\Facades\DataGrid;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Lang;
+use Illuminate\Support\Facades\Mail;
 use Response;
 use View;
 
 use WA\Helpers\Traits\SetLimits;
+
 use WA\DataStore\User\User;
 use WA\DataStore\User\UserTransformer;
 use WA\Repositories\User\UserInterface;
+
+use WA\DataStore\Package\PackageTransformer;
+use WA\Repositories\Package\PackageInterface;
 
 use WA\DataStore\Allocation\Allocation;
 use WA\DataStore\Content\Content;
@@ -20,8 +25,6 @@ use WA\DataStore\Asset\Asset;
 
 use DB;
 use Cache;
-
-use Illuminate\Support\Facades\Mail;
 
 /**
  * Users resource.
@@ -45,89 +48,45 @@ class UsersController extends FilteredApiController
      */
     public function __construct(
         UserInterface $user,
+        PackageInterface $package,
         Request $request
     ) {
         parent::__construct($user, $request);
-        $this->user = $user;
+        $this->packageInterface = $package;
+        $this->userInterface = $user;
     }
 
-    public function numberUsers(Request $request)
+    /*
+     *  This functions returns the packages with conditions accomplished by the user.
+     *
+     *  @userId : The id of the User.
+     *  @return: Array of Packages.
+     */
+    public function usersPackages($userId, Request $request)
     {
-        $conditions = $request->all()['data']['conditions'];
-        $companyId = $request->all()['data']['companyId'];
+        $user = $this->userInterface->byId($userId, 1);
+        $companyId = $user->companyId; // number
+        $address = $user->address; // Array
+        $udlValues = $this->getUdlValuesFromUser($user); // Array
 
-        // Retrieve all the users that have the same companyId as the company.
-        $users = User::where('companyId', $companyId);
-        $usersAux = $users->get();
+        $packages = $this->packageInterface->getAllPackageByCompanyId($user->companyId);
 
-        $users->where(function ($query) use ($conditions, $usersAux) {
-            $query = $query->where('id', 0);
+        $packagesOk = [];
 
-            foreach ($usersAux as $user) {
-                $info = $this->retrieveInformationofUser($user);
-                $ok = true;
-
-                if ($conditions <> null) {
-                    foreach ($conditions as $condition) {
-                        foreach ($info as $i) {
-                            if ($condition['name'] == $i['label'] && $ok) {
-                                switch ($condition['condition']) {
-                                    case "like":
-                                        $ok = $ok && strpos($i['value'], $condition['value']) !== false;
-                                        break;
-                                    case "gt":
-                                        $ok = $ok && ($i['value'] > $condition['value']) ? true : false;
-                                        break;
-                                    case "lt":
-                                        $ok = $ok && ($i['value'] < $condition['value']) ? true : false;
-                                        break;
-                                    case "gte":
-                                        $ok = $ok && ($i['value'] >= $condition['value']) ? true : false;
-                                        break;
-                                    case "lte":
-                                        $ok = $ok && ($i['value'] <= $condition['value']) ? true : false;
-                                        break;
-                                    case "ne":
-                                        $ok = $ok && ($i['value'] <> $condition['value']) ? true : false;
-                                        break;
-                                    case "eq":
-                                        $ok = $ok && ($i['value'] == $condition['value']) ? true : false;
-                                        break;
-                                    default:
-                                        $ok = $ok && true;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                if ($ok) {
-                    $query = $query->orWhere('id', $user->id);
-                }
+        foreach ($packages as $pack) {
+            $isOk = true;
+            $isOk = $isOk && $this->checkUserAttributes($user, $pack->conditions);
+            $isOk = $isOk && $this->checkIfHasAnyAddress($address, $pack->conditions);
+            foreach ($udlValues as $udl) {
+                $isOk = $isOk && $this->checkIfHasAnyUdl($udl, $pack->conditions);
             }
-        });
 
-        return array("number" => $users->count());
-    }
-
-    private function retrieveInformationofUser(User $user)
-    {
-        // Retrieve the UDLSValues.
-        $udlValues = $user->UdlValues;
-
-        // Retrieve the user information that will be compared.
-        $info = array();
-        $auxName = ["value" => $user->username, "name" => "name", "label" => "Name"];
-        array_push($info, $auxName);
-        $auxEmail = ["value" => $user->email, "name" => "email", "label" => "Email"];
-        array_push($info, $auxEmail);
-
-        foreach ($udlValues as $uv) {
-            $aux = ["value" => $uv->name, "name" => $uv->udl->name, "label" => $uv->udl->label];
-            array_push($info, $aux);
+            if ($isOk) {
+                array_push($packagesOk, $pack);
+            }
         }
 
-        return $info;
+        return $this->transformToJson($packagesOk);
     }
 
     public function getLoggedInUser(Request $request)
@@ -666,4 +625,188 @@ class UsersController extends FilteredApiController
         $response = $this->response->item($user, $transformer, ['key' => 'users']);
         return $response;
     }*/
+
+    private function transformToJson($array) {
+        $list = [];
+        foreach ($array as $obj) {
+            $aux['id'] = $obj->id;
+            $aux['type'] = 'packages';
+            $aux['attributes']['name'] = $obj->name;
+            $aux['attributes']['companyId'] = $obj->companyId;
+
+            array_push($list, $aux);
+        }
+
+        return response()->json($list)->setStatusCode($this->status_codes['ok']);
+    }
+
+    private function getUdlValuesFromUser($user) {
+        $udlV = $user->udlValues;
+        $arrayAux = [];
+        foreach ($udlV as $uv) {
+            $aux['udlName'] = $uv->udl->name;
+            $aux['udlValue'] = $uv->name;
+            array_push($arrayAux, $aux);
+        }
+
+        return $arrayAux;
+    }
+
+    private function checkUserAttributes($user, $conditions) {
+        $isOk = true;
+        if (count($conditions) > 0) {
+            foreach ($conditions as $cond) {
+                if ($cond['name'] == 'Supervisor?') {
+                    $isOk = $isOk && $this->checkIfIsSupervisor($user->isSupervisor, $cond);
+                }
+                // ADD Other Attributes if needed.
+            }
+
+            if ($isOk) {
+                return true;
+            }
+
+            return false;
+        }        
+
+        return true;
+    }
+
+    private function checkIfIsSupervisor($supervisor, $condition) {
+        if (strtolower($condition->condition) == 'equal') {
+            if (strtolower($condition->value) == 'no') {
+                if ($supervisor == 0) {
+                    return true;
+                }
+            } else if (strtolower($condition->value) == 'yes') {
+                if ($supervisor == 1) {
+                    return true;
+                }
+            }
+        } else if (strtolower($condition->condition) == 'not equal') {
+            if (strtolower($condition->value) == 'no') {
+                if ($supervisor == 1) {
+                    return true;
+                }
+            } else if (strtolower($condition->value) == 'yes') {
+                if ($supervisor == 0) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private function checkIfHasAnyAddress($address, $conditions) {
+        if(count($address)) {
+            if (count($conditions) > 0) {
+                foreach ($address as $add) {
+                    $ok = true;
+                    $ok = $ok && $this->checkIfHasAnyInfo($add->city, $conditions, 'City');
+                    $ok = $ok && $this->checkIfHasAnyInfo($add->state, $conditions, 'State');
+                    $ok = $ok && $this->checkIfHasAnyInfo($add->country, $conditions, 'Country');
+                    if ($ok) {
+                        return true;
+                    }
+                }
+                if(count($address) > 0) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private function checkIfHasAnyInfo($val, $conditions, $type){
+        $conditionsOK = true;
+        foreach ($conditions as $cond) {
+            if ($cond['name'] == $type) {
+                if ($cond['condition'] == 'contains') {
+                    if (strpos(strtolower($val), strtolower($cond['value'])) !== false) {
+                        $conditionsOK = $conditionsOK && true;
+                    } else {
+                        $conditionsOK = $conditionsOK && false;
+                    }
+                } else if ($cond['condition'] == 'equal') {
+                    if (strtolower($cond['value']) == strtolower($val)) {
+                        $conditionsOK = $conditionsOK && true;
+                    } else {
+                        $conditionsOK = $conditionsOK && false;
+                    }
+                } else if ($cond['condition'] == 'not equal') {
+                    if (strtolower($cond['value']) != strtolower($val)) {
+                        $conditionsOK = $conditionsOK && true;
+                    } else {
+                        $conditionsOK = $conditionsOK && false;
+                    }
+                } else {
+                    // NOTHING
+                }
+            }
+        }
+        if ($conditionsOK) {
+            return true;
+        }
+        return false;
+    }
+
+    private function checkIfHasAnyUdl($udl, $conditions) {
+        $conditionsOK = true;
+        foreach ($conditions as $cond) {
+            if ($cond['name'] == $udl['udlName']) {
+                if ($cond['condition'] == 'contains') {
+                    if (strpos(strtolower($udl['udlValue']), strtolower($cond['value'])) !== false) {
+                        $conditionsOK = $conditionsOK && true;
+                    } else {
+                        $conditionsOK = $conditionsOK && false;
+                    }
+                } else if ($cond['condition'] == 'equal') {
+                    if (strtolower($udl['udlValue']) == strtolower($cond['value'])) {
+                        $conditionsOK = $conditionsOK && true;
+                    } else {
+                        $conditionsOK = $conditionsOK && false;
+                    }
+                } else if ($cond['condition'] == 'not equal') {
+                    if (strtolower($udl['udlValue']) != strtolower($cond['value'])) {
+                        $conditionsOK = $conditionsOK && true;
+                    } else {
+                        $conditionsOK = $conditionsOK && false;
+                    }
+                } else if ($cond['condition'] == 'greater than') {
+                    if (strtolower($udl['udlValue']) > strtolower($cond['value'])) {
+                        $conditionsOK = $conditionsOK && true;
+                    } else {
+                        $conditionsOK = $conditionsOK && false;
+                    }
+                } else if ($cond['condition'] == 'greater or equal') {
+                    if (strtolower($udl['udlValue']) >= strtolower($cond['value'])) {
+                        $conditionsOK = $conditionsOK && true;
+                    } else {
+                        $conditionsOK = $conditionsOK && false;
+                    }
+                } else if ($cond['condition'] == 'less than') {
+                    if (strtolower($udl['udlValue']) < strtolower($cond['value'])){
+                        $conditionsOK = $conditionsOK && true;
+                    } else {
+                        $conditionsOK = $conditionsOK && false;
+                    }
+                } else if ($cond['condition'] == 'less or equal') {
+                    if (strtolower($udl['udlValue']) <= strtolower($cond['value'])) {
+                        $conditionsOK = $conditionsOK && true;
+                    } else {
+                        $conditionsOK = $conditionsOK && false;
+                    }
+                } else {
+                    // NOTHING
+                }
+            }
+        }
+
+        if ($conditionsOK) {
+            return true;
+        }
+        return false;
+    }
 }
