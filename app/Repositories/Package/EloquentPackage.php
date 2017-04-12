@@ -50,6 +50,18 @@ class EloquentPackage extends AbstractRepository implements PackageInterface
     }
 
     /**
+     * Get an array of all the available package.
+     *
+     * @return Array of Package
+     */
+    public function getAllPackageByCompanyId($companyId)
+    {
+        $package = $this->model->where('companyId', $companyId)->get();
+
+        return $package;
+    }
+
+    /**
      * Create a new Package.
      *
      * @param array $data
