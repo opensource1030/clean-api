@@ -105,16 +105,34 @@ class CompaniesController extends FilteredApiController
         if (isset($data['relationships']) && $success) {
             $dataRelationships = $data['relationships'];
 
-            if (isset($dataRelationships['address']) && $success) {
+            if (isset($dataRelationships['address'])) {
                 if (isset($dataRelationships['address']['data'])) {
-                    $dataAddress = $this->parseJsonToArray($dataRelationships['address']['data'], 'address');
-                    try {
-                        $company->address()->sync($dataAddress);
-                    } catch (\Exception $e) {
-                        $success = false;
-                        $error['errors']['address'] = Lang::get('messages.NotOptionIncludeClass',
-                            ['class' => 'Company', 'option' => 'created', 'include' => 'Address']);
-                        //$error['errors']['Message'] = $e->getMessage();
+                        
+                    $addressInterface = app()->make('WA\Repositories\Address\AddressInterface');
+                    $data = $dataRelationships['address']['data'];
+
+                    $addressIdArray = [];
+
+                    foreach ($data as $item) {
+                        try {
+                            if($item['id'] > 0) {
+                                array_push($addressIdArray, $item);
+                            } else {
+                                $newAddress = $addressInterface->create($item['attributes']);
+                                Log::debug("NEW ADDRESS: ". print_r($newAddress, true));
+                                $aux['id'] = $newAddress->id;
+                                $aux['type'] = 'address';
+                                array_push($addressIdArray, $aux);
+                            }
+
+                            $dataAddress = $this->parseJsonToArray($addressIdArray, 'address');
+                            $company->address()->sync($dataAddress);                                
+                        } catch (\Exception $e) {
+                            DB::rollBack();
+                            $error['errors']['address'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Company', 'option' => 'created', 'include' => 'Address']);
+                            $error['errors']['Message'] = $e->getMessage();
+                            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+                        }
                     }
                 }
             }
@@ -188,16 +206,35 @@ class CompaniesController extends FilteredApiController
         if (isset($data['relationships']) && $success) {
             $dataRelationships = $data['relationships'];
 
-            if (isset($dataRelationships['address']) && $success) {
+            if (isset($dataRelationships['address'])) {
                 if (isset($dataRelationships['address']['data'])) {
-                    $dataAddress = $this->parseJsonToArray($dataRelationships['address']['data'], 'address');
-                    try {
-                        $company->address()->sync($dataAddress);
-                    } catch (\Exception $e) {
-                        $success = false;
-                        $error['errors']['address'] = Lang::get('messages.NotOptionIncludeClass',
-                            ['class' => 'Company', 'option' => 'created', 'include' => 'Address']);
-                        //$error['errors']['Message'] = $e->getMessage();
+                        
+                    $addressInterface = app()->make('WA\Repositories\Address\AddressInterface');
+                    $data = $dataRelationships['address']['data'];
+
+                    $addressIdArray = [];
+
+                    foreach ($data as $item) {
+                        try {
+                            Log::debug("item: ". print_r($item, true));
+                            if($item['id'] > 0) {
+                                array_push($addressIdArray, $item);
+                            } else {
+                                $newAddress = $addressInterface->create($item['attributes']);
+                                Log::debug("NEW ADDRESS: ". print_r($newAddress, true));
+                                $aux['id'] = $newAddress->id;
+                                $aux['type'] = 'address';
+                                array_push($addressIdArray, $aux);
+                            }
+
+                            $dataAddress = $this->parseJsonToArray($addressIdArray, 'address');
+                            $company->address()->sync($dataAddress);                                
+                        } catch (\Exception $e) {
+                            DB::rollBack();
+                            $error['errors']['address'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Company', 'option' => 'created', 'include' => 'Address']);
+                            $error['errors']['Message'] = $e->getMessage();
+                            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+                        }
                     }
                 }
             }
