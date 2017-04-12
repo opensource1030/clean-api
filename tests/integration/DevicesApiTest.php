@@ -449,10 +449,7 @@ class DevicesApiTest extends TestCase
     }
 
     public function testUpdateDevice()
-    {   //@Todo
-        $this->markTestIncomplete(
-          'This test has has some problems.'
-        );
+    {
         $device = factory(\WA\DataStore\Device\Device::class)->create(
             ['properties' => 'properties1', 'name' => 'Phone1']
         );
@@ -557,7 +554,7 @@ class DevicesApiTest extends TestCase
                 'priceOwn' => 800, ]
         );
 
-        $this->PATCH('/devices/'.$device->id,
+        $res = $this->PATCH('/devices/'.$device->id.'?include=modifications,devicevariations,devicevariations.carriers,devicevariations.companies,devicevariations.devices',
             [
                 'data' => [
                     'type' => 'devices',
@@ -575,32 +572,392 @@ class DevicesApiTest extends TestCase
                         ],
                         'devicevariations' => [
                             'data' => [
-                                ['type' => 'devicevariations', 'id' => $price1->id, 'carrierId' => 1, 'deviceId'=> $device->id, 'companyId' => 1, 'priceRetail' => 1100, 'price1' => 1100, 'price2' => 1100, 'priceOwn' => 1100],
-                                ['type' => 'devicevariations', 'id' => $price2->id, 'carrierId' => 1, 'deviceId'=> $device->id, 'companyId' => 2, 'priceRetail' => 1200, 'price1' => 1200, 'price2' => 1200, 'priceOwn' => 1200],
-                                ['type' => 'devicevariations', 'id' => $price3->id, 'carrierId' => 2, 'deviceId'=> $device->id,'companyId' => 1, 'priceRetail' => 1300, 'price1' => 1300, 'price2' => 1300, 'priceOwn' => 1300],
-                                ['type' => 'devicevariations', 'id' => $price4->id, 'carrierId' => 2, 'deviceId'=> $device->id,'companyId' => 2, 'priceRetail' => 1400, 'price1' => 1400, 'price2' => 1400, 'priceOwn' => 1400],
-                                ['type' => 'devicevariations', 'id' => $price5->id, 'carrierId' => 1, 'deviceId'=> $device->id,'companyId' => 1, 'priceRetail' => 1500, 'price1' => 1500, 'price2' => 1500, 'priceOwn' => 1500],
-                                ['type' => 'devicevariations', 'id' => $price6->id, 'carrierId' => 1, 'deviceId'=> $device->id,'companyId' => 2, 'priceRetail' => 1600, 'price1' => 1600, 'price2' => 1600, 'priceOwn' => 1600],
-                                ['type' => 'devicevariations', 'id' => $price7->id, 'carrierId' => 2, 'deviceId'=> $device->id,'companyId' => 1, 'priceRetail' => 1700, 'price1' => 1700, 'price2' => 1700, 'priceOwn' => 1700],
-                                ['type' => 'devicevariations', 'id' => $price8->id, 'carrierId' => 2, 'deviceId'=> $device->id,'companyId' => 2, 'priceRetail' => 1800, 'price1' => 1800, 'price2' => 1800, 'priceOwn' => 1800],
+                                [
+                                    'type' => 'devicevariations',
+                                    'id' => $price1->id,
+                                    'attributes' => [
+                                        'carrierId' => 1,
+                                        'deviceId'=> $device->id,
+                                        'companyId' => 1,
+                                        'priceRetail' => 1100,
+                                        'price1' => 1100,
+                                        'price2' => 1100,
+                                        'priceOwn' => 1100
+                                    ]
+                                ],
+                                [
+                                    'type' => 'devicevariations',
+                                    'id' => $price2->id,
+                                    'attributes' => [
+                                        'carrierId' => 1,
+                                        'deviceId'=> $device->id,
+                                        'companyId' => 2,
+                                        'priceRetail' => 1200,
+                                        'price1' => 1200,
+                                        'price2' => 1200,
+                                        'priceOwn' => 1200
+                                    ]
+                                ],
+                                [
+                                    'type' => 'devicevariations',
+                                    'id' => $price3->id,
+                                    'attributes' => [
+                                        'carrierId' => 2,
+                                        'deviceId'=> $device->id,
+                                        'companyId' => 1,
+                                        'priceRetail' => 1300,
+                                        'price1' => 1300,
+                                        'price2' => 1300,
+                                        'priceOwn' => 1300
+                                    ]
+                                ],
+                                [
+                                    'type' => 'devicevariations',
+                                    'id' => $price4->id,
+                                    'attributes' => [
+                                        'carrierId' => 2,
+                                        'deviceId'=> $device->id,
+                                        'companyId' => 2,
+                                        'priceRetail' => 1400,
+                                        'price1' => 1400,
+                                        'price2' => 1400,
+                                        'priceOwn' => 1400
+                                    ]
+                                ],
+                                [
+                                    'type' => 'devicevariations',
+                                    'id' => $price5->id,
+                                    'attributes' => [
+                                        'carrierId' => 1,
+                                        'deviceId'=> $device->id,
+                                        'companyId' => 1,
+                                        'priceRetail' => 1500,
+                                        'price1' => 1500,
+                                        'price2' => 1500,
+                                        'priceOwn' => 1500
+                                    ]
+                                ],
+                                [
+                                    'type' => 'devicevariations',
+                                    'id' => $price6->id,
+                                    'attributes' => [
+                                        'carrierId' => 1,
+                                        'deviceId'=> $device->id,
+                                        'companyId' => 2,
+                                        'priceRetail' => 1600,
+                                        'price1' => 1600,
+                                        'price2' => 1600,
+                                        'priceOwn' => 1600
+                                    ]
+                                ],
+                                [
+                                    'type' => 'devicevariations',
+                                    'id' => $price7->id,
+                                    'attributes' => [
+                                        'carrierId' => 2,
+                                        'deviceId'=> $device->id,
+                                        'companyId' => 1,
+                                        'priceRetail' => 1700,
+                                        'price1' => 1700,
+                                        'price2' => 1700,
+                                        'priceOwn' => 1700
+                                    ]
+                                ],
+                                [
+                                    'type' => 'devicevariations',
+                                    'id' => $price8->id,
+                                    'attributes' => [
+                                        'carrierId' => 2,
+                                        'deviceId'=> $device->id,
+                                        'companyId' => 2,
+                                        'priceRetail' => 1800,
+                                        'price1' => 1800,
+                                        'price2' => 1800,
+                                        'priceOwn' => 1800
+                                    ]
+                                ]
                             ],
                         ],
                     ],
                 ],
             ])
+            //Log::debug("testGetPackageByIdandIncludesDevices: ".print_r($res->response->getContent(), true));
             ->seeJson(
             [
                 'type' => 'devices',
                 'name' => $deviceAux->name,
                 'properties' => $deviceAux->properties,
+            ])
+            ->seeJsonStructure([
+                'data' => [
+                    'type',
+                    'id',
+                    'attributes' => [
+                        'identification',
+                        'name',
+                        'properties',
+                        'externalId',
+                        'statusId',
+                        'syncId',
+                        'make',
+                        'model',
+                        'defaultPrice',
+                        'currency',
+                        'created_at' => [
+                            'date',
+                            'timezone_type',
+                            'timezone'
+                        ],
+                        'updated_at' => [
+                            'date',
+                            'timezone_type',
+                            'timezone'
+                        ]
+                    ],
+                    'links' => [
+                        'self'
+                    ],
+                    'relationships' => [
+                        'devicetypes' => [
+                            'links' => [
+                                'self',
+                                'related'
+                            ],
+                            'data' => []
+                        ],
+                        'modifications' => [
+                            'links' => [
+                                'self',
+                                'related'
+                            ],
+                            'data' => [
+                                0 => [
+                                    'type',
+                                    'id'
+                                ],
+                                1 => [
+                                    'type',
+                                    'id'
+                                ],
+                                2 => [
+                                    'type',
+                                    'id'
+                                ]
+                            ]
+                        ],
+                        'devicevariations' => [
+                            'links' => [
+                                'self',
+                                'related',
+                            ],
+                            'data' => [
+                                0 => [
+                                    'type',
+                                    'id'
+                                ],
+                                1 => [
+                                    'type',
+                                    'id'
+                                ],
+                                2 => [
+                                    'type',
+                                    'id'
+                                ],
+                                3 => [
+                                    'type',
+                                    'id'
+                                ],
+                                4 => [
+                                    'type',
+                                    'id'
+                                ],
+                                5 => [
+                                    'type',
+                                    'id'
+                                ],
+                                6 => [
+                                    'type',
+                                    'id'
+                                ],
+                                7 => [
+                                    'type',
+                                    'id'
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
+                'included' => [
+                    0 => [
+                        'type',
+                        'id',
+                        'attributes' => [
+                            'modType',
+                            'value',
+                            'unit',
+                        ],
+                        'links' => [
+                            'self',
+                        ],
+                    ],
+                    1 => [
+                        'type',
+                        'id',
+                        'attributes' => [
+                            'modType',
+                            'value',
+                            'unit',
+                        ],
+                        'links' => [
+                            'self',
+                        ],
+                    ],
+                    2 => [
+                        'type',
+                        'id',
+                        'attributes' => [
+                            'modType',
+                            'value',
+                            'unit',
+                        ],
+                        'links' => [
+                            'self',
+                        ],
+                    ],
+                    3 => [
+                        'type',
+                        'id',
+                        'attributes' => [
+                            'priceRetail',
+                            'price1',
+                            'price2',
+                            'priceOwn',
+                            'deviceId',
+                            'carrierId',
+                            'companyId',
+                        ],
+                        'links' => [
+                            'self',
+                        ],
+                    ],
+                    4 => [
+                        'type',
+                        'id',
+                        'attributes' => [
+                            'priceRetail',
+                            'price1',
+                            'price2',
+                            'priceOwn',
+                            'deviceId',
+                            'carrierId',
+                            'companyId',
+                        ],
+                        'links' => [
+                            'self',
+                        ],
+                    ],
+                    5 => [
+                        'type',
+                        'id',
+                        'attributes' => [
+                            'priceRetail',
+                            'price1',
+                            'price2',
+                            'priceOwn',
+                            'deviceId',
+                            'carrierId',
+                            'companyId',
+                        ],
+                        'links' => [
+                            'self',
+                        ],
+                    ],
+                    6 => [
+                        'type',
+                        'id',
+                        'attributes' => [
+                            'priceRetail',
+                            'price1',
+                            'price2',
+                            'priceOwn',
+                            'deviceId',
+                            'carrierId',
+                            'companyId',
+                        ],
+                        'links' => [
+                            'self',
+                        ],
+                    ],
+                    7 => [
+                        'type',
+                        'id',
+                        'attributes' => [
+                            'priceRetail',
+                            'price1',
+                            'price2',
+                            'priceOwn',
+                            'deviceId',
+                            'carrierId',
+                            'companyId',
+                        ],
+                        'links' => [
+                            'self',
+                        ],
+                    ],
+                    8 => [
+                        'type',
+                        'id',
+                        'attributes' => [
+                            'priceRetail',
+                            'price1',
+                            'price2',
+                            'priceOwn',
+                            'deviceId',
+                            'carrierId',
+                            'companyId',
+                        ],
+                        'links' => [
+                            'self',
+                        ],
+                    ],
+                    9 => [
+                        'type',
+                        'id',
+                        'attributes' => [
+                            'priceRetail',
+                            'price1',
+                            'price2',
+                            'priceOwn',
+                            'deviceId',
+                            'carrierId',
+                            'companyId',
+                        ],
+                        'links' => [
+                            'self',
+                        ],
+                    ],
+                    10 => [
+                        'type',
+                        'id',
+                        'attributes' => [
+                            'priceRetail',
+                            'price1',
+                            'price2',
+                            'priceOwn',
+                            'deviceId',
+                            'carrierId',
+                            'companyId',
+                        ],
+                        'links' => [
+                            'self',
+                        ],
+                    ]
+                ],
             ]);
     }
 
     public function testUpdateServiceIncludeDeviceVariations(){
-        //@Todo
-        $this->markTestIncomplete(
-          'This test has has some problems.'
-        );
+
         $device = factory(\WA\DataStore\Device\Device::class)->create(
             ['properties' => 'properties1', 'name' => 'Phone1']
         );
@@ -662,7 +1019,7 @@ class DevicesApiTest extends TestCase
         );
 
 
-        $this->PATCH('/devices/'.$device->id.'?include=devicevariations',
+        $res = $this->PATCH('/devices/'.$device->id.'?include=devicevariations',
             [
                 'data' => [
                     'type' => 'devices',
@@ -679,15 +1036,65 @@ class DevicesApiTest extends TestCase
                         ],
                         'devicevariations' => [
                             'data' => [
-                                ['type' => 'devicevariations', 'id' => $deviceVariation1->id, 'deviceId'=> $device->id,'carrierId' => 1, 'companyId' => 1, 'priceRetail' => 1100, 'price1' => 1100, 'price2' => 1100, 'priceOwn' => 1100],
-                                ['type' => 'devicevariations', 'id' => $deviceVariation2->id, 'deviceId'=> $device->id,'carrierId' => 1, 'companyId' => 2, 'priceRetail' => 1200, 'price1' => 1200, 'price2' => 1200, 'priceOwn' => 1200],
-                                ['type' => 'devicevariations', 'id' => $deviceVariation3->id, 'deviceId'=> $device->id,'carrierId' => 2, 'companyId' => 1, 'priceRetail' => 1300, 'price1' => 1300, 'price2' => 1300, 'priceOwn' => 1300],
-                                ['type' => 'devicevariations', 'id' => $deviceVariation4->id, 'deviceId'=> $device->id,'carrierId' => 2, 'companyId' => 2, 'priceRetail' => 1400, 'price1' => 1400, 'price2' => 1400, 'priceOwn' => 1400],
+                                [
+                                    'type' => 'devicevariations',
+                                    'id' => $deviceVariation1->id,
+                                    'attributes' => [
+                                        'carrierId' => 1,
+                                        'deviceId'=> $device->id,
+                                        'companyId' => 1,
+                                        'priceRetail' => 1500,
+                                        'price1' => 1500,
+                                        'price2' => 1500,
+                                        'priceOwn' => 1500
+                                    ]
+                                ],
+                                [
+                                    'type' => 'devicevariations',
+                                    'id' => $deviceVariation2->id,
+                                    'attributes' => [
+                                        'carrierId' => 1,
+                                        'deviceId'=> $device->id,
+                                        'companyId' => 2,
+                                        'priceRetail' => 1600,
+                                        'price1' => 1600,
+                                        'price2' => 1600,
+                                        'priceOwn' => 1600
+                                    ]
+                                ],
+                                [
+                                    'type' => 'devicevariations',
+                                    'id' => $deviceVariation3->id,
+                                    'attributes' => [
+                                        'carrierId' => 2,
+                                        'deviceId'=> $device->id,
+                                        'companyId' => 1,
+                                        'priceRetail' => 1700,
+                                        'price1' => 1700,
+                                        'price2' => 1700,
+                                        'priceOwn' => 1700
+                                    ]
+                                ],
+                                [
+                                    'type' => 'devicevariations',
+                                    'id' => $deviceVariation4->id,
+                                    'attributes' => [
+                                        'carrierId' => 2,
+                                        'deviceId'=> $device->id,
+                                        'companyId' => 2,
+                                        'priceRetail' => 1800,
+                                        'price1' => 1800,
+                                        'price2' => 1800,
+                                        'priceOwn' => 1800
+                                    ]
+                                ]
                             ],
                         ],
                     ],
                 ],
-            ])->seeJsonStructure([
+            ])
+            //Log::debug("testGetPackageByIdandIncludesDevices: ".print_r($res->response->getContent(), true));
+            ->seeJsonStructure([
                 'data' => [
                     'type',
                     'id',
@@ -710,12 +1117,7 @@ class DevicesApiTest extends TestCase
                                 'self',
                                 'related',
                             ],
-                            'data' => [
-                                [
-                                    'type',
-                                    'id',
-                                ]
-                            ]
+                            'data' => []
                         ],
                         'devicevariations' => [
                             'links' => [
@@ -748,7 +1150,13 @@ class DevicesApiTest extends TestCase
                         'type',
                         'id',
                         'attributes' => [
-                            'name',
+                            'priceRetail',
+                            'price1',
+                            'price2',
+                            'priceOwn',
+                            'deviceId',
+                            'carrierId',
+                            'companyId'
                         ],
                         'links' => [
                             'self'
@@ -787,22 +1195,6 @@ class DevicesApiTest extends TestCase
                         ]
                     ],
                     3 => [
-                        'type',
-                        'id',
-                        'attributes' => [
-                            'priceRetail',
-                            'price1',
-                            'price2',
-                            'priceOwn',
-                            'deviceId',
-                            'carrierId',
-                            'companyId'
-                        ],
-                        'links' => [
-                            'self'
-                        ]
-                    ],
-                    4 => [
                         'type',
                         'id',
                         'attributes' => [

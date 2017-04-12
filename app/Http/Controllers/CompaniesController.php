@@ -6,9 +6,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Lang;
 use WA\DataStore\Company\Company;
 use WA\DataStore\Company\CompanyTransformer;
+use WA\DataStore\Udl\Udl;
+use WA\DataStore\Udl\UdlTransformer;
 use WA\Repositories\Company\CompanyInterface;
 use WA\Repositories\Udl\UdlInterface;
 use DB;
+use Log;
+
 /**
  * Class CompaniesController.
  */
@@ -101,15 +105,57 @@ class CompaniesController extends FilteredApiController
         if (isset($data['relationships']) && $success) {
             $dataRelationships = $data['relationships'];
 
-            if (isset($dataRelationships['address']) && $success) {
+            if (isset($dataRelationships['address'])) {
                 if (isset($dataRelationships['address']['data'])) {
-                    $dataAddress = $this->parseJsonToArray($dataRelationships['address']['data'], 'address');
+                        
+                    $addressInterface = app()->make('WA\Repositories\Address\AddressInterface');
+                    $data = $dataRelationships['address']['data'];
+
+                    $addressIdArray = [];
+
+                    foreach ($data as $item) {
+                        try {
+                            if($item['id'] > 0) {
+                                array_push($addressIdArray, $item);
+                            } else {
+                                $newAddress = $addressInterface->create($item['attributes']);
+                                Log::debug("NEW ADDRESS: ". print_r($newAddress, true));
+                                $aux['id'] = $newAddress->id;
+                                $aux['type'] = 'address';
+                                array_push($addressIdArray, $aux);
+                            }
+
+                            $dataAddress = $this->parseJsonToArray($addressIdArray, 'address');
+                            $company->address()->sync($dataAddress);                                
+                        } catch (\Exception $e) {
+                            DB::rollBack();
+                            $error['errors']['address'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Company', 'option' => 'created', 'include' => 'Address']);
+                            $error['errors']['Message'] = $e->getMessage();
+                            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+                        }
+                    }
+                }
+            }
+
+            if (isset($dataRelationships['udls'])) {
+                if (isset($dataRelationships['udls']['data'])) {
+
                     try {
-                        $company->address()->sync($dataAddress);
+                        $udl = Udl::where('companyId', $company->id)->get();
+
+                        $udlInterface = app()->make('WA\Repositories\Udl\UdlInterface');
+                        $this->deleteNotRequested($dataRelationships['udls']['data'], $udl, $udlInterface, 'udls');
+
+                        $helper = app()->make('WA\Http\Controllers\UdlsHelperController');
+                        $success = $helper->create($dataRelationships['udls'], $company->id);
+
+                        if (!$success){
+                            $error['errors']['udls'] = Lang::get('messages.NotOptionIncludeClass',['class' => 'Udl', 'option' => 'updated', 'include' => '']);
+                        }
+
                     } catch (\Exception $e) {
                         $success = false;
-                        $error['errors']['address'] = Lang::get('messages.NotOptionIncludeClass',
-                            ['class' => 'Company', 'option' => 'created', 'include' => 'Address']);
+                        $error['errors']['udls'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Udl', 'option' => 'updated', 'include' => '']);
                         //$error['errors']['Message'] = $e->getMessage();
                     }
                 }
@@ -118,12 +164,10 @@ class CompaniesController extends FilteredApiController
 
         if ($success) {
             DB::commit();
-
             return $this->response()->item($company, new CompanyTransformer(),
                 ['key' => 'companies'])->setStatusCode($this->status_codes['created']);
         } else {
             DB::rollBack();
-
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
     }
@@ -162,15 +206,54 @@ class CompaniesController extends FilteredApiController
         if (isset($data['relationships']) && $success) {
             $dataRelationships = $data['relationships'];
 
-            if (isset($dataRelationships['address']) && $success) {
+            if (isset($dataRelationships['address'])) {
                 if (isset($dataRelationships['address']['data'])) {
-                    $dataAddress = $this->parseJsonToArray($dataRelationships['address']['data'], 'address');
+                        
+                    $addressInterface = app()->make('WA\Repositories\Address\AddressInterface');
+                    $data = $dataRelationships['address']['data'];
+
+                    $addressIdArray = [];
+
+                    foreach ($data as $item) {
+                        try {
+                            Log::debug("item: ". print_r($item, true));
+                            if($item['id'] > 0) {
+                                array_push($addressIdArray, $item);
+                            } else {
+                                $newAddress = $addressInterface->create($item['attributes']);
+                                Log::debug("NEW ADDRESS: ". print_r($newAddress, true));
+                                $aux['id'] = $newAddress->id;
+                                $aux['type'] = 'address';
+                                array_push($addressIdArray, $aux);
+                            }
+
+                            $dataAddress = $this->parseJsonToArray($addressIdArray, 'address');
+                            $company->address()->sync($dataAddress);                                
+                        } catch (\Exception $e) {
+                            DB::rollBack();
+                            $error['errors']['address'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Company', 'option' => 'created', 'include' => 'Address']);
+                            $error['errors']['Message'] = $e->getMessage();
+                            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+                        }
+                    }
+                }
+            }
+
+            if (isset($dataRelationships['udls'])) {
+                if (isset($dataRelationships['udls']['data'])) {
+
                     try {
-                        $company->address()->sync($dataAddress);
+
+                        $helper = app()->make('WA\Http\Controllers\UdlsHelperController');
+                        $success = $helper->create($dataRelationships['udls'], $company->id);
+
+                        if (!$success){
+                            $error['errors']['udls'] = Lang::get('messages.NotOptionIncludeClass',['class' => 'Udl', 'option' => 'created', 'include' => '']);
+                        }
+
                     } catch (\Exception $e) {
                         $success = false;
-                        $error['errors']['address'] = Lang::get('messages.NotOptionIncludeClass',
-                            ['class' => 'Company', 'option' => 'created', 'include' => 'Address']);
+                        $error['errors']['udls'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Udl', 'option' => 'created', 'include' => '']);
                         //$error['errors']['Message'] = $e->getMessage();
                     }
                 }

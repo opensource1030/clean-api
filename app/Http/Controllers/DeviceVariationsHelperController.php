@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Lang;
 use WA\DataStore\DeviceVariation\DeviceVariation;
 use WA\DataStore\DeviceVariation\DeviceVariationTransformer;
 use WA\Repositories\DeviceVariation\DeviceVariationInterface;
-
+use Log;
 use DB;
 
 /**
@@ -44,7 +44,6 @@ class DeviceVariationsHelperController extends FilteredApiController
         foreach ($data['data'] as $var) {
             $aux['data'] = $var;    
             if (!$this->isJsonCorrect($aux, 'devicevariations')) {
-
                 return false;
             }
             
@@ -65,7 +64,7 @@ class DeviceVariationsHelperController extends FilteredApiController
                 try{
                     $deviceVariation = $this->deviceVariation->create($aux['data']['attributes']);
                 }catch (\Exception $e) {
-                    DB::rollBack();                 
+                    DB::rollBack();
                     return false;
                 }
             }
@@ -73,30 +72,31 @@ class DeviceVariationsHelperController extends FilteredApiController
                 DB::rollBack();
                 return false;
             }
-            $dataRelationships = $aux['data']['relationships'];
 
-            if (isset($dataRelationships['modifications'])) {
-                if (isset($dataRelationships['modifications']['data'])) {
-                    $dataModifications = $this->parseJsonToArray($dataRelationships['modifications']['data'],
-                        'modifications');
-                    try {
-                        $deviceVariation->modifications()->sync($dataModifications);
-                    } catch (\Exception $e) {
-                        DB::rollBack();
-                        return false;
-                        
+            if(isset($aux['data']['relationships'])){
+                $dataRelationships = $aux['data']['relationships'];
+                if (isset($dataRelationships['modifications'])) {
+                    if (isset($dataRelationships['modifications']['data'])) {
+                        $dataModifications = $this->parseJsonToArray($dataRelationships['modifications']['data'],
+                            'modifications');
+                        try {
+                            $deviceVariation->modifications()->sync($dataModifications);
+                        } catch (\Exception $e) {
+                            DB::rollBack();
+                            return false;
+                        }
                     }
                 }
-            }
-           
-           if (isset($dataRelationships['images'])) {
-                if (isset($dataRelationships['images']['data'])) {
-                    $dataImages = $this->parseJsonToArray($dataRelationships['images']['data'], 'images');
-                    try {
-                        $deviceVariation->images()->sync($dataImages);
-                    } catch (\Exception $e) {
-                        DB::rollBack();
-                        return false;
+
+                if (isset($dataRelationships['images'])) {
+                    if (isset($dataRelationships['images']['data'])) {
+                        $dataImages = $this->parseJsonToArray($dataRelationships['images']['data'], 'images');
+                        try {
+                            $deviceVariation->images()->sync($dataImages);
+                        } catch (\Exception $e) {
+                            DB::rollBack();
+                            return false;
+                        }
                     }
                 }
             }

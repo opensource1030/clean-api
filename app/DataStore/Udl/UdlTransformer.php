@@ -9,6 +9,10 @@ use WA\DataStore\FilterableTransformer;
  */
 class UdlTransformer extends FilterableTransformer
 {
+    protected $availableIncludes = [
+        'udlvalues'
+    ];
+
     /**
      * @param Udl $udl
      *

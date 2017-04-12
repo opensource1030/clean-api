@@ -88,7 +88,7 @@ class PackagesController extends FilteredApiController
 
             if ($isOk) {
                 $numberUsers ++;
-                Log::debug("numberUsers: ".print_r($numberUsers, true));
+                //Log::debug("numberUsers: ".print_r($numberUsers, true));
             }
         }
 

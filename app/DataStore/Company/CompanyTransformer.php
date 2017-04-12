@@ -40,7 +40,7 @@ class CompanyTransformer extends FilterableTransformer
             'label'            => $company->label,
             'active'           => (int)$company->active,
             'udlpath'          => $company->udlpath,
-            'isCensus'         => $company->isCensus,
+            'isCensus'         => (int)$company->isCensus,
             'udlPathRule'      => $company->udlPathRule,
             'assetPath'        => $company->assetPath,
             'shortName'        => $company->shortName,

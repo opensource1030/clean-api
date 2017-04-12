@@ -14,11 +14,7 @@ class OauthApiTest extends TestCase
     use DatabaseMigrations;
 
     public function testApiOauthAccessToken()
-    {   //@Todo
-
-        $this->markTestIncomplete(
-          'This test has has some problems.'
-        );
+    {
         $grantType = 'password';
         $password = 'user';
         $scope = factory(\WA\DataStore\Scope\Scope::class)->create(['name' => 'get', 'display_name'=>'get']);

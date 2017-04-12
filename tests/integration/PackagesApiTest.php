@@ -166,7 +166,7 @@ class PackageApiTest extends TestCase
 
     public function testGetPackageByIdandIncludesServices()
     {
-        $this->markTestSkipped('Test for older version');
+        //$this->markTestSkipped('Test for older version');
 
         $package = factory(\WA\DataStore\Package\Package::class)->create();
 
@@ -219,16 +219,13 @@ class PackageApiTest extends TestCase
                         'type',
                         'id',
                         'attributes' => [
+                            'status',
                             'title',
                             'planCode',
                             'cost',
                             'description',
-                            'domesticMinutes',
-                            'domesticData',
-                            'domesticMessages',
-                            'internationalMinutes',
-                            'internationalData',
-                            'internationalMessages',
+                            'currency',
+                            'carrierId',
                         ],
                         'links' => [
                             'self',

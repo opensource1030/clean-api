@@ -79,6 +79,7 @@ class UsersApiTest extends TestCase
                 ],
             ]);
     }
+
     public function testGetUserByIdIfExists()
     {
         $user = factory(\WA\DataStore\User\User::class)->create();
@@ -163,6 +164,7 @@ class UsersApiTest extends TestCase
                 ]
             ]);
     }
+
     public function testGetUserByIdIfNoExists()
     {
         $userId = factory(\WA\DataStore\User\User::class)->create()->id;
@@ -170,13 +172,9 @@ class UsersApiTest extends TestCase
         $response = $this->call('GET', '/users/'.$userId);
         $this->assertEquals(404, $response->status());
     }
+
     public function testGetLoggedInUser()
     {
-
-        $this->markTestSkipped(
-              '.'
-            );
-
         $grantType = 'password';
         $password = 'user';
         $user = factory(\WA\DataStore\User\User::class)->create([
@@ -249,6 +247,7 @@ class UsersApiTest extends TestCase
         $this->assertEquals($resArray['approverId'], $user->approverId);
         $this->assertEquals($resArray['defaultLocationId'], $user->defaultLocationId);
     }
+    
     public function testGetUserByIdandIncludesAssets()
     {
         $user = factory(\WA\DataStore\User\User::class)->create();
@@ -981,6 +980,7 @@ class UsersApiTest extends TestCase
                             'data' => [
                                 [
                                     'id' => $allocation1->id,
+                                    'type' => 'allocations',
                                     'billMonth' => $allocation1->billMonth,
                                     'mobileNumber' => $allocation1->mobileNumber,
                                     'carrier' => $allocation1->carrier,
@@ -1041,6 +1041,7 @@ class UsersApiTest extends TestCase
                                 ],
                                 [
                                     'id' => $allocation2->id,
+                                    'type' => 'allocations',
                                     'billMonth' => $allocation2->billMonth,
                                     'mobileNumber' => $allocation2->mobileNumber,
                                     'carrier' => $allocation2->carrier,
@@ -1104,11 +1105,13 @@ class UsersApiTest extends TestCase
                         'contents' => [
                             'data' => [
                                 [
+                                    'type' => 'contents',
                                     'content' => $content1->content,
                                     'active' => $content1->active,
                                     'owner_type' => $content1->owner_type
                                 ],
                                 [
+                                    'type' => 'contents',
                                     'content' => $content2->content,
                                     'active' => $content2->active,
                                     'owner_type' => $content2->owner_type
@@ -1678,6 +1681,7 @@ class UsersApiTest extends TestCase
                     ]
                 ]);
     }
+
     public function testCreateUserReturnRelationshipNoExistsInclude()
     {
         $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
@@ -1813,6 +1817,7 @@ class UsersApiTest extends TestCase
                     ]
                 ]);
     }
+
     public function testCreateUserReturnRelationshipNoData()
     {
         $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
@@ -2220,6 +2225,7 @@ class UsersApiTest extends TestCase
                     ]
                 ]);
     }
+
     public function testUpdateUser()
     {
         $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
@@ -2339,6 +2345,7 @@ class UsersApiTest extends TestCase
                     ]
                 ]);
     }
+
     public function testUpdateUserIncludeAllDeleteRelationships()
     {
         $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
@@ -2530,6 +2537,7 @@ class UsersApiTest extends TestCase
                             'data' => [
                                 [
                                     'id' => $allocation1->id,
+                                    'type' => 'allocations',
                                     'billMonth' => $allocation1->billMonth,
                                     'mobileNumber' => $allocation1->mobileNumber,
                                     'carrier' => $allocation1->carrier,
@@ -2578,6 +2586,7 @@ class UsersApiTest extends TestCase
                             'data' => [
                                 [
                                     'id' => $content1->id,
+                                    'type' => 'contents',
                                     'content' => $content1->content,
                                     'active' => $content1->active,
                                     'owner_type' => $content1->owner_type
@@ -2903,6 +2912,7 @@ class UsersApiTest extends TestCase
                     ]
                 ]);
     }
+
     public function testUpdateUserIncludeAllAddRelationships()
     {
         $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
@@ -3029,6 +3039,7 @@ class UsersApiTest extends TestCase
                             'data' => [
                                 [
                                     'id' => 1,
+                                    'type' => 'allocations',
                                     'billMonth' => $allocation1->billMonth,
                                     'mobileNumber' => $allocation1->mobileNumber,
                                     'carrier' => $allocation1->carrier,
@@ -3089,6 +3100,7 @@ class UsersApiTest extends TestCase
                                 ],
                                 [
                                     'id' => 2,
+                                    'type' => 'allocations',
                                     'billMonth' => $allocation2->billMonth,
                                     'mobileNumber' => $allocation2->mobileNumber,
                                     'carrier' => $allocation2->carrier,
@@ -3149,6 +3161,7 @@ class UsersApiTest extends TestCase
                                 ],
                                 [
                                     'id' => 0,
+                                    'type' => 'allocations',
                                     'billMonth' => $allocation1->billMonth,
                                     'mobileNumber' => $allocation1->mobileNumber,
                                     'carrier' => $allocation1->carrier,
@@ -3213,18 +3226,21 @@ class UsersApiTest extends TestCase
                             'data' => [
                                 [
                                     'id' => 1,
+                                    'type' => 'contents',
                                     'content' => $content1->content,
                                     'active' => $content1->active,
                                     'owner_type' => $content1->owner_type
                                 ],
                                 [
                                     'id' => 2,
+                                    'type' => 'contents',
                                     'content' => $content2->content,
                                     'active' => $content2->active,
                                     'owner_type' => $content2->owner_type
                                 ],
                                 [
                                     'id' => 0,
+                                    'type' => 'contents',
                                     'content' => $content2->content,
                                     'active' => $content1->active,
                                     'owner_type' => $content2->owner_type
@@ -3735,6 +3751,7 @@ class UsersApiTest extends TestCase
                     ]
                 ]);
     }
+
     public function testDeleteUserIfExists()
     {
         // CREATE & DELETE
@@ -3744,11 +3761,1083 @@ class UsersApiTest extends TestCase
         $responseGet = $this->call('GET', '/users/'.$user->id);
         $this->assertEquals(404, $responseGet->status());
     }
+
     public function testDeleteUserIfNoExists()
     {
         // DELETE NO EXISTING.
         $responseDel = $this->call('DELETE', '/users/1');
         $this->assertEquals(404, $responseDel->status());
 
+    }
+
+    public function testUserPackagesUdlString()
+    {
+        // COMPANY
+        $company = factory(\WA\DataStore\Company\Company::class)->create();
+
+        // UDLS
+        $udl1 = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $company->id, 'name' => 'Name1']);
+        $udl2 = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $company->id, 'name' => 'Name2']);
+
+        // UDLVALUES
+        $udl1Value1 = factory(\WA\DataStore\UdlValue\UdlValue::class)->create([
+            'udlId' => $udl1->id,
+            'name' => 'udl1Value1'
+        ]);
+        $udl1Value2 = factory(\WA\DataStore\UdlValue\UdlValue::class)->create([
+            'udlId' => $udl1->id,
+            'name' => 'udl1Value2'
+        ]);
+        $udl1Value3 = factory(\WA\DataStore\UdlValue\UdlValue::class)->create([
+            'udlId' => $udl1->id,
+            'name' => 'udl1Value3'
+        ]);
+
+        $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $company->id]);
+
+        $userUdlValue1 = factory(\WA\DataStore\User\UserUdlValue::class)->create([
+            'userId' => $user->id,
+            'udlValueId' => $udl1Value1->id
+        ]);
+
+        // PACKAGES
+        $package1 = factory(\WA\DataStore\Package\Package::class)->create([
+            'companyId' => $company->id,
+            'name' => 'Package1'
+        ]);
+        $package2 = factory(\WA\DataStore\Package\Package::class)->create([
+            'companyId' => $company->id,
+            'name' => 'Package2'
+        ]);
+        $package3 = factory(\WA\DataStore\Package\Package::class)->create([
+            'companyId' => $company->id,
+            'name' => 'Package3'
+        ]);
+
+        $package4 = factory(\WA\DataStore\Package\Package::class)->create([
+            'companyId' => $company->id,
+            'name' => 'Package4'
+        ]);
+        $package5 = factory(\WA\DataStore\Package\Package::class)->create([
+            'companyId' => $company->id,
+            'name' => 'Package5'
+        ]);
+        $package6 = factory(\WA\DataStore\Package\Package::class)->create([
+            'companyId' => $company->id,
+            'name' => 'Package6'
+        ]);
+        $package7 = factory(\WA\DataStore\Package\Package::class)->create([
+            'companyId' => $company->id,
+            'name' => 'Package7'
+        ]);
+
+        // CONDITIONS
+        $pack1Condition1 = factory(\WA\DataStore\Condition\Condition::class)->create([
+            'packageId' => $package1->id,
+            'name' => 'Name1',
+            'condition' => 'equals',
+            'value' => 'udl1Value1'
+        ]); // OK!
+
+        $pack2Condition1 = factory(\WA\DataStore\Condition\Condition::class)->create([
+            'packageId' => $package2->id,
+            'name' => 'Name1',
+            'condition' => 'contains',
+            'value' => 'udl1'
+        ]); // OK!
+
+        $pack3Condition1 = factory(\WA\DataStore\Condition\Condition::class)->create([
+            'packageId' => $package3->id,
+            'name' => 'Name1',
+            'condition' => 'not equals',
+            'value' => 'udl2Value1'
+        ]); // OK!
+
+        $pack4Condition1 = factory(\WA\DataStore\Condition\Condition::class)->create([
+            'packageId' => $package4->id,
+            'name' => 'Name1',
+            'condition' => 'equal',
+            'value' => 'udl2Value1'
+        ]); // NO!
+
+        $pack5Condition1 = factory(\WA\DataStore\Condition\Condition::class)->create([
+            'packageId' => $package5->id,
+            'name' => 'Name1',
+            'condition' => 'contains',
+            'value' => 'udl2'
+        ]); // NO!
+
+        $pack6Condition1 = factory(\WA\DataStore\Condition\Condition::class)->create([
+            'packageId' => $package6->id,
+            'name' => 'Name1',
+            'condition' => 'not equal',
+            'value' => 'udl1Value1'
+        ]); // NO!
+
+        $res = $this->json('GET', '/users/packages/' . $user->id)
+            ->seeJsonEquals([
+                'data' => [
+                    [
+                        'id' => 1,
+                        'type' => 'packages',
+                        'attributes' => [
+                            'name' => 'Package1',
+                            'companyId' => '1'
+                        ]
+                    ],
+                    [
+                        'id' => 2,
+                        'type' => 'packages',
+                        'attributes' => [
+                            'name' => 'Package2',
+                            'companyId' => '1'
+                        ]
+                    ],
+                    [
+                        'id' => 3,
+                        'type' => 'packages',
+                        'attributes' => [
+                            'name' => 'Package3',
+                            'companyId' => '1'
+                        ]
+                    ],
+                    [
+                        'id' => 7,
+                        'type' => 'packages',
+                        'attributes' => [
+                            'name' => 'Package7',
+                            'companyId' => '1'
+                        ]
+                    ]
+                ]
+            ]);
+    }
+
+    public function testUserPackagesUdlNumber()
+    {
+        // COMPANY
+        $company = factory(\WA\DataStore\Company\Company::class)->create();
+
+        // UDLS
+        $udl1 = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $company->id, 'name' => 'Name1']);
+        $udl2 = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $company->id, 'name' => 'Name2']);
+
+        // UDLVALUES
+        $udl1Value1 = factory(\WA\DataStore\UdlValue\UdlValue::class)->create([
+            'udlId' => $udl1->id,
+            'name' => 1
+        ]);
+        $udl1Value2 = factory(\WA\DataStore\UdlValue\UdlValue::class)->create([
+            'udlId' => $udl1->id,
+            'name' => 2
+        ]);
+        $udl1Value3 = factory(\WA\DataStore\UdlValue\UdlValue::class)->create([
+            'udlId' => $udl1->id,
+            'name' => 3
+        ]);
+
+        $user1 = factory(\WA\DataStore\User\User::class)->create(['companyId' => $company->id]);
+
+        $userUdlValue1 = factory(\WA\DataStore\User\UserUdlValue::class)->create([
+            'userId' => $user1->id,
+            'udlValueId' => $udl1Value1->id
+        ]);
+
+        $user2 = factory(\WA\DataStore\User\User::class)->create(['companyId' => $company->id]);
+
+        $userUdlValue1 = factory(\WA\DataStore\User\UserUdlValue::class)->create([
+            'userId' => $user2->id,
+            'udlValueId' => $udl1Value2->id
+        ]);
+
+        $user3 = factory(\WA\DataStore\User\User::class)->create(['companyId' => $company->id]);
+
+        $userUdlValue1 = factory(\WA\DataStore\User\UserUdlValue::class)->create([
+            'userId' => $user3->id,
+            'udlValueId' => $udl1Value3->id
+        ]);
+
+        // PACKAGES
+        $package1 = factory(\WA\DataStore\Package\Package::class)->create([
+            'companyId' => $company->id,
+            'name' => 'Package1'
+        ]);
+        $package2 = factory(\WA\DataStore\Package\Package::class)->create([
+            'companyId' => $company->id,
+            'name' => 'Package2'
+        ]);
+        $package3 = factory(\WA\DataStore\Package\Package::class)->create([
+            'companyId' => $company->id,
+            'name' => 'Package3'
+        ]);
+
+        $package4 = factory(\WA\DataStore\Package\Package::class)->create([
+            'companyId' => $company->id,
+            'name' => 'Package4'
+        ]);
+        $package5 = factory(\WA\DataStore\Package\Package::class)->create([
+            'companyId' => $company->id,
+            'name' => 'Package5'
+        ]);
+        $package6 = factory(\WA\DataStore\Package\Package::class)->create([
+            'companyId' => $company->id,
+            'name' => 'Package6'
+        ]);
+        $package7 = factory(\WA\DataStore\Package\Package::class)->create([
+            'companyId' => $company->id,
+            'name' => 'Package7'
+        ]);
+
+        // CONDITIONS
+        $pack1Condition1 = factory(\WA\DataStore\Condition\Condition::class)->create([
+            'packageId' => $package1->id,
+            'name' => 'Name1',
+            'condition' => 'equal',
+            'value' => 2
+        ]);
+
+        $pack2Condition1 = factory(\WA\DataStore\Condition\Condition::class)->create([
+            'packageId' => $package2->id,
+            'name' => 'Name1',
+            'condition' => 'greater than',
+            'value' => 2
+        ]);
+
+        $pack3Condition1 = factory(\WA\DataStore\Condition\Condition::class)->create([
+            'packageId' => $package3->id,
+            'name' => 'Name1',
+            'condition' => 'less than',
+            'value' => 2
+        ]);
+
+        $pack4Condition1 = factory(\WA\DataStore\Condition\Condition::class)->create([
+            'packageId' => $package4->id,
+            'name' => 'Name1',
+            'condition' => 'greater or equal',
+            'value' => 2
+        ]);
+
+        $pack5Condition1 = factory(\WA\DataStore\Condition\Condition::class)->create([
+            'packageId' => $package5->id,
+            'name' => 'Name1',
+            'condition' => 'less or equal',
+            'value' => 2
+        ]);
+
+        $pack6Condition1 = factory(\WA\DataStore\Condition\Condition::class)->create([
+            'packageId' => $package6->id,
+            'name' => 'Name1',
+            'condition' => 'not equal',
+            'value' => 2
+        ]);
+
+        $res = $this->json('GET', '/users/packages/' . $user1->id)
+            ->seeJsonEquals([
+                'data' => [
+                    [
+                        'id' => 3,
+                        'type' => 'packages',
+                        'attributes' => [
+                            'name' => 'Package3',
+                            'companyId' => '1'
+                        ]
+                    ],
+                    [
+                        'id' => 5,
+                        'type' => 'packages',
+                        'attributes' => [
+                            'name' => 'Package5',
+                            'companyId' => '1'
+                        ]
+                    ],
+                    [
+                        'id' => 6,
+                        'type' => 'packages',
+                        'attributes' => [
+                            'name' => 'Package6',
+                            'companyId' => '1'
+                        ]
+                    ],
+                    [
+                        'id' => 7,
+                        'type' => 'packages',
+                        'attributes' => [
+                            'name' => 'Package7',
+                            'companyId' => '1'
+                        ]
+                    ]
+                ]
+            ]);
+
+        $res = $this->json('GET', '/users/packages/' . $user2->id)
+            ->seeJsonEquals([
+                'data' => [
+                    [
+                        'id' => 1,
+                        'type' => 'packages',
+                        'attributes' => [
+                            'name' => 'Package1',
+                            'companyId' => '1'
+                        ]
+                    ],
+                    [
+                        'id' => 4,
+                        'type' => 'packages',
+                        'attributes' => [
+                            'name' => 'Package4',
+                            'companyId' => '1'
+                        ]
+                    ],
+                    [
+                        'id' => 5,
+                        'type' => 'packages',
+                        'attributes' => [
+                            'name' => 'Package5',
+                            'companyId' => '1'
+                        ]
+                    ],
+                    [
+                        'id' => 7,
+                        'type' => 'packages',
+                        'attributes' => [
+                            'name' => 'Package7',
+                            'companyId' => '1'
+                        ]
+                    ]
+                ]
+            ]);
+
+        $res = $this->json('GET', '/users/packages/' . $user3->id)
+            ->seeJsonEquals([
+                'data' => [
+                    [
+                        'id' => 2,
+                        'type' => 'packages',
+                        'attributes' => [
+                            'name' => 'Package2',
+                            'companyId' => '1'
+                        ]
+                    ],
+                    [
+                        'id' => 4,
+                        'type' => 'packages',
+                        'attributes' => [
+                            'name' => 'Package4',
+                            'companyId' => '1'
+                        ]
+                    ],
+                    [
+                        'id' => 6,
+                        'type' => 'packages',
+                        'attributes' => [
+                            'name' => 'Package6',
+                            'companyId' => '1'
+                        ]
+                    ],
+                    [
+                        'id' => 7,
+                        'type' => 'packages',
+                        'attributes' => [
+                            'name' => 'Package7',
+                            'companyId' => '1'
+                        ]
+                    ]
+                ]
+            ]);
+    }
+
+    public function testUserPackagesSupervisor()
+    {
+        // COMPANY
+        $company = factory(\WA\DataStore\Company\Company::class)->create();
+
+        $user1 = factory(\WA\DataStore\User\User::class)->create(['companyId' => $company->id, 'isSupervisor' => 0]);
+
+        $user2 = factory(\WA\DataStore\User\User::class)->create(['companyId' => $company->id, 'isSupervisor' => 1]);
+
+        // PACKAGES
+        $package1 = factory(\WA\DataStore\Package\Package::class)->create([
+            'companyId' => $company->id,
+            'name' => 'Package1'
+        ]);
+        $package2 = factory(\WA\DataStore\Package\Package::class)->create([
+            'companyId' => $company->id,
+            'name' => 'Package2'
+        ]);
+        $package3 = factory(\WA\DataStore\Package\Package::class)->create([
+            'companyId' => $company->id,
+            'name' => 'Package3'
+        ]);
+
+        $package4 = factory(\WA\DataStore\Package\Package::class)->create([
+            'companyId' => $company->id,
+            'name' => 'Package4'
+        ]);
+        $package5 = factory(\WA\DataStore\Package\Package::class)->create([
+            'companyId' => $company->id,
+            'name' => 'Package5'
+        ]);
+
+        // CONDITIONS
+        $pack1Condition1 = factory(\WA\DataStore\Condition\Condition::class)->create([
+            'packageId' => $package1->id,
+            'name' => 'Supervisor?',
+            'condition' => 'equal',
+            'value' => 'Yes'
+        ]); // OK!
+
+        $pack2Condition1 = factory(\WA\DataStore\Condition\Condition::class)->create([
+            'packageId' => $package2->id,
+            'name' => 'Supervisor?',
+            'condition' => 'not equal',
+            'value' => 'Yes'
+        ]); // OK!
+
+        $pack3Condition1 = factory(\WA\DataStore\Condition\Condition::class)->create([
+            'packageId' => $package3->id,
+            'name' => 'Supervisor?',
+            'condition' => 'equal',
+            'value' => 'No'
+        ]); // OK!
+
+        $pack4Condition1 = factory(\WA\DataStore\Condition\Condition::class)->create([
+            'packageId' => $package4->id,
+            'name' => 'Supervisor?',
+            'condition' => 'not equal',
+            'value' => 'No'
+        ]); // NO!
+
+        $res = $this->json('GET', '/users/packages/' . $user1->id)
+            ->seeJsonEquals([
+                'data' => [
+                    [
+                        'id' => 2,
+                        'type' => 'packages',
+                        'attributes' => [
+                            'name' => 'Package2',
+                            'companyId' => '1'
+                        ]
+                    ],
+                    [
+                        'id' => 3,
+                        'type' => 'packages',
+                        'attributes' => [
+                            'name' => 'Package3',
+                            'companyId' => '1'
+                        ]
+                    ],
+                    [
+                        'id' => 5,
+                        'type' => 'packages',
+                        'attributes' => [
+                            'name' => 'Package5',
+                            'companyId' => '1'
+                        ]
+                    ]
+                ]
+            ]);
+
+        $res = $this->json('GET', '/users/packages/' . $user2->id)
+            ->seeJsonEquals([
+                'data' => [
+                    [
+                        'id' => 1,
+                        'type' => 'packages',
+                        'attributes' => [
+                            'name' => 'Package1',
+                            'companyId' => '1'
+                        ]
+                    ],
+                    [
+                        'id' => 4,
+                        'type' => 'packages',
+                        'attributes' => [
+                            'name' => 'Package4',
+                            'companyId' => '1'
+                        ]
+                    ],
+                    [
+                        'id' => 5,
+                        'type' => 'packages',
+                        'attributes' => [
+                            'name' => 'Package5',
+                            'companyId' => '1'
+                        ]
+                    ]
+                ]
+            ]);
+    }
+
+    public function testUserPackagesAddress()
+    {
+        // COMPANY
+        $company = factory(\WA\DataStore\Company\Company::class)->create();
+
+        $user1 = factory(\WA\DataStore\User\User::class)->create(['companyId' => $company->id]);
+        $user2 = factory(\WA\DataStore\User\User::class)->create(['companyId' => $company->id]);
+        $user3 = factory(\WA\DataStore\User\User::class)->create(['companyId' => $company->id]);
+        $user4 = factory(\WA\DataStore\User\User::class)->create(['companyId' => $company->id]);
+
+        $address1 = factory(\WA\DataStore\Address\Address::class)->create([
+            'country' => 'Catalonia',
+            'state' => 'Barcelona',
+            'city' => 'Barcelona',
+        ]);
+
+        $address2 = factory(\WA\DataStore\Address\Address::class)->create([
+            'country' => 'Catalonia',
+            'state' => 'Barcelona',
+            'city' => 'Rubi',
+        ]);
+
+        $address3 = factory(\WA\DataStore\Address\Address::class)->create([
+            'country' => 'Catalonia',
+            'state' => 'Tarragona',
+            'city' => 'Reus',
+        ]);
+
+        $address4 = factory(\WA\DataStore\Address\Address::class)->create([
+            'country' => 'EEUU',
+            'state' => 'Massachusetts',
+            'city' => 'Boston',
+        ]);
+
+        $user1Address1 = factory(\WA\DataStore\User\UserAddress::class)->create([
+            'userId' => $user1->id,
+            'addressId' => $address1->id,
+        ]);
+
+        $user1Address2 = factory(\WA\DataStore\User\UserAddress::class)->create([
+            'userId' => $user1->id,
+            'addressId' => $address2->id,
+        ]);
+
+        $user2Address2 = factory(\WA\DataStore\User\UserAddress::class)->create([
+            'userId' => $user2->id,
+            'addressId' => $address2->id,
+        ]);
+
+        $user2Address3 = factory(\WA\DataStore\User\UserAddress::class)->create([
+            'userId' => $user2->id,
+            'addressId' => $address3->id,
+        ]);
+
+        $user3Address3 = factory(\WA\DataStore\User\UserAddress::class)->create([
+            'userId' => $user3->id,
+            'addressId' => $address3->id,
+        ]);
+
+        $user3Address4 = factory(\WA\DataStore\User\UserAddress::class)->create([
+            'userId' => $user3->id,
+            'addressId' => $address4->id,
+        ]);
+
+        $user4Address4 = factory(\WA\DataStore\User\UserAddress::class)->create([
+            'userId' => $user4->id,
+            'addressId' => $address4->id,
+        ]);
+
+        $user4Address1 = factory(\WA\DataStore\User\UserAddress::class)->create([
+            'userId' => $user4->id,
+            'addressId' => $address1->id,
+        ]);
+
+        // PACKAGES
+        $package1 = factory(\WA\DataStore\Package\Package::class)->create([
+            'companyId' => $company->id,
+            'name' => 'Package1'
+        ]);
+        $package2 = factory(\WA\DataStore\Package\Package::class)->create([
+            'companyId' => $company->id,
+            'name' => 'Package2'
+        ]);
+        $package3 = factory(\WA\DataStore\Package\Package::class)->create([
+            'companyId' => $company->id,
+            'name' => 'Package3'
+        ]);
+        $package4 = factory(\WA\DataStore\Package\Package::class)->create([
+            'companyId' => $company->id,
+            'name' => 'Package4'
+        ]);
+        $package5 = factory(\WA\DataStore\Package\Package::class)->create([
+            'companyId' => $company->id,
+            'name' => 'Package5'
+        ]);
+        $package6 = factory(\WA\DataStore\Package\Package::class)->create([
+            'companyId' => $company->id,
+            'name' => 'Package6'
+        ]);
+        $package7 = factory(\WA\DataStore\Package\Package::class)->create([
+            'companyId' => $company->id,
+            'name' => 'Package7'
+        ]);
+        $package8 = factory(\WA\DataStore\Package\Package::class)->create([
+            'companyId' => $company->id,
+            'name' => 'Package8'
+        ]);
+        $package9 = factory(\WA\DataStore\Package\Package::class)->create([
+            'companyId' => $company->id,
+            'name' => 'Package9'
+        ]);
+
+        $package10 = factory(\WA\DataStore\Package\Package::class)->create([
+            'companyId' => $company->id,
+            'name' => 'Package10'
+        ]);
+        $package11 = factory(\WA\DataStore\Package\Package::class)->create([
+            'companyId' => $company->id,
+            'name' => 'Package11'
+        ]);
+        $package12 = factory(\WA\DataStore\Package\Package::class)->create([
+            'companyId' => $company->id,
+            'name' => 'Package12'
+        ]);
+
+        // CONDITIONS
+        $pack1Condition1 = factory(\WA\DataStore\Condition\Condition::class)->create([
+            'packageId' => $package1->id,
+            'name' => 'Country',
+            'condition' => 'equal',
+            'value' => 'Catalonia'
+        ]);
+
+        $pack1Condition2 = factory(\WA\DataStore\Condition\Condition::class)->create([
+            'packageId' => $package1->id,
+            'name' => 'State',
+            'condition' => 'equal',
+            'value' => 'Barcelona'
+        ]);
+
+        $pack1Condition3 = factory(\WA\DataStore\Condition\Condition::class)->create([
+            'packageId' => $package1->id,
+            'name' => 'City',
+            'condition' => 'equal',
+            'value' => 'Barcelona'
+        ]);
+
+        $pack2Condition1 = factory(\WA\DataStore\Condition\Condition::class)->create([
+            'packageId' => $package2->id,
+            'name' => 'Country',
+            'condition' => 'contains',
+            'value' => 'Cat'
+        ]);
+
+        $pack2Condition2 = factory(\WA\DataStore\Condition\Condition::class)->create([
+            'packageId' => $package2->id,
+            'name' => 'State',
+            'condition' => 'contains',
+            'value' => 'ona'
+        ]);
+
+        $pack2Condition3 = factory(\WA\DataStore\Condition\Condition::class)->create([
+            'packageId' => $package2->id,
+            'name' => 'City',
+            'condition' => 'contains',
+            'value' => 'e'
+        ]);
+
+        $pack3Condition1 = factory(\WA\DataStore\Condition\Condition::class)->create([
+            'packageId' => $package3->id,
+            'name' => 'Country',
+            'condition' => 'not equal',
+            'value' => 'Catalonia'
+        ]);
+
+        $pack3Condition2 = factory(\WA\DataStore\Condition\Condition::class)->create([
+            'packageId' => $package3->id,
+            'name' => 'State',
+            'condition' => 'not equal',
+            'value' => 'Barcelona'
+        ]);
+
+        $pack3Condition3 = factory(\WA\DataStore\Condition\Condition::class)->create([
+            'packageId' => $package3->id,
+            'name' => 'City',
+            'condition' => 'not equal',
+            'value' => 'Barcelona'
+        ]);
+
+        $pack4Condition1 = factory(\WA\DataStore\Condition\Condition::class)->create([
+            'packageId' => $package4->id,
+            'name' => 'Country',
+            'condition' => 'equal',
+            'value' => 'Catalonia'
+        ]);
+
+        $pack5Condition1 = factory(\WA\DataStore\Condition\Condition::class)->create([
+            'packageId' => $package5->id,
+            'name' => 'Country',
+            'condition' => 'contains',
+            'value' => 'alon'
+        ]);
+
+        $pack6Condition1 = factory(\WA\DataStore\Condition\Condition::class)->create([
+            'packageId' => $package6->id,
+            'name' => 'Country',
+            'condition' => 'not equal',
+            'value' => 'Catalonia'
+        ]);
+
+        $pack7Condition1 = factory(\WA\DataStore\Condition\Condition::class)->create([
+            'packageId' => $package7->id,
+            'name' => 'State',
+            'condition' => 'equal',
+            'value' => 'Barcelona'
+        ]);
+
+        $pack8Condition1 = factory(\WA\DataStore\Condition\Condition::class)->create([
+            'packageId' => $package8->id,
+            'name' => 'State',
+            'condition' => 'contains',
+            'value' => 'ona'
+        ]);
+
+        $pack9Condition1 = factory(\WA\DataStore\Condition\Condition::class)->create([
+            'packageId' => $package9->id,
+            'name' => 'State',
+            'condition' => 'not equal',
+            'value' => 'Barcelona'
+        ]);
+
+        $pack10Condition1 = factory(\WA\DataStore\Condition\Condition::class)->create([
+            'packageId' => $package10->id,
+            'name' => 'City',
+            'condition' => 'equal',
+            'value' => 'Barcelona'
+        ]);
+
+        $pack11Condition1 = factory(\WA\DataStore\Condition\Condition::class)->create([
+            'packageId' => $package11->id,
+            'name' => 'City',
+            'condition' => 'contains',
+            'value' => 'on'
+        ]);
+
+        $pack12Condition1 = factory(\WA\DataStore\Condition\Condition::class)->create([
+            'packageId' => $package12->id,
+            'name' => 'City',
+            'condition' => 'not equal',
+            'value' => 'Barcelona'
+        ]);
+
+        $res = $this->json('GET', '/users/packages/' . $user1->id)
+            ->seeJsonEquals([
+                'data' => [
+                    [
+                        'id' => 1,
+                        'type' => 'packages',
+                        'attributes' => [
+                            'name' => 'Package1',
+                            'companyId' => '1'
+                        ]
+                    ],
+                    [
+                        'id' => 2,
+                        'type' => 'packages',
+                        'attributes' => [
+                            'name' => 'Package2',
+                            'companyId' => '1'
+                        ]
+                    ],
+                    [
+                        'id' => 4,
+                        'type' => 'packages',
+                        'attributes' => [
+                            'name' => 'Package4',
+                            'companyId' => '1'
+                        ]
+                    ],
+                    [
+                        'id' => 5,
+                        'type' => 'packages',
+                        'attributes' => [
+                            'name' => 'Package5',
+                            'companyId' => '1'
+                        ]
+                    ],
+                    [
+                        'id' => 7,
+                        'type' => 'packages',
+                        'attributes' => [
+                            'name' => 'Package7',
+                            'companyId' => '1'
+                        ]
+                    ],
+                    [
+                        'id' => 8,
+                        'type' => 'packages',
+                        'attributes' => [
+                            'name' => 'Package8',
+                            'companyId' => '1'
+                        ]
+                    ],
+                    [
+                        'id' => 10,
+                        'type' => 'packages',
+                        'attributes' => [
+                            'name' => 'Package10',
+                            'companyId' => '1'
+                        ]
+                    ],
+                    [
+                        'id' => 11,
+                        'type' => 'packages',
+                        'attributes' => [
+                            'name' => 'Package11',
+                            'companyId' => '1'
+                        ]
+                    ],
+                    [
+                        'id' => 12,
+                        'type' => 'packages',
+                        'attributes' => [
+                            'name' => 'Package12',
+                            'companyId' => '1'
+                        ]
+                    ]
+                ]
+            ]);
+
+        $res = $this->json('GET', '/users/packages/' . $user2->id)
+            ->seeJsonEquals([
+                'data' => [
+                    [
+                        'id' => 2,
+                        'type' => 'packages',
+                        'attributes' => [
+                            'name' => 'Package2',
+                            'companyId' => '1'
+                        ]
+                    ],
+                    [
+                        'id' => 4,
+                        'type' => 'packages',
+                        'attributes' => [
+                            'name' => 'Package4',
+                            'companyId' => '1'
+                        ]
+                    ],
+                    [
+                        'id' => 5,
+                        'type' => 'packages',
+                        'attributes' => [
+                            'name' => 'Package5',
+                            'companyId' => '1'
+                        ]
+                    ],
+                    [
+                        'id' => 7,
+                        'type' => 'packages',
+                        'attributes' => [
+                            'name' => 'Package7',
+                            'companyId' => '1'
+                        ]
+                    ],
+                    [
+                        'id' => 8,
+                        'type' => 'packages',
+                        'attributes' => [
+                            'name' => 'Package8',
+                            'companyId' => '1'
+                        ]
+                    ],
+                    [
+                        'id' => 9,
+                        'type' => 'packages',
+                        'attributes' => [
+                            'name' => 'Package9',
+                            'companyId' => '1'
+                        ]
+                    ],
+                    [
+                        'id' => 12,
+                        'type' => 'packages',
+                        'attributes' => [
+                            'name' => 'Package12',
+                            'companyId' => '1'
+                        ]
+                    ]
+                ]
+            ]);
+
+        $res = $this->json('GET', '/users/packages/' . $user3->id)
+            ->seeJsonEquals([
+                'data' => [
+                    [
+                        'id' => 2,
+                        'type' => 'packages',
+                        'attributes' => [
+                            'name' => 'Package2',
+                            'companyId' => '1'
+                        ]
+                    ],
+                    [
+                        'id' => 3,
+                        'type' => 'packages',
+                        'attributes' => [
+                            'name' => 'Package3',
+                            'companyId' => '1'
+                        ]
+                    ],
+                    [
+                        'id' => 4,
+                        'type' => 'packages',
+                        'attributes' => [
+                            'name' => 'Package4',
+                            'companyId' => '1'
+                        ]
+                    ],
+                    [
+                        'id' => 5,
+                        'type' => 'packages',
+                        'attributes' => [
+                            'name' => 'Package5',
+                            'companyId' => '1'
+                        ]
+                    ],
+                    [
+                        'id' => 6,
+                        'type' => 'packages',
+                        'attributes' => [
+                            'name' => 'Package6',
+                            'companyId' => '1'
+                        ]
+                    ],
+                    [
+                        'id' => 8,
+                        'type' => 'packages',
+                        'attributes' => [
+                            'name' => 'Package8',
+                            'companyId' => '1'
+                        ]
+                    ],
+                    [
+                        'id' => 9,
+                        'type' => 'packages',
+                        'attributes' => [
+                            'name' => 'Package9',
+                            'companyId' => '1'
+                        ]
+                    ],
+                    [
+                        'id' => 11,
+                        'type' => 'packages',
+                        'attributes' => [
+                            'name' => 'Package11',
+                            'companyId' => '1'
+                        ]
+                    ],
+                    [
+                        'id' => 12,
+                        'type' => 'packages',
+                        'attributes' => [
+                            'name' => 'Package12',
+                            'companyId' => '1'
+                        ]
+                    ]
+                ]
+            ]);
+
+        $res = $this->json('GET', '/users/packages/' . $user4->id)
+            ->seeJsonEquals([
+                'data' => [
+                    [
+                        'id' => 1,
+                        'type' => 'packages',
+                        'attributes' => [
+                            'name' => 'Package1',
+                            'companyId' => '1'
+                        ]
+                    ],
+                    [
+                        'id' => 2,
+                        'type' => 'packages',
+                        'attributes' => [
+                            'name' => 'Package2',
+                            'companyId' => '1'
+                        ]
+                    ],
+                    [
+                        'id' => 3,
+                        'type' => 'packages',
+                        'attributes' => [
+                            'name' => 'Package3',
+                            'companyId' => '1'
+                        ]
+                    ],
+                    [
+                        'id' => 4,
+                        'type' => 'packages',
+                        'attributes' => [
+                            'name' => 'Package4',
+                            'companyId' => '1'
+                        ]
+                    ],
+                    [
+                        'id' => 5,
+                        'type' => 'packages',
+                        'attributes' => [
+                            'name' => 'Package5',
+                            'companyId' => '1'
+                        ]
+                    ],
+                    [
+                        'id' => 6,
+                        'type' => 'packages',
+                        'attributes' => [
+                            'name' => 'Package6',
+                            'companyId' => '1'
+                        ]
+                    ],
+                    [
+                        'id' => 7,
+                        'type' => 'packages',
+                        'attributes' => [
+                            'name' => 'Package7',
+                            'companyId' => '1'
+                        ]
+                    ],
+                    [
+                        'id' => 8,
+                        'type' => 'packages',
+                        'attributes' => [
+                            'name' => 'Package8',
+                            'companyId' => '1'
+                        ]
+                    ],
+                    [
+                        'id' => 9,
+                        'type' => 'packages',
+                        'attributes' => [
+                            'name' => 'Package9',
+                            'companyId' => '1'
+                        ]
+                    ],
+                    [
+                        'id' => 10,
+                        'type' => 'packages',
+                        'attributes' => [
+                            'name' => 'Package10',
+                            'companyId' => '1'
+                        ]
+                    ],
+                    [
+                        'id' => 11,
+                        'type' => 'packages',
+                        'attributes' => [
+                            'name' => 'Package11',
+                            'companyId' => '1'
+                        ]
+                    ],
+                    [
+                        'id' => 12,
+                        'type' => 'packages',
+                        'attributes' => [
+                            'name' => 'Package12',
+                            'companyId' => '1'
+                        ]
+                    ]
+                ]
+            ]);
     }
 }
