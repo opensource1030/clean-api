@@ -25,6 +25,7 @@ use WA\DataStore\Asset\Asset;
 
 use DB;
 use Cache;
+use Log;
 
 /**
  * Users resource.
@@ -70,7 +71,6 @@ class UsersController extends FilteredApiController
         $udlValues = $this->getUdlValuesFromUser($user); // Array
 
         $packages = $this->packageInterface->getAllPackageByCompanyId($user->companyId);
-
         $packagesOk = [];
 
         foreach ($packages as $pack) {
@@ -86,13 +86,18 @@ class UsersController extends FilteredApiController
             }
         }
 
-        return $this->transformToJson($packagesOk);
+        if(count($packagesOk) > 0) {
+            return $this->transformToJson($packagesOk);    
+        }
+
+        $error['message'] = 'The user doesn\'t fulfill any packages conditions';
+        return response()->json($error)->setStatusCode($this->status_codes['ok']);        
     }
 
     public function getLoggedInUser(Request $request)
     {
         $criteria = $this->getRequestCriteria();
-        $this->user->setCriteria($criteria);
+        $this->userInterface->setCriteria($criteria);
         $user = Auth::user();
 
         if ($user === null) {
@@ -132,7 +137,7 @@ class UsersController extends FilteredApiController
         try {
             $data = $request->all()['data'];
             $data['attributes']['id'] = $id;
-            $user = $this->user->update($data['attributes']);
+            $user = $this->userInterface->update($data['attributes']);
 
             if ($user == 'notExist') {
                 $success = false;
@@ -400,12 +405,12 @@ class UsersController extends FilteredApiController
         try {
             $data = $request->all()['data'];
 
-            if($this->user->byEmail($data['attributes']['email'])['id'] > 0) {
+            if($this->userInterface->byEmail($data['attributes']['email'])['id'] > 0) {
                 $error['errors']['User'] = 'The User can not be created, there are other user with the same email.';
                 return response()->json($error)->setStatusCode(409);
             }
 
-            $user = $this->user->create($data['attributes']);
+            $user = $this->userInterface->create($data['attributes']);
             if(!$user){
                 $error['errors']['users'] = 'The User has not been created, some data information is wrong, may be the Email.';
                 return response()->json($error)->setStatusCode(409);
@@ -591,7 +596,7 @@ class UsersController extends FilteredApiController
     public function delete($id) {
         $user = User::find($id);
         if ($user <> null) {
-            $this->user->deleteById($id);
+            $this->userInterface->deleteById($id);
         } else {
             $error['errors']['delete'] = Lang::get('messages.NotExistClass', ['class' => 'User']);
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
@@ -637,7 +642,8 @@ class UsersController extends FilteredApiController
             array_push($list, $aux);
         }
 
-        return response()->json($list)->setStatusCode($this->status_codes['ok']);
+        $final['data'] = $list;
+        return response()->json($final)->setStatusCode($this->status_codes['ok']);
     }
 
     private function getUdlValuesFromUser($user) {
@@ -699,24 +705,21 @@ class UsersController extends FilteredApiController
     }
 
     private function checkIfHasAnyAddress($address, $conditions) {
-        if(count($address)) {
-            if (count($conditions) > 0) {
-                foreach ($address as $add) {
-                    $ok = true;
-                    $ok = $ok && $this->checkIfHasAnyInfo($add->city, $conditions, 'City');
-                    $ok = $ok && $this->checkIfHasAnyInfo($add->state, $conditions, 'State');
-                    $ok = $ok && $this->checkIfHasAnyInfo($add->country, $conditions, 'Country');
-                    if ($ok) {
-                        return true;
-                    }
-                }
-                if(count($address) > 0) {
-                    return false;
+        if (count($conditions) > 0) {
+            foreach ($address as $add) {
+                $ok = true;
+                $ok = $ok && $this->checkIfHasAnyInfo($add->city, $conditions, 'City');
+                $ok = $ok && $this->checkIfHasAnyInfo($add->state, $conditions, 'State');
+                $ok = $ok && $this->checkIfHasAnyInfo($add->country, $conditions, 'Country');
+                if ($ok) {
+                    return true;
                 }
             }
-            return true;
+            if(count($address) > 0) {
+                return false;
+            }
         }
-        return false;
+        return true;
     }
 
     private function checkIfHasAnyInfo($val, $conditions, $type){
@@ -754,6 +757,7 @@ class UsersController extends FilteredApiController
 
     private function checkIfHasAnyUdl($udl, $conditions) {
         $conditionsOK = true;
+
         foreach ($conditions as $cond) {
             if ($cond['name'] == $udl['udlName']) {
                 if ($cond['condition'] == 'contains') {
