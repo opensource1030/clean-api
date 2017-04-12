@@ -735,6 +735,144 @@ class CompaniesTest extends TestCase
             ]);
     }
 
+    public function testCreateCompanyIncludeAddress()
+    {
+        $company = factory(\WA\DataStore\Company\Company::class)->create();
+        $address1 = factory(\WA\DataStore\Address\Address::class)->create();
+
+        $this->json('POST', 'companies?include=address',
+            [
+                'data' => [
+                    'type'=> 'companies',
+                    'attributes' => [
+                        'name'             => 'SirionDev',
+                        'label'            => 'Sirion',
+                        'active'           => 1,
+                        'udlpath'          => null,
+                        'isCensus'         => 0,
+                        'udlPathRule'      => null,
+                        'assetPath'        => '/var/www/clean/storage/clients/clients/acme',
+                        'shortName'        => 'ShortName',
+                        'currentBillMonth' => $company->currentBillMonth,
+                        'defaultLocation'  => $company->defaultLocation
+                    ],
+                    'relationships' => [
+                        'address' => [
+                            'data' => [
+                                [
+                                    'type' => 'address',
+                                    'id'  => $address1->id
+                                ],
+                                [
+                                    'type' => 'address',
+                                    'id'  => 0,
+                                    'attributes' => [
+                                        'name' => 'Drug Store 01',
+                                        'attn' => '',
+                                        'phone' => '',
+                                        'address' => 'C/huesca 01',
+                                        'city' => 'El Grado',
+                                        'state' => 'Huesca',
+                                        'country' => 'Spain',
+                                        'postalCode' => '22390'
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+            //Log::debug("testCreateCompanyIncludeAddress: ".print_r($res->response->getContent(), true));
+            )->seeJson(
+            [
+                'type'              => 'companies',
+                'name'              => 'SirionDev',
+                'label'             => 'Sirion',
+                'active'            => 1,
+                'udlpath'           => null,
+                'isCensus'          => 0,
+                'udlPathRule'       => null,
+                'assetPath'         => '/var/www/clean/storage/clients/clients/acme',
+                'shortName'         => 'ShortName',
+                'currentBillMonth'  => $company->currentBillMonth,
+                'defaultLocation'   => $company->defaultLocation
+            ]
+            )->seeJsonStructure(
+            [
+                'data' => [
+                    'type',
+                    'id',
+                    'attributes' => [
+                        'name',
+                        'label',
+                        'active',
+                        'udlpath',
+                        'isCensus',
+                        'udlPathRule',
+                        'assetPath',
+                        'currentBillMonth',
+                    ],
+                    'links' => [
+                        'self',
+                    ],
+                    'relationships' => [
+                        'address' => [
+                            'links' => [
+                                'self',
+                                'related',
+                            ],
+                            'data' => [
+                                0 => [
+                                    'type',
+                                    'id',
+                                ],
+                                1 => [
+                                    'type',
+                                    'id',
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
+                'included' => [
+                    0 => [ // ADDRESS
+                        'type',
+                        'id',
+                        'attributes' => [
+                            'name',
+                            'attn',
+                            'phone',
+                            'address',
+                            'city',
+                            'state',
+                            'country',
+                            'postalCode',
+                        ],
+                        'links' => [
+                            'self',
+                        ],
+                    ],
+                    1 => [ // ADDRESS
+                        'type',
+                        'id',
+                        'attributes' => [
+                            'name',
+                            'attn',
+                            'phone',
+                            'address',
+                            'city',
+                            'state',
+                            'country',
+                            'postalCode',
+                        ],
+                        'links' => [
+                            'self',
+                        ],
+                    ], 
+                ]
+            ]);
+    }
+
     public function testCreateCompanyReturnNoValidData()
     {
         // 'data' no valid.
@@ -1426,6 +1564,146 @@ class CompaniesTest extends TestCase
                     ]
                 ]
             ]);
+    }
+
+    public function testUpdateCompanyIncludeAddress()
+    {
+        $company = factory(\WA\DataStore\Company\Company::class)->create();
+
+        $address1 = factory(\WA\DataStore\Address\Address::class)->create();
+        Log::debug("address1: ". print_r($address1, true));
+        $company->address()->sync([$address1->id]);
+
+        $address1DB = DB::table('company_address')->where('companyId', $company->id)->get();
+        $this->assertCount(1, $address1DB);
+        $this->assertEquals($address1->id , $address1DB[0]->id);
+
+        $address2 = factory(\WA\DataStore\Address\Address::class)->create();
+        $address3 = factory(\WA\DataStore\Address\Address::class)->create();
+
+        $this->json('PATCH', 'companies/'.$company->id.'?include=address',
+            [
+                'data' => [
+                    'type'=> 'companies',
+                    'attributes' => [
+                        'name'             => 'SirionDev',
+                        'label'            => 'Sirion',
+                        'active'           => 1,
+                        'udlpath'          => null,
+                        'isCensus'         => 0,
+                        'udlPathRule'      => null,
+                        'assetPath'        => '/var/www/clean/storage/clients/clients/acme',
+                        'shortName'        => 'ShortName',
+                        'currentBillMonth' => $company->currentBillMonth,
+                        'defaultLocation'  => $company->defaultLocation
+                    ],
+                    'relationships' => [
+                        'address' => [
+                            'data' => [
+                                [
+                                    'type' => 'address',
+                                    'id'  => 0,
+                                    'attributes' => [
+                                        'name' => $address2->name,
+                                        'attn' => $address2->attn,
+                                        'phone' => $address2->phone,
+                                        'address' => $address2->address,
+                                        'city' => $address2->city,
+                                        'state' => $address2->state,
+                                        'country' => $address2->country,
+                                        'postalCode' => $address2->postalCode
+                                    ]
+                                ],
+                                [
+                                    'type' => 'address',
+                                    'id'  => $address3->id
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ])
+            //Log::debug("testCreateCompanyIncludeAddress: ".print_r($res->response->getContent(), true));        
+            ->seeJsonStructure([
+                'data' => [
+                    'type',
+                    'id',
+                    'attributes' => [
+                        'name',
+                        'label',
+                        'active',
+                        'udlpath',
+                        'isCensus',
+                        'udlPathRule',
+                        'assetPath',
+                        'currentBillMonth',
+                        'shortName',
+                        'defaultLocation'
+                    ],
+                    'links' => [
+                        'self'
+                    ],
+                    'relationships' => [
+                        'address' => [
+                            'links' => [
+                                'self',
+                                'related',
+                            ],
+                            'data' => [
+                                0 => [
+                                    'type',
+                                    'id'
+                                ],
+                                1 => [
+                                    'type',
+                                    'id'
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
+                'included' => [
+                    0 => [
+                        'type',
+                        'id',
+                        'attributes' => [
+                            'name',
+                            'attn',
+                            'phone',
+                            'address',
+                            'city',
+                            'state',
+                            'country',
+                            'postalCode'
+                        ],
+                        'links' => [
+                            'self'
+                        ],
+                    ],
+                    1 => [
+                        'type',
+                        'id',
+                        'attributes' => [
+                            'name',
+                            'attn',
+                            'phone',
+                            'address',
+                            'city',
+                            'state',
+                            'country',
+                            'postalCode'
+                        ],
+                        'links' => [
+                            'self'
+                        ],
+                    ]
+                ]
+            ]);
+
+        $address2DB = DB::table('company_address')->where('companyId', $company->id)->get();
+        $this->assertCount(2, $address2DB);
+        $this->assertEquals($address2->id , $address2DB[0]->id);
+        $this->assertEquals($address3->id , $address2DB[1]->id);
     }
 
     public function testUpdateCompanyIncludeUdlsAddOneUdl()
