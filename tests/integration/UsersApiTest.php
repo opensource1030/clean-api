@@ -1,4 +1,5 @@
 <?php
+
 use Laravel\Lumen\Testing\DatabaseMigrations;
 use WA\DataStore\User\User;
 use Laravel\Passport\Bridge\Scope;
@@ -873,8 +874,8 @@ class UsersApiTest extends TestCase
 
         $addressId = factory(\WA\DataStore\Address\Address::class)->create()->id;
 
-        $asset1 = factory(\WA\DataStore\Asset\Asset::class)->create()->id;
-        $asset2 = factory(\WA\DataStore\Asset\Asset::class)->create()->id;
+        //$asset1 = factory(\WA\DataStore\Asset\Asset::class)->create()->id;
+        //$asset2 = factory(\WA\DataStore\Asset\Asset::class)->create()->id;
         
         $devicevariation1 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create()->id;
         $devicevariation2 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create()->id;
@@ -905,7 +906,8 @@ class UsersApiTest extends TestCase
         $service2 = factory(\WA\DataStore\Service\Service::class)->create();
 
 
-        $res = $this->json('POST', '/users?include=assets,devicevariations,roles,udls,allocations,companies,contents,address',
+        // assets include deleted.
+        $res = $this->json('POST', '/users?include=devicevariations,roles,udls,allocations,companies,contents,address',
             [
                 'data' => [
                     'type' => 'users',
@@ -946,12 +948,13 @@ class UsersApiTest extends TestCase
                                 ['type' => 'address', 'id' => $addressId]
                             ],
                         ],
-                        'assets' => [
+/*                        'assets' => [
                             'data' => [
                                 ['type' => 'assets', 'id' => $asset1],
                                 ['type' => 'assets', 'id' => $asset2],
                             ],
                         ],
+*/
                         'devicevariations' => [
                             'data' => [
                                 ['type' => 'devicevariations', 'id' => $devicevariation1],
@@ -1121,9 +1124,9 @@ class UsersApiTest extends TestCase
                     ],
                 ],
             ]
-            )
-            //Log::debug("testCreateUser: ".print_r($res->response->getContent(), true));
-            ->seeJson(
+            );
+            Log::debug("testCreateUser: ".print_r($res->response->getContent(), true));
+            $res->seeJson(
                 [
                     'uuid' => $user->uuid,
                     'alternateEmail' => $user->alternateEmail,
@@ -1205,7 +1208,7 @@ class UsersApiTest extends TestCase
                                     ]
                                 ]
                             ],
-                            'assets' => [
+/*                            'assets' => [
                                 'links' => [
                                     'self',
                                     'related'
@@ -1213,6 +1216,7 @@ class UsersApiTest extends TestCase
                                 'data' => [
                                 ]
                             ],
+*/
                             'devicevariations' => [
                                 'links' => [
                                     'self',
@@ -1308,6 +1312,41 @@ class UsersApiTest extends TestCase
                         ]
                     ],
                     'included' => [
+/*                        0 => [ // ASSETS
+                            "type",
+                            "id",
+                            "attributes" => [
+                                "identification",
+                                "active",
+                                "statusId",
+                                "typeId",
+                                "externalId",
+                                "carrierId",
+                                "syncId",
+                                "userId"
+                            ],
+                            "links" => [
+                                "self"
+                            ]
+                        ],
+                        1 => [ // ASSETS
+                            "type",
+                            "id",
+                            "attributes" => [
+                                "identification",
+                                "active",
+                                "statusId",
+                                "typeId",
+                                "externalId",
+                                "carrierId",
+                                "syncId",
+                                "userId"
+                            ],
+                            "links" => [
+                                "self"
+                            ]
+                        ],
+*/
                         0 => [ // COMPANIES
                             'type',
                             'id',
@@ -1863,8 +1902,8 @@ class UsersApiTest extends TestCase
                     'relationships' => [
                         'assets' => [
                             'NoData' => [
-                                ['type' => 'NoAssets', 'id' => 1],
-                                ['type' => 'NoAssets', 'id' => 2],
+                                ['type' => 'assets', 'id' => 1],
+                                ['type' => 'assets', 'id' => 2],
                             ],
                         ]
                     ],
@@ -2355,6 +2394,7 @@ class UsersApiTest extends TestCase
         $addressId = factory(\WA\DataStore\Address\Address::class)->create()->id;
  
         // ASSETS
+/*
         $asset1 = factory(\WA\DataStore\Asset\Asset::class)->create(['userId' => $user->id]);
         $asset2 = factory(\WA\DataStore\Asset\Asset::class)->create(['userId' => $user->id]);
 
@@ -2382,7 +2422,7 @@ class UsersApiTest extends TestCase
         $this->assertEquals($asset2DB->carrierId, $asset2->carrierId);
         $this->assertEquals($asset2DB->statusId, $asset2->statusId);
         $this->assertEquals($asset2DB->syncId, $asset2->syncId);
-
+*/
         // DEVICE VARIATIONS       
         $devicevariation1 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create();
         $devicevariation2 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create();
@@ -2472,7 +2512,8 @@ class UsersApiTest extends TestCase
         $content1 = factory(\WA\DataStore\Content\Content::class)->create(['owner_id' => $user->id, 'owner_type' => 'users']);
         $content2 = factory(\WA\DataStore\Content\Content::class)->create(['owner_id' => $user->id, 'owner_type' => 'users']);
 
-        $res = $this->json('PATCH', '/users/'.$user->id.'?include=assets,devicevariations,roles,udls,allocations,companies,contents,address',
+        // assets include deleted.
+        $res = $this->json('PATCH', '/users/'.$user->id.'?include=devicevariations,roles,udls,allocations,companies,contents,address',
             [
                 'data' => [
                     'type' => 'users',
@@ -2513,11 +2554,13 @@ class UsersApiTest extends TestCase
                                 ['type' => 'address', 'id' => $addressId]
                             ],
                         ],
+/*                
                         'assets' => [
                             'data' => [
                                 ['type' => 'assets', 'id' => $asset1->id]
                             ],
                         ],
+*/
                         'devicevariations' => [
                             'data' => [
                                 ['type' => 'devicevariations', 'id' => $devicevariation1->id]
@@ -2669,6 +2712,7 @@ class UsersApiTest extends TestCase
                             'self'
                         ],
                         'relationships' => [
+/*    
                             'assets' => [
                                 'links' => [
                                     'self',
@@ -2685,6 +2729,7 @@ class UsersApiTest extends TestCase
                                     ]
                                 ]
                             ],
+*/
                             'devicevariations' => [
                                 'links' => [
                                     'self',
@@ -2772,6 +2817,7 @@ class UsersApiTest extends TestCase
                         ]
                     ],
                     'included' => [
+/*
                         0 => [ // ASSETS
                             'type',
                             'id',
@@ -2788,23 +2834,8 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        1 => [ // ASSETS
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'identification',
-                                'active',
-                                'statusId',
-                                'typeId',
-                                'externalId',
-                                'carrierId',
-                                'syncId'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        2 => [ // COMPANIES
+*/
+                        0 => [ // COMPANIES
                             'type',
                             'id',
                             'attributes' => [
@@ -2821,7 +2852,7 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        3 => [ // DEVICEVARIATIONS
+                        1 => [ // DEVICEVARIATIONS
                             'type',
                             'id',
                             'attributes' => [
@@ -2838,7 +2869,7 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        4 => [ // ROLES
+                        2 => [ // ROLES
                             'type',
                             'id',
                             'attributes' => [
@@ -2848,7 +2879,7 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        5 => [ // ALLOCATIONS
+                        3 => [ // ALLOCATIONS
                             'type',
                             'id',
                             'attributes' => [
@@ -2868,7 +2899,7 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        6 => [ // CONTENTS
+                        4 => [ // CONTENTS
                             'type',
                             'id',
                             'attributes' => [
@@ -2881,7 +2912,7 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        7 => [ // UDLVALUES
+                        5 => [ // UDLVALUES
                             'type',
                             'id',
                             'attributes' => [
@@ -2892,7 +2923,7 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        8 => [ // ADDRESS
+                        6 => [ // ADDRESS
                             'type',
                             'id',
                             'attributes' => [
@@ -2917,6 +2948,7 @@ class UsersApiTest extends TestCase
     {
         $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
         $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId]);
+        $userOther = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId]);
 
         // ADDRESS
         $addressId = factory(\WA\DataStore\Address\Address::class)->create()->id;
@@ -2925,7 +2957,7 @@ class UsersApiTest extends TestCase
         // ASSET
         $asset1 = factory(\WA\DataStore\Asset\Asset::class)->create(['userId' => $user->id])->id;
         $asset2 = factory(\WA\DataStore\Asset\Asset::class)->create(['userId' => $user->id])->id;
-        $asset3 = factory(\WA\DataStore\Asset\Asset::class)->create()->id;
+        $asset3 = factory(\WA\DataStore\Asset\Asset::class)->create(['userId' => $userOther->id])->id;
         
         // DEVICE VARIATIONS
         $deviceVariation1 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create()->id;
@@ -2966,7 +2998,8 @@ class UsersApiTest extends TestCase
         $content1 = factory(\WA\DataStore\Content\Content::class)->create(['owner_id' => $user->id, 'owner_type' => 'users']);
         $content2 = factory(\WA\DataStore\Content\Content::class)->create(['owner_id' => $user->id, 'owner_type' => 'users']);
         
-        $res = $this->json('PATCH', '/users/'.$user->id.'?include=assets,devicevariations,roles,udls,allocations,companies,contents,address',
+        // assets include deleted.
+        $res = $this->json('PATCH', '/users/'.$user->id.'?include=devicevariations,roles,udls,allocations,companies,contents,address',
             [
                 'data' => [
                     'type' => 'users',
@@ -3007,6 +3040,7 @@ class UsersApiTest extends TestCase
                                 ['type' => 'address', 'id' => $addressId]
                             ],
                         ],
+/*                        
                         'assets' => [
                             'data' => [
                                 ['type' => 'assets', 'id' => $asset1],
@@ -3014,6 +3048,7 @@ class UsersApiTest extends TestCase
                                 ['type' => 'assets', 'id' => $asset3]
                             ],
                         ],
+*/
                         'devicevariations' => [
                             'data' => [
                                 ['type' => 'devicevariations', 'id' => $deviceVariation1],
@@ -3324,6 +3359,7 @@ class UsersApiTest extends TestCase
                             'self'
                         ],
                         'relationships' => [
+/*    
                             'assets' => [
                                 'links' => [
                                     'self',
@@ -3337,9 +3373,14 @@ class UsersApiTest extends TestCase
                                     1 => [
                                         'type',
                                         'id'
+                                    ],
+                                    2 => [
+                                        'type',
+                                        'id'
                                     ]
                                 ]
                             ],
+*/
                             'devicevariations' => [
                                 'links' => [
                                     'self',
@@ -3467,6 +3508,7 @@ class UsersApiTest extends TestCase
                         ]
                     ],
                     'included' => [
+/*                    
                         0 => [ // ASSETS
                             'type',
                             'id',
@@ -3499,7 +3541,24 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        2 => [ // COMPANIES
+                        2 => [ // ASSETS
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'identification',
+                                'active',
+                                'statusId',
+                                'typeId',
+                                'externalId',
+                                'carrierId',
+                                'syncId'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+*/                        
+                        0 => [ // COMPANIES
                             'type',
                             'id',
                             'attributes' => [
@@ -3513,6 +3572,38 @@ class UsersApiTest extends TestCase
                                 'shortName',
                                 'currentBillMonth',
                                 'defaultLocation'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        1 => [ // DEVICEVARIATIONS
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'priceRetail',
+                                'price1',
+                                'price2',
+                                'priceOwn',
+                                'deviceId',
+                                'carrierId',
+                                'companyId'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        2 => [ // DEVICEVARIATIONS
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'priceRetail',
+                                'price1',
+                                'price2',
+                                'priceOwn',
+                                'deviceId',
+                                'carrierId',
+                                'companyId'
                             ],
                             'links' => [
                                 'self'
@@ -3534,33 +3625,21 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        4 => [ // DEVICEVARIATIONS
+                        4 => [ // ROLES
                             'type',
                             'id',
                             'attributes' => [
-                                'priceRetail',
-                                'price1',
-                                'price2',
-                                'priceOwn',
-                                'deviceId',
-                                'carrierId',
-                                'companyId'
+                                'name'
                             ],
                             'links' => [
                                 'self'
                             ]
                         ],
-                        5 => [ // DEVICEVARIATIONS
+                        5 => [ // ROLES
                             'type',
                             'id',
                             'attributes' => [
-                                'priceRetail',
-                                'price1',
-                                'price2',
-                                'priceOwn',
-                                'deviceId',
-                                'carrierId',
-                                'companyId'
+                                'name'
                             ],
                             'links' => [
                                 'self'
@@ -3576,21 +3655,41 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        7 => [ // ROLES
+                        7 => [ // ALLOCATIONS
                             'type',
                             'id',
                             'attributes' => [
-                                'name'
+                                'bill_month',
+                                'carrier',
+                                'mobile_number',
+                                'currency',
+                                'device',
+                                'allocated_charge',
+                                'service_plan_charge',
+                                'usage_charge',
+                                'other_charge',
+                                'fees_charge',
+                                'last_upgrade'
                             ],
                             'links' => [
                                 'self'
                             ]
                         ],
-                        8 => [ // ROLES
+                        8 => [ // ALLOCATIONS
                             'type',
                             'id',
                             'attributes' => [
-                                'name'
+                                'bill_month',
+                                'carrier',
+                                'mobile_number',
+                                'currency',
+                                'device',
+                                'allocated_charge',
+                                'service_plan_charge',
+                                'usage_charge',
+                                'other_charge',
+                                'fees_charge',
+                                'last_upgrade'
                             ],
                             'links' => [
                                 'self'
@@ -3616,41 +3715,27 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        10 => [ // ALLOCATIONS
+                        10 => [ // CONTENTS
                             'type',
                             'id',
                             'attributes' => [
-                                'bill_month',
-                                'carrier',
-                                'mobile_number',
-                                'currency',
-                                'device',
-                                'allocated_charge',
-                                'service_plan_charge',
-                                'usage_charge',
-                                'other_charge',
-                                'fees_charge',
-                                'last_upgrade'
+                                'content',
+                                'active',
+                                'owner_type',
+                                'owner_id'
                             ],
                             'links' => [
                                 'self'
                             ]
                         ],
-                        11 => [ // ALLOCATIONS
+                        11 => [ // CONTENTS
                             'type',
                             'id',
                             'attributes' => [
-                                'bill_month',
-                                'carrier',
-                                'mobile_number',
-                                'currency',
-                                'device',
-                                'allocated_charge',
-                                'service_plan_charge',
-                                'usage_charge',
-                                'other_charge',
-                                'fees_charge',
-                                'last_upgrade'
+                                'content',
+                                'active',
+                                'owner_type',
+                                'owner_id'
                             ],
                             'links' => [
                                 'self'
@@ -3669,27 +3754,25 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        13 => [ // CONTENTS
+                        13 => [ // UDLVALUES
                             'type',
                             'id',
                             'attributes' => [
-                                'content',
-                                'active',
-                                'owner_type',
-                                'owner_id'
+                                'udlId',
+                                'udlName',
+                                'udlValue'
                             ],
                             'links' => [
                                 'self'
                             ]
                         ],
-                        14 => [ // CONTENTS
+                        14 => [ // UDLVALUES
                             'type',
                             'id',
                             'attributes' => [
-                                'content',
-                                'active',
-                                'owner_type',
-                                'owner_id'
+                                'udlId',
+                                'udlName',
+                                'udlValue'
                             ],
                             'links' => [
                                 'self'
@@ -3707,31 +3790,7 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        16 => [ // UDLVALUES
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'udlId',
-                                'udlName',
-                                'udlValue'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        17 => [ // UDLVALUES
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'udlId',
-                                'udlName',
-                                'udlValue'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        18 => [ // ADDRESS
+                        16 => [ // ADDRESS
                             'type',
                             'id',
                             'attributes' => [
