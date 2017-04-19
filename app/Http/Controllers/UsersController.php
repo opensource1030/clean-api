@@ -637,6 +637,7 @@ class UsersController extends FilteredApiController
             $aux['id'] = $obj->id;
             $aux['type'] = 'packages';
             $aux['attributes']['name'] = $obj->name;
+            $aux['attributes']['information'] = $obj->information;
             $aux['attributes']['companyId'] = $obj->companyId;
 
             array_push($list, $aux);
