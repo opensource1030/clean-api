@@ -200,7 +200,7 @@ class OrdersApiTest extends TestCase
                         'id',
                         'attributes' => [
                             'name',
-                            'addressId',
+                            'information',
                             'companyId'
                         ],
                         'links' => [
@@ -438,7 +438,7 @@ class OrdersApiTest extends TestCase
                             'id',
                             'attributes' => [
                                 'name',
-                                'addressId',
+                                'information',
                                 'companyId'
                             ],
                             'links' => [
@@ -710,7 +710,7 @@ class OrdersApiTest extends TestCase
                             'id',
                             'attributes' => [
                                 'name',
-                                'addressId',
+                                'information',
                                 'companyId'
                             ],
                             'links' => [
@@ -946,7 +946,7 @@ class OrdersApiTest extends TestCase
                             'id',
                             'attributes' => [
                                 'name',
-                                'addressId',
+                                'information',
                                 'companyId'
                             ],
                             'links' => [

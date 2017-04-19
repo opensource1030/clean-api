@@ -179,7 +179,7 @@ class ServicesApiTest extends TestCase
                         'id',
                         'attributes' => [
                             'name',
-                            'addressId',
+                            'information',
                             'companyId'
                         ],
                         'links' => [
@@ -372,7 +372,7 @@ class ServicesApiTest extends TestCase
                         'id',
                         'attributes' => [
                             'name',
-                            'addressId',
+                            'information',
                             'companyId'
                         ],
                         'links' => [
