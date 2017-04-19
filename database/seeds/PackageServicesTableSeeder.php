@@ -15,91 +15,17 @@ class PackageServicesTableSeeder extends BaseTableSeeder
     public function run()
     {
         $this->deleteTable();
+        $i = 1;
+        while ($i < 900) {
+            $data = [
+                [
+                    'packageId' => rand(1,39),
+                    'serviceId' => rand(1,900)
+                ]
+            ];
 
-        $data = [
-
-            [
-                'packageId' => 1,
-                'serviceId' => 1,
-            ],
-            [
-                'packageId' => 1,
-                'serviceId' => 2,
-            ],
-            [
-                'packageId' => 1,
-                'serviceId' => 5,
-            ],
-            [
-                'packageId' => 1,
-                'serviceId' => 11,
-            ],
-            [
-                'packageId' => 2,
-                'serviceId' => 4,
-            ],
-            [
-                'packageId' => 2,
-                'serviceId' => 6,
-            ],
-            [
-                'packageId' => 2,
-                'serviceId' => 7,
-            ],
-            [
-                'packageId' => 2,
-                'serviceId' => 8,
-            ],
-            [
-                'packageId' => 2,
-                'serviceId' => 12,
-            ],
-            [
-                'packageId' => 2,
-                'serviceId' => 14,
-            ],
-            [
-                'packageId' => 2,
-                'serviceId' => 15,
-            ],
-            [
-                'packageId' => 3,
-                'serviceId' => 8,
-            ],
-            [
-                'packageId' => 3,
-                'serviceId' => 4,
-            ],
-            [
-                'packageId' => 3,
-                'serviceId' => 6,
-            ],
-            [
-                'packageId' => 3,
-                'serviceId' => 7,
-            ],
-            [
-                'packageId' => 3,
-                'serviceId' => 8,
-            ],
-            [
-                'packageId' => 4,
-                'serviceId' => 4,
-            ],
-            [
-                'packageId' => 4,
-                'serviceId' => 6,
-            ],
-            [
-                'packageId' => 4,
-                'serviceId' => 7,
-            ],
-            [
-                'packageId' => 4,
-                'serviceId' => 8,
-            ],
-        ];
-
-        $this->loadTable($data);
+            $this->loadTable($data);
+            $i++;
+        }
     }
 }

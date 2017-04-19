@@ -15,27 +15,17 @@ class CarrierImagesTableSeeder extends BaseTableSeeder
     public function run()
     {
         $this->deleteTable();
+        $i = 1;
+        while ($i < 31) {
+            $data = [
+                [
+                    'carrierId' => $i,
+                    'imageId' => rand(5,8)
+                ]
+            ];
 
-        $data = [
-
-            [
-                'carrierId' => 1,
-                'imageId' => 5,
-            ],
-            [
-                'carrierId' => 2,
-                'imageId' => 6,
-            ],
-            [
-                'carrierId' => 5,
-                'imageId' => 7,
-            ],
-            [
-                'carrierId' => 11,
-                'imageId' => 8,
-            ],
-        ];
-
-        $this->loadTable($data);
+            $this->loadTable($data);
+            $i++;
+        }
     }
 }
