@@ -11,7 +11,7 @@ class PresetDeviceVariationTableSeeder extends BaseTableSeeder
         while ($i < 1001) {
             $data = [
                 [
-                    'presetId' => rand(1,60),
+                    'presetId' => rand(1,70),
                     'deviceVariationId' => $i
                 ]
             ];

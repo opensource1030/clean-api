@@ -8,7 +8,7 @@ $factory->define(\WA\DataStore\DeviceVariation\DeviceVariation::class,
         //$company = factory(\WA\DataStore\Company\Company::class)->create();
 
         return [
-            'deviceId' => $faker->numberBetween(1, 40),
+            'deviceId' => $faker->numberBetween(1, 20),
             'carrierId' => $faker->numberBetween(1, 30),
             'companyId' => 1,
             'priceRetail' => $faker->numberBetween(300, 599),

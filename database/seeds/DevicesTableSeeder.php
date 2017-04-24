@@ -9,7 +9,7 @@ class DevicesTableSeeder extends BaseTableSeeder
     {
         $this->deleteTable();
 
-        factory(\WA\DataStore\Device\Device::class, 40)->create();
+        factory(\WA\DataStore\Device\Device::class, 21)->create();
         
 
                   /*  $dataDevice1 = [

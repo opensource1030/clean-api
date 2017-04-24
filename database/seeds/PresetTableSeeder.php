@@ -8,5 +8,6 @@ class PresetTableSeeder extends BaseTableSeeder
     {
         $this->deleteTable();
         factory(\WA\DataStore\Preset\Preset::class, 60)->create();
+        factory(\WA\DataStore\Preset\Preset::class, 10)->create(['companyId' => 20]);
     }
 }
