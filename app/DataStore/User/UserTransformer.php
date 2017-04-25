@@ -22,7 +22,7 @@ class UserTransformer extends FilterableTransformer
         'allocations',
         'contents',
         'udls',
-        'address'
+        'addresses'
     ];
 
     /**

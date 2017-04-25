@@ -14,7 +14,6 @@ class Package extends BaseDataStore
     protected $fillable = [
             'name',
             'information',
-            'addressId',
             'companyId',
             'updated_at', ];
 
@@ -89,7 +88,7 @@ class Package extends BaseDataStore
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function address()
+    public function addresses()
     {
         return $this->belongsToMany('WA\DataStore\Address\Address', 'package_address', 'packageId', 'addressId');
     }

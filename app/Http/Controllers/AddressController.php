@@ -41,28 +41,28 @@ class AddressController extends FilteredApiController
      */
     public function store($id, Request $request)
     {
-        if ($this->isJsonCorrect($request, 'address')) {
+        if ($this->isJsonCorrect($request, 'addresses')) {
             try {
                 $data = $request->all()['data'];
                 $data['attributes']['id'] = $id;
                 $address = $this->address->update($data['attributes']);
 
                 if ($address == 'notExist') {
-                    $error['errors']['address'] = Lang::get('messages.NotExistClass', ['class' => 'Address']);
+                    $error['errors']['addresses'] = Lang::get('messages.NotExistClass', ['class' => 'Address']);
                     //$error['errors']['Message'] = $e->getMessage();
                     return response()->json($error)->setStatusCode($this->status_codes['notexists']);
                 }
 
                 if ($address == 'notSaved') {
-                    $error['errors']['address'] = Lang::get('messages.NotSavedClass', ['class' => 'Address']);
+                    $error['errors']['addresses'] = Lang::get('messages.NotSavedClass', ['class' => 'Address']);
                     //$error['errors']['Message'] = $e->getMessage();
                     return response()->json($error)->setStatusCode($this->status_codes['conflict']);
                 }
 
                 return $this->response()->item($address, new AddressTransformer(),
-                    ['key' => 'address'])->setStatusCode($this->status_codes['created']);
+                    ['key' => 'addresses'])->setStatusCode($this->status_codes['created']);
             } catch (\Exception $e) {
-                $error['errors']['address'] = Lang::get('messages.NotOptionIncludeClass',
+                $error['errors']['addresses'] = Lang::get('messages.NotOptionIncludeClass',
                     ['class' => 'Address', 'option' => 'updated', 'include' => '']);
                 //$error['errors']['addressMessage'] = $e->getMessage();
             }
@@ -80,15 +80,15 @@ class AddressController extends FilteredApiController
      */
     public function create(Request $request)
     {
-        if ($this->isJsonCorrect($request, 'address')) {
+        if ($this->isJsonCorrect($request, 'addresses')) {
             try {
                 $data = $request->all()['data']['attributes'];
                 $address = $this->address->create($data);
 
                 return $this->response()->item($address, new AddressTransformer(),
-                    ['key' => 'address'])->setStatusCode($this->status_codes['created']);
+                    ['key' => 'addresses'])->setStatusCode($this->status_codes['created']);
             } catch (\Exception $e) {
-                $error['errors']['address'] = Lang::get('messages.NotOptionIncludeClass',
+                $error['errors']['addresses'] = Lang::get('messages.NotOptionIncludeClass',
                     ['class' => 'Address', 'option' => 'created', 'include' => '']);
                 //$error['errors']['Message'] = $e->getMessage();
             }

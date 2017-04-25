@@ -740,7 +740,7 @@ class CompaniesTest extends TestCase
         $company = factory(\WA\DataStore\Company\Company::class)->create();
         $address1 = factory(\WA\DataStore\Address\Address::class)->create();
 
-        $this->json('POST', 'companies?include=address',
+        $this->json('POST', 'companies?include=addresses',
             [
                 'data' => [
                     'type'=> 'companies',
@@ -757,14 +757,14 @@ class CompaniesTest extends TestCase
                         'defaultLocation'  => $company->defaultLocation
                     ],
                     'relationships' => [
-                        'address' => [
+                        'addresses' => [
                             'data' => [
                                 [
-                                    'type' => 'address',
+                                    'type' => 'addresses',
                                     'id'  => $address1->id
                                 ],
                                 [
-                                    'type' => 'address',
+                                    'type' => 'addresses',
                                     'id'  => 0,
                                     'attributes' => [
                                         'name' => 'Drug Store 01',
@@ -816,7 +816,7 @@ class CompaniesTest extends TestCase
                         'self',
                     ],
                     'relationships' => [
-                        'address' => [
+                        'addresses' => [
                             'links' => [
                                 'self',
                                 'related',
@@ -1572,7 +1572,7 @@ class CompaniesTest extends TestCase
 
         $address1 = factory(\WA\DataStore\Address\Address::class)->create();
         Log::debug("address1: ". print_r($address1, true));
-        $company->address()->sync([$address1->id]);
+        $company->addresses()->sync([$address1->id]);
 
         $address1DB = DB::table('company_address')->where('companyId', $company->id)->get();
         $this->assertCount(1, $address1DB);
@@ -1581,7 +1581,7 @@ class CompaniesTest extends TestCase
         $address2 = factory(\WA\DataStore\Address\Address::class)->create();
         $address3 = factory(\WA\DataStore\Address\Address::class)->create();
 
-        $this->json('PATCH', 'companies/'.$company->id.'?include=address',
+        $this->json('PATCH', 'companies/'.$company->id.'?include=addresses',
             [
                 'data' => [
                     'type'=> 'companies',
@@ -1598,10 +1598,10 @@ class CompaniesTest extends TestCase
                         'defaultLocation'  => $company->defaultLocation
                     ],
                     'relationships' => [
-                        'address' => [
+                        'addresses' => [
                             'data' => [
                                 [
-                                    'type' => 'address',
+                                    'type' => 'addresses',
                                     'id'  => 0,
                                     'attributes' => [
                                         'name' => $address2->name,
@@ -1615,7 +1615,7 @@ class CompaniesTest extends TestCase
                                     ]
                                 ],
                                 [
-                                    'type' => 'address',
+                                    'type' => 'addresses',
                                     'id'  => $address3->id
                                 ]
                             ]
@@ -1644,7 +1644,7 @@ class CompaniesTest extends TestCase
                         'self'
                     ],
                     'relationships' => [
-                        'address' => [
+                        'addresses' => [
                             'links' => [
                                 'self',
                                 'related',

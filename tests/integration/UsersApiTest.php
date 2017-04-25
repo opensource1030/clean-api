@@ -907,7 +907,7 @@ class UsersApiTest extends TestCase
 
 
         // assets include deleted.
-        $res = $this->json('POST', '/users?include=devicevariations,roles,udls,allocations,companies,contents,address',
+        $res = $this->json('POST', '/users?include=devicevariations,roles,udls,allocations,companies,contents,addresses',
             [
                 'data' => [
                     'type' => 'users',
@@ -943,9 +943,9 @@ class UsersApiTest extends TestCase
                         'defaultLocationId' => $user->defaultLocationId
                     ],
                     'relationships' => [
-                        'address' => [
+                        'addresses' => [
                             'data' => [
-                                ['type' => 'address', 'id' => $addressId]
+                                ['type' => 'addresses', 'id' => $addressId]
                             ],
                         ],
 /*                        'assets' => [
@@ -1196,7 +1196,7 @@ class UsersApiTest extends TestCase
                             'self'
                         ],
                         'relationships' => [
-                            'address' => [
+                            'addresses' => [
                                 'links' => [
                                     'self',
                                     'related'
@@ -2513,7 +2513,7 @@ class UsersApiTest extends TestCase
         $content2 = factory(\WA\DataStore\Content\Content::class)->create(['owner_id' => $user->id, 'owner_type' => 'users']);
 
         // assets include deleted.
-        $res = $this->json('PATCH', '/users/'.$user->id.'?include=devicevariations,roles,udls,allocations,companies,contents,address',
+        $res = $this->json('PATCH', '/users/'.$user->id.'?include=devicevariations,roles,udls,allocations,companies,contents,addresses',
             [
                 'data' => [
                     'type' => 'users',
@@ -2549,9 +2549,9 @@ class UsersApiTest extends TestCase
                         'defaultLocationId' => $user->defaultLocationId
                     ],
                     'relationships' => [
-                        'address' => [
+                        'addresses' => [
                             'data' => [
-                                ['type' => 'address', 'id' => $addressId]
+                                ['type' => 'addresses', 'id' => $addressId]
                             ],
                         ],
 /*                
@@ -2802,7 +2802,7 @@ class UsersApiTest extends TestCase
                                     ]
                                 ]
                             ],
-                            'address' => [
+                            'addresses' => [
                                 'links' => [
                                     'self',
                                     'related'
@@ -2952,7 +2952,7 @@ class UsersApiTest extends TestCase
 
         // ADDRESS
         $addressId = factory(\WA\DataStore\Address\Address::class)->create()->id;
-        $user->address()->sync([$addressId]);
+        $user->addresses()->sync([$addressId]);
  
         // ASSET
         $asset1 = factory(\WA\DataStore\Asset\Asset::class)->create(['userId' => $user->id])->id;
@@ -2999,7 +2999,7 @@ class UsersApiTest extends TestCase
         $content2 = factory(\WA\DataStore\Content\Content::class)->create(['owner_id' => $user->id, 'owner_type' => 'users']);
         
         // assets include deleted.
-        $res = $this->json('PATCH', '/users/'.$user->id.'?include=devicevariations,roles,udls,allocations,companies,contents,address',
+        $res = $this->json('PATCH', '/users/'.$user->id.'?include=devicevariations,roles,udls,allocations,companies,contents,addresses',
             [
                 'data' => [
                     'type' => 'users',
@@ -3035,9 +3035,9 @@ class UsersApiTest extends TestCase
                         'defaultLocationId' => $user->defaultLocationId
                     ],
                     'relationships' => [
-                        'address' => [
+                        'addresses' => [
                             'data' => [
-                                ['type' => 'address', 'id' => $addressId]
+                                ['type' => 'addresses', 'id' => $addressId]
                             ],
                         ],
 /*                        
@@ -3493,7 +3493,7 @@ class UsersApiTest extends TestCase
                                     ]
                                 ]
                             ],
-                            'address' => [
+                            'addresses' => [
                                 'links' => [
                                     'self',
                                     'related'

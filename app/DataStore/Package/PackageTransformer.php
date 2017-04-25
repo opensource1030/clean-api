@@ -17,7 +17,7 @@ class PackageTransformer extends FilterableTransformer
         'services',
         'companies',
         'conditions',
-        'address',        
+        'addresses',        
     ];
 
     /**

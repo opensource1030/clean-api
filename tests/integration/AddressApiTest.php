@@ -13,7 +13,7 @@ class AddressApiTest extends TestCase
     {
         factory(\WA\DataStore\Address\Address::class, 40)->create();
 
-        $this->json('GET', 'address')
+        $this->json('GET', 'addresses')
             ->seeJsonStructure([
                 'data' => [
                     0 => [
@@ -63,9 +63,9 @@ class AddressApiTest extends TestCase
     {
         $address = factory(\WA\DataStore\Address\Address::class)->create();
 
-        $res = $this->json('GET', 'address/'.$address->id)
+        $res = $this->json('GET', 'addresses/'.$address->id)
             ->seeJson([
-                'type' => 'address',
+                'type' => 'addresses',
                 'name' => $address->name,
                 'attn' => $address->attn,
                 'phone' => "$address->phone",
@@ -79,15 +79,15 @@ class AddressApiTest extends TestCase
 
     public function testCreateAddress()
     {
-        $this->json('POST', 'address',
+        $this->json('POST', 'addresses',
             [
                 'data' => [
-                    'type' => 'address',
+                    'type' => 'addresses',
                     'attributes' => [
                         'name' => 'addressName',
                         'attn' => 'addressAttn',
                         'phone' => 'addressPhone',
-                        'address' => 'addressAddress',
+                        'address' => 'address',
                         'city' => 'addressCity',
                         'state' => 'addressState',
                         'country' => 'addressCountry',
@@ -96,11 +96,11 @@ class AddressApiTest extends TestCase
                 ],
             ])
             ->seeJson([
-                'type' => 'address',
+                'type' => 'addresses',
                 'name' => 'addressName',
                 'attn' => 'addressAttn',
                 'phone' => 'addressPhone',                
-                'address' => 'addressAddress',
+                'address' => 'address',
                 'city' => 'addressCity',
                 'state' => 'addressState',
                 'country' => 'addressCountry',
@@ -120,9 +120,9 @@ class AddressApiTest extends TestCase
         $this->assertNotEquals($address1->country, $address2->country);
         $this->assertNotEquals($address1->postalCode, $address2->postalCode);
 
-        $this->json('GET', 'address/'.$address1->id)
+        $this->json('GET', 'addresses/'.$address1->id)
             ->seeJson([
-                'type' => 'address',
+                'type' => 'addresses',
                 'name' => $address1->name,
                 'attn' => $address1->attn,
                 'phone' => "$address1->phone",
@@ -133,10 +133,10 @@ class AddressApiTest extends TestCase
                 'postalCode' => "$address1->postalCode",
             ]);
 
-        $this->json('PATCH', 'address/'.$address1->id,
+        $this->json('PATCH', 'addresses/'.$address1->id,
             [
                 'data' => [
-                    'type' => 'address',
+                    'type' => 'addresses',
                     'attributes' => [
                         'name' => $address2->name,
                         'attn' => $address2->attn,
@@ -166,15 +166,15 @@ class AddressApiTest extends TestCase
     public function testDeleteAddressIfExists()
     {
         $address = factory(\WA\DataStore\Address\Address::class)->create();
-        $responseDel = $this->call('DELETE', 'address/'.$address->id);
+        $responseDel = $this->call('DELETE', 'addresses/'.$address->id);
         $this->assertEquals(200, $responseDel->status());
-        $responseGet = $this->call('GET', 'address/'.$address->id);
+        $responseGet = $this->call('GET', 'addresses/'.$address->id);
         $this->assertEquals(404, $responseGet->status());
     }
 
     public function testDeleteAddressIfNoExists()
     {
-        $responseDel = $this->call('DELETE', 'address/1');
+        $responseDel = $this->call('DELETE', 'addresses/1');
         $this->assertEquals(404, $responseDel->status());
     }
 }

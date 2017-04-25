@@ -85,7 +85,7 @@ class Company extends BaseDataStore
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function address()
+    public function addresses()
     {
         return $this->belongsToMany('WA\DataStore\Address\Address', 'company_address', 'companyId', 'addressId');
     }

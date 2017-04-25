@@ -105,11 +105,11 @@ class CompaniesController extends FilteredApiController
         if (isset($data['relationships']) && $success) {
             $dataRelationships = $data['relationships'];
 
-            if (isset($dataRelationships['address'])) {
-                if (isset($dataRelationships['address']['data'])) {
+            if (isset($dataRelationships['addresses'])) {
+                if (isset($dataRelationships['addresses']['data'])) {
                         
                     $addressInterface = app()->make('WA\Repositories\Address\AddressInterface');
-                    $data = $dataRelationships['address']['data'];
+                    $data = $dataRelationships['addresses']['data'];
 
                     $addressIdArray = [];
 
@@ -121,15 +121,15 @@ class CompaniesController extends FilteredApiController
                                 $newAddress = $addressInterface->create($item['attributes']);
                                 Log::debug("NEW ADDRESS: ". print_r($newAddress, true));
                                 $aux['id'] = $newAddress->id;
-                                $aux['type'] = 'address';
+                                $aux['type'] = 'addresses';
                                 array_push($addressIdArray, $aux);
                             }
 
-                            $dataAddress = $this->parseJsonToArray($addressIdArray, 'address');
-                            $company->address()->sync($dataAddress);                                
+                            $dataAddress = $this->parseJsonToArray($addressIdArray, 'addresses');
+                            $company->addresses()->sync($dataAddress);                                
                         } catch (\Exception $e) {
                             DB::rollBack();
-                            $error['errors']['address'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Company', 'option' => 'created', 'include' => 'Address']);
+                            $error['errors']['addresses'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Company', 'option' => 'created', 'include' => 'Address']);
                             $error['errors']['Message'] = $e->getMessage();
                             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
                         }
@@ -206,11 +206,11 @@ class CompaniesController extends FilteredApiController
         if (isset($data['relationships']) && $success) {
             $dataRelationships = $data['relationships'];
 
-            if (isset($dataRelationships['address'])) {
-                if (isset($dataRelationships['address']['data'])) {
+            if (isset($dataRelationships['addresses'])) {
+                if (isset($dataRelationships['addresses']['data'])) {
                         
                     $addressInterface = app()->make('WA\Repositories\Address\AddressInterface');
-                    $data = $dataRelationships['address']['data'];
+                    $data = $dataRelationships['addresses']['data'];
 
                     $addressIdArray = [];
 
@@ -223,15 +223,15 @@ class CompaniesController extends FilteredApiController
                                 $newAddress = $addressInterface->create($item['attributes']);
                                 Log::debug("NEW ADDRESS: ". print_r($newAddress, true));
                                 $aux['id'] = $newAddress->id;
-                                $aux['type'] = 'address';
+                                $aux['type'] = 'addresses';
                                 array_push($addressIdArray, $aux);
                             }
 
-                            $dataAddress = $this->parseJsonToArray($addressIdArray, 'address');
-                            $company->address()->sync($dataAddress);                                
+                            $dataAddress = $this->parseJsonToArray($addressIdArray, 'addresses');
+                            $company->addresses()->sync($dataAddress);                                
                         } catch (\Exception $e) {
                             DB::rollBack();
-                            $error['errors']['address'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Company', 'option' => 'created', 'include' => 'Address']);
+                            $error['errors']['addresses'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Company', 'option' => 'created', 'include' => 'Address']);
                             $error['errors']['Message'] = $e->getMessage();
                             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
                         }
