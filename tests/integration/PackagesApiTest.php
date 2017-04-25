@@ -374,9 +374,9 @@ class PackageApiTest extends TestCase
         $address1 = factory(\WA\DataStore\Address\Address::class)->create()->id;
         $address2 = factory(\WA\DataStore\Address\Address::class)->create()->id;
 
-        $package->address()->sync([$address1, $address2]);
+        $package->addresses()->sync([$address1, $address2]);
 
-        $this->json('GET', 'packages/'.$package->id.'?include=address')
+        $this->json('GET', 'packages/'.$package->id.'?include=addresses')
             ->seeJsonStructure([
                 'data' => [
                     'type',
@@ -399,7 +399,7 @@ class PackageApiTest extends TestCase
                         'self',
                     ],
                     'relationships' => [
-                        'address' => [
+                        'addresses' => [
                             'links' => [
                                 'self',
                                 'related',
@@ -451,6 +451,10 @@ class PackageApiTest extends TestCase
 
         $app1 = factory(\WA\DataStore\App\App::class)->create()->id;
         $app2 = factory(\WA\DataStore\App\App::class)->create()->id;
+
+        $address1 = factory(\WA\DataStore\Address\Address::class)->create()->id;
+        $address2 = factory(\WA\DataStore\Address\Address::class)->create()->id;
+
 
         $this->json('POST', 'packages',
             [
@@ -509,6 +513,12 @@ class PackageApiTest extends TestCase
                                 ['type' => 'apps', 'id' => $app2],
                             ],
                         ],
+                        'addresses' => [
+                            'data' => [
+                                ['type' => 'addresses', 'id' => $address1],
+                                ['type' => 'addresses', 'id' => $address2],
+                            ],
+                        ]
                     ],
                 ],
             ]

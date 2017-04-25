@@ -255,7 +255,7 @@ class User extends BaseDataStore implements IlluminateCanResetPasswordContract, 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function address()
+    public function addresses()
     {
         return $this->belongsToMany('WA\DataStore\Address\Address', 'user_address', 'userId', 'addressId');
     }
