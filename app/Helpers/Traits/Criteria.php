@@ -242,10 +242,17 @@ trait Criteria
                     if ($returnEmptyResults === false) {
                         $op = strtolower(key($filterVal));
                         $val = current($filterVal);
-                        $this->criteriaQuery->whereHas($relKey,
-                            function ($query) use ($relKey, $relColumn, $op, $val) {
-                                return $query = $this->executeCriteria($query, $relKey . "." . $relColumn, $op, $val);
+
+                        $model = $this->returnTheCriteriaModel($criteriaModelName);
+                        $transformer = $this->createTransformer($model);
+                        $newTransformer = new $transformer();
+
+                        if ($this->includesAreCorrectInf($relKey, $newTransformer)) {
+                            $this->criteriaQuery->whereHas($relKey,
+                                function ($query) use ($relKey, $relColumn, $op, $val) {
+                                    return $query = $this->executeCriteria($query, $relKey . "." . $relColumn, $op, $val);
                             });
+                        }
                     }
                     continue;
                 }
@@ -254,8 +261,6 @@ trait Criteria
             } elseif ($this->isInclude) {
                 continue;
             }
-
-
 
             if (in_array($filterKey, $criteriaModelColumns)) {
                 if (is_array($filterVal)) {
@@ -273,6 +278,43 @@ trait Criteria
         }
 
         return $this;
+    }
+
+    private function returnTheCriteriaModel($model) {
+        $values = explode("_", $model);
+        if (count($values) == 2) {
+            return $values[0].$values[1];
+        }
+        return $model;
+    }
+
+    private function createTransformer($var)
+    {
+        if($var === 'devicevariations') {
+            return "\\WA\\DataStore\\DeviceVariation\\DeviceVariationTransformer";
+        }
+
+        if($var === 'devicetypes') {
+            return "\\WA\\DataStore\\DeviceType\\DeviceTypeTransformer";
+        }
+
+        if($var === 'udlvalues') {
+            return "\\WA\\DataStore\\UdlValue\\UdlValueTransformer";
+        }
+
+        $model = title_case(str_singular($var));
+        return "\\WA\\DataStore\\${model}\\${model}Transformer";
+    }
+
+    public function includesAreCorrectInf($include, $class)
+    {
+        $includesAvailable = $class->getAvailableIncludes();
+
+        foreach ($includesAvailable as $aic) {
+            if ($aic == $include) {
+                return true;
+            }
+        }
     }
 
     /**
