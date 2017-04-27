@@ -19,10 +19,6 @@ class DeviceTransformer extends FilterableTransformer
         'devicevariations',
     ];
 
-    protected $defaultIncludes = [
-        'devicetypes'
-    ];
-
     /**
      * @param Device $device
      *
