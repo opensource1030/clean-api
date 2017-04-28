@@ -474,15 +474,20 @@ class PackagesController extends FilteredApiController
                     $data = $data['relationships']['conditions']['data'];
 
                     foreach ($data as $item) {
-                        try {
-                            $item['packageId'] = $package->id;
-                            $conditionsInterface->create($item);    
-                        } catch (\Exception $e) {
-                            DB::rollBack();
-                            $error['errors']['services'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Package', 'option' => 'created', 'include' => 'Conditions']);
-                            $error['errors']['Message'] = $e->getMessage();
-                            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
-                              
+                        if (isset($item['type']) && $item['type'] == 'conditions') {
+                            try {
+                                $item['packageId'] = $package->id;
+                                $conditionsInterface->create($item);
+                            } catch (\Exception $e) {
+                                DB::rollBack();
+                                $error['errors']['conditions'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Package', 'option' => 'created', 'include' => 'Conditions']);
+                                $error['errors']['Message'] = $e->getMessage();
+                                return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+                            }
+                        } else {
+                            $success = false;
+                            $error['errors']['conditions'] = Lang::get('messages.NotOptionIncludeClass',
+                                ['class' => 'Package', 'option' => 'created', 'include' => 'Conditions']);
                         }
                     }
                 }
