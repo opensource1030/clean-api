@@ -47,8 +47,31 @@ abstract class FilterableTransformer extends TransformerAbstract
             $returnEmptyResults = true;
         }
 
-        $include = $this->applyCriteria($resource->$finder(), $this->criteria, true, null, $returnEmptyResults);
+        /*
+         *  @TODO: @adosaiguas: we have to discuss if we need to retrieve all the includes information or only the includes that 
+         *     accomplishes the filters and how to tell the API which option. For now, we will retrieve all of them!
+         *
+         *  File@Function (line) - Modified? (Yes/No)
+         *
+         *  UserTransformer@includeAllocations (82) - Modified? (No)
+         *  ServiceItemTransformer@includeOrders (37) - Modified? (Yes)
+         *  ServiceTransformer@includeServiceitems (51) - Modified? (Yes)
+         *  OrderTransformer@includeServiceitems (50) - Modified? (No)
+         *  OrderTransformer@includeApps (60) - Modified? (No)
+         *  OrderTransformer@includeUsers (69) - Modified? (No)
+         *  OrderTransformer@includePackages (78) - Modified? (No)
+         *  OrderTransformer@includeDeviceVariations (87) - Modified? (No)
+         *  OrderTransformer@includeServices (96) - Modified? (No)
+         *  DeviceVariationTransformer@includeAllocations (52) - Modified? (No)
+         *  DeviceTransformer@includeDevicetypes (55) - Modified? (Yes)
+         *  CompanyTransformer@includeAllocations (59) - Modified? (No)
+         *  AppTransformer@includeOrders (39) - Modified? (No)
+         *  AppTransformer@includePackages (48) - Modified? (No)
+         *
+         */
+        $criteria = null; //$this->criteria;
 
+        $include = $this->applyCriteria($resource->$finder(), $criteria, true, null, $returnEmptyResults);
         return new ResourceCollection($include->get(), new $transformer(), $finder);
 
     }
