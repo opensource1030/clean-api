@@ -20,7 +20,7 @@ class ModifyPackagesDevicesTable extends Migration
         Schema::table(
             $this->tableName, function ($table) {
                 $table->dropForeign('package_devices_deviceid_foreign');
-                $table->dropColumn('deviceId');
+                $table  ->dropColumn('deviceId');
         });
 
         Schema::table(
