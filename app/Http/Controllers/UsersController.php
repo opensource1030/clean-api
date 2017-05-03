@@ -67,7 +67,7 @@ class UsersController extends FilteredApiController
     {
         $user = $this->userInterface->byId($userId, 1);
         $companyId = $user->companyId; // number
-        $address = $user->address; // Array
+        $address = $user->addresses; // Array
         $udlValues = $this->getUdlValuesFromUser($user); // Array
 
         $packages = $this->packageInterface->getAllPackageByCompanyId($user->companyId);
@@ -221,14 +221,14 @@ class UsersController extends FilteredApiController
                 }
             }
 
-            if (isset($dataRelationships['address']) && $success) {
-                if (isset($dataRelationships['address']['data'])) {
-                    $dataAddress = $this->parseJsonToArray($dataRelationships['address']['data'], 'address');
+            if (isset($dataRelationships['addresses']) && $success) {
+                if (isset($dataRelationships['addresses']['data'])) {
+                    $dataAddress = $this->parseJsonToArray($dataRelationships['addresses']['data'], 'addresses');
                     try {
-                        $user->address()->sync($dataAddress);
+                        $user->addresses()->sync($dataAddress);
                     } catch (\Exception $e) {
                         $success = false;
-                        $error['errors']['address'] = Lang::get('messages.NotOptionIncludeClass',
+                        $error['errors']['addresses'] = Lang::get('messages.NotOptionIncludeClass',
                             ['class' => 'User', 'option' => 'updated', 'include' => 'Address']);
                         //$error['errors']['Message'] = $e->getMessage();
                     }
@@ -470,14 +470,14 @@ class UsersController extends FilteredApiController
                 }
             }
 
-            if (isset($dataRelationships['address']) && $success) {
-                if (isset($dataRelationships['address']['data'])) {
-                    $dataAddress = $this->parseJsonToArray($dataRelationships['address']['data'], 'address');
+            if (isset($dataRelationships['addresses']) && $success) {
+                if (isset($dataRelationships['addresses']['data'])) {
+                    $dataAddress = $this->parseJsonToArray($dataRelationships['addresses']['data'], 'addresses');
                     try {
-                        $user->address()->sync($dataAddress);
+                        $user->addresses()->sync($dataAddress);
                     } catch (\Exception $e) {
                         $success = false;
-                        $error['errors']['address'] = Lang::get('messages.NotOptionIncludeClass',
+                        $error['errors']['addresses'] = Lang::get('messages.NotOptionIncludeClass',
                             ['class' => 'User', 'option' => 'created', 'include' => 'Address']);
                         //$error['errors']['Message'] = $e->getMessage();
                     }
@@ -637,6 +637,7 @@ class UsersController extends FilteredApiController
             $aux['id'] = $obj->id;
             $aux['type'] = 'packages';
             $aux['attributes']['name'] = $obj->name;
+            $aux['attributes']['information'] = $obj->information;
             $aux['attributes']['companyId'] = $obj->companyId;
 
             array_push($list, $aux);

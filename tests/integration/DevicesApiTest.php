@@ -554,7 +554,7 @@ class DevicesApiTest extends TestCase
                 'priceOwn' => 800, ]
         );
 
-        $res = $this->PATCH('/devices/'.$device->id.'?include=modifications,devicevariations,devicevariations.carriers,devicevariations.companies,devicevariations.devices',
+        $res = $this->PATCH('/devices/'.$device->id.'?include=devicetypes,modifications,devicevariations,devicevariations.carriers,devicevariations.companies,devicevariations.devices',
             [
                 'data' => [
                     'type' => 'devices',
@@ -1019,7 +1019,7 @@ class DevicesApiTest extends TestCase
         );
 
 
-        $res = $this->PATCH('/devices/'.$device->id.'?include=devicevariations',
+        $res = $this->PATCH('/devices/'.$device->id.'?include=devicetypes,devicevariations',
             [
                 'data' => [
                     'type' => 'devices',

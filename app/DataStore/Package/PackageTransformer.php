@@ -17,7 +17,7 @@ class PackageTransformer extends FilterableTransformer
         'services',
         'companies',
         'conditions',
-        'address',        
+        'addresses',        
     ];
 
     /**
@@ -29,7 +29,7 @@ class PackageTransformer extends FilterableTransformer
         return [
             'id'         => (int)$package->id,
             'name'       => $package->name,
-            'addressId'  => (int)$package->addressId,
+            'information'=> $package->information,
             'companyId'  => (int)$package->companyId,
             'created_at' => $package->created_at,
             'updated_at' => $package->updated_at,

@@ -17,7 +17,7 @@ class ServiceItemsTableSeeder extends BaseTableSeeder
         $this->deleteTable();
 
         $i = 1;
-        while ($i < 301) {
+        while ($i < 901) {
 
             $data = [
                 [   

@@ -229,7 +229,6 @@ trait Criteria
         $criteriaModelColumns = $this->criteriaModelColumns;
 
         foreach ($this->filterCriteria->filtering() as $filterKey => $filterVal) {
-
             if (strpos($filterKey, '.')) {
                 $relKey = substr($filterKey, 0, strpos($filterKey, '.'));
                 $relColumn = substr($filterKey, strpos($filterKey, '.') + 1);
@@ -242,37 +241,186 @@ trait Criteria
                     if ($returnEmptyResults === false) {
                         $op = strtolower(key($filterVal));
                         $val = current($filterVal);
-                        $this->criteriaQuery->whereHas($relKey,
-                            function ($query) use ($relKey, $relColumn, $op, $val) {
-                                return $query = $this->executeCriteria($query, $relKey . "." . $relColumn, $op, $val);
+
+                        $model = $this->returnTheCriteriaModel($criteriaModelName);
+                        $transformer = $this->createTransformer($model);
+                        $newTransformer = new $transformer();
+
+                        if ($this->includesAreCorrectInf($relKey, $newTransformer)) {
+                            $this->criteriaQuery->whereHas($relKey,
+                                function ($query) use ($relKey, $relColumn, $op, $val) {
+                                    return $query = $this->executeCriteria($query, $this->changeTableName($relKey) . "." . $relColumn, $op, $val, 'AND');
                             });
+                        }
                     }
                     continue;
                 }
 
                 $filterKey = $relColumn;
+            } else if (is_int($filterKey)) {
+                if(isset($filterVal['eq'])) {
+                    $parts = explode("[or]" , $filterVal['eq']);
+
+                    $arrayFilters = $this->retrieveInformationInAnArray($parts);
+
+                    $model = $this->returnTheCriteriaModel($criteriaModelName);
+                    $transformer = $this->createTransformer($model);
+                    $newTransformer = new $transformer();
+
+                    $ok = true;
+                    foreach ($arrayFilters as $key => $value) {
+                        $ok = $this->includesAreCorrectInf($value['relKey'], $newTransformer);
+                    }
+
+                    if ($ok) {
+                        $this->criteriaQuery->whereHas($arrayFilters[0]['relKey'],
+                            function ($query) use ($arrayFilters) {
+                                $type = 'AND';
+                                foreach ($arrayFilters as $key => $value) {
+                                    $query = $this->executeCriteria($query, $this->changeTableName($value['relKey']) . "." . $value['relColumn'], $value['operation'], $value['value'], $type);
+                                    $type = 'OR';
+                                }
+                            return $query;
+                        });
+                    }
+                }
             } elseif ($this->isInclude) {
                 continue;
             }
 
-
-
-            if (in_array($filterKey, $criteriaModelColumns)) {
-                if (is_array($filterVal)) {
-                    foreach ($filterVal as $op => $val) {
-                        $this->criteriaQuery = $this->executeCriteria($this->criteriaQuery, $filterKey, $op, $val);
+            if (!is_int($filterKey)) {
+                if (in_array($filterKey, $criteriaModelColumns)) {
+                    if (is_array($filterVal)) {
+                        foreach ($filterVal as $op => $val) {
+                            $this->criteriaQuery = $this->executeCriteria($this->criteriaQuery, $this->changeTableName($filterKey), $op, $val, 'AND');
+                        }
+                    } else {
+                        $op = strtolower(key($filterVal));
+                        $val = current($filterVal);
+                        $this->criteriaQuery = $this->executeCriteria($this->criteriaQuery, $this->changeTableName($filterKey), $op, $val, 'AND');
                     }
                 } else {
-                    $op = strtolower(key($filterVal));
-                    $val = current($filterVal);
-                    $this->criteriaQuery = $this->executeCriteria($this->criteriaQuery, $filterKey, $op, $val);
+                    throw new BadCriteriaException('Invalid filter criteria');
                 }
-            } else {
-                throw new BadCriteriaException('Invalid filter criteria');
             }
         }
 
         return $this;
+    }
+
+    private function returnTheCriteriaModel($model) {
+        $values = explode("_", $model);
+        if (count($values) == 2) {
+            return $values[0].$values[1];
+        }
+        return $model;
+    }
+
+    private function createTransformer($var)
+    {
+        if($var === 'categoryapps') { return "\\WA\\DataStore\\Category\\CategoryAppTransformer"; }
+        if($var === 'devicetypes') { return "\\WA\\DataStore\\DeviceType\\DeviceTypeTransformer"; }
+        if($var === 'devicevariations') { return "\\WA\\DataStore\\DeviceVariation\\DeviceVariationTransformer"; }
+        if($var === 'serviceitems') { return "\\WA\\DataStore\\ServiceItem\\ServiceItemTransformer"; }
+        if($var === 'udlvalues') { return "\\WA\\DataStore\\UdlValue\\UdlValueTransformer"; }
+
+        $model = title_case(str_singular($var));
+        return "\\WA\\DataStore\\${model}\\${model}Transformer";
+    }
+
+    public function includesAreCorrectInf($include, $class)
+    {
+        $includesAvailable = $class->getAvailableIncludes();
+
+        foreach ($includesAvailable as $aic) {
+            if ($aic == $include) {
+                return true;
+            }
+        }
+    }
+
+    private function changeTableName($var)
+    {
+        if($var === 'assettypes') { return "asset_types"; }
+        if($var === 'carrierdevices') { return "carrier_devices"; }
+        if($var === 'carrierimages') { return "carrier_images"; }
+        if($var === 'categoryappsapp') { return "categoryapps_app"; }
+        if($var === 'categoryappsimage') { return "categoryapps_image"; }
+        if($var === 'companyaddress') { return "company_address"; }
+        if($var === 'companycurrentbillmonths') { return "company_current_bill_months"; }
+        if($var === 'companydomains') { return "company_domains"; }
+        if($var === 'companyrules') { return "company_rules"; }
+        if($var === 'companysaml2') { return "company_saml2"; }
+        if($var === 'conditionfields') { return "condition_fields"; }
+        if($var === 'conditionoperators') { return "condition_operators"; }
+        if($var === 'customrequests') { return "custom_requests"; }
+        if($var === 'devicevariationimages') { return "deviceVariation_images"; }
+        if($var === 'deviceimages') { return "device_images"; }
+        if($var === 'devicemodifications') { return "device_modifications"; }
+        if($var === 'devicetypes') { return "device_types"; }
+        if($var === 'deviceusers') { return "device_users"; }
+        if($var === 'devicevariations') { return "device_variations"; }
+        if($var === 'devicevariations_modifications') { return "device_variations_modifications"; }
+        if($var === 'emailnotifications') { return "email_notifications"; }
+        if($var === 'employeeassets') { return "employee_assets"; }
+        if($var === 'jobstatuses') { return "job_statuses"; }
+        if($var === 'notificationgroups') { return "notification_groups"; }
+        if($var === 'notificationscategoriesingroup') { return "notifications_categories_in_group"; }
+        if($var === 'oauthaccesstokens') { return "oauth_access_tokens"; }
+        if($var === 'oauthauthcodes') { return "oauth_auth_codes"; }
+        if($var === 'oauthclients') { return "oauth_clients"; }
+        if($var === 'oauthpersonal_access_clients') { return "oauth_personal_access_clients"; }
+        if($var === 'oauthrefresh_tokens') { return "oauth_refresh_tokens"; }
+        if($var === 'orderapps') { return "order_apps"; }
+        if($var === 'orderdevicevariations') { return "order_device_variations"; }
+        if($var === 'packageaddress') { return "package_address"; }
+        if($var === 'packageapps') { return "package_apps"; }
+        if($var === 'packagedevices') { return "package_devices"; }
+        if($var === 'packageservices') { return "package_services"; }
+        if($var === 'passwordreminders') { return "password_reminders"; }
+        if($var === 'passwordresets') { return "password_resets"; }
+        if($var === 'permissionrole') { return "permission_role"; }
+        if($var === 'presetdevice_variations') { return "preset_device_variations"; }
+        if($var === 'presetimages') { return "preset_images"; }
+        if($var === 'roleuser') { return "role_user"; }
+        if($var === 'scopepermission') { return "scope_permission"; }
+        if($var === 'serviceitems') { return "service_items"; }
+        if($var === 'syncjobs') { return "sync_jobs"; }
+        if($var === 'systemrules') { return "system_rules"; }
+        if($var === 'udlvaluepaths') { return "udl_value_paths"; }
+        if($var === 'udlvaluepathscreatorsusers') { return "udl_value_paths_creators_users"; }
+        if($var === 'udlvalues') { return "udl_values"; }
+        if($var === 'useraddress') { return "user_address"; }
+        if($var === 'userdevicevariations') { return "user_device_variations"; }
+        if($var === 'usernotifications') { return "user_notifications"; }
+        if($var === 'userservices') { return "user_services"; }
+        if($var === 'userudls') { return "user_udls"; }
+
+        return $var;
+    }
+
+    private function retrieveInformationInAnArray($array) {
+        $arrayAux = [];
+        foreach ($array as $key => $value) {
+            if (strpos($value, '=')) {
+                $relationship = substr($value, 0, strpos($value, '='));
+                $aux['value'] = substr($value, strpos($value, '=') + 1);
+                if (strpos($relationship, '][')) {
+                    $relation = substr($relationship, 1, strpos($relationship, '][')-1);
+                    $aux['operation'] = substr($relationship, strpos($relationship, '][') + 2 , -1);
+                    if (strpos($relation, '.')) {
+                        $aux['relKey'] = substr($relation, 0, strpos($relation, '.'));
+                        $aux['relColumn'] = substr($relation, strpos($relation, '.') + 1);
+                    } else {}
+                } else if (strpos($relationship, '.')) {
+                    $aux['operation'] = 'eq';
+                    $aux['relKey'] = substr($relationship, 1, strpos($relationship, '.')-1);
+                    $aux['relColumn'] = substr($relationship, strpos($relationship, '.') + 1 , -1);
+                } else {}
+            } else {}
+            array_push($arrayAux, $aux);
+        }
+        return $arrayAux;
     }
 
     /**
@@ -283,22 +431,38 @@ trait Criteria
      * @return mixed
      * @throws BadCriteriaException
      */
-    protected function executeCriteria($query, $filterKey, $op, $val)
+    protected function executeCriteria($query, $filterKey, $op, $val, $type)
     {
         switch ($op) {
             case 'gt':
-                $query->where($filterKey, '>', $val);
+                if ($type == 'OR') {
+                    $query->orWhere($filterKey, '>', $val);
+                } else {
+                    $query->where($filterKey, '>', $val);
+                }
                 break;
             case 'lt':
-                $query->where($filterKey, '<', $val);
+                if ($type == 'OR') {
+                    $query->orWhere($filterKey, '>', $val);
+                } else {
+                    $query->where($filterKey, '<', $val);
+                }
                 break;
             case 'ge':
             case 'gte':
-                $query->where($filterKey, '>=', $val);
+                if ($type == 'OR') {
+                    $query->orWhere($filterKey, '>=', $val);
+                } else {
+                    $query->where($filterKey, '>=', $val);
+                }
                 break;
             case 'lte':
             case 'le':
-                $query->where($filterKey, '<=', $val);
+                if ($type == 'OR') {
+                    $query->orWhere($filterKey, '<=', $val);
+                } else {
+                    $query->where($filterKey, '<=', $val);
+                }
                 break;
             case 'ne':
                 // Handle delimited lists
@@ -307,7 +471,12 @@ trait Criteria
                 if (count($vals) === 0) {
                     continue;
                 }
-                $query->whereNotIn($filterKey, $vals);
+                if ($type == 'OR') {
+                    $query->orWhereNotIn($filterKey, $vals);
+                } else {
+                    $query->whereNotIn($filterKey, $vals);
+                }
+
                 break;
             case 'eq':
                 // Handle delimited lists
@@ -316,7 +485,11 @@ trait Criteria
                 if (count($vals) === 0) {
                     continue;
                 }
-                $query->whereIn($filterKey, $vals);
+                if ($type == 'OR') {
+                    $query->orWhereIn($filterKey, $vals);
+                } else {
+                    $query->whereIn($filterKey, $vals);
+                }
                 break;
             case 'like':
                 // Handle delimited lists

@@ -16,5 +16,8 @@ class DeviceVariationsTableSeeder extends BaseTableSeeder
     {
         $this->deleteTable();
         factory(\WA\DataStore\DeviceVariation\DeviceVariation::class, 1000)->create();
+
+		//factory(\WA\DataStore\DeviceVariation\DeviceVariation::class, 3)->create(['deviceId' => 21]);
+
     }
 }

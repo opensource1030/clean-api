@@ -72,7 +72,7 @@ class PackagesController extends FilteredApiController
         $numberUsers = 0;
         foreach ($users as $user) {
             $userInfo = User::find($user->id);
-            $address = $userInfo->address;
+            $address = $userInfo->addresses;
             $udlValues = $this->getUdlValuesFromUser($userInfo);
 
             $isOk = true;
@@ -401,14 +401,14 @@ class PackagesController extends FilteredApiController
                 }
             }
 
-            if (isset($dataRelationships['address']) && $success) {
-                if (isset($dataRelationships['address']['data'])) {
-                    $dataAddress = $this->parseJsonToArray($dataRelationships['address']['data'], 'address');
+            if (isset($dataRelationships['addresses']) && $success) {
+                if (isset($dataRelationships['addresses']['data'])) {
+                    $dataAddress = $this->parseJsonToArray($dataRelationships['addresses']['data'], 'addresses');
                     try {
-                        $package->address()->sync($dataAddress);
+                        $package->addresses()->sync($dataAddress);
                     } catch (\Exception $e) {
                         $success = false;
-                        $error['errors']['address'] = Lang::get('messages.NotOptionIncludeClass',
+                        $error['errors']['addresses'] = Lang::get('messages.NotOptionIncludeClass',
                             ['class' => 'Package', 'option' => 'created', 'include' => 'Address']);
                         //$error['errors']['Message'] = $e->getMessage();
                     }
@@ -474,15 +474,20 @@ class PackagesController extends FilteredApiController
                     $data = $data['relationships']['conditions']['data'];
 
                     foreach ($data as $item) {
-                        try {
-                            $item['packageId'] = $package->id;
-                            $conditionsInterface->create($item);    
-                        } catch (\Exception $e) {
-                            DB::rollBack();
-                            $error['errors']['services'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Package', 'option' => 'created', 'include' => 'Conditions']);
-                            $error['errors']['Message'] = $e->getMessage();
-                            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
-                              
+                        if (isset($item['type']) && $item['type'] == 'conditions') {
+                            try {
+                                $item['packageId'] = $package->id;
+                                $conditionsInterface->create($item);
+                            } catch (\Exception $e) {
+                                DB::rollBack();
+                                $error['errors']['conditions'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Package', 'option' => 'created', 'include' => 'Conditions']);
+                                $error['errors']['Message'] = $e->getMessage();
+                                return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+                            }
+                        } else {
+                            $success = false;
+                            $error['errors']['conditions'] = Lang::get('messages.NotOptionIncludeClass',
+                                ['class' => 'Package', 'option' => 'created', 'include' => 'Conditions']);
                         }
                     }
                 }
@@ -530,14 +535,14 @@ class PackagesController extends FilteredApiController
                 }
             }
 
-            if (isset($dataRelationships['address']) && $success) {
-                if (isset($dataRelationships['address']['data'])) {
-                    $dataAddress = $this->parseJsonToArray($dataRelationships['address']['data'], 'address');
+            if (isset($dataRelationships['addresses']) && $success) {
+                if (isset($dataRelationships['addresses']['data'])) {
+                    $dataAddress = $this->parseJsonToArray($dataRelationships['addresses']['data'], 'addresses');
                     try {
-                        $package->address()->sync($dataAddress);
+                        $package->addresses()->sync($dataAddress);
                     } catch (\Exception $e) {
                         $success = false;
-                        $error['errors']['address'] = Lang::get('messages.NotOptionIncludeClass',
+                        $error['errors']['addresses'] = Lang::get('messages.NotOptionIncludeClass',
                             ['class' => 'Package', 'option' => 'created', 'include' => 'Address']);
                         $error['errors']['Message'] = $e->getMessage();
                     }

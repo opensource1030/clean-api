@@ -34,7 +34,7 @@ class ServiceItemTransformer extends FilterableTransformer
     public function includeOrders(ServiceItem $serviceitem)
     {
         $this->criteria = $this->getRequestCriteria();
-        $orders = $this->applyCriteria($serviceitem->orders(), $this->criteria, true, [
+        $orders = $this->applyCriteria($serviceitem->orders(), null, true, [
             'orders' => 'orders'
         ]);
         return new ResourceCollection ($orders->get(), new OrderTransformer(), 'orders');

@@ -29,4 +29,16 @@ class ApiFiltersTest extends TestCase
         $response = $this->call('GET', '/devices?filter[blahblah]=9001');
         $this->assertEquals(400, $response->status());
     }
+
+    public function testCanIncludeFiltersWithOrCriteriaInMeta()
+    {
+        $this->json('GET', '/devices?include=devicetypes&filter[]=[devicetypes.name]=Smartphone[or][devicetypes.name]=Tablet')
+            ->seeJson(['filter' => ['[0]=[devicetypes.name]=Smartphone[or][devicetypes.name]=Tablet']]);
+    }
+
+    public function testCanIncludeFiltersWithMultipleOrCriteriaInMeta()
+    {
+        $this->json('GET', '/devices?include=devicetypes&filter[]=[devicetypes.name]=Smartphone[or][devicetypes.name]=Tablet&filter[]=[devicetypes.name]=Smartphone[or][devicetypes.name]=Tablet')
+            ->seeJson(['filter' => ['[0]=[devicetypes.name]=Smartphone[or][devicetypes.name]=Tablet', '[1]=[devicetypes.name]=Smartphone[or][devicetypes.name]=Tablet']]);
+    }
 }

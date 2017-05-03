@@ -17,22 +17,9 @@ class ModificationsTableSeeder extends BaseTableSeeder
         $this->deleteTable();
 
         $data = [
-
-            [
-                'modType' => 'capacity',
-                'value' => '16Gb',
-            ],
             [
                 'modType' => 'style',
                 'value' => 'White',
-            ],
-            [
-                'modType' => 'capacity',
-                'value' => '8Gb',
-            ],
-            [
-                'modType' => 'capacity',
-                'value' => '128Gb',
             ],
             [
                 'modType' => 'style',
@@ -42,6 +29,35 @@ class ModificationsTableSeeder extends BaseTableSeeder
                 'modType' => 'style',
                 'value' => 'Space Grey',
             ],
+            [
+                'modType' => 'style',
+                'value' => 'Black',
+            ],
+            [
+                'modType' => 'style',
+                'value' => 'Silver',
+            ],
+            [
+                'modType' => 'capacity',
+                'value' => '8Gb',
+            ],
+            [
+                'modType' => 'capacity',
+                'value' => '16Gb',
+            ],
+            [
+                'modType' => 'capacity',
+                'value' => '32Gb',
+            ],
+            [
+                'modType' => 'capacity',
+                'value' => '64Gb',
+            ],
+            [
+                'modType' => 'capacity',
+                'value' => '128Gb',
+            ],
+
         ];
 
         $this->loadTable($data);

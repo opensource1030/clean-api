@@ -258,11 +258,11 @@ $api->version('v1', function ($api) {
 
         //=Address
         $addressController = 'WA\Http\Controllers\AddressController';
-        $api->get('address', ['as' => 'api.address.index', 'uses' => $addressController . '@index']);
-        $api->get('address/{id}', ['as' => 'api.address.show', 'uses' => $addressController . '@show']);
-        $api->post('address', ['uses' => $addressController . '@create']);
-        $api->patch('address/{id}', ['uses' => $addressController . '@store']);
-        $api->delete('address/{id}', ['uses' => $addressController . '@delete']);
+        $api->get('addresses', ['as' => 'api.addresses.index', 'uses' => $addressController . '@index']);
+        $api->get('addresses/{id}', ['as' => 'api.addresses.show', 'uses' => $addressController . '@show']);
+        $api->post('addresses', ['uses' => $addressController . '@create']);
+        $api->patch('addresses/{id}', ['uses' => $addressController . '@store']);
+        $api->delete('addresses/{id}', ['uses' => $addressController . '@delete']);
 
         //=DeviceType
         $devicesTypeController = 'WA\Http\Controllers\DeviceTypesController';

@@ -48,7 +48,7 @@ class ServiceTransformer extends FilterableTransformer
     public function includeServiceitems(Service $service)
     {
         $this->criteria = $this->getRequestCriteria();
-        $serviceItems = $this->applyCriteria($service->serviceitems(), $this->criteria, true, [
+        $serviceItems = $this->applyCriteria($service->serviceitems(), null, true, [
             'serviceitems' => 'service_items'
         ]);
         return new ResourceCollection ($serviceItems->get(), new ServiceItemTransformer(), 'service_items');

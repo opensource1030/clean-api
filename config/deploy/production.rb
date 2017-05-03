@@ -38,5 +38,4 @@ namespace :deploy do
   # after :published, "laravel:migrate"
   
   after :published, "ops:reset_app"
-  # after :published, "laravel:restart_queue"
 end
