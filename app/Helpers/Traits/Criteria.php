@@ -301,8 +301,18 @@ trait Criteria
             } else {
                 // CASO AND
                 if (strpos($filterKey, '.')) {
-                    $relKey = substr($filterKey, 0, strpos($filterKey, '.'));
-                    $relColumn = substr($filterKey, strpos($filterKey, '.') + 1);
+                    $parts = explode('.', $filterKey);
+                    $relColumn = $parts[count($parts) - 1];
+                    $relKey = '';
+                    $parts = array_slice($parts, 0, count($parts) - 1);
+                    
+                    foreach ($parts as $part) {
+                        if ($relKey == '') {
+                            $relKey = $part;   
+                        } else {
+                            $relKey = $relKey . '.' . $part;
+                        }                        
+                    }
 
                     if (is_array($this->modelMap) && isset($this->modelMap[$relKey])) {
                         $relKey = $this->modelMap[$relKey];
@@ -320,6 +330,8 @@ trait Criteria
                             if ($this->includesAreCorrectInf($relKey, $newTransformer)) {
                                 $this->criteriaQuery->whereHas($relKey,
                                     function ($query) use ($relKey, $relColumn, $op, $val) {
+                                        $parts = explode('.', $relKey);
+                                        $relKey = $parts[count($parts) - 1];
                                         return $query = $this->executeCriteria($query, $this->changeTableName($relKey) . "." . $relColumn, $op, $val, 'AND');
                                 });
                             }
@@ -347,6 +359,7 @@ trait Criteria
             }
         }
 
+        //dd($this->criteriaQuery->toSql());
         //\Log::debug("Criteria@filter - this->criteriaQuery->toSql(): " . print_r($this->criteriaQuery->toSql(), true));
 
         return $this;
@@ -376,10 +389,21 @@ trait Criteria
     {
         $includesAvailable = $class->getAvailableIncludes();
 
-        foreach ($includesAvailable as $aic) {
-            if ($aic == $include) {
-                return true;
-            }
+        if (strpos($include, '.')) {
+            $auxClass = substr($include, 0, strpos($include, '.'));
+            $auxInclude = substr($include, strpos($include, '.') + 1);
+
+            $model = $this->returnTheCriteriaModel($auxClass);
+            $transformer = $this->createTransformer($model);
+            $newTransformer = new $transformer();
+
+            return $this->includesAreCorrectInf($auxInclude, $newTransformer);
+        } else {
+            foreach ($includesAvailable as $aic) {
+                if ($aic == $include) {
+                    return true;
+                }
+            }    
         }
     }
 
@@ -453,6 +477,10 @@ trait Criteria
                     $relation = substr($relationship, 1, strpos($relationship, '][')-1);
                     $aux['operation'] = substr($relationship, strpos($relationship, '][') + 2 , -1);
                     if (strpos($relation, '.')) {
+                        //$count = substr_count($relation,".");
+                        //$parts = explode($relation, ".");
+                        //$aux['relColumn'] = $parts[count($parts)-1];
+                        //array_slice($parts, 0, -1);
                         $aux['relKey'] = substr($relation, 0, strpos($relation, '.'));
                         $aux['relColumn'] = substr($relation, strpos($relation, '.') + 1);
                     } else {
