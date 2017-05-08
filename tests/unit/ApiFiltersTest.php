@@ -511,4 +511,156 @@ class ApiFiltersTest extends TestCase
         $this->assertEquals($resArray['meta']->filter, ['[0]=[devicevariations.carrierId]=1[or][devicevariations.carrierId]=3[or][devicevariations.carrierId]=5']);
         $this->assertCount(6, $resArray['included']);
     }
+
+    public function testFilterModelByItsIncludesGrandchildren() {
+
+        $device1 = factory(\WA\DataStore\Device\Device::class)->create(['name' => 'device1']);
+        $device2 = factory(\WA\DataStore\Device\Device::class)->create(['name' => 'device2']);
+        $device3 = factory(\WA\DataStore\Device\Device::class)->create(['name' => 'device3']);
+        $device4 = factory(\WA\DataStore\Device\Device::class)->create(['name' => 'device4']);
+        $device5 = factory(\WA\DataStore\Device\Device::class)->create(['name' => 'device5']);
+
+        $carrier1 = factory(\WA\DataStore\Carrier\Carrier::class)->create(['name' => 'carrier1']);
+        $carrier2 = factory(\WA\DataStore\Carrier\Carrier::class)->create(['name' => 'carrier2']);
+        $carrier3 = factory(\WA\DataStore\Carrier\Carrier::class)->create(['name' => 'carrier3']);
+        $carrier4 = factory(\WA\DataStore\Carrier\Carrier::class)->create(['name' => 'carrier4']);
+        $carrier5 = factory(\WA\DataStore\Carrier\Carrier::class)->create(['name' => 'carrier5']);
+
+
+        $devvar1 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create([
+            'carrierId' => $carrier1->id,
+            'deviceId' => $device1->id,
+            'priceRetail' => 100
+        ]);
+        $devvar2 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create([
+            'carrierId' => $carrier2->id,
+            'deviceId' => $device2->id,
+            'priceRetail' => 200
+        ]);
+        $devvar3 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create([
+            'carrierId' => $carrier1->id,
+            'deviceId' => $device3->id,
+            'priceRetail' => 300
+        ]);
+        $devvar4 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create([
+            'carrierId' => $carrier4->id,
+            'deviceId' => $device4->id,
+            'priceRetail' => 400
+        ]);
+        $devvar5 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create([
+            'carrierId' => $carrier1->id,
+            'deviceId' => $device5->id,
+            'priceRetail' => 500
+        ]);
+
+        $resArray = (array)json_decode($this->json('GET', '/devices?include=devicevariations,devicevariations.carriers&filter[devicevariations.carriers.name]=' . $carrier1->name)->response->getContent());
+        //\Log::debug("ApiFiltersTest@testFilterModelByItsIncludesGrandchildren: " . print_r($resArray, true));
+        $this->assertCount(3, $resArray['data']);
+        $this->assertEquals($resArray['data'][0]->id, $device1->id);
+        $this->assertEquals($resArray['data'][1]->id, $device3->id);
+        $this->assertEquals($resArray['data'][2]->id, $device5->id);
+        $this->assertEquals($resArray['meta']->filter, ['[devicevariations.carriers.name]=' . $carrier1->name]);
+        $this->assertCount(4, $resArray['included']);
+    }
+
+    public function testFilterModelByItsIncludesANDGrandchildren() {
+
+        $device1 = factory(\WA\DataStore\Device\Device::class)->create(['name' => 'device1']);
+        $device2 = factory(\WA\DataStore\Device\Device::class)->create(['name' => 'device2']);
+        $device3 = factory(\WA\DataStore\Device\Device::class)->create(['name' => 'device3']);
+        $device4 = factory(\WA\DataStore\Device\Device::class)->create(['name' => 'device4']);
+        $device5 = factory(\WA\DataStore\Device\Device::class)->create(['name' => 'device5']);
+
+        $carrier1 = factory(\WA\DataStore\Carrier\Carrier::class)->create(['name' => 'carrier1']);
+        $carrier2 = factory(\WA\DataStore\Carrier\Carrier::class)->create(['name' => 'carrier2']);
+        $carrier3 = factory(\WA\DataStore\Carrier\Carrier::class)->create(['name' => 'carrier3']);
+        $carrier4 = factory(\WA\DataStore\Carrier\Carrier::class)->create(['name' => 'carrier4']);
+        $carrier5 = factory(\WA\DataStore\Carrier\Carrier::class)->create(['name' => 'carrier5']);
+
+
+        $devvar1 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create([
+            'carrierId' => $carrier1->id,
+            'deviceId' => $device1->id,
+            'priceRetail' => 100
+        ]);
+        $devvar2 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create([
+            'carrierId' => $carrier2->id,
+            'deviceId' => $device2->id,
+            'priceRetail' => 200
+        ]);
+        $devvar3 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create([
+            'carrierId' => $carrier3->id,
+            'deviceId' => $device3->id,
+            'priceRetail' => 300
+        ]);
+        $devvar4 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create([
+            'carrierId' => $carrier4->id,
+            'deviceId' => $device4->id,
+            'priceRetail' => 400
+        ]);
+        $devvar5 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create([
+            'carrierId' => $carrier5->id,
+            'deviceId' => $device5->id,
+            'priceRetail' => 500
+        ]);
+
+        $resArray = (array)json_decode($this->json('GET', '/devices?include=devicevariations,devicevariations.carriers&filter[devicevariations.carriers.name]=' . $carrier1->name . ',' . $carrier2->name)->response->getContent());
+        //\Log::debug("ApiFiltersTest@testFilterModelByItsIncludesANDGrandchildren: " . print_r($resArray, true));
+        $this->assertCount(2, $resArray['data']);
+        $this->assertEquals($resArray['data'][0]->id, $device1->id);
+        $this->assertEquals($resArray['data'][1]->id, $device2->id);
+        $this->assertEquals($resArray['meta']->filter, ['[devicevariations.carriers.name]=' . $carrier1->name . ',' . $carrier2->name]);
+        $this->assertCount(4, $resArray['included']);
+    }
+
+        public function testFilterModelByItsIncludesORGrandchildren() {
+
+        $device1 = factory(\WA\DataStore\Device\Device::class)->create(['name' => 'device1']);
+        $device2 = factory(\WA\DataStore\Device\Device::class)->create(['name' => 'device2']);
+        $device3 = factory(\WA\DataStore\Device\Device::class)->create(['name' => 'device3']);
+        $device4 = factory(\WA\DataStore\Device\Device::class)->create(['name' => 'device4']);
+        $device5 = factory(\WA\DataStore\Device\Device::class)->create(['name' => 'device5']);
+
+        $carrier1 = factory(\WA\DataStore\Carrier\Carrier::class)->create(['name' => 'carrier1']);
+        $carrier2 = factory(\WA\DataStore\Carrier\Carrier::class)->create(['name' => 'carrier2']);
+        $carrier3 = factory(\WA\DataStore\Carrier\Carrier::class)->create(['name' => 'carrier3']);
+        $carrier4 = factory(\WA\DataStore\Carrier\Carrier::class)->create(['name' => 'carrier4']);
+        $carrier5 = factory(\WA\DataStore\Carrier\Carrier::class)->create(['name' => 'carrier5']);
+
+
+        $devvar1 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create([
+            'carrierId' => $carrier1->id,
+            'deviceId' => $device1->id,
+            'priceRetail' => 100
+        ]);
+        $devvar2 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create([
+            'carrierId' => $carrier2->id,
+            'deviceId' => $device2->id,
+            'priceRetail' => 200
+        ]);
+        $devvar3 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create([
+            'carrierId' => $carrier3->id,
+            'deviceId' => $device3->id,
+            'priceRetail' => 300
+        ]);
+        $devvar4 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create([
+            'carrierId' => $carrier1->id,
+            'deviceId' => $device4->id,
+            'priceRetail' => 400
+        ]);
+        $devvar5 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create([
+            'carrierId' => $carrier5->id,
+            'deviceId' => $device5->id,
+            'priceRetail' => 500
+        ]);
+
+        $resArray = (array)json_decode($this->json('GET', '/devices?include=devicevariations,devicevariations.carriers&filter[]=[devicevariations.carriers.name]=' . $carrier1->name . '[or][devicevariations.carriers.name]=' . $carrier2->name)->response->getContent());
+        \Log::debug("ApiFiltersTest@testFilterModelByItsIncludesORGrandchildren: " . print_r($resArray, true));
+        $this->assertCount(3, $resArray['data']);
+        $this->assertEquals($resArray['data'][0]->id, $device1->id);
+        $this->assertEquals($resArray['data'][1]->id, $device2->id);
+        $this->assertEquals($resArray['data'][2]->id, $device4->id);
+        $this->assertEquals($resArray['meta']->filter, ['[0]=[devicevariations.carriers.name]=' . $carrier1->name . '[or][devicevariations.carriers.name]=' . $carrier2->name]);
+        $this->assertCount(5, $resArray['included']);
+    }
 }

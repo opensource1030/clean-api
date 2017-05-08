@@ -229,7 +229,6 @@ trait Criteria
         $criteriaModelColumns = $this->criteriaModelColumns;
 
         foreach ($this->filterCriteria->filtering() as $filterKey => $filterVal) {
-
             if(is_int($filterKey)) {
                 // CASO OR
                 if(isset($filterVal['eq'])) {
@@ -254,7 +253,9 @@ trait Criteria
                                 $this->criteriaQuery->whereHas($arrayFilters[0]['relKey'],
                                     function ($query) use ($arrayFilters, $type) {
                                         foreach ($arrayFilters as $key => $value) {
-                                            $query = $this->executeCriteria($query, $this->changeTableName($value['relKey']) . "." . $value['relColumn'], $value['operation'], $value['value'], $type);
+                                            $parts = explode('.', $value['relKey']);
+                                            $relKey = $parts[count($parts) - 1];
+                                            $query = $this->executeCriteria($query, $this->changeTableName($relKey) . "." . $value['relColumn'], $value['operation'], $value['value'], $type);
                                             $type = 'OR';
                                         }
                                     return $query;
@@ -296,6 +297,8 @@ trait Criteria
                                 $this->criteriaQuery = $this->executeCriteria($this->criteriaQuery, $value['relColumn'], $value['operation'], $value['value'], 'AND');
                             }
                         }
+                    } else {
+                        throw new BadCriteriaException('Invalid filter criteria, malformed OR filter');
                     }
                 }
             } else {
@@ -477,20 +480,42 @@ trait Criteria
                     $relation = substr($relationship, 1, strpos($relationship, '][')-1);
                     $aux['operation'] = substr($relationship, strpos($relationship, '][') + 2 , -1);
                     if (strpos($relation, '.')) {
-                        //$count = substr_count($relation,".");
-                        //$parts = explode($relation, ".");
-                        //$aux['relColumn'] = $parts[count($parts)-1];
-                        //array_slice($parts, 0, -1);
-                        $aux['relKey'] = substr($relation, 0, strpos($relation, '.'));
-                        $aux['relColumn'] = substr($relation, strpos($relation, '.') + 1);
+
+                        $parts = explode('.', $relation);
+                        $aux['relColumn'] = $parts[count($parts) - 1];
+                        $relKey = '';
+                        $parts = array_slice($parts, 0, count($parts) - 1);
+                        
+                        foreach ($parts as $part) {
+                            if ($relKey == '') {
+                                $relKey = $part;   
+                            } else {
+                                $relKey = $relKey . '.' . $part;
+                            }                        
+                        }
+
+                        $aux['relKey'] = $relKey;
                     } else {
                         $aux['relKey'] = '';
                         $aux['relColumn'] = $relation;
                     }
                 } else if (strpos($relationship, '.')) {
-                    $aux['operation'] = 'eq';
-                    $aux['relKey'] = substr($relationship, 1, strpos($relationship, '.')-1);
-                    $aux['relColumn'] = substr($relationship, strpos($relationship, '.') + 1 , -1);
+                    $relationship = substr($relationship, 1, -1);
+
+                    $aux['operation'] = 'eq';$parts = explode('.', $relationship);
+                    $aux['relColumn'] = $parts[count($parts) - 1];
+                    $relKey = '';
+                    $parts = array_slice($parts, 0, count($parts) - 1);
+                    
+                    foreach ($parts as $part) {
+                        if ($relKey == '') {
+                            $relKey = $part;   
+                        } else {
+                            $relKey = $relKey . '.' . $part;
+                        }                        
+                    }
+
+                    $aux['relKey'] = $relKey;
                 } else {}
             } else {}
             array_push($arrayAux, $aux);
