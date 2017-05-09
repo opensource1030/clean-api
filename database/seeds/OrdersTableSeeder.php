@@ -16,35 +16,6 @@ class OrdersTableSeeder extends BaseTableSeeder
     {
         $this->deleteTable();
 
-        $data = [
-
-            [
-                'status' => 'Denied',
-                'userId' => 1,
-                'packageId' => 1,
-                'serviceId' => 1
-
-            ],
-            [
-                'status' => 'Accepted',
-                'userId' => 2,
-                'packageId' => 2,
-                'serviceId' => 2
-            ],
-            [
-                'status' => 'Pending',
-                'userId' => 3,
-                'packageId' => 3,
-                'serviceId' => 3
-            ],
-            [
-                'status' => 'Accepted',
-                'userId' => 4,
-                'packageId' => 4,
-                'serviceId' => 4
-            ],
-        ];
-
-        $this->loadTable($data);
+        factory(\WA\DataStore\Order\Order::class, 10)->create();
     }
 }

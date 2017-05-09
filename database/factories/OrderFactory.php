@@ -2,15 +2,14 @@
 
 
 $factory->define(WA\DataStore\Order\Order::class, function ($faker) {
-    $users = factory(\WA\DataStore\User\User::class)->create();
-    $package = factory(\WA\DataStore\Package\Package::class)->create();
-    $service = factory(\WA\DataStore\Service\Service::class)->create();
+    $status = ['Approval', 'New', 'Delivered', 'Expired'];
 
     return [
-        'status' => $faker->sentence,
-        'userId' => $users->id,
-        'packageId' => $package->id,
-        'serviceId' => $service->id,
+        'status' => $status[array_rand($status)],
+        'userId' => rand(1,20),
+        'packageId' => rand(1,20),
+        'serviceId' => rand(1,20),
+        'addressId' => rand(1,20),
         'created_at' => $faker->dateTime,
         'updated_at' => $faker->dateTime,
     ];
