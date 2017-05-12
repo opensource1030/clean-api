@@ -25,6 +25,17 @@ $app = new Laravel\Lumen\Application(
 
 $app->withFacades();
 
+/**
+Set up Logging with Papertrail
+**/
+$app->configureMonologUsing(function($monolog) {
+    $syslog = new \Monolog\Handler\SyslogHandler('lumen');
+    $formatter = new \Monolog\Formatter\LineFormatter(null, null, false, true);
+    $syslog->setFormatter($formatter);
+    $monolog->pushHandler($syslog);
+    return $monolog;
+});
+
 $app->withEloquent();
 
 config([

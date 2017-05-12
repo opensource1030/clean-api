@@ -29,6 +29,5 @@ namespace :deploy do
   after :published, "composer:install"
   after :published, "laravel:permissions"
   after :published, "laravel:migrate"
-  after :published, "laravel:seed"
   after :published, "laravel:optimize"
 end
