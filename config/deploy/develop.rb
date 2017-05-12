@@ -1,16 +1,16 @@
-role :app, %w{204.156.175.49}
+role :app, %w{54.87.193.65}
 
 set :stage, :develop
-set :deploy_to, '/home/deploy/webapps/clean/api'
+set :deploy_to, '/home/forge/staging.api.wirelessanalytics.com/'
 set :branch, 'master'
 set :keep_releases, 3
 set :log_level, :debug
 
 set :ssh_options, {
-  user: 'deploy'
+  user: 'forge'
 }
 
-set :tmp_dir, '/home/deploy/tmp'
+set :tmp_dir, '/home/forge/staging.api.wirelessanalytics.com/tmp'
 
 namespace :composer do
 
@@ -30,6 +30,7 @@ namespace :deploy do
   after :published, "composer:install"
   after :published, "laravel:permissions"
   after :published, "laravel:migrate"
-  # after :published, "laravel:optimize"
-  after :published, "ops:reset_app"
+  after :published, "laravel:seed"
+  after :published, "laravel:optimize"
+  # after :published, "ops:reset_app"
 end
