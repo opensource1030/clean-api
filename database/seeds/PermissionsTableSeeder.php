@@ -16,8 +16,12 @@ class PermissionsTableSeeder extends BaseTableSeeder
     {
         $this->deleteTable();
 
-            //roleS
-        $dataRoles = [
+        /*
+         *  ROLES
+         *  scope:get_roles, scope:get_role, scope:create_role, scope:update_role, scope:delete_role
+         *
+         */
+        $dataRole = [
              [
                 'name' => 'get_roles',
                 'display_name' => 'View all roles',
@@ -48,8 +52,13 @@ class PermissionsTableSeeder extends BaseTableSeeder
                 
             ],
         ];
-            //permissionS
-        $dataPermissions = [
+
+        /*
+         *  PERMISSIONS
+         *  scope:get_permissions, scope:get_permission, scope:create_permission, scope:update_permission,           *    scope:delete_permission
+         *
+         */
+        $dataPermission = [
              [
                 'name' => 'get_permissions',
                 'display_name' => 'View all permissions',
@@ -80,8 +89,13 @@ class PermissionsTableSeeder extends BaseTableSeeder
                 
             ],
         ];
-            //scopeS
-        $dataScopes = [
+
+        /*
+         *  SCOPES
+         *  scope:get_scopes, scope:get_scope, scope:create_scope, scope:update_scope, scope:delete_scope
+         *
+         */
+        $dataScope = [
              [
                 'name' => 'get_scopes',
                 'display_name' => 'View all scopes',
@@ -113,14 +127,16 @@ class PermissionsTableSeeder extends BaseTableSeeder
             ],
         ];
 
-        //COMPANIES
-        $dataCompanies = [
-
+        /*
+         *  COMPANIES
+         *  scope:get_companies, scope:get_company, scope:create_company, scope:update_company, scope:delete_company
+         *
+         */
+        $dataCompany = [
             [
                 'name' => 'get_companies',
                 'display_name' => 'View all companies',
                 'description' => 'View all companies',
-                
             ],
             [
                 'name' => 'get_company',
@@ -143,16 +159,30 @@ class PermissionsTableSeeder extends BaseTableSeeder
                 'name' => 'delete_company',
                 'display_name' => 'Erase a company',
                 'description' => 'Erase a company',
-                
             ],
         ];
-            //USER
+
+        /*
+         *  USERS
+         *  scope:get_users, scope:get_users_packages, scope:get_user_me, scope:get_user, scope:create_user,
+         *  scope:update_user, scope:delete_user
+         *
+         */
         $dataUser = [
-             [
+            [
                 'name' => 'get_users',
                 'display_name' => 'View all users',
                 'description' => 'View all users',
-                
+            ],
+            [
+                'name' => 'get_users_packages',
+                'display_name' => 'View the number of users allowed',
+                'description' => 'View the number of users allowed',
+            ],
+            [
+                'name' => 'get_user_me',
+                'display_name' => 'View logged user information',
+                'description' => 'View logged user information',
             ],
             [
                 'name' => 'get_user',
@@ -163,25 +193,44 @@ class PermissionsTableSeeder extends BaseTableSeeder
                 'name' => 'create_user',
                 'display_name' => 'Create a user',
                 'description' => 'Create a user',
-                
+            ],
+            [
+                'name' => 'update_user',
+                'display_name' => 'Update a users',
+                'description' => 'Update a users',
+            ],
+            [
+                'name' => 'delete_user',
+                'display_name' => 'Delete a users',
+                'description' => 'Delete a users',
             ],
         ];
-            //ASSETS
-        $dataAssets = [
+
+        /*
+         *  ASSETS
+         *  scope:get_assets, scope:get_asset
+         *
+         */
+        $dataAsset = [
              [
-                'name' => 'get_assetss',
-                'display_name' => 'View all assetss',
-                'description' => 'View all assetss',
+                'name' => 'get_assets',
+                'display_name' => 'View all assets',
+                'description' => 'View all assets',
                 
             ],
             [
-                'name' => 'get_assets',
-                'display_name' => 'View a assets',
-                'description' => 'View a assets',
+                'name' => 'get_asset',
+                'display_name' => 'View an asset',
+                'description' => 'View an asset',
             ],
         ];
-            //DEVICES
-        $dataDevices = [
+
+        /*
+         *  DEVICES
+         *  scope:get_devices, scope:get_device, scope:create_device, scope:update_device, scope:delete_device
+         *
+         */
+        $dataDevice = [
              [
                 'name' => 'get_devices',
                 'display_name' => 'View all devices',
@@ -212,8 +261,13 @@ class PermissionsTableSeeder extends BaseTableSeeder
                 
             ],
         ];
-            //CONTENTS
-        $dataContents = [
+
+        /*
+         *  CONTENTS
+         *  scope:get_contents, scope:get_content, scope:create_content, scope:update_content, scope:delete_content
+         *
+         */
+        $dataContent = [
              [
                 'name' => 'get_contents',
                 'display_name' => 'View all contents',
@@ -243,8 +297,13 @@ class PermissionsTableSeeder extends BaseTableSeeder
                 'description' => 'Erase a content',
                 
             ],
-        ];    
-            //APP
+        ];
+
+        /*
+         *  APPS
+         *  scope:get_apps, scope:get_app, scope:create_app, scope:update_app, scope:delete_app
+         *
+         */
         $dataApp = [
              [
                 'name' => 'get_apps',
@@ -276,7 +335,12 @@ class PermissionsTableSeeder extends BaseTableSeeder
                 
             ],
         ];
-            //ORDER
+
+        /*
+         *  ORDERS
+         *  scope:get_orders, scope:get_order, scope:create_order, scope:update_order, scope:delete_order
+         *
+         */
         $dataOrder = [
              [
                 'name' => 'get_orders',
@@ -308,39 +372,12 @@ class PermissionsTableSeeder extends BaseTableSeeder
                 
             ],
         ];
-            //REQUEST
-        $dataRequest = [
-             [
-                'name' => 'get_requests',
-                'display_name' => 'View all requests',
-                'description' => 'View all requests',
-                
-            ],
-            [
-                'name' => 'get_request',
-                'display_name' => 'View a request',
-                'description' => 'View a request',
-            ],
-            [
-                'name' => 'create_request',
-                'display_name' => 'Create a request',
-                'description' => 'Create a request',
-                
-            ],
-            [
-                'name' => 'update_request',
-                'display_name' => 'Update a request',
-                'description' => 'Update a request',
-                
-            ],
-            [
-                'name' => 'delete_request',
-                'display_name' => 'Erase a request',
-                'description' => 'Erase a request',
-                
-            ],
-        ];
-            //PACKAGE
+
+        /*
+         *  PACKAGES
+         *  scope:get_packages, scope:get_packages_foruser, scope:get_package, scope:create_package,                 *    scope:update_package, scope:delete_package
+         *
+         */
         $dataPackage = [
              [
                 'name' => 'get_packages',
@@ -354,9 +391,9 @@ class PermissionsTableSeeder extends BaseTableSeeder
                 'description' => 'View a package',
             ],
             [
-                'name' => 'get_package_forUser',
-                'display_name' => 'User view a package',
-                'description' => 'User view a package',
+                'name' => 'get_packages_foruser',
+                'display_name' => 'View all packages of the user',
+                'description' => 'View all packages of the user',
             ],
             [
                 'name' => 'create_package',
@@ -377,7 +414,12 @@ class PermissionsTableSeeder extends BaseTableSeeder
                 
             ],
         ];
-            //SERVICE
+
+        /*
+         *  SERVICES
+         *  scope:get_services, scope:get_service, scope:create_service, scope:update_service, scope:delete_service
+         *
+         */
         $dataService = [
              [
                 'name' => 'get_services',
@@ -409,7 +451,13 @@ class PermissionsTableSeeder extends BaseTableSeeder
                 
             ],
         ];
-            //MODIFICATION
+
+        /*
+         *  MODIFICATIONS
+         *  scope:get_modifications, scope:get_modification, scope:create_modification, scope:update_modification,
+         *    scope:delete_modification
+         *
+         */
         $dataModification = [
              [
                 'name' => 'get_modifications',
@@ -441,7 +489,12 @@ class PermissionsTableSeeder extends BaseTableSeeder
                 
             ],
         ];
-            //CARRIER
+
+        /*
+         *  CARRIERS
+         *  scope:get_carriers, scope:get_carrier, scope:create_carrier, scope:update_carrier, scope:delete_carrier
+         *
+         */
         $dataCarrier = [
             [
                 'name' => 'get_carriers',
@@ -473,8 +526,14 @@ class PermissionsTableSeeder extends BaseTableSeeder
                 
             ],
         ];
-            //PRICE
-        $dataPrice = [
+
+        /*
+         *  DEVICEVARIATIONS
+         *  scope:get_devicevariations, scope:get_devicevariation, scope:create_devicevariation,
+         *    scope:update_devicevariation, scope:delete_devicevariation
+         *
+         */
+        $dataDeviceVariation = [
              [
                 'name' => 'get_prices',
                 'display_name' => 'View all prices',
@@ -505,7 +564,12 @@ class PermissionsTableSeeder extends BaseTableSeeder
                 
             ],
         ];
-            //IMAGE
+
+        /*
+         *  IMAGES
+         *  scope:get_images, scope:get_image, scope:get_image_info, scope:create_image, scope:delete_image
+         *
+         */
         $dataImage = [
              [
                 'name' => 'get_images',
@@ -530,19 +594,18 @@ class PermissionsTableSeeder extends BaseTableSeeder
                 
             ],
             [
-                'name' => 'update_image',
-                'display_name' => 'Update a image',
-                'description' => 'Update a image',
-                
-            ],
-            [
                 'name' => 'delete_image',
                 'display_name' => 'Erase a image',
                 'description' => 'Erase a image',
                 
             ],
         ];
-            //ADDRESS
+
+        /*
+         *  ADDRESS
+         *  scope:get_addresses, scope:get_address, scope:create_address, scope:update_address, scope:delete_address
+         *
+         */
         $dataAddress = [
             [
                 'name' => 'get_addresses',
@@ -574,7 +637,13 @@ class PermissionsTableSeeder extends BaseTableSeeder
                 
             ],
         ];
-            //DEVICETYPE
+
+        /*
+         *  DEVICETYPES
+         *  scope:get_devicetypes, scope:get_devicetype, scope:create_devicetype, scope:update_devicetype,
+         *    scope:delete_devicetype
+         *
+         */
         $dataDeviceType = [
             [
                 'name' => 'get_devicetypes',
@@ -606,71 +675,13 @@ class PermissionsTableSeeder extends BaseTableSeeder
                 
             ],
         ];
-            //CATEGORYDEVICES
-        $dataCategoryDevice = [
-            [
-                'name' => 'get_categorydevices',
-                'display_name' => 'View all devices category',
-                'description' => 'View all devices category',
-                
-            ],
-            [
-                'name' => 'get_categorydevice',
-                'display_name' => 'View a device category',
-                'description' => 'View a device category',
-            ],
-            [
-                'name' => 'create_categorydevice',
-                'display_name' => 'Create a device category',
-                'description' => 'Create a device category',
-                
-            ],
-            [
-                'name' => 'update_categorydevice',
-                'display_name' => 'Update a device category',
-                'description' => 'Update a device category',
-                
-            ],
-            [
-                'name' => 'delete_categorydevice',
-                'display_name' => 'Erase a device category',
-                'description' => 'Erase a device category',
-                
-            ],
-        ];
-            //CATEGORYAPPS
-        $dataCategoryApps = [
-            [
-                'name' => 'get_categoryapps',
-                'display_name' => 'View all apps category',
-                'description' => 'View all apps category',
-                
-            ],
-            [
-                'name' => 'get_categoryapp',
-                'display_name' => 'View a app category',
-                'description' => 'View a app category',
-            ],
-            [
-                'name' => 'create_categoryapp',
-                'display_name' => 'Create a app category',
-                'description' => 'Create a app category',
-                
-            ],
-            [
-                'name' => 'update_categoryapp',
-                'display_name' => 'Update a app category',
-                'description' => 'Update a app category',
-                
-            ],
-            [
-                'name' => 'delete_categoryapp',
-                'display_name' => 'Erase a app category',
-                'description' => 'Erase a app category',
-                
-            ],
-        ];
-            //CONDITIONS
+
+        /*
+         *  CONDITIONS
+         *  scope:get_conditions, scope:get_condition, scope:create_condition, scope:updatecondition,
+         *    scope:delete_condition
+         *
+         */
         $dataConditions = [
              [
                 'name' => 'get_conditions',
@@ -702,51 +713,25 @@ class PermissionsTableSeeder extends BaseTableSeeder
                 
             ],
         ];
-            //CONDITIONsFIELDs
-        $dataConditionsFields = [
-             [
-                'name' => 'get_ conditionsfields',
-                'display_name' => 'View all  conditions fields',
-                'description' => 'View all  conditions fields',
-                
-            ],
-        ];
-            //CONDITIONsOPERATOR
-        $dataConditionsOperator = [
-             [
-                'name' => 'get_ conditionsoperators',
-                'display_name' => 'View all  conditions operators',
-                'description' => 'View all  conditions operators',
-                
-            ],
-        ];
-        
 
-        $this->loadTable($dataRoles);
-        $this->loadTable($dataPermissions);
-        $this->loadTable($dataScopes);
-        $this->loadTable($dataCompanies);
+        $this->loadTable($dataRole);
+        $this->loadTable($dataPermission);
+        $this->loadTable($dataScope);
+        $this->loadTable($dataCompany);
+        $this->loadTable($dataDevice);
         $this->loadTable($dataUser);
-        $this->loadTable($dataAssets);
-        $this->loadTable($dataDevices);
-        $this->loadTable($dataContents);
+        $this->loadTable($dataAsset);
+        $this->loadTable($dataContent);
         $this->loadTable($dataApp);
         $this->loadTable($dataOrder);
-        $this->loadTable($dataRequest);
         $this->loadTable($dataPackage);
         $this->loadTable($dataService);
         $this->loadTable($dataModification);
         $this->loadTable($dataCarrier);
-        $this->loadTable($dataPrice);
+        $this->loadTable($dataDeviceVariation);
         $this->loadTable($dataImage);
         $this->loadTable($dataAddress);
         $this->loadTable($dataDeviceType);
-        $this->loadTable($dataCategoryDevice);
-        $this->loadTable($dataCategoryApps);
         $this->loadTable($dataConditions);
-        $this->loadTable($dataConditionsFields);
-        $this->loadTable($dataConditionsOperator);
-        
-
     }
 }

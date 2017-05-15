@@ -44,7 +44,8 @@ class DatabaseSeeder extends Seeder
         $this->call(LocationsTableSeeder::class);
         $this->call(ModificationsTableSeeder::class);
         //$this->call(OAuthTableSeeder::class);
-        $this->call(OauthClientsTableSeeder::class);	
+        $this->call(OauthClientsTableSeeder::class);
+        $this->call(OauthPersonalAccessClientsTableSeeder::class);
         $this->call(OrderDeviceVariationsTableSeeder::class);
         $this->call(OrderAppsTableSeeder::class);
         $this->call(OrdersTableSeeder::class);

@@ -17,27 +17,20 @@ class RolesTableSeeder extends BaseTableSeeder
         $this->deleteTable();
 
         $data = [
-
-            [
-                'name' => 'superAdmin',
-                'display_name' => 'superAdmin',
-                'description' => 'User with full power and access',
-                
-            ],
             [
                 'name' => 'admin',
                 'display_name' => 'admin',
-                'description' => 'Administrator of the company account',
+                'description' => 'User with full power and access',
             ],
             [
                 'name' => 'wta',
                 'display_name' => 'wta',
-                'description' => 'Accept or no the services',
+                'description' => 'User with full power and access of his own company information',
             ],
             [
                'name' => 'user',
                 'display_name' => 'user',
-                'description' => 'Normal user',
+                'description' => 'Normal user that can only retrieve information',
             ]
         ];
 
