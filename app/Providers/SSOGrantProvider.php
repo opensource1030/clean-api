@@ -7,7 +7,7 @@ use Laravel\Passport\Bridge\AccessTokenRepository;
 use Laravel\Passport\Bridge\ScopeRepository;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Laravel\Passport\Passport;
-use Laravel\Passport\PassportServiceProvider;
+use Laravel\Passport\PassportServiceProvider as PassServiceProvider;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2Server\Grant\PasswordGrant;
 use Log;
@@ -16,7 +16,7 @@ use Log;
  *
  * @package App\Providers
  */
-class SSOGrantProvider extends PassportServiceProvider
+class SSOGrantProvider extends PassServiceProvider
 {
     /**
      * Bootstrap any application services.
