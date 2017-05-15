@@ -142,7 +142,7 @@ $app->register(\WA\Providers\Saml2ServiceProvider::class);
 $app->register(\WA\Providers\CatchAllOptionsRequestsProvider::class);
 $app->register(\GrahamCampbell\Flysystem\FlysystemServiceProvider::class);
 $app->register(WA\Providers\AuthServiceProvider::class);
-$app->register(Dusterio\LumenPassport\PassportServiceProvider::class);
+$app->register(WA\Providers\PassportServiceProvider::class);
 $app->register(\WA\Providers\SSOGrantProvider::class);
 app('Dingo\Api\Transformer\Factory')->setAdapter(function ($app) {
     $base_url = env('API_DOMAIN', 'api.wirelessanalytics.com');
