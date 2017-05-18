@@ -39,8 +39,8 @@ class EloquentOrder extends AbstractRepository implements OrderInterface
         if (isset($data['serviceId'])) {
             $order->serviceId = $data['serviceId'];
         }
-        if (isset($data['carrierId'])) {
-            $order->carrierId = $data['carrierId'];
+        if (isset($data['addressId'])) {
+            $order->addressId = $data['addressId'];
         }
 
         if (!$order->save()) {
@@ -77,7 +77,7 @@ class EloquentOrder extends AbstractRepository implements OrderInterface
             'packageId'     => isset($data['packageId'])    ? $data['packageId']    : null,
             'deviceId'      => isset($data['deviceId'])     ? $data['deviceId']     : null,
             'serviceId'     => isset($data['serviceId'])    ? $data['serviceId']    : null,
-            'carrierId'     => isset($data['carrierId'])    ? $data['carrierId']    : null,
+            'addressId'     => isset($data['addressId'])    ? $data['addressId']    : null,
         ];
 
         $order = $this->model->create($orderData);
