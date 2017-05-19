@@ -1,6 +1,6 @@
 role :app, %w{54.87.193.65}
 
-set :stage, :develop
+set :stage, :staging
 set :deploy_to, '/home/forge/staging.api.wirelessanalytics.com/'
 set :branch, 'master'
 set :keep_releases, 3
@@ -15,8 +15,7 @@ set :tmp_dir, '/home/forge/staging.api.wirelessanalytics.com/tmp'
 namespace :composer do
 
     desc "Running Composer Install"
-    task :install do
-        on roles(:app), in: :sequence, wait: 5 do
+    task :install do on roles(:app), in: :sequence, wait: 5 do
             within release_path  do
                 execute "cd #{release_path} && composer install --no-scripts --prefer-source --optimize-autoloader"
             end
@@ -30,7 +29,5 @@ namespace :deploy do
   after :published, "composer:install"
   after :published, "laravel:permissions"
   after :published, "laravel:migrate"
-  after :published, "laravel:seed"
   after :published, "laravel:optimize"
-  # after :published, "ops:reset_app"
 end

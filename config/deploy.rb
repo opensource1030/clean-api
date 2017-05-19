@@ -30,14 +30,6 @@ namespace :ops do
         end
     end
 
-    desc 'create documentations'
-    task :make_api_docs, :stoplight_arg do | m, args |
-        on roles(:app), in: :sequence, wait: 1 do
-            version = args[:stoplight_arg]
-            execute "wget -O /home/deploy/webapps/api_doc/dist/versions/oas.json https://api.stoplight.io/v1/versions/#{version}/export/oas.json"
-        end
-    end 
-    
     desc 'Copy ENV specific files to servers.'
     task :put_env  do
         on roles(:app), in: :sequence, wait: 1 do
@@ -72,7 +64,7 @@ namespace :laravel do
     desc "Run Laravel Artisan migrate task."
     task :migrate do
         on roles(:app), in: :sequence, wait: 5 do
-            # execute "cd #{release_path} && php artisan migrate --force"
+            execute "cd #{release_path} && php artisan migrate --force"
         end
     end
 
