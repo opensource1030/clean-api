@@ -12,6 +12,10 @@ use WA\Repositories\Company\CompanyInterface;
 use WA\Repositories\Udl\UdlInterface;
 use DB;
 
+use WA\DataStore\Company\CompanyUserImportJob;
+use WA\Helpers\Vendors\CSVParser;
+use Illuminate\Support\Facades\Auth;
+
 /**
  * Class CompaniesController.
  */
@@ -301,6 +305,156 @@ class CompaniesController extends FilteredApiController
             $error['errors']['delete'] = Lang::get('messages.NotDeletedClass', ['class' => 'Company']);
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
+    }
+
+    /**
+     * Create a job and return the details.
+     *
+     * @param $companyId
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function jobs($companyId, Request $request) {
+        $company = Company::find($companyId);
+        if($company == null) {
+            $error['errors']['company'] = Lang::get('messages.NotExistClass', ['class' => 'Company']);
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+        }
+
+        $subFolder = str_slug($company->name);
+        $storagePath = 'clients' . DIRECTORY_SEPARATOR . $subFolder;
+        $file = $request->file('csv');
+        $fileName = null;
+        $fileExtension = null;
+
+        // check if files is exist
+        if (is_null($file)) {
+            $error['errors']['csv'] = Lang::get('messages.NotExistFile');
+
+            return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
+        }
+
+        // check if file extension is csv
+        $originalFileName = $file->getClientOriginalName();
+        $fileName = pathinfo($originalFileName, PATHINFO_FILENAME) . time();
+        $fileExtension = pathinfo($originalFileName, PATHINFO_EXTENSION);
+        if ($fileExtension !== 'csv') {
+            $error['errors']['file'] = Lang::get('messages.NotRightFile', ['class' => 'csv']);
+
+            return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
+        }
+
+        // move file to storage
+        $uploadedFileName = str_slug($fileName) . '.' . $fileExtension;
+        if(!($file = $file->move(storage_path($storagePath), $uploadedFileName))) {
+            $error['errors']['file'] = Lang::get('messages.NotExistPath');
+
+            return response()->json($error)->setStatusCode($this->status_codes['forbidden']);
+        }
+
+        $filePath = $file->getRealPath();
+        $csvParser = new CSVParser($filePath);
+        $rows = $csvParser->getRows();
+
+        // check file is empty
+        if(count($rows) == 0) {
+            $error['errors']['file'] = Lang::get('messages.EmptyFile');
+
+            return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
+        }
+
+        // create import job
+        $randomRow = count($rows) > 1 ? $rows[mt_rand(1, count($rows)-1)] : array();
+        $sampleRow = $this->getSampleImportRow($rows[0], $randomRow);
+
+        $job = new CompanyUserImportJob;
+        $job->company_id = $company->id;
+        $job->path = $storagePath;
+        $job->file = $uploadedFileName;
+        $job->total     = count($rows);
+        $job->fields    = serialize($rows[0]);
+        $job->sample    = serialize($sampleRow);
+        $job->mappings  = serialize(array());
+        $job->status    = CompanyUserImportJob::STATUS_PENDING;
+        $job->created_by_id = Auth::id();
+        $job->created_by_id = Auth::id();
+        $job->save();
+
+        return response()->json($job->getJobData())->setStatusCode($this->status_codes['created']);
+    }
+
+    /**
+     * Retrieve the information related to the job.
+     *
+     * @param $companyId
+     * @param $jobId
+     * @return mixed
+     */
+    public function job($companyId, $jobId) {
+        // check if company is exist
+        $company = Company::find($companyId);
+        if($company == null) {
+            $error['errors']['company'] = Lang::get('messages.NotExistClass', ['class' => 'Company']);
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+        }
+
+        // get job details
+        $job = CompanyUserImportJob::find($jobId);
+        if($job == null) {
+            $error['errors']['job'] = Lang::get('messages.NotExistClass', ['class' => 'Job']);
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+        }
+
+        return response()->json($job->getJobData());
+    }
+
+    /**
+     * Update the information related to the job.
+     *
+     * @param $companyId
+     * @param $jobId
+     * @param Request $request
+     * @return mixed
+     */
+    public function updateJob($companyId, $jobId, Request $request) {
+        if (!$this->isJsonCorrect($request, 'jobs')) {
+            $error['errors']['json'] = Lang::get('messages.InvalidJson');
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+        }
+
+        // check if company is exist
+        $company = Company::find($companyId);
+        if($company == null) {
+            $error['errors']['company'] = Lang::get('messages.NotExistClass', ['class' => 'Company']);
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+        }
+
+        // get job details
+        $job = CompanyUserImportJob::find($jobId);
+        if($job == null) {
+            $error['errors']['job'] = Lang::get('messages.NotExistClass', ['class' => 'Job']);
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+        }
+
+        // request data
+        $data = $request->get('data');
+        $job->mappings = serialize($data->mappings);
+        $job->save();
+
+        return response()->json($job->getJobData());
+    }
+
+    private function getSampleImportRow($header, $row) {
+        $result = new \stdClass();
+        foreach($header as $index => $field) {
+            if(isset($row[$index])) {
+                $result->$field = $row[$index];
+            } else {
+                $result->$field = '';
+            }
+        }
+
+        return $result;
     }
 
 }

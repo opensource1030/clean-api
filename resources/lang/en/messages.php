@@ -8,5 +8,9 @@ return [
     'NotIncludeExistsOptionClass' => 'the :class :include has not been :option because other relationships can\'t be created',
     'NotDeletedClass' => 'the :class has not been deleted',
     'NotSavedClass' => 'the :class has not been saved',
-    'FilterErrorNotUser' => 'The requested endpoint has not any results.'
+    'FilterErrorNotUser' => 'The requested endpoint has not any results.',
+    'NotExistFile' => 'Please attach your file.',
+    'NotRightFile' => 'You need to upload :class file.',
+    'NotExistPath' => 'Can not upload file due to directory permission.',
+    'EmptyFile'    => 'File is empty.'
 ];

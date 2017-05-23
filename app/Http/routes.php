@@ -114,6 +114,19 @@ $api->version('v1', function ($api) {
             $scopeMiddleware = 'scopeTest';
         //}
 
+        // =Companies
+        $companiesController = 'WA\Http\Controllers\CompaniesController';
+        $api->get('companies', ['as' => 'api.company.index', 'uses' => $companiesController . '@index']);
+        $api->get('companies/{id}', ['as' => 'api.company.show', 'uses' => $companiesController . '@show']);
+        $api->post('companies', ['uses' => $companiesController . '@create']);
+        $api->patch('companies/{id}', ['uses' => $companiesController . '@store']);
+        $api->delete('companies/{id}', ['uses' => $companiesController . '@deleteCompany']);
+        // ==Company Jobs
+        $api->post('companies/{companyId}/jobs',            ['uses' => $companiesController . '@jobs']);
+        $api->get('companies/{companyId}/jobs/{jobId}',     ['uses' => $companiesController . '@job']);
+        $api->patch('companies/{companyId}/jobs/{jobId}',   ['uses' => $companiesController . '@updateJob']);
+
+
         $api->post('/create', [
             'middleware' => [$scopeMiddleware.':create'],
             'as' => 'api.create',
