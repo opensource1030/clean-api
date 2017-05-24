@@ -133,6 +133,12 @@ class PresetsController extends FilteredApiController
         try {
             $data = $request->all()['data'];
             $preset = $this->preset->create($data['attributes']);
+            if(!$preset) {
+                DB::rollBack();
+                $error['errors']['preset'] = Lang::get('messages.NotOptionIncludeClass',
+                    ['class' => 'Preset', 'option' => 'created', 'include' => '']);
+                return response()->json($error)->setStatusCode($this->status_codes['conflict']);    
+            }
         } catch (\Exception $e) {
             DB::rollBack();
             $error['errors']['preset'] = Lang::get('messages.NotOptionIncludeClass',
@@ -150,7 +156,7 @@ class PresetsController extends FilteredApiController
                         $success = false;
                         $error['errors']['devicevariations'] = Lang::get('messages.NotOptionIncludeClass',
                             ['class' => 'Preset', 'option' => 'created', 'include' => 'devicevariations']);
-                        //$error['errors']['Message'] = $e->getMessage();
+                        $error['errors']['Message'] = $e->getMessage();
                     }
                 }
             }
