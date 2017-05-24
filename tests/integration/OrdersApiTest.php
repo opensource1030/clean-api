@@ -22,6 +22,9 @@ class OrdersApiTest extends TestCase
                     0 => ['type', 'id',
                         'attributes' => [
                             'status',
+                            'phoneno',
+                            'imei',
+                            'sim',
                             'userId',
                             'packageId',
                             'created_at',
@@ -40,6 +43,9 @@ class OrdersApiTest extends TestCase
         $res = $this->json('GET', 'orders/'.$order->id)
             ->seeJson([
                 'type' => 'orders',
+                'phoneno' => "$order->phoneno", 
+                'imei' => "$order->imei",
+                'sim' => "$order->sim",
                 'status' => $order->status,
                 'userId' => $order->userId,
                 'packageId' => $order->packageId,
@@ -50,6 +56,9 @@ class OrdersApiTest extends TestCase
                     'id',
                     'attributes' => [
                         'status',
+                        'phoneno',
+                        'imei',
+                        'sim',
                         'userId',
                         'packageId',
                         'serviceId',
@@ -101,6 +110,9 @@ class OrdersApiTest extends TestCase
                     'id',
                     'attributes' => [
                         'status',
+                        'phoneno', 
+                        'imei',
+                        'sim',
                         'userId',
                         'packageId',
                         'serviceId',
@@ -333,6 +345,9 @@ class OrdersApiTest extends TestCase
                     'type' => 'orders',
                     'attributes' => [
                         'status' => 'Enabled',
+                        'phoneno' => '111111111',
+                        'imei' => '222222222',
+                        'sim' => '3333333333',
                         'userId' => $userId,
                         'packageId' => $packageId,
                         'serviceId' => $serviceId,
@@ -359,6 +374,9 @@ class OrdersApiTest extends TestCase
             ->seeJson(
                 [
                     'status' => 'Enabled',
+                    'phoneno' => '111111111',
+                    'imei' => '222222222',
+                    'sim' => '3333333333',
                     'userId' => $userId,
                     'packageId' => $packageId,
                     'serviceId' => $serviceId
@@ -370,6 +388,9 @@ class OrdersApiTest extends TestCase
                         'id',
                         'attributes' => [
                             'status',
+                            'phoneno',
+                            'imei',
+                            'sim',
                             'userId',
                             'packageId',
                             'serviceId'
@@ -584,6 +605,9 @@ class OrdersApiTest extends TestCase
     {
         $order1 = factory(\WA\DataStore\Order\Order::class)->create([
             'status' => 'status1',
+            'phoneno' => '111111111',
+            'imei' => '222222222',
+            'sim' => '3333333333',
             'userId' => 1,
             'packageId' => 1,
             'serviceId' => 1,
@@ -591,6 +615,9 @@ class OrdersApiTest extends TestCase
             ]);
         $order2 = factory(\WA\DataStore\Order\Order::class)->create([
             'status' => 'status2',
+            'phoneno' => '444444444',
+            'imei' => '555555555',
+            'sim' => '6666666666',
             'userId' => 2,
             'packageId' => 2,
             'serviceId' => 2,
@@ -610,6 +637,9 @@ class OrdersApiTest extends TestCase
                     'type' => 'orders',
                     'attributes' => [
                         'status' => $order2->status,
+                        'phoneno' => $order2->phoneno,
+                        'imei' => $order2->imei,
+                        'sim' => $order2->sim,
                         'userId' => $order2->userId,
                         'packageId' => $order2->packageId,
                         'serviceId' => $order2->serviceId,
@@ -620,6 +650,9 @@ class OrdersApiTest extends TestCase
                 'type' => 'orders',
                 'id' => "$order1->id",
                 'status' => $order2->status,
+                'phoneno' => $order2->phoneno,
+                'imei' => $order2->imei,
+                'sim' => $order2->sim,
                 'userId' => $order2->userId,
                 'packageId' => $order2->packageId,
                 'serviceId' => $order2->serviceId,
@@ -662,6 +695,9 @@ class OrdersApiTest extends TestCase
                     'type' => 'orders',
                     'attributes' => [
                         'status' => 'Enabled',
+                        'phoneno' => $order->phoneno,
+                        'imei' => $order->imei,
+                        'sim' => $order->sim,
                         'userId' => $userId,
                         'packageId' => $packageId,
                         'serviceId' => $serviceId,
@@ -686,6 +722,9 @@ class OrdersApiTest extends TestCase
             $res->seeJson(
                 [
                     'status' => 'Enabled',
+                    'phoneno' => $order->phoneno,
+                    'imei' => $order->imei,
+                    'sim' => $order->sim,
                     'userId' => $userId,
                     'packageId' => $packageId,
                     'serviceId' => $serviceId
@@ -697,6 +736,9 @@ class OrdersApiTest extends TestCase
                         'id',
                         'attributes' => [
                             'status',
+                            'phoneno',
+                            'imei',
+                            'sim',
                             'userId',
                             'packageId',
                             'serviceId'
@@ -941,6 +983,9 @@ class OrdersApiTest extends TestCase
                     'type' => 'orders',
                     'attributes' => [
                         'status' => 'Enabled',
+                        'phoneno' => $order->phoneno,
+                        'imei' => $order->imei,
+                        'sim' => $order->sim,
                         'userId' => $userId,
                         'packageId' => $packageId,
                         'serviceId' => $serviceId,
@@ -969,6 +1014,9 @@ class OrdersApiTest extends TestCase
             $res->seeJson(
                 [
                     'status' => 'Enabled',
+                    'phoneno' => $order->phoneno,
+                    'imei' => $order->imei,
+                    'sim' => $order->sim,
                     'userId' => $userId,
                     'packageId' => $packageId,
                     'serviceId' => $serviceId
@@ -980,6 +1028,9 @@ class OrdersApiTest extends TestCase
                         'id',
                         'attributes' => [
                             'status',
+                            'phoneno',
+                            'imei',
+                            'sim',
                             'userId',
                             'packageId',
                             'serviceId'

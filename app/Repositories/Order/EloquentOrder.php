@@ -27,6 +27,15 @@ class EloquentOrder extends AbstractRepository implements OrderInterface
         if (isset($data['status'])) {
             $order->status = $data['status'];
         }
+        if (isset($data['phoneno'])) {
+            $order->phoneno = $data['phoneno'];
+        }
+        if (isset($data['imei'])) {
+            $order->imei = $data['imei'];
+        }
+        if (isset($data['sim'])) {
+            $order->sim = $data['sim'];
+        }
         if (isset($data['userId'])) {
             $order->userId = $data['userId'];
         }
@@ -71,8 +80,15 @@ class EloquentOrder extends AbstractRepository implements OrderInterface
      */
     public function create(array $data)
     {
+        if (!isset($data['userId'])) {
+            return false;
+        }
+
         $orderData = [
             'status'        => isset($data['status'])       ? $data['status']       : null,
+            'phoneno'       => isset($data['phoneno'])      ? $data['phoneno']      : null,
+            'imei'          => isset($data['imei'])         ? $data['imei']         : null,
+            'sim'           => isset($data['sim'])          ? $data['sim']          : null,
             'userId'        => isset($data['userId'])       ? $data['userId']       : null,
             'packageId'     => isset($data['packageId'])    ? $data['packageId']    : null,
             'deviceId'      => isset($data['deviceId'])     ? $data['deviceId']     : null,

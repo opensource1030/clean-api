@@ -36,6 +36,9 @@ class OrderTransformer extends FilterableTransformer
         return [
             'id'         => (int)$order->id,
             'status'     => $order->status,
+            'phoneno'    => $order->phoneno,
+            'imei'       => $order->imei,
+            'sim'        => $order->sim,
             'userId'     => (int)$order->userId,
             'packageId'  => (int)$order->packageId,
             'serviceId'  => (int)$order->serviceId,

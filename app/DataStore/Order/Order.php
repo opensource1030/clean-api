@@ -13,6 +13,9 @@ class Order extends BaseDataStore
 
     protected $fillable = [
             'status',
+            'phoneno',
+            'imei',
+            'sim',
             'userId',
             'packageId',
             'serviceId',
