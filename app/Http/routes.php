@@ -84,15 +84,135 @@ $api->version('v1', function ($api) {
 
         $apiATC = '\Laravel\Passport\Http\Controllers\PersonalAccessTokenController';
 
-        $scopeMiddleware = 'scope';
-        if (app()->runningUnitTests()) {
+        //$scopeMiddleware = 'scope';
+        //if (app()->runningUnitTests()) {
             $scopeMiddleware = 'scopeTest';
-        }
+        //}
 
         $api->post('/create', [
             'middleware' => [$scopeMiddleware.':create'],
             'as' => 'api.create',
             'uses' => $apiATC.'@create'
+        ]);
+
+        // ADDRESSES
+        $addressController = 'WA\Http\Controllers\AddressController';
+
+        $api->get('addresses', [
+            'middleware' => [$scopeMiddleware.':get_addresses'],
+            'as' => 'api.addresses.index',
+            'uses' => $addressController . '@index'
+        ]);
+
+        $api->get('addresses/{id}', [
+            'middleware' => [$scopeMiddleware.':get_address'],
+            'as' => 'api.addresses.show',
+            'uses' => $addressController . '@show'
+        ]);
+
+        $api->post('addresses', [
+            'middleware' => [$scopeMiddleware.':create_address'],
+            'uses' => $addressController . '@create'
+        ]);
+
+        $api->patch('addresses/{id}', [
+            'middleware' => [$scopeMiddleware.':update_address'],
+            'uses' => $addressController . '@store'
+        ]);
+
+        $api->delete('addresses/{id}', [
+            'middleware' => [$scopeMiddleware.':delete_address'],
+            'uses' => $addressController . '@delete'
+        ]);
+
+        // ALLOCATIONS
+        $allocationsController = 'WA\Http\Controllers\AllocationsController';
+
+        $api->get('allocations', [
+            'middleware' => [$scopeMiddleware.':get_allocations'],
+            'as' => 'api.allocations.index',
+            'uses' => $allocationsController . '@index'
+        ]);
+
+        $api->get('allocations/{id}', [
+            'middleware' => [$scopeMiddleware.':get_allocation'],
+            'as' => 'api.allocations.show',
+            'uses' => $allocationsController . '@show'
+        ]);
+
+        // APPS
+        $appController = 'WA\Http\Controllers\AppsController';
+
+        $api->get('apps', [
+            'middleware' => [$scopeMiddleware.':get_apps'],
+            'as' => 'api.app.index',
+            'uses' => $appController . '@index'
+        ]);
+
+        $api->get('apps/{id}', [
+            'middleware' => [$scopeMiddleware.':get_app'],
+            'as' => 'api.app.show',
+            'uses' => $appController . '@show'
+        ]);
+
+        $api->post('apps', [
+            'middleware' => [$scopeMiddleware.':create_app'],
+            'uses' => $appController . '@create'
+        ]);
+
+        $api->patch('apps/{id}', [
+            'middleware' => [$scopeMiddleware.':update_app'],
+            'uses' => $appController . '@store'
+        ]);
+
+        $api->delete('apps/{id}', [
+            'middleware' => [$scopeMiddleware.':delete_app'],
+            'uses' => $appController . '@delete'
+        ]);
+
+        // ASSETS
+        $assetsController = 'WA\Http\Controllers\AssetsController';
+
+        $api->get('assets', [
+            'middleware' => [$scopeMiddleware.':get_assets'],
+            'as' => 'assets.index',
+            'uses' => $assetsController . '@index'
+        ]);
+
+        $api->get('assets/{id}', [
+            'middleware' => [$scopeMiddleware.':get_asset'],
+            'as' => 'assets.index',
+            'uses' => $assetsController . '@show'
+        ]);
+
+        // CARRIERS
+        $carrierController = 'WA\Http\Controllers\CarriersController';
+
+        $api->get('carriers', [
+            'middleware' => [$scopeMiddleware.':get_carriers'],
+            'as' => 'api.carrier.index',
+            'uses' => $carrierController . '@index'
+        ]);
+
+        $api->get('carriers/{id}', [
+            'middleware' => [$scopeMiddleware.':get_carrier'],
+            'as' => 'api.carrier.show',
+            'uses' => $carrierController . '@show'
+        ]);
+
+        $api->post('carriers', [
+            'middleware' => [$scopeMiddleware.':create_carrier'],
+            'uses' => $carrierController . '@create'
+        ]);
+
+        $api->patch('carriers/{id}', [
+            'middleware' => [$scopeMiddleware.':update_carrier'],
+            'uses' => $carrierController . '@store'
+        ]);
+
+        $api->delete('carriers/{id}', [
+            'middleware' => [$scopeMiddleware.':delete_carrier'],
+            'uses' => $carrierController . '@delete'
         ]);
 
         // COMPANIES
@@ -125,106 +245,34 @@ $api->version('v1', function ($api) {
             'uses' => $companiesController . '@deleteCompany'
         ]);
 
-        // USERS
-        $usersController = 'WA\Http\Controllers\UsersController';
+        // CONDITIONS
+        $conditionsController = 'WA\Http\Controllers\ConditionsController';
 
-        $api->get('users', [
-            'middleware' => [$scopeMiddleware.':get_users'],
-            'as' => 'api.users.index',
-            'uses' => $usersController . '@index'
+        $api->get('conditions', [
+            'middleware' => [$scopeMiddleware.':get_conditions'],
+            'as' => 'api.conditions.index',
+            'uses' => $conditionsController . '@index'
         ]);
 
-        $api->get('users/packages/{userId}', [
-            'middleware' => [$scopeMiddleware.':get_users_packages'],
-            'as' => 'api.users.number',
-            'uses' => $usersController . '@usersPackages'
+        $api->get('conditions/{id}', [
+            'middleware' => [$scopeMiddleware.':get_condition'],
+            'as' => 'api.conditions.show',
+            'uses' => $conditionsController . '@show'
         ]);
 
-        $api->get('users/me', [
-            'middleware' => [$scopeMiddleware.':get_user_me'],
-            'as' => 'api.users.logged',
-            'uses' => $usersController . '@getLoggedInUser'
+        $api->post('conditions', [
+            'middleware' => [$scopeMiddleware.':create_condition'],
+            'uses' => $conditionsController . '@create'
         ]);
 
-        $api->get('users/{id}', [
-            'middleware' => [$scopeMiddleware.':get_user'],
-            'as' => 'api.users.show',
-            'uses' => $usersController . '@show'
+        $api->patch('conditions/{id}', [
+            'middleware' => [$scopeMiddleware.':updatecondition'],
+            'uses' => $conditionsController . '@store'
         ]);
 
-        $api->post('users', [
-            'middleware' => [$scopeMiddleware.':create_user'],
-            'uses' => $usersController . '@create'
-        ]);
-
-        $api->patch('users/{id}', [
-            'middleware' => [$scopeMiddleware.':update_user'],
-            'uses' => $usersController . '@store'
-        ]);
-
-        $api->delete('users/{id}', [
-            'middleware' => [$scopeMiddleware.':delete_user'],
-            'uses' => $usersController . '@delete'
-        ]);
-
-        // ASSETS
-        $assetsController = 'WA\Http\Controllers\AssetsController';
-
-        $api->get('assets', [
-            'middleware' => [$scopeMiddleware.':get_assets'],
-            'as' => 'assets.index',
-            'uses' => $assetsController . '@index'
-        ]);
-
-        $api->get('assets/{id}', [
-            'middleware' => [$scopeMiddleware.':get_asset'],
-            'as' => 'assets.index',
-            'uses' => $assetsController . '@show'
-        ]);
-
-        // DEVICES
-        $devicesController = 'WA\Http\Controllers\DevicesController';
-
-        $api->get('devices', [
-            'middleware' => [$scopeMiddleware.':get_devices'],
-            'as' => 'api.devices.index',
-            'uses' => $devicesController . '@index'
-        ]);
-
-        $api->get('devices/{id}', [
-            'middleware' => [$scopeMiddleware.':get_device'],
-            'as' => 'api.devices.show',
-            'uses' => $devicesController . '@show'
-        ]);
-
-        $api->post('devices', [
-            'middleware' => [$scopeMiddleware.':create_device'],
-            'uses' => $devicesController . '@create'
-        ]);
-
-        $api->patch('devices/{id}', [
-            'middleware' => [$scopeMiddleware.':update_device'],
-            'uses' => $devicesController . '@store'
-        ]);
-
-        $api->delete('devices/{id}', [
-            'middleware' => [$scopeMiddleware.':delete_device'],
-            'uses' => $devicesController . '@delete'
-        ]);
-
-        // ALLOCATIONS
-        $allocationsController = 'WA\Http\Controllers\AllocationsController';
-
-        $api->get('allocations', [
-            'middleware' => [$scopeMiddleware.':get_allocations'],
-            'as' => 'api.allocations.index',
-            'uses' => $allocationsController . '@index'
-        ]);
-
-        $api->get('allocations/{id}', [
-            'middleware' => [$scopeMiddleware.':get_allocation'],
-            'as' => 'api.allocations.show',
-            'uses' => $allocationsController . '@show'
+        $api->delete('conditions/{id}', [
+            'middleware' => [$scopeMiddleware.':delete_condition'],
+            'uses' => $conditionsController . '@delete'
         ]);
 
         // CONTENTS
@@ -257,34 +305,155 @@ $api->version('v1', function ($api) {
             'uses' => $contentsController . '@deleteContent'
         ]);
 
-        // APPS
-        $appController = 'WA\Http\Controllers\AppsController';
+        // DEVICETYPES
+        $devicesTypeController = 'WA\Http\Controllers\DeviceTypesController';
 
-        $api->get('apps', [
-            'middleware' => [$scopeMiddleware.':get_apps'],
-            'as' => 'api.app.index',
-            'uses' => $appController . '@index'
+        $api->get('devicetypes', [
+            'middleware' => [$scopeMiddleware.':get_devicetypes'],
+            'as' => 'api.devicetype.index',
+            'uses' => $devicesTypeController . '@index'
         ]);
 
-        $api->get('apps/{id}', [
-            'middleware' => [$scopeMiddleware.':get_app'],
-            'as' => 'api.app.show',
-            'uses' => $appController . '@show'
+        $api->get('devicetypes/{id}', [
+            'middleware' => [$scopeMiddleware.':get_devicetype'],
+            'as' => 'api.devicetype.show',
+            'uses' => $devicesTypeController . '@show'
         ]);
 
-        $api->post('apps', [
-            'middleware' => [$scopeMiddleware.':create_app'],
-            'uses' => $appController . '@create'
+        $api->post('devicetypes', [
+            'middleware' => [$scopeMiddleware.':create_devicetype'],
+            'uses' => $devicesTypeController . '@create'
         ]);
 
-        $api->patch('apps/{id}', [
-            'middleware' => [$scopeMiddleware.':update_app'],
-            'uses' => $appController . '@store'
+        $api->patch('devicetypes/{id}', [
+            'middleware' => [$scopeMiddleware.':update_devicetype'],
+            'uses' => $devicesTypeController . '@store'
         ]);
 
-        $api->delete('apps/{id}', [
-            'middleware' => [$scopeMiddleware.':delete_app'],
-            'uses' => $appController . '@delete'
+        $api->delete('devicetypes/{id}', [
+            'middleware' => [$scopeMiddleware.':delete_devicetype'],
+            'uses' => $devicesTypeController . '@delete'
+        ]);
+
+        // DEVICES
+        $devicesController = 'WA\Http\Controllers\DevicesController';
+
+        $api->get('devices', [
+            'middleware' => [$scopeMiddleware.':get_devices'],
+            'as' => 'api.devices.index',
+            'uses' => $devicesController . '@index'
+        ]);
+
+        $api->get('devices/{id}', [
+            'middleware' => [$scopeMiddleware.':get_device'],
+            'as' => 'api.devices.show',
+            'uses' => $devicesController . '@show'
+        ]);
+
+        $api->post('devices', [
+            'middleware' => [$scopeMiddleware.':create_device'],
+            'uses' => $devicesController . '@create'
+        ]);
+
+        $api->patch('devices/{id}', [
+            'middleware' => [$scopeMiddleware.':update_device'],
+            'uses' => $devicesController . '@store'
+        ]);
+
+        $api->delete('devices/{id}', [
+            'middleware' => [$scopeMiddleware.':delete_device'],
+            'uses' => $devicesController . '@delete'
+        ]);
+
+        // DEVICEVARIATIONS
+        $deviceVariationsController = 'WA\Http\Controllers\DeviceVariationsController';
+
+        $api->get('devicevariations', [
+            'middleware' => [$scopeMiddleware.':get_devicevariations'],
+            'as' => 'api.deviceVariation.index',
+            'uses' => $deviceVariationsController . '@index'
+        ]);
+
+        $api->get('devicevariations/{id}', [
+            'middleware' => [$scopeMiddleware.':get_devicevariation'],
+            'as' => 'api.deviceVariation.show',
+            'uses' => $deviceVariationsController . '@show'
+        ]);
+
+        $api->post('devicevariations', [
+            'middleware' => [$scopeMiddleware.':create_devicevariation'],
+            'uses' => $deviceVariationsController . '@create'
+        ]);
+
+        $api->patch('devicevariations/{id}', [
+            'middleware' => [$scopeMiddleware.':update_devicevariation'],
+            'uses' => $deviceVariationsController . '@store'
+        ]);
+
+        $api->delete('devicevariations/{id}', [
+            'middleware' => [$scopeMiddleware.':delete_devicevariation'],
+            'uses' => $deviceVariationsController . '@delete'
+        ]);
+
+        // IMAGES
+        $imageController = 'WA\Http\Controllers\ImagesController';
+
+        $api->get('images', [
+            'middleware' => [$scopeMiddleware.':get_images'],
+            'as' => 'api.image.index',
+            'uses' => $imageController . '@index'
+        ]);
+
+        $api->get('images/{id}', [
+            'middleware' => [$scopeMiddleware.':get_image'],
+            'as' => 'api.image.show',
+            'uses' => $imageController . '@show'
+        ]);
+
+        $api->get('images/info/{id}', [
+            'middleware' => [$scopeMiddleware.':get_image_info'],
+            'as' => 'api.image.info',
+            'uses' => $imageController . '@info'
+        ]);
+
+        $api->post('images', [
+            'middleware' => [$scopeMiddleware.':create_image'],
+            'uses' => $imageController . '@create'
+        ]);
+
+        $api->delete('images/{id}', [
+            'middleware' => [$scopeMiddleware.':delete_image'],
+            'uses' => $imageController . '@delete'
+        ]);
+
+        // MODIFICATIONS
+        $modificationController = 'WA\Http\Controllers\ModificationsController';
+
+        $api->get('modifications', [
+            'middleware' => [$scopeMiddleware.':get_modifications'],
+            'as' => 'api.modification.index',
+            'uses' => $modificationController . '@index'
+        ]);
+
+        $api->get('modifications/{id}', [
+            'middleware' => [$scopeMiddleware.':get_modification'],
+            'as' => 'api.modification.show',
+            'uses' => $modificationController . '@show'
+        ]);
+
+        $api->post('modifications', [
+            'middleware' => [$scopeMiddleware.':create_modification'],
+            'uses' => $modificationController . '@create'
+        ]);
+
+        $api->patch('modifications/{id}', [
+            'middleware' => [$scopeMiddleware.':update_modification'],
+            'uses' => $modificationController . '@store'
+        ]);
+
+        $api->delete('modifications/{id}', [
+            'middleware' => [$scopeMiddleware.':delete_modification'],
+            'uses' => $modificationController . '@delete'
         ]);
 
         // ORDERS
@@ -353,8 +522,37 @@ $api->version('v1', function ($api) {
             'uses' => $packageController . '@delete'
         ]);
 
+        // PRESETS
+        $presetController = 'WA\Http\Controllers\PresetsController';
+
+        $api->get('presets', [
+            'middleware' => [$scopeMiddleware.':get_presets'],
+            'as' => 'api.presets.index',
+            'uses' => $presetController . '@index'
+        ]);
+
+        $api->get('presets/{id}', [
+            'middleware' => [$scopeMiddleware.':get_preset'],
+            'as' => 'api.presets.show',
+            'uses' => $presetController . '@show'
+        ]);
+
+        $api->post('presets', [
+            'middleware' => [$scopeMiddleware.':create_preset'],
+            'uses' => $presetController . '@create'
+        ]);
+
+        $api->patch('presets/{id}', [
+            'middleware' => [$scopeMiddleware.':update_preset'],
+            'uses' => $presetController . '@store'
+        ]);
+
+        $api->delete('presets/{id}', [
+            'middleware' => [$scopeMiddleware.':delete_preset'],
+            'uses' => $presetController . '@delete'
+        ]);
+
         // REQUESTS
-/*
         $requestController = 'WA\Http\Controllers\RequestsController';
 
         $api->get('requests', [
@@ -383,7 +581,7 @@ $api->version('v1', function ($api) {
             'middleware' => [$scopeMiddleware.':delete_request'],
             'uses' => $requestController . '@delete'
         ]);
-*/
+
         // SERVICES
         $serviceController = 'WA\Http\Controllers\ServicesController';
 
@@ -414,215 +612,46 @@ $api->version('v1', function ($api) {
             'uses' => $serviceController . '@delete'
         ]);
 
-        // MODIFICATIONS
-        $modificationController = 'WA\Http\Controllers\ModificationsController';
+        // USERS
+        $usersController = 'WA\Http\Controllers\UsersController';
 
-        $api->get('modifications', [
-            'middleware' => [$scopeMiddleware.':get_modifications'],
-            'as' => 'api.modification.index',
-            'uses' => $modificationController . '@index'
+        $api->get('users', [
+            'middleware' => [$scopeMiddleware.':get_users'],
+            'as' => 'api.users.index',
+            'uses' => $usersController . '@index'
         ]);
 
-        $api->get('modifications/{id}', [
-            'middleware' => [$scopeMiddleware.':get_modification'],
-            'as' => 'api.modification.show',
-            'uses' => $modificationController . '@show'
+        $api->get('users/packages/{userId}', [
+            'middleware' => [$scopeMiddleware.':get_users_packages'],
+            'as' => 'api.users.number',
+            'uses' => $usersController . '@usersPackages'
         ]);
 
-        $api->post('modifications', [
-            'middleware' => [$scopeMiddleware.':create_modification'],
-            'uses' => $modificationController . '@create'
+        $api->get('users/me', [
+            'middleware' => [$scopeMiddleware.':get_user_me'],
+            'as' => 'api.users.logged',
+            'uses' => $usersController . '@getLoggedInUser'
         ]);
 
-        $api->patch('modifications/{id}', [
-            'middleware' => [$scopeMiddleware.':update_modification'],
-            'uses' => $modificationController . '@store'
+        $api->get('users/{id}', [
+            'middleware' => [$scopeMiddleware.':get_user'],
+            'as' => 'api.users.show',
+            'uses' => $usersController . '@show'
         ]);
 
-        $api->delete('modifications/{id}', [
-            'middleware' => [$scopeMiddleware.':delete_modification'],
-            'uses' => $modificationController . '@delete'
+        $api->post('users', [
+            'middleware' => [$scopeMiddleware.':create_user'],
+            'uses' => $usersController . '@create'
         ]);
 
-        // CARRIERS
-        $carrierController = 'WA\Http\Controllers\CarriersController';
-
-        $api->get('carriers', [
-            'middleware' => [$scopeMiddleware.':get_carriers'],
-            'as' => 'api.carrier.index',
-            'uses' => $carrierController . '@index'
+        $api->patch('users/{id}', [
+            'middleware' => [$scopeMiddleware.':update_user'],
+            'uses' => $usersController . '@store'
         ]);
 
-        $api->get('carriers/{id}', [
-            'middleware' => [$scopeMiddleware.':get_carrier'],
-            'as' => 'api.carrier.show',
-            'uses' => $carrierController . '@show'
-        ]);
-
-        $api->post('carriers', [
-            'middleware' => [$scopeMiddleware.':create_carrier'],
-            'uses' => $carrierController . '@create'
-        ]);
-
-        $api->patch('carriers/{id}', [
-            'middleware' => [$scopeMiddleware.':update_carrier'],
-            'uses' => $carrierController . '@store'
-        ]);
-
-        $api->delete('carriers/{id}', [
-            'middleware' => [$scopeMiddleware.':delete_carrier'],
-            'uses' => $carrierController . '@delete'
-        ]);
-
-        // DEVICEVARIATIONS
-        $deviceVariationsController = 'WA\Http\Controllers\DeviceVariationsController';
-
-        $api->get('devicevariations', [
-            'middleware' => [$scopeMiddleware.':get_devicevariations'],
-            'as' => 'api.deviceVariation.index',
-            'uses' => $deviceVariationsController . '@index'
-        ]);
-
-        $api->get('devicevariations/{id}', [
-            'middleware' => [$scopeMiddleware.':get_devicevariation'],
-            'as' => 'api.deviceVariation.show',
-            'uses' => $deviceVariationsController . '@show'
-        ]);
-
-        $api->post('devicevariations', [
-            'middleware' => [$scopeMiddleware.':create_devicevariation'],
-            'uses' => $deviceVariationsController . '@create'
-        ]);
-
-        $api->patch('devicevariations/{id}', [
-            'middleware' => [$scopeMiddleware.':update_devicevariation'],
-            'uses' => $deviceVariationsController . '@store'
-        ]);
-
-        $api->delete('devicevariations/{id}', [
-            'middleware' => [$scopeMiddleware.':delete_devicevariation'],
-            'uses' => $deviceVariationsController . '@delete'
-        ]);
-
-        // IMAGES
-        $imageController = 'WA\Http\Controllers\ImagesController';
-
-        $api->get('images', [
-            'middleware' => [$scopeMiddleware.':get_images'],
-            'as' => 'api.image.index',
-            'uses' => $imageController . '@index'
-        ]);
-
-        $api->get('images/{id}', [
-            'middleware' => [$scopeMiddleware.':get_image'],
-            'as' => 'api.image.show',
-            'uses' => $imageController . '@show'
-        ]);
-
-        $api->get('images/info/{id}', [
-            'middleware' => [$scopeMiddleware.':get_image_info'],
-            'as' => 'api.image.info',
-            'uses' => $imageController . '@info'
-        ]);
-
-        $api->post('images', [
-            'middleware' => [$scopeMiddleware.':create_image'],
-            'uses' => $imageController . '@create'
-        ]);
-
-        $api->delete('images/{id}', [
-            'middleware' => [$scopeMiddleware.':delete_image'],
-            'uses' => $imageController . '@delete'
-        ]);
-
-        // ADDRESSES
-        $addressController = 'WA\Http\Controllers\AddressController';
-
-        $api->get('addresses', [
-            'middleware' => [$scopeMiddleware.':get_addresses'],
-            'as' => 'api.addresses.index',
-            'uses' => $addressController . '@index'
-        ]);
-
-        $api->get('addresses/{id}', [
-            'middleware' => [$scopeMiddleware.':get_address'],
-            'as' => 'api.addresses.show',
-            'uses' => $addressController . '@show'
-        ]);
-
-        $api->post('addresses', [
-            'middleware' => [$scopeMiddleware.':create_address'],
-            'uses' => $addressController . '@create'
-        ]);
-
-        $api->patch('addresses/{id}', [
-            'middleware' => [$scopeMiddleware.':update_address'],
-            'uses' => $addressController . '@store'
-        ]);
-
-        $api->delete('addresses/{id}', [
-            'middleware' => [$scopeMiddleware.':delete_address'],
-            'uses' => $addressController . '@delete'
-        ]);
-
-        // DEVICETYPES
-        $devicesTypeController = 'WA\Http\Controllers\DeviceTypesController';
-
-        $api->get('devicetypes', [
-            'middleware' => [$scopeMiddleware.':get_devicetypes'],
-            'as' => 'api.devicetype.index',
-            'uses' => $devicesTypeController . '@index'
-        ]);
-
-        $api->get('devicetypes/{id}', [
-            'middleware' => [$scopeMiddleware.':get_devicetype'],
-            'as' => 'api.devicetype.show',
-            'uses' => $devicesTypeController . '@show'
-        ]);
-
-        $api->post('devicetypes', [
-            'middleware' => [$scopeMiddleware.':create_devicetype'],
-            'uses' => $devicesTypeController . '@create'
-        ]);
-
-        $api->patch('devicetypes/{id}', [
-            'middleware' => [$scopeMiddleware.':update_devicetype'],
-            'uses' => $devicesTypeController . '@store'
-        ]);
-
-        $api->delete('devicetypes/{id}', [
-            'middleware' => [$scopeMiddleware.':delete_devicetype'],
-            'uses' => $devicesTypeController . '@delete'
-        ]);
-
-        // PRESETS
-        $presetController = 'WA\Http\Controllers\PresetsController';
-
-        $api->get('presets', [
-            'middleware' => [$scopeMiddleware.':get_presets'],
-            'as' => 'api.presets.index',
-            'uses' => $presetController . '@index'
-        ]);
-
-        $api->get('presets/{id}', [
-            'middleware' => [$scopeMiddleware.':get_preset'],
-            'as' => 'api.presets.show',
-            'uses' => $presetController . '@show'
-        ]);
-
-        $api->post('presets', [
-            'middleware' => [$scopeMiddleware.':create_preset'],
-            'uses' => $presetController . '@create'
-        ]);
-
-        $api->patch('presets/{id}', [
-            'middleware' => [$scopeMiddleware.':update_preset'],
-            'uses' => $presetController . '@store'
-        ]);
-
-        $api->delete('presets/{id}', [
-            'middleware' => [$scopeMiddleware.':delete_preset'],
-            'uses' => $presetController . '@delete'
+        $api->delete('users/{id}', [
+            'middleware' => [$scopeMiddleware.':delete_user'],
+            'uses' => $usersController . '@delete'
         ]);
 
         // CATEGORYAPPS
@@ -654,39 +683,9 @@ $api->version('v1', function ($api) {
             'middleware' => [$scopeMiddleware.':delete_categoryapp'],
             'uses' => $categoryAppController . '@delete'
         ]);
-
-        // CONDITIONS
-        $conditionsController = 'WA\Http\Controllers\ConditionsController';
-
-        $api->get('conditions', [
-            'middleware' => [$scopeMiddleware.':get_conditions'],
-            'as' => 'api.conditions.index',
-            'uses' => $conditionsController . '@index'
-        ]);
-
-        $api->get('conditions/{id}', [
-            'middleware' => [$scopeMiddleware.':get_condition'],
-            'as' => 'api.conditions.show',
-            'uses' => $conditionsController . '@show'
-        ]);
-
-        $api->post('conditions', [
-            'middleware' => [$scopeMiddleware.':create_condition'],
-            'uses' => $conditionsController . '@create'
-        ]);
-
-        $api->patch('conditions/{id}', [
-            'middleware' => [$scopeMiddleware.':updatecondition'],
-            'uses' => $conditionsController . '@store'
-        ]);
-
-        $api->delete('conditions/{id}', [
-            'middleware' => [$scopeMiddleware.':delete_condition'],
-            'uses' => $conditionsController . '@delete'
-        ]);
-
-        // CONDITIONFIELDS
+        
 /*
+        // CONDITIONFIELDS
         $conditionFieldsController = 'WA\Http\Controllers\ConditionFieldsController';
 
         $api->get('conditionsfields', [
@@ -716,9 +715,8 @@ $api->version('v1', function ($api) {
             'uses' => $conditionFieldsController . '@delete'
         ]);
 */
-
-        // CONDITIONS OPERATORS
 /*
+        // CONDITIONS OPERATORS
         $conditionOpController = 'WA\Http\Controllers\ConditionOperatorsController';
         
         $api->get('conditionsoperators', [

@@ -1,11 +1,10 @@
 <?php
 
-use Laravel\Lumen\Testing\DatabaseMigrations;
-use WA\DataStore\Condition\Condition;
 
-class PackageApiTest extends TestCase
+
+class PackageApiTest extends \TestCase
 {
-    use DatabaseMigrations;
+    use \Laravel\Lumen\Testing\DatabaseMigrations;
 
     public function testGetPackages()
     {
@@ -808,30 +807,30 @@ class PackageApiTest extends TestCase
         $address2 = factory(\WA\DataStore\Address\Address::class)->create(['city' => 'city', 'state' => 'state', 'country' => 'country']);
         $address3 = factory(\WA\DataStore\Address\Address::class)->create(['city' => 'city', 'state' => 'state', 'country' => 'country']);
 
-        $address5 = factory(\WA\DataStore\Address\Address::class)->create(['city' => 'Madrid', 'state' => 'Madrid', 'country' => 'Spain']);
-        $address6 = factory(\WA\DataStore\Address\Address::class)->create(['city' => 'Girona', 'state' => 'Girona', 'country' => 'Catalonia']);
-        $address7 = factory(\WA\DataStore\Address\Address::class)->create(['city' => 'Rubi', 'state' => 'Barcelona', 'country' => 'Catalonia']);
-        $address8 = factory(\WA\DataStore\Address\Address::class)->create(['city' => 'Barcelona', 'state' => 'Barcelona', 'country' => 'Catalonia']);
+        $address4 = factory(\WA\DataStore\Address\Address::class)->create(['city' => 'Madrid', 'state' => 'Madrid', 'country' => 'Spain']);
+        $address5 = factory(\WA\DataStore\Address\Address::class)->create(['city' => 'Girona', 'state' => 'Girona', 'country' => 'Catalonia']);
+        $address6 = factory(\WA\DataStore\Address\Address::class)->create(['city' => 'Rubi', 'state' => 'Barcelona', 'country' => 'Catalonia']);
+        $address7 = factory(\WA\DataStore\Address\Address::class)->create(['city' => 'Barcelona', 'state' => 'Barcelona', 'country' => 'Catalonia']);
 
-        $user1Address5 = factory(\WA\DataStore\User\UserAddress::class)->create(['userId' => $user1->id, 'addressId' => $address5->id]);
+        $user1Address4 = factory(\WA\DataStore\User\UserAddress::class)->create(['userId' => $user1->id, 'addressId' => $address4->id]);
         $user1Address1 = factory(\WA\DataStore\User\UserAddress::class)->create(['userId' => $user1->id, 'addressId' => $address1->id]);
         $user1Address2 = factory(\WA\DataStore\User\UserAddress::class)->create(['userId' => $user1->id, 'addressId' => $address2->id]);
         $user1Address3 = factory(\WA\DataStore\User\UserAddress::class)->create(['userId' => $user1->id, 'addressId' => $address3->id]);
 
         $user2Address1 = factory(\WA\DataStore\User\UserAddress::class)->create(['userId' => $user2->id, 'addressId' => $address1->id]);
-        $user2Address6 = factory(\WA\DataStore\User\UserAddress::class)->create(['userId' => $user2->id, 'addressId' => $address6->id]);
+        $user2Address5 = factory(\WA\DataStore\User\UserAddress::class)->create(['userId' => $user2->id, 'addressId' => $address5->id]);
         $user2Address2 = factory(\WA\DataStore\User\UserAddress::class)->create(['userId' => $user2->id, 'addressId' => $address2->id]);
         $user2Address3 = factory(\WA\DataStore\User\UserAddress::class)->create(['userId' => $user2->id, 'addressId' => $address3->id]);
         
         $user3Address1 = factory(\WA\DataStore\User\UserAddress::class)->create(['userId' => $user3->id, 'addressId' => $address1->id]);
         $user3Address2 = factory(\WA\DataStore\User\UserAddress::class)->create(['userId' => $user3->id, 'addressId' => $address2->id]);
-        $user3Address7 = factory(\WA\DataStore\User\UserAddress::class)->create(['userId' => $user3->id, 'addressId' => $address7->id]);
+        $user3Address6 = factory(\WA\DataStore\User\UserAddress::class)->create(['userId' => $user3->id, 'addressId' => $address6->id]);
         $user3Address3 = factory(\WA\DataStore\User\UserAddress::class)->create(['userId' => $user3->id, 'addressId' => $address3->id]);
 
         $user4Address1 = factory(\WA\DataStore\User\UserAddress::class)->create(['userId' => $user4->id, 'addressId' => $address1->id]);
         $user4Address2 = factory(\WA\DataStore\User\UserAddress::class)->create(['userId' => $user4->id, 'addressId' => $address2->id]);
         $user4Address3 = factory(\WA\DataStore\User\UserAddress::class)->create(['userId' => $user4->id, 'addressId' => $address3->id]);
-        $user4Address8 = factory(\WA\DataStore\User\UserAddress::class)->create(['userId' => $user4->id, 'addressId' => $address8->id]);
+        $user4Address7 = factory(\WA\DataStore\User\UserAddress::class)->create(['userId' => $user4->id, 'addressId' => $address7->id]);
 
         $res1 = $this->json('POST', '/packages/forUser',
             [
@@ -1102,7 +1101,6 @@ class PackageApiTest extends TestCase
 
     public function testUserPackagesCheckUdls() 
     {
-        
         $company = factory(\WA\DataStore\Company\Company::class)->create();
 
         $udl1 = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $company->id, 'name' => 'Position']);

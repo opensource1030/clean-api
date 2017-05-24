@@ -1,11 +1,8 @@
 <?php
 
-namespace WA\Testing\Http\Requests\Parameters;
-
-use TestCase;
 use WA\Http\Requests\Parameters\Fields;
 
-class FieldParameterTest extends TestCase
+class FieldParameterTest extends \TestCase
 {
     /**
      * @var Fields

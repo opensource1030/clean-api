@@ -1,12 +1,14 @@
 <?php
+
 use Laravel\Passport\Bridge\Scope as ScopeGI;
-use Laravel\Lumen\Testing\DatabaseMigrations;
+
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 use League\OAuth2\Server\Grant\PasswordGrant as PassGrant;
-class PasswordGrantTest extends TestCase
+
+class PasswordGrantTest extends \TestCase
 {
-    use DatabaseMigrations;
+    use \Laravel\Lumen\Testing\DatabaseMigrations;
     /**
      * 
      */

@@ -42,6 +42,12 @@ class AppsController extends FilteredApiController
     public function store($id, Request $request)
     {
         if ($this->isJsonCorrect($request, 'apps')) {
+            
+            if(!$this->addFilterToTheRequest("store", $request)) {
+                $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
+                return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+            }
+
             try {
                 $data = $request->all()['data'];
                 $data['attributes']['id'] = $id;
@@ -80,7 +86,16 @@ class AppsController extends FilteredApiController
      */
     public function create(Request $request)
     {
+        /*
+         * Checks if Json has data, data-type & data-attributes.
+         */
         if ($this->isJsonCorrect($request, 'apps')) {
+
+            if(!$this->addFilterToTheRequest("create", $request)) {
+                $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
+                return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+            }
+
             try {
                 $data = $request->all()['data']['attributes'];
                 $app = $this->app->create($data);
@@ -106,6 +121,11 @@ class AppsController extends FilteredApiController
      */
     public function delete($id)
     {
+        if(!$this->addFilterToTheRequest("delete", null)) {
+            $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+        }
+        
         $app = App::find($id);
         if ($app != null) {
             $this->app->deleteById($id);

@@ -1,16 +1,11 @@
 <?php
 
-//use Laravel\Lumen\Testing\DatabaseTransactions;
-use Laravel\Lumen\Testing\DatabaseMigrations;
 
-class DeviceVariationApiTest extends TestCase
+
+class DeviceVariationApiTest extends \TestCase
 {
-    //use DatabaseTransactions;
-    use DatabaseMigrations;
+    use \Laravel\Lumen\Testing\DatabaseMigrations;
 
-    /**
-     * A basic functional test for Prices.
-     */
     public function testGetDeviceVariations()
     {
         factory(\WA\DataStore\DeviceVariation\DeviceVariation::class, 40)->create();
@@ -92,7 +87,7 @@ class DeviceVariationApiTest extends TestCase
         $image1 = factory(\WA\DataStore\Image\Image::class)->create()->id;
         $image2 = factory(\WA\DataStore\Image\Image::class)->create()->id;
 
-       $deviceVariation = $this->POST('/devicevariations',
+       $deviceVariation = $this->json('POST', '/devicevariations',
             [
                 'data' => [
                     'type' => 'devicevariations',

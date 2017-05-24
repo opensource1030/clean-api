@@ -1,17 +1,16 @@
 <?php
 
-use Laravel\Lumen\Testing\DatabaseMigrations;
-use WA\DataStore\Company\Company;
 
-class CompaniesTest extends TestCase
+
+class CompaniesTest extends \TestCase
 {
-    use DatabaseMigrations;
+    use \Laravel\Lumen\Testing\DatabaseMigrations;
 
     public function testGetCompanies()
     {
         factory(\WA\DataStore\Company\Company::class, 40)->create();
 
-        $this->json('GET', 'companies')
+        $res = $this->json('GET', 'companies')
             ->seeJsonStructure([
                 'data' => [
                     0 => [
@@ -1315,7 +1314,6 @@ class CompaniesTest extends TestCase
         $company = factory(\WA\DataStore\Company\Company::class)->create();
 
         $address1 = factory(\WA\DataStore\Address\Address::class)->create();
-        Log::debug("address1: ". print_r($address1, true));
         $company->addresses()->sync([$address1->id]);
 
         $address1DB = DB::table('company_address')->where('companyId', $company->id)->get();
@@ -2694,7 +2692,7 @@ class CompaniesTest extends TestCase
     public function testDeletecompanyIfNoExists()
     {
         // DELETE NO EXISTING.
-        $responseDel = $this->call('DELETE', 'companies/1');
+        $responseDel = $this->call('DELETE', 'companies/10');
         $this->assertEquals(404, $responseDel->status());
     }
 }

@@ -11,7 +11,6 @@ use WA\DataStore\Udl\UdlTransformer;
 use WA\Repositories\Company\CompanyInterface;
 use WA\Repositories\Udl\UdlInterface;
 use DB;
-use Log;
 
 /**
  * Class CompaniesController.
@@ -67,8 +66,12 @@ class CompaniesController extends FilteredApiController
          */
         if (!$this->isJsonCorrect($request, 'companies')) {
             $error['errors']['json'] = Lang::get('messages.InvalidJson');
-
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+        }
+
+        if(!$this->addFilterToTheRequest("store", $request)) {
+            $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
         DB::beginTransaction();
@@ -119,7 +122,6 @@ class CompaniesController extends FilteredApiController
                                 array_push($addressIdArray, $item);
                             } else {
                                 $newAddress = $addressInterface->create($item['attributes']);
-                                Log::debug("NEW ADDRESS: ". print_r($newAddress, true));
                                 $aux['id'] = $newAddress->id;
                                 $aux['type'] = 'addresses';
                                 array_push($addressIdArray, $aux);
@@ -179,18 +181,24 @@ class CompaniesController extends FilteredApiController
     public function create(Request $request)
     {   
         $success = true;
-       
+
+        /*
+         * Checks if Json has data, data-type & data-attributes.
+         */
         if (!$this->isJsonCorrect($request, 'companies')) {
             $error['errors']['json'] = Lang::get('messages.InvalidJson');
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
-        else{
-            $data = $request->all()['data'];
+
+        if(!$this->addFilterToTheRequest("create", $request)) {
+            $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
         DB::beginTransaction();
 
         try {
+            $data = $request->all()['data'];
             $company = $this->company->create($data['attributes']);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -216,12 +224,10 @@ class CompaniesController extends FilteredApiController
 
                     foreach ($data as $item) {
                         try {
-                            Log::debug("item: ". print_r($item, true));
                             if($item['id'] > 0) {
                                 array_push($addressIdArray, $item);
                             } else {
                                 $newAddress = $addressInterface->create($item['attributes']);
-                                Log::debug("NEW ADDRESS: ". print_r($newAddress, true));
                                 $aux['id'] = $newAddress->id;
                                 $aux['type'] = 'addresses';
                                 array_push($addressIdArray, $aux);

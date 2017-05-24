@@ -56,6 +56,11 @@ class ServicesController extends FilteredApiController
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
+        if(!$this->addFilterToTheRequest("store", $request)) {
+            $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+        }
+
         DB::beginTransaction();
 
         /*
@@ -162,7 +167,16 @@ class ServicesController extends FilteredApiController
     {
         DB::beginTransaction();
 
+        /*
+         * Checks if Json has data, data-type & data-attributes.
+         */
         if ($this->isJsonCorrect($request, 'services')) {
+
+            if(!$this->addFilterToTheRequest("create", $request)) {
+                $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
+                return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+            }
+        
             try {
                 $data = $request->all()['data'];
                 $service = $this->service->create($data['attributes']);
@@ -225,6 +239,12 @@ class ServicesController extends FilteredApiController
      */
     public function delete($id)
     {
+        if(!$this->addFilterToTheRequest("delete", null)) {
+            $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+        }
+
+        
         $service = Service::find($id);
         if ($service != null) {
             $this->service->deleteById($id);

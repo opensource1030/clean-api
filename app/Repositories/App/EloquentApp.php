@@ -97,4 +97,48 @@ class EloquentApp extends AbstractRepository implements AppInterface
 
         return $this->model->destroy($id);
     }
+
+    /**
+     * Retrieve the filters for the Model.
+     *
+     * @param int  $companyId
+     *
+     * @return Array
+     */
+    public function addFilterToTheRequest($companyId) {
+        $aux[] = '[packages.companyId]=' . (string) $companyId . '[or][orders.companyId]=' . (string) $companyId;
+        return $aux;
+    }
+
+    /**
+     * Check if the Model and/or its relationships are related to the Company of the User.
+     *
+     * @param JSON  $json : The Json request.
+     * @param int  $companyId
+     *
+     * @return Boolean
+     */
+    public function checkModelAndRelationships($json, $companyId) {
+        if(!isset($json->data->relationships)) {
+            return false;
+        } else {
+            foreach ($json->data->relationships->packages->data as $value) {
+                if ($value->type == 'packages') {
+                    if ($value->companyId == $companyId) {
+                        return true;
+                    }
+                }
+            }
+
+            foreach ($json->data->relationships->orders->data as $value) {
+                if ($value->type == 'orders') {
+                    if ($value->companyId == $companyId) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+    }
 }

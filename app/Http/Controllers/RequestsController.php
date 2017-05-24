@@ -39,6 +39,11 @@ class RequestsController extends FilteredApiController
      */
     public function store($id, Request $request)
     {
+        if(!$this->addFilterToTheRequest("store", $request)) {
+            $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+        }
+
         $data = $request->all();
         $data['id'] = $id;
         $request = $this->request->update($data);
@@ -53,6 +58,11 @@ class RequestsController extends FilteredApiController
      */
     public function create(Request $request)
     {
+        if(!$this->addFilterToTheRequest("create", $request)) {
+            $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+        }
+        
         $data = $request->all();
         $request = $this->request->create($data);
 
@@ -66,6 +76,11 @@ class RequestsController extends FilteredApiController
      */
     public function delete($id)
     {
+        if(!$this->addFilterToTheRequest("delete", null)) {
+            $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+        }
+
         $this->request->deleteById($id);
     }
 }

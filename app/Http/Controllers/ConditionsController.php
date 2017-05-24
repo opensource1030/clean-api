@@ -41,6 +41,12 @@ class ConditionsController extends FilteredApiController
     public function store($id, Request $request)
     {
         if ($this->isJsonCorrect($request, 'conditions')) {
+
+            if(!$this->addFilterToTheRequest("store", $request)) {
+                $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
+                return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+            }
+
             try {
                 $data = $request->all()['data']['attributes'];
                 $data['id'] = $id;
@@ -79,7 +85,16 @@ class ConditionsController extends FilteredApiController
      */
     public function create(Request $request)
     {
+        /*
+         * Checks if Json has data, data-type & data-attributes.
+         */
         if ($this->isJsonCorrect($request, 'conditions')) {
+
+            if(!$this->addFilterToTheRequest("create", $request)) {
+                $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
+                return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+            }
+        
             try {
                 $data = $request->all()['data']['attributes'];
                 $condition = $this->condition->create($data);
@@ -105,6 +120,11 @@ class ConditionsController extends FilteredApiController
      */
     public function delete($id)
     {
+        if(!$this->addFilterToTheRequest("delete", null)) {
+            $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+        }
+        
         $condition = Condition::find($id);
         if ($condition <> null) {
             $this->condition->deleteById($id);

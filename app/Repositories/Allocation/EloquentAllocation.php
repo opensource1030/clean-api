@@ -34,4 +34,36 @@ class EloquentAllocation extends AbstractRepository implements AllocationInterfa
     {
         return $this->model->getTransformer();
     }
+
+    /**
+     * Retrieve the filters for the Model.
+     *
+     * @param int  $companyId
+     *
+     * @return Array
+     */
+    public function addFilterToTheRequest($companyId) {
+        $aux['companyId']= (string) $companyId;
+        return $aux;
+    }
+
+    /**
+     * Check if the Model and/or its relationships are related to the Company of the User.
+     *
+     * @param JSON  $json : The Json request.
+     * @param int  $companyId
+     *
+     * @return Boolean
+     */
+    public function checkModelAndRelationships($json, $companyId) {
+        $ok = true;
+        $attributes = $json->data->attributes;
+
+        $user = \WA\DataStore\User\User::find($attributes->userId);
+        $ok = $ok && ($user->companyId == $companyId);
+
+        $ok = $ok && ($attributes->companyId == $companyId);
+
+        return $ok;
+    }
 }

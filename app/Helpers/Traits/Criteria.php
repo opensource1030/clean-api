@@ -44,6 +44,7 @@ trait Criteria
      * @var Filters
      */
     protected $filters = null;
+    protected $extraFilter = null;
 
     /**
      * @var Sorting
@@ -160,9 +161,17 @@ trait Criteria
         if ($filterCriteria !== null) {
             $this->filterCriteria = $filterCriteria;
         }
-
+        
         return $this;
     }
+
+    public function setExtraFilters($filterCriteria) {
+        if ($filterCriteria !== null) {
+            $this->extraFilter = $filterCriteria;
+        }
+        
+        return $this;
+    } 
 
     /**
      * Set fields criteria.
@@ -238,7 +247,7 @@ trait Criteria
 
                         $arrayFilters = $this->retrieveInformationInAnArray($parts);
                         $needIncludes = $this->arrayNeedsIncludes($arrayFilters);
-
+                        
                         if($needIncludes) {
                             $model = $this->returnTheCriteriaModel($criteriaModelName);
                             $transformer = $this->createTransformer($model);
@@ -250,6 +259,19 @@ trait Criteria
                             }
 
                             if ($ok) {
+                                foreach ($arrayFilters as $key => $value) {
+                                    $this->criteriaQuery->orWhereHas($value['relKey'],
+                                        function ($query) use ($value, $type) {
+                                            $parts = explode('.', $value['relKey']);
+                                            $relKey = $parts[count($parts) - 1];
+                                            $query = $this->executeCriteria($query, $this->changeTableName($relKey) . "." . $value['relColumn'], $value['operation'], $value['value'], $type);
+                                            $type = 'OR';
+                                            return $query;
+                                    });
+                                }
+                                
+
+                                /*
                                 $this->criteriaQuery->whereHas($arrayFilters[0]['relKey'],
                                     function ($query) use ($arrayFilters, $type) {
                                         foreach ($arrayFilters as $key => $value) {
@@ -258,8 +280,10 @@ trait Criteria
                                             $query = $this->executeCriteria($query, $this->changeTableName($relKey) . "." . $value['relColumn'], $value['operation'], $value['value'], $type);
                                             $type = 'OR';
                                         }
+                                        
                                     return $query;
                                 });
+                                */
                             }
                         } else {
                             foreach ($arrayFilters as $key => $value) {
@@ -284,13 +308,23 @@ trait Criteria
                             }
 
                             if ($ok) {
+                                foreach ($arrayFilters as $key => $value) {
+                                    $this->criteriaQuery->whereHas($value['relKey'],
+                                        function ($query) use ($value) {
+                                            $parts = explode('.', $value['relKey']);
+                                            $relKey = $parts[count($parts) - 1];
+                                            $query = $this->executeCriteria($query, $this->changeTableName($relKey) . "." . $value['relColumn'], $value['operation'], $value['value'], 'AND');
+                                            return $query;
+                                    });
+                                }
+                                /*
                                 $this->criteriaQuery->whereHas($arrayFilters[0]['relKey'],
                                     function ($query) use ($arrayFilters) {
                                         foreach ($arrayFilters as $key => $value) {
                                             $query = $this->executeCriteria($query, $this->changeTableName($value['relKey']) . "." . $value['relColumn'], $value['operation'], $value['value'], 'AND');
                                         }
                                     return $query;
-                                });
+                                });*/
                             }
                         } else {
                             foreach ($arrayFilters as $key => $value) {
@@ -406,7 +440,7 @@ trait Criteria
                 if ($aic == $include) {
                     return true;
                 }
-            }    
+            }
         }
     }
 
@@ -520,6 +554,7 @@ trait Criteria
             } else {}
             array_push($arrayAux, $aux);
         }
+
         return $arrayAux;
     }
 
@@ -717,11 +752,17 @@ trait Criteria
      * @return Filters
      */
     public function getFilters()
-    {
-        $filters = new Filters((array)\Request::get('filter', null));
+    {   
+        $req = (array)\Request::get('filter', null);
+        if (isset($this->extraFilter)) {
+            foreach ($this->extraFilter as $key => $value) {
+                $req[$key] = $value;
+            }
+        }
+        $filters = new Filters($req);
+        //dd($filters);
         return $filters;
     }
-
 
     /**
      * @return Fields

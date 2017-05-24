@@ -42,6 +42,11 @@ class ImagesController extends FilteredApiController
      */
     public function show($id, Request $request)
     {
+        if(!$this->addFilterToTheRequest("show", $request)) {
+            $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+        }
+
         $criteria = $this->getRequestCriteria();
         $this->image->setCriteria($criteria);
         $image = Image::find($id);
@@ -67,6 +72,11 @@ class ImagesController extends FilteredApiController
      */
     public function info($id)
     {
+        if(!$this->addFilterToTheRequest("info", null)) {
+            $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+        }
+
         $image = Image::find($id);
         if ($image == null) {
             $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => 'Image']);
@@ -85,6 +95,11 @@ class ImagesController extends FilteredApiController
      */
     public function create(Request $request)
     {
+        if(!$this->addFilterToTheRequest("create", $request)) {
+            $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+        }
+        
         try {
             $file = $request->file('filename');
 
@@ -123,6 +138,11 @@ class ImagesController extends FilteredApiController
      */
     public function delete($id)
     {
+        if(!$this->addFilterToTheRequest("delete", null)) {
+            $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+        }
+        
         $image = Image::find($id);
         if ($image != null) {
             $this->image->deleteById($id);

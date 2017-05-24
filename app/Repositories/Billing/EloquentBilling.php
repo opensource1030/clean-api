@@ -107,4 +107,28 @@ class EloquentBilling extends AbstractRepository implements BillingInterface
         //@todo: get the proper bill month, per the relationships
         return '2015-04-01';
     }
+
+    /**
+     * Retrieve the filters for the Model.
+     *
+     * @param int  $companyId
+     *
+     * @return Array
+     */
+    public function addFilterToTheRequest($companyId) {
+        //$aux['companies.id'] = (string) $companyId;
+        return ''; //$aux;
+    }
+
+    /**
+     * Check if the Model and/or its relationships are related to the Company of the User.
+     *
+     * @param JSON  $json : The Json request.
+     * @param int  $companyId
+     *
+     * @return Boolean
+     */
+    public function checkModelAndRelationships($json, $companyId) {
+        return true;
+    }
 }

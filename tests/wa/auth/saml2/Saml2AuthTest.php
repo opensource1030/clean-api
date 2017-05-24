@@ -1,11 +1,8 @@
 <?php
 
-namespace wa\auth\saml2;
+//use OneLogin_Saml2_Auth;
 
-use TestCase;
-use OneLogin_Saml2_Auth;
-
-class Saml2AuthTest extends TestCase
+class Saml2AuthTest extends \TestCase
 { 
 
     public function testLogin()

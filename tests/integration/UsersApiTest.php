@@ -1,18 +1,9 @@
 <?php
 
-use Laravel\Lumen\Testing\DatabaseMigrations;
-use WA\DataStore\User\User;
-use Laravel\Passport\Bridge\Scope;
-use WA\DataStore\Scope\Scope as ScopeModel;
-use Laravel\Passport\Passport;
-
-class UsersApiTest extends TestCase
+class UsersApiTest extends \TestCase
 {
-    use DatabaseMigrations;
-    /**
-     * A basic functional test for user endpoints.
-     */
-    
+    use \Laravel\Lumen\Testing\DatabaseMigrations;
+
     public function testGetUsers()
     {
         $user = factory(\WA\DataStore\User\User::class, 20)->create();
@@ -183,11 +174,10 @@ class UsersApiTest extends TestCase
             'password' => '$2y$10$oc9QZeaYYAd.8BPGmXGaFu9cAycKTcBu7LRzmT2J231F0BzKwpxj6'
         ]);
         $scope = factory(\WA\DataStore\Scope\Scope::class)->create(['name' => 'get', 'display_name'=>'get']);
-        $role = factory(\WA\DataStore\Role\Role::class)->create();
         $permission1 = factory(\WA\DataStore\Permission\Permission::class)->create();
         $permission2 = factory(\WA\DataStore\Permission\Permission::class)->create();
-        $user->roles()->sync([$role->id]);
-        $role->perms()->sync([$permission1->id,$permission2->id]);
+        $user->roles()->sync([$this->roleUser->id]);
+        $this->roleUser->perms()->sync([$permission1->id,$permission2->id]);
         $scope->permissions()->sync([$permission1->id,$permission2->id]);
         
         $scp = $scope->name;
@@ -201,14 +191,14 @@ class UsersApiTest extends TestCase
             'revoked' => 0,
         ]);
         // Setup TokensCan as in AuthSericeProvider, as it is not properly executed on app bootstrap during the test
-        $scopes = ScopeModel::all();
+        $scopes = \WA\DataStore\Scope\Scope::all();
             
         $listScope = array();
         foreach ($scopes as $scop){
             $listScope[$scop->getAttributes()['name']] = $scop->getAttributes()['description'];
         }
 
-        Passport::tokensCan($listScope);
+        \Laravel\Passport\Passport::tokensCan($listScope);
 
         $body = [
             'grant_type' => $grantType,
@@ -440,10 +430,7 @@ class UsersApiTest extends TestCase
     public function testGetUserByIdandIncludesRoles()
     {
         $user = factory(\WA\DataStore\User\User::class)->create();
-        $role1 = factory(\WA\DataStore\Role\Role::class)->create()->id;
-        $role2 = factory(\WA\DataStore\Role\Role::class)->create()->id;
-        $dataroles = array($role1, $role2);
-        $user->roles()->sync($dataroles);
+        $user->roles()->sync([$this->roleUser->id, $this->roleAdmin->id]);
         $res = $this->json('GET', 'users/'.$user->id.'?include=roles')
         //Log::debug("Users/id: ".print_r($res->response->getContent(), true));
             ->seeJsonStructure([
@@ -880,9 +867,6 @@ class UsersApiTest extends TestCase
         $devicevariation1 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create()->id;
         $devicevariation2 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create()->id;
         
-        $role1 = factory(\WA\DataStore\Role\Role::class)->create()->id;
-        $role2 = factory(\WA\DataStore\Role\Role::class)->create()->id;
-        
         $udl1 = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $companyId])->id;
         $udl2 = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $companyId])->id;
         
@@ -969,8 +953,8 @@ class UsersApiTest extends TestCase
                         ],
                         'roles' => [
                             'data' => [
-                                ['type' => 'roles', 'id' => $role1],
-                                ['type' => 'roles', 'id' => $role2]
+                                ['type' => 'roles', 'id' => $this->roleUser->id],
+                                ['type' => 'roles', 'id' => $this->roleAdmin->id]
                             ],
                         ],
                         'udlvalues' => [
@@ -1125,7 +1109,7 @@ class UsersApiTest extends TestCase
                 ],
             ]
             );
-            Log::debug("testCreateUser: ".print_r($res->response->getContent(), true));
+            //Log::debug("testCreateUser: ".print_r($res->response->getContent(), true));
             $res->seeJson(
                 [
                     'uuid' => $user->uuid,
@@ -1155,8 +1139,8 @@ class UsersApiTest extends TestCase
                     'externalId' => $user->externalId,
                     'approverId' => $user->approverId,
                     'defaultLocationId' => $user->defaultLocationId
-                ])
-            ->seeJsonStructure(
+                ]);
+            $res->seeJsonStructure(
                 [
                     'data' => [
                         'type',
@@ -1254,10 +1238,6 @@ class UsersApiTest extends TestCase
                                     0 => [
                                         'type',
                                         'id'
-                                    ],
-                                    1 => [
-                                        'type',
-                                        'id'
                                     ]
                                 ]
                             ],
@@ -1310,7 +1290,8 @@ class UsersApiTest extends TestCase
                                 ]
                             ]
                         ]
-                    ],
+                    ]
+                /*]);*/,
                     'included' => [
 /*                        0 => [ // ASSETS
                             "type",
@@ -1406,11 +1387,21 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        4 => [ // ROLES
+                        4 => [ // ALLOCATIONS
                             'type',
                             'id',
                             'attributes' => [
-                                'name'
+                                'bill_month',
+                                'carrier',
+                                'mobile_number',
+                                'currency',
+                                'device',
+                                'allocated_charge',
+                                'service_plan_charge',
+                                'usage_charge',
+                                'other_charge',
+                                'fees_charge',
+                                'last_upgrade'
                             ],
                             'links' => [
                                 'self'
@@ -1436,27 +1427,7 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        6 => [ // ALLOCATIONS
-                            'type',
-                            'id',
-                            'attributes' => [
-                                'bill_month',
-                                'carrier',
-                                'mobile_number',
-                                'currency',
-                                'device',
-                                'allocated_charge',
-                                'service_plan_charge',
-                                'usage_charge',
-                                'other_charge',
-                                'fees_charge',
-                                'last_upgrade'
-                            ],
-                            'links' => [
-                                'self'
-                            ]
-                        ],
-                        7 => [  // CONTENTS
+                        6 => [  // CONTENTS
                             'type',
                             'id',
                             'attributes' => [
@@ -1469,7 +1440,7 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        8 => [ // CONTENTS
+                        7 => [ // CONTENTS
                             'type',
                             'id',
                             'attributes' => [
@@ -1482,7 +1453,7 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        9 => [ // UDLVALUES
+                        8 => [ // UDLS
                             'type',
                             'id',
                             'attributes' => [
@@ -1493,7 +1464,7 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        10 => [ // UDLVALUES
+                        9 => [ // UDLS
                             'type',
                             'id',
                             'attributes' => [
@@ -1504,7 +1475,7 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        11 => [ // ADDRESS
+                        10 => [ // ADDRESS
                             'type',
                             'id',
                             'attributes' => [
@@ -1590,6 +1561,7 @@ class UsersApiTest extends TestCase
     {
         $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
         $companyDomain = factory(\WA\DataStore\Company\CompanyDomains::class)->create(['domain' => 'email.com', 'companyId' => $companyId]);
+
         $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId]);
 
         $res = $this->json('POST', '/users?include=assets',
@@ -2454,25 +2426,22 @@ class UsersApiTest extends TestCase
         $this->assertEquals($deviceVar2DB->companyId, $devicevariation2->companyId);
         
         // ROLES
-        $role1 = factory(\WA\DataStore\Role\Role::class)->create();
-        $role2 = factory(\WA\DataStore\Role\Role::class)->create();
-        $arrayR = array($role1->id, $role2->id);
-        $user->roles()->sync($arrayR);
+        $user->roles()->sync([$this->roleUser->id, $this->roleAdmin->id]);
         $userRoleDB = DB::table('role_user')->where('user_id', $user->id)->get();
         $this->assertCount(2, $userRoleDB);
-        $this->assertEquals($userRoleDB[0]->role_id, $role1->id);
-        $this->assertEquals($userRoleDB[1]->role_id, $role2->id);
-        $role1DB = DB::table('roles')->where('id', $role1->id)->get()[0];
-        $role2DB = DB::table('roles')->where('id', $role2->id)->get()[0];
+        $this->assertEquals($userRoleDB[0]->role_id, $this->roleAdmin->id);
+        $this->assertEquals($userRoleDB[1]->role_id, $this->roleUser->id);
+        $role1DB = DB::table('roles')->where('id', $this->roleUser->id)->get()[0];
+        $role2DB = DB::table('roles')->where('id', $this->roleAdmin->id)->get()[0];
         
-        $this->assertEquals($role1DB->id, $role1->id);
-        $this->assertEquals($role1DB->name, $role1->name);
-        $this->assertEquals($role1DB->display_name, $role1->display_name);
-        $this->assertEquals($role1DB->description, $role1->description);
-        $this->assertEquals($role2DB->id, $role2->id);
-        $this->assertEquals($role2DB->name, $role2->name);
-        $this->assertEquals($role2DB->display_name, $role2->display_name);
-        $this->assertEquals($role2DB->description, $role2->description);
+        $this->assertEquals($role1DB->id, $this->roleUser->id);
+        $this->assertEquals($role1DB->name, $this->roleUser->name);
+        $this->assertEquals($role1DB->display_name, $this->roleUser->display_name);
+        $this->assertEquals($role1DB->description, $this->roleUser->description);
+        $this->assertEquals($role2DB->id, $this->roleAdmin->id);
+        $this->assertEquals($role2DB->name, $this->roleAdmin->name);
+        $this->assertEquals($role2DB->display_name, $this->roleAdmin->display_name);
+        $this->assertEquals($role2DB->description, $this->roleAdmin->description);
 
         // UDLVALUES
         $udl1 = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $companyId]);
@@ -2568,7 +2537,7 @@ class UsersApiTest extends TestCase
                         ],
                         'roles' => [
                             'data' => [
-                                ['type' => 'roles', 'id' => $role1->id]
+                                ['type' => 'roles', 'id' => $this->roleUser->id]
                             ],
                         ],
                         'udlvalues' => [
@@ -2967,11 +2936,7 @@ class UsersApiTest extends TestCase
         $deviceVariation3 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create()->id;
         
         // ROLES
-        $role1 = factory(\WA\DataStore\Role\Role::class)->create()->id;
-        $role2 = factory(\WA\DataStore\Role\Role::class)->create()->id;
-        $arrayR = array($role1, $role2);
-        $user->roles()->sync($arrayR);
-        $role3 = factory(\WA\DataStore\Role\Role::class)->create()->id;
+        $user->roles()->sync([$this->roleUser->id, $this->roleAdmin->id]);
         
         // UDL VALUES
         $udl1 = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $companyId])->id;
@@ -3058,9 +3023,9 @@ class UsersApiTest extends TestCase
                         ],
                         'roles' => [
                             'data' => [
-                                ['type' => 'roles', 'id' => $role1],
-                                ['type' => 'roles', 'id' => $role2],
-                                ['type' => 'roles', 'id' => $role3]
+                                ['type' => 'roles', 'id' => $this->roleUser->id],
+                                ['type' => 'roles', 'id' => $this->roleAdmin->id],
+                                ['type' => 'roles', 'id' => $this->roleSuperAdmin->id]
                             ],
                         ],
                         'udlvalues' => [
@@ -3824,7 +3789,7 @@ class UsersApiTest extends TestCase
     public function testDeleteUserIfNoExists()
     {
         // DELETE NO EXISTING.
-        $responseDel = $this->call('DELETE', '/users/1');
+        $responseDel = $this->call('DELETE', '/users/10');
         $this->assertEquals(404, $responseDel->status());
 
     }
@@ -3832,11 +3797,11 @@ class UsersApiTest extends TestCase
     public function testUserPackagesUdlString()
     {
         // COMPANY
-        $company = factory(\WA\DataStore\Company\Company::class)->create();
+        $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
 
         // UDLS
-        $udl1 = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $company->id, 'name' => 'Name1']);
-        $udl2 = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $company->id, 'name' => 'Name2']);
+        $udl1 = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $companyId, 'name' => 'Name1']);
+        $udl2 = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $companyId, 'name' => 'Name2']);
 
         // UDLVALUES
         $udl1Value1 = factory(\WA\DataStore\UdlValue\UdlValue::class)->create([
@@ -3852,7 +3817,7 @@ class UsersApiTest extends TestCase
             'name' => 'udl1Value3'
         ]);
 
-        $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $company->id]);
+        $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId]);
 
         $userUdlValue1 = factory(\WA\DataStore\User\UserUdlValue::class)->create([
             'userId' => $user->id,
@@ -3861,38 +3826,38 @@ class UsersApiTest extends TestCase
 
         // PACKAGES
         $package1 = factory(\WA\DataStore\Package\Package::class)->create([
-            'companyId' => $company->id,
+            'companyId' => $companyId,
             'name' => 'Package1',
             'information' => 'Information1',
         ]);
         $package2 = factory(\WA\DataStore\Package\Package::class)->create([
-            'companyId' => $company->id,
+            'companyId' => $companyId,
             'name' => 'Package2',
             'information' => 'Information2',
         ]);
         $package3 = factory(\WA\DataStore\Package\Package::class)->create([
-            'companyId' => $company->id,
+            'companyId' => $companyId,
             'name' => 'Package3',
             'information' => 'Information3',
         ]);
 
         $package4 = factory(\WA\DataStore\Package\Package::class)->create([
-            'companyId' => $company->id,
+            'companyId' => $companyId,
             'name' => 'Package4',
             'information' => 'Information4',
         ]);
         $package5 = factory(\WA\DataStore\Package\Package::class)->create([
-            'companyId' => $company->id,
+            'companyId' => $companyId,
             'name' => 'Package5',
             'information' => 'Information5',
         ]);
         $package6 = factory(\WA\DataStore\Package\Package::class)->create([
-            'companyId' => $company->id,
+            'companyId' => $companyId,
             'name' => 'Package6',
             'information' => 'Information6',
         ]);
         $package7 = factory(\WA\DataStore\Package\Package::class)->create([
-            'companyId' => $company->id,
+            'companyId' => $companyId,
             'name' => 'Package7',
             'information' => 'Information7',
         ]);
@@ -3949,7 +3914,7 @@ class UsersApiTest extends TestCase
                         'attributes' => [
                             'name' => 'Package1',
                             'information' => 'Information1',
-                            'companyId' => '1'
+                            'companyId' => "$companyId"
                         ]
                     ],
                     [
@@ -3958,7 +3923,7 @@ class UsersApiTest extends TestCase
                         'attributes' => [
                             'name' => 'Package2',
                             'information' => 'Information2',
-                            'companyId' => '1'
+                            'companyId' => "$companyId"
                         ]
                     ],
                     [
@@ -3967,7 +3932,7 @@ class UsersApiTest extends TestCase
                         'attributes' => [
                             'name' => 'Package3',
                             'information' => 'Information3',
-                            'companyId' => '1'
+                            'companyId' => "$companyId"
                         ]
                     ],
                     [
@@ -3976,7 +3941,7 @@ class UsersApiTest extends TestCase
                         'attributes' => [
                             'name' => 'Package7',
                             'information' => 'Information7',
-                            'companyId' => '1'
+                            'companyId' => "$companyId"
                         ]
                     ]
                 ]
@@ -3986,11 +3951,11 @@ class UsersApiTest extends TestCase
     public function testUserPackagesUdlNumber()
     {
         // COMPANY
-        $company = factory(\WA\DataStore\Company\Company::class)->create();
+        $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
 
         // UDLS
-        $udl1 = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $company->id, 'name' => 'Name1']);
-        $udl2 = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $company->id, 'name' => 'Name2']);
+        $udl1 = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $companyId, 'name' => 'Name1']);
+        $udl2 = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $companyId, 'name' => 'Name2']);
 
         // UDLVALUES
         $udl1Value1 = factory(\WA\DataStore\UdlValue\UdlValue::class)->create([
@@ -4006,21 +3971,21 @@ class UsersApiTest extends TestCase
             'name' => 3
         ]);
 
-        $user1 = factory(\WA\DataStore\User\User::class)->create(['companyId' => $company->id]);
+        $user1 = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId]);
 
         $userUdlValue1 = factory(\WA\DataStore\User\UserUdlValue::class)->create([
             'userId' => $user1->id,
             'udlValueId' => $udl1Value1->id
         ]);
 
-        $user2 = factory(\WA\DataStore\User\User::class)->create(['companyId' => $company->id]);
+        $user2 = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId]);
 
         $userUdlValue1 = factory(\WA\DataStore\User\UserUdlValue::class)->create([
             'userId' => $user2->id,
             'udlValueId' => $udl1Value2->id
         ]);
 
-        $user3 = factory(\WA\DataStore\User\User::class)->create(['companyId' => $company->id]);
+        $user3 = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId]);
 
         $userUdlValue1 = factory(\WA\DataStore\User\UserUdlValue::class)->create([
             'userId' => $user3->id,
@@ -4029,38 +3994,38 @@ class UsersApiTest extends TestCase
 
         // PACKAGES
         $package1 = factory(\WA\DataStore\Package\Package::class)->create([
-            'companyId' => $company->id,
+            'companyId' => $companyId,
             'name' => 'Package1',
             'information' => 'Information1',
         ]);
         $package2 = factory(\WA\DataStore\Package\Package::class)->create([
-            'companyId' => $company->id,
+            'companyId' => $companyId,
             'name' => 'Package2',
             'information' => 'Information2',
         ]);
         $package3 = factory(\WA\DataStore\Package\Package::class)->create([
-            'companyId' => $company->id,
+            'companyId' => $companyId,
             'name' => 'Package3',
             'information' => 'Information3',
         ]);
 
         $package4 = factory(\WA\DataStore\Package\Package::class)->create([
-            'companyId' => $company->id,
+            'companyId' => $companyId,
             'name' => 'Package4',
             'information' => 'Information4',
         ]);
         $package5 = factory(\WA\DataStore\Package\Package::class)->create([
-            'companyId' => $company->id,
+            'companyId' => $companyId,
             'name' => 'Package5',
             'information' => 'Information5',
         ]);
         $package6 = factory(\WA\DataStore\Package\Package::class)->create([
-            'companyId' => $company->id,
+            'companyId' => $companyId,
             'name' => 'Package6',
             'information' => 'Information6',
         ]);
         $package7 = factory(\WA\DataStore\Package\Package::class)->create([
-            'companyId' => $company->id,
+            'companyId' => $companyId,
             'name' => 'Package7',
             'information' => 'Information7',
         ]);
@@ -4117,7 +4082,7 @@ class UsersApiTest extends TestCase
                         'attributes' => [
                             'name' => 'Package3',
                             'information' => 'Information3',
-                            'companyId' => '1'
+                            'companyId' => "$companyId"
                         ]
                     ],
                     [
@@ -4126,7 +4091,7 @@ class UsersApiTest extends TestCase
                         'attributes' => [
                             'name' => 'Package5',
                             'information' => 'Information5',
-                            'companyId' => '1'
+                            'companyId' => "$companyId"
                         ]
                     ],
                     [
@@ -4135,7 +4100,7 @@ class UsersApiTest extends TestCase
                         'attributes' => [
                             'name' => 'Package6',
                             'information' => 'Information6',
-                            'companyId' => '1'
+                            'companyId' => "$companyId"
                         ]
                     ],
                     [
@@ -4144,7 +4109,7 @@ class UsersApiTest extends TestCase
                         'attributes' => [
                             'name' => 'Package7',
                             'information' => 'Information7',
-                            'companyId' => '1'
+                            'companyId' => "$companyId"
                         ]
                     ]
                 ]
@@ -4159,7 +4124,7 @@ class UsersApiTest extends TestCase
                         'attributes' => [
                             'name' => 'Package1',
                             'information' => 'Information1',
-                            'companyId' => '1'
+                            'companyId' => "$companyId"
                         ]
                     ],
                     [
@@ -4168,7 +4133,7 @@ class UsersApiTest extends TestCase
                         'attributes' => [
                             'name' => 'Package4',
                             'information' => 'Information4',
-                            'companyId' => '1'
+                            'companyId' => "$companyId"
                         ]
                     ],
                     [
@@ -4177,7 +4142,7 @@ class UsersApiTest extends TestCase
                         'attributes' => [
                             'name' => 'Package5',
                             'information' => 'Information5',
-                            'companyId' => '1'
+                            'companyId' => "$companyId"
                         ]
                     ],
                     [
@@ -4186,7 +4151,7 @@ class UsersApiTest extends TestCase
                         'attributes' => [
                             'name' => 'Package7',
                             'information' => 'Information7',
-                            'companyId' => '1'
+                            'companyId' => "$companyId"
                         ]
                     ]
                 ]
@@ -4201,7 +4166,7 @@ class UsersApiTest extends TestCase
                         'attributes' => [
                             'name' => 'Package2',
                             'information' => 'Information2',
-                            'companyId' => '1'
+                            'companyId' => "$companyId"
                         ]
                     ],
                     [
@@ -4210,7 +4175,7 @@ class UsersApiTest extends TestCase
                         'attributes' => [
                             'name' => 'Package4',
                             'information' => 'Information4',
-                            'companyId' => '1'
+                            'companyId' => "$companyId"
                         ]
                     ],
                     [
@@ -4219,7 +4184,7 @@ class UsersApiTest extends TestCase
                         'attributes' => [
                             'name' => 'Package6',
                             'information' => 'Information6',
-                            'companyId' => '1'
+                            'companyId' => "$companyId"
                         ]
                     ],
                     [
@@ -4228,7 +4193,7 @@ class UsersApiTest extends TestCase
                         'attributes' => [
                             'name' => 'Package7',
                             'information' => 'Information7',
-                            'companyId' => '1'
+                            'companyId' => "$companyId"
                         ]
                     ]
                 ]
@@ -4238,36 +4203,36 @@ class UsersApiTest extends TestCase
     public function testUserPackagesSupervisor()
     {
         // COMPANY
-        $company = factory(\WA\DataStore\Company\Company::class)->create();
+        $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
 
-        $user1 = factory(\WA\DataStore\User\User::class)->create(['companyId' => $company->id, 'isSupervisor' => 0]);
+        $user1 = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId, 'isSupervisor' => 0]);
 
-        $user2 = factory(\WA\DataStore\User\User::class)->create(['companyId' => $company->id, 'isSupervisor' => 1]);
+        $user2 = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId, 'isSupervisor' => 1]);
 
         // PACKAGES
         $package1 = factory(\WA\DataStore\Package\Package::class)->create([
-            'companyId' => $company->id,
+            'companyId' => $companyId,
             'name' => 'Package1',
             'information' => 'Information1',
         ]);
         $package2 = factory(\WA\DataStore\Package\Package::class)->create([
-            'companyId' => $company->id,
+            'companyId' => $companyId,
             'name' => 'Package2',
             'information' => 'Information2',
         ]);
         $package3 = factory(\WA\DataStore\Package\Package::class)->create([
-            'companyId' => $company->id,
+            'companyId' => $companyId,
             'name' => 'Package3',
             'information' => 'Information3',
         ]);
 
         $package4 = factory(\WA\DataStore\Package\Package::class)->create([
-            'companyId' => $company->id,
+            'companyId' => $companyId,
             'name' => 'Package4',
             'information' => 'Information4',
         ]);
         $package5 = factory(\WA\DataStore\Package\Package::class)->create([
-            'companyId' => $company->id,
+            'companyId' => $companyId,
             'name' => 'Package5',
             'information' => 'Information5',
         ]);
@@ -4310,7 +4275,7 @@ class UsersApiTest extends TestCase
                         'attributes' => [
                             'name' => 'Package2',
                             'information' => 'Information2',
-                            'companyId' => '1'
+                            'companyId' => "$companyId"
                         ]
                     ],
                     [
@@ -4319,7 +4284,7 @@ class UsersApiTest extends TestCase
                         'attributes' => [
                             'name' => 'Package3',
                             'information' => 'Information3',
-                            'companyId' => '1'
+                            'companyId' => "$companyId"
                         ]
                     ],
                     [
@@ -4328,7 +4293,7 @@ class UsersApiTest extends TestCase
                         'attributes' => [
                             'name' => 'Package5',
                             'information' => 'Information5',
-                            'companyId' => '1'
+                            'companyId' => "$companyId"
                         ]
                     ]
                 ]
@@ -4343,7 +4308,7 @@ class UsersApiTest extends TestCase
                         'attributes' => [
                             'name' => 'Package1',
                             'information' => 'Information1',
-                            'companyId' => '1'
+                            'companyId' => "$companyId"
                         ]
                     ],
                     [
@@ -4352,7 +4317,7 @@ class UsersApiTest extends TestCase
                         'attributes' => [
                             'name' => 'Package4',
                             'information' => 'Information4',
-                            'companyId' => '1'
+                            'companyId' => "$companyId"
                         ]
                     ],
                     [
@@ -4361,7 +4326,7 @@ class UsersApiTest extends TestCase
                         'attributes' => [
                             'name' => 'Package5',
                             'information' => 'Information5',
-                            'companyId' => '1'
+                            'companyId' => "$companyId"
                         ]
                     ]
                 ]
@@ -4371,12 +4336,12 @@ class UsersApiTest extends TestCase
     public function testUserPackagesAddress()
     {
         // COMPANY
-        $company = factory(\WA\DataStore\Company\Company::class)->create();
+        $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
 
-        $user1 = factory(\WA\DataStore\User\User::class)->create(['companyId' => $company->id]);
-        $user2 = factory(\WA\DataStore\User\User::class)->create(['companyId' => $company->id]);
-        $user3 = factory(\WA\DataStore\User\User::class)->create(['companyId' => $company->id]);
-        $user4 = factory(\WA\DataStore\User\User::class)->create(['companyId' => $company->id]);
+        $user1 = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId]);
+        $user2 = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId]);
+        $user3 = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId]);
+        $user4 = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId]);
 
         $address1 = factory(\WA\DataStore\Address\Address::class)->create([
             'country' => 'Catalonia',
@@ -4444,63 +4409,63 @@ class UsersApiTest extends TestCase
 
         // PACKAGES
         $package1 = factory(\WA\DataStore\Package\Package::class)->create([
-            'companyId' => $company->id,
+            'companyId' => $companyId,
             'name' => 'Package1',
             'information' => 'Information1'
         ]);
         $package2 = factory(\WA\DataStore\Package\Package::class)->create([
-            'companyId' => $company->id,
+            'companyId' => $companyId,
             'name' => 'Package2',
             'information' => 'Information2'
         ]);
         $package3 = factory(\WA\DataStore\Package\Package::class)->create([
-            'companyId' => $company->id,
+            'companyId' => $companyId,
             'name' => 'Package3',
             'information' => 'Information3'
         ]);
         $package4 = factory(\WA\DataStore\Package\Package::class)->create([
-            'companyId' => $company->id,
+            'companyId' => $companyId,
             'name' => 'Package4',
             'information' => 'Information4'
         ]);
         $package5 = factory(\WA\DataStore\Package\Package::class)->create([
-            'companyId' => $company->id,
+            'companyId' => $companyId,
             'name' => 'Package5',
             'information' => 'Information5'
         ]);
         $package6 = factory(\WA\DataStore\Package\Package::class)->create([
-            'companyId' => $company->id,
+            'companyId' => $companyId,
             'name' => 'Package6',
             'information' => 'Information6'
         ]);
         $package7 = factory(\WA\DataStore\Package\Package::class)->create([
-            'companyId' => $company->id,
+            'companyId' => $companyId,
             'name' => 'Package7',
             'information' => 'Information7'
         ]);
         $package8 = factory(\WA\DataStore\Package\Package::class)->create([
-            'companyId' => $company->id,
+            'companyId' => $companyId,
             'name' => 'Package8',
             'information' => 'Information8'
         ]);
         $package9 = factory(\WA\DataStore\Package\Package::class)->create([
-            'companyId' => $company->id,
+            'companyId' => $companyId,
             'name' => 'Package9',
             'information' => 'Information9'
         ]);
 
         $package10 = factory(\WA\DataStore\Package\Package::class)->create([
-            'companyId' => $company->id,
+            'companyId' => $companyId,
             'name' => 'Package10',
             'information' => 'Information10'
         ]);
         $package11 = factory(\WA\DataStore\Package\Package::class)->create([
-            'companyId' => $company->id,
+            'companyId' => $companyId,
             'name' => 'Package11',
             'information' => 'Information11'
         ]);
         $package12 = factory(\WA\DataStore\Package\Package::class)->create([
-            'companyId' => $company->id,
+            'companyId' => $companyId,
             'name' => 'Package12',
             'information' => 'Information12'
         ]);
@@ -4641,7 +4606,7 @@ class UsersApiTest extends TestCase
                         'attributes' => [
                             'name' => 'Package1',
                             'information' => 'Information1',
-                            'companyId' => '1'
+                            'companyId' => "$companyId"
                         ]
                     ],
                     [
@@ -4650,7 +4615,7 @@ class UsersApiTest extends TestCase
                         'attributes' => [
                             'name' => 'Package2',
                             'information' => 'Information2',
-                            'companyId' => '1'
+                            'companyId' => "$companyId"
                         ]
                     ],
                     [
@@ -4659,7 +4624,7 @@ class UsersApiTest extends TestCase
                         'attributes' => [
                             'name' => 'Package4',
                             'information' => 'Information4',
-                            'companyId' => '1'
+                            'companyId' => "$companyId"
                         ]
                     ],
                     [
@@ -4668,7 +4633,7 @@ class UsersApiTest extends TestCase
                         'attributes' => [
                             'name' => 'Package5',
                             'information' => 'Information5',
-                            'companyId' => '1'
+                            'companyId' => "$companyId"
                         ]
                     ],
                     [
@@ -4677,7 +4642,7 @@ class UsersApiTest extends TestCase
                         'attributes' => [
                             'name' => 'Package7',
                             'information' => 'Information7',
-                            'companyId' => '1'
+                            'companyId' => "$companyId"
                         ]
                     ],
                     [
@@ -4686,7 +4651,7 @@ class UsersApiTest extends TestCase
                         'attributes' => [
                             'name' => 'Package8',
                             'information' => 'Information8',
-                            'companyId' => '1'
+                            'companyId' => "$companyId"
                         ]
                     ],
                     [
@@ -4695,7 +4660,7 @@ class UsersApiTest extends TestCase
                         'attributes' => [
                             'name' => 'Package10',
                             'information' => 'Information10',
-                            'companyId' => '1'
+                            'companyId' => "$companyId"
                         ]
                     ],
                     [
@@ -4704,7 +4669,7 @@ class UsersApiTest extends TestCase
                         'attributes' => [
                             'name' => 'Package11',
                             'information' => 'Information11',
-                            'companyId' => '1'
+                            'companyId' => "$companyId"
                         ]
                     ],
                     [
@@ -4713,7 +4678,7 @@ class UsersApiTest extends TestCase
                         'attributes' => [
                             'name' => 'Package12',
                             'information' => 'Information12',
-                            'companyId' => '1'
+                            'companyId' => "$companyId"
                         ]
                     ]
                 ]
@@ -4728,7 +4693,7 @@ class UsersApiTest extends TestCase
                         'attributes' => [
                             'name' => 'Package2',
                             'information' => 'Information2',
-                            'companyId' => '1'
+                            'companyId' => "$companyId"
                         ]
                     ],
                     [
@@ -4737,7 +4702,7 @@ class UsersApiTest extends TestCase
                         'attributes' => [
                             'name' => 'Package4',
                             'information' => 'Information4',
-                            'companyId' => '1'
+                            'companyId' => "$companyId"
                         ]
                     ],
                     [
@@ -4746,7 +4711,7 @@ class UsersApiTest extends TestCase
                         'attributes' => [
                             'name' => 'Package5',
                             'information' => 'Information5',
-                            'companyId' => '1'
+                            'companyId' => "$companyId"
                         ]
                     ],
                     [
@@ -4755,7 +4720,7 @@ class UsersApiTest extends TestCase
                         'attributes' => [
                             'name' => 'Package7',
                             'information' => 'Information7',
-                            'companyId' => '1'
+                            'companyId' => "$companyId"
                         ]
                     ],
                     [
@@ -4764,7 +4729,7 @@ class UsersApiTest extends TestCase
                         'attributes' => [
                             'name' => 'Package8',
                             'information' => 'Information8',
-                            'companyId' => '1'
+                            'companyId' => "$companyId"
                         ]
                     ],
                     [
@@ -4773,7 +4738,7 @@ class UsersApiTest extends TestCase
                         'attributes' => [
                             'name' => 'Package9',
                             'information' => 'Information9',
-                            'companyId' => '1'
+                            'companyId' => "$companyId"
                         ]
                     ],
                     [
@@ -4782,7 +4747,7 @@ class UsersApiTest extends TestCase
                         'attributes' => [
                             'name' => 'Package12',
                             'information' => 'Information12',
-                            'companyId' => '1'
+                            'companyId' => "$companyId"
                         ]
                     ]
                 ]
@@ -4797,7 +4762,7 @@ class UsersApiTest extends TestCase
                         'attributes' => [
                             'name' => 'Package2',
                             'information' => 'Information2',
-                            'companyId' => '1'
+                            'companyId' => "$companyId"
                         ]
                     ],
                     [
@@ -4806,7 +4771,7 @@ class UsersApiTest extends TestCase
                         'attributes' => [
                             'name' => 'Package3',
                             'information' => 'Information3',
-                            'companyId' => '1'
+                            'companyId' => "$companyId"
                         ]
                     ],
                     [
@@ -4815,7 +4780,7 @@ class UsersApiTest extends TestCase
                         'attributes' => [
                             'name' => 'Package4',
                             'information' => 'Information4',
-                            'companyId' => '1'
+                            'companyId' => "$companyId"
                         ]
                     ],
                     [
@@ -4824,7 +4789,7 @@ class UsersApiTest extends TestCase
                         'attributes' => [
                             'name' => 'Package5',
                             'information' => 'Information5',
-                            'companyId' => '1'
+                            'companyId' => "$companyId"
                         ]
                     ],
                     [
@@ -4833,7 +4798,7 @@ class UsersApiTest extends TestCase
                         'attributes' => [
                             'name' => 'Package6',
                             'information' => 'Information6',
-                            'companyId' => '1'
+                            'companyId' => "$companyId"
                         ]
                     ],
                     [
@@ -4842,7 +4807,7 @@ class UsersApiTest extends TestCase
                         'attributes' => [
                             'name' => 'Package8',
                             'information' => 'Information8',
-                            'companyId' => '1'
+                            'companyId' => "$companyId"
                         ]
                     ],
                     [
@@ -4851,7 +4816,7 @@ class UsersApiTest extends TestCase
                         'attributes' => [
                             'name' => 'Package9',
                             'information' => 'Information9',
-                            'companyId' => '1'
+                            'companyId' => "$companyId"
                         ]
                     ],
                     [
@@ -4860,7 +4825,7 @@ class UsersApiTest extends TestCase
                         'attributes' => [
                             'name' => 'Package11',
                             'information' => 'Information11',
-                            'companyId' => '1'
+                            'companyId' => "$companyId"
                         ]
                     ],
                     [
@@ -4869,7 +4834,7 @@ class UsersApiTest extends TestCase
                         'attributes' => [
                             'name' => 'Package12',
                             'information' => 'Information12',
-                            'companyId' => '1'
+                            'companyId' => "$companyId"
                         ]
                     ]
                 ]
@@ -4884,7 +4849,7 @@ class UsersApiTest extends TestCase
                         'attributes' => [
                             'name' => 'Package1',
                             'information' => 'Information1',
-                            'companyId' => '1'
+                            'companyId' => "$companyId"
                         ]
                     ],
                     [
@@ -4893,7 +4858,7 @@ class UsersApiTest extends TestCase
                         'attributes' => [
                             'name' => 'Package2',
                             'information' => 'Information2',
-                            'companyId' => '1'
+                            'companyId' => "$companyId"
                         ]
                     ],
                     [
@@ -4902,7 +4867,7 @@ class UsersApiTest extends TestCase
                         'attributes' => [
                             'name' => 'Package3',
                             'information' => 'Information3',
-                            'companyId' => '1'
+                            'companyId' => "$companyId"
                         ]
                     ],
                     [
@@ -4911,7 +4876,7 @@ class UsersApiTest extends TestCase
                         'attributes' => [
                             'name' => 'Package4',
                             'information' => 'Information4',
-                            'companyId' => '1'
+                            'companyId' => "$companyId"
                         ]
                     ],
                     [
@@ -4920,7 +4885,7 @@ class UsersApiTest extends TestCase
                         'attributes' => [
                             'name' => 'Package5',
                             'information' => 'Information5',
-                            'companyId' => '1'
+                            'companyId' => "$companyId"
                         ]
                     ],
                     [
@@ -4929,7 +4894,7 @@ class UsersApiTest extends TestCase
                         'attributes' => [
                             'name' => 'Package6',
                             'information' => 'Information6',
-                            'companyId' => '1'
+                            'companyId' => "$companyId"
                         ]
                     ],
                     [
@@ -4938,7 +4903,7 @@ class UsersApiTest extends TestCase
                         'attributes' => [
                             'name' => 'Package7',
                             'information' => 'Information7',
-                            'companyId' => '1'
+                            'companyId' => "$companyId"
                         ]
                     ],
                     [
@@ -4947,7 +4912,7 @@ class UsersApiTest extends TestCase
                         'attributes' => [
                             'name' => 'Package8',
                             'information' => 'Information8',
-                            'companyId' => '1'
+                            'companyId' => "$companyId"
                         ]
                     ],
                     [
@@ -4956,7 +4921,7 @@ class UsersApiTest extends TestCase
                         'attributes' => [
                             'name' => 'Package9',
                             'information' => 'Information9',
-                            'companyId' => '1'
+                            'companyId' => "$companyId"
                         ]
                     ],
                     [
@@ -4965,7 +4930,7 @@ class UsersApiTest extends TestCase
                         'attributes' => [
                             'name' => 'Package10',
                             'information' => 'Information10',
-                            'companyId' => '1'
+                            'companyId' => "$companyId"
                         ]
                     ],
                     [
@@ -4974,7 +4939,7 @@ class UsersApiTest extends TestCase
                         'attributes' => [
                             'name' => 'Package11',
                             'information' => 'Information11',
-                            'companyId' => '1'
+                            'companyId' => "$companyId"
                         ]
                     ],
                     [
@@ -4983,7 +4948,7 @@ class UsersApiTest extends TestCase
                         'attributes' => [
                             'name' => 'Package12',
                             'information' => 'Information12',
-                            'companyId' => '1'
+                            'companyId' => "$companyId"
                         ]
                     ]
                 ]

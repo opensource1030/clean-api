@@ -1,14 +1,11 @@
 <?php
 
-use Laravel\Lumen\Testing\DatabaseMigrations;
 
-class ImagesApiTest extends TestCase
+
+class ImagesApiTest extends \TestCase
 {
-    use DatabaseMigrations;
+    use \Laravel\Lumen\Testing\DatabaseMigrations;
 
-    /**
-     * A basic functional test for Apps.
-     */
     public function testGetImages()
     {
         factory(\WA\DataStore\Image\Image::class, 40)->create();

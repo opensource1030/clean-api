@@ -1,6 +1,6 @@
 <?php
 
-class ApiFiltersTest extends TestCase
+class ApiFiltersTest extends \TestCase
 {
     use \Laravel\Lumen\Testing\DatabaseMigrations;
 
@@ -613,7 +613,7 @@ class ApiFiltersTest extends TestCase
         $this->assertCount(4, $resArray['included']);
     }
 
-        public function testFilterModelByItsIncludesORGrandchildren() {
+    public function testFilterModelByItsIncludesORGrandchildren() {
 
         $device1 = factory(\WA\DataStore\Device\Device::class)->create(['name' => 'device1']);
         $device2 = factory(\WA\DataStore\Device\Device::class)->create(['name' => 'device2']);
@@ -655,7 +655,7 @@ class ApiFiltersTest extends TestCase
         ]);
 
         $resArray = (array)json_decode($this->json('GET', '/devices?include=devicevariations,devicevariations.carriers&filter[]=[devicevariations.carriers.name]=' . $carrier1->name . '[or][devicevariations.carriers.name]=' . $carrier2->name)->response->getContent());
-        \Log::debug("ApiFiltersTest@testFilterModelByItsIncludesORGrandchildren: " . print_r($resArray, true));
+        //\Log::debug("ApiFiltersTest@testFilterModelByItsIncludesORGrandchildren: " . print_r($resArray, true));
         $this->assertCount(3, $resArray['data']);
         $this->assertEquals($resArray['data'][0]->id, $device1->id);
         $this->assertEquals($resArray['data'][1]->id, $device2->id);

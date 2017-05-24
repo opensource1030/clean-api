@@ -38,12 +38,10 @@ abstract class FilteredApiController extends ApiController
      */
     protected $request = null;
 
-
     /**
      * @var bool
      */
     protected $returnEmptyResults = false;
-
 
     /**
      * FilteredApiController constructor.
@@ -67,7 +65,6 @@ abstract class FilteredApiController extends ApiController
         }
     }
 
-
     /**
      * Show all resource
      *
@@ -85,6 +82,11 @@ abstract class FilteredApiController extends ApiController
      */
     public function index(Request $request)
     {
+        if(!$this->addFilterToTheRequest("index", $request)) {
+            $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+        }
+        
         $criteria = $this->getRequestCriteria();
         $this->resource->setCriteria($criteria);
 
@@ -116,10 +118,15 @@ abstract class FilteredApiController extends ApiController
      */
     public function show($id, Request $request)
     {
+        if(!$this->addFilterToTheRequest("show", $request)) {
+            $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+        }
+
         $criteria = $this->getRequestCriteria();
         $this->resource->setCriteria($criteria);
         $resource = $this->resource->byId($id);
-
+        
         if ($resource === null) {
             $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => $this->modelName]);
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
@@ -256,7 +263,41 @@ abstract class FilteredApiController extends ApiController
         $response->addMeta('fields', $this->criteria['fields']->get());
         return parent::applyMeta($response);
     }
-     /**
+
+    /**
+     * This function add a company.id filter to each request based on the Model.
+     *
+     *  @return Boolean
+     *  Case1: If no Authenticated user: Error.
+     *  Case2: If user has the "superadmin" role: All privileges.
+     *  Case3: It user has another role: He/She can only get objects with a relationship with his/her own company.
+     *
+     */
+    public function addFilterToTheRequest($type, $request) {
+        //$user = \Auth::user();
+        $user = \WA\DataStore\User\User::find(1); // POSTMAN TESTS
+        if (!isset($user)) {
+            return false;
+        }
+
+        $role = $user->roles;
+        $companyId = $user->companyId;
+
+        if($role[0]->name == 'superadmin') {
+
+            return true;
+        } else {
+            if ($type == 'create') { //create
+                return $this->resource->checkModelAndRelationships(json_decode($request->getContent()), $companyId);
+            } else {
+                $filter = $this->resource->addFilterToTheRequest($companyId);
+                $this->setExtraFilters($filter);
+                return true;
+            }
+        }
+    }
+
+    /**
      * When the include is a combination of two words we need to title_case both to create the Transformer.
      * We supose that the includePlural argument has the $model as a substring.
      *

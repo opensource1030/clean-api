@@ -149,4 +149,43 @@ class EloquentDeviceType extends AbstractRepository implements DeviceTypeInterfa
 
         return $this->model->destroy($id);
     }
+
+    /**
+     * Retrieve the filters for the Model.
+     *
+     * @param int  $companyId
+     *
+     * @return Array
+     */
+    public function addFilterToTheRequest($companyId) {
+        $aux['devices.devicevariations.companyId'] = (string) $companyId;
+        return $aux;
+    }
+
+    /**
+     * Check if the Model and/or its relationships are related to the Company of the User.
+     *
+     * @param JSON  $json : The Json request.
+     * @param int  $companyId
+     *
+     * @return Boolean
+     */
+    public function checkModelAndRelationships($json, $companyId) {
+        if(!isset($json->data->relationships)) {
+            return false;
+        } else {
+            foreach ($json->data->relationships->devices->data as $value) {
+                if ($value->type == 'devices') {
+                    $device = \WA\DataStore\Device\Device::find($value->id);
+                    foreach ($device->devicevariations as $val) {
+                        if ($val->companyId == $companyId) {
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+    }
 }

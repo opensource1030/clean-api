@@ -1,14 +1,11 @@
 <?php
 
-use Laravel\Lumen\Testing\DatabaseMigrations;
 
-class AppsApiTest extends TestCase
+
+class AppsApiTest extends \TestCase
 {
-    use DatabaseMigrations;
+    use \Laravel\Lumen\Testing\DatabaseMigrations;
 
-    /**
-     * A basic functional test for Apps.
-     */
     public function testGetApps()
     {
         factory(\WA\DataStore\App\App::class, 40)->create();

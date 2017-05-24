@@ -141,4 +141,35 @@ class EloquentOrder extends AbstractRepository implements OrderInterface
 
         return $this->model->destroy($id);
     }
+
+    public function addFilterToTheRequest($companyId) {
+        $aux[]='[users.companyId]=' . $companyId . '[and][packages.companyId]=' . $companyId;
+        return $aux;
+    }
+
+    /**
+     * Check if the Model and/or its relationships are related to the Company of the User.
+     *
+     * @param JSON  $json : The Json request.
+     * @param int  $companyId
+     *
+     * @return Boolean
+     */
+    public function checkModelAndRelationships($json, $companyId) {
+        $ok = true;
+        $attributes = $json->data->attributes;
+
+        $user = \WA\DataStore\User\User::find($attributes->userId);
+        $ok = $ok && ($user->companyId == $companyId);
+
+        $pack = \WA\DataStore\Package\Package::find($attributes->packageId);
+        $ok = $ok && ($pack->companyId == $companyId);
+
+        $service = \WA\DataStore\Service\Service::find($attributes->serviceId);
+        foreach ($service->packages as $value) {
+            $ok = $ok && ($value->companyId == $companyId);
+        }
+
+        return $ok;
+    }
 }

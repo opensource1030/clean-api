@@ -1,12 +1,10 @@
 <?php
 
-use Laravel\Lumen\Testing\DatabaseMigrations;
-use WA\DataStore\Category\CategoryApps;
-use WA\DataStore\Image\Image;
 
-class CategoryAppsApiTest extends TestCase
+
+class CategoryAppsApiTest extends \TestCase
 {
-    use DatabaseMigrations;
+    use \Laravel\Lumen\Testing\DatabaseMigrations;
 
     public function testGetCategoryApps()
     {

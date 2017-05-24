@@ -381,4 +381,42 @@ class EloquentDevice extends AbstractRepository implements DeviceInterface
 
         return $device;
     }
+
+    /**
+     * Retrieve the filters for the Model.
+     *
+     * @param int  $companyId
+     *
+     * @return Array
+     */
+    public function addFilterToTheRequest($companyId) {
+        $aux['devicevariations.companies.id'] = (string) $companyId;
+        return $aux;
+    }
+
+    /**
+     * Check if the Model and/or its relationships are related to the Company of the User.
+     *
+     * @param JSON  $json : The Json request.
+     * @param int  $companyId
+     *
+     * @return Boolean
+     */
+    public function checkModelAndRelationships($json, $companyId) {
+        if(!isset($json->data->relationships)) {
+            return true;
+        } else {
+            $ok = true;
+            foreach ($json->data->relationships->devicevariations->data as $value) {
+                if ($value->type == 'devicevariations') {
+                    $devvar = \WA\DataStore\DeviceVariation\DeviceVariation::find($value->id);
+                    $ok = $ok && $devvar->companyId == $companyId;
+                } else {
+                    return false;
+                }
+            }
+
+            return $ok;
+        }
+    }
 }

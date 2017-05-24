@@ -55,6 +55,11 @@ class OrdersController extends FilteredApiController
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
+        if(!$this->addFilterToTheRequest("store", $request)) {
+            $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+        }
+
         DB::beginTransaction();
 
         /*
@@ -162,6 +167,11 @@ class OrdersController extends FilteredApiController
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
+        if(!$this->addFilterToTheRequest("create", $request)) {
+            $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+        }
+
         DB::beginTransaction();
 
         /*
@@ -253,6 +263,11 @@ class OrdersController extends FilteredApiController
      */
     public function delete($id)
     {
+        if(!$this->addFilterToTheRequest("delete", null)) {
+            $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+        }
+        
         $order = Order::find($id);
         if ($order != null) {
             $this->order->deleteById($id);

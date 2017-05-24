@@ -81,6 +81,9 @@ class ConditionFieldsController extends FilteredApiController
      */
     public function create(Request $request)
     {
+        /*
+         * Checks if Json has data, data-type & data-attributes.
+         */
         if ($this->isJsonCorrect($request, 'conditionFields')) {
             try {
                 $data = $request->all()['data']['attributes'];

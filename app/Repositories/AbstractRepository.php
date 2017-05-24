@@ -79,12 +79,14 @@ abstract class AbstractRepository implements RepositoryInterface
      */
     public function byId($id)
     {
+        $query = $this->applyCriteria($this->model);
+
         if (is_array($id)) {
-            return $this->model->whereIn('id', $id)
+            return $query->whereIn('id', $id)
                 ->get();
         }
         try {
-            return $this->model->findOrFail($id);
+            return $query->findOrFail($id);
         } catch (ModelNotFoundException $e) {
             return null;
         }

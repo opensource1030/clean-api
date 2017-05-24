@@ -13,7 +13,6 @@ use WA\Repositories\Package\PackageInterface;
 use WA\Repositories\User\UserInterface;
 
 use Authorizer;
-use Log;
 
 /**
  * Package resource.
@@ -46,19 +45,19 @@ class PackagesController extends FilteredApiController
 
         if (!isset($req['data'])) {
             $error['errors']['data'] = Lang::get('messages.InvalidJson');
-            //Log::debug("JSON NO VALID - data");
+            //\Log::debug("JSON NO VALID - data");
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         } else {
             $data = $request['data'];
             if (!isset($data['companyId'])) {
                 $error['errors']['companyId'] = Lang::get('messages.InvalidJson');
-                //Log::debug("JSON NO VALID - companyId");
+                //\Log::debug("JSON NO VALID - companyId");
                 return response()->json($error)->setStatusCode($this->status_codes['conflict']);
             } 
 
             if (!isset($data['conditions'])) {
                 $error['errors']['conditions'] = Lang::get('messages.InvalidJson');
-                //Log::debug("JSON NO VALID - conditions");
+                //\Log::debug("JSON NO VALID - conditions");
                 return response()->json($error)->setStatusCode($this->status_codes['conflict']);
             }
         }
@@ -76,19 +75,19 @@ class PackagesController extends FilteredApiController
             $udlValues = $this->getUdlValuesFromUser($userInfo);
 
             $isOk = true;
-            //Log::debug("user: ".print_r($user, true));
+            //\Log::debug("user: ".print_r($user, true));
             $isOk = $isOk && $this->checkIfIsSupervisor($userInfo->isSupervisor, $conditions);
-            //Log::debug("isOk IsSupervisor: ".print_r($isOk, true));
+            //\Log::debug("isOk IsSupervisor: ".print_r($isOk, true));
             $isOk = $isOk && $this->checkIfHasAnyAddress($address, $conditions);
-            //Log::debug("isOk Address: ".print_r($isOk, true));
+            //\Log::debug("isOk Address: ".print_r($isOk, true));
             foreach ($udlValues as $udl) {
                 $isOk = $isOk && $this->checkIfHasAnyUdl($udl, $conditions);
-                //Log::debug("isOk: ".print_r($isOk, true));
+                //\Log::debug("isOk: ".print_r($isOk, true));
             }
 
             if ($isOk) {
                 $numberUsers ++;
-                //Log::debug("numberUsers: ".print_r($numberUsers, true));
+                //\Log::debug("numberUsers: ".print_r($numberUsers, true));
             }
         }
 
@@ -103,11 +102,11 @@ class PackagesController extends FilteredApiController
             $aux['udlName'] = $uv->udls->name;
             $aux['udlValue'] = $uv->name;
             array_push($arrayAux, $aux);
-            //Log::debug("getUdlValuesFromUser: uv->name: ".print_r($uv->name, true));
-            //Log::debug("getUdlValuesFromUser: uv->udl->name: ".print_r($uv->udl->name, true));
+            //\Log::debug("getUdlValuesFromUser: uv->name: ".print_r($uv->name, true));
+            //\Log::debug("getUdlValuesFromUser: uv->udl->name: ".print_r($uv->udl->name, true));
         }
 
-        //Log::debug("getUdlValuesFromUser: arrayAux: ".print_r($arrayAux, true));
+        //\Log::debug("getUdlValuesFromUser: arrayAux: ".print_r($arrayAux, true));
         return $arrayAux;
     }
 
@@ -135,17 +134,17 @@ class PackagesController extends FilteredApiController
     }
 
     private function checkIfHasAnyAddress($address, $conditions) {
-        //Log::debug("Count conditions: ".print_r(count($conditions), true));
-        //Log::debug("Count address: ".print_r(count($address), true));
+        //\Log::debug("Count conditions: ".print_r(count($conditions), true));
+        //\Log::debug("Count address: ".print_r(count($address), true));
         if (count($conditions) > 0) {
             foreach ($address as $add) {
                 $ok = true;
                 $ok = $ok && $this->checkIfHasAnyInfo($add->city, $conditions, 'City');
-                //Log::debug("ok City: ".print_r($ok, true));
+                //\Log::debug("ok City: ".print_r($ok, true));
                 $ok = $ok && $this->checkIfHasAnyInfo($add->state, $conditions, 'State');
-                //Log::debug("ok State: ".print_r($ok, true));
+                //\Log::debug("ok State: ".print_r($ok, true));
                 $ok = $ok && $this->checkIfHasAnyInfo($add->country, $conditions, 'Country');
-                //Log::debug("ok Country: ".print_r($ok, true));
+                //\Log::debug("ok Country: ".print_r($ok, true));
                 if ($ok) {
                     return true;
                 }
@@ -162,9 +161,9 @@ class PackagesController extends FilteredApiController
         foreach ($conditions as $cond) {
             if ($cond['nameCond'] == $type) {
                 if ($cond['condition'] == 'contains') {
-                    //Log::debug("Value: ".print_r($cond['value'], true));
-                    //Log::debug("val: ".print_r($val, true));
-                    //Log::debug("Strpos: ".print_r(strpos($cond['value'], $val), true));
+                    //\Log::debug("Value: ".print_r($cond['value'], true));
+                    //\Log::debug("val: ".print_r($val, true));
+                    //\Log::debug("Strpos: ".print_r(strpos($cond['value'], $val), true));
                     if (strpos(strtolower($val), strtolower($cond['value'])) !== false) {
                         $conditionsOK = $conditionsOK && true;
                     } else {
@@ -195,14 +194,14 @@ class PackagesController extends FilteredApiController
     // allConditions: ['contains', 'greater than', 'greater or equal', 'less than', 'less or equal', 'equal', 'not equal'],
     private function checkIfHasAnyUdl($udl, $conditions) {
         $conditionsOK = true;
-        //Log::debug("conditions: ".print_r($conditions, true));
+        //\Log::debug("conditions: ".print_r($conditions, true));
         foreach ($conditions as $cond) {
-            //Log::debug("COND: ".print_r($cond, true));
-            //Log::debug("UDL: ".print_r($udl, true));
+            //\Log::debug("COND: ".print_r($cond, true));
+            //\Log::debug("UDL: ".print_r($udl, true));
             
             if ($cond['nameCond'] == $udl['udlName']) {
-                //Log::debug("udl[udlValue]: ".print_r($udl['udlValue'], true));
-                //Log::debug("cond[value]: ".print_r($cond['value'], true));
+                //\Log::debug("udl[udlValue]: ".print_r($udl['udlValue'], true));
+                //\Log::debug("cond[value]: ".print_r($cond['value'], true));
                 if ($cond['condition'] == 'contains') {
                     if (strpos(strtolower($udl['udlValue']), strtolower($cond['value'])) !== false) {
                         $conditionsOK = $conditionsOK && true;
@@ -276,6 +275,10 @@ class PackagesController extends FilteredApiController
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
+        if(!$this->addFilterToTheRequest("store", $request)) {
+            $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+        }
 
         DB::beginTransaction();
 
@@ -302,7 +305,6 @@ class PackagesController extends FilteredApiController
             }
         } catch (\Exception $e) {
             DB::rollBack();
-            $success = false;
             $error['errors']['packages'] = Lang::get('messages.NotOptionIncludeClass',
                 ['class' => 'Package', 'option' => 'updated', 'include' => '']);
             //$error['errors']['Message'] = $e->getMessage();
@@ -315,48 +317,42 @@ class PackagesController extends FilteredApiController
         if (isset($data['relationships'])) {
             $dataRelationships = $data['relationships'];
 
-            if (isset($data['relationships']) && $success) {
-                if (isset($data['relationships']['conditions'])) {
-                    if (isset($data['relationships']['conditions']['data'])) {
-                        $data = $data['relationships']['conditions']['data'];
+            if (isset($data['relationships']['conditions'])) {
+                if (isset($data['relationships']['conditions']['data'])) {
+                    $data = $data['relationships']['conditions']['data'];
 
-                        try {
-                            $conditions = Condition::where('packageId', $id)->get();
-                            $conditionsInterface = app()->make('WA\Repositories\Condition\ConditionInterface');
-                        } catch (\Exception $e) {
-                            $succes = false;
-                            $error['errors']['conditions'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Package', 'option' => 'updated', 'include' => 'conditions']);
-                            //$error['errors']['Message'] = $e->getMessage();
-                        }
-
-                        if ($success) {
-                            $this->deleteNotRequested($data, $conditions, $conditionsInterface, 'conditions');
-
-                            foreach ($data as $item) {
-                                $item['packageId'] = $package->id;
-
-                                if (isset($item['id'])) {
-                                    if ($item['id'] == 0) {
-                                        $conditionsInterface->create($item);
-                                    } else {
-                                        if ($item['id'] > 0) {
-                                            $conditionsInterface->update($item);
-                                        } else {
-                                            $success = false;
-                                            $error['errors']['items'] = 'the Condition has an incorrect id';
-                                        }
-                                    }
-                                } else {
-                                    $success = false;
-                                    $error['errors']['conditions'] = 'the Condition has no id';
-                                }
-                            }
-                        }                    
+                    try {
+                        $conditions = Condition::where('packageId', $id)->get();
+                        $conditionsInterface = app()->make('WA\Repositories\Condition\ConditionInterface');
+                    } catch (\Exception $e) {
+                        $succes = false;
+                        $error['errors']['conditions'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Package', 'option' => 'updated', 'include' => 'conditions']);
+                        //$error['errors']['Message'] = $e->getMessage();
                     }
-                }
-            } else {
-                foreach ($serviceItems as $item) {
-                    $serviceItemsInterface->deleteById($item['id']);
+
+                    if ($success) {
+                        $this->deleteNotRequested($data, $conditions, $conditionsInterface, 'conditions');
+
+                        foreach ($data as $item) {
+                            $item['packageId'] = $package->id;
+
+                            if (isset($item['id'])) {
+                                if ($item['id'] == 0) {
+                                    $conditionsInterface->create($item);
+                                } else {
+                                    if ($item['id'] > 0) {
+                                        $conditionsInterface->update($item);
+                                    } else {
+                                        $success = false;
+                                        $error['errors']['items'] = 'the Condition has an incorrect id';
+                                    }
+                                }
+                            } else {
+                                $success = false;
+                                $error['errors']['conditions'] = 'the Condition has no id';
+                            }
+                        }
+                    }
                 }
             }
 
@@ -444,6 +440,11 @@ class PackagesController extends FilteredApiController
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
+        if(!$this->addFilterToTheRequest("create", $request)) {
+            $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+        }
+
         DB::beginTransaction();
 
         /*
@@ -456,7 +457,6 @@ class PackagesController extends FilteredApiController
             DB::rollBack();
             $error['errors']['packages'] = Lang::get('messages.NotOptionIncludeClass',
                 ['class' => 'Package', 'option' => 'created', 'include' => '']);
-            //Log::debug($e->getMessage());
             $error['errors']['Message'] = $e->getMessage();
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
@@ -567,6 +567,11 @@ class PackagesController extends FilteredApiController
      */
     public function delete($id)
     {
+        if(!$this->addFilterToTheRequest("delete", null)) {
+            $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+        }
+        
         $package = Package::find($id);
         if ($package != null) {
             $this->package->deleteById($id);

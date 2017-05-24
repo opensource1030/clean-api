@@ -1,11 +1,9 @@
 <?php
 
-namespace WA\Testing\Http\Controllers;
-
-use TestCase;
-
-class FilteredApiControllerTest extends TestCase
+class FilteredApiControllerTest extends \TestCase
 {
+	use \Laravel\Lumen\Testing\DatabaseMigrations;
+
     public function setUp()
     {
         parent::setUp();
@@ -16,5 +14,4 @@ class FilteredApiControllerTest extends TestCase
         $controller = app()->make('WA\Http\Controllers\DevicesController');
         $this->assertInstanceOf(\WA\Http\Controllers\FilteredApiController::class, $controller);
     }
-
 }

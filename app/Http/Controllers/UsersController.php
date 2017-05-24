@@ -13,6 +13,7 @@ use View;
 use WA\Helpers\Traits\SetLimits;
 
 use WA\DataStore\User\User;
+use WA\DataStore\Role\Role;
 use WA\DataStore\User\UserTransformer;
 use WA\Repositories\User\UserInterface;
 
@@ -127,6 +128,11 @@ class UsersController extends FilteredApiController
         if (!$this->isJsonCorrect($request, 'users')) {
             $error['errors']['json'] = Lang::get('messages.InvalidJson');
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+        }
+
+        if(!$this->addFilterToTheRequest("store", $request)) {
+            $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
         DB::beginTransaction();
@@ -397,6 +403,11 @@ class UsersController extends FilteredApiController
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
+        if(!$this->addFilterToTheRequest("create", $request)) {
+            $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+        }
+
         DB::beginTransaction();
 
         /*
@@ -415,6 +426,16 @@ class UsersController extends FilteredApiController
                 $error['errors']['users'] = 'The User has not been created, some data information is wrong, may be the Email.';
                 return response()->json($error)->setStatusCode(409);
             }
+
+            $userRole = Role::where('name', 'user')->first();
+            if (isset($userRole)) {
+                $user->roles()->sync([$userRole->id]);
+            } else {
+                $success = false;
+                $error['errors']['users'] = Lang::get('messages.NotOptionIncludeClass',
+                    ['class' => 'User', 'option' => 'created', 'include' => 'Role']);
+            }           
+
         } catch (\Exception $e) {
             $success = false;
             $error['errors']['users'] = Lang::get('messages.NotOptionIncludeClass',
@@ -441,7 +462,7 @@ class UsersController extends FilteredApiController
                     }
                 }
             }
-
+/*
             if (isset($dataRelationships['roles']) && $success) {
                 if (isset($dataRelationships['roles']['data'])) {
                     $dataRoles = $this->parseJsonToArray($dataRelationships['roles']['data'], 'roles');
@@ -455,7 +476,7 @@ class UsersController extends FilteredApiController
                     }
                 }
             }
-
+*/
             if (isset($dataRelationships['udlvalues']) && $success) {
                 if (isset($dataRelationships['udlvalues']['data'])) {
                     $dataUdls = $this->parseJsonToArray($dataRelationships['udlvalues']['data'], 'udlvalues');
@@ -518,23 +539,15 @@ class UsersController extends FilteredApiController
 
                     try {
                         $interfaceC = app()->make('WA\Repositories\Content\ContentInterface');
+                        
+                        foreach ($data as $content) {
+                            $content['owner_id'] = $user->id;
+                            $interfaceC->create($content);
+                        }
                     } catch (\Exception $e) {
                         $success = false;                        
-                        $error['errors']['contents'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'User', 'option' => 'created', 'include' => 'contents']);
+                        $error['errors']['contents'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'User', 'option' => 'created', 'include' => 'Contents']);
                         //$error['errors']['Message'] = $e->getMessage();
-                    }
-
-                    if ($success) {
-                        try {                           
-                            foreach ($data as $content) {
-                                $content['owner_id'] = $user->id;
-                                $interfaceC->create($content);
-                            }
-                        } catch (\Exception $e) {
-                            $success = false;
-                            $error['errors']['contents'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'user', 'option' => 'created', 'include' => 'contents']);
-                            //$error['errors']['Message'] = $e->getMessage();
-                        }
                     }
                 }
             }
@@ -593,7 +606,13 @@ class UsersController extends FilteredApiController
         }
     }
 
-    public function delete($id) {
+    public function delete($id)
+    {
+        if(!$this->addFilterToTheRequest("delete", null)) {
+            $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+        }
+
         $user = User::find($id);
         if ($user <> null) {
             $this->userInterface->deleteById($id);
@@ -610,26 +629,6 @@ class UsersController extends FilteredApiController
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
     }
-
-    /*public function getLoggedInUser(Request $request)
-    {
-        $user = Auth::user();
-
-        if ($user === null) {
-            $error['errors']['scopes'] = 'There\'s no user authenticated';
-            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
-        }
-
-        $transformer = $user->getTransformer();
-
-        if (!$this->includesAreCorrect($request, $transformer)) {
-            $error['errors']['getIncludes'] = Lang::get('messages.NotExistInclude');
-            return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
-        }
-
-        $response = $this->response->item($user, $transformer, ['key' => 'users']);
-        return $response;
-    }*/
 
     private function transformToJson($array) {
         $list = [];

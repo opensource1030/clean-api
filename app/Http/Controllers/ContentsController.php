@@ -35,6 +35,11 @@ class ContentsController extends FilteredApiController
      */
     public function store($id, Request $request)
     {
+        if(!$this->addFilterToTheRequest("store", $request)) {
+            $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+        }
+
         $content = Content::find($id);
         if (!isset($content)) {
             $error['errors']['put'] = 'Content selected does not exist';
@@ -58,6 +63,11 @@ class ContentsController extends FilteredApiController
      */
     public function create(Request $request)
     {
+        if(!$this->addFilterToTheRequest("create", $request)) {
+            $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+        }
+        
         $data = $request->all();
         $content = $this->contents->create($data);
         if (!$content) {
@@ -77,6 +87,11 @@ class ContentsController extends FilteredApiController
      */
     public function deleteContent($id)
     {
+        if(!$this->addFilterToTheRequest("delete", null)) {
+            $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+        }
+        
         $content = Content::find($id);
         if (!isset($content)) {
             $error['errors']['delete'] = 'Content selected does not exist';

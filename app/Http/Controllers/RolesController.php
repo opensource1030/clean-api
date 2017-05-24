@@ -42,6 +42,12 @@ class RolesController extends FilteredApiController
     public function store($id, Request $request)
     {
         if ($this->isJsonCorrect($request, 'roles')) {
+
+            if(!$this->addFilterToTheRequest("store", $request)) {
+                $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
+                return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+            }
+
             try {
                 $data = $request->all()['data'];
                 $data['attributes']['id'] = $id;
@@ -81,6 +87,12 @@ class RolesController extends FilteredApiController
     public function create(Request $request)
     {
         if ($this->isJsonCorrect($request, 'roles')) {
+
+            if(!$this->addFilterToTheRequest("create", $request)) {
+                $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
+                return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+            }
+        
             try {
                 $data = $request->all()['data']['attributes'];
                 $role = $this->role->create($data);
@@ -106,6 +118,11 @@ class RolesController extends FilteredApiController
      */
     public function delete($id)
     {
+        if(!$this->addFilterToTheRequest("delete", null)) {
+            $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+        }
+        
         $role = Role::find($id);
         if ($role != null) {
             $this->role->deleteById($id);

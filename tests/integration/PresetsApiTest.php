@@ -1,11 +1,10 @@
 <?php
 
-use Laravel\Lumen\Testing\DatabaseMigrations;
-use WA\DataStore\Image\Image;
 
-class PresetsApiTest extends TestCase
+
+class PresetsApiTest extends \TestCase
 {
-    use DatabaseMigrations;
+    use \Laravel\Lumen\Testing\DatabaseMigrations;
 
     public function testGetPresets()
     {

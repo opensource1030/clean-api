@@ -1,6 +1,6 @@
 <?php
 
-class JobsApiTest extends TestCase
+class JobsApiTest extends \TestCase
 {
     use \Laravel\Lumen\Testing\DatabaseMigrations;
 

@@ -1,6 +1,6 @@
 <?php
 
-class ApiSortingTest extends TestCase
+class ApiSortingTest extends \TestCase
 {
     use \Laravel\Lumen\Testing\DatabaseMigrations;
 

@@ -42,6 +42,12 @@ class PermissionsController extends FilteredApiController
     public function store($id, Request $request)
     {
         if ($this->isJsonCorrect($request, 'permissions')) {
+
+            if(!$this->addFilterToTheRequest("store", $request)) {
+                $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
+                return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+            }
+
             try {
                 $data = $request->all()['data']['attributes'];
                 $data['id'] = $id;
@@ -80,7 +86,16 @@ class PermissionsController extends FilteredApiController
      */
     public function create(Request $request)
     {
+        /*
+         * Checks if Json has data, data-type & data-attributes.
+         */
         if ($this->isJsonCorrect($request, 'permissions')) {
+
+            if(!$this->addFilterToTheRequest("create", $request)) {
+                $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
+                return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+            }
+        
             try {
                 $data = $request->all()['data']['attributes'];
                 $permission = $this->permission->create($data);
@@ -106,6 +121,11 @@ class PermissionsController extends FilteredApiController
      */
     public function delete($id)
     {
+        if(!$this->addFilterToTheRequest("delete", null)) {
+            $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+        }
+        
         $permission = Permission::find($id);
         if ($permission != null) {
             $this->permission->deleteById($id);

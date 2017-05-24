@@ -105,4 +105,28 @@ class EloquentPreset extends AbstractRepository implements PresetInterface
 
         return $this->model->destroy($id);
     }
+
+    /**
+     * Retrieve the filters for the Model.
+     *
+     * @param int  $companyId
+     *
+     * @return Array
+     */
+    public function addFilterToTheRequest($companyId) {
+        $aux['companyId'] = (string) $companyId;
+        return $aux;
+    }
+
+    /**
+     * Check if the Model and/or its relationships are related to the Company of the User.
+     *
+     * @param JSON  $json : The Json request.
+     * @param int  $companyId
+     *
+     * @return Boolean
+     */
+    public function checkModelAndRelationships($json, $companyId) {
+        return $json->data->attributes->companyId == $companyId;
+    }
 }

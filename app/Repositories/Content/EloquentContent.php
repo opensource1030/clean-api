@@ -115,4 +115,44 @@ class EloquentContent extends AbstractRepository implements ContentInterface
     {
         return $this->model->where('owner_id', 0)->get();
     }
+
+    /**
+     * Retrieve the filters for the Model.
+     *
+     * @param int  $companyId
+     *
+     * @return Array
+     */
+    public function addFilterToTheRequest($companyId) {
+        $aux['owner_type'] = "company";
+        $aux['owner_id'] = (string) $companyId;
+        return $aux;
+    }
+
+    /**
+     * Check if the Model and/or its relationships are related to the Company of the User.
+     *
+     * @param JSON  $json : The Json request.
+     * @param int  $companyId
+     *
+     * @return Boolean
+     */
+    public function checkModelAndRelationships($json, $companyId) {
+        $attributes = $json->data->attributes;
+
+        if ($attributes->owner_type == 'company') {
+            if ($attributes->owner_id == $companyId) {
+                return true;
+            }
+        } else if ($attributes->owner_type == 'user') {
+            $user = \WA\DataStore\User\User::find($attributes->owner_id);
+            if ($user->companyId == $companyId) {
+                return true;
+            }
+        } else {
+            return true;    
+        }
+
+        return false;        
+    }
 }

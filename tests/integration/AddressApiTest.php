@@ -1,14 +1,11 @@
 <?php
 
-use Laravel\Lumen\Testing\DatabaseMigrations;
 
-class AddressApiTest extends TestCase
+
+class AddressApiTest extends \TestCase
 {
-    use DatabaseMigrations;
+    use \Laravel\Lumen\Testing\DatabaseMigrations;
 
-    /**
-     * A basic functional test for Address.
-     */
     public function testGetAddress()
     {
         factory(\WA\DataStore\Address\Address::class, 40)->create();

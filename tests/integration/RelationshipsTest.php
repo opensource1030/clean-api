@@ -1,10 +1,10 @@
 <?php
 
-use Laravel\Lumen\Testing\DatabaseMigrations;
 
-class RelationshipsTest extends TestCase
+
+class RelationshipsTest extends \TestCase
 {
-    use DatabaseMigrations;
+    use \Laravel\Lumen\Testing\DatabaseMigrations;
 
     public function testIncludeRelationships()
     {

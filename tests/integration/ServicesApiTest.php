@@ -1,20 +1,10 @@
 <?php
 
-//use Laravel\Lumen\Testing\DatabaseTransactions;
-use Laravel\Lumen\Testing\DatabaseMigrations;
-
-use WA\DataStore\ServiceItem\ServiceItem;
 
 
-
-class ServicesApiTest extends TestCase
+class ServicesApiTest extends \TestCase
 {
-    //use DatabaseTransactions;
-    use DatabaseMigrations;
-
-    /**
-     * A basic functional test for services.
-     */
+    use \Laravel\Lumen\Testing\DatabaseMigrations;
 
     public function testGetServices()
     {
