@@ -18,7 +18,10 @@ class AddCompanyUserImportJobsTable extends Migration
             $table->integer('company_id', false, true);
             $table->string('path');
             $table->string('file');
-            $table->integer('total');
+            $table->integer('total', false, true);
+            $table->integer('created', false, true)->default(0);
+            $table->integer('updated', false, true)->default(0);
+            $table->integer('failed', false, true)->default(0);
             $table->text('fields');
             $table->text('sample');
             $table->text('mappings');

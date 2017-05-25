@@ -250,14 +250,14 @@ class EloquentUser extends AbstractRepository implements UserInterface
                 $company = \DB::table('company_domains')
                     ->select('companyId')
                     ->where('domain', $domain)->get();
-                
-                if($company !== null){
+
+                if($company !== null && $company->count() > 0){
                     $userData['companyId'] = $company[0]->companyId;
                 } else {
                     return false;
                 } 
             }
-        }  
+        }
 
         if(isset($data['uuid']) && $data['uuid'] !== ''){
             $userData['uuid'] = $data['uuid'];

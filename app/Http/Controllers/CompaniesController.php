@@ -15,6 +15,8 @@ use DB;
 use WA\DataStore\Company\CompanyUserImportJob;
 use WA\Helpers\Vendors\CSVParser;
 use Illuminate\Support\Facades\Auth;
+use WA\Jobs\ImportBulkUsersJob;
+use Illuminate\Support\Facades\Queue;
 
 /**
  * Class CompaniesController.
@@ -354,7 +356,7 @@ class CompaniesController extends FilteredApiController
 
         $filePath = $file->getRealPath();
         $csvParser = new CSVParser($filePath);
-        $rows = $csvParser->getRows();
+        $rows = $csvParser->getRows(true);
 
         // check file is empty
         if(count($rows) == 0) {
@@ -364,20 +366,24 @@ class CompaniesController extends FilteredApiController
         }
 
         // create import job
-        $randomRow = count($rows) > 1 ? $rows[mt_rand(1, count($rows)-1)] : array();
+        //$randomRow = count($rows) > 1 ? $rows[mt_rand(1, count($rows)-1)] : array();
+        $randomRow = count($rows) > 1 ? $rows[1] : array();
         $sampleRow = $this->getSampleImportRow($rows[0], $randomRow);
 
         $job = new CompanyUserImportJob;
         $job->company_id = $company->id;
         $job->path = $storagePath;
         $job->file = $uploadedFileName;
-        $job->total     = count($rows);
+        $job->total     = count($rows) - 1;
+        $job->created   = 0;
+        $job->updated   = 0;
+        $job->failed    = 0;
         $job->fields    = serialize($rows[0]);
         $job->sample    = serialize($sampleRow);
         $job->mappings  = serialize(array());
         $job->status    = CompanyUserImportJob::STATUS_PENDING;
         $job->created_by_id = Auth::id();
-        $job->created_by_id = Auth::id();
+        $job->updated_by_id = Auth::id();
         $job->save();
 
         return response()->json($job->getJobData())->setStatusCode($this->status_codes['created']);
@@ -437,11 +443,23 @@ class CompaniesController extends FilteredApiController
         }
 
         // request data
+        // check mapping is array and not empty
         $data = $request->get('data');
-        $job->mappings = serialize($data->mappings);
+        if(!isset($data['attributes'])
+            || !isset($data['attributes']['mappings'])
+            || !is_array($data['attributes']['mappings'])
+            || empty($data['attributes']['mappings'])) {
+            $error['errors']['job'] = Lang::get('messages.InvalidJson');
+            return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+        }
+        $job->mappings = serialize($data['attributes']['mappings']);
         $job->save();
 
-        return response()->json($job->getJobData());
+        // start importing
+        dispatch(new ImportBulkUsersJob($jobId));
+        //Queue::push(new ImportBulkUsersJob);
+
+        return response()->json($job->getJobData(true));
     }
 
     private function getSampleImportRow($header, $row) {

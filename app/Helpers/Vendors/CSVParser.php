@@ -15,10 +15,14 @@ class CSVParser extends CSV
      *
      * @return array
      */
-    public function getRows()
+    public function getRows($removeEmptyRows=false)
     {
         if (!isset($this->rows)) {
             $this->parse();
+
+            if($removeEmptyRows) {
+                $this->flushEmptyRows();
+            }
         }
         
         return $this->rows;

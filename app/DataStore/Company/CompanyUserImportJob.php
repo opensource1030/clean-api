@@ -3,6 +3,7 @@
 namespace WA\DataStore\Company;
 
 use WA\DataStore\BaseDataStore;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * Class CompanyUserImportJob.
@@ -22,7 +23,14 @@ class CompanyUserImportJob extends BaseDataStore
      *
      * @return mixed
      */
-    public function getJobData() {
+    public function getJobData($fresh=false) {
+        if($fresh) {
+            $this->fresh();
+        }
+
+        $userInterface = app()->make('WA\Repositories\User\UserInterface');
+        //print_r($userInterface->getUdls(1)->toArray()); exit;
+
         $data = new \stdClass();
         $data->id = $this->id;
         $data->type = 'jobs';
@@ -30,19 +38,20 @@ class CompanyUserImportJob extends BaseDataStore
         $attributes = new \stdClass();
         $attributes->status = $this->getStatusText();
         $attributes->total  = $this->total;
-        $attributes->created = strtotime($this->created_at);
-        $attributes->updated = strtotime($this->updated_at);
-        $attributes->errors = 0;
+        $attributes->created = $this->created;
+        $attributes->updated = $this->updated;
+        $attributes->errors  = $this->failed;
         $attributes->sampleUser = unserialize($this->sample);
-        $attributes->CSVfields = unserialize($this->fields);
-        $attributes->mappings = unserialize($this->mappings);
+        $attributes->CSVfields  = unserialize($this->fields);
+        $attributes->DBfields   = array_flip($userInterface->getMappableFields());
+        $attributes->mappings   = unserialize($this->mappings);
 
         $data->attributes = $attributes;
 
         $result = new \stdClass();
         $result->data = $data;
 
-        return json_encode($result);
+        return $result;
     }
 
     /**

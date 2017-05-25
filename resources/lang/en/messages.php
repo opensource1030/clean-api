@@ -12,5 +12,6 @@ return [
     'NotExistFile' => 'Please attach your file.',
     'NotRightFile' => 'You need to upload :class file.',
     'NotExistPath' => 'Can not upload file due to directory permission.',
-    'EmptyFile'    => 'File is empty.'
+    'EmptyFile'    => 'File is empty.',
+    'InvalidImportFile'  => 'Invalid import file.'
 ];
