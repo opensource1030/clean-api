@@ -240,15 +240,14 @@ class PresetsApiTest extends \TestCase
 
         $device1 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create()->id;
         $device2 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create()->id;
-        $company = factory(\WA\DataStore\Company\Company::class)->create()->id;
-
+        
         $this->json('POST', 'presets',
             [
                 'data' => [
                     'type' => 'presets',
                     'attributes' => [
                         'name' => 'namePreset',
-                        'companyId' => $company,
+                        'companyId' => 1,
                     ],
                     'relationships' => [
                         'devicevariations' => [
@@ -264,7 +263,7 @@ class PresetsApiTest extends \TestCase
             [
                 'type' => 'presets',
                 'name' => 'namePreset',
-                'companyId' => $company,
+                'companyId' => 1,
             ]);
     }
 
