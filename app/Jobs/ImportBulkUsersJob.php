@@ -44,6 +44,8 @@ class ImportBulkUsersJob extends Job
 
         foreach($rows as $index => $row) {
             if($index == 0) continue;
+            if(empty($row)) continue;
+            if(join('', $row) == '') continue;
 
             $formattedRow = $this->getFormatRow($rows[0], $row);
 

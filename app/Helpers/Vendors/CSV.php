@@ -463,7 +463,7 @@ class CSV implements IteratorAggregate
         }
 
         // Remove any rows that appear empty.
-        if (empty($row)) {
+        if (empty($row) || join('', $row) == '') {
             unset($this->rows[$index], $row, $index);
         }
     }
