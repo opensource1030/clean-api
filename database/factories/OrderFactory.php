@@ -3,12 +3,17 @@
 
 $factory->define(WA\DataStore\Order\Order::class, function ($faker) {
     $status = ['Approval', 'New', 'Delivered', 'Expired'];
+    $orderType = ['NewLineOfService', 'UpgradeDevice', 'TransferServiceLiability', 'Accessories'];
 
     return [
         'status' => $status[array_rand($status)],
-        'phoneno' => rand(600000000, 699999999),
-        'imei' => rand(100000000000000, 999999999999999),
-        'sim' => rand(100000000, 999999999),
+        'orderType' => $orderType[array_rand($orderType)], 
+        'serviceImei' => rand(100000000000000, 999999999999999), 
+        'servicePhoneNo' => rand(600000000, 699999999),
+        'serviceSim' => rand(100000000, 999999999), 
+        'deviceImei' => rand(100000000000000, 999999999999999), 
+        'deviceCarrier' => $faker->sentence, 
+        'deviceSim' => rand(100000000, 999999999),
         'userId' => rand(1,20),
         'packageId' => rand(1,20),
         'serviceId' => rand(1,20),
@@ -17,3 +22,4 @@ $factory->define(WA\DataStore\Order\Order::class, function ($faker) {
         'updated_at' => $faker->dateTime,
     ];
 });
+

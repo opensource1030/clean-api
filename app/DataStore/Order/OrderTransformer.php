@@ -34,17 +34,21 @@ class OrderTransformer extends FilterableTransformer
     public function transform(Order $order)
     {
         return [
-            'id'         => (int)$order->id,
-            'status'     => $order->status,
-            'phoneno'    => $order->phoneno,
-            'imei'       => $order->imei,
-            'sim'        => $order->sim,
-            'userId'     => (int)$order->userId,
-            'packageId'  => (int)$order->packageId,
-            'serviceId'  => (int)$order->serviceId,
-            'addressId'  => (int)$order->addressId,
-            'created_at' => $order->created_at,
-            'updated_at' => $order->updated_at,
+            'id'                => (int)$order->id,
+            'status'            => $order->status,
+            'orderType'         => $order->orderType,
+            'serviceImei'       => $order->serviceImei,
+            'servicePhoneNo'    => $order->servicePhoneNo,
+            'serviceSim'        => $order->serviceSim,
+            'deviceImei'        => $order->deviceImei,
+            'deviceCarrier'     => $order->deviceCarrier,
+            'deviceSim'         => $order->deviceSim,
+            'userId'            => (int)$order->userId,
+            'packageId'         => (int)$order->packageId,
+            'serviceId'         => (int)$order->serviceId,
+            'addressId'         => (int)$order->addressId,
+            'created_at'        => $order->created_at,
+            'updated_at'        => $order->updated_at,
         ];
     }
 

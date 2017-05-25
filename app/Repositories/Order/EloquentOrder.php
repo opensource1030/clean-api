@@ -27,14 +27,26 @@ class EloquentOrder extends AbstractRepository implements OrderInterface
         if (isset($data['status'])) {
             $order->status = $data['status'];
         }
-        if (isset($data['phoneno'])) {
-            $order->phoneno = $data['phoneno'];
+        if (isset($data['orderType'])) {
+            $order->orderType = $data['orderType'];
         }
-        if (isset($data['imei'])) {
-            $order->imei = $data['imei'];
+        if (isset($data['serviceImei'])) {
+            $order->serviceImei = $data['serviceImei'];
         }
-        if (isset($data['sim'])) {
-            $order->sim = $data['sim'];
+        if (isset($data['servicePhoneNo'])) {
+            $order->servicePhoneNo = $data['servicePhoneNo'];
+        }
+        if (isset($data['serviceSim'])) {
+            $order->serviceSim = $data['serviceSim'];
+        }
+        if (isset($data['deviceImei'])) {
+            $order->deviceImei = $data['deviceImei'];
+        }
+        if (isset($data['deviceCarrier'])) {
+            $order->deviceCarrier = $data['deviceCarrier'];
+        }
+        if (isset($data['deviceSim'])) {
+            $order->deviceSim = $data['deviceSim'];
         }
         if (isset($data['userId'])) {
             $order->userId = $data['userId'];
@@ -85,15 +97,19 @@ class EloquentOrder extends AbstractRepository implements OrderInterface
         }
 
         $orderData = [
-            'status'        => isset($data['status'])       ? $data['status']       : null,
-            'phoneno'       => isset($data['phoneno'])      ? $data['phoneno']      : null,
-            'imei'          => isset($data['imei'])         ? $data['imei']         : null,
-            'sim'           => isset($data['sim'])          ? $data['sim']          : null,
-            'userId'        => isset($data['userId'])       ? $data['userId']       : null,
-            'packageId'     => isset($data['packageId'])    ? $data['packageId']    : null,
-            'deviceId'      => isset($data['deviceId'])     ? $data['deviceId']     : null,
-            'serviceId'     => isset($data['serviceId'])    ? $data['serviceId']    : null,
-            'addressId'     => isset($data['addressId'])    ? $data['addressId']    : null,
+            'status'            => isset($data['status'])           ? $data['status']           : null,
+            'orderType'         => isset($data['orderType'])        ? $data['orderType']        : null,
+            'serviceImei'       => isset($data['serviceImei'])      ? $data['serviceImei']      : null,
+            'servicePhoneNo'    => isset($data['servicePhoneNo'])   ? $data['servicePhoneNo']   : null,
+            'serviceSim'        => isset($data['serviceSim'])       ? $data['serviceSim']       : null,
+            'deviceImei'        => isset($data['deviceImei'])       ? $data['deviceImei']       : null,
+            'deviceCarrier'     => isset($data['deviceCarrier'])    ? $data['deviceCarrier']    : null,
+            'deviceSim'         => isset($data['deviceSim'])        ? $data['deviceSim']        : null,
+            'userId'            => isset($data['userId'])           ? $data['userId']           : null,
+            'packageId'         => isset($data['packageId'])        ? $data['packageId']        : null,
+            'deviceId'          => isset($data['deviceId'])         ? $data['deviceId']         : null,
+            'serviceId'         => isset($data['serviceId'])        ? $data['serviceId']        : null,
+            'addressId'         => isset($data['addressId'])        ? $data['addressId']        : null,
         ];
 
         $order = $this->model->create($orderData);
