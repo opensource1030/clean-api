@@ -26,12 +26,12 @@ class ImportBulkUsersJob extends Job
         $userInterface = app()->make('WA\Repositories\User\UserInterface');
 
         $job = CompanyUserImportJob::find($this->jobId);
-        /*if($job == null
+        if($job == null
             || $job->status != CompanyUserImportJob::STATUS_PENDING
             || (($job->created + $job->updated) >= $job->total)
             || ($job->failed >= $job->total)) {
             return;
-        }*/
+        }
 
         // update job status to working
         $job->status = CompanyUserImportJob::STATUS_WORKING;
