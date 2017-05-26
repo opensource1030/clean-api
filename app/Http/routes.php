@@ -305,36 +305,6 @@ $api->version('v1', function ($api) {
             'uses' => $contentsController . '@deleteContent'
         ]);
 
-        // DEVICETYPES
-        $devicesTypeController = 'WA\Http\Controllers\DeviceTypesController';
-
-        $api->get('devicetypes', [
-            'middleware' => [$scopeMiddleware.':get_devicetypes'],
-            'as' => 'api.devicetype.index',
-            'uses' => $devicesTypeController . '@index'
-        ]);
-
-        $api->get('devicetypes/{id}', [
-            'middleware' => [$scopeMiddleware.':get_devicetype'],
-            'as' => 'api.devicetype.show',
-            'uses' => $devicesTypeController . '@show'
-        ]);
-
-        $api->post('devicetypes', [
-            'middleware' => [$scopeMiddleware.':create_devicetype'],
-            'uses' => $devicesTypeController . '@create'
-        ]);
-
-        $api->patch('devicetypes/{id}', [
-            'middleware' => [$scopeMiddleware.':update_devicetype'],
-            'uses' => $devicesTypeController . '@store'
-        ]);
-
-        $api->delete('devicetypes/{id}', [
-            'middleware' => [$scopeMiddleware.':delete_devicetype'],
-            'uses' => $devicesTypeController . '@delete'
-        ]);
-
         // DEVICES
         $devicesController = 'WA\Http\Controllers\DevicesController';
 
@@ -363,6 +333,36 @@ $api->version('v1', function ($api) {
         $api->delete('devices/{id}', [
             'middleware' => [$scopeMiddleware.':delete_device'],
             'uses' => $devicesController . '@delete'
+        ]);
+
+        // DEVICETYPES
+        $devicesTypeController = 'WA\Http\Controllers\DeviceTypesController';
+
+        $api->get('devicetypes', [
+            'middleware' => [$scopeMiddleware.':get_devicetypes'],
+            'as' => 'api.devicetype.index',
+            'uses' => $devicesTypeController . '@index'
+        ]);
+
+        $api->get('devicetypes/{id}', [
+            'middleware' => [$scopeMiddleware.':get_devicetype'],
+            'as' => 'api.devicetype.show',
+            'uses' => $devicesTypeController . '@show'
+        ]);
+
+        $api->post('devicetypes', [
+            'middleware' => [$scopeMiddleware.':create_devicetype'],
+            'uses' => $devicesTypeController . '@create'
+        ]);
+
+        $api->patch('devicetypes/{id}', [
+            'middleware' => [$scopeMiddleware.':update_devicetype'],
+            'uses' => $devicesTypeController . '@store'
+        ]);
+
+        $api->delete('devicetypes/{id}', [
+            'middleware' => [$scopeMiddleware.':delete_devicetype'],
+            'uses' => $devicesTypeController . '@delete'
         ]);
 
         // DEVICEVARIATIONS
@@ -654,6 +654,7 @@ $api->version('v1', function ($api) {
             'uses' => $usersController . '@delete'
         ]);
 
+/*
         // CATEGORYAPPS
         $categoryAppController = 'WA\Http\Controllers\CategoryAppsController';
 
@@ -684,7 +685,6 @@ $api->version('v1', function ($api) {
             'uses' => $categoryAppController . '@delete'
         ]);
         
-/*
         // CONDITIONFIELDS
         $conditionFieldsController = 'WA\Http\Controllers\ConditionFieldsController';
 
@@ -714,8 +714,7 @@ $api->version('v1', function ($api) {
             'middleware' => [$scopeMiddleware.':delete_conditionsfield'],
             'uses' => $conditionFieldsController . '@delete'
         ]);
-*/
-/*
+
         // CONDITIONS OPERATORS
         $conditionOpController = 'WA\Http\Controllers\ConditionOperatorsController';
         

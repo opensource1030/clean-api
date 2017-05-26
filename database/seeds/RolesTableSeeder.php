@@ -28,9 +28,9 @@ class RolesTableSeeder extends BaseTableSeeder
                 'description' => 'User with full power and access of his own company information',
             ],
             [
-               'name' => 'user',
+                'name' => 'user',
                 'display_name' => 'user',
-                'description' => 'Normal user that can only retrieve information',
+                'description' => 'Normal user that can only retrieve information and create/update Orders',
             ]
         ];
 

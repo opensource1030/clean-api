@@ -754,13 +754,12 @@ trait Criteria
     public function getFilters()
     {   
         $req = (array)\Request::get('filter', null);
-        if (isset($this->extraFilter)) {
+        if ($this->extraFilter != '') {
             foreach ($this->extraFilter as $key => $value) {
                 $req[$key] = $value;
             }
         }
         $filters = new Filters($req);
-        //dd($filters);
         return $filters;
     }
 

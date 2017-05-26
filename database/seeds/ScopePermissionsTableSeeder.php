@@ -16,8 +16,11 @@ class ScopePermissionsTableSeeder extends BaseTableSeeder
     {
         $this->deleteTable();
 
+        // Scopes = 108. Permissions = 108.
+
         $i = 1;
-        while ($i < 95) {
+        while ($i < 109) {
+
             $data = [
                 [
                     'scope_id' => $i,

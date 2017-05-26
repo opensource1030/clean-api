@@ -13,7 +13,7 @@ class UsersTableSeeder extends BaseTableSeeder
             'uuid' => '123456789123',
             'email' => 'data1@wirelessanalytics.com',
             'supervisorEmail' => 'admin@siriondev.com',
-            'password' => bcrypt('user'),
+            'password' => bcrypt('i1need4the3most4poweful7password8'),
             'confirmation_code' => md5(uniqid(mt_rand(), true)),
             'confirmed' => 1,
             'firstName' => 'Sirion',
@@ -109,6 +109,69 @@ class UsersTableSeeder extends BaseTableSeeder
             'approverId' => 3,
             'defaultLocationId' => 'location',
             'companyId' => 20,
+        ];
+
+        $this->loadTable($dataUserLogin);
+
+        $dataUserLogin = [
+            'identification' => uniqid('A1-'),
+            'uuid' => 'administratorofthecompany1',
+            'email' => 'admin1@testing.com',
+            'supervisorEmail' => null,
+            'password' => bcrypt('admin1'),
+            'confirmation_code' => md5(uniqid(mt_rand(), true)),
+            'confirmed' => 1,
+            'firstName' => 'Testing',
+            'lastName' => 'Developers',
+            'username' => 'testing',
+            'defaultLang' => 'en',
+            'supervisorId' => 1,
+            'notify' => 0,
+            'approverId' => 3,
+            'defaultLocationId' => 'location',
+            'companyId' => 1,
+        ];
+
+        $this->loadTable($dataUserLogin);
+
+        $dataUserLogin = [
+            'identification' => uniqid('U1-'),
+            'uuid' => 'user1ofthecompany1',
+            'email' => 'user11@testing.com',
+            'supervisorEmail' => null,
+            'password' => bcrypt('user'),
+            'confirmation_code' => md5(uniqid(mt_rand(), true)),
+            'confirmed' => 1,
+            'firstName' => 'Testing',
+            'lastName' => 'Developers',
+            'username' => 'testing',
+            'defaultLang' => 'en',
+            'supervisorId' => 1,
+            'notify' => 0,
+            'approverId' => 3,
+            'defaultLocationId' => 'location',
+            'companyId' => 1,
+        ];
+
+        $this->loadTable($dataUserLogin);
+
+        $dataUserLogin = [
+            'identification' => uniqid('U1-'),
+            'uuid' => 'user2ofthecompany1',
+            'email' => 'user12@testing.com',
+            'supervisorEmail' => null,
+            'password' => bcrypt('user'),
+            'confirmation_code' => md5(uniqid(mt_rand(), true)),
+            'confirmed' => 1,
+            'firstName' => 'Testing',
+            'lastName' => 'Developers',
+            'username' => 'testing',
+            'defaultLang' => 'en',
+            'supervisorId' => 1,
+            'notify' => 0,
+            'approverId' => 3,
+            'defaultLocationId' => 'location',
+            'companyId' => 1,
         ];
 
         $this->loadTable($dataUserLogin);
