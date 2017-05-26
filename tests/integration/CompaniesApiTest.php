@@ -2695,4 +2695,195 @@ class CompaniesTest extends \TestCase
         $responseDel = $this->call('DELETE', 'companies/10');
         $this->assertEquals(404, $responseDel->status());
     }
+
+    public function testCreateImportUserJobWithWrongRequest()
+    {
+        // check company is exist
+        $companyId = 'random';
+        $uri = "companies/$companyId/jobs";
+        $response = $this->call('POST', $uri);
+        $this->assertEquals(404, $response->status());
+
+        // check attach file
+        $company = factory(\WA\DataStore\Company\Company::class)->create(['name' => 'random-company']);
+        $companyId = $company->id;
+        $uri = "companies/$companyId/jobs";
+        $response = $this->call('POST', $uri);
+        $this->assertEquals(400, $response->status());
+
+        // check attach file is csv
+        $targetPath = "./storage/clients/{$company->name}";
+        $targetFile = "$targetPath/filename.png";
+        if(!is_dir($targetPath)){
+            mkdir($targetPath, 0755, true);
+        }
+        copy('./database/seeds/imagesseeder/phpFmndT1.png', $targetFile);
+
+        $uploadedFile = new Symfony\Component\HttpFoundation\File\UploadedFile(
+            $targetFile,
+            'iphone6.png',
+            'image/png',
+            235417,
+            null,
+            true
+        );
+        $response = $this->call('POST', $uri, [], [], ['csv' => $uploadedFile]);
+        $this->assertEquals(400, $response->status());
+
+        @unlink($targetFile);
+    }
+
+    public function testCompanyCreatJobSuccessfully()
+    {
+        $company = factory(\WA\DataStore\Company\Company::class)->create(['name' => 'random-company']);
+        $companyId = $company->id;
+        $uri = "companies/$companyId/jobs";
+        $fileName = "employee.csv";
+        $targetPath = "clients/{$company->name}";
+        $targetFile = "{$targetPath}/{$fileName}";
+        if(!is_dir(storage_path($targetPath))){
+            mkdir(storage_path($targetPath), 0755, true);
+        }
+        copy('./database/seeds/import/employee.csv', storage_path($targetFile));
+
+        $uploadedFile = new Symfony\Component\HttpFoundation\File\UploadedFile(
+            storage_path($targetFile),
+            $fileName,
+            null,
+            null,
+            null,
+            true
+        );
+
+        $response = $this->call('POST', $uri, ['test' => '1'], [], ['csv' => $uploadedFile]);
+        $this->assertEquals(201, $response->status());
+        $this->assertJson($response->getContent());
+
+        @unlink($targetFile);
+    }
+
+    public function testCompanyGetJob()
+    {
+        $job = factory(\WA\DataStore\Company\CompanyUserImportJob::class)->create();
+
+        $this->json('GET', "companies/{$job->company_id}/jobs/{$job->id}")
+            ->seeJsonStructure([
+                'data' => [
+                    'id',
+                    'type',
+                    'attributes' => [
+                        'status',
+                        'total',
+                        'created',
+                        'updated',
+                        'errors',
+                        'sampleUser',
+                        'CSVfields',
+                        'DBfields',
+                        'mappings'
+                    ]
+                ]
+            ]);
+    }
+
+    public function testCompanyPatchJob()
+    {
+        $job = factory(\WA\DataStore\Company\CompanyUserImportJob::class)->create();
+
+        $this->withoutJobs()
+            ->json('PATCH', "companies/{$job->company_id}/jobs/{$job->id}",
+            [
+                "data" => [
+                    "id" => $job->id,
+                    "type" => "jobs",
+                    "attributes" => [
+                        "status" => "Pending",
+                        "total" => $job->total,
+                        "created" => 0,
+                        "updated" => 0,
+                        "errors" => 0,
+                        "sampleUser" => [
+                            "email" => "douglas.rolfson@example.org1",
+                            "alternateEmail" => "pagac.ashlee@example.org",
+                            "password" => "user",
+                            "username" => "douglas.rolfson",
+                            "confirmation_code" => "b95c05f09018e7d91c5a67c8d66b68f4",
+                            "confirmed" => "1",
+                            "firstName" => "Britney",
+                            "lastName" => "Prosacco",
+                            "alternateFirstName" => "Larissa",
+                            "supervisorEmail" => "leon62@example.org",
+                            "companyUserIdentifier" => "2",
+                            "isSupervisor" => "0",
+                            "isValidator" => "0",
+                            "isActive" => "1",
+                            "defaultLang" => "en",
+                            "level" => "0",
+                            "notify" => "0",
+                            "companyId" => "3",
+                            "supervisorId" => "3",
+                            "externalId" => "",
+                            "approverId" => "1",
+                            "defaultLocationId" => "52"
+                        ],
+                        "CSVfields" => [
+                            "email",
+                            "alternateEmail",
+                            "password",
+                            "username",
+                            "confirmation_code",
+                            "confirmed",
+                            "firstName",
+                            "lastName",
+                            "alternateFirstName",
+                            "supervisorEmail",
+                            "companyUserIdentifier",
+                            "isSupervisor",
+                            "isValidator",
+                            "isActive",
+                            "defaultLang",
+                            "level",
+                            "notify",
+                            "companyId",
+                            "supervisorId",
+                            "externalId",
+                            "approverId",
+                            "defaultLocationId"
+                        ],
+                        "DBfields" => [
+                            "email" => "Main Email",
+                            "alternateEmail" => "Alternate Email",
+                            "firstName" => "First Name",
+                            "alternateFirstName" => "Alternate First Name",
+                            "lastName" => "Last Name",
+                            "supervisorEmail" => "Supervisor Email",
+                            "companyUserIdentifier" => "Company Identification",
+                            "defaultLocationId" => "Location",
+                            "notes" => "Notes"
+                        ],
+                        "mappings" => [
+                            ["csvField" =>"email","dbField" =>"email"],
+                            ["csvField" =>"companyId","dbField" =>"companyId"]
+                        ]
+                    ]
+                ]
+            ])
+            ->seeJsonStructure([
+                'data' => [
+                    'id',
+                    'type',
+                    'attributes' => [
+                        'status',
+                        'total',
+                        'created',
+                        'updated',
+                        'errors',
+                        'sampleUser',
+                        'CSVfields',
+                        'DBfields',
+                        'mappings'
+                    ]
+                ]
+            ]);
+    }
 }

@@ -338,7 +338,7 @@ class CompaniesController extends FilteredApiController
 
         // check if file extension is csv
         $originalFileName = $file->getClientOriginalName();
-        $fileName = pathinfo($originalFileName, PATHINFO_FILENAME) . time();
+        $fileName = pathinfo($originalFileName, PATHINFO_FILENAME) . ($request->has('test') ? '' : time());
         $fileExtension = pathinfo($originalFileName, PATHINFO_EXTENSION);
         if ($fileExtension !== 'csv') {
             $error['errors']['file'] = Lang::get('messages.NotRightFile', ['class' => 'csv']);
@@ -348,10 +348,12 @@ class CompaniesController extends FilteredApiController
 
         // move file to storage
         $uploadedFileName = str_slug($fileName) . '.' . $fileExtension;
-        if(!($file = $file->move(storage_path($storagePath), $uploadedFileName))) {
-            $error['errors']['file'] = Lang::get('messages.NotExistPath');
+        if(!$request->has('test')) {
+            if(!($file = $file->move(storage_path($storagePath), $uploadedFileName))) {
+                $error['errors']['file'] = Lang::get('messages.NotExistPath');
 
-            return response()->json($error)->setStatusCode($this->status_codes['forbidden']);
+                return response()->json($error)->setStatusCode($this->status_codes['forbidden']);
+            }
         }
 
         $filePath = $file->getRealPath();
@@ -382,8 +384,8 @@ class CompaniesController extends FilteredApiController
         $job->sample    = serialize($sampleRow);
         $job->mappings  = serialize(array());
         $job->status    = CompanyUserImportJob::STATUS_PENDING;
-        $job->created_by_id = Auth::id();
-        $job->updated_by_id = Auth::id();
+        $job->created_by_id = Auth::id() ?: 0;
+        $job->updated_by_id = Auth::id() ?: 0;
         $job->save();
 
         return response()->json($job->getJobData())->setStatusCode($this->status_codes['created']);
@@ -444,7 +446,7 @@ class CompaniesController extends FilteredApiController
 
         // request data
         // check mapping is array and not empty
-        $data = $request->get('data');
+        $data = $request->all()['data'];
         if(!isset($data['attributes'])
             || !isset($data['attributes']['mappings'])
             || !is_array($data['attributes']['mappings'])
