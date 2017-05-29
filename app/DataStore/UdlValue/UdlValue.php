@@ -38,7 +38,7 @@ class UdlValue extends BaseDataStore
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function udl()
+    public function udls()
     {
         return $this->belongsTo('WA\DataStore\Udl\Udl', 'udlId');
     }

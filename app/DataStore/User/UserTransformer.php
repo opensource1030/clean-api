@@ -21,7 +21,7 @@ class UserTransformer extends FilterableTransformer
         'roles',
         'allocations',
         'contents',
-        'udls',
+        'udlvalues',
         'addresses'
     ];
 
