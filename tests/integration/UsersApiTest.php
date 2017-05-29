@@ -529,7 +529,7 @@ class UsersApiTest extends TestCase
             ]);
     }
     
-    public function testGetUserByIdandIncludesUdls()
+    public function testGetUserByIdandIncludesUdlvalues()
     {
         $user = factory(\WA\DataStore\User\User::class)->create();
         $company1 = factory(\WA\DataStore\Company\Company::class)->create()->id;
@@ -540,8 +540,8 @@ class UsersApiTest extends TestCase
         $udlV2 = factory(\WA\DataStore\UdlValue\UdlValue::class)->create(['udlId' => $udl2])->id;
         $dataudls = array($udlV1, $udlV2);
         $user->udlValues()->sync($dataudls);
-        $res = $this->json('GET', 'users/'.$user->id.'?include=udls')
-        //Log::debug("testGetUserByIdandIncludesUdls: ".print_r($res->response->getContent(), true));
+        $res = $this->json('GET', 'users/'.$user->id.'?include=udlvalues')
+        //Log::debug("testGetUserByIdandIncludesUdlvalues: ".print_r($res->response->getContent(), true));
             ->seeJsonStructure([
                 'data' => [
                     'type',
@@ -582,7 +582,7 @@ class UsersApiTest extends TestCase
                         'self',
                     ],
                     'relationships' => [
-                        'udls' => [
+                        'udlvalues' => [
                             'links' => [
                                 'self',
                                 'related',
@@ -907,7 +907,7 @@ class UsersApiTest extends TestCase
 
 
         // assets include deleted.
-        $res = $this->json('POST', '/users?include=devicevariations,roles,udls,allocations,companies,contents,addresses',
+        $res = $this->json('POST', '/users?include=devicevariations,roles,udlvalues,allocations,companies,contents,addresses',
             [
                 'data' => [
                     'type' => 'users',
@@ -973,10 +973,10 @@ class UsersApiTest extends TestCase
                                 ['type' => 'roles', 'id' => $role2]
                             ],
                         ],
-                        'udls' => [
+                        'udlvalues' => [
                             'data' => [
-                                ['type' => 'udls', 'id' => $udlV1],
-                                ['type' => 'udls', 'id' => $udlV2],
+                                ['type' => 'udlvalues', 'id' => $udlV1],
+                                ['type' => 'udlvalues', 'id' => $udlV2],
                             ],
                         ],
                         'allocations' => [
@@ -1293,7 +1293,7 @@ class UsersApiTest extends TestCase
                                     ]
                                 ]
                             ],
-                            'udls' => [
+                            'udlvalues' => [
                                 'links' => [
                                     'self',
                                     'related'
@@ -1482,7 +1482,7 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        9 => [ // UDLS
+                        9 => [ // UDLVALUES
                             'type',
                             'id',
                             'attributes' => [
@@ -1493,7 +1493,7 @@ class UsersApiTest extends TestCase
                                 'self'
                             ]
                         ],
-                        10 => [ // UDLS
+                        10 => [ // UDLVALUES
                             'type',
                             'id',
                             'attributes' => [
@@ -2513,7 +2513,7 @@ class UsersApiTest extends TestCase
         $content2 = factory(\WA\DataStore\Content\Content::class)->create(['owner_id' => $user->id, 'owner_type' => 'users']);
 
         // assets include deleted.
-        $res = $this->json('PATCH', '/users/'.$user->id.'?include=devicevariations,roles,udls,allocations,companies,contents,addresses',
+        $res = $this->json('PATCH', '/users/'.$user->id.'?include=devicevariations,roles,udlvalues,allocations,companies,contents,addresses',
             [
                 'data' => [
                     'type' => 'users',
@@ -2571,9 +2571,9 @@ class UsersApiTest extends TestCase
                                 ['type' => 'roles', 'id' => $role1->id]
                             ],
                         ],
-                        'udls' => [
+                        'udlvalues' => [
                             'data' => [
-                                ['type' => 'udls', 'id' => $udlV1->id]
+                                ['type' => 'udlvalues', 'id' => $udlV1->id]
                             ],
                         ],
                         'allocations' => [
@@ -2790,7 +2790,7 @@ class UsersApiTest extends TestCase
                                     ]
                                 ]
                             ],
-                            'udls' => [
+                            'udlvalues' => [
                                 'links' => [
                                     'self',
                                     'related'
@@ -2999,7 +2999,7 @@ class UsersApiTest extends TestCase
         $content2 = factory(\WA\DataStore\Content\Content::class)->create(['owner_id' => $user->id, 'owner_type' => 'users']);
         
         // assets include deleted.
-        $res = $this->json('PATCH', '/users/'.$user->id.'?include=devicevariations,roles,udls,allocations,companies,contents,addresses',
+        $res = $this->json('PATCH', '/users/'.$user->id.'?include=devicevariations,roles,udlvalues,allocations,companies,contents,addresses',
             [
                 'data' => [
                     'type' => 'users',
@@ -3063,11 +3063,11 @@ class UsersApiTest extends TestCase
                                 ['type' => 'roles', 'id' => $role3]
                             ],
                         ],
-                        'udls' => [
+                        'udlvalues' => [
                             'data' => [
-                                ['type' => 'udls', 'id' => $udlV1],
-                                ['type' => 'udls', 'id' => $udlV2],
-                                ['type' => 'udls', 'id' => $udlV3]
+                                ['type' => 'udlvalues', 'id' => $udlV1],
+                                ['type' => 'udlvalues', 'id' => $udlV2],
+                                ['type' => 'udlvalues', 'id' => $udlV3]
                             ],
                         ],
                         'allocations' => [
@@ -3473,7 +3473,7 @@ class UsersApiTest extends TestCase
                                     ]
                                 ]
                             ],
-                            'udls' => [
+                            'udlvalues' => [
                                 'links' => [
                                     'self',
                                     'related'

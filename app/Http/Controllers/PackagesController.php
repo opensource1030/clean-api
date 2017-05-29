@@ -100,7 +100,7 @@ class PackagesController extends FilteredApiController
         $udlV = $user->udlValues;
         $arrayAux = [];
         foreach ($udlV as $uv) {
-            $aux['udlName'] = $uv->udl->name;
+            $aux['udlName'] = $uv->udls->name;
             $aux['udlValue'] = $uv->name;
             array_push($arrayAux, $aux);
             //Log::debug("getUdlValuesFromUser: uv->name: ".print_r($uv->name, true));

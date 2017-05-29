@@ -207,15 +207,15 @@ class UsersController extends FilteredApiController
                 }
             }
 
-            if (isset($dataRelationships['udls']) && $success) {
-                if (isset($dataRelationships['udls']['data'])) {
-                    $dataUdls = $this->parseJsonToArray($dataRelationships['udls']['data'], 'udls');
+            if (isset($dataRelationships['udlvalues']) && $success) {
+                if (isset($dataRelationships['udlvalues']['data'])) {
+                    $dataUdls = $this->parseJsonToArray($dataRelationships['udlvalues']['data'], 'udlvalues');
                     try {
                         $user->udlValues()->sync($dataUdls);
                     } catch (\Exception $e) {
                         $success = false;
-                        $error['errors']['udls'] = Lang::get('messages.NotOptionIncludeClass',
-                            ['class' => 'User', 'option' => 'updated', 'include' => 'Udls']);
+                        $error['errors']['udlvalues'] = Lang::get('messages.NotOptionIncludeClass',
+                            ['class' => 'User', 'option' => 'updated', 'include' => 'UdlValues']);
                         //$error['errors']['Message'] = $e->getMessage();
                     }
                 }
@@ -456,15 +456,15 @@ class UsersController extends FilteredApiController
                 }
             }
 
-            if (isset($dataRelationships['udls']) && $success) {
-                if (isset($dataRelationships['udls']['data'])) {
-                    $dataUdls = $this->parseJsonToArray($dataRelationships['udls']['data'], 'udls');
+            if (isset($dataRelationships['udlvalues']) && $success) {
+                if (isset($dataRelationships['udlvalues']['data'])) {
+                    $dataUdls = $this->parseJsonToArray($dataRelationships['udlvalues']['data'], 'udlvalues');
                     try {
                         $user->udlValues()->sync($dataUdls);
                     } catch (\Exception $e) {
                         $success = false;
-                        $error['errors']['udls'] = Lang::get('messages.NotOptionIncludeClass',
-                            ['class' => 'User', 'option' => 'created', 'include' => 'Udls']);
+                        $error['errors']['udlvalues'] = Lang::get('messages.NotOptionIncludeClass',
+                            ['class' => 'User', 'option' => 'created', 'include' => 'UdlValues']);
                         //$error['errors']['Message'] = $e->getMessage();
                     }
                 }
@@ -651,7 +651,7 @@ class UsersController extends FilteredApiController
         $udlV = $user->udlValues;
         $arrayAux = [];
         foreach ($udlV as $uv) {
-            $aux['udlName'] = $uv->udl->name;
+            $aux['udlName'] = $uv->udls->name;
             $aux['udlValue'] = $uv->name;
             array_push($arrayAux, $aux);
         }
