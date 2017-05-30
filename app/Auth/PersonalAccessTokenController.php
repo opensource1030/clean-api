@@ -28,9 +28,10 @@ class PersonalAccessTokenController extends \Laravel\Passport\Http\Controllers\P
                 'scopes' => 'array|in:'.implode(',', $userScopes),
             ])->validate();    
         } catch (ValidationException $ve) {
-            $error['errors']['validation'] = 'Validation Exception';
+            $error['errors']['validation'] = $this->returnErrorText($userScopes, $request->all()['scopes']);
             $error['errors']['userScopes'] = $userScopes;
             $error['errors']['requestScopes'] = $request->all()['scopes'];
+            $error['errors']['errorScopes'] = array_diff($request->all()['scopes'],$userScopes);
             return response()->json($error)->setStatusCode(422);
         }        
 
@@ -55,7 +56,18 @@ class PersonalAccessTokenController extends \Laravel\Passport\Http\Controllers\P
         }
 
         $scopeList = array_unique($scopeList);
-
         return $scopeList;
+    }
+
+    private function returnErrorText($userScopes, $listScopes) {
+        if (count($listScopes) == 0) {
+            return 'The User doesn\'t have any scopes';
+        }
+
+        if (array_diff($listScopes,$userScopes)) {
+            return 'The User doesn\'t have any of the scopes requested';
+        }
+
+        return 'Validation Exception';
     }
 }
