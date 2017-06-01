@@ -336,16 +336,18 @@ class OrdersApiTest extends \TestCase
 
     public function testCreateOrder()
     {
-        $userId = factory(\WA\DataStore\User\User::class)->create()->id;
+        $userId = factory(\WA\DataStore\User\User::class)->create(['companyId' => 1])->id;
+
+        $userAdmin = factory(\WA\DataStore\User\User::class)->create(['companyId' => 1]);
+        $roleAdmin = factory(\WA\DataStore\Role\Role::class)->create(['name' => 'admin']);
+        $userAdmin->roles()->sync([$roleAdmin->id]);
+
         $packageId = factory(\WA\DataStore\Package\Package::class)->create()->id;
         $serviceId = factory(\WA\DataStore\Service\Service::class)->create()->id;
         $addressId = factory(\WA\DataStore\Address\Address::class)->create()->id;
 
         $app1 = factory(\WA\DataStore\App\App::class)->create()->id;
         $app2 = factory(\WA\DataStore\App\App::class)->create()->id;
-
-        $serviceitem1 = factory(\WA\DataStore\ServiceItem\ServiceItem::class)->create()->id;
-        $serviceitem2 = factory(\WA\DataStore\ServiceItem\ServiceItem::class)->create()->id;
 
         $deviceVariation1 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create()->id;
         $deviceVariation2 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create()->id;
