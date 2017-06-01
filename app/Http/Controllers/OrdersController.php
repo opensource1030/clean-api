@@ -110,20 +110,6 @@ class OrdersController extends FilteredApiController
                 }
             }
 
-            if (isset($dataRelationships['serviceitems']) && $success) {
-                if (isset($dataRelationships['serviceitems']['data'])) {
-                    $data_serviceitems = $this->parseJsonToArray($dataRelationships['serviceitems']['data'], 'serviceitems');
-                    try {
-                        $order->serviceitems()->sync($data_serviceitems);
-                    } catch (\Exception $e) {
-                        $success = false;
-                        $error['errors']['serviceitems'] = Lang::get('messages.NotOptionIncludeClass',
-                            ['class' => 'Order', 'option' => 'updated', 'include' => 'Service Items']);
-                        //$error['errors']['Message'] = $e->getMessage();
-                    }
-                }
-            }
-
             if (isset($dataRelationships['devicevariations']) && $success) {
                 if (isset($dataRelationships['devicevariations']['data'])) {
                     $data_devices = $this->parseJsonToArray($dataRelationships['devicevariations']['data'], 'devicevariations');
@@ -157,7 +143,7 @@ class OrdersController extends FilteredApiController
     public function create(Request $request)
     {
         $success = true;
-        $data_apps = $data_serviceitems = $data_devices = array();
+        $data_apps = $data_devices = array();
 
         /*
          * Checks if Json has data, data-type & data-attributes.
@@ -212,20 +198,6 @@ class OrdersController extends FilteredApiController
                 }
             }
 
-            if (isset($dataRelationships['serviceitems'])) {
-                if (isset($dataRelationships['serviceitems']['data'])) {
-                    $data_serviceitems = $this->parseJsonToArray($dataRelationships['serviceitems']['data'], 'serviceitems');
-                    try {
-                        $order->serviceitems()->sync($data_serviceitems);
-                    } catch (\Exception $e) {
-                        $success = false;
-                        $error['errors']['serviceitems'] = Lang::get('messages.NotOptionIncludeClass',
-                            ['class' => 'Order', 'option' => 'created', 'include' => 'Service Items']);
-                        //$error['errors']['Message'] = $e->getMessage();
-                    }
-                }
-            }
-
             if (isset($dataRelationships['devicevariations']) && $success) {
                 if (isset($dataRelationships['devicevariations']['data'])) {
                     $data_devices = $this->parseJsonToArray($dataRelationships['devicevariations']['data'], 'devicevariations');
@@ -249,6 +221,11 @@ class OrdersController extends FilteredApiController
                 }    
             }            
             $res = $this->sendConfirmationEmail($data['attributes']['userId'], 'Order');
+            if(!$res) {
+                DB::rollBack();
+                $error['errors']['emailnotification'] = "The Email Notification has not been sent.";
+                return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+            }
             DB::commit();
             return $this->response()->item($order, new OrderTransformer(), ['key' => 'orders'])
                         ->setStatusCode($this->status_codes['created']);
