@@ -4,8 +4,8 @@ set :repo_url, 'git@github.com:WirelessAnalytics/clean-api.git'
 set :rails_env, -> { fetch(:stage) }
 set :log_level, :debug
 set :linked_files, %w{.env}
-set :linked_dirs, %w{storage/logs}
-set :file_permissions_paths, ["storage/logs", "storage/framework"]
+set :linked_dirs, %w{storage/logs storage/app/public}
+set :file_permissions_paths, ["storage/logs", "storage/framework", "storage/app/public"]
 set :file_permissions_users, ["www-data","deploy"]
 
 
