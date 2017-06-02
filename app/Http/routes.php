@@ -368,5 +368,14 @@ $api->version('v1', function ($api) {
         //=Jobs
         $jobsController = 'WA\Http\Controllers\JobsController';
         $api->put('jobs/updateBillingMonths', ['uses' => $jobsController . '@updateBillingMonths']);
+
+        // Stripes
+        $paymentsController = 'WA\Http\Controllers\PaymentsController';
+        //$api->get('payments', ['as' => 'api.payments.index', 'uses' => $paymentsController . '@index']);
+        //$api->get('payments/{id}', ['as' => 'api.payments.show', 'uses' => $paymentsController . '@show']);
+        $api->post('payments', ['uses' => $paymentsController . '@create']);
+        //$api->put('payments/{id}', ['uses' => $paymentsController . '@store']);
+        $api->delete('payments/{id}', ['uses' => $paymentsController . '@delete']);
+
     });
 });
