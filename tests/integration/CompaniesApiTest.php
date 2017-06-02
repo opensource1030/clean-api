@@ -558,38 +558,6 @@ class CompaniesTest extends TestCase
                             "companyId",
                             "name",
                             "inputType",
-                            "sections" => [
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ]
-                            ],
                             "legacyUdlField"
                         ],
                         'links' => [
@@ -603,38 +571,6 @@ class CompaniesTest extends TestCase
                             "companyId",
                             "name",
                             "inputType",
-                            "sections" => [
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ]
-                            ],
                             "legacyUdlField"
                         ],
                         'links' => [
@@ -648,38 +584,6 @@ class CompaniesTest extends TestCase
                             "companyId",
                             "name",
                             "inputType",
-                            "sections" => [
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ]
-                            ],
                             "legacyUdlField"
                         ],
                         'links' => [
@@ -693,38 +597,6 @@ class CompaniesTest extends TestCase
                             "companyId",
                             "name",
                             "inputType",
-                            "sections" => [
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ]
-                            ],
                             "legacyUdlField"
                         ],
                         'links' => [
@@ -1389,38 +1261,6 @@ class CompaniesTest extends TestCase
                             "companyId",
                             "name",
                             "inputType",
-                            "sections" => [
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ]
-                            ],
                             "legacyUdlField"
                         ],
                         'links' => [
@@ -1434,38 +1274,6 @@ class CompaniesTest extends TestCase
                             "companyId",
                             "name",
                             "inputType",
-                            "sections" => [
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ]
-                            ],
                             "legacyUdlField"
                         ],
                         'links' => [
@@ -1479,38 +1287,6 @@ class CompaniesTest extends TestCase
                             "companyId",
                             "name",
                             "inputType",
-                            "sections" => [
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ]
-                            ],
                             "legacyUdlField"
                         ],
                         'links' => [
@@ -1524,38 +1300,6 @@ class CompaniesTest extends TestCase
                             "companyId",
                             "name",
                             "inputType",
-                            "sections" => [
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ]
-                            ],
                             "legacyUdlField"
                         ],
                         'links' => [
@@ -1917,26 +1661,6 @@ class CompaniesTest extends TestCase
                             "companyId",
                             "name",
                             "inputType",
-                            "sections" => [
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ]
-                            ],
                             "legacyUdlField"
                         ],
                         'links' => [
@@ -1950,26 +1674,6 @@ class CompaniesTest extends TestCase
                             "companyId",
                             "name",
                             "inputType",
-                            "sections" => [
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ]
-                            ],
                             "legacyUdlField"
                         ],
                         'links' => [
@@ -2215,26 +1919,6 @@ class CompaniesTest extends TestCase
                             "companyId",
                             "name",
                             "inputType",
-                            "sections" => [
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ]
-                            ],
                             "legacyUdlField"
                         ],
                         'links' => [
@@ -2248,26 +1932,6 @@ class CompaniesTest extends TestCase
                             "companyId",
                             "name",
                             "inputType",
-                            "sections" => [
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ]
-                            ],
                             "legacyUdlField"
                         ],
                         'links' => [
@@ -2415,20 +2079,6 @@ class CompaniesTest extends TestCase
                             "companyId",
                             "name",
                             "inputType",
-                            "sections" => [
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ]
-                            ],
                             "legacyUdlField"
                         ],
                         'links' => [
@@ -2565,14 +2215,6 @@ class CompaniesTest extends TestCase
                             "companyId",
                             "name",
                             "inputType",
-                            "sections" => [
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ]
-                            ],
                             "legacyUdlField"
                         ],
                         'links' => [
@@ -2708,14 +2350,6 @@ class CompaniesTest extends TestCase
                             "companyId",
                             "name",
                             "inputType",
-                            "sections" => [
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ]
-                            ],
                             "legacyUdlField"
                         ],
                         'links' => [
@@ -2931,14 +2565,6 @@ class CompaniesTest extends TestCase
                             "companyId",
                             "name",
                             "inputType",
-                            "sections" => [
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ]
-                            ],
                             "legacyUdlField"
                         ],
                         'links' => [

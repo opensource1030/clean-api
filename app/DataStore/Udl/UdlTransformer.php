@@ -21,12 +21,11 @@ class UdlTransformer extends FilterableTransformer
     public function transform(Udl $udl)
     {
         return [
-            'id'    => $udl->id,
-            'companyId'    => $udl->companyId,
-            'name'  => $udl->name,
-            'inputType' => $udl->inputType,
-            'sections' => $udl->udlValues,
-            'legacyUdlField' => $udl->legacyUdlField,
+            'id'                => $udl->id,
+            'companyId'         => $udl->companyId,
+            'name'              => $udl->name,
+            'inputType'         => $udl->inputType,
+            'legacyUdlField'    => $udl->legacyUdlField,
         ];
     }
 }
