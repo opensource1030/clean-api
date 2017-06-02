@@ -5,6 +5,7 @@ set :deploy_to, '/home/deploy/webapps/clean/api'
 set :branch, "env/prod"
 set :keep_releases, 4
 set :log_level, :debug
+set :linked_dirs, %w{storage/app/public}
 
 #require custom config
 # require './config/myconfig.rb'

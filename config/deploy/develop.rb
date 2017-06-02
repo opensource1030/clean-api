@@ -5,6 +5,7 @@ set :deploy_to, '/home/forge/staging.api.wirelessanalytics.com/'
 set :branch, 'master'
 set :keep_releases, 3
 set :log_level, :debug
+set :linked_dirs, %w{storage/app/public}
 
 set :ssh_options, {
   user: 'forge'
@@ -30,7 +31,7 @@ namespace :deploy do
   after :published, "composer:install"
   after :published, "laravel:permissions"
   after :published, "laravel:migrate"
-  after :published, "laravel:seed"
+  # after :published, "laravel:seed"
   after :published, "laravel:optimize"
   # after :published, "ops:reset_app"
 end
