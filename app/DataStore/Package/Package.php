@@ -14,6 +14,7 @@ class Package extends BaseDataStore
     protected $fillable = [
             'name',
             'information',
+            'approvalCode',
             'companyId',
             'updated_at', ];
 

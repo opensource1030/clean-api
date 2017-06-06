@@ -419,7 +419,7 @@ class UsersController extends FilteredApiController
             $success = false;
             $error['errors']['users'] = Lang::get('messages.NotOptionIncludeClass',
                 ['class' => 'User', 'option' => 'created', 'include' => '']);
-            //$error['errors']['Message'] = $e->getMessage();
+            $error['errors']['Message'] = $e->getMessage();
         }
 
         /*

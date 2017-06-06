@@ -232,9 +232,12 @@ class OrdersController extends FilteredApiController
         }
 
         if ($success) {
-            DB::commit();
-
+            if(!$this->createTicketOnEasyVista($order)) {
+                $error['errors']['orders'] = "Create Ticket on EasyVista Error";
+                return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+            }
             $res = $this->sendConfirmationEmail($data['attributes']['userId'], 'Order');
+            DB::commit();
             return $this->response()->item($order, new OrderTransformer(), ['key' => 'orders'])
                         ->setStatusCode($this->status_codes['created']);
         } else {
@@ -265,5 +268,124 @@ class OrdersController extends FilteredApiController
             $error['errors']['delete'] = Lang::get('messages.NotDeletedClass', ['class' => 'Order']);
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
+    }
+
+    private function createTicketOnEasyVista($order) {
+
+        try {
+            $user = \WA\DataStore\User\User::find($order->userId);
+            $address = \WA\DataStore\Address\Address::find($order->addressId);
+            $service = \WA\DataStore\Service\Service::find($order->serviceId);
+            $package = \WA\DataStore\Package\Package::find($order->packageId);
+            $devicevariations = $order->devicevariations;
+
+            $code = base64_encode(env('EV_API_LOGIN') . ':' . env('EV_API_PASSWORD'));
+            $attributes = $this->makeTheStringWithOrderAttributes($user, $address, $package, $service, $devicevariations);
+            \Log::debug("OrdersController@createTicketOnEasyVista - attributes: " . print_r($attributes, true));
+
+            $client = new \Guzzle\Http\Client('https://wa.easyvista.com/api/v1/50005/');
+            $uri = 'requests';
+            $post_data = array(
+                'Catalog_GUID' => '',
+                'Catalog_Code' => $package->approvalCode,
+                'AssetID' => '',
+                'AssetTag' => '',
+                'ASSET_NAME' => '',
+                'Urgency_ID' => '2',
+                'Severity_ID' => '41',
+                'External_reference' => '',
+                'Phone' => '',
+                'Requestor_Identification' => '',
+                'Requestor_Mail' => $user->email,
+                'Requestor_Name' => '',
+                'Location_ID' => '',
+                'Location_Code' => '',
+                'Department_ID' => '',
+                'Department_Code' => '',
+                'Recipient_ID' => '',
+                'Recipient_Identification' => '',
+                'Recipient_Mail' => $user->email,
+                'Recipient_Name' => '',
+                'Origin' => '2',
+                'Description' => 'An order has been created for :' . $attributes,
+                'ParentRequest' => '',
+                'CI_ID' => '',
+                'CI_ASSET_TAG' => '',
+                'CI_NAME' => '',
+                'SUBMIT_DATE' => ''
+            );
+            $data = json_encode(['requests' => [$post_data]]);
+            $request = $client->post($uri, array(
+                'content-type' => 'application/json',
+                'Authorization' => 'Basic anN0ZWVsZTp3MXJlbGVzcw=='// . $code
+            ));
+
+            $request->setBody($data);
+            $response = $request->send();
+            \Log::debug("OrdersController@createTicketOnEasyVista - response: " . print_r($response, true));
+            return true;
+        } catch (\Exception $e) {
+            \Log::debug("OrdersController@createTicketOnEasyVista - e: " . print_r($e->getMessage(), true));
+            return false;
+        }
+    }
+
+    private function makeTheStringWithOrderAttributes($user, $address, $package, $service, $devicevariations) {
+        $attributes = '';
+
+        $attributes = $attributes .
+            '<bold>Username:</bold> ' . $user->username .
+            ' with email: ' . $user->email .
+            ', with supervisor: ' . $user->supervisorEmail . '<br>';
+
+        $attributes = $attributes .
+            ', <bold>Address Name:</bold> ' . $address->name .
+            ', from ' . $address->city .
+            ' ( ' . $address->state . ' - ' . $address->country . ' )<br>';
+
+        /*
+        if ($package != null) {
+            $attributes = $attributes . '<bold>Package Name:</bold> ' . $package->name . '<br>';
+        }
+        */
+
+        if ($service != null) {
+            $attributes = $attributes . '<bold>Service Name:</bold> ' . $service->title . ', ';
+            foreach ($service->serviceitems as $si) {
+                if ($si->domain == 'domestic' || $si->domain == 'international') {
+                    if ($si->value > 0) {
+                        $attributes = $attributes .
+                            $si->domain . ' ' .
+                            $si->category . ': ' .
+                            $si->value . ' ' .
+                            $si->unit . ', ';
+                    }
+                }
+            }
+        }
+
+        $attributes = $attributes . '<br>';
+
+        if (count($devicevariations) > 0) {
+            foreach ($devicevariations as $dv) {
+                if(isset($dv->devices)) {
+                    if (isset($dv->devices->devicetypes)) {
+                        if ($dv->devices->devicetypes->name == 'Smartphone') {
+                            $attributes = $attributes .
+                                '<bold>Device Name</bold>: ' . $dv->devices->name . ' : ' .
+                                $dv->devices->defaultPrice . ' ' .
+                                $dv->devices->currency;
+                            if($dv->devices->property != '') {
+                                $attributes = $attributes  . ', ' . $dv->devices->property;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        $attributes = $attributes . '.';
+
+        return $attributes;
     }
 }

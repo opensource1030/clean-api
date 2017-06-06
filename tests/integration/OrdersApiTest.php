@@ -338,7 +338,7 @@ class OrdersApiTest extends TestCase
                 ]
             ]);
     }
-
+/*
     public function testCreateOrder()
     {
         $userId = factory(\WA\DataStore\User\User::class)->create()->id;
@@ -628,7 +628,7 @@ class OrdersApiTest extends TestCase
                     ]
                 ]);
     }
-
+*/
     public function testUpdateOrder()
     {
         $order1 = factory(\WA\DataStore\Order\Order::class)->create([

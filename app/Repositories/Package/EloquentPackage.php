@@ -34,6 +34,10 @@ class EloquentPackage extends AbstractRepository implements PackageInterface
             $package->information = $data['information'];
         }
 
+        if (isset($data['approvalCode'])) {
+            $package->approvalCode = $data['approvalCode'];
+        }
+
         if (!$package->save()) {
             return 'notSaved';
         }
@@ -77,6 +81,7 @@ class EloquentPackage extends AbstractRepository implements PackageInterface
         $packageData = [
             'name' => isset($data['name']) ? $data['name'] : '',
             'information' => isset($data['information']) ? $data['information'] : '',
+            'approvalCode' => isset($data['approvalCode']) ? $data['approvalCode'] : null,
             'companyId' => isset($data['companyId']) ? $data['companyId'] : 0,
         ];
 

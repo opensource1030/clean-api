@@ -9,7 +9,6 @@ use WA\DataStore\FilterableTransformer;
  */
 class PackageTransformer extends FilterableTransformer
 {
-
     protected $availableIncludes = [
         'apps',
         'orders',
@@ -27,12 +26,13 @@ class PackageTransformer extends FilterableTransformer
     public function transform(Package $package)
     {
         return [
-            'id'         => (int)$package->id,
-            'name'       => $package->name,
-            'information'=> $package->information,
-            'companyId'  => (int)$package->companyId,
-            'created_at' => $package->created_at,
-            'updated_at' => $package->updated_at,
+            'id'            => (int)$package->id,
+            'name'          => $package->name,
+            'information'   => $package->information,
+            'approvalCode'  => $package->approvalCode,
+            'companyId'     => (int)$package->companyId,
+            'created_at'    => $package->created_at,
+            'updated_at'    => $package->updated_at,
         ];
     }
 
