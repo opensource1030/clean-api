@@ -14,7 +14,19 @@ class RelationshipsController extends ApiController
 {
     public function includeRelationships($modelPlural, $id, $includePlural)
     {
-        $criteria = $this->getRequestCriteria();
+        $modelName = title_case($modelPlural);
+        $modelSingular = str_singular($modelName);
+        $controllerName = "\\WA\\Http\\Controllers\\${modelName}Controller";
+
+        if (!class_exists($controllerName)) {
+            $error['errors'][$modelPlural] = \Illuminate\Support\Facades\Lang::get('messages.NotExistClass',
+                  ['class' => $modelSingular]);
+            return response()->json($error)->setStatusCode(404);
+        }
+
+        $controller = app()->make($controllerName);
+
+        $criteria = $controller->getRequestCriteria();
         $plural = str_plural($modelPlural);
 
         if ($plural == $modelPlural) {
@@ -59,7 +71,19 @@ class RelationshipsController extends ApiController
 
     public function includeInformationRelationships($modelPlural, $id, $includePlural)
     {
-        $criteria = $this->getRequestCriteria();
+        $modelName = title_case($modelPlural);
+        $modelSingular = str_singular($modelName);
+        $controllerName = "\\WA\\Http\\Controllers\\${modelName}Controller";
+
+        if (!class_exists($controllerName)) {
+            $error['errors'][$modelPlural] = \Illuminate\Support\Facades\Lang::get('messages.NotExistClass',
+                  ['class' => $modelSingular]);
+            return response()->json($error)->setStatusCode(404);
+        }
+
+        $controller = app()->make($controllerName);
+
+        $criteria = $controller->getRequestCriteria();
         $plural = str_plural($modelPlural);
 
         if ($plural == $modelPlural) {
@@ -96,8 +120,7 @@ class RelationshipsController extends ApiController
             return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
         }
 
-        $includeTC = title_case(str_singular($includePlural));
-        $transformer = "\\WA\\DataStore\\$includeTC\\$includeTC".'Transformer';
+        $transformer = $this->createTransformer($includePlural);
 
         $response = $this->response()->withPaginator($results, new $transformer(), ['key' => $includePlural]);
         $response = $this->applyMeta($response);

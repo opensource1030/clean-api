@@ -76,7 +76,7 @@ abstract class FilterableTransformer extends TransformerAbstract
 
     }
 
-    private function createTransformer($finder) 
+    protected function createTransformer($finder)
     {
         if($finder === 'devicevariations') {
             return "\\WA\\DataStore\\DeviceVariation\\DeviceVariationTransformer";

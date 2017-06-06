@@ -410,7 +410,7 @@ trait Criteria
         return $model;
     }
 
-    private function createTransformer($var)
+    protected function createTransformer($var)
     {
         if($var === 'categoryapps') { return "\\WA\\DataStore\\Category\\CategoryAppTransformer"; }
         if($var === 'devicetypes') { return "\\WA\\DataStore\\DeviceType\\DeviceTypeTransformer"; }

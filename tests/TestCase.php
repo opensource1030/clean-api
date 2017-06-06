@@ -1,6 +1,6 @@
 <?php
 
-abstract class TestCase extends \Laravel\Lumen\Testing\TestCase
+abstract class TestCase extends Laravel\BrowserKitTesting\TestCase //Laravel\Lumen\Testing\TestCase
 {
     use \Laravel\Lumen\Testing\DatabaseMigrations;
 
@@ -8,7 +8,7 @@ abstract class TestCase extends \Laravel\Lumen\Testing\TestCase
 
     protected $mainCompany, $mainUserSuperAdmin, $roleSuperAdmin, $mainUserAdmin, $roleAdmin, $mainUser, $roleUser;
 
-    /*
+    /**
      * Creates the application.
      *
      * @return \Laravel\Lumen\Application
@@ -18,7 +18,12 @@ abstract class TestCase extends \Laravel\Lumen\Testing\TestCase
         $app = require __DIR__.'/../bootstrap/app.php';
         $this->baseUrl = 'http://'.getenv('API_DOMAIN');
 
+        //$app->make(Kernel::class)->bootstrap();
+        //$app['config']->set('database.default','sqlite');
+        //$app['config']->set('database.connections.sqlite.database', ':memory:');
+
         return $app;
+
     }
 
     public function setUp(){

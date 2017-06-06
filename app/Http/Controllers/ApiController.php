@@ -154,7 +154,7 @@ abstract class ApiController extends BaseController
         }
     }
 
-    private function createTransformer($var) 
+    protected function createTransformer($var)
     {
         if($var === 'devicevariations') {
             return "\\WA\\DataStore\\DeviceVariation\\DeviceVariationTransformer";
@@ -226,13 +226,13 @@ abstract class ApiController extends BaseController
             foreach ($listOfAdmins as $key => $admin) {
                 //dd($admin);
                 $adminRetrieved = \WA\DataStore\User\User::find($admin->user_id);
-                \Log::debug($adminRetrieved->companyId);
-                \Log::debug($userOrder->companyId);
+                //\Log::debug($adminRetrieved->companyId);
+                //\Log::debug($userOrder->companyId);
                 if ($adminRetrieved->companyId == $userOrder->companyId) {
 
-                    \Log::debug($userOrder->username);
-                    \Log::debug(env('MAIL_FROM_ADDRESS'));
-                    \Log::debug($type);
+                    //\Log::debug($userOrder->username);
+                    //\Log::debug(env('MAIL_FROM_ADDRESS'));
+                    //\Log::debug($type);
 
                     $res = \Illuminate\Support\Facades\Mail::send(
                         'emails.notifications.new_order_received', // VIEW NAME
