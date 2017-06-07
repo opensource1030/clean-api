@@ -333,7 +333,7 @@ class OrdersApiTest extends \TestCase
                 ]
             ]);
     }
-/*
+
     public function testCreateOrder()
     {
         $userId = factory(\WA\DataStore\User\User::class)->create()->id;
@@ -384,9 +384,9 @@ class OrdersApiTest extends \TestCase
                     ]
                 ]
             ]
-            )
-            //Log::debug("testCreateUser: ".print_r($res->response->getContent(), true));
-            ->seeJson(
+            );
+            Log::debug("testCreateUser: ".print_r($res->response->getContent(), true));
+            $res->seeJson(
                 [
                     'status' => 'Enabled',
                     'orderType' => 'UpgradeDevice',
@@ -398,7 +398,8 @@ class OrdersApiTest extends \TestCase
                     'deviceSim' => '3333333333',
                     'userId' => $userId,
                     'packageId' => $packageId,
-                    'serviceId' => $serviceId
+                    'serviceId' => $serviceId,
+                    'addressId' => $addressId
                 ])
             ->seeJsonStructure(
                 [
@@ -416,7 +417,8 @@ class OrdersApiTest extends \TestCase
                             'deviceSim',
                             'userId',
                             'packageId',
-                            'serviceId'
+                            'serviceId',
+                            'addressId'
                         ],
                         'links' => [
                             'self'
@@ -623,7 +625,7 @@ class OrdersApiTest extends \TestCase
                     ]
                 ]);
     }
-*/
+
     public function testUpdateOrder()
     {
         $order1 = factory(\WA\DataStore\Order\Order::class)->create([

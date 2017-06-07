@@ -242,10 +242,12 @@ class OrdersController extends FilteredApiController
         }
 
         if ($success) {
-            if(!$this->createTicketOnEasyVista($order)) {
-                $error['errors']['orders'] = "Create Ticket on EasyVista Error";
-                return response()->json($error)->setStatusCode($this->status_codes['conflict']);
-            }
+            if(env('EV_ENABLED')) {
+                if(!$this->createTicketOnEasyVista($order)) {
+                    $error['errors']['orders'] = "Create Ticket on EasyVista Error";
+                    return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+                }    
+            }            
             $res = $this->sendConfirmationEmail($data['attributes']['userId'], 'Order');
             DB::commit();
             return $this->response()->item($order, new OrderTransformer(), ['key' => 'orders'])
