@@ -28,6 +28,7 @@ class DatabaseSeeder extends Seeder
         $this->call(CompanyAddressTableSeeder::class);
         $this->call(CompanyDomainsTableSeeder::class);
         $this->call(CompanySaml2TableSeeder::class);
+        $this->call(CompanySettingsTableSeeder::class);
         $this->call(ConditionFieldsTableSeeder::class);
         $this->call(ConditionOperatorsTableSeeder::class);
         $this->call(ConditionsTableSeeder::class);
@@ -74,6 +75,7 @@ class DatabaseSeeder extends Seeder
         $this->call(PresetTableSeeder::class);
         $this->call(PresetDeviceVariationTableSeeder::class);
         $this->call(DeviceVariationImagesTableSeeder::class);
+        
         switch (DB::getDriverName()) {
             case 'mysql':
                 DB::statement('SET FOREIGN_KEY_CHECKS=1');

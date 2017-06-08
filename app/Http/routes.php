@@ -374,8 +374,15 @@ $api->version('v1', function ($api) {
         //$api->get('payments', ['as' => 'api.payments.index', 'uses' => $paymentsController . '@index']);
         //$api->get('payments/{id}', ['as' => 'api.payments.show', 'uses' => $paymentsController . '@show']);
         $api->post('payments', ['uses' => $paymentsController . '@create']);
-        //$api->put('payments/{id}', ['uses' => $paymentsController . '@store']);
+        //$api->patch('payments/{id}', ['uses' => $paymentsController . '@store']);
         $api->delete('payments/{id}', ['uses' => $paymentsController . '@delete']);
 
+        // =CompanySetting
+        $companySettingController = 'WA\Http\Controllers\CompanySettingsController';
+        $api->get('companysettings', ['as' => 'api.companysettings.index', 'uses' => $companySettingController . '@index']);
+        $api->get('companysettings/{id}', ['as' => 'api.companysettings.show', 'uses' => $companySettingController . '@show']);
+        $api->post('companysettings', ['uses' => $companySettingController . '@create']);
+        $api->patch('companysettings/{id}', ['uses' => $companySettingController . '@store']);
+        $api->delete('companysettings/{id}', ['uses' => $companySettingController . '@delete']);
     });
 });

@@ -12,6 +12,7 @@ use WA\DataStore\Category\CategoryApp;
 use WA\DataStore\Preset\Preset;
 use WA\DataStore\Company\Company;
 use WA\DataStore\Company\CompanyCurrentBillMonth;
+use WA\DataStore\Company\CompanySetting;
 use WA\DataStore\Condition\Condition;
 use WA\DataStore\Condition\ConditionField;
 use WA\DataStore\Condition\ConditionOperator;
@@ -53,6 +54,7 @@ use WA\Repositories\Category\EloquentCategoryApps;
 use WA\Repositories\Category\EloquentPreset;
 use WA\Repositories\Company\EloquentCompany;
 use WA\Repositories\CompanyCurrentBillMonth\EloquentCompanyCurrentBillMonth;
+use WA\Repositories\Company\EloquentCompanySetting;
 use WA\Repositories\Condition\EloquentCondition;
 use WA\Repositories\Condition\EloquentConditionField;
 use WA\Repositories\Condition\EloquentConditionOperator;
@@ -577,5 +579,18 @@ trait ServiceRegistration
             function () {
                 return new EloquentCompanyCurrentBillMonth(new CompanyCurrentBillMonth());
             });
+    }
+
+    /**
+     * @param
+     */
+    public function registerCompanySetting()
+    {
+        app()->bind(
+            'WA\Repositories\Company\CompanySettingInterface',
+            function () {
+                return new EloquentCompanySetting(new CompanySetting());
+            }
+        );
     }
 }
