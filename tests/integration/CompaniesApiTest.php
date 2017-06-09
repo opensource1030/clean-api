@@ -2762,6 +2762,10 @@ class CompaniesTest extends \TestCase
         @unlink($targetFile);
     }
 
+    /**
+     *
+     * @group CompaniesControllerTest
+     */
     public function testCompanyGetJob()
     {
         $job = factory(\WA\DataStore\Company\CompanyUserImportJob::class)->create();
@@ -2773,9 +2777,9 @@ class CompaniesTest extends \TestCase
                     'type',
                     'attributes' => [
                         'status',
-                        'total',
-                        'created',
-                        'updated',
+                        'totalUsers',
+                        'createdUsers',
+                        'updatedUsers',
                         'errors',
                         'sampleUser',
                         'CSVfields',
@@ -2786,6 +2790,10 @@ class CompaniesTest extends \TestCase
             ]);
     }
 
+    /**
+     *
+     * @group CompaniesControllerTest
+     */
     public function testCompanyPatchJob()
     {
         $job = factory(\WA\DataStore\Company\CompanyUserImportJob::class)->create();
@@ -2798,9 +2806,9 @@ class CompaniesTest extends \TestCase
                     "type" => "jobs",
                     "attributes" => [
                         "status" => "Pending",
-                        "total" => $job->total,
-                        "created" => 0,
-                        "updated" => 0,
+                        "totalUsers" => $job->total,
+                        "createdUsers" => 0,
+                        "updatedUsers" => 0,
                         "errors" => 0,
                         "sampleUser" => [
                             "email" => "douglas.rolfson@example.org1",
@@ -2851,15 +2859,28 @@ class CompaniesTest extends \TestCase
                             "defaultLocationId"
                         ],
                         "DBfields" => [
-                            "email" => "Main Email",
-                            "alternateEmail" => "Alternate Email",
-                            "firstName" => "First Name",
-                            "alternateFirstName" => "Alternate First Name",
-                            "lastName" => "Last Name",
-                            "supervisorEmail" => "Supervisor Email",
-                            "companyUserIdentifier" => "Company Identification",
-                            "defaultLocationId" => "Location",
-                            "notes" => "Notes"
+                            "email",
+                            "alternateEmail",
+                            "password",
+                            "username",
+                            "confirmation_code",
+                            "confirmed",
+                            "firstName",
+                            "lastName",
+                            "alternateFirstName",
+                            "supervisorEmail",
+                            "companyUserIdentifier",
+                            "isSupervisor",
+                            "isValidator",
+                            "isActive",
+                            "defaultLang",
+                            "notes",
+                            "level",
+                            "notify",
+                            "Cost Center",
+                            "Position",
+                            "Sector",
+                            "Vehicle"
                         ],
                         "mappings" => [
                             ["csvField" =>"email","dbField" =>"email"],
@@ -2874,9 +2895,9 @@ class CompaniesTest extends \TestCase
                     'type',
                     'attributes' => [
                         'status',
-                        'total',
-                        'created',
-                        'updated',
+                        'totalUsers',
+                        'createdUsers',
+                        'updatedUsers',
                         'errors',
                         'sampleUser',
                         'CSVfields',
@@ -2886,4 +2907,5 @@ class CompaniesTest extends \TestCase
                 ]
             ]);
     }
+
 }

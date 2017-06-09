@@ -27,14 +27,24 @@ $app->withFacades();
 
 /**
 Set up Logging with Papertrail
+<<<<<<< 096dd393f4f099149b27a122d044876163cf8ef4
 **//*
+=======
+**/
+/*
+>>>>>>> CP-1754 #Bulk employees endpoints (first steps)
 $app->configureMonologUsing(function($monolog) {
     $syslog = new \Monolog\Handler\SyslogHandler('lumen');
     $formatter = new \Monolog\Formatter\LineFormatter(null, null, false, true);
     $syslog->setFormatter($formatter);
     $monolog->pushHandler($syslog);
     return $monolog;
+<<<<<<< 096dd393f4f099149b27a122d044876163cf8ef4
 });*/
+=======
+});
+//*/
+>>>>>>> CP-1754 #Bulk employees endpoints (first steps)
 
 $app->withEloquent();
 

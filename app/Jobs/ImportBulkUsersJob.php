@@ -3,6 +3,7 @@
 namespace WA\Jobs;
 
 use WA\DataStore\Company\CompanyUserImportJob;
+use WA\DataStore\Company\CompanyUserImportJobTransformer;
 use WA\Helpers\Vendors\CSVParser;
 
 class ImportBulkUsersJob extends Job
@@ -27,14 +28,14 @@ class ImportBulkUsersJob extends Job
 
         $job = CompanyUserImportJob::find($this->jobId);
         if($job == null
-            || $job->status != CompanyUserImportJob::STATUS_PENDING
+            || $job->status != CompanyUserImportJobTransformer::STATUS_PENDING
             || (($job->created + $job->updated) >= $job->total)
             || ($job->failed >= $job->total)) {
             return;
         }
 
         // update job status to working
-        $job->status = CompanyUserImportJob::STATUS_WORKING;
+        $job->status = CompanyUserImportJobTransformer::STATUS_WORKING;
         $job->save();
 
         // start importing/updating
@@ -83,7 +84,7 @@ class ImportBulkUsersJob extends Job
             $job->save();
         }
 
-        $job->status = CompanyUserImportJob::STATUS_COMPLETED;
+        $job->status = CompanyUserImportJobTransformer::STATUS_COMPLETED;
         $job->save();
     }
 

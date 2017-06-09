@@ -12,6 +12,7 @@ use WA\DataStore\Category\CategoryApp;
 use WA\DataStore\Preset\Preset;
 use WA\DataStore\Company\Company;
 use WA\DataStore\Company\CompanyCurrentBillMonth;
+use WA\DataStore\Company\CompanyUserImportJob;
 use WA\DataStore\Condition\Condition;
 use WA\DataStore\Condition\ConditionField;
 use WA\DataStore\Condition\ConditionOperator;
@@ -55,6 +56,7 @@ use WA\Repositories\Category\EloquentCategoryApps;
 use WA\Repositories\Category\EloquentPreset;
 use WA\Repositories\Company\EloquentCompany;
 use WA\Repositories\CompanyCurrentBillMonth\EloquentCompanyCurrentBillMonth;
+use WA\Repositories\Company\EloquentCompanyUserImportJob;
 use WA\Repositories\Condition\EloquentCondition;
 use WA\Repositories\Condition\EloquentConditionField;
 use WA\Repositories\Condition\EloquentConditionOperator;
@@ -283,6 +285,23 @@ trait ServiceRegistration
             }
         );
     }
+
+
+    /**
+     * @param
+     */
+    protected function registerCompanyUserImportJob()
+    {
+        app()->bind(
+            'WA\Repositories\Company\CompanyUserImportJobInterface',
+            function () {
+                return new EloquentCompanyUserImportJob(
+                    new CompanyUserImportJob()
+                );
+            }
+        );
+    }
+
 
     /**
      * @param
