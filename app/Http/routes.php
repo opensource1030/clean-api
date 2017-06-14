@@ -377,12 +377,12 @@ $api->version('v1', function ($api) {
         //$api->patch('payments/{id}', ['uses' => $paymentsController . '@store']);
         $api->delete('payments/{id}', ['uses' => $paymentsController . '@delete']);
 
-        // =CompanySetting
-        $companySettingController = 'WA\Http\Controllers\CompanySettingsController';
-        $api->get('companysettings', ['as' => 'api.companysettings.index', 'uses' => $companySettingController . '@index']);
-        $api->get('companysettings/{id}', ['as' => 'api.companysettings.show', 'uses' => $companySettingController . '@show']);
-        $api->post('companysettings', ['uses' => $companySettingController . '@create']);
-        $api->patch('companysettings/{id}', ['uses' => $companySettingController . '@store']);
-        $api->delete('companysettings/{id}', ['uses' => $companySettingController . '@delete']);
+        // =GlobalSetting
+        $globalSettingController = 'WA\Http\Controllers\GlobalSettingsController';
+        $api->get('globalsettings', ['as' => 'api.globalsettings.index', 'uses' => $globalSettingController . '@index']);
+        $api->get('globalsettings/{id}', ['as' => 'api.globalsettings.show', 'uses' => $globalSettingController . '@show']);
+        $api->post('globalsettings', ['uses' => $globalSettingController . '@create']);
+        $api->patch('globalsettings/{id}', ['uses' => $globalSettingController . '@store']);
+        $api->delete('globalsettings/{id}', ['uses' => $globalSettingController . '@delete']);
     });
 });

@@ -5,9 +5,9 @@
  *
  * @author   Agustí Dosaiguas
  */
-class CompanySettingsTableSeeder extends BaseTableSeeder
+class GlobalSettingsValuesTableSeeder extends BaseTableSeeder
 {
-    protected $table = 'company_settings';
+    protected $table = 'global_settings_values';
 
     /**
      * Run the database seeds.
@@ -18,28 +18,34 @@ class CompanySettingsTableSeeder extends BaseTableSeeder
 
         $data = [
             [
+                'name' => 'enable',
+                'label' => 'Enable',
                 'globalSettingId' => 1,
-                'companyId' => 1,
             ],
             [
+                'name' => 'disable',
+                'label' => 'Disable',
                 'globalSettingId' => 1,
-                'companyId' => 2,
             ],
             [
+                'name' => 'protected',
+                'label' => 'Protected',
                 'globalSettingId' => 1,
-                'companyId' => 3,
             ],
             [
+                'name' => 'enable',
+                'label' => 'Enable',
                 'globalSettingId' => 2,
-                'companyId' => 3,
             ],
             [
+                'name' => 'disable',
+                'label' => 'Disable',
                 'globalSettingId' => 2,
-                'companyId' => 2,
             ],
             [
+                'name' => 'protected',
+                'label' => 'Protected',
                 'globalSettingId' => 2,
-                'companyId' => 1,
             ],
         ];
 

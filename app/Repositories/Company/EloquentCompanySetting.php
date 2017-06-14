@@ -24,19 +24,16 @@ class EloquentCompanySetting extends AbstractRepository implements CompanySettin
             return 'notExist';
         }
 
-        if (isset($data['value'])) {
-            $companySetting->value = $data['value'];
-        }
         if (isset($data['name'])) {
             $companySetting->name = $data['name'];
+        }
+        if (isset($data['label'])) {
+            $companySetting->label = $data['label'];
         }
         if (isset($data['description'])) {
             $companySetting->description = $data['description'];
         }
-        if (isset($data['companyId'])) {
-            $companySetting->companyId = $data['companyId'];
-        }
-
+        
         if (!$companySetting->save()) {
             return 'notSaved';
         }
@@ -54,8 +51,8 @@ class EloquentCompanySetting extends AbstractRepository implements CompanySettin
     public function create(array $data)
     {
         $companySetting = [
-            "value" => isset($data['value']) ? $data['value'] : '',
             "name" => isset($data['name']) ? $data['name'] : '',
+            "label" => isset($data['label']) ? $data['label'] : '',
             "description" => isset($data['description']) ? $data['description'] : '',
             "companyId" => isset($data['companyId']) ? $data['companyId'] : ''
         ];

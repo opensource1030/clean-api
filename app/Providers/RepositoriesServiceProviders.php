@@ -62,6 +62,7 @@ class RepositoriesServiceProviders extends ServiceProvider
         $this->registerConditionField();
         $this->registerConditionOperator();
         $this->registerCurrentBillMonth();
-        $this->registerCompanySetting();
+        $this->registerGlobalSetting();
+        $this->registerGlobalSettingValue();
     }
 }

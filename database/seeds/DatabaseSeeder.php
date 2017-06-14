@@ -28,7 +28,6 @@ class DatabaseSeeder extends Seeder
         $this->call(CompanyAddressTableSeeder::class);
         $this->call(CompanyDomainsTableSeeder::class);
         $this->call(CompanySaml2TableSeeder::class);
-        $this->call(CompanySettingsTableSeeder::class);
         $this->call(ConditionFieldsTableSeeder::class);
         $this->call(ConditionOperatorsTableSeeder::class);
         $this->call(ConditionsTableSeeder::class);
@@ -42,6 +41,8 @@ class DatabaseSeeder extends Seeder
         $this->call(DeviceTypeSeeder::class);
         //$this->call(DeviceTypeSeeder::class);
         $this->call(ImagesTableSeeder::class);
+        $this->call(GlobalSettingsTableSeeder::class);
+        $this->call(GlobalSettingsValuesTableSeeder::class);
         $this->call(LocationsTableSeeder::class);
         $this->call(ModificationsTableSeeder::class);
         //$this->call(OAuthTableSeeder::class);

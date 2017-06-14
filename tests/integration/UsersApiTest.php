@@ -12,7 +12,7 @@ class UsersApiTest extends TestCase
     /**
      * A basic functional test for user endpoints.
      */
-    
+
     public function testGetUsers()
     {
         $user = factory(\WA\DataStore\User\User::class, 20)->create();
@@ -865,7 +865,7 @@ class UsersApiTest extends TestCase
             ]);
     }
 
-    public function testCreateUser()
+    public function testCreateUserAll()
     {
         $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
         $companyDomain = factory(\WA\DataStore\Company\CompanyDomains::class)->create(['domain' => 'email.com', 'companyId' => $companyId]);
