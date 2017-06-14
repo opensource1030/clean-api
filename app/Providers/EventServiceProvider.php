@@ -16,6 +16,9 @@ class EventServiceProvider extends ServiceProvider
         'WA\Events\SomeEvent' => [
             'WA\Listeners\EventListener',
         ],
+        'WA\Events\Handlers\EmailEvent' => [
+            'WA\Events\Handlers\EmailEvent@sendOrderConfirmationEmail',
+        ],
         'Aacotroneo\Saml2\Events\Saml2LoginEvent' => [
             'WA\Events\Handlers\Saml2\MainHandler@saml2LoginUser',
         ],

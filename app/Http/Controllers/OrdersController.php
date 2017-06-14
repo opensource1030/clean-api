@@ -227,6 +227,8 @@ class OrdersController extends FilteredApiController
                 return response()->json($error)->setStatusCode($this->status_codes['conflict']);
             }
             DB::commit();
+
+            event(new \WA\Events\Handlers\CreateOrder($order));
             return $this->response()->item($order, new OrderTransformer(), ['key' => 'orders'])
                         ->setStatusCode($this->status_codes['created']);
         } else {
