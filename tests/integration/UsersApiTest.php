@@ -2,7 +2,11 @@
 
 class UsersApiTest extends \TestCase
 {
-    use \Laravel\Lumen\Testing\DatabaseMigrations;
+
+    use DatabaseMigrations;
+    /**
+     * A basic functional test for user endpoints.
+     */
 
     public function testGetUsers()
     {
@@ -852,7 +856,7 @@ class UsersApiTest extends \TestCase
             ]);
     }
 
-    public function testCreateUser()
+    public function testCreateUserAll()
     {
         $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
         $companyDomain = factory(\WA\DataStore\Company\CompanyDomains::class)->create(['domain' => 'email.com', 'companyId' => $companyId]);

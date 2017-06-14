@@ -897,7 +897,16 @@ $api->version('v1', function ($api) {
         //$api->get('payments', ['as' => 'api.payments.index', 'uses' => $paymentsController . '@index']);
         //$api->get('payments/{id}', ['as' => 'api.payments.show', 'uses' => $paymentsController . '@show']);
         $api->post('payments', ['uses' => $paymentsController . '@create']);
-        //$api->put('payments/{id}', ['uses' => $paymentsController . '@store']);
+        //$api->patch('payments/{id}', ['uses' => $paymentsController . '@store']);
         $api->delete('payments/{id}', ['uses' => $paymentsController . '@delete']);
+
+
+        // =GlobalSetting
+        $globalSettingController = 'WA\Http\Controllers\GlobalSettingsController';
+        $api->get('globalsettings', ['as' => 'api.globalsettings.index', 'uses' => $globalSettingController . '@index']);
+        $api->get('globalsettings/{id}', ['as' => 'api.globalsettings.show', 'uses' => $globalSettingController . '@show']);
+        $api->post('globalsettings', ['uses' => $globalSettingController . '@create']);
+        $api->patch('globalsettings/{id}', ['uses' => $globalSettingController . '@store']);
+        $api->delete('globalsettings/{id}', ['uses' => $globalSettingController . '@delete']);
     });
 });

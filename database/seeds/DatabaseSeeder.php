@@ -39,6 +39,8 @@ class DatabaseSeeder extends Seeder
         $this->call(DeviceTypeSeeder::class);
         //$this->call(DeviceTypeSeeder::class);
         $this->call(ImagesTableSeeder::class);
+        $this->call(GlobalSettingsTableSeeder::class);
+        $this->call(GlobalSettingsValuesTableSeeder::class);
         $this->call(LocationsTableSeeder::class);
         $this->call(ModificationsTableSeeder::class);
         //$this->call(OAuthTableSeeder::class);
@@ -73,6 +75,7 @@ class DatabaseSeeder extends Seeder
         $this->call(PresetTableSeeder::class);
         $this->call(PresetDeviceVariationTableSeeder::class);
         $this->call(DeviceVariationImagesTableSeeder::class);
+        
         switch (DB::getDriverName()) {
             case 'mysql':
                 DB::statement('SET FOREIGN_KEY_CHECKS=1');
