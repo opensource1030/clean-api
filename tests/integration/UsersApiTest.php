@@ -3,7 +3,7 @@
 class UsersApiTest extends \TestCase
 {
 
-    use DatabaseMigrations;
+    use Laravel\Lumen\Testing\DatabaseMigrations;
     /**
      * A basic functional test for user endpoints.
      */
