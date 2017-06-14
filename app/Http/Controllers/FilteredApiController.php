@@ -160,7 +160,7 @@ abstract class FilteredApiController extends ApiController
         $transformer = "\\WA\\DataStore\\${model}\\${model}Transformer";
         $includeTransformer = "\\WA\\DataStore\\${includeModel}\\${includeModel}Transformer";
 
-        $class = "\\WA\\Repositories\\${model}\\${model}Interface";
+        $class = "WA\\Repositories\\${model}\\${model}Interface";
         $repository = app()->make($class);
 
         if ($repository === null || !($repository instanceOf AbstractRepository)) {
@@ -220,7 +220,7 @@ abstract class FilteredApiController extends ApiController
         }
 
         try {
-            $class = "\\WA\\Repositories\\${model}\\${model}Interface";
+            $class = "WA\\Repositories\\${model}\\${model}Interface";
             $repository = app()->make($class);
             if ($repository !== null && $repository instanceOf AbstractRepository) {
                 $criteria = $this->getRequestCriteria();

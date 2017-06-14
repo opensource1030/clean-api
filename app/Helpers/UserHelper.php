@@ -38,7 +38,7 @@ class UserHelper extends AuthorizedController
                 $id = $this->randGenerator($company->shortName);
             }
 
-            $user = app()->make('\WA\Repositories\User\UserInterface');
+            $user = app()->make('WA\Repositories\User\UserInterface');
             $dup_id = $user->byIdentification($id);
 
             if (count($dup_id)) {
