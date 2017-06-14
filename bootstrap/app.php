@@ -145,6 +145,7 @@ $app->register(\GrahamCampbell\Flysystem\FlysystemServiceProvider::class);
 $app->register(WA\Providers\AuthServiceProvider::class);
 $app->register(WA\Providers\PassportServiceProvider::class);
 $app->register(\WA\Providers\SSOGrantProvider::class);
+$app->register(Brexis\LaravelWorkflow\Facades\WorkflowFacade::class);
 app('Dingo\Api\Transformer\Factory')->setAdapter(function ($app) {
     $base_url = env('API_DOMAIN', 'api.wirelessanalytics.com');
     // $serializer = new \League\Fractal\Serializer\JsonApiSerializer($base_url);
@@ -201,9 +202,12 @@ if (!class_exists('Request')) {
     class_alias('Illuminate\Support\Facades\Request', 'Request');
 }
 
-
 if (!class_exists('Flysystem')) {
     class_alias('\GrahamCampbell\Flysystem\Facades\Flysystem', 'Flysystem');
+}
+
+if (!class_exists('Workflow')) {
+    class_alias('Brexis\LaravelWorkflow\Facades\WorkflowFacade', 'Workflow');
 }
 
 
