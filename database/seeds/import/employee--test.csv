@@ -1,0 +1,3 @@
+email,alternateEmail,password,username,confirmation_code,confirmed,firstName,lastName,alternateFirstName,supervisorEmail,companyUserIdentifier,isSupervisor,isValidator,isActive,defaultLang,level,notify,companyId,supervisorId,externalId,approverId,defaultLocationId,udl-for-tests
+douglas.rolfson@example.org,correo@cambiado.org,password cambiado,username cambiado,codigo cambiado,1,Firstname cambiado,Lastname cambiado,AlternateName cambiado,supervisor@cambiad.org,2,0,0,1,en,0,0,1,3,\N,1,52,udl-value-1
+unonuevo@cambiado.org,nuevocambiado@cambiado.org,Cambiado 2,username cambiado,Código 2,0,Primer nombre,Ultimo nombre,Nombre alternativo,Ssuperv@cambiado.org,0,0,0,1,en,0,0,1,3,\N,1,52,udl-value-3

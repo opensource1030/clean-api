@@ -24,22 +24,20 @@ class ImportBulkUsersJob extends Job
      */
     public function handle()
     {
-        $userInterface = app()->make('WA\Repositories\User\UserInterface');
-
-        $job = CompanyUserImportJob::find($this->jobId);
-        if($job == null
-            || $job->status != CompanyUserImportJobTransformer::STATUS_PENDING
-            || (($job->created + $job->updated) >= $job->total)
-            || ($job->failed >= $job->total)) {
-            return;
-        }
-
-        // update job status to working
-        $job->status = CompanyUserImportJobTransformer::STATUS_WORKING;
-        $job->save();
+        $companyUserImportJob = app()->make('WA\Repositories\Company\CompanyUserImportJobInterface');
+        
+        $data = [
+            'id' => $this->jobId,
+            'status' => CompanyUserImportJobTransformer::STATUS_WORKING
+        ];
+        $job = $companyUserImportJob->update($data);
 
         // start importing/updating
-        $filePath = storage_path() . DIRECTORY_SEPARATOR . $job->path . DIRECTORY_SEPARATOR . $job->file;
+        $filePath = $job->filepath;
+        /*
+        // storage_path() . DIRECTORY_SEPARATOR . $job->path;
+        // . DIRECTORY_SEPARATOR . $job->file;
+        //*/
         $csvParser = new CSVParser($filePath);
         $rows = $csvParser->getRows(true);
 
@@ -47,45 +45,45 @@ class ImportBulkUsersJob extends Job
             if($index == 0) continue;
             if(empty($row)) continue;
             if(join('', $row) == '') continue;
-
             $formattedRow = $this->getFormatRow($rows[0], $row);
-
             // check email is empty,
             // then increase failed and continue
             if(empty($formattedRow->email)) {
-                $job->failed = min($job->failed + 1, $job->total);
+                $job->failedUsers = min($job->failedUsers + 1, $job->totalUsers);
                 $job->save();
 
                 continue;
             }
-
             // check if email is already exist
             // if exist, update it
             // if not, create new one
+            $userInterface = app()->make('WA\Repositories\User\UserInterface');
             $user = $userInterface->byEmail($formattedRow->email);
             $mappings = unserialize($job->mappings);
             $data = $this->makeMappingRow($mappings, $formattedRow);
             if($user == null) {
                 $result = $userInterface->create($data);
                 if($result == false) {
-                    $job->failed = min($job->failed + 1, $job->total);
+                    $job->failedUsers = min($job->failedUsers + 1, $job->totalUsers);
                 } else {
-                    $job->created = min($job->created + 1, $job->total);
+                    $job->createdUsers = min($job->createdUsers + 1, $job->totalUsers);
                 }
             } else {
                 $data['id'] = $user->id;
                 $result = $userInterface->update($data);
                 if($result == 'notSaved') {
-                    $job->failed = min($job->failed + 1, $job->total);
+                    $job->failedUsers = min($job->failedUsers + 1, $job->totalUsers);
                 } else {
-                    $job->updated = min($job->updated + 1, $job->total);
+                    $job->updatedUsers = min($job->updatedUsers + 1, $job->totalUsers);
                 }
             }
             $job->save();
         }
-
-        $job->status = CompanyUserImportJobTransformer::STATUS_COMPLETED;
-        $job->save();
+        $data = [
+            'id' => $this->jobId,
+            'status' => CompanyUserImportJobTransformer::STATUS_COMPLETED
+        ];
+        $jobUpdated = $companyUserImportJob->update($data);
     }
 
     private function getFormatRow($header, $row) {

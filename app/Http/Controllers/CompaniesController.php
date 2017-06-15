@@ -22,6 +22,7 @@ use WA\Jobs\ImportBulkUsersJob;
 use WA\Repositories\Company\CompanyInterface;
 use WA\Repositories\Company\CompanyUserImportJobInterface;
 use WA\Repositories\Udl\UdlInterface;
+use WA\DataStore\User\User;
 
 /**
  * Class CompaniesController.
@@ -205,6 +206,13 @@ class CompaniesController extends FilteredApiController {
 
 		try {
 			$company = $this->company->create($data['attributes']);
+			if(!$company) {
+				DB::rollBack();
+				$error['errors']['companies'] = Lang::get('messages.NotOptionIncludeClass',
+					['class' => 'Company', 'option' => 'created', 'include' => '']);
+				$error['errors']['Message'] = $e->getMessage();
+				return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+			}
 		} catch (\Exception $e) {
 			DB::rollBack();
 			$error['errors']['companies'] = Lang::get('messages.NotOptionIncludeClass',
@@ -378,30 +386,100 @@ class CompaniesController extends FilteredApiController {
 		}
 
 		$data = [
-		    "company_id" => $companyId,
-            "path" => $filePath,
-            "file" => $uploadedFileName,
-            "total" => 0,
-            "created" => 0,
-            "updated" => 0,
-            "failed" => 0,
+		    "companyId" => $companyId,
+            "filepath" => $filePath,
+            "filename" => $uploadedFileName,
+            "totalUsers" => 0,
+            "createdUsers" => 0,
+            "updatedUsers" => 0,
+            "failedUsers" => 0,
             "fields" => $rows[0],
-            "sample" => array_combine($rows[0], $firstMeaningfulRow),
+            "sampleUsers" => array_combine($rows[0], $firstMeaningfulRow),
             "mappings" => new \stdClass,
             "status" => 0,
             "created_by_id" => 1, // Auth::user()->id,
             "updated_by_id" => 1, // Auth::user()->id,
         ];
 
-		// CREAS EL TRABAJO:
+        $dbFields = [];
+
+        // Step 1. Add the Database Fields of the table, just hardcoded:
+
+        $user = User::where('companyId', $companyId)->first();
+        if(!isset($user)) {
+	        $user = factory(\WA\DataStore\User\User::class)->create([
+	        	"companyId" => $companyId
+	        ]);
+        }
+        $dbFields_1 = $user->getFillable();
+        $dbFields_1 = $this->filterUnnecessaryFields($dbFields_1);
+        // commented fields exist in database, but are not relevant here:
+        $dbFields_1 = [
+            "uuid",
+            "identification",
+            "email",
+            "alternateEmail",
+            //"password",
+            "username",
+            //"confirmation_code",
+            //"remember_token",
+            //"confirmed",
+            "firstName",
+            "lastName",
+            "alternateFirstName",
+            //"supervisorEmail",
+            //"companyUserIdentifier",
+            "isSupervisor",
+            "isValidator",
+            "isActive",
+            //"rgt",
+            //"lft",
+            "hierarchy",
+            "defaultLang",
+            "notes",
+            "level",
+            //"notify",
+            //"companyId",
+            //"syncId",
+            //"supervisorId",
+            //"externalId",
+            //"approverId",
+            //"defaultLocationId",
+            //"deleted_at",
+            //"created_at",
+            //"updated_at",
+        ];
+
+        $dbFields = array_merge($dbFields, $dbFields_1);
+
+        // Step 2. Add all the UDLs from the company (from the model):
+
+        $dbFields_2 = [];
+        $company = Company::find($companyId);
+        
+        $udls = $company->udls;
+        $dbFields_2 = [];
+
+        foreach($udls as $val) {
+            array_push($dbFields_2, $val->name);
+        }
+
+        $dbFields = array_merge($dbFields, $dbFields_2);
+
+		// Create the job:
 		$companyUserImportJob = $this->companyUserImportJob->create($data);// --> ELOQUENT.
+		$companyUserImportJob->dbfields = $dbFields;
+		
+		// \Log::debug(json_encode($companyUserImportJob, JSON_PRETTY_PRINT));
 
 		return $this->response()->item(
 			$companyUserImportJob,
-			new CompanyUserImportJobTransformer(),
+			$companyUserImportJob->getTransformer(),
 			['key' => 'companyuserimportjobs']
 		)->setStatusCode($this->status_codes['created']);
+		
 	}
+
 
 	/**
 	 * Retrieve the information related to the job.
@@ -409,62 +487,30 @@ class CompaniesController extends FilteredApiController {
 	 * @param $companyId
 	 * @param $jobId
 	 * @return mixed
-	 *//*
-	public function showJob($companyId, $jobId) {
-
-		// check if company is exist
-		$company = Company::find($companyId);
-		if ($company == null) {
-			$error['errors']['company'] = Lang::get('messages.NotExistClass', ['class' => 'Company']);
-			return response()->json($error)->setStatusCode($this->status_codes['notexists']);
-		}
-
-		// get job details
-		$companyUserImportJob = CompanyUserImportJob::find($jobId);
-		if ($companyUserImportJob == null) {
-			$error['errors']['job'] = Lang::get('messages.NotExistClass', ['class' => 'Job']);
-			return response()->json($error)->setStatusCode($this->status_codes['notexists']);
-		}
-
-		// dd($companyUserImportJob);
-
-		$response = $this->response->item($resource, $transformer, ['key' => $this->modelPlural]);
-		$response = $this->applyMeta($response);
-		return $response;
-
-		return response()->json($companyUserImportJob);
-	}*/
-
-		/**
-	 * Show a single resource
-	 *
-	 * Get a payload of a single resource by it's ID
-	 *
-	 * @Get("/{id}")
-	 *
-	 * @param $id
-	 * @param Request $request
-	 * @return Response
 	 */
 	public function showJob($companyId, $jobId, Request $request) {
+        $criteria = $this->getRequestCriteria();
+        $this->companyUserImportJob->setCriteria($criteria);
+        $resource = $this->companyUserImportJob->byId($jobId);
 
-		$resource = CompanyUserImportJob::find($jobId);
+        if ($resource === null) {
+            $error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => $this->modelName]);
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+        }
 
-		if ($resource === null) {
-			$error['errors']['get'] = Lang::get('messages.NotExistClass', ['class' => $this->modelName]);
-			return response()->json($error)->setStatusCode($this->status_codes['notexists']);
-		}
+        $transformer = $this->companyUserImportJob->getTransformer();
 
-		$transformer = $resource->getTransformer();
+        if (!$this->includesAreCorrect($request, $transformer)) {
+            $error['errors']['getIncludes'] = Lang::get('messages.NotExistInclude');
+            return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
+        }
 
-		if (!$this->includesAreCorrect($request, $transformer)) {
-			$error['errors']['getIncludes'] = Lang::get('messages.NotExistInclude');
-			return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
-		}
+        $response = $this->response->item($resource, $transformer, ['key' => 'companyuserimpotjobs']);
+        $response = $this->applyMeta($response);
+        return $response;
 
-		$response = $this->response->item($resource, $transformer, ['key' => $this->modelPlural]);
-		return $response;
-	}
+    }
+
 
 	/**
 	 * Update the information related to the job.
@@ -475,6 +521,7 @@ class CompaniesController extends FilteredApiController {
 	 * @return mixed
 	 */
 	public function storeJob($companyId, $jobId, Request $request) {
+
 		if (!$this->isJsonCorrect($request, 'jobs')) {
 			$error['errors']['json'] = Lang::get('messages.InvalidJson');
 			return response()->json($error)->setStatusCode($this->status_codes['conflict']);
@@ -488,7 +535,10 @@ class CompaniesController extends FilteredApiController {
 		}
 
 		// get job details
-		$job = CompanyUserImportJob::find($jobId);
+		$criteria = $this->getRequestCriteria();
+        $this->companyUserImportJob->setCriteria($criteria);
+		$job = $this->companyUserImportJob->byId($jobId);
+
 		if ($job == null) {
 			$error['errors']['job'] = Lang::get('messages.NotExistClass', ['class' => 'Job']);
 			return response()->json($error)->setStatusCode($this->status_codes['notexists']);
@@ -504,17 +554,19 @@ class CompaniesController extends FilteredApiController {
 			$error['errors']['job'] = Lang::get('messages.InvalidJson');
 			return response()->json($error)->setStatusCode($this->status_codes['conflict']);
 		}
-		$job->mappings = serialize($data['attributes']['mappings']);
-		$job->save();
 
-		// start importing
-		dispatch(new ImportBulkUsersJob($jobId));
-		//Queue::push(new ImportBulkUsersJob);
+		// Update the current status of the job:
+		$companyUserImportJob = $this->companyUserImportJob->update($data);
+		$jobForUsersImportation = new ImportBulkUsersJob($jobId);
+		dispatch($jobForUsersImportation);
+		// \Queue::push($jobForUsersImportation)
 
-		$response = $this->response->item($job, $job->getTransformer(), ['key' => $this->modelPlural]);
+		// tests:
+		$response = $this->response->item($job, $job->getTransformer(), ['key' => 'companyuserimportjob']);
+		$response = $this->applyMeta($response);
+		// \Log::debug($job);
+
 		return $response;
-
-		return response()->json($job->getJobData(true, $companyId));
 	}
 
 	private function getSampleImportRow($header, $row) {

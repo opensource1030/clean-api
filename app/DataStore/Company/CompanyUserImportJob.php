@@ -15,15 +15,15 @@ class CompanyUserImportJob extends BaseDataStore
     protected $table = 'company_user_import_jobs';
 
     protected $fillable = [
-        'company_id',
-        'path',
-        'file',
-        'total',
-        'created',
-        'updated',
-        'failed',
+        'companyId',
+        'filepath',
+        'filename',
+        'totalUsers',
+        'createdUsers',
+        'updatedUsers',
+        'failedUsers',
         'fields',
-        'sample',
+        'sampleUser',
         'mappings',
         'status',
         'created_at',
@@ -37,7 +37,7 @@ class CompanyUserImportJob extends BaseDataStore
      */
     public function companies()
     {
-        return $this->belongsTo('WA\DataStore\Company\Company', 'company_id');
+        return $this->belongsTo('WA\DataStore\Company\Company', 'companyId');
     }
 
     /**
