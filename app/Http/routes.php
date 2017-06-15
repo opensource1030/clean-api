@@ -679,7 +679,7 @@ $api->version('v1', function ($api) {
             'uses' => $usersController . '@delete'
         ]);
 
-/*
+
         // CATEGORYAPPS
         $categoryAppController = 'WA\Http\Controllers\CategoryAppsController';
 
@@ -709,7 +709,7 @@ $api->version('v1', function ($api) {
             'middleware' => [$scopeMiddleware.':delete_categoryapp'],
             'uses' => $categoryAppController . '@delete'
         ]);
-        
+/*
         // CONDITIONFIELDS
         $conditionFieldsController = 'WA\Http\Controllers\ConditionFieldsController';
 
