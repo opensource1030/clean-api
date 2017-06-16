@@ -19,7 +19,9 @@ class PermissionRolesTableSeeder extends BaseTableSeeder
         // SUPERADMIN: ALL PERMISSIONS.
 
         $i = 1;
-        while ($i < 109) {
+        // while ($i < 109) {
+        while ($i < 112) {
+
             $data = [
                 [
                     'permission_id' => $i,

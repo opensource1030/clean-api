@@ -185,6 +185,29 @@ class ScopesTableSeeder extends BaseTableSeeder
         ];
 
         /*
+         *  COMPANY JOB
+         *  scope:get_company_job,scope:update_company_job,scope:create_company_job
+         *
+         */
+        $dataCompanyJob = [
+            [
+                'name' => 'get_company_job',
+                'display_name' => 'View a company job',
+                'description' => 'View a company job',
+            ],
+            [
+                'name' => 'create_company_job',
+                'display_name' => 'Create a company job',
+                'description' => 'Create a company job',
+            ],
+            [
+                'name' => 'update_company_job',
+                'display_name' => 'Update a company job',
+                'description' => 'Update a company job',
+            ]
+        ];
+
+        /*
          *  CONDITIONS
          *  scope:get_conditions,scope:get_condition,scope:create_condition,scope:updatecondition,
          *    scope:delete_condition
@@ -752,6 +775,7 @@ class ScopesTableSeeder extends BaseTableSeeder
         $this->loadTable($dataAsset);
         $this->loadTable($dataCarrier);
         $this->loadTable($dataCompany);
+        $this->loadTable($dataCompanyJob);
         $this->loadTable($dataCondition);
         $this->loadTable($dataContent);
         $this->loadTable($dataDevice);

@@ -19,7 +19,7 @@ class ScopePermissionsTableSeeder extends BaseTableSeeder
         // Scopes = 108. Permissions = 108.
 
         $i = 1;
-        while ($i < 109) {
+        while ($i < 112) {
 
             $data = [
                 [

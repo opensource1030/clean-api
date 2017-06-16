@@ -1,13 +1,9 @@
 <?php
 
-<<<<<<< 858adad85fd99270597b8b12e0169b6467dcd92f
-=======
 use Laravel\Lumen\Testing\DatabaseMigrations;
 use WA\DataStore\Company\Company;
 use WA\DataStore\Company\CompanyUserImportJob;
 use WA\DataStore\User\User;
->>>>>>> Changes for user importation through CSV file
-
 
 class CompaniesTest extends \TestCase
 {

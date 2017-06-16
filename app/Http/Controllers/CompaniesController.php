@@ -8,20 +8,16 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Lang;
 use WA\DataStore\Company\Company;
 use WA\DataStore\Company\CompanyTransformer;
-use WA\DataStore\Udl\Udl;
-use WA\DataStore\Udl\UdlTransformer;
-use WA\Repositories\Company\CompanyInterface;
-use WA\Repositories\Udl\UdlInterface;
-use DB;
-
 use WA\DataStore\Company\CompanyUserImportJob;
 use WA\DataStore\Company\CompanyUserImportJobTransformer;
-use WA\DataStore\Udl\Udl;
-use WA\Helpers\Vendors\CSVParser;
-use WA\Jobs\ImportBulkUsersJob;
 use WA\Repositories\Company\CompanyInterface;
 use WA\Repositories\Company\CompanyUserImportJobInterface;
+use WA\DataStore\Udl\Udl;
+use WA\DataStore\Udl\UdlTransformer;
 use WA\Repositories\Udl\UdlInterface;
+
+use WA\Helpers\Vendors\CSVParser;
+use WA\Jobs\ImportBulkUsersJob;
 use WA\DataStore\User\User;
 
 /**
@@ -402,6 +398,7 @@ class CompaniesController extends FilteredApiController {
         ];
 
         $dbFields = [];
+        //
 
         // Step 1. Add the Database Fields of the table, just hardcoded:
 
@@ -411,8 +408,6 @@ class CompaniesController extends FilteredApiController {
 	        	"companyId" => $companyId
 	        ]);
         }
-        $dbFields_1 = $user->getFillable();
-        $dbFields_1 = $this->filterUnnecessaryFields($dbFields_1);
         // commented fields exist in database, but are not relevant here:
         $dbFields_1 = [
             "uuid",
