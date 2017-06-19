@@ -274,8 +274,8 @@ abstract class FilteredApiController extends ApiController
      *
      */
     public function addFilterToTheRequest($type, $request) {
-        //$user = \Auth::user();
-        $user = \WA\DataStore\User\User::find(1); // POSTMAN TESTS
+        $user = \Auth::user();
+        
         if (!isset($user)) {
             return false;
         }
