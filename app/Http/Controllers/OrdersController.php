@@ -348,61 +348,121 @@ class OrdersController extends FilteredApiController
     }
 
     private function makeTheStringWithOrderAttributes($user, $address, $package, $service, $devicevariations) {
+
+        $company = \WA\DataStore\Company\Company::find($user->companyId);
         $attributes = '';
 
+        // Company.
         $attributes = $attributes .
-            '<bold>Username:</bold> ' . $user->username .
-            ' with email: ' . $user->email .
-            ', with supervisor: ' . $user->supervisorEmail . '<br>';
+            '<h2><strong>' . $company->name .
+            ' - ' . $order->orderType . 
+            ' - ' . $user->username .
+            '</strong></h2>';
+
+        // Package.
+        $attributes = $attributes .
+            '<h3><strong>Package Name: </strong>' . $apckage->name .
+            '</h3>';
 
         $attributes = $attributes .
-            ', <bold>Address Name:</bold> ' . $address->name .
-            ', from ' . $address->city .
-            ' ( ' . $address->state . ' - ' . $address->country . ' )<br>';
+            '<hr />';
 
-        /*
-        if ($package != null) {
-            $attributes = $attributes . '<bold>Package Name:</bold> ' . $package->name . '<br>';
-        }
-        */
+        // User
+        $departmentUdl = '';
+        $costCenterUdl = '';
+        $udlValues = $user->udlvalues;
+        foreach ($udlValues as $udlValue) {
+            $udl = \WA\DataStore\Udl\Udl::find($udlValue->id);
+            if ($udl->name == 'Department') {
+                $departmentUdl = $udlValue->name;
+            }
 
-        if ($service != null) {
-            $attributes = $attributes . '<bold>Service Name:</bold> ' . $service->title . ', ';
-            foreach ($service->serviceitems as $si) {
-                if ($si->domain == 'domestic' || $si->domain == 'international') {
-                    if ($si->value > 0) {
-                        $attributes = $attributes .
-                            $si->domain . ' ' .
-                            $si->category . ': ' .
-                            $si->value . ' ' .
-                            $si->unit . ', ';
-                    }
-                }
+            if ($udl->name == 'Cost Center') {
+                $costCenterUdl = $udlValue->name;
             }
         }
 
-        $attributes = $attributes . '<br>';
+        $activeLogin = Auth::user();
+        $attributes = $attributes .
+        '<h3 class="heading2">User Info:</h3>' .
+        '<p>' .
+            '<strong>Username:</strong>&nbsp;' . $user->username .
+            '<br /><strong>Email:</strong>&nbsp;' . $user->email .
+            '<br /><strong>Supervisor Email:</strong> ' . $email->supervisorEmail .
+            '<br /><strong>Department:</strong> ' . $departmentUdl .
+            '<br /><strong>Cost Center:</strong> ' . $costCenterUdl .
+        '</p>' .
+        '<p>' .
+            '<strong>Entered by:</strong>&nbsp;' . $activeLogin->username .
+        '</p>';
 
-        if (count($devicevariations) > 0) {
-            foreach ($devicevariations as $dv) {
-                if(isset($dv->devices)) {
-                    if (isset($dv->devices->devicetypes)) {
-                        if ($dv->devices->devicetypes->name == 'Smartphone') {
-                            $attributes = $attributes .
-                                '<bold>Device Name</bold>: ' . $dv->devices->name . ' : ' .
-                                $dv->devices->defaultPrice . ' ' .
-                                $dv->devices->currency;
-                            if($dv->devices->property != '') {
-                                $attributes = $attributes  . ', ' . $dv->devices->property;
-                            }
-                        }
-                    }
+        $attributes = $attributes .
+            '<hr />';
+
+        $smartphone = '';
+        $accessories = '';
+        foreach ($devicevariations as $dv) {
+            if ($dv->devicetypes->name == 'Smartphone') {
+                $smartphone = $dv;
+            }
+
+            if ($dv->devicetypes->name == 'Accessory') {
+                if ($accessories == '') {
+                    $accessories = $accessories . ', ';
                 }
+                $accessories = $accessories . $dv->name;
             }
         }
 
-        $attributes = $attributes . '.';
+        //
+        $attributes = $attributes .
+            '<h3 class="heading2">Device&nbsp;Info:</h3>' .
+            '<p>' .
+                '<strong>Mobile Number:</strong> ' . $order->servicePhoneNo .
+                '<br />' .
+                '<strong>Carrier:</strong> ' . $service->carriers->name .
+                '<br />' .
+                '<strong>Make/Model:</strong> ' . $smartphone->make . ' ' . $smartphone->model .
+                '<br />' .
+                '<strong>Accessories:</strong> ' . $accessories .
+            '</p>';
 
+        $attributes = $attributes .
+            '<hr />';
+
+        $attributes = $attributes .
+            '<h3 class="heading2">Mobile Service Info:</h3>' .
+            '<p>' .
+                '<strong>Domestic Voice:</strong>' .
+                '<br />' .
+                '<strong>Domestic Data:</strong>' .
+                '<br />' .
+                '<strong>Domestic Messaging:</strong>' .
+                '<br />' .
+                '<strong>International Voice:</strong>' .
+                '<br />' .
+                '<strong>International Data:</strong>' .
+                '<br />' .
+                '<strong>International Messaging:</strong>' .
+            '</p>';
+
+        $attributes = $attributes .
+            '<hr />';
+
+        $attributes = $attributes .
+            '<h3 class="heading2">Shipping Info:</h3>' .
+            '<p>' . $company->name .
+                '<br />' . $address->name .
+                '<br />' . $address->city . ', ' . $address->state . ', ' . $address->postalCode .
+                '<br />Attn.&nbsp;' . $user->username .
+            '</p>';
+/*
+        $attributes = $attributes .
+            '<hr />';
+
+        $attributes = $attributes .
+            '<h3 class="heading2">Comments:</h3><p>Open comments field.</p>';
+*/
         return $attributes;
     }
 }
