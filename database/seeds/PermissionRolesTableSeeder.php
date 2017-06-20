@@ -16,14 +16,14 @@ class PermissionRolesTableSeeder extends BaseTableSeeder
     {
         $this->deleteTable();
 
-        // SUPERADMIN: ALL PERMISSIONS.
+        // ADMIN: ALL PERMISSIONS.
 
         $i = 1;
         while ($i < 114) {
             $data = [
                 [
                     'permission_id' => $i,
-                    'role_id' => 1 // SUPERADMIN
+                    'role_id' => 1 // ADMIN
                 ]
             ];
 
@@ -31,7 +31,7 @@ class PermissionRolesTableSeeder extends BaseTableSeeder
             $i++;
         }
 
-        // ADMIN: SOME PERMISSIONS (Asociated to the company of the admin)
+        // WTA: SOME PERMISSIONS (Asociated to the company of the admin)
         // note: I've commented categoryapps, conditionfields and conditionoperators from routes.
 
         $j = 1;
@@ -54,7 +54,7 @@ class PermissionRolesTableSeeder extends BaseTableSeeder
                 $data = [
                     [
                         'permission_id' => $j,
-                        'role_id' => 2 // ADMIN
+                        'role_id' => 2 // WTA
                     ]
                 ];
 

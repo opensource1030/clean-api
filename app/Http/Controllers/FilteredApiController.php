@@ -269,7 +269,7 @@ abstract class FilteredApiController extends ApiController
      *
      *  @return Boolean
      *  Case1: If no Authenticated user: Error.
-     *  Case2: If user has the "superadmin" role: All privileges.
+     *  Case2: If user has the "admin" role: All privileges.
      *  Case3: It user has another role: He/She can only get objects with a relationship with his/her own company.
      *
      */
@@ -283,9 +283,9 @@ abstract class FilteredApiController extends ApiController
         $role = $user->roles;
         $companyId = $user->companyId;
 
-        if($role[0]->name == 'superadmin') {
-
+        if($role[0]->name == 'admin') {
             return true;
+
         } else {
             if ($type == 'create') { //create
                 return $this->resource->checkModelAndRelationships(json_decode($request->getContent()), $companyId);
