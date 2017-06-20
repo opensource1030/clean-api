@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "0a40dd0cb3fbd7b9f1610c8869e9461a",
-    "content-hash": "696e92321c4407c32b00ea6d44207ba5",
+    "hash": "b0d395c65a17ef407ddd5a1e21256035",
+    "content-hash": "a15a3c17b40c60e67c1bc9e170391e11",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -598,12 +598,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/inflector.git",
-                "reference": "5a8e3ef6da29737f0ec0345acd67bb6ba49bfad2"
+                "reference": "dde035898f2daae9b3b3e5c792f4891cf7aaff80"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/inflector/zipball/5a8e3ef6da29737f0ec0345acd67bb6ba49bfad2",
-                "reference": "5a8e3ef6da29737f0ec0345acd67bb6ba49bfad2",
+                "url": "https://api.github.com/repos/doctrine/inflector/zipball/dde035898f2daae9b3b3e5c792f4891cf7aaff80",
+                "reference": "dde035898f2daae9b3b3e5c792f4891cf7aaff80",
                 "shasum": ""
             },
             "require": {
@@ -657,7 +657,7 @@
                 "singularize",
                 "string"
             ],
-            "time": "2017-06-16 04:52:04"
+            "time": "2017-06-16 11:07:05"
         },
         {
             "name": "doctrine/lexer",
@@ -813,12 +813,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/GrahamCampbell/Laravel-Flysystem.git",
-                "reference": "af76c078b74692fddeeacde9dc1b8a64f60aa0b0"
+                "reference": "36ebdbb20cab5898766d71e5dea674663b4d4f0b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/GrahamCampbell/Laravel-Flysystem/zipball/af76c078b74692fddeeacde9dc1b8a64f60aa0b0",
-                "reference": "af76c078b74692fddeeacde9dc1b8a64f60aa0b0",
+                "url": "https://api.github.com/repos/GrahamCampbell/Laravel-Flysystem/zipball/36ebdbb20cab5898766d71e5dea674663b4d4f0b",
+                "reference": "36ebdbb20cab5898766d71e5dea674663b4d4f0b",
                 "shasum": ""
             },
             "require": {
@@ -834,7 +834,6 @@
                 "league/flysystem-aws-s3-v3": "^1.0",
                 "league/flysystem-azure": "^1.0",
                 "league/flysystem-cached-adapter": "^1.0",
-                "league/flysystem-dropbox": "^1.0",
                 "league/flysystem-eventable-filesystem": "^1.0",
                 "league/flysystem-gridfs": "^1.0",
                 "league/flysystem-rackspace": "^1.0",
@@ -842,20 +841,21 @@
                 "league/flysystem-webdav": "^1.0",
                 "league/flysystem-ziparchive": "^1.0",
                 "mockery/mockery": "^0.9.4",
-                "phpunit/phpunit": "^4.8|^5.0"
+                "phpunit/phpunit": "^4.8|^5.0",
+                "srmklive/flysystem-dropbox-v2": "^1.0"
             },
             "suggest": {
                 "league/flysystem-aws-s3-v3": "AwsS3 adapter support.",
                 "league/flysystem-azure": "Azure adapter support.",
                 "league/flysystem-cached-adapter": "Adapter caching support.",
-                "league/flysystem-dropbox": "Dropbox adapter support.",
                 "league/flysystem-eventable-filesystem": "Eventable filesystem support.",
                 "league/flysystem-gridfs": "GridFS adapter support.",
                 "league/flysystem-rackspace": "Rackspace adapter support.",
                 "league/flysystem-replicate-adapter": "Replicate adapter support.",
                 "league/flysystem-sftp": "Sftp adapter support.",
                 "league/flysystem-webdav": "WebDav adapter support.",
-                "league/flysystem-ziparchive": "ZipArchive adapter support."
+                "league/flysystem-ziparchive": "ZipArchive adapter support.",
+                "srmklive/flysystem-dropbox-v2": "Dropbox adapter support."
             },
             "type": "library",
             "extra": {
@@ -892,7 +892,7 @@
                 "laravel",
                 "s3"
             ],
-            "time": "2017-06-01 22:45:08"
+            "time": "2017-06-16 12:32:47"
         },
         {
             "name": "graham-campbell/manager",
@@ -2824,12 +2824,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Seldaek/monolog.git",
-                "reference": "35c07a81de6200e5aa0629eacecd11fd925d19dc"
+                "reference": "d6be96bc3c570597c67b5a83ca7968de392a75ac"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/35c07a81de6200e5aa0629eacecd11fd925d19dc",
-                "reference": "35c07a81de6200e5aa0629eacecd11fd925d19dc",
+                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/d6be96bc3c570597c67b5a83ca7968de392a75ac",
+                "reference": "d6be96bc3c570597c67b5a83ca7968de392a75ac",
                 "shasum": ""
             },
             "require": {
@@ -2850,7 +2850,7 @@
                 "phpunit/phpunit-mock-objects": "2.3.0",
                 "ruflin/elastica": ">=0.90 <3.0",
                 "sentry/sentry": "^0.13",
-                "swiftmailer/swiftmailer": "~5.3"
+                "swiftmailer/swiftmailer": "^5.3|^6.0"
             },
             "suggest": {
                 "aws/aws-sdk-php": "Allow sending log messages to AWS services like DynamoDB",
@@ -2894,7 +2894,7 @@
                 "logging",
                 "psr-3"
             ],
-            "time": "2017-05-03 13:17:21"
+            "time": "2017-06-19 01:13:01"
         },
         {
             "name": "mtdowling/cron-expression",
@@ -3198,6 +3198,56 @@
                 "random"
             ],
             "time": "2017-03-13 16:27:32"
+        },
+        {
+            "name": "pda/pheanstalk",
+            "version": "v3.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/pda/pheanstalk.git",
+                "reference": "430e77c551479aad0c6ada0450ee844cf656a18b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/pda/pheanstalk/zipball/430e77c551479aad0c6ada0450ee844cf656a18b",
+                "reference": "430e77c551479aad0c6ada0450ee844cf656a18b",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Pheanstalk\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Paul Annesley",
+                    "email": "paul@annesley.cc",
+                    "homepage": "http://paul.annesley.cc/",
+                    "role": "Developer"
+                }
+            ],
+            "description": "PHP client for beanstalkd queue",
+            "homepage": "https://github.com/pda/pheanstalk",
+            "keywords": [
+                "beanstalkd"
+            ],
+            "time": "2015-08-07 21:42:41"
         },
         {
             "name": "phpdocumentor/reflection-common",
@@ -4740,26 +4790,26 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/barryvdh/laravel-ide-helper.git",
-                "reference": "9e42ce11f44180f7092318b6dbbc565f331736a4"
+                "reference": "87a02ff574f722c685e011f76692ab869ab64f6c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/barryvdh/laravel-ide-helper/zipball/9e42ce11f44180f7092318b6dbbc565f331736a4",
-                "reference": "9e42ce11f44180f7092318b6dbbc565f331736a4",
+                "url": "https://api.github.com/repos/barryvdh/laravel-ide-helper/zipball/87a02ff574f722c685e011f76692ab869ab64f6c",
+                "reference": "87a02ff574f722c685e011f76692ab869ab64f6c",
                 "shasum": ""
             },
             "require": {
                 "barryvdh/reflection-docblock": "^2.0.4",
-                "illuminate/console": "^5.0,<5.5",
-                "illuminate/filesystem": "^5.0,<5.5",
-                "illuminate/support": "^5.0,<5.5",
+                "illuminate/console": "^5.0,<5.6",
+                "illuminate/filesystem": "^5.0,<5.6",
+                "illuminate/support": "^5.0,<5.6",
                 "php": ">=5.4.0",
                 "symfony/class-loader": "^2.3|^3.0"
             },
             "require-dev": {
                 "doctrine/dbal": "~2.3",
-                "illuminate/config": "^5.0,<5.5",
-                "illuminate/view": "^5.0,<5.5",
+                "illuminate/config": "^5.0,<5.6",
+                "illuminate/view": "^5.0,<5.6",
                 "phpunit/phpunit": "4.*",
                 "scrutinizer/ocular": "~1.1",
                 "squizlabs/php_codesniffer": "~2.3"
@@ -4805,7 +4855,7 @@
                 "phpstorm",
                 "sublime"
             ],
-            "time": "2017-06-15 15:22:20"
+            "time": "2017-06-16 14:08:59"
         },
         {
             "name": "barryvdh/reflection-docblock",
@@ -5107,12 +5157,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/mockery/mockery.git",
-                "reference": "e0fd9ceb9a191f892983a848291d2c6a91cd09d7"
+                "reference": "a162bb147f19f90f80cf88dd6c0198135e873cde"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mockery/mockery/zipball/e0fd9ceb9a191f892983a848291d2c6a91cd09d7",
-                "reference": "e0fd9ceb9a191f892983a848291d2c6a91cd09d7",
+                "url": "https://api.github.com/repos/mockery/mockery/zipball/a162bb147f19f90f80cf88dd6c0198135e873cde",
+                "reference": "a162bb147f19f90f80cf88dd6c0198135e873cde",
                 "shasum": ""
             },
             "require": {
@@ -5164,7 +5214,7 @@
                 "test double",
                 "testing"
             ],
-            "time": "2017-06-05 13:23:09"
+            "time": "2017-06-16 20:18:48"
         },
         {
             "name": "myclabs/deep-copy",

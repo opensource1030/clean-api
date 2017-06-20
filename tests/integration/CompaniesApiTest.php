@@ -2893,6 +2893,7 @@ class CompaniesTest extends \TestCase
 
         // // \Log::debug(json_encode($fieldsInCSVFields, JSON_PRETTY_PRINT));
         // // \Log::debug(json_encode($fieldsInDBFields, JSON_PRETTY_PRINT));
+        return $responseContents['data']['id'];
 
     }
 
@@ -2952,10 +2953,12 @@ class CompaniesTest extends \TestCase
      */
     public function testCompanyPatchJob()
     {
-        $job = factory(\WA\DataStore\Company\CompanyUserImportJob::class)->create();
 
-        $this->withoutJobs()
-            ->json('PATCH', "companies/{$job->companyId}/jobs/{$job->id}",
+        $job = factory(\WA\DataStore\Company\CompanyUserImportJob::class)->create([
+            'filepath' => base_path() . '/storage/clients/random-company/employee.csv'
+        ]);
+        $this->withoutJobs();
+        $response = $this->call('PATCH', "companies/{$job->companyId}/jobs/{$job->id}",
             [
                 "data" => [
                     "id" => $job->id,
@@ -3044,24 +3047,26 @@ class CompaniesTest extends \TestCase
                         ]
                     ]
                 ]
-            ])
-            ->seeJsonStructure([
-                'data' => [
-                    'id',
-                    'type',
-                    'attributes' => [
-                        'status',
-                        'totalUsers',
-                        'createdUsers',
-                        'updatedUsers',
-                        // 'errors',
-                        'sampleUser',
-                        'CSVfields',
-                        'DBfields',
-                        'mappings'
-                    ]
-                ]
             ]);
+        \Log::debug($response->getcontent());
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->seeJsonStructure([
+            'data' => [
+                'id',
+                'type',
+                'attributes' => [
+                    'status',
+                    'totalUsers',
+                    'createdUsers',
+                    'updatedUsers',
+                    // 'errors',
+                    'sampleUser',
+                    'CSVfields',
+                    'DBfields',
+                    'mappings'
+                ]
+            ]
+        ]);
     }
 
 

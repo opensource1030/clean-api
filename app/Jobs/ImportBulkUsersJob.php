@@ -9,14 +9,16 @@ use WA\Helpers\Vendors\CSVParser;
 class ImportBulkUsersJob extends Job
 {
     protected $jobId;
+    protected $companyUserImportJob;
 
     /**
      * ImportBulkUsersJob constructor.
      * @param $jobId
      */
-    public function __construct($jobId)
+    public function __construct($jobId, $companyUserImportJob)
     {
         $this->jobId = $jobId;
+        $this->companyUserImportJob = $companyUserImportJob;
     }
 
     /**
@@ -24,13 +26,24 @@ class ImportBulkUsersJob extends Job
      */
     public function handle()
     {
-        $companyUserImportJob = app()->make('WA\Repositories\Company\CompanyUserImportJobInterface');
+        // $companyUserImportJob = app()->make('WA\Repositories\Company\CompanyUserImportJobInterface');
+        // $jobFound = CompanyUserImportJob::find($this->jobId);
+        $jobFound = $this->companyUserImportJob;
         
+        // Job must be in PENDING:
+        if(($jobFound->status === CompanyUserImportJobTransformer::STATUS_PENDING)) {
+            // Okay
+        } else {
+            // Cut the job:
+            \Log::debug("The job should be in PENDING status to be executed.");
+            return null;
+        }
+
         $data = [
             'id' => $this->jobId,
             'status' => CompanyUserImportJobTransformer::STATUS_WORKING
         ];
-        $job = $companyUserImportJob->update($data);
+        $job = $jobFound->update($data);
 
         // start importing/updating
         $filePath = $job->filepath;
@@ -62,6 +75,8 @@ class ImportBulkUsersJob extends Job
             $mappings = unserialize($job->mappings);
             $data = $this->makeMappingRow($mappings, $formattedRow);
             if($user == null) {
+                \Log::debug("Data for user UPDATE: ");
+                \Log::debug(json_encode($data, JSON_PRETTY_PRINT));
                 $result = $userInterface->create($data);
                 if($result == false) {
                     $job->failedUsers = min($job->failedUsers + 1, $job->totalUsers);
@@ -70,6 +85,8 @@ class ImportBulkUsersJob extends Job
                 }
             } else {
                 $data['id'] = $user->id;
+                \Log::debug("Data for user CREATE: ");
+                \Log::debug(json_encode($data, JSON_PRETTY_PRINT));
                 $result = $userInterface->update($data);
                 if($result == 'notSaved') {
                     $job->failedUsers = min($job->failedUsers + 1, $job->totalUsers);
@@ -83,7 +100,7 @@ class ImportBulkUsersJob extends Job
             'id' => $this->jobId,
             'status' => CompanyUserImportJobTransformer::STATUS_COMPLETED
         ];
-        $jobUpdated = $companyUserImportJob->update($data);
+        $jobUpdated = $jobFound->update($data);
     }
 
     private function getFormatRow($header, $row) {

@@ -88,6 +88,9 @@ class EloquentCompanyUserImportJob extends AbstractRepository implements Company
     public function update(array $data)
     {
 
+        \Log::debug("Datos para el update:");
+        \Log::debug(json_encode($data, JSON_PRETTY_PRINT));
+
         $companyUserImportJob = $this->model->find($data['id']);
 
         if (!$companyUserImportJob) {
@@ -126,11 +129,11 @@ class EloquentCompanyUserImportJob extends AbstractRepository implements Company
         }
 
         if (isset($data['sampleUser'])) {
-            $companyUserImportJob->sampleUser = $data['sampleUser'];
+            $companyUserImportJob->sampleUser = serialize($data['sampleUser']);
         }
 
         if (isset($data['mappings'])) {
-            $companyUserImportJob->mappings = $data['mappings'];
+            $companyUserImportJob->mappings = serialize($data['mappings']);
         }
 
         if (isset($data['updated_by_id'])) {

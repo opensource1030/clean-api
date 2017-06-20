@@ -6,6 +6,7 @@ use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Lang;
+use Illuminate\Support\Facades\Queue;
 use WA\DataStore\Company\Company;
 use WA\DataStore\Company\CompanyTransformer;
 use WA\DataStore\Company\CompanyUserImportJob;
@@ -551,10 +552,15 @@ class CompaniesController extends FilteredApiController {
 		}
 
 		// Update the current status of the job:
-		$companyUserImportJob = $this->companyUserImportJob->update($data);
-		$jobForUsersImportation = new ImportBulkUsersJob($jobId);
-		dispatch($jobForUsersImportation);
-		// \Queue::push($jobForUsersImportation)
+		$data['attributes']['id'] = $jobId;
+		$companyUserImportJob = $this->companyUserImportJob->update($data["attributes"]); //TODO: CARLOS
+		$jobForUsersImportation = new ImportBulkUsersJob($jobId, $companyUserImportJob);
+		
+		// \Log::debug("Send to dispatch job");
+		// $enqueuedJobID = Queue::push($jobForUsersImportation);
+		$jobForUsersImportation->onQueue('default');
+		$jobId = dispatch($jobForUsersImportation);
+		// \Log::debug("Sent to dispatch job");
 
 		// tests:
 		$response = $this->response->item($job, $job->getTransformer(), ['key' => 'companyuserimportjob']);
