@@ -390,7 +390,7 @@ class EloquentDevice extends AbstractRepository implements DeviceInterface
      * @return Array
      */
     public function addFilterToTheRequest($companyId) {
-        $aux['devicevariations.companies.id'] = (string) $companyId;
+        $aux['devicevariations.companyId'] = (string) $companyId;
         return $aux;
     }
 
