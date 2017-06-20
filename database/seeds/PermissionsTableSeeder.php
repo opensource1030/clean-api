@@ -745,6 +745,46 @@ class PermissionsTableSeeder extends BaseTableSeeder
             ],
         ];
 
+        // SPECIAL CASES.
+        $dataManageDevices = [
+            [
+                'name' => 'manage_devices',
+                'display_name' => 'Manage Devices',
+                'description' => 'Group of Scopes that allows the User to Manage Devices',
+            ]
+        ];
+
+        $dataManagePresets = [
+            [
+                'name' => 'manage_presets',
+                'display_name' => 'Manage Presets',
+                'description' => 'Group of Scopes that allows the User to Manage Presets',
+            ]
+        ];
+
+        $dataManageServices = [
+            [
+                'name' => 'manage_services',
+                'display_name' => 'Manage Services',
+                'description' => 'Group of Scopes that allows the User to Manage Services',
+            ]
+        ];
+        
+        $dataManageEmployees = [
+            [
+                'name' => 'manage_employees',
+                'display_name' => 'Manage Employees',
+                'description' => 'Group of Scopes that allows the User to Manage Employees',
+            ]
+        ];
+
+        $dataManageCompanies = [
+            [
+                'name' => 'manage_companies',
+                'display_name' => 'Manage Companies',
+                'description' => 'Group of Scopes that allows the User to Manage Companie',
+            ]
+        ];
 
         $this->loadTable($dataAddress);
         $this->loadTable($dataAllocation);
@@ -769,5 +809,10 @@ class PermissionsTableSeeder extends BaseTableSeeder
         $this->loadTable($dataRole);
         $this->loadTable($dataPermission);
         $this->loadTable($dataScope);
+        $this->loadTable($dataManageDevices);
+        $this->loadTable($dataManagePresets);
+        $this->loadTable($dataManageServices);
+        $this->loadTable($dataManageEmployees);
+        $this->loadTable($dataManageCompanies);
     }
 }

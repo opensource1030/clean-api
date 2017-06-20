@@ -36,7 +36,7 @@ class Permission extends BaseDataStore
      */
     public function scopes()
     {
-        return $this->belongsToMany('WA\DataStore\Scope\Scope', 'scope_permission', 'scope_id', 'permission_id');
+        return $this->belongsToMany('WA\DataStore\Scope\Scope', 'scope_permission', 'permission_id', 'scope_id');
     }
 
     /**
