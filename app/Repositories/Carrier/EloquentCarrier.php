@@ -104,7 +104,7 @@ class EloquentCarrier extends AbstractRepository implements CarrierInterface
      * @return Array
      */
     public function addFilterToTheRequest($companyId) {
-        $aux[] = '[services.users.comnpanyId]=' . (string) $companyId . '[or][devicevariations.companyId]=' . (string) $companyId;
+        $aux[] = '[services.users.companyId]=' . (string) $companyId . '[or][devicevariations.companyId]=' . (string) $companyId;
         return $aux;
     }
 
