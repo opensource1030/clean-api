@@ -220,7 +220,7 @@ class OrdersController extends FilteredApiController
                     return response()->json($error)->setStatusCode($this->status_codes['conflict']);
                 }    
             }            
-            $res = $this->sendConfirmationEmail($data['attributes']['userId'], 'Order');
+            $res = $this->sendConfirmationEmail($order);
             if(!$res) {
                 DB::rollBack();
                 $error['errors']['emailnotification'] = "The Email Notification has not been sent.";
@@ -332,7 +332,211 @@ class OrdersController extends FilteredApiController
         }
     }
 
-    private function makeTheStringWithOrderAttributes($order, $user, $address, $package, $service, $devicevariations) {
+    /**
+     *  @param: $userId = The Id of the User that has set the Order.
+     */
+    private function sendConfirmationEmail($order) {
+        try {
+            $userOrder = \WA\DataStore\User\User::find($order->userId);
+            if(!$userOrder) {
+                return false;
+            }
+
+            $address = \WA\DataStore\Address\Address::find($order->addressId);
+            $service = \WA\DataStore\Service\Service::find($order->serviceId);
+            $package = \WA\DataStore\Package\Package::find($order->packageId);
+            $devicevariations = $order->devicevariations;
+
+            $attributes = $this->retrieveTheAttributes($userOrder, $address, $package, $service, $devicevariations);
+            //\Log::debug("OrdersController@sendConfirmationEmail - attributes: " . print_r($attributes, true));
+
+            $adminRole = \WA\DataStore\Role\Role::where('name', 'wta')->first();
+            if(!$adminRole) {
+                return false;
+            }
+
+            $listOfAdmins = \WA\DataStore\User\UserRole::where('role_id', $adminRole->id)->get();
+            if (count($listOfAdmins) == 0) {
+                return false;
+            }
+
+            foreach ($listOfAdmins as $admin) {
+                $adminRetrieved = \WA\DataStore\User\User::find($admin->user_id);
+
+                if ($adminRetrieved->companyId == $userOrder->companyId) {
+                    $resAdmin = \Illuminate\Support\Facades\Mail::send(
+                        'emails.notifications.new_order_received', // VIEW NAME
+                        [
+                            'username' => 'adminMessage',//$userOrder->username,
+                            'redirectPath' => 'urlderedireccion'
+                        ], // PARAMETERS PASSED TO THE VIEW
+                        function ($message) {
+                            $message->subject('New Order Received.');
+                            $message->from(env('MAIL_FROM_ADDRESS'), 'Wireless Analytics');
+                            $message->to('didac.pallares@siriondev.com');//$adminRetrieved->email);
+                        } // CALLBACK
+                    );
+                }
+            }
+
+            $domesticvoice = $domesticdata = $domesticmess = $internationalvoice = $internationaldata = $internationalmess = '';
+            if (isset($attributes['service']['serviceitems'])) {
+                foreach ($attributes['service']['serviceitems'] as $si) {
+                    if($si['domain'] == 'domestic' && $si['category'] == 'voice') {
+                        $domesticvoice = $si['domain'] . ' - ' . $si['category'] . ' : ' . $si['value'] . ' ' . $si['unit'];
+                    }
+
+                    if($si['domain'] == 'domestic' && $si['category'] == 'data') {
+                        $domesticdata = $si['domain'] . ' - ' . $si['category'] . ' : ' . $si['value'] . ' ' . $si['unit'];
+                    }
+
+                    if($si['domain'] == 'domestic' && $si['category'] == 'messaging') {
+                        $domesticmess = $si['domain'] . ' - ' . $si['category'] . ' : ' . $si['value'] . ' ' . $si['unit'];
+                    }
+
+                    if($si['domain'] == 'international' && $si['category'] == 'voice') {
+                        $internationalvoice = $si['domain'] . ' - ' . $si['category'] . ' : ' . $si['value'] . ' ' . $si['unit'];
+                    }
+
+                    if($si['domain'] == 'international' && $si['category'] == 'data') {
+                        $internationaldata = $si['domain'] . ' - ' . $si['category'] . ' : ' . $si['value'] . ' ' . $si['unit'];
+                    }
+
+                    if($si['domain'] == 'international' && $si['category'] == 'messaging') {
+                        $internationalmess = $si['domain'] . ' - ' . $si['category'] . ' : ' . $si['value'] . ' ' . $si['unit'];
+                    }
+                }
+            }
+
+            $resUser = \Illuminate\Support\Facades\Mail::send(
+                'emails.notifications.new_order_created', // VIEW NAME
+                [
+                    'username' => $userOrder->username,
+                    'redirectPath' => 'urlderedireccion',
+                    'username' => isset($attributes['user']['username']) ? $attributes['user']['username'] : '',
+                    'useremail' => isset($attributes['user']['email']) ? $attributes['user']['email'] : '',
+                    'usersupervisoremail' => isset($attributes['user']['supervisorEmail']) ? $attributes['user']['supervisorEmail'] : '',
+                    'addressname' => isset($attributes['address']['name']) ? $attributes['address']['name'] : '',
+                    'addresscity' => isset($attributes['address']['city']) ? $attributes['address']['city'] : '',
+                    'addressstate' => isset($attributes['address']['state']) ? $attributes['address']['state'] : '',
+                    'addresscountry' => isset($attributes['address']['country']) ? $attributes['address']['country'] : '',
+                    'packagename' => isset($attributes['package']['name']) ? $attributes['package']['name'] : '',
+                    'servicetitle' => isset($attributes['service']['title']) ? $attributes['service']['title'] : '',
+                    'serviceitemsdomvo' => $domesticvoice,
+                    'serviceitemsdomdata' => $domesticdata,
+                    'serviceitemsdommess' => $domesticmess,
+                    'serviceitemsintvo' => $internationalvoice,
+                    'serviceitemsintdata' => $internationaldata,
+                    'serviceitemsintmess' => $internationalmess,
+                    'devicename' => isset($attributes['device']['name']) ? $attributes['device']['name'] : '',
+                    'deviceprice' => isset($attributes['device']['defaultPrice']) ? $attributes['device']['defaultPrice'] : '',
+                    'devicecurrency' => isset($attributes['device']['currency']) ? $attributes['device']['currency'] : '',
+                ], // PARAMETERS PASSED TO THE VIEW
+                function ($message) use ($userOrder) {
+                    $message->subject('New Order Created.');
+                    $message->from(env('MAIL_FROM_ADDRESS'), 'Wireless Analytics');
+                    $message->to('didac.pallares@siriondev.com');//$userOrder->email);
+                } // CALLBACK
+            );
+        } catch (\Exception $e) {
+            \Log::debug("OrdersController@sendConfirmationEmail - e: " . print_r($e->getMessage(), true));
+            return false;
+        }
+        return true;
+    }
+
+    private function retrieveTheAttributes($user, $address, $package, $service, $devicevariations) {
+        $attributes = [];
+
+        // USER ATTRIBUTES
+        if (isset($user->username)) {
+            $attributes['user']['username'] = $user->username;
+        }
+        if (isset($user->email)) {
+            $attributes['user']['email'] = $user->email;
+        }
+        if (isset($user->supervisorEmail)) {
+            $attributes['user']['supervisorEmail'] = $user->supervisorEmail;
+        }
+
+        // ADDRESS ATTRIBUTES
+        if (isset($address->name)) {
+            $attributes['address']['name'] = $address->name;
+        }
+        if (isset($address->city)) {
+            $attributes['address']['city'] = $address->city;
+        }
+        if (isset($address->state)) {
+            $attributes['address']['state'] = $address->state;
+        }
+        if (isset($address->country)) {
+            $attributes['address']['country'] = $address->country;
+        }
+
+        // PACKAGE ATTRIBUTES
+        if(isset($package->name)) {
+            $attributes['package']['name'] = $package->name;
+        }
+
+        // SERVICE ATTRIBUTES
+        if(isset($service->title)) {
+            $attributes['service']['title'] = $service->title;
+            $i = 0;
+            foreach ($service->serviceitems as $si) {
+                if ($si->domain == 'domestic' || $si->domain == 'international') {
+                    if ($si->value > 0) {
+                        if (isset($si->domain)) {
+                            $attributes['service']['serviceitems'][$i]['domain'] = $si->domain;
+                        }
+
+                        if (isset($si->category)) {
+                            $attributes['service']['serviceitems'][$i]['category'] = $si->category;
+                        }
+
+                        if (isset($si->value)) {
+                            $attributes['service']['serviceitems'][$i]['value'] = $si->value;
+                        }
+
+                        if (isset($si->unit)) {
+                            $attributes['service']['serviceitems'][$i]['unit'] = $si->unit;
+                        }
+                    }
+                }
+                $i++;
+            }
+        }
+
+        // DEVICEVARIATION ATTRIBUTES
+        if (count($devicevariations) > 0) {
+            foreach ($devicevariations as $dv) {
+                if(isset($dv->devices)) {
+                    if (isset($dv->devices->devicetypes)) {
+                        if ($dv->devices->devicetypes->name == 'Smartphone') {
+                            if (isset($dv->devices->name)) {
+                                $attributes['device']['name'] = $dv->devices->name;
+                            }
+
+                            if (isset($dv->devices->defaultPrice)) {
+                                $attributes['device']['defaultPrice'] = $dv->devices->defaultPrice;
+                            }
+
+                            if (isset($dv->devices->currency)) {
+                                $attributes['device']['currency'] = $dv->devices->currency;
+                            }
+
+                            if (isset($dv->devices->property)) {
+                                $attributes['device']['property'] = $dv->devices->property;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return $attributes;
+    }
+
+    private function makeTheStringWithOrderAttributes($user, $address, $package, $service, $devicevariations) {
 
         $company = \WA\DataStore\Company\Company::find($user->companyId);
         $attributes = '';
