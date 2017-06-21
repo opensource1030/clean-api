@@ -284,6 +284,7 @@ abstract class FilteredApiController extends ApiController
         $companyId = $user->companyId;
 
         if($role[0]->name == 'admin') {
+
             return true;
 
         } else {
