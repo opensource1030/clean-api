@@ -296,8 +296,10 @@ class OrdersController extends FilteredApiController
             $package = \WA\DataStore\Package\Package::find($order->packageId);
             $devicevariations = $order->devicevariations;
 
+
+
             $code = base64_encode(env('EV_API_LOGIN') . ':' . env('EV_API_PASSWORD'));
-            $attributes = $this->makeTheStringWithOrderAttributes($user, $address, $package, $service, $devicevariations);
+            $attributes = $this->makeTheStringWithOrderAttributes($order, $user, $address, $package, $service, $devicevariations);
             \Log::debug("OrdersController@createTicketOnEasyVista - attributes: " . print_r($attributes, true));
 
             $client = new \Guzzle\Http\Client('https://wa.easyvista.com/api/v1/50005/');
@@ -347,7 +349,7 @@ class OrdersController extends FilteredApiController
         }
     }
 
-    private function makeTheStringWithOrderAttributes($user, $address, $package, $service, $devicevariations) {
+    private function makeTheStringWithOrderAttributes($order, $user, $address, $package, $service, $devicevariations) {
 
         $company = \WA\DataStore\Company\Company::find($user->companyId);
         $attributes = '';
@@ -361,7 +363,7 @@ class OrdersController extends FilteredApiController
 
         // Package.
         $attributes = $attributes .
-            '<h3><strong>Package Name: </strong>' . $apckage->name .
+            '<h3><strong>Package Name: </strong>' . $package->name .
             '</h3>';
 
         $attributes = $attributes .
@@ -372,7 +374,7 @@ class OrdersController extends FilteredApiController
         $costCenterUdl = '';
         $udlValues = $user->udlvalues;
         foreach ($udlValues as $udlValue) {
-            $udl = \WA\DataStore\Udl\Udl::find($udlValue->id);
+            $udl = \WA\DataStore\Udl\Udl::find($udlValue->udlId);
             if ($udl->name == 'Department') {
                 $departmentUdl = $udlValue->name;
             }
@@ -382,13 +384,13 @@ class OrdersController extends FilteredApiController
             }
         }
 
-        $activeLogin = Auth::user();
+        $activeLogin = \Auth::user();
         $attributes = $attributes .
         '<h3 class="heading2">User Info:</h3>' .
         '<p>' .
             '<strong>Username:</strong>&nbsp;' . $user->username .
             '<br /><strong>Email:</strong>&nbsp;' . $user->email .
-            '<br /><strong>Supervisor Email:</strong> ' . $email->supervisorEmail .
+            '<br /><strong>Supervisor Email:</strong> ' . $user->supervisorEmail .
             '<br /><strong>Department:</strong> ' . $departmentUdl .
             '<br /><strong>Cost Center:</strong> ' . $costCenterUdl .
         '</p>' .
@@ -402,16 +404,24 @@ class OrdersController extends FilteredApiController
         $smartphone = '';
         $accessories = '';
         foreach ($devicevariations as $dv) {
-            if ($dv->devicetypes->name == 'Smartphone') {
+            if ($dv->devices->devicetypes->name == 'Smartphone') {
                 $smartphone = $dv;
             }
 
-            if ($dv->devicetypes->name == 'Accessory') {
+            if ($dv->devices->devicetypes->name == 'Accessory') {
                 if ($accessories == '') {
                     $accessories = $accessories . ', ';
                 }
                 $accessories = $accessories . $dv->name;
             }
+        }
+
+        if ($smartphone == '') {
+            $make = '';
+            $model = '';
+        } else {
+            $make = $smartphone->devices->make;
+            $model = $smartphone->devices->model;
         }
 
         //
@@ -422,7 +432,7 @@ class OrdersController extends FilteredApiController
                 '<br />' .
                 '<strong>Carrier:</strong> ' . $service->carriers->name .
                 '<br />' .
-                '<strong>Make/Model:</strong> ' . $smartphone->make . ' ' . $smartphone->model .
+                '<strong>Make/Model:</strong> ' . $make . ' ' . $model .
                 '<br />' .
                 '<strong>Accessories:</strong> ' . $accessories .
             '</p>';
