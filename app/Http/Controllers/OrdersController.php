@@ -303,10 +303,13 @@ class OrdersController extends FilteredApiController
             \Log::debug("OrdersController@createTicketOnEasyVista - attributes: " . print_r($attributes, true));
 
             $client = new \Guzzle\Http\Client('https://wa.easyvista.com/api/v1/50005/');
+
+            $packageAC = isset($package->approvalCode) ? $package->approvalCode : '';
+
             $uri = 'requests';
             $post_data = array(
                 'Catalog_GUID' => '',
-                'Catalog_Code' => $package->approvalCode,
+                'Catalog_Code' => $packageAC,
                 'AssetID' => '',
                 'AssetTag' => '',
                 'ASSET_NAME' => '',
@@ -333,6 +336,7 @@ class OrdersController extends FilteredApiController
                 'CI_NAME' => '',
                 'SUBMIT_DATE' => ''
             );
+
             $data = json_encode(['requests' => [$post_data]]);
             $request = $client->post($uri, array(
                 'content-type' => 'application/json',
@@ -361,9 +365,11 @@ class OrdersController extends FilteredApiController
             ' - ' . $user->username .
             '</strong></h2>';
 
+        $packageName = isset($package->name) ? $package->name : '';
+
         // Package.
         $attributes = $attributes .
-            '<h3><strong>Package Name: </strong>' . $package->name .
+            '<h3><strong>Package Name: </strong>' . $packageName .
             '</h3>';
 
         $attributes = $attributes .
@@ -403,19 +409,21 @@ class OrdersController extends FilteredApiController
 
         $smartphone = '';
         $accessories = '';
-        foreach ($devicevariations as $dv) {
-            if ($dv->devices->devicetypes->name == 'Smartphone') {
-                $smartphone = $dv;
-            }
-
-            if ($dv->devices->devicetypes->name == 'Accessory') {
-                if ($accessories == '') {
-                    $accessories = $accessories . ', ';
+        if ($devicevariations == null) {
+            foreach ($devicevariations as $dv) {
+                if ($dv->devices->devicetypes->name == 'Smartphone') {
+                    $smartphone = $dv;
                 }
-                $accessories = $accessories . $dv->name;
-            }
-        }
 
+                if ($dv->devices->devicetypes->name == 'Accessory') {
+                    if ($accessories == '') {
+                        $accessories = $accessories . ', ';
+                    }
+                    $accessories = $accessories . $dv->name;
+                }
+            }    
+        }
+        
         if ($smartphone == '') {
             $make = '';
             $model = '';
@@ -424,13 +432,44 @@ class OrdersController extends FilteredApiController
             $model = $smartphone->devices->model;
         }
 
+        $domVo = $domDa = $domMe = $intVo = $intDa = $intMe = '';
+        if ($service == null) {
+            $CarrierName = $order->deviceCarrier;
+        } else {
+            $CarrierName = $service->carriers->name;
+            
+            foreach ($service->serviceitems as $si) {
+                if ($si->domain == 'domestic') {
+                    if ($si->category == 'voice') {
+                        $domVo = $si->value . ' ' . $si->unit;
+                    } else if ($si->category == 'data') {
+                        $domDa = $si->value . ' ' . $si->unit;
+                    } else if ($si->category == 'messages') {
+                        $domMe = $si->value . ' ' . $si->unit;
+                    } else {
+                        // NOTHING.
+                    }
+                } else if ($si->domain == 'international') {
+                    if ($si->category == 'voice') {
+                        $intVo = $si->value . ' ' . $si->unit;
+                    } else if ($si->category == 'data') {
+                        $intDa = $si->value . ' ' . $si->unit;
+                    } else if ($si->category == 'messages') {
+                        $intMe = $si->value . ' ' . $si->unit;
+                    } else {
+                        // NOTHING.
+                    }
+                }
+            }
+        }
+
         //
         $attributes = $attributes .
             '<h3 class="heading2">Device&nbsp;Info:</h3>' .
             '<p>' .
                 '<strong>Mobile Number:</strong> ' . $order->servicePhoneNo .
                 '<br />' .
-                '<strong>Carrier:</strong> ' . $service->carriers->name .
+                '<strong>Carrier:</strong> ' . $CarrierName .
                 '<br />' .
                 '<strong>Make/Model:</strong> ' . $make . ' ' . $model .
                 '<br />' .
@@ -443,17 +482,17 @@ class OrdersController extends FilteredApiController
         $attributes = $attributes .
             '<h3 class="heading2">Mobile Service Info:</h3>' .
             '<p>' .
-                '<strong>Domestic Voice:</strong>' .
+                '<strong>Domestic Voice:</strong>' . $domVo .
                 '<br />' .
-                '<strong>Domestic Data:</strong>' .
+                '<strong>Domestic Data:</strong>' . $domDa .
                 '<br />' .
-                '<strong>Domestic Messaging:</strong>' .
+                '<strong>Domestic Messaging:</strong>' . $domMe .
                 '<br />' .
-                '<strong>International Voice:</strong>' .
+                '<strong>International Voice:</strong>' . $intVo .
                 '<br />' .
-                '<strong>International Data:</strong>' .
+                '<strong>International Data:</strong>' . $intDa .
                 '<br />' .
-                '<strong>International Messaging:</strong>' .
+                '<strong>International Messaging:</strong>' . $intMe .
             '</p>';
 
         $attributes = $attributes .
