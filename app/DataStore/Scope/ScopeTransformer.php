@@ -9,9 +9,8 @@ use WA\DataStore\FilterableTransformer;
  */
 class ScopeTransformer extends FilterableTransformer
 {
-     protected $availableIncludes = [
-        'permissions',
-        
+    protected $availableIncludes = [
+        'permissions'        
     ];
 
     /**
@@ -24,10 +23,8 @@ class ScopeTransformer extends FilterableTransformer
         return [
             'id'   => (int)$scope->id,
             'name' => $scope->display_name,
-            //'display_name' => $scope->display_name,
-            //'description' => $scope->description,
-
-
+            'display_name' => $scope->display_name,
+            'description' => $scope->description,
         ];
     }
 }

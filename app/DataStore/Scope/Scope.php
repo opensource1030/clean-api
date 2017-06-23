@@ -2,15 +2,12 @@
 
 namespace WA\DataStore\Scope;
 use WA\DataStore\BaseDataStore;
-use Log;
-use DB;
 
 /**
  * Class Scope.
  */
 class Scope extends BaseDataStore
 {
-     
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
@@ -20,8 +17,13 @@ class Scope extends BaseDataStore
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * Get the Scope by Name.
+     *
+     * @return Scope
      */
+    public static function getByName($name){
+        return Scope::where('name', $name)->get();
+    }
 
     /**
      * Get the transformer instance.
@@ -32,12 +34,4 @@ class Scope extends BaseDataStore
     {
         return new ScopeTransformer();
     }
-
-    public static function getByName($name){
-        return Scope::where('name', $name)->get();
-    }
-
-   /* public function getId(){
-        return $this->id;
-    }*/
 }
