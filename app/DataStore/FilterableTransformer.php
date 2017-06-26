@@ -90,6 +90,14 @@ abstract class FilterableTransformer extends TransformerAbstract
             return "\\WA\\DataStore\\UdlValue\\UdlValueTransformer";
         }
 
+        if($finder === 'globalsettings') {
+            return "\\WA\\DataStore\\GlobalSetting\\GlobalSettingTransformer";
+        }
+
+        if($finder === 'globalsettingvalues') {
+            return "\\WA\\DataStore\\GlobalSettingValue\\GlobalSettingValueTransformer";
+        }
+
         $model = title_case(str_singular($finder));
         return "\\WA\\DataStore\\${model}\\${model}Transformer";
     }

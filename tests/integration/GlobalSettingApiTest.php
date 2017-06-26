@@ -57,6 +57,64 @@ class GlobalSettingApiTest extends TestCase
             ]);
     }
 
+    public function testGetGlobalSettingByIdIncludeValues()
+    {
+        $globalSetting = factory(\WA\DataStore\GlobalSetting\GlobalSetting::class)->create();
+
+        $globalSettingValue1 = factory(\WA\DataStore\GlobalSettingValue\GlobalSettingValue::class)->create([
+            'globalSettingId' => $globalSetting->id
+        ]);
+
+        $globalSettingValue2 = factory(\WA\DataStore\GlobalSettingValue\GlobalSettingValue::class)->create([
+            'globalSettingId' => $globalSetting->id
+        ]);
+
+        $res = $this->json('GET', 'globalsettings/'.$globalSetting->id.'?include=globalsettingvalues');
+        \Log::debug($res->response->getContent());
+        $res->seeJsonStructure([
+            'data' => [
+                'type',
+                'id',
+                'attributes' => [
+                    'name',
+                    'label',
+                    'description'
+                ],
+                'links' => [
+                    'self',
+                ],
+                'relationships' => [
+                    'globalsettingvalues' => [
+                        'links' => [
+                            'self',
+                            'related'
+                        ],
+                        'data' => [
+                            0 => [
+                                'type',
+                                'id'
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            'included' => [
+                0 => [
+                    'type',
+                    'id',
+                    'attributes' => [
+                        'name',
+                        'label',
+                        'globalSettingId'
+                    ],
+                    'links' => [
+                        'self'
+                    ]
+                ]
+            ]
+        ]);
+    }
+
     public function testCreateGlobalSetting()
     {
         $company = factory(\WA\DataStore\Company\Company::class)->create();

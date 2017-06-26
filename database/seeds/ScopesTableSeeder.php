@@ -745,6 +745,38 @@ class ScopesTableSeeder extends BaseTableSeeder
             ],
         ];
 
+        /*
+         *  GLOBALSETTINGS
+         *  scope:get_globalsettings,scope:get_globalsetting,scope:create_globalsetting,scope:update_globalsetting,scope:delete_globalsetting
+         *
+         */
+        $dataGlobalSetting = [
+            [
+                'name' => 'get_globalsettings',
+                'display_name' => 'View all Global Settings',
+                'description' => 'View all Global Settings',
+            ],
+            [
+                'name' => 'get_globalsetting',
+                'display_name' => 'View a Global Settings',
+                'description' => 'View a Global Settings',
+            ],
+            [
+                'name' => 'create_globalsetting',
+                'display_name' => 'Create a Global Settings',
+                'description' => 'Create a Global Settings',
+            ],
+            [
+                'name' => 'update_globalsetting',
+                'display_name' => 'Update a Global Settings',
+                'description' => 'Update a Global Settings',
+            ],
+            [
+                'name' => 'delete_globalsetting',
+                'display_name' => 'Erase a Global Settings',
+                'description' => 'Erase a Global Settings',
+            ],
+        ];
 
         $this->loadTable($dataAddress);
         $this->loadTable($dataAllocation);
@@ -769,5 +801,6 @@ class ScopesTableSeeder extends BaseTableSeeder
         $this->loadTable($dataRole);
         $this->loadTable($dataPermission);
         $this->loadTable($dataScope);
+        $this->loadTable($dataGlobalSetting);
     }
 }
