@@ -815,7 +815,15 @@ class PermissionsTableSeeder extends BaseTableSeeder
             [
                 'name' => 'manage_companies',
                 'display_name' => 'Manage Companies',
-                'description' => 'Group of Scopes that allows the User to Manage Companie',
+                'description' => 'Group of Scopes that allows the User to Manage Companies',
+            ]
+        ];
+
+        $dataManageCompanies = [
+            [
+                'name' => 'manage_own_company',
+                'display_name' => 'Manage Own Company',
+                'description' => 'Group of Scopes that allows the User to Manage His/Her Own Company',
             ]
         ];
 

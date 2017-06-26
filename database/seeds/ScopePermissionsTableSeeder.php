@@ -16,7 +16,7 @@ class ScopePermissionsTableSeeder extends BaseTableSeeder
     {
         $this->deleteTable();
 
-        // Scopes = 108. Permissions = 108.
+        // Scopes = 113. Permissions = 119.
         /*
          *  ADDRESS (1-5)
          *  ALLOCATIONS (6-7)
@@ -42,7 +42,7 @@ class ScopePermissionsTableSeeder extends BaseTableSeeder
          *  PERMISSIONS (99-103)
          *  SCOPES (104-108)
          *  GLOBALSETTINGS (109-113)
-         *  SPECIAL CASES. (114:manage_devices, 115:manage_presets, 116:manage_services, 117:manage_employees, 118:manage_companies)
+         *  SPECIAL CASES. (114:manage_devices, 115:manage_presets, 116:manage_services, 117:manage_employees, 118:manage_companies, 119:manage_own_company)
          */
 
         $i = 1;
@@ -253,5 +253,35 @@ class ScopePermissionsTableSeeder extends BaseTableSeeder
         ];
 
         $this->loadTable($dataManageCompanies);
+
+        // MANAGE OWN COMPANY -> 119 (Can't Create or Delete a Company.)
+        $dataManageOwnCompanies = [
+            [
+                'scope_id' => 20,
+                'permission_id' => 119
+            ],
+            [
+                'scope_id' => 23,
+                'permission_id' => 119
+            ],
+            [
+                'scope_id' => 1,
+                'permission_id' => 119
+            ],
+            [
+                'scope_id' => 3,
+                'permission_id' => 119
+            ],
+            [
+                'scope_id' => 4,
+                'permission_id' => 119
+            ],
+            [
+                'scope_id' => 5,
+                'permission_id' => 119
+            ]
+        ];
+
+        $this->loadTable($dataManageOwnCompanies);
     }
 }
