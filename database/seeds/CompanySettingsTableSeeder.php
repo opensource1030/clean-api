@@ -16,33 +16,27 @@ class CompanySettingsTableSeeder extends BaseTableSeeder
     {
         $this->deleteTable();
 
-        $data = [
-            [
-                'globalSettingId' => 1,
-                'companyId' => 1,
-            ],
-            [
-                'globalSettingId' => 1,
-                'companyId' => 2,
-            ],
-            [
-                'globalSettingId' => 1,
-                'companyId' => 3,
-            ],
-            [
-                'globalSettingId' => 2,
-                'companyId' => 3,
-            ],
-            [
-                'globalSettingId' => 2,
-                'companyId' => 2,
-            ],
-            [
-                'globalSettingId' => 2,
-                'companyId' => 1,
-            ],
-        ];
+        $i = 1;
+        while ($i < 20) {
+            $dataS1 = [
+                [
+                    'globalSettingsValueId' => rand(1,3),
+                    'companyId' => $i // ADMIN
+                ]
+            ];
 
-        $this->loadTable($data);
+            $this->loadTable($dataS1);
+
+            $dataS2 = [
+                [
+                    'globalSettingsValueId' => rand(4,6),
+                    'companyId' => $i // ADMIN
+                ]
+            ];
+
+            $this->loadTable($dataS2);
+
+            $i++;
+        }
     }
 }

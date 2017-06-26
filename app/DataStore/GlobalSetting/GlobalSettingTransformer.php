@@ -10,7 +10,7 @@ use WA\DataStore\FilterableTransformer;
 class GlobalSettingTransformer extends FilterableTransformer
 {
     protected $availableIncludes = [
-        'globalsettingsvalues'
+        'globalsettingvalues'
     ];
 
     /**

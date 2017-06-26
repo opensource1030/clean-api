@@ -7,7 +7,7 @@ use WA\DataStore\FilterableTransformer;
 /**
  * Class GlobalSettingValueTransformer.
  */
-class GlobalSettingsValueTransformer extends FilterableTransformer
+class GlobalSettingValueTransformer extends FilterableTransformer
 {
     /**
      * @param GlobalSettingValue $globalSettingValue

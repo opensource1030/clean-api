@@ -24,7 +24,8 @@ class CompanyTransformer extends FilterableTransformer
         'packages',
         'presets',
         'users',
-        'addresses'
+        'addresses',
+        'globalsettingvalues'
     ];
 
     /**

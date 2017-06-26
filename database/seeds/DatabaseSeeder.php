@@ -28,6 +28,7 @@ class DatabaseSeeder extends Seeder
         $this->call(CompanyAddressTableSeeder::class);
         $this->call(CompanyDomainsTableSeeder::class);
         $this->call(CompanySaml2TableSeeder::class);
+        $this->call(CompanySettingsTableSeeder::class);
         $this->call(ConditionsTableSeeder::class);
         //$this->call(DeviceCarriersTableSeeder::class);
         //$this->call(DeviceCompaniesTableSeeder::class);

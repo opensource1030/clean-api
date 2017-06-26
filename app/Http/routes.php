@@ -98,6 +98,12 @@ $api->version('v1', function ($api) {
     $api->get('resetPassword/{identification}/{code}', ['as' => 'reset.password.credentials', 'uses' => $auth . '@getPasswordFromEmail']);
     $api->get('acceptUser/{identification}/{code}', ['as' => 'activate.email.credentials', 'uses' => $auth . '@acceptUser']);
 
+    // Only for debugging purposes:
+    $api->get('deskpro/debug', [
+        'middleware' => [],
+        'uses' => 'WA\Http\Controllers\CompaniesController@debugEndpoint'
+    ]);
+
     $middleware = [];
     if (!app()->runningUnitTests()) {
         if (env('API_AUTH_MIDDLEWARE') !== null) {
@@ -903,10 +909,31 @@ $api->version('v1', function ($api) {
 
         // =GlobalSetting
         $globalSettingController = 'WA\Http\Controllers\GlobalSettingsController';
-        $api->get('globalsettings', ['as' => 'api.globalsettings.index', 'uses' => $globalSettingController . '@index']);
-        $api->get('globalsettings/{id}', ['as' => 'api.globalsettings.show', 'uses' => $globalSettingController . '@show']);
-        $api->post('globalsettings', ['uses' => $globalSettingController . '@create']);
-        $api->patch('globalsettings/{id}', ['uses' => $globalSettingController . '@store']);
-        $api->delete('globalsettings/{id}', ['uses' => $globalSettingController . '@delete']);
+        $api->get('globalsettings', [
+            'middleware' => [$scopeMiddleware.':get_globalsettings'],
+            'as' => 'api.globalsettings.index',
+            'uses' => $globalSettingController . '@index'
+        ]);
+
+        $api->get('globalsettings/{id}', [
+            'middleware' => [$scopeMiddleware.':get_globalsetting'],
+            'as' => 'api.globalsettings.show',
+            'uses' => $globalSettingController . '@show'
+        ]);
+
+        $api->post('globalsettings', [
+            'middleware' => [$scopeMiddleware.':create_globalsetting'],
+            'uses' => $globalSettingController . '@create'
+        ]);
+
+        $api->patch('globalsettings/{id}', [
+            'middleware' => [$scopeMiddleware.':update_globalsetting'],
+            'uses' => $globalSettingController . '@store'
+        ]);
+
+        $api->delete('globalsettings/{id}', [
+            'middleware' => [$scopeMiddleware.':delete_globalsetting'],
+            'uses' => $globalSettingController . '@delete'
+        ]);
     });
 });
