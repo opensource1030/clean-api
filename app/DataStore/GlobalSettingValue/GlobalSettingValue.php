@@ -7,9 +7,11 @@ use WA\DataStore\BaseDataStore;
 /**
  * Class GlobalSettingValue.
  */
-class GlobalSettingsValue extends BaseDataStore
+class GlobalSettingValue extends BaseDataStore
 {
     protected $table = 'global_settings_values';
+
+    public $timestamps = false;
 
     protected $fillable = [
             'name',

@@ -16,16 +16,15 @@ class PermissionRolesTableSeeder extends BaseTableSeeder
     {
         $this->deleteTable();
 
-        // SUPERADMIN: ALL PERMISSIONS.
+        // ADMIN: ALL PERMISSIONS.
 
         $i = 1;
-        // while ($i < 109) {
-        while ($i < 112) {
 
+        while ($i < 119) {
             $data = [
                 [
                     'permission_id' => $i,
-                    'role_id' => 1 // SUPERADMIN
+                    'role_id' => 1 // ADMIN
                 ]
             ];
 
@@ -33,11 +32,11 @@ class PermissionRolesTableSeeder extends BaseTableSeeder
             $i++;
         }
 
-        // ADMIN: SOME PERMISSIONS (Asociated to the company of the admin)
+        // WTA: SOME PERMISSIONS (Asociated to the company of the admin)
         // note: I've commented categoryapps, conditionfields and conditionoperators from routes.
 
         $j = 1;
-        while ($j < 95) {
+        while ($j < 119) {
             // NOT assign the permissions listed below.
             if(    $j != 22 // create_company
                 && $j != 24 // delete_company
@@ -52,11 +51,12 @@ class PermissionRolesTableSeeder extends BaseTableSeeder
                 && $j != 105 // create_scope
                 && $j != 106 // update_scope
                 && $j != 107 // delete_scope
+                && $j != 118 // manage_companies
             ) {
                 $data = [
                     [
                         'permission_id' => $j,
-                        'role_id' => 2 // ADMIN
+                        'role_id' => 2 // WTA
                     ]
                 ];
 

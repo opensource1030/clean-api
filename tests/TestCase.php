@@ -27,11 +27,11 @@ abstract class TestCase extends \Laravel\Lumen\Testing\TestCase
         $this->mainCompany = factory(\WA\DataStore\Company\Company::class)->create()->id;
         
         $this->mainUserSuperAdmin = factory(\WA\DataStore\User\User::class)->create(['companyId' => $this->mainCompany]);
-        $this->roleSuperAdmin = factory(\WA\DataStore\Role\Role::class)->create(['display_name' => 'superadmin', 'name' => 'superadmin']);
+        $this->roleSuperAdmin = factory(\WA\DataStore\Role\Role::class)->create(['display_name' => 'admin', 'name' => 'admin']);
         $this->mainUserSuperAdmin->roles()->sync([$this->roleSuperAdmin->id]);
 
         $this->mainUserAdmin = factory(\WA\DataStore\User\User::class)->create(['companyId' => $this->mainCompany]);
-        $this->roleAdmin = factory(\WA\DataStore\Role\Role::class)->create(['display_name' => 'admin', 'name' => 'admin']);
+        $this->roleAdmin = factory(\WA\DataStore\Role\Role::class)->create(['display_name' => 'wta', 'name' => 'wta']);
         $this->mainUserAdmin->roles()->sync([$this->roleAdmin->id]);
 
         $this->mainUser = factory(\WA\DataStore\User\User::class)->create(['companyId' => $this->mainCompany]);

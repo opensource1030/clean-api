@@ -769,6 +769,87 @@ class PermissionsTableSeeder extends BaseTableSeeder
             ],
         ];
 
+        /*
+         *  GLOBALSETTINGS
+         *  scope:get_globalsettings,scope:get_globalsetting,scope:create_globalsetting,scope:update_globalsetting,scope:delete_globalsetting
+         *
+         */
+        $dataGlobalSetting = [
+            [
+                'name' => 'get_globalsettings',
+                'display_name' => 'View all Global Settings',
+                'description' => 'View all Global Settings',
+            ],
+            [
+                'name' => 'get_globalsetting',
+                'display_name' => 'View a Global Settings',
+                'description' => 'View a Global Settings',
+            ],
+            [
+                'name' => 'create_globalsetting',
+                'display_name' => 'Create a Global Settings',
+                'description' => 'Create a Global Settings',
+            ],
+            [
+                'name' => 'update_globalsetting',
+                'display_name' => 'Update a Global Settings',
+                'description' => 'Update a Global Settings',
+            ],
+            [
+                'name' => 'delete_globalsetting',
+                'display_name' => 'Erase a Global Settings',
+                'description' => 'Erase a Global Settings',
+            ],
+        ];
+
+        // SPECIAL CASES.
+        $dataManageDevices = [
+            [
+                'name' => 'manage_devices',
+                'display_name' => 'Manage Devices',
+                'description' => 'Group of Scopes that allows the User to Manage Devices',
+            ]
+        ];
+
+        $dataManagePresets = [
+            [
+                'name' => 'manage_presets',
+                'display_name' => 'Manage Presets',
+                'description' => 'Group of Scopes that allows the User to Manage Presets',
+            ]
+        ];
+
+        $dataManageServices = [
+            [
+                'name' => 'manage_services',
+                'display_name' => 'Manage Services',
+                'description' => 'Group of Scopes that allows the User to Manage Services',
+            ]
+        ];
+        
+        $dataManageEmployees = [
+            [
+                'name' => 'manage_employees',
+                'display_name' => 'Manage Employees',
+                'description' => 'Group of Scopes that allows the User to Manage Employees',
+            ]
+        ];
+
+        $dataManageCompanies = [
+            [
+                'name' => 'manage_companies',
+                'display_name' => 'Manage Companies',
+                'description' => 'Group of Scopes that allows the User to Manage Companies',
+            ]
+        ];
+
+        $dataManageCompanies = [
+            [
+                'name' => 'manage_own_company',
+                'display_name' => 'Manage Own Company',
+                'description' => 'Group of Scopes that allows the User to Manage His/Her Own Company',
+            ]
+        ];
 
         $this->loadTable($dataAddress);
         $this->loadTable($dataAllocation);
@@ -794,5 +875,10 @@ class PermissionsTableSeeder extends BaseTableSeeder
         $this->loadTable($dataRole);
         $this->loadTable($dataPermission);
         $this->loadTable($dataScope);
+        $this->loadTable($dataManageDevices);
+        $this->loadTable($dataManagePresets);
+        $this->loadTable($dataManageServices);
+        $this->loadTable($dataManageEmployees);
+        $this->loadTable($dataManageCompanies);
     }
 }

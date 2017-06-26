@@ -242,10 +242,12 @@ class OrdersController extends FilteredApiController
         }
 
         if ($success) {
-            if(!$this->createTicketOnEasyVista($order)) {
-                $error['errors']['orders'] = "Create Ticket on EasyVista Error";
-                return response()->json($error)->setStatusCode($this->status_codes['conflict']);
-            }
+            if(env('EV_ENABLED')) {
+                if(!$this->createTicketOnEasyVista($order)) {
+                    $error['errors']['orders'] = "Create Ticket on EasyVista Error";
+                    return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+                }    
+            }            
             $res = $this->sendConfirmationEmail($data['attributes']['userId'], 'Order');
             DB::commit();
             return $this->response()->item($order, new OrderTransformer(), ['key' => 'orders'])
@@ -294,15 +296,20 @@ class OrdersController extends FilteredApiController
             $package = \WA\DataStore\Package\Package::find($order->packageId);
             $devicevariations = $order->devicevariations;
 
+
+
             $code = base64_encode(env('EV_API_LOGIN') . ':' . env('EV_API_PASSWORD'));
-            $attributes = $this->makeTheStringWithOrderAttributes($user, $address, $package, $service, $devicevariations);
+            $attributes = $this->makeTheStringWithOrderAttributes($order, $user, $address, $package, $service, $devicevariations);
             \Log::debug("OrdersController@createTicketOnEasyVista - attributes: " . print_r($attributes, true));
 
             $client = new \Guzzle\Http\Client('https://wa.easyvista.com/api/v1/50005/');
+
+            $packageAC = isset($package->approvalCode) ? $package->approvalCode : '';
+
             $uri = 'requests';
             $post_data = array(
                 'Catalog_GUID' => '',
-                'Catalog_Code' => $package->approvalCode,
+                'Catalog_Code' => $packageAC,
                 'AssetID' => '',
                 'AssetTag' => '',
                 'ASSET_NAME' => '',
@@ -329,6 +336,7 @@ class OrdersController extends FilteredApiController
                 'CI_NAME' => '',
                 'SUBMIT_DATE' => ''
             );
+
             $data = json_encode(['requests' => [$post_data]]);
             $request = $client->post($uri, array(
                 'content-type' => 'application/json',
@@ -345,62 +353,165 @@ class OrdersController extends FilteredApiController
         }
     }
 
-    private function makeTheStringWithOrderAttributes($user, $address, $package, $service, $devicevariations) {
+    private function makeTheStringWithOrderAttributes($order, $user, $address, $package, $service, $devicevariations) {
+
+        $company = \WA\DataStore\Company\Company::find($user->companyId);
         $attributes = '';
 
+        // Company.
         $attributes = $attributes .
-            '<bold>Username:</bold> ' . $user->username .
-            ' with email: ' . $user->email .
-            ', with supervisor: ' . $user->supervisorEmail . '<br>';
+            '<h2><strong>' . $company->name .
+            ' - ' . $order->orderType . 
+            ' - ' . $user->username .
+            '</strong></h2>';
+
+        $packageName = isset($package->name) ? $package->name : '';
+
+        // Package.
+        $attributes = $attributes .
+            '<h3><strong>Package Name: </strong>' . $packageName .
+            '</h3>';
 
         $attributes = $attributes .
-            ', <bold>Address Name:</bold> ' . $address->name .
-            ', from ' . $address->city .
-            ' ( ' . $address->state . ' - ' . $address->country . ' )<br>';
+            '<hr />';
 
-        /*
-        if ($package != null) {
-            $attributes = $attributes . '<bold>Package Name:</bold> ' . $package->name . '<br>';
-        }
-        */
+        // User
+        $departmentUdl = '';
+        $costCenterUdl = '';
+        $udlValues = $user->udlvalues;
+        foreach ($udlValues as $udlValue) {
+            $udl = \WA\DataStore\Udl\Udl::find($udlValue->udlId);
+            if ($udl->name == 'Department') {
+                $departmentUdl = $udlValue->name;
+            }
 
-        if ($service != null) {
-            $attributes = $attributes . '<bold>Service Name:</bold> ' . $service->title . ', ';
-            foreach ($service->serviceitems as $si) {
-                if ($si->domain == 'domestic' || $si->domain == 'international') {
-                    if ($si->value > 0) {
-                        $attributes = $attributes .
-                            $si->domain . ' ' .
-                            $si->category . ': ' .
-                            $si->value . ' ' .
-                            $si->unit . ', ';
-                    }
-                }
+            if ($udl->name == 'Cost Center') {
+                $costCenterUdl = $udlValue->name;
             }
         }
 
-        $attributes = $attributes . '<br>';
+        $activeLogin = \Auth::user();
+        $attributes = $attributes .
+        '<h3 class="heading2">User Info:</h3>' .
+        '<p>' .
+            '<strong>Username:</strong>&nbsp;' . $user->username .
+            '<br /><strong>Email:</strong>&nbsp;' . $user->email .
+            '<br /><strong>Supervisor Email:</strong> ' . $user->supervisorEmail .
+            '<br /><strong>Department:</strong> ' . $departmentUdl .
+            '<br /><strong>Cost Center:</strong> ' . $costCenterUdl .
+        '</p>' .
+        '<p>' .
+            '<strong>Entered by:</strong>&nbsp;' . $activeLogin->username .
+        '</p>';
 
-        if (count($devicevariations) > 0) {
+        $attributes = $attributes .
+            '<hr />';
+
+        $smartphone = '';
+        $accessories = '';
+        if ($devicevariations == null) {
             foreach ($devicevariations as $dv) {
-                if(isset($dv->devices)) {
-                    if (isset($dv->devices->devicetypes)) {
-                        if ($dv->devices->devicetypes->name == 'Smartphone') {
-                            $attributes = $attributes .
-                                '<bold>Device Name</bold>: ' . $dv->devices->name . ' : ' .
-                                $dv->devices->defaultPrice . ' ' .
-                                $dv->devices->currency;
-                            if($dv->devices->property != '') {
-                                $attributes = $attributes  . ', ' . $dv->devices->property;
-                            }
-                        }
+                if ($dv->devices->devicetypes->name == 'Smartphone') {
+                    $smartphone = $dv;
+                }
+
+                if ($dv->devices->devicetypes->name == 'Accessory') {
+                    if ($accessories == '') {
+                        $accessories = $accessories . ', ';
+                    }
+                    $accessories = $accessories . $dv->name;
+                }
+            }    
+        }
+        
+        if ($smartphone == '') {
+            $make = '';
+            $model = '';
+        } else {
+            $make = $smartphone->devices->make;
+            $model = $smartphone->devices->model;
+        }
+
+        $domVo = $domDa = $domMe = $intVo = $intDa = $intMe = '';
+        if ($service == null) {
+            $CarrierName = $order->deviceCarrier;
+        } else {
+            $CarrierName = $service->carriers->name;
+            
+            foreach ($service->serviceitems as $si) {
+                if ($si->domain == 'domestic') {
+                    if ($si->category == 'voice') {
+                        $domVo = $si->value . ' ' . $si->unit;
+                    } else if ($si->category == 'data') {
+                        $domDa = $si->value . ' ' . $si->unit;
+                    } else if ($si->category == 'messages') {
+                        $domMe = $si->value . ' ' . $si->unit;
+                    } else {
+                        // NOTHING.
+                    }
+                } else if ($si->domain == 'international') {
+                    if ($si->category == 'voice') {
+                        $intVo = $si->value . ' ' . $si->unit;
+                    } else if ($si->category == 'data') {
+                        $intDa = $si->value . ' ' . $si->unit;
+                    } else if ($si->category == 'messages') {
+                        $intMe = $si->value . ' ' . $si->unit;
+                    } else {
+                        // NOTHING.
                     }
                 }
             }
         }
 
-        $attributes = $attributes . '.';
+        //
+        $attributes = $attributes .
+            '<h3 class="heading2">Device&nbsp;Info:</h3>' .
+            '<p>' .
+                '<strong>Mobile Number:</strong> ' . $order->servicePhoneNo .
+                '<br />' .
+                '<strong>Carrier:</strong> ' . $CarrierName .
+                '<br />' .
+                '<strong>Make/Model:</strong> ' . $make . ' ' . $model .
+                '<br />' .
+                '<strong>Accessories:</strong> ' . $accessories .
+            '</p>';
 
+        $attributes = $attributes .
+            '<hr />';
+
+        $attributes = $attributes .
+            '<h3 class="heading2">Mobile Service Info:</h3>' .
+            '<p>' .
+                '<strong>Domestic Voice:</strong>' . $domVo .
+                '<br />' .
+                '<strong>Domestic Data:</strong>' . $domDa .
+                '<br />' .
+                '<strong>Domestic Messaging:</strong>' . $domMe .
+                '<br />' .
+                '<strong>International Voice:</strong>' . $intVo .
+                '<br />' .
+                '<strong>International Data:</strong>' . $intDa .
+                '<br />' .
+                '<strong>International Messaging:</strong>' . $intMe .
+            '</p>';
+
+        $attributes = $attributes .
+            '<hr />';
+
+        $attributes = $attributes .
+            '<h3 class="heading2">Shipping Info:</h3>' .
+            '<p>' . $company->name .
+                '<br />' . $address->name .
+                '<br />' . $address->city . ', ' . $address->state . ', ' . $address->postalCode .
+                '<br />Attn.&nbsp;' . $user->username .
+            '</p>';
+/*
+        $attributes = $attributes .
+            '<hr />';
+
+        $attributes = $attributes .
+            '<h3 class="heading2">Comments:</h3><p>Open comments field.</p>';
+*/
         return $attributes;
     }
 }

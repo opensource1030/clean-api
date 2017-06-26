@@ -71,7 +71,7 @@ class EloquentDevice extends AbstractRepository implements DeviceInterface
         if(isset($data['properties']) && $data['properties'] !== ''){
             $deviceData['properties'] = $data['properties'];
         } else {
-            $deviceData['properties'] = null;
+            $deviceData['properties'] = '';
         }
         
         if(isset($data['deviceTypeId']) && $data['deviceTypeId'] !== ''){
@@ -390,7 +390,7 @@ class EloquentDevice extends AbstractRepository implements DeviceInterface
      * @return Array
      */
     public function addFilterToTheRequest($companyId) {
-        $aux['devicevariations.companies.id'] = (string) $companyId;
+        $aux['devicevariations.companyId'] = (string) $companyId;
         return $aux;
     }
 
@@ -409,8 +409,7 @@ class EloquentDevice extends AbstractRepository implements DeviceInterface
             $ok = true;
             foreach ($json->data->relationships->devicevariations->data as $value) {
                 if ($value->type == 'devicevariations') {
-                    $devvar = \WA\DataStore\DeviceVariation\DeviceVariation::find($value->id);
-                    $ok = $ok && $devvar->companyId == $companyId;
+                    $ok = $ok && $value->attributes->companyId == $companyId;
                 } else {
                     return false;
                 }

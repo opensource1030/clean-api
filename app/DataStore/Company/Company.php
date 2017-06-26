@@ -123,9 +123,9 @@ class Company extends BaseDataStore
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function globalsettingsvalues()
+    public function globalsettingvalues()
     {
-        return $this->belongsToMany('WA\DataStore\GlobalSettingsValue\GlobalSettingsValue', 'company_settings', 'companyId', 'globalSettingsValueId');
+        return $this->belongsToMany('WA\DataStore\GlobalSettingValue\GlobalSettingValue', 'company_settings', 'companyId', 'globalSettingsValueId');
     }
 
     /**

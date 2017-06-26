@@ -24,8 +24,9 @@ class PermissionTransformer extends FilterableTransformer
     {
         return [
             'id'   => (int)$permission->id,
-            'name' => $permission->display_name,
-           
+            'name' => $permission->name,
+            'display_name' => $permission->display_name,
+            'description' => $permission->description,           
         ];
     }
 }

@@ -63,7 +63,7 @@ class Service extends BaseDataStore
     /**
      * @return \Illuminate\Database\Eloquent\Relations\belongsToMany
      */
-    public function user()
+    public function users()
     {
         return $this->belongsToMany('WA\DataStore\User\User', 'user_services', 'userId', 'serviceId');
     }

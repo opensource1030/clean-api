@@ -13,7 +13,7 @@ class BaseTableSeeder extends Seeder
 
     public function deleteTable()
     {
-        return DB::table($this->table)->delete();
+        return DB::table($this->table)->truncate();
     }
 
     public function run()

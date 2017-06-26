@@ -43,7 +43,7 @@ class PersonalAccessTokenController extends \Laravel\Passport\Http\Controllers\P
     private function retrieveScopesRelatedToTheUserRole() {
         $user = Auth::user();
         $roles = $user->roles;
-        
+
         $scopeList = [];
         foreach ($roles as $role) {
             $permissions = $role->permissions;
@@ -54,8 +54,8 @@ class PersonalAccessTokenController extends \Laravel\Passport\Http\Controllers\P
                 }
             }
         }
-
         $scopeList = array_unique($scopeList);
+        
         return $scopeList;
     }
 
