@@ -82,6 +82,22 @@ class ImagesTableSeeder extends BaseTableSeeder
                 'size' => 160054,
                 'url' => 'phpjNUU8x.bmp',
             ],
+            [
+                'originalName' => 'headphones.jpg',
+                'filename' => 'phpheadphones',
+                'mimeType' => 'image/jpeg',
+                'extension' => 'jpg',
+                'size' => 88361,
+                'url' => 'phpheadphones.jpg',
+            ],
+            [
+                'originalName' => 'Charger.jpg',
+                'filename' => 'phpcharger',
+                'mimeType' => 'image/jpg',
+                'extension' => 'jpg',
+                'size' => 160054,
+                'url' => 'phpcharger.jpg',
+            ]
         ];
 
         if(!file_exists('./storage/app/public/')) {
@@ -96,6 +112,8 @@ class ImagesTableSeeder extends BaseTableSeeder
         copy('./database/seeds/imagesseeder/phprwT8UU.png', './storage/app/public/phprwT8UU.png');
         copy('./database/seeds/imagesseeder/phpjf9GTX.png', './storage/app/public/phpjf9GTX.png');
         copy('./database/seeds/imagesseeder/phpjNUU8x.bmp', './storage/app/public/phpjNUU8x.bmp');
+        copy('./database/seeds/imagesseeder/phpheadphones.jpg', './storage/app/public/phpheadphones.jpg');
+        copy('./database/seeds/imagesseeder/phpcharger.jpg', './storage/app/public/phpcharger.jpg');
 
         $this->loadTable($data);
     }
