@@ -1,6 +1,9 @@
 <?php
 
-
+use Laravel\Lumen\Testing\DatabaseMigrations;
+use WA\DataStore\Company\Company;
+use WA\DataStore\Company\CompanyUserImportJob;
+use WA\DataStore\User\User;
 
 class CompaniesTest extends \TestCase
 {
@@ -40,7 +43,7 @@ class CompaniesTest extends \TestCase
     {
         $company = factory(\WA\DataStore\Company\Company::class)->create();
 
-        $this->json('GET', 'companies/'.$company->id)
+        $response = $this->json('GET', 'companies/'.$company->id)
             ->seeJson([
                 'type' => 'companies',
                 'id' => "$company->id",
@@ -2695,4 +2698,552 @@ class CompaniesTest extends \TestCase
         $responseDel = $this->call('DELETE', 'companies/10');
         $this->assertEquals(404, $responseDel->status());
     }
+
+    public function testCreateImportUserJobWithWrongRequest()
+    {
+        // check company is exist
+        $companyId = 'random';
+        $uri = "companies/$companyId/jobs";
+        $response = $this->call('POST', $uri);
+        $this->assertEquals(404, $response->status());
+
+        // check attach file
+        $company = factory(\WA\DataStore\Company\Company::class)->create(['name' => 'random-company']);
+        $companyId = $company->id;
+        $uri = "companies/$companyId/jobs";
+        $response = $this->call('POST', $uri);
+        $this->assertEquals(400, $response->status());
+
+        // check attach file is csv
+        $targetPath = "./storage/clients/{$company->name}";
+        $targetFile = "$targetPath/filename.png";
+        if(!is_dir($targetPath)){
+            mkdir($targetPath, 0755, true);
+        }
+        copy('./database/seeds/imagesseeder/phpFmndT1.png', $targetFile);
+
+        $uploadedFile = new Symfony\Component\HttpFoundation\File\UploadedFile(
+            $targetFile,
+            'iphone6.png',
+            'image/png',
+            235417,
+            null,
+            true
+        );
+        $response = $this->call('POST', $uri, [], [], ['csv' => $uploadedFile]);
+        $this->assertEquals(400, $response->status());
+
+        @unlink($targetFile);
+    }
+
+    /**
+     *
+     * @group CompaniesControllerTest
+     */
+    public function testCompanyCreateJobSuccessfully()
+    {
+        $company = factory(\WA\DataStore\Company\Company::class)->create(['name' => 'random-company']);
+        
+        $udl1 = factory(\WA\DataStore\Udl\Udl::class)->create([
+            'companyId'         => $company->id,
+            'name'              => 'udl-for-tests',
+            'legacyUdlField'    => null,
+            'inputType'         => 'string'
+        ]);
+
+        $udl1Value1 = factory(\WA\DataStore\UdlValue\UdlValue::class)->create([
+            'udlId' => $udl1->id,
+            'name' => 'udl-value-1'
+        ]);
+        $udl1Value2 = factory(\WA\DataStore\UdlValue\UdlValue::class)->create([
+            'udlId' => $udl1->id,
+            'name' => 'udl-value-2'
+        ]);
+        $udl1Value3 = factory(\WA\DataStore\UdlValue\UdlValue::class)->create([
+            'udlId' => $udl1->id,
+            'name' => 'udl-value-3'
+        ]);
+    
+        $uploadedFile = new Symfony\Component\HttpFoundation\File\UploadedFile(
+            "./database/seeds/import/employee--test.csv",
+            "employee--test.csv",
+            null,null,null,true
+        );
+
+        $response = $this->call('POST', "companies/{$company->id}/jobs", ['test' => '1'], [], ['csv' => $uploadedFile]);
+        $responseContents = json_decode($response->getContent(), true);
+        
+        \Log::debug("JSON FOR GET OF CompanyUsersImportJob");
+        \Log::debug(json_encode($responseContents, JSON_PRETTY_PRINT));
+
+        $this->seeJsonStructure([
+            "data" => [
+                "type",
+                "id",
+                "attributes" => [
+                    "companyId",
+                    "path",
+                    "file",
+                    "totalUsers",
+                    "createdUsers",
+                    "updatedUsers",
+                    "failedUsers",
+                    "CSVfields",
+                    "DBfields",
+                    "sampleUser" => [
+                        /*
+                        "email",
+                        "alternateEmail",
+                        "password",
+                        "username",
+                        "confirmation_code",
+                        "confirmed",
+                        "firstName",
+                        "lastName",
+                        "alternateFirstName",
+                        "supervisorEmail",
+                        "companyUserIdentifier",
+                        "isSupervisor",
+                        "isValidator",
+                        "isActive",
+                        "defaultLang",
+                        "level",
+                        "notify",
+                        "companyId",
+                        "supervisorId",
+                        "externalId",
+                        "approverId",
+                        "defaultLocationId",
+                        //*/
+                    ],
+                    "mappings" => [],
+                    "status",
+                    // "errors",
+                    "created_by_id",
+                    "updated_by_id",
+                    "created_at" => [
+                        "date",
+                        "timezone_type",
+                        "timezone",
+                    ],
+                    "updated_at" => [
+                        "date",
+                        "timezone_type",
+                        "timezone",
+                    ]
+                ],
+                "links" => [
+                    "self",
+                ]
+            ]
+        ]);
+
+        $fieldsInCSVFields = array_diff([
+                "email",
+                "alternateEmail",
+                "password",
+                "username",
+                "confirmation_code",
+                "confirmed",
+                "firstName",
+                "lastName",
+                "alternateFirstName",
+                "supervisorEmail",
+                "companyUserIdentifier",
+                "isSupervisor",
+                "isValidator",
+                "isActive",
+                "defaultLang",
+                "level",
+                "notify",
+                "companyId",
+                "supervisorId",
+                "externalId",
+                "approverId",
+                "defaultLocationId",
+                "udl-for-tests",
+            ],
+            $responseContents["data"]["attributes"]["CSVfields"]
+        );
+
+        $fieldsInDBFields = array_diff([
+                "uuid",
+                "identification",
+                "email",
+                "alternateEmail",
+                "username",
+                "firstName",
+                "lastName",
+                "alternateFirstName",
+                "isSupervisor",
+                "isValidator",
+                "isActive",
+                "hierarchy",
+                "defaultLang",
+                "notes",
+                "level",
+                // And the UDLs already injected from the factories and then, appearing in the CSV:
+                "udl-for-tests"
+            ],
+            $responseContents["data"]["attributes"]["DBfields"]
+        );
+
+        $this->assertEmpty($fieldsInCSVFields);
+        $this->assertEmpty($fieldsInDBFields);
+
+        // // \Log::debug(json_encode($fieldsInCSVFields, JSON_PRETTY_PRINT));
+        // // \Log::debug(json_encode($fieldsInDBFields, JSON_PRETTY_PRINT));
+        return $responseContents['data']['id'];
+
+    }
+
+    /**
+     *
+     * @group CompaniesControllerTest
+     */
+    public function testCompanyGetJob()
+    {
+        $job = factory(\WA\DataStore\Company\CompanyUserImportJob::class)->create();
+
+        $response = $this->json('GET', "companies/{$job->companyId}/jobs/{$job->id}");
+        \Log::debug(json_encode(json_decode($response->response->getContent()), JSON_PRETTY_PRINT));
+        $response->seeJsonStructure([
+            'data' => [
+                'id',
+                'type',
+                'attributes' => [
+                    'status',
+                    'totalUsers',
+                    'createdUsers',
+                    'updatedUsers',
+                    'sampleUser',
+                    'CSVfields',
+                    'DBfields',
+                    'mappings'
+                ]
+            ]
+        ]);
+    }
+
+    /**
+     *
+     * @group CompaniesControllerTest
+     */
+    public function testBORRAR()
+    {
+        $job = factory(\WA\DataStore\Company\CompanyUserImportJob::class)->create();
+
+        $response = $this->json('GET', "companies/{$job->companyId}");
+        \Log::debug(json_encode(json_decode($response->response->getContent()), JSON_PRETTY_PRINT));
+        $response->seeJsonStructure([
+                'data' => [
+                    'id',
+                    'type',
+                    'attributes' => [
+
+                        
+                    ]
+                ]
+            ]);
+    }
+
+    /**
+     *
+     * @group CompaniesControllerTest
+     */
+    public function testCompanyPatchJob()
+    {
+
+        $job = factory(\WA\DataStore\Company\CompanyUserImportJob::class)->create([
+            'filepath' => base_path() . '/storage/clients/random-company/employee.csv'
+        ]);
+        $this->withoutJobs();
+        $response = $this->call('PATCH', "companies/{$job->companyId}/jobs/{$job->id}",
+            [
+                "data" => [
+                    "id" => $job->id,
+                    "type" => "jobs",
+                    "attributes" => [
+                        "status" => "Pending",
+                        "totalUsers" => $job->total,
+                        "createdUsers" => 0,
+                        "updatedUsers" => 0,
+                        "errors" => 0,
+                        "sampleUser" => [
+                            "email" => "douglas.rolfson@example.org1",
+                            "alternateEmail" => "pagac.ashlee@example.org",
+                            "password" => "user",
+                            "username" => "douglas.rolfson",
+                            "confirmation_code" => "b95c05f09018e7d91c5a67c8d66b68f4",
+                            "confirmed" => "1",
+                            "firstName" => "Britney",
+                            "lastName" => "Prosacco",
+                            "alternateFirstName" => "Larissa",
+                            "supervisorEmail" => "leon62@example.org",
+                            "companyUserIdentifier" => "2",
+                            "isSupervisor" => "0",
+                            "isValidator" => "0",
+                            "isActive" => "1",
+                            "defaultLang" => "en",
+                            "level" => "0",
+                            "notify" => "0",
+                            "companyId" => "3",
+                            "supervisorId" => "3",
+                            "externalId" => "",
+                            "approverId" => "1",
+                            "defaultLocationId" => "52"
+                        ],
+                        "CSVfields" => [
+                            "email",
+                            "alternateEmail",
+                            "password",
+                            "username",
+                            "confirmation_code",
+                            "confirmed",
+                            "firstName",
+                            "lastName",
+                            "alternateFirstName",
+                            "supervisorEmail",
+                            "companyUserIdentifier",
+                            "isSupervisor",
+                            "isValidator",
+                            "isActive",
+                            "defaultLang",
+                            "level",
+                            "notify",
+                            "companyId",
+                            "supervisorId",
+                            "externalId",
+                            "approverId",
+                            "defaultLocationId"
+                        ],
+                        "DBfields" => [
+                            "email",
+                            "alternateEmail",
+                            "password",
+                            "username",
+                            "confirmation_code",
+                            "confirmed",
+                            "firstName",
+                            "lastName",
+                            "alternateFirstName",
+                            "supervisorEmail",
+                            "companyUserIdentifier",
+                            "isSupervisor",
+                            "isValidator",
+                            "isActive",
+                            "defaultLang",
+                            "notes",
+                            "level",
+                            "notify",
+                            "Cost Center",
+                            "Position",
+                            "Sector",
+                            "Vehicle"
+                        ],
+                        "mappings" => [
+                            ["csvField" =>"email","dbField" =>"email"],
+                            ["csvField" =>"companyId","dbField" =>"companyId"]
+                        ]
+                    ]
+                ]
+            ]);
+        \Log::debug($response->getcontent());
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->seeJsonStructure([
+            'data' => [
+                'id',
+                'type',
+                'attributes' => [
+                    'status',
+                    'totalUsers',
+                    'createdUsers',
+                    'updatedUsers',
+                    // 'errors',
+                    'sampleUser',
+                    'CSVfields',
+                    'DBfields',
+                    'mappings'
+                ]
+            ]
+        ]);
+    }
+
+
+    /**
+     * 
+     * @group CompaniesControllerTest
+     */
+    public function testCompanyUsersImportationProcessAll_2 () {
+
+        $company = factory(\WA\DataStore\Company\Company::class)->create([
+            'name' => 'random-company'
+        ]);
+
+        $user = factory(\WA\DataStore\User\User::class)->create([
+            // 'companyId' => $company->id,
+            'username'  => 'Anemail Adomain',
+            'email'     => 'anemail@adomain.com'
+        ]);
+        
+        $udl1 = factory(\WA\DataStore\Udl\Udl::class)->create([
+            'companyId'         => $company->id,
+            'name'              => 'udl-for-tests',
+            'legacyUdlField'    => null,
+            'inputType'         => 'string'
+        ]);
+
+        $udl1Value1 = factory(\WA\DataStore\UdlValue\UdlValue::class)->create([
+            'udlId' => $udl1->id,
+            'name' => 'udl-value-1'
+        ]);
+        $udl1Value2 = factory(\WA\DataStore\UdlValue\UdlValue::class)->create([
+            'udlId' => $udl1->id,
+            'name' => 'udl-value-2'
+        ]);
+        $udl1Value3 = factory(\WA\DataStore\UdlValue\UdlValue::class)->create([
+            'udlId' => $udl1->id,
+            'name' => 'udl-value-3'
+        ]);
+    
+        $uploadedFile = new Symfony\Component\HttpFoundation\File\UploadedFile(
+            "./database/seeds/import/employee--test.csv",
+            "employee--test.csv",
+            null,null,null,true
+        );
+
+        $usersCount1 = User::where("companyId", $company->id)->count();
+        $jobsCount1 = CompanyUserImportJob::where("companyId", $company->id)->count();
+
+        $this->assertEquals(0, $jobsCount1);
+        $this->assertEquals(0, $usersCount1);
+
+        $postUsers = $this->call('POST', "companies/{$company->id}/jobs/", 
+            ["test" => 1],
+            [],
+            ["csv" => $uploadedFile]
+        );
+
+        $job = json_decode($postUsers->getContent())->data;
+
+        $usersCount2 = User::where("companyId", $company->id)->count();
+        $jobsCount2 = CompanyUserImportJob::where("companyId", $company->id)->count();
+
+        // There is 1 user because if there is none, the controller creates one.
+        $this->assertEquals(1, $usersCount2);
+        $this->assertEquals(1, $jobsCount2);
+
+        $uri = "companies/{$company->id}/jobs/{$job->id}";
+
+        $patchJob = $this->call('PATCH', $uri, [ 
+            "data" => [
+                "type" => "jobs",
+                "id" => $job->id,
+                "attributes" => [
+                    "companyId" => "1",
+                    "filepath" => "/var/www/html/wirelessanalytics/clean-api/storage/clients/ward-steuber-and-mayert/employee1497367323.csv",
+                    "filename" => "employee1497367323.csv",
+                    "totalUsers" => 0,
+                    "createdUsers" => 0,
+                    "updatedUsers" => 0,
+                    "failedUsers" => 0,
+                    "CSVfields" => [
+                        "email",
+                        "alternateEmail",
+                        "password",
+                        "username",
+                        "confirmation_code",
+                        "confirmed",
+                        "firstName",
+                        "lastName",
+                        "alternateFirstName",
+                        "supervisorEmail",
+                        "companyUserIdentifier",
+                        "isSupervisor",
+                        "isValidator",
+                        "isActive",
+                        "defaultLang",
+                        "level",
+                        "notify",
+                        "companyId",
+                        "supervisorId",
+                        "externalId",
+                        "approverId",
+                        "defaultLocationId"
+                    ],
+                    "DBfields" => [
+                        "uuid",
+                        "identification",
+                        "email",
+                        "alternateEmail",
+                        "username",
+                        "firstName",
+                        "lastName",
+                        "alternateFirstName",
+                        "isSupervisor",
+                        "isValidator",
+                        "isActive",
+                        "hierarchy",
+                        "defaultLang",
+                        "notes",
+                        "level",
+                        "Cost Center",
+                        "Division",
+                        "Position"
+                    ],
+                    "sampleUser" => [
+                        "email" => "douglas.rolfson@example.org",
+                        "alternateEmail" => "pagac.ashlee@example.org",
+                        "password" => "user",
+                        "username" => "douglas.rolfson",
+                        "confirmation_code" => "b95c05f09018e7d91c5a67c8d66b68f4",
+                        "confirmed" => "1",
+                        "firstName" => "Britney",
+                        "lastName" => "Prosacco",
+                        "alternateFirstName" => "Larissa",
+                        "supervisorEmail" => "leon62@example.org",
+                        "companyUserIdentifier" => "2",
+                        "isSupervisor" => "0",
+                        "isValidator" => "0",
+                        "isActive" => "1",
+                        "defaultLang" => "en",
+                        "level" => "0",
+                        "notify" => "0",
+                        "companyId" => "3",
+                        "supervisorId" => "3",
+                        "externalId" => "\\N",
+                        "approverId" => "1",
+                        "defaultLocationId" => "52"
+                    ],
+                    "mappings" => [
+                        ["csvField" =>"email","dbField" =>"email"],
+                        ["csvField" =>"companyId","dbField" =>"companyId"]
+                    ],
+                    "status" => "Pending",
+                    "errors" => [],
+                    "created_by_id" => 1,
+                    "updated_by_id" => 1,
+                    "created_at" => [
+                        "date" => "2017-06-13 15:22:03.000000",
+                        "timezone_type" => 3,
+                        "timezone" => "UTC"
+                    ],
+                    "updated_at" => [
+                        "date" => "2017-06-13 15:22:03.000000",
+                        "timezone_type" => 3,
+                        "timezone" => "UTC"
+                    ]
+                ],
+                "links" => [
+                    "self" => "clean.api/companyuserimportjobs/5"
+                ]
+            ]
+        ]);
+
+        $usersCount3 = User::where("companyId", $company->id)->get();
+
+        $this->assertEquals(200, $patchJob->getStatusCode());
+
+    }
+
 }

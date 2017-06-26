@@ -115,10 +115,10 @@ $api->version('v1', function ($api) {
 
         $apiATC = '\Laravel\Passport\Http\Controllers\PersonalAccessTokenController';
 
-        //$scopeMiddleware = 'scope';
-        //if (app()->runningUnitTests()) {
+        $scopeMiddleware = 'scope';
+        if (app()->runningUnitTests()) {
             $scopeMiddleware = 'scopeTest';
-        //}
+        }
 
         $api->post('/create', [
             'middleware' => [$scopeMiddleware.':create'],
@@ -275,6 +275,23 @@ $api->version('v1', function ($api) {
             'middleware' => [$scopeMiddleware.':delete_company'],
             'uses' => $companiesController . '@deleteCompany'
         ]);
+
+        // ==Company Jobs
+        $api->post('companies/{companyId}/jobs', [
+            'middleware' => [$scopeMiddleware.':create_company_job'],
+            'uses' => $companiesController . '@createJob'
+        ]);
+        
+        $api->get('companies/{companyId}/jobs/{jobId}', [
+            'middleware' => [$scopeMiddleware.':get_company_job'],
+            'uses' => $companiesController . '@showJob'
+        ]);
+
+        $api->patch('companies/{companyId}/jobs/{jobId}', [
+            'middleware' => [$scopeMiddleware.':update_company_job'],
+            'uses' => $companiesController . '@storeJob'
+        ]);
+
 
         // CONDITIONS
         $conditionsController = 'WA\Http\Controllers\ConditionsController';

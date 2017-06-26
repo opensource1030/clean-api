@@ -19,6 +19,7 @@ class PermissionRolesTableSeeder extends BaseTableSeeder
         // ADMIN: ALL PERMISSIONS.
 
         $i = 1;
+
         while ($i < 119) {
             $data = [
                 [

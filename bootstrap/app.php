@@ -27,7 +27,8 @@ $app->withFacades();
 
 /**
 Set up Logging with Papertrail
-**//*
+**/
+/*
 $app->configureMonologUsing(function($monolog) {
     $syslog = new \Monolog\Handler\SyslogHandler('lumen');
     $formatter = new \Monolog\Formatter\LineFormatter(null, null, false, true);

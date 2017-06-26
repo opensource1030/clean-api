@@ -64,5 +64,6 @@ class RepositoriesServiceProviders extends ServiceProvider
         $this->registerCurrentBillMonth();
         $this->registerGlobalSetting();
         $this->registerGlobalSettingValue();
+	$this->registerCompanyUserImportJob();
     }
 }

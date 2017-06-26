@@ -36,7 +36,9 @@ class Company extends BaseDataStore
                              'assetPath',
                              'shortName',
                              'currentBillMonth',
-                             'defaultLocation'
+                             'defaultLocation',
+                             'companyId',
+                             'email'
                            ];
 
     protected $morphClass = 'company';
