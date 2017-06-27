@@ -126,7 +126,8 @@ class GlobalSettingApiTest extends TestCase
                     'attributes' => [
                         'label' => "Example Test",
                         'name' => "Example Test",
-                        'description' => "Description Test"
+                        'description' => "Description Test",
+                        'forType' => 'companies'
                     ],
                 ],
             ])
@@ -134,7 +135,8 @@ class GlobalSettingApiTest extends TestCase
                 'type' => 'globalsettings',
                 'label' => "Example Test",
                 'name' => "Example Test",
-                'description' => "Description Test"
+                'description' => "Description Test",
+                'forType' => 'companies'
             ]);
     }
 
@@ -147,12 +149,14 @@ class GlobalSettingApiTest extends TestCase
             'name' => "Example Test",
             'label' => "Example Test",
             'description' => "Description Test",
+            'forType' => 'companies'
         ]);
 
         $globalSetting2 = factory(\WA\DataStore\GlobalSetting\GlobalSetting::class)->create([
             'name' => "Other Example Test",
             'label' => "Other Example Test",
             'description' => "Other Description Test",
+            'forType' => 'companies'
         ]);
 
         $this->assertNotEquals($globalSetting1->name, $globalSetting2->name);
@@ -165,6 +169,7 @@ class GlobalSettingApiTest extends TestCase
                 'label' => $globalSetting1->label,
                 'name' => $globalSetting1->name,
                 'description' => $globalSetting1->description,
+                'forType' => 'companies'
             ]);
 
         $this->json('PATCH', 'globalsettings/'.$globalSetting1->id,
@@ -175,6 +180,7 @@ class GlobalSettingApiTest extends TestCase
                         'label' => $globalSetting2->label,
                         'name' => $globalSetting2->name,
                         'description' => $globalSetting2->description,
+                        'forType' => 'companies'
                     ],
                 ],
             ])
@@ -184,6 +190,7 @@ class GlobalSettingApiTest extends TestCase
                 'label' => $globalSetting2->label,
                 'name' => $globalSetting2->name,
                 'description' => $globalSetting2->description,
+                'forType' => 'companies'
             ]);
     }
 

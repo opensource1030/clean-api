@@ -3080,12 +3080,6 @@ class CompaniesTest extends \TestCase
             'name' => 'random-company'
         ]);
 
-        $user = factory(\WA\DataStore\User\User::class)->create([
-            // 'companyId' => $company->id,
-            'username'  => 'Anemail Adomain',
-            'email'     => 'anemail@adomain.com'
-        ]);
-        
         $udl1 = factory(\WA\DataStore\Udl\Udl::class)->create([
             'companyId'         => $company->id,
             'name'              => 'udl-for-tests',
