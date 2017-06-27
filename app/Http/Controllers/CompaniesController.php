@@ -132,7 +132,7 @@ class CompaniesController extends FilteredApiController {
 								array_push($addressIdArray, $item);
 							} else {
 								$newAddress = $addressInterface->create($item['attributes']);
-								\Log::debug("NEW ADDRESS: " . print_r($newAddress, true));
+								//\Log::debug("NEW ADDRESS: " . print_r($newAddress, true));
 								$aux['id'] = $newAddress->id;
 								$aux['type'] = 'addresses';
 								array_push($addressIdArray, $aux);
@@ -234,12 +234,12 @@ class CompaniesController extends FilteredApiController {
 
 					foreach ($data as $item) {
 						try {
-							\Log::debug("item: " . print_r($item, true));
+							//\Log::debug("item: " . print_r($item, true));
 							if ($item['id'] > 0) {
 								array_push($addressIdArray, $item);
 							} else {
 								$newAddress = $addressInterface->create($item['attributes']);
-								\Log::debug("NEW ADDRESS: " . print_r($newAddress, true));
+								//\Log::debug("NEW ADDRESS: " . print_r($newAddress, true));
 								$aux['id'] = $newAddress->id;
 								$aux['type'] = 'addresses';
 								array_push($addressIdArray, $aux);

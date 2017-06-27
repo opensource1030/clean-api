@@ -2773,8 +2773,8 @@ class CompaniesTest extends \TestCase
         $response = $this->call('POST', "companies/{$company->id}/jobs", ['test' => '1'], [], ['csv' => $uploadedFile]);
         $responseContents = json_decode($response->getContent(), true);
         
-        \Log::debug("JSON FOR GET OF CompanyUsersImportJob");
-        \Log::debug(json_encode($responseContents, JSON_PRETTY_PRINT));
+        //\Log::debug("JSON FOR GET OF CompanyUsersImportJob:");
+        //\Log::debug(json_encode($responseContents, JSON_PRETTY_PRINT));
 
         $this->seeJsonStructure([
             "data" => [
@@ -2906,7 +2906,7 @@ class CompaniesTest extends \TestCase
         $job = factory(\WA\DataStore\Company\CompanyUserImportJob::class)->create();
 
         $response = $this->json('GET', "companies/{$job->companyId}/jobs/{$job->id}");
-        \Log::debug(json_encode(json_decode($response->response->getContent()), JSON_PRETTY_PRINT));
+        //\Log::debug(json_encode(json_decode($response->response->getContent()), JSON_PRETTY_PRINT));
         $response->seeJsonStructure([
             'data' => [
                 'id',
@@ -2934,7 +2934,7 @@ class CompaniesTest extends \TestCase
         $job = factory(\WA\DataStore\Company\CompanyUserImportJob::class)->create();
 
         $response = $this->json('GET', "companies/{$job->companyId}");
-        \Log::debug(json_encode(json_decode($response->response->getContent()), JSON_PRETTY_PRINT));
+        //\Log::debug(json_encode(json_decode($response->response->getContent()), JSON_PRETTY_PRINT));
         $response->seeJsonStructure([
                 'data' => [
                     'id',
@@ -3048,7 +3048,7 @@ class CompaniesTest extends \TestCase
                     ]
                 ]
             ]);
-        \Log::debug($response->getcontent());
+        //\Log::debug($response->getcontent());
         $this->assertEquals(200, $response->getStatusCode());
         $this->seeJsonStructure([
             'data' => [
@@ -3080,12 +3080,6 @@ class CompaniesTest extends \TestCase
             'name' => 'random-company'
         ]);
 
-        $user = factory(\WA\DataStore\User\User::class)->create([
-            // 'companyId' => $company->id,
-            'username'  => 'Anemail Adomain',
-            'email'     => 'anemail@adomain.com'
-        ]);
-        
         $udl1 = factory(\WA\DataStore\Udl\Udl::class)->create([
             'companyId'         => $company->id,
             'name'              => 'udl-for-tests',
@@ -3114,7 +3108,7 @@ class CompaniesTest extends \TestCase
 
         $usersCount1 = User::where("companyId", $company->id)->count();
         $jobsCount1 = CompanyUserImportJob::where("companyId", $company->id)->count();
-
+        //\Log::debug("testCompanyUsersImportationProcessAll_2 - usersCount1: ".print_r($usersCount1, true));
         $this->assertEquals(0, $jobsCount1);
         $this->assertEquals(0, $usersCount1);
 

@@ -88,8 +88,8 @@ class EloquentCompanyUserImportJob extends AbstractRepository implements Company
     public function update(array $data)
     {
 
-        \Log::debug("Datos para el update:");
-        \Log::debug(json_encode($data, JSON_PRETTY_PRINT));
+        //\Log::debug("Datos para el update:");
+        //\Log::debug(json_encode($data, JSON_PRETTY_PRINT));
 
         $companyUserImportJob = $this->model->find($data['id']);
 
