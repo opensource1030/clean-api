@@ -391,7 +391,7 @@ class CompaniesController extends FilteredApiController {
             "updatedUsers" => 0,
             "failedUsers" => 0,
             "fields" => $rows[0],
-            "sampleUsers" => array_combine($rows[0], $firstMeaningfulRow),
+            "sampleUser" => array_combine($rows[0], $firstMeaningfulRow),
             "mappings" => new \stdClass,
             "status" => 0,
             "created_by_id" => 1, // Auth::user()->id,
