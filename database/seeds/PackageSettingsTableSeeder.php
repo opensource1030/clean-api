@@ -7,7 +7,7 @@
  */
 class CompanySettingsTableSeeder extends BaseTableSeeder
 {
-    protected $table = 'company_settings';
+    protected $table = 'package_settings';
 
     /**
      * Run the database seeds.
@@ -17,11 +17,11 @@ class CompanySettingsTableSeeder extends BaseTableSeeder
         $this->deleteTable();
 
         $i = 1;
-        while ($i < 21) {
+        while ($i < 41) {
             $dataS1 = [
                 [
-                    'globalSettingsValueId' => rand(1,3),
-                    'companyId' => $i // ADMIN
+                    'globalSettingsValueId' => rand(7,9),
+                    'packageId' => $i // ADMIN
                 ]
             ];
 
@@ -29,15 +29,23 @@ class CompanySettingsTableSeeder extends BaseTableSeeder
 
             $dataS2 = [
                 [
-                    'globalSettingsValueId' => rand(4,6),
-                    'companyId' => $i // ADMIN
+                    'globalSettingsValueId' => rand(10,12),
+                    'packageId' => $i // ADMIN
                 ]
             ];
 
             $this->loadTable($dataS2);
 
+            $dataS3 = [
+                [
+                    'globalSettingsValueId' => rand(13,15),
+                    'packageId' => $i // ADMIN
+                ]
+            ];
+
+            $this->loadTable($dataS3);
+
             $i++;
         }
-
     }
 }

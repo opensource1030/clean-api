@@ -36,9 +36,10 @@ class EloquentGlobalSetting extends AbstractRepository implements GlobalSettingI
             return 'notExist';
         }
 
-        $udl->name = isset($data['name']) ? $data['name'] : $device->name;
-        $udl->label = isset($data['label']) ? $data['label'] : $device->label;
-        $udl->description = isset($data['description']) ? $data['description'] : $device->description;
+        $udl->name =        isset($data['name'])        ? $data['name']         : $device->name;
+        $udl->label =       isset($data['label'])       ? $data['label']        : $device->label;
+        $udl->description = isset($data['description']) ? $data['description']  : $device->description;
+        $udl->forType =     isset($data['forType'])     ? $data['forType']      : $device->forType;
 
         if (!$udl->save()) {
             return 'notSaved';
@@ -60,9 +61,10 @@ class EloquentGlobalSetting extends AbstractRepository implements GlobalSettingI
     {
         return $this->model->firstOrCreate(
                 [
-                    'name' => $data['name'],
-                    'label' => $data['label'],
-                    'description' => $data['description'],
+                    'name'          => $data['name'],
+                    'label'         => $data['label'],
+                    'description'   => $data['description'],
+                    'forType'       => $data['forType'],
                 ]
             );
     }

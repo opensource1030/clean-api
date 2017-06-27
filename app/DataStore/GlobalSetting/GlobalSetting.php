@@ -16,7 +16,8 @@ class GlobalSetting extends BaseDataStore
     protected $fillable = [
             'name',
             'label',
-            'description' ];
+            'description',
+            'forType'];
 
     /**
      * Get the transformer instance.

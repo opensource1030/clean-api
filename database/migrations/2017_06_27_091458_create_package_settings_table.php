@@ -1,10 +1,10 @@
 <?php
 
-class CreateCompanySettingsTable extends \Illuminate\Database\Migrations\Migration
+class CreatePackageSettingsTable extends \Illuminate\Database\Migrations\Migration
 {
     use \WA\Database\Command\TablesRelationsAndIndexes;
 
-    protected $tableName = 'company_settings';
+    protected $tableName = 'package_settings';
 
     /**
      * Run the migrations.
@@ -18,7 +18,7 @@ class CreateCompanySettingsTable extends \Illuminate\Database\Migrations\Migrati
             function ($table) {
                 $table->increments('id');
                 $table->integer('globalSettingsValueId')->unsigned();
-                $table->integer('companyId')->unsigned();
+                $table->integer('packageId')->unsigned();
             }
         );
 
@@ -32,7 +32,7 @@ class CreateCompanySettingsTable extends \Illuminate\Database\Migrations\Migrati
         Schema::table(
             $this->tableName,
             function ($table) {
-                $table->foreign('companyId')->references('id')->on('companies')->onDelete('cascade');
+                $table->foreign('packageId')->references('id')->on('packages')->onDelete('cascade');
             }
         );
     }

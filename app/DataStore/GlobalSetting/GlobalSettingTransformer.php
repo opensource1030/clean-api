@@ -25,6 +25,7 @@ class GlobalSettingTransformer extends FilterableTransformer
             'name'          => $globalSetting->name,
             'label'         => $globalSetting->label,
             'description'   => $globalSetting->description,
+            'forType'       => $globalSetting->forType,
         ];
     }
 }
