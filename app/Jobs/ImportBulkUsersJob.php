@@ -35,7 +35,7 @@ class ImportBulkUsersJob extends Job
             // Okay
         } else {
             // Cut the job:
-            \Log::debug("The job should be in PENDING status to be executed.");
+            //\Log::debug("The job should be in PENDING status to be executed.");
             return null;
         }
 
@@ -75,8 +75,8 @@ class ImportBulkUsersJob extends Job
             $mappings = unserialize($job->mappings);
             $data = $this->makeMappingRow($mappings, $formattedRow);
             if($user == null) {
-                \Log::debug("Data for user UPDATE: ");
-                \Log::debug(json_encode($data, JSON_PRETTY_PRINT));
+                //\Log::debug("Data for user UPDATE: ");
+                //\Log::debug(json_encode($data, JSON_PRETTY_PRINT));
                 $result = $userInterface->create($data);
                 if($result == false) {
                     $job->failedUsers = min($job->failedUsers + 1, $job->totalUsers);
@@ -85,8 +85,8 @@ class ImportBulkUsersJob extends Job
                 }
             } else {
                 $data['id'] = $user->id;
-                \Log::debug("Data for user CREATE: ");
-                \Log::debug(json_encode($data, JSON_PRETTY_PRINT));
+                //\Log::debug("Data for user CREATE: ");
+                //\Log::debug(json_encode($data, JSON_PRETTY_PRINT));
                 $result = $userInterface->update($data);
                 if($result == 'notSaved') {
                     $job->failedUsers = min($job->failedUsers + 1, $job->totalUsers);

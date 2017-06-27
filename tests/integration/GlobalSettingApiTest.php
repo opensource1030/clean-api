@@ -70,7 +70,7 @@ class GlobalSettingApiTest extends TestCase
         ]);
 
         $res = $this->json('GET', 'globalsettings/'.$globalSetting->id.'?include=globalsettingvalues');
-        \Log::debug($res->response->getContent());
+        //\Log::debug($res->response->getContent());
         $res->seeJsonStructure([
             'data' => [
                 'type',

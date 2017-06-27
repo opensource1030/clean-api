@@ -385,7 +385,7 @@ class OrdersApiTest extends \TestCase
                 ]
             ]
             );
-            Log::debug("testCreateUser: ".print_r($res->response->getContent(), true));
+            //Log::debug("testCreateUser: ".print_r($res->response->getContent(), true));
             $res->seeJson(
                 [
                     'status' => 'Enabled',
