@@ -16,12 +16,30 @@ class EventServiceProvider extends ServiceProvider
         'WA\Events\SomeEvent' => [
             'WA\Listeners\EventListener',
         ],
-        'WA\Events\Handlers\EmailEvent' => [
-            'WA\Events\Handlers\EmailEvent@sendOrderConfirmationEmail',
+        'WA\Events\Handlers\CreateOrder' => [
+            'WA\Events\Handlers\CreateOrder@createOrderEmails',
         ],
         'Aacotroneo\Saml2\Events\Saml2LoginEvent' => [
             'WA\Events\Handlers\Saml2\MainHandler@saml2LoginUser',
         ],
+        'Brexis\LaravelWorkflow\Events\GuardEvent' => [
+            'WA\Events\Handlers\OrderSendEmailEventSubscriber@onGuard'
+        ],
+        'Brexis\LaravelWorkflow\Events\LeaveEvent' => [
+            'WA\Events\Handlers\OrderSendEmailEventSubscriber@onLeave'
+        ],
+        'Brexis\LaravelWorkflow\Events\TransitionEvent' => [
+            'WA\Events\Handlers\OrderSendEmailEventSubscriber@onTransition'
+        ],
+        'Brexis\LaravelWorkflow\Events\EnterEvent' => [
+            'WA\Events\Handlers\OrderSendEmailEventSubscriber@onEnter'
+        ],
+        'WA\Events\Handlers\SendUsersEmail' => [
+            'WA\Events\Handlers\SendUsersEmail@sendOrderConfirmationEmail'
+        ],
+        'WA\Events\Handlers\SendEVEmail' => [
+            'WA\Events\Handlers\SendEVEmail@createTicketOnEasyVista'
+        ]
     ];
 
 /*
