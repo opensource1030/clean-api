@@ -148,10 +148,12 @@ class SendUsersEmail extends \WA\Events\Handlers\BaseHandler
                 function ($message) use ($userOrder) {
                     $message->subject('New Order Created.');
                     $message->from(env('MAIL_FROM_ADDRESS'), 'Wireless Analytics');
-                    $message->to('didac.pallares@siriondev.com');//$userOrder->email);
+                    $message->to($userOrder->email);
                 } // CALLBACK
             );
             \Log::debug("OrdersController@sendConfirmationEmail - All Emails have been sent.");
+            \Log::debug("OrdersController@sendConfirmationEmail - resAdmin: " . print_r($resAdmin, true));
+            \Log::debug("OrdersController@sendConfirmationEmail - resUser: " . print_r($resUser, true));
         } catch (\Exception $e) {
             \Log::debug("OrdersController@sendConfirmationEmail - e: " . print_r($e->getMessage(), true));
             return false;
