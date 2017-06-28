@@ -339,8 +339,7 @@ class OrdersApiTest extends \TestCase
         $userId = factory(\WA\DataStore\User\User::class)->create(['companyId' => 1])->id;
 
         $userAdmin = factory(\WA\DataStore\User\User::class)->create(['companyId' => 1]);
-        $roleAdmin = factory(\WA\DataStore\Role\Role::class)->create(['name' => 'admin']);
-        $userAdmin->roles()->sync([$roleAdmin->id]);
+        $userAdmin->roles()->sync([$this->roleAdmin->id]);
 
         $packageId = factory(\WA\DataStore\Package\Package::class)->create()->id;
         $serviceId = factory(\WA\DataStore\Service\Service::class)->create()->id;

@@ -1,6 +1,6 @@
 <?php
 
-abstract class TestCase extends Laravel\BrowserKitTesting\TestCase //Laravel\Lumen\Testing\TestCase
+abstract class TestCase extends \Laravel\Lumen\Testing\TestCase
 {
     use \Laravel\Lumen\Testing\DatabaseMigrations;
 
@@ -31,13 +31,13 @@ abstract class TestCase extends Laravel\BrowserKitTesting\TestCase //Laravel\Lum
 
         $this->mainCompany = factory(\WA\DataStore\Company\Company::class)->create()->id;
         
-        $this->mainUserSuperAdmin = factory(\WA\DataStore\User\User::class)->create(['companyId' => $this->mainCompany]);
-        $this->roleSuperAdmin = factory(\WA\DataStore\Role\Role::class)->create(['display_name' => 'admin', 'name' => 'admin']);
-        $this->mainUserSuperAdmin->roles()->sync([$this->roleSuperAdmin->id]);
-
         $this->mainUserAdmin = factory(\WA\DataStore\User\User::class)->create(['companyId' => $this->mainCompany]);
-        $this->roleAdmin = factory(\WA\DataStore\Role\Role::class)->create(['display_name' => 'wta', 'name' => 'wta']);
+        $this->roleAdmin = factory(\WA\DataStore\Role\Role::class)->create(['display_name' => 'admin', 'name' => 'admin']);
         $this->mainUserAdmin->roles()->sync([$this->roleAdmin->id]);
+
+        $this->mainUserWTA = factory(\WA\DataStore\User\User::class)->create(['companyId' => $this->mainCompany]);
+        $this->roleWTA = factory(\WA\DataStore\Role\Role::class)->create(['display_name' => 'wta', 'name' => 'wta']);
+        $this->mainUserWTA->roles()->sync([$this->roleWTA->id]);
 
         $this->mainUser = factory(\WA\DataStore\User\User::class)->create(['companyId' => $this->mainCompany]);
         $this->roleUser = factory(\WA\DataStore\Role\Role::class)->create(['display_name' => 'user', 'name' => 'user']);
@@ -46,8 +46,8 @@ abstract class TestCase extends Laravel\BrowserKitTesting\TestCase //Laravel\Lum
         /*
          * Use one of the lines below to login using any of the users above.
          */
-        $this->be($this->mainUserSuperAdmin);
-        //$this->be($mainUserAdmin);
+        $this->be($this->mainUserAdmin);
+        //$this->be($mainUserWTA);
         //$this->be($mainUser);
     }
 }

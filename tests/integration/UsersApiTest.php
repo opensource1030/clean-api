@@ -3028,8 +3028,8 @@ class UsersApiTest extends \TestCase
                         'roles' => [
                             'data' => [
                                 ['type' => 'roles', 'id' => $this->roleUser->id],
-                                ['type' => 'roles', 'id' => $this->roleAdmin->id],
-                                ['type' => 'roles', 'id' => $this->roleSuperAdmin->id]
+                                ['type' => 'roles', 'id' => $this->roleWTA->id],
+                                ['type' => 'roles', 'id' => $this->roleAdmin->id]
                             ],
                         ],
                         'udlvalues' => [
