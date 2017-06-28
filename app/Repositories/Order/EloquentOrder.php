@@ -97,7 +97,7 @@ class EloquentOrder extends AbstractRepository implements OrderInterface
         }
 
         $orderData = [
-            'status'            => isset($data['status'])           ? $data['status']           : null,
+            'status'            => 'New',
             'orderType'         => isset($data['orderType'])        ? $data['orderType']        : null,
             'serviceImei'       => isset($data['serviceImei'])      ? $data['serviceImei']      : '',
             'servicePhoneNo'    => isset($data['servicePhoneNo'])   ? $data['servicePhoneNo']   : '',

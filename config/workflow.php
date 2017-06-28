@@ -5,27 +5,27 @@ return [
         'type'          => 'workflow', // or 'state_machine'
         'marking_store' => [
             'type'      => 'single_state',
-            'arguments' => ['currentPlace']
+            'arguments' => ['status']//, 'userId', 'packageId', 'serviceId', 'addressId', 'orderType', 'serviceImei', 'servicePhoneNo', 'serviceSim', 'deviceImei', 'deviceCarrier', 'deviceSim']
         ],
         'supports'      => ['WA\DataStore\Order\Order'],
-        'places'        => ['initial', 'created', 'in_progress', 'rejected', 'fulfilled'],
+        'places'        => ['New', 'Approval', 'Deliver', 'Delivered', 'Denied'],
         'transitions'   => [
             'create' => [
-                'from' => 'initial',
-                'to'   => 'created'
+                'from' => 'New',
+                'to'   => 'Approval'
             ],
             'accept' => [
-                'from' => 'created',
-                'to'   => 'in_progress'
+                'from' => 'Approval',
+                'to'   => 'Deliver'
             ],
-            'reject' => [
-                'from' => 'created',
-                'to'   => 'rejected'
+            'deny' => [
+                'from' => 'Approval',
+                'to'   => 'Denied'
             ],
-            'finish' => [
-                'from' => 'created',
-                'to'   => 'fulfilled'
+            'send' => [
+                'from' => 'Deliver',
+                'to'   => 'Delivered'
             ]
-        ],
+        ]
     ]
 ];

@@ -3,12 +3,15 @@
 namespace WA\DataStore\Order;
 
 use WA\DataStore\BaseDataStore;
+use Brexis\LaravelWorkflow\Traits\WorkflowTrait;
 
 /**
  * Class Order.
  */
 class Order extends BaseDataStore
 {
+    use WorkflowTrait;
+
     protected $table = 'orders';
 
     protected $fillable = [
