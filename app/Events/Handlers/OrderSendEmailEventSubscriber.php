@@ -8,7 +8,7 @@ class OrderSendEmailEventSubscriber
      * Handle workflow guard events.
      */
     public function onGuard(\Brexis\LaravelWorkflow\Events\GuardEvent $event) {
-        \Log::debug("onGuard");
+        \Log::debug("OrderSendEmailEventSubscriber@onGuard");
         /** Symfony\Component\Workflow\Event\GuardEvent */
         $originalEvent = $event->getOriginalEvent();
 
@@ -28,7 +28,7 @@ class OrderSendEmailEventSubscriber
      * Handle workflow leave event.
      */
     public function onLeave($event) {
-        \Log::debug("onLeave");
+        \Log::debug("OrderSendEmailEventSubscriber@onLeave");
     }
 
     /**
@@ -46,7 +46,8 @@ class OrderSendEmailEventSubscriber
                 switch ($nameTransition) {
                     case 'create':
                         event(new \WA\Events\Handlers\SendEVEmail($order));
-                        event(new \WA\Events\Handlers\SendUsersEmail($order));
+                        event(new \WA\Events\Handlers\SendUserEmailCreateOrder($order));
+                        event(new \WA\Events\Handlers\SendAdminEmailCreateOrder($order));
                         break;
                     case 'accept':
                         # code...
@@ -59,33 +60,21 @@ class OrderSendEmailEventSubscriber
                         break;
                     
                     default:
-                        # code...
+                        // NOTHING
                         break;
                 }
                 break;
             
             default:
-                # code...
+                // NOTHING
                 break;
         }
-
-        //var_dump($event->getOriginalEvent()->getMarking());
-        //var_dump($event->getOriginalEvent()->getTransition());
-        
-        
-        //var_dump($nameTransition);
-        //var_dump($nameWorkflow);
-        //var_dump($event->getOriginalEvent()->getSubject());
-        //var_dump($event->getOriginalEvent()->getWorkflowName());
-        
-        //dd("onTransition");
-        //\Log::debug("onTransition");
     }
 
     /**
      * Handle workflow enter event.
      */
     public function onEnter($event) {
-        \Log::debug("onEnter");
+        \Log::debug("OrderSendEmailEventSubscriber@onEnter");
     }
 }

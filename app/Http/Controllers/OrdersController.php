@@ -127,6 +127,7 @@ class OrdersController extends FilteredApiController
 
         if ($success) {
             DB::commit();
+            $this->updateOrderEvent($order, $data['attributes']);
             return $this->response()->item($order, new OrderTransformer(),
                 ['key' => 'orders'])->setStatusCode($this->status_codes['created']);
         } else {
@@ -215,7 +216,8 @@ class OrdersController extends FilteredApiController
 
         if ($success) {
             DB::commit();
-            event(new \WA\Events\Handlers\CreateOrder($order));
+            // event(new \WA\Events\Handlers\CreateOrder($order));
+            $this->createOrderEvent($order);
             return $this->response()->item($order, new OrderTransformer(), ['key' => 'orders'])
                         ->setStatusCode($this->status_codes['created']);
         } else {
@@ -250,6 +252,31 @@ class OrdersController extends FilteredApiController
         } else {
             $error['errors']['delete'] = Lang::get('messages.NotDeletedClass', ['class' => 'Order']);
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+        }
+    }
+
+    private function createOrderEvent($order) {
+        \Log::debug("OrdersController@createOrderEvent");
+        $workflow = \Workflow::get($order);
+        $workflow->apply($order, 'create');
+        $order->save();
+    }
+
+    private function updateOrderEvent($order, $attributes) {
+        \Log::debug("OrdersController@updateOrderEvent");
+        \Log::debug($attributes['status']);
+        \Log::debug($order->status);
+
+        $workflow = \Workflow::get($order);
+
+        if ($order->status == 'Approval' && $attributes['status'] == 'Deliver') {
+            \Log::debug('accept');
+        } else if ($order->status == 'Approval' && $attributes['status'] == 'Denied') {
+            \Log::debug('deny');
+        } else if ($order->status == 'Deliver' && $attributes['status'] == 'Delivered') {
+            \Log::debug('send');
+        } else {
+            // NOTHING
         }
     }
 }
