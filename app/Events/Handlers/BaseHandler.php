@@ -55,6 +55,9 @@ abstract class BaseHandler
         if (isset($address->name)) {
             $attributes['address']['name'] = $address->name;
         }
+        if (isset($address->address)) {
+            $attributes['address']['address'] = $address->address;
+        }
         if (isset($address->city)) {
             $attributes['address']['city'] = $address->city;
         }
@@ -63,6 +66,9 @@ abstract class BaseHandler
         }
         if (isset($address->country)) {
             $attributes['address']['country'] = $address->country;
+        }
+        if (isset($address->postalCode)) {
+            $attributes['address']['postalCode'] = $address->postalCode;
         }
 
         // PACKAGE ATTRIBUTES
@@ -73,30 +79,31 @@ abstract class BaseHandler
         // SERVICE ATTRIBUTES
         if(isset($service->title)) {
             $attributes['service']['title'] = $service->title;
+            $attributes['service']['description'] = $service->description;
             $i = 0;
             foreach ($service->serviceitems as $si) {
                 if($si->domain == 'domestic' && $si->category == 'voice') {
-                    $attributes['service']['domesticvoice'] = title_case($si->domain) . ' - ' . title_case($si->category) . ' : ' . $si['value'] . ' ' . $si['unit'];
+                    $attributes['service']['domesticvoice'] = $si['value'] . ' ' . $si['unit'];
                 }
 
                 if($si->domain == 'domestic' && $si->category == 'data') {
-                    $attributes['service']['domesticdata'] = title_case($si->domain) . ' - ' . title_case($si->category) . ' : ' . $si['value'] . ' ' . $si['unit'];
+                    $attributes['service']['domesticdata'] = $si['value'] . ' ' . $si['unit'];
                 }
 
                 if($si->domain == 'domestic' && $si->category == 'messaging') {
-                    $attributes['service']['domesticmess'] = title_case($si->domain) . ' - ' . title_case($si->category) . ' : ' . $si['value'] . ' ' . $si['unit'];
+                    $attributes['service']['domesticmess'] = $si['value'] . ' ' . $si['unit'];
                 }
 
                 if($si->domain == 'international' && $si->category == 'voice') {
-                    $attributes['service']['internationalvoice'] = title_case($si->domain) . ' - ' . title_case($si->category) . ' : ' . $si['value'] . ' ' . $si['unit'];
+                    $attributes['service']['internationalvoice'] = $si['value'] . ' ' . $si['unit'];
                 }
 
                 if($si->domain == 'international' && $si->category == 'data') {
-                    $attributes['service']['internationaldata'] = title_case($si->domain) . ' - ' . title_case($si->category) . ' : ' . $si['value'] . ' ' . $si['unit'];
+                    $attributes['service']['internationaldata'] = $si['value'] . ' ' . $si['unit'];
                 }
 
                 if($si->domain == 'international' && $si->category == 'messaging') {
-                    $attributes['service']['internationalmess'] = title_case($si->domain) . ' - ' . title_case($si->category) . ' : ' . $si['value'] . ' ' . $si['unit'];
+                    $attributes['service']['internationalmess'] = $si['value'] . ' ' . $si['unit'];
                 }
             }
         }

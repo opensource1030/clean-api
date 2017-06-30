@@ -146,7 +146,7 @@ class EloquentOrder extends AbstractRepository implements OrderInterface
     }
 
     public function addFilterToTheRequest($companyId) {
-        $aux[]='[users.companyId]=' . $companyId . '[and][packages.companyId]=' . $companyId;
+        $aux['users.companyId'] = (string) $companyId;
         return $aux;
     }
 

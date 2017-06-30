@@ -15,10 +15,7 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         'WA\Events\SomeEvent' => [
             'WA\Listeners\EventListener',
-        ],/*
-        'WA\Events\Handlers\CreateOrder' => [
-            'WA\Events\Handlers\CreateOrder@createOrderEmails',
-        ],*/
+        ],
         'Aacotroneo\Saml2\Events\Saml2LoginEvent' => [
             'WA\Events\Handlers\Saml2\MainHandler@saml2LoginUser',
         ],
@@ -42,6 +39,15 @@ class EventServiceProvider extends ServiceProvider
         ],
         'WA\Events\Handlers\SendEVEmail' => [
             'WA\Events\Handlers\SendEVEmail@createTicketOnEasyVista'
+        ],
+        'WA\Events\Handlers\SendUserEmailOrderAccepted' => [
+            'WA\Events\Handlers\SendUserEmailOrderAccepted@sendOrderConfirmationEmail'
+        ],
+        'WA\Events\Handlers\SendUserEmailOrderDenied' => [
+            'WA\Events\Handlers\SendUserEmailOrderDenied@sendOrderConfirmationEmail'
+        ],
+        'WA\Events\Handlers\SendUserEmailOrderDelivered' => [
+            'WA\Events\Handlers\SendUserEmailOrderDelivered@sendOrderConfirmationEmail'
         ]
     ];
 

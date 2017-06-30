@@ -45,18 +45,22 @@ class OrderSendEmailEventSubscriber
             case 'new_order':
                 switch ($nameTransition) {
                     case 'create':
+                        \Log::debug("OrderSendEmailEventSubscriber@onTransition - create");
                         event(new \WA\Events\Handlers\SendEVEmail($order));
                         event(new \WA\Events\Handlers\SendUserEmailCreateOrder($order));
                         event(new \WA\Events\Handlers\SendAdminEmailCreateOrder($order));
                         break;
                     case 'accept':
-                        # code...
+                        \Log::debug("OrderSendEmailEventSubscriber@onTransition - accept");
+                        event(new \WA\Events\Handlers\SendUserEmailOrderAccepted($order));
                         break;
                     case 'deny':
-                        # code...
+                        \Log::debug("OrderSendEmailEventSubscriber@onTransition - deny");
+                        event(new \WA\Events\Handlers\SendUserEmailOrderDenied($order));
                         break;
                     case 'send':
-                        # code...
+                        \Log::debug("OrderSendEmailEventSubscriber@onTransition - send");
+                        event(new \WA\Events\Handlers\SendUserEmailOrderDelivered($order));
                         break;
                     
                     default:

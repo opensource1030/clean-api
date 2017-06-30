@@ -47,47 +47,59 @@ class SendUserEmailCreateOrder extends \WA\Events\Handlers\BaseHandler
             $attributes = $this->retrieveTheAttributes($event->order);
 
             $resUser = \Illuminate\Support\Facades\Mail::send(
-                'emails.notifications.new_order_created', // VIEW NAME
+                'emails.notifications.create_order_user', // VIEW NAME
                 [
                     'username' => $userOrder->username,
-                    'redirectPath' => 'urlderedireccion',
-                    'username' => isset($attributes['user']['username']) 
-                        ? $attributes['user']['username'] : '',
-                    'useremail' => isset($attributes['user']['email']) 
+
+                    'userEmail' => isset($attributes['user']['email'])
                         ? $attributes['user']['email'] : '',
-                    'usersupervisoremail' => isset($attributes['user']['supervisorEmail']) 
+
+                    'supervisorEmail' => isset($attributes['user']['supervisorEmail'])
                         ? $attributes['user']['supervisorEmail'] : '',
-                    'addressname' => isset($attributes['address']['name']) 
+
+                    'orderId' => $event->order->id,
+
+                    'addressName' => isset($attributes['address']['name'])
                         ? $attributes['address']['name'] : '',
-                    'addresscity' => isset($attributes['address']['city']) 
+
+                    'addressAddress' => isset($attributes['address']['address'])
+                        ? $attributes['address']['address'] : '',
+
+                    'addressCity' => isset($attributes['address']['city'])
                         ? $attributes['address']['city'] : '',
-                    'addressstate' => isset($attributes['address']['state']) 
-                        ? $attributes['address']['state'] : '',
-                    'addresscountry' => isset($attributes['address']['country']) 
+
+                    'addressCountry' => isset($attributes['address']['country'])
                         ? $attributes['address']['country'] : '',
-                    'packagename' => isset($attributes['package']['name']) 
-                        ? $attributes['package']['name'] : '',
-                    'servicetitle' => isset($attributes['service']['title']) 
-                        ? $attributes['service']['title'] : '',
-                    'serviceitemsdomvo' => isset($attributes['service']['domesticvoice']) 
+
+                    'addressPostalCode' => isset($attributes['address']['postalCode'])
+                        ? $attributes['address']['postalCode'] : '',
+
+                    'serviceDescription' => isset($attributes['service']['description'])
+                        ? $attributes['service']['description'] : '',
+
+                    'domesticvoice' => isset($attributes['service']['domesticvoice'])
                         ? $attributes['service']['domesticvoice'] : '',
-                    'serviceitemsdomdata' => isset($attributes['service']['domesticdata']) 
+
+                    'domesticdata' => isset($attributes['service']['domesticdata'])
                         ? $attributes['service']['domesticdata'] : '',
-                    'serviceitemsdommess' => isset($attributes['service']['domesticmess']) 
+
+                    'domesticmessage' => isset($attributes['service']['domesticmess'])
                         ? $attributes['service']['domesticmess'] : '',
-                    'serviceitemsintvo' => isset($attributes['service']['internationalvoice']) 
+
+                    'internationalvoice' => isset($attributes['service']['internationalvoice'])
                         ? $attributes['service']['internationalvoice'] : '',
-                    'serviceitemsintdata' => isset($attributes['service']['internationaldata']) 
+
+                    'internationaldata' => isset($attributes['service']['internationaldata'])
                         ? $attributes['service']['internationaldata'] : '',
-                    'serviceitemsintmess' => isset($attributes['service']['internationalmess']) 
+
+                    'internationalmessage' => isset($attributes['service']['internationalmess'])
                         ? $attributes['service']['internationalmess'] : '',
-                    'deviceinfo' => isset($attributes['device']['deviceInfo']) 
-                        ? $attributes['device']['deviceInfo'] : '',
+
                 ], // PARAMETERS PASSED TO THE VIEW
                 function ($message) use ($userOrder) {
                     $message->subject('New Order Created.');
                     $message->from(env('MAIL_FROM_ADDRESS'), 'Wireless Analytics');
-                    $message->to('didac.pallares@siriondev.com');//$userOrder->email);
+                    $message->to(env('MAIL_USERNAME'));//$userOrder->email);
                 } // CALLBACK
             );
             \Log::debug("SendUserEmailCreateOrder@sendConfirmationEmail - User Email has been sent.");

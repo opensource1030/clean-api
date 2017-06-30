@@ -51,7 +51,7 @@ class SendAdminEmailCreateOrder extends \WA\Events\Handlers\BaseHandler
 
                 if ($adminRetrieved->companyId == $userOrder->companyId) {
                     $resAdmin = \Illuminate\Support\Facades\Mail::send(
-                        'emails.notifications.new_order_received', // VIEW NAME
+                        'emails.notifications.create_order_admin', // VIEW NAME
                         [
                             'username' => $userOrder->username,
                             'redirectPath' => 'urlderedireccion'
@@ -59,7 +59,7 @@ class SendAdminEmailCreateOrder extends \WA\Events\Handlers\BaseHandler
                         function ($message) {
                             $message->subject('New Order Received.');
                             $message->from(env('MAIL_FROM_ADDRESS'), 'Wireless Analytics');
-                            $message->to('didac.pallares@siriondev.com');//$adminRetrieved->email);
+                            $message->to(env('MAIL_USERNAME'));//$adminRetrieved->email);
                         } // CALLBACK
                     );
                 }
