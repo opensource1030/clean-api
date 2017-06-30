@@ -215,7 +215,7 @@ class OrdersController extends FilteredApiController
 
         if ($success) {
             DB::commit();
-            event(new \WA\Events\Handlers\CreateOrder($order));
+            $this->createOrderEvent($order);
             return $this->response()->item($order, new OrderTransformer(), ['key' => 'orders'])
                         ->setStatusCode($this->status_codes['created']);
         } else {
@@ -250,6 +250,37 @@ class OrdersController extends FilteredApiController
         } else {
             $error['errors']['delete'] = Lang::get('messages.NotDeletedClass', ['class' => 'Order']);
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+        }
+    }
+
+    private function createOrderEvent($order) {
+        \Log::debug("OrdersController@createOrderEvent");
+        $workflow = \Workflow::get($order);
+        $workflow->apply($order, 'create');
+        $order->save();
+    }
+
+    private function updateOrderEvent($order, $attributes) {
+        \Log::debug("OrdersController@updateOrderEvent");
+        \Log::debug("OrdersController@updateOrderEvent - attributes.status: " . $attributes['status']);
+        \Log::debug("OrdersController@updateOrderEvent - order.status: " . $order->status);
+
+        $workflow = \Workflow::get($order);
+
+        if ($order->status == 'Approval' && $attributes['status'] == 'Deliver') {
+            \Log::debug('Transition - Accept');
+            $workflow->apply($order, 'accept');
+            $order->save();
+        } else if ($order->status == 'Approval' && $attributes['status'] == 'Denied') {
+            \Log::debug('Transition - Deny');
+            $workflow->apply($order, 'deny');
+            $order->save();
+        } else if ($order->status == 'Deliver' && $attributes['status'] == 'Delivered') {
+            \Log::debug('Transition - Send');
+            $workflow->apply($order, 'send');
+            $order->save();
+        } else {
+            \Log::debug('Transition - NONE');
         }
     }
 }
