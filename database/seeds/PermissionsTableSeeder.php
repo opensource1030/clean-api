@@ -843,7 +843,7 @@ class PermissionsTableSeeder extends BaseTableSeeder
             ]
         ];
 
-        $dataManageCompanies = [
+        $dataManageOwnCompanies = [
             [
                 'name' => 'manage_own_company',
                 'display_name' => 'Manage Own Company',
@@ -880,5 +880,6 @@ class PermissionsTableSeeder extends BaseTableSeeder
         $this->loadTable($dataManageServices);
         $this->loadTable($dataManageEmployees);
         $this->loadTable($dataManageCompanies);
+        $this->loadTable($dataManageOwnCompanies);
     }
 }
