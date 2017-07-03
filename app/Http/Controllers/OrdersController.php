@@ -302,7 +302,7 @@ class OrdersController extends FilteredApiController
             $attributes = $this->makeTheStringWithOrderAttributes($order, $user, $address, $package, $service, $devicevariations);
             \Log::debug("OrdersController@createTicketOnEasyVista - attributes: " . print_r($attributes, true));
 
-            $client = new \Guzzle\Http\Client('https://wa.easyvista.com/api/v1/50005/');
+            $client = new \Guzzle\Http\Client('https://wa.easyvista.com/api/v1/' . env('EV_API_ACCOUNT') .'/');
 
             $packageAC = isset($package->approvalCode) ? $package->approvalCode : '';
 
