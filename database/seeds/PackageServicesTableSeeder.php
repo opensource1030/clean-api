@@ -16,11 +16,19 @@ class PackageServicesTableSeeder extends BaseTableSeeder
     {
         $this->deleteTable();
         $i = 1;
+        $data = [
+            [
+                'packageId' => 1,
+                'serviceId' => 1
+            ]
+        ];
+        $this->loadTable($data);
+
         while ($i < 900) {
             $data = [
                 [
-                    'packageId' => rand(1,39),
-                    'serviceId' => rand(1,900)
+                    'packageId' => rand(2, 39),
+                    'serviceId' => rand(2, 900)
                 ]
             ];
 

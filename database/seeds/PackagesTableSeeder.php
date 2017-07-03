@@ -19,8 +19,8 @@ class PackagesTableSeeder extends BaseTableSeeder
         $data = [
 
             [
-                'name'     => "Package1",
-                'information' => 'This is the default package (then you can add some modification based on the others',
+                'name'     => "Package1 / On Device & Service",
+                'information' => 'This is the default package  has one device and service (then you can add some modification based on the others',
                 'approvalCode' => 'WRF1',
                 'companyId' => 1
             ],
