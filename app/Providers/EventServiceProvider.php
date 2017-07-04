@@ -52,7 +52,7 @@ class EventServiceProvider extends ServiceProvider
         'WA\Events\OrderCreateTransition' => [
             'WA\Events\Handlers\SendEVRequest@createTicketOnEasyVista',
             'WA\Events\Handlers\SendUserEmailCreateOrder@sendOrderConfirmationEmail',
-            'WA\Events\Handlers\SendAdminEmailCreateOrder@sendOrderConfirmationEmail'
+            //'WA\Events\Handlers\SendAdminEmailCreateOrder@sendOrderConfirmationEmail'
         ]
     ];
 

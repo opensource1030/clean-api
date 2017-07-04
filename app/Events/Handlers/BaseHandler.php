@@ -135,7 +135,7 @@ abstract class BaseHandler
         $service = \WA\DataStore\Service\Service::find($order->serviceId);
 
         $package = \WA\DataStore\Package\Package::find($order->packageId);
-        $attributes['packageAC'] = isset($package->approvalCode) ? $package->approvalCode : '';
+        $attributes['packageAC'] = isset($package->approvalCode) ? $package->approvalCode : env('EV_DEFAULT_APPROVAL_CODE');
 
         $devicevariations = $order->devicevariations;
 
