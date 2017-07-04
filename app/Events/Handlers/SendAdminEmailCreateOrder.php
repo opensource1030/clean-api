@@ -1,17 +1,11 @@
 <?php
 
 /**
- * SendAdminEmailCreateOrder - Gets the event received by the OrderSendEmailEventSubscriber.
+ * SendAdminEmailCreateOrder - Gets the event received by the WorkflowEventSubscriber.
  *
  * @author Agustí Dosaiguas
  */
 namespace WA\Events\Handlers;
-
-use Illuminate\Contracts\Events\Dispatcher;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
-
-use WA\Events\PodcastWasPurchased;
 
 /**
  * Class SendAdminEmailCreateOrder.
@@ -37,7 +31,7 @@ class SendAdminEmailCreateOrder extends \WA\Events\Handlers\BaseHandler
     }
 
     /**
-     *  @param: $userId = The Id of the User that has set the Order.
+     *  @param: $event
      */
     public function sendOrderConfirmationEmail($event) {
         
@@ -50,22 +44,22 @@ class SendAdminEmailCreateOrder extends \WA\Events\Handlers\BaseHandler
                 $adminRetrieved = \WA\DataStore\User\User::find($admin->user_id);
 
                 if ($adminRetrieved->companyId == $userOrder->companyId) {
-                    $resAdmin = \Illuminate\Support\Facades\Mail::send(
-                        'emails.notifications.create_order_admin', // VIEW NAME
-                        [
-                            'username' => $userOrder->username,
-                            'redirectPath' => 'urlderedireccion'
-                        ], // PARAMETERS PASSED TO THE VIEW
-                        function ($message) {
-                            $message->subject('New Order Received.');
-                            $message->from(env('MAIL_FROM_ADDRESS'), 'Wireless Analytics');
-                            $message->to(env('MAIL_USERNAME'));//$adminRetrieved->email);
-                        } // CALLBACK
-                    );
+
+                    $values['view_name'] = 'emails.notifications.create_order_admin';
+                    $values['data'] = [
+                        'username' => $userOrder->username,
+                        'redirectPath' => 'urlderedireccion'
+                    ];
+                    $values['subject'] = 'New Order Received.';
+                    $values['from'] = env('MAIL_FROM_ADDRESS');
+                    $values['to'] = /*env('MAIL_USERNAME'); //*/ $adminRetrieved->email;
+
+                    $emailQueue = new \WA\Jobs\EmailQueue($values);
+                    dispatch($emailQueue);
                 }
             }
 
-            \Log::debug("SendAdminEmailCreateOrder@sendConfirmationEmail - Admin Email has been sent.");
+            \Log::debug("SendAdminEmailCreateOrder@sendConfirmationEmail - Admin Email has been queued.");
         } catch (\Exception $e) {
             \Log::debug("SendAdminEmailCreateOrder@sendConfirmationEmail - e: " . print_r($e->getMessage(), true));
             return false;

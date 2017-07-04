@@ -1,17 +1,11 @@
 <?php
 
 /**
- * SendUserEmailCreateOrder - Gets the event received by the OrderSendEmailEventSubscriber.
+ * SendUserEmailCreateOrder - Gets the event received by the WorkflowEventSubscriber.
  *
  * @author Agustí Dosaiguas
  */
 namespace WA\Events\Handlers;
-
-use Illuminate\Contracts\Events\Dispatcher;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
-
-use WA\Events\PodcastWasPurchased;
 
 /**
  * Class SendUserEmailCreateOrder.
@@ -37,72 +31,69 @@ class SendUserEmailCreateOrder extends \WA\Events\Handlers\BaseHandler
     }
 
     /**
-     *  @param: $userId = The Id of the User that has set the Order.
+     *  @param: $event
      */
     public function sendOrderConfirmationEmail($event) {
         
         try {
             $userOrder = \WA\DataStore\User\User::find($event->order->userId);
-
             $attributes = $this->retrieveTheAttributes($event->order);
 
-            $resUser = \Illuminate\Support\Facades\Mail::send(
-                'emails.notifications.create_order_user', // VIEW NAME
-                [
-                    'username' => $userOrder->username,
+            $values['view_name'] = 'emails.notifications.create_order_user';
+            $values['data'] = [
+                'username' => $userOrder->username,
+                'userEmail' => isset($attributes['user']['email'])
+                    ? $attributes['user']['email'] : '',
 
-                    'userEmail' => isset($attributes['user']['email'])
-                        ? $attributes['user']['email'] : '',
+                'supervisorEmail' => isset($attributes['user']['supervisorEmail'])
+                    ? $attributes['user']['supervisorEmail'] : '',
 
-                    'supervisorEmail' => isset($attributes['user']['supervisorEmail'])
-                        ? $attributes['user']['supervisorEmail'] : '',
+                'orderId' => $event->order->id,
 
-                    'orderId' => $event->order->id,
+                'addressName' => isset($attributes['address']['name'])
+                    ? $attributes['address']['name'] : '',
 
-                    'addressName' => isset($attributes['address']['name'])
-                        ? $attributes['address']['name'] : '',
+                'addressAddress' => isset($attributes['address']['address'])
+                    ? $attributes['address']['address'] : '',
 
-                    'addressAddress' => isset($attributes['address']['address'])
-                        ? $attributes['address']['address'] : '',
+                'addressCity' => isset($attributes['address']['city'])
+                    ? $attributes['address']['city'] : '',
 
-                    'addressCity' => isset($attributes['address']['city'])
-                        ? $attributes['address']['city'] : '',
+                'addressCountry' => isset($attributes['address']['country'])
+                    ? $attributes['address']['country'] : '',
 
-                    'addressCountry' => isset($attributes['address']['country'])
-                        ? $attributes['address']['country'] : '',
+                'addressPostalCode' => isset($attributes['address']['postalCode'])
+                    ? $attributes['address']['postalCode'] : '',
 
-                    'addressPostalCode' => isset($attributes['address']['postalCode'])
-                        ? $attributes['address']['postalCode'] : '',
+                'serviceDescription' => isset($attributes['service']['description'])
+                    ? $attributes['service']['description'] : '',
 
-                    'serviceDescription' => isset($attributes['service']['description'])
-                        ? $attributes['service']['description'] : '',
+                'domesticvoice' => isset($attributes['service']['domesticvoice'])
+                    ? $attributes['service']['domesticvoice'] : '',
 
-                    'domesticvoice' => isset($attributes['service']['domesticvoice'])
-                        ? $attributes['service']['domesticvoice'] : '',
+                'domesticdata' => isset($attributes['service']['domesticdata'])
+                    ? $attributes['service']['domesticdata'] : '',
 
-                    'domesticdata' => isset($attributes['service']['domesticdata'])
-                        ? $attributes['service']['domesticdata'] : '',
+                'domesticmessage' => isset($attributes['service']['domesticmess'])
+                    ? $attributes['service']['domesticmess'] : '',
 
-                    'domesticmessage' => isset($attributes['service']['domesticmess'])
-                        ? $attributes['service']['domesticmess'] : '',
+                'internationalvoice' => isset($attributes['service']['internationalvoice'])
+                    ? $attributes['service']['internationalvoice'] : '',
 
-                    'internationalvoice' => isset($attributes['service']['internationalvoice'])
-                        ? $attributes['service']['internationalvoice'] : '',
+                'internationaldata' => isset($attributes['service']['internationaldata'])
+                    ? $attributes['service']['internationaldata'] : '',
 
-                    'internationaldata' => isset($attributes['service']['internationaldata'])
-                        ? $attributes['service']['internationaldata'] : '',
+                'internationalmessage' => isset($attributes['service']['internationalmess'])
+                    ? $attributes['service']['internationalmess'] : '',
+            ];
+            $values['subject'] = 'New Order Created.';
+            $values['from'] = env('MAIL_FROM_ADDRESS');
+            $values['to'] = /*env('MAIL_USERNAME'); //*/$userOrder->email;
 
-                    'internationalmessage' => isset($attributes['service']['internationalmess'])
-                        ? $attributes['service']['internationalmess'] : '',
+            $emailQueue = new \WA\Jobs\EmailQueue($values);
+            dispatch($emailQueue);
 
-                ], // PARAMETERS PASSED TO THE VIEW
-                function ($message) use ($userOrder) {
-                    $message->subject('New Order Created.');
-                    $message->from(env('MAIL_FROM_ADDRESS'), 'Wireless Analytics');
-                    $message->to(env('MAIL_USERNAME'));//$userOrder->email);
-                } // CALLBACK
-            );
-            \Log::debug("SendUserEmailCreateOrder@sendConfirmationEmail - User Email has been sent.");
+            \Log::debug("SendUserEmailCreateOrder@sendConfirmationEmail - User Email has been queued.");
         } catch (\Exception $e) {
             \Log::debug("SendUserEmailCreateOrder@sendConfirmationEmail - e: " . print_r($e->getMessage(), true));
             return false;
