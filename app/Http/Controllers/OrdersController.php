@@ -127,6 +127,7 @@ class OrdersController extends FilteredApiController
 
         if ($success) {
             DB::commit();
+            $this->addOrderToTransition($order, $data['attributes']);
             return $this->response()->item($order, new OrderTransformer(),
                 ['key' => 'orders'])->setStatusCode($this->status_codes['created']);
         } else {
@@ -215,7 +216,7 @@ class OrdersController extends FilteredApiController
 
         if ($success) {
             DB::commit();
-            $this->createOrderEvent($order);
+            $this->addOrderToTransition($order, $data['attributes']);
             return $this->response()->item($order, new OrderTransformer(), ['key' => 'orders'])
                         ->setStatusCode($this->status_codes['created']);
         } else {
@@ -253,21 +254,18 @@ class OrdersController extends FilteredApiController
         }
     }
 
-    private function createOrderEvent($order) {
-        \Log::debug("OrdersController@createOrderEvent");
-        $workflow = \Workflow::get($order);
-        $workflow->apply($order, 'create');
-        $order->save();
-    }
-
-    private function updateOrderEvent($order, $attributes) {
+    private function addOrderToTransition($order, $attributes) {
         \Log::debug("OrdersController@updateOrderEvent");
         \Log::debug("OrdersController@updateOrderEvent - attributes.status: " . $attributes['status']);
         \Log::debug("OrdersController@updateOrderEvent - order.status: " . $order->status);
 
         $workflow = \Workflow::get($order);
 
-        if ($order->status == 'Approval' && $attributes['status'] == 'Deliver') {
+        if ($order->status == 'New' && $attributes['status'] == 'Approval') {
+            \Log::debug('Transition - Create');
+            $workflow->apply($order, 'create');
+            $order->save();
+        } else if ($order->status == 'Approval' && $attributes['status'] == 'Deliver') {
             \Log::debug('Transition - Accept');
             $workflow->apply($order, 'accept');
             $order->save();

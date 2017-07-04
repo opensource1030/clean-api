@@ -1,7 +1,7 @@
 <?php
 
 /**
- * SendUserEmailCreateOrder - Gets the event received by the OrderSendEmailEventSubscriber.
+ * SendUserEmailCreateOrder - Gets the event received by the WorkflowEventSubscriber.
  *
  * @author Agustí Dosaiguas
  */

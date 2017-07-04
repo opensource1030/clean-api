@@ -20,22 +20,22 @@ class EventServiceProvider extends ServiceProvider
             'WA\Events\Handlers\Saml2\MainHandler@saml2LoginUser',
         ],
         'Brexis\LaravelWorkflow\Events\GuardEvent' => [
-            'WA\Events\Handlers\OrderSendEmailEventSubscriber@onGuard'
+            'WA\Events\Handlers\WorkflowEventSubscriber@onGuard'
         ],
         'Brexis\LaravelWorkflow\Events\LeaveEvent' => [
-            'WA\Events\Handlers\OrderSendEmailEventSubscriber@onLeave'
+            'WA\Events\Handlers\WorkflowEventSubscriber@onLeave'
         ],
         'Brexis\LaravelWorkflow\Events\TransitionEvent' => [
-            'WA\Events\Handlers\OrderSendEmailEventSubscriber@onTransition'
+            'WA\Events\Handlers\WorkflowEventSubscriber@onTransition'
         ],
         'Brexis\LaravelWorkflow\Events\EnterEvent' => [
-            'WA\Events\Handlers\OrderSendEmailEventSubscriber@onEnter'
+            'WA\Events\Handlers\WorkflowEventSubscriber@onEnter'
         ],
         'WA\Events\Handlers\SendUsersEmail' => [
             'WA\Events\Handlers\SendUsersEmail@sendOrderConfirmationEmail'
         ],
-        'WA\Events\Handlers\SendEVEmail' => [
-            'WA\Events\Handlers\SendEVEmail@createTicketOnEasyVista'
+        'WA\Events\Handlers\SendEVRequest' => [
+            'WA\Events\Handlers\SendEVRequest@createTicketOnEasyVista'
         ],
         'WA\Events\Handlers\SendUserEmailOrderAccepted' => [
             'WA\Events\Handlers\SendUserEmailOrderAccepted@sendOrderConfirmationEmail'
@@ -45,6 +45,11 @@ class EventServiceProvider extends ServiceProvider
         ],
         'WA\Events\Handlers\SendUserEmailOrderDelivered' => [
             'WA\Events\Handlers\SendUserEmailOrderDelivered@sendOrderConfirmationEmail'
+        ],
+        'WA\Events\OrderCreateTransition' => [
+            'WA\Events\Handlers\SendEVRequest@createTicketOnEasyVista',
+            'WA\Events\Handlers\SendUserEmailCreateOrder@sendOrderConfirmationEmail',
+            'WA\Events\Handlers\SendAdminEmailCreateOrder@sendOrderConfirmationEmail'
         ]
     ];
 
