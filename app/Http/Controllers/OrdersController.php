@@ -261,7 +261,7 @@ class OrdersController extends FilteredApiController
 
         $workflow = \Workflow::get($order);
 
-        if ($order->status == 'New' && $attributes['status'] == 'Approval') {
+        if ($order->status == 'New') {
             \Log::debug('Transition - Create');
             $workflow->apply($order, 'create');
             $order->save();
