@@ -46,6 +46,12 @@ class GlobalSettingsTableSeeder extends BaseTableSeeder
                 'label' => 'Bring Your Own Device',
                 'description' => 'something special',
                 'forType' => 'packages'
+            ],
+            [
+                'name' => 'mobility_central_login',
+                'label' => 'Mobility Central SSO',
+                'description' => 'Allow SSO Login into Mobility Central',
+                'forType' => 'companies'
             ]
         ];
 

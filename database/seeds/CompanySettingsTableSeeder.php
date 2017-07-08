@@ -17,7 +17,7 @@ class CompanySettingsTableSeeder extends BaseTableSeeder
         $this->deleteTable();
 
         $i = 1;
-        while ($i < 21) {
+        while ($i < 5) {
             $dataS1 = [
                 [
                     'globalSettingsValueId' => rand(1,3),

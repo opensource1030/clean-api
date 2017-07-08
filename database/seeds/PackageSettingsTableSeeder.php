@@ -5,7 +5,7 @@
  *
  * @author   Agustí Dosaiguas
  */
-class CompanySettingsTableSeeder extends BaseTableSeeder
+class PackageSettingsTableSeeder extends BaseTableSeeder
 {
     protected $table = 'package_settings';
 

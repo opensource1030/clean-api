@@ -68,4 +68,17 @@ class EloquentGlobalSetting extends AbstractRepository implements GlobalSettingI
                 ]
             );
     }
+
+
+    /**
+     * Retrieve the filters for the Model.
+     *
+     * @param int  $companyId
+     *
+     * @return Array
+     */
+    public function addFilterToTheRequest($companyId) {
+        $aux['companyId']= (string) $companyId;
+        return $aux;
+    }
 }

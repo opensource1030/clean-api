@@ -83,14 +83,14 @@ class GlobalSettingsValuesTableSeeder extends BaseTableSeeder
                 'globalSettingId' => 5,
             ],
             [
-                'name' => 'disable',
-                'label' => 'Disable',
-                'globalSettingId' => 5,
+                'name' => 'enable',
+                'label' => 'Enable',
+                'globalSettingId' => 6,
             ],
             [
-                'name' => 'protected',
-                'label' => 'Protected',
-                'globalSettingId' => 5,
+                'name' => 'disabled',
+                'label' => 'Disabled',
+                'globalSettingId' => 6,
             ]
         ];
 
