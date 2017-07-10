@@ -44,9 +44,9 @@ class OrderTransformer extends FilterableTransformer
             'deviceCarrier'     => $order->deviceCarrier,
             'deviceSim'         => $order->deviceSim,
             'userId'            => (int)$order->userId,
-            'packageId'         => (int)$order->packageId,
-            'serviceId'         => (int)$order->serviceId,
-            'addressId'         => (int)$order->addressId,
+            'packageId'         => isset($order->packageId) ? (int)$order->packageId : $order->packageId,
+            'serviceId'         => isset($order->serviceId) ? (int)$order->serviceId : $order->serviceId,
+            'addressId'         => isset($order->addressId) ? (int)$order->addressId : $order->addressId,
             'created_at'        => $order->created_at,
             'updated_at'        => $order->updated_at,
         ];
