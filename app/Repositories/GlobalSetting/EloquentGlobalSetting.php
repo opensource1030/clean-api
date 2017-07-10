@@ -78,7 +78,7 @@ class EloquentGlobalSetting extends AbstractRepository implements GlobalSettingI
      * @return Array
      */
     public function addFilterToTheRequest($companyId) {
-        $aux['companyId']= (string) $companyId;
+        $aux['companies.id']= (string) $companyId;
         return $aux;
     }
 }

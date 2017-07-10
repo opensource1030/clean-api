@@ -417,6 +417,8 @@ trait Criteria
         if($var === 'devicevariations') { return "\\WA\\DataStore\\DeviceVariation\\DeviceVariationTransformer"; }
         if($var === 'serviceitems') { return "\\WA\\DataStore\\ServiceItem\\ServiceItemTransformer"; }
         if($var === 'udlvalues') { return "\\WA\\DataStore\\UdlValue\\UdlValueTransformer"; }
+        if($var === 'globalsettings') { return "\\WA\\DataStore\\GlobalSetting\\GlobalSettingTransformer"; }
+        if($var === 'globalsettingvalues') { return "\\WA\\DataStore\\GlobalSettingValue\\GlobalSettingValueTransformer"; }
 
         $model = title_case(str_singular($var));
         return "\\WA\\DataStore\\${model}\\${model}Transformer";
