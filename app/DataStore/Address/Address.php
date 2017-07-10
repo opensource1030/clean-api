@@ -37,7 +37,7 @@ class Address extends BaseDataStore
      */
     public function users()
     {
-        return $this->belongsToMany('WA\DataStore\User\User', 'user_address', 'userId', 'addressId');
+        return $this->belongsToMany('WA\DataStore\User\User', 'user_address', 'addressId', 'userId');
     }
 
     /**
@@ -45,7 +45,7 @@ class Address extends BaseDataStore
      */
     public function companies()
     {
-        return $this->belongsToMany('WA\DataStore\Company\Company', 'company_address', 'companyId', 'addressId');
+        return $this->belongsToMany('WA\DataStore\Company\Company', 'company_address', 'addressId', 'companyId');
     }
 
     /**
@@ -53,7 +53,7 @@ class Address extends BaseDataStore
      */
     public function packages()
     {
-        return $this->belongsToMany('WA\DataStore\Package\Package', 'package_address', 'packageId', 'addressId');
+        return $this->belongsToMany('WA\DataStore\Package\Package', 'package_address', 'addressId', 'packageId');
     }
 
     /**
