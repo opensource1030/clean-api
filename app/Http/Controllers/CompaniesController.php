@@ -116,13 +116,11 @@ class CompaniesController extends FilteredApiController {
 			         * Check if Json has relationships to continue or if not and commit + return.
 		*/
 		if (isset($data['relationships']) && $success) {
-			$dataRelationships = $data['relationships'];
-
-			if (isset($dataRelationships['addresses'])) {
-				if (isset($dataRelationships['addresses']['data'])) {
+			if (isset($data['relationships']['addresses'])) {
+				if (isset($data['relationships']['addresses']['data'])) {
 
 					$addressInterface = app()->make('WA\Repositories\Address\AddressInterface');
-					$data = $dataRelationships['addresses']['data'];
+					$data = $data['relationships']['addresses']['data'];
 
 					$addressIdArray = [];
 
@@ -150,17 +148,17 @@ class CompaniesController extends FilteredApiController {
 				}
 			}
 
-			if (isset($dataRelationships['udls'])) {
-				if (isset($dataRelationships['udls']['data'])) {
+			if (isset($data['relationships']['udls'])) {
+				if (isset($data['relationships']['udls']['data'])) {
 
 					try {
 						$udl = Udl::where('companyId', $company->id)->get();
 
 						$udlInterface = app()->make('WA\Repositories\Udl\UdlInterface');
-						$this->deleteNotRequested($dataRelationships['udls']['data'], $udl, $udlInterface, 'udls');
+						$this->deleteNotRequested($data['relationships']['udls']['data'], $udl, $udlInterface, 'udls');
 
 						$helper = app()->make('WA\Http\Controllers\UdlsHelperController');
-						$success = $helper->create($dataRelationships['udls'], $company->id);
+						$success = $helper->create($data['relationships']['udls'], $company->id);
 
 						if (!$success) {
 							$error['errors']['udls'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Udl', 'option' => 'updated', 'include' => '']);
@@ -173,6 +171,21 @@ class CompaniesController extends FilteredApiController {
 					}
 				}
 			}
+
+			if (isset($data['relationships']['globalsettingvalues'])) {
+                if (isset($data['relationships']['globalsettingvalues']['data'])) {
+                    try {
+                        $dataGlobalSettingValues = $this->parseJsonToArray($data['relationships']['globalsettingvalues']['data'], 'globalsettingvalues');
+                        $company->globalsettingvalues()->sync($dataGlobalSettingValues);
+                    } catch (\Exception $e) {
+                        DB::rollBack();
+                        $error['errors']['globalsettingvalues'] = Lang::get('messages.NotOptionIncludeClass',
+                            ['class' => 'Company', 'option' => 'created', 'include' => 'Globalsettingvalues']);
+                        $error['errors']['Message'] = $e->getMessage();
+                        return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+                    }
+                }
+            }
 		}
 
 		if ($success) {
@@ -222,13 +235,11 @@ class CompaniesController extends FilteredApiController {
 			         * Check if Json has relationships to continue or if not and commit + return.
 		*/
 		if (isset($data['relationships']) && $success) {
-			$dataRelationships = $data['relationships'];
-
-			if (isset($dataRelationships['addresses'])) {
-				if (isset($dataRelationships['addresses']['data'])) {
+			if (isset($data['relationships']['addresses'])) {
+				if (isset($data['relationships']['addresses']['data'])) {
 
 					$addressInterface = app()->make('WA\Repositories\Address\AddressInterface');
-					$data = $dataRelationships['addresses']['data'];
+					$data = $data['relationships']['addresses']['data'];
 
 					$addressIdArray = [];
 
@@ -257,13 +268,13 @@ class CompaniesController extends FilteredApiController {
 				}
 			}
 
-			if (isset($dataRelationships['udls'])) {
-				if (isset($dataRelationships['udls']['data'])) {
+			if (isset($data['relationships']['udls'])) {
+				if (isset($data['relationships']['udls']['data'])) {
 
 					try {
 
 						$helper = app()->make('WA\Http\Controllers\UdlsHelperController');
-						$success = $helper->create($dataRelationships['udls'], $company->id);
+						$success = $helper->create($data['relationships']['udls'], $company->id);
 
 						if (!$success) {
 							$error['errors']['udls'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Udl', 'option' => 'created', 'include' => '']);
@@ -276,6 +287,21 @@ class CompaniesController extends FilteredApiController {
 					}
 				}
 			}
+
+			if (isset($data['relationships']['globalsettingvalues'])) {
+                if (isset($data['relationships']['globalsettingvalues']['data'])) {
+                    try {
+                        $dataGlobalSettingValues = $this->parseJsonToArray($data['relationships']['globalsettingvalues']['data'], 'globalsettingvalues');
+                        $company->globalsettingvalues()->sync($dataGlobalSettingValues);
+                    } catch (\Exception $e) {
+                        DB::rollBack();
+                        $error['errors']['globalsettingvalues'] = Lang::get('messages.NotOptionIncludeClass',
+                            ['class' => 'Company', 'option' => 'created', 'include' => 'Globalsettingvalues']);
+                        $error['errors']['Message'] = $e->getMessage();
+                        return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+                    }
+                }
+            }
 		}
 
 		if ($success) {
