@@ -27,4 +27,9 @@ class GlobalSettingValue extends BaseDataStore
     {
         return new GlobalSettingValueTransformer();
     }
+
+    public function globalsettings()
+    {
+        return $this->belongsTo('WA\DataStore\GlobalSetting\GlobalSetting', 'globalSettingId');
+    }
 }

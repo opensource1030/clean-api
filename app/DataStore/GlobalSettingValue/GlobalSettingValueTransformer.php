@@ -9,6 +9,11 @@ use WA\DataStore\FilterableTransformer;
  */
 class GlobalSettingValueTransformer extends FilterableTransformer
 {
+    protected $availableIncludes = [
+        'globalsettings',
+        'companies'
+    ];
+
     /**
      * @param GlobalSettingValue $globalSettingValue
      *
@@ -29,7 +34,7 @@ class GlobalSettingValueTransformer extends FilterableTransformer
      */
     public function globalsettings()
     {
-        return $this->belongsTo('WA\DataStore\GlobalSetting\GlobalSetting', 'globalSettingId');
+        return $this->hasMany('WA\DataStore\GlobalSetting\GlobalSetting', 'globalSettingId');
     }
 
     /**
