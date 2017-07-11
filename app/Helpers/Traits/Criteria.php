@@ -470,6 +470,8 @@ trait Criteria
         if($var === 'devicevariations_modifications') { return "device_variations_modifications"; }
         if($var === 'emailnotifications') { return "email_notifications"; }
         if($var === 'employeeassets') { return "employee_assets"; }
+        if($var === 'globalsettings') { return "global_settings"; }
+        if($var === 'globalsettingvalues') { return "global_settings_values"; }
         if($var === 'jobstatuses') { return "job_statuses"; }
         if($var === 'notificationgroups') { return "notification_groups"; }
         if($var === 'notificationscategoriesingroup') { return "notifications_categories_in_group"; }
