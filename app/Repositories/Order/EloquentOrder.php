@@ -24,9 +24,12 @@ class EloquentOrder extends AbstractRepository implements OrderInterface
             return 'notExist';
         }
 
+        /* The Status will not be updated directly.
+         * We will use the WorkflowEventSubscriber to do that.
+         *
         if (isset($data['status'])) {
             $order->status = $data['status'];
-        }
+        }*/
         if (isset($data['orderType'])) {
             $order->orderType = $data['orderType'];
         }

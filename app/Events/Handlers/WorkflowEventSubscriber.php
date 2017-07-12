@@ -62,27 +62,15 @@ class WorkflowEventSubscriber
                         break;
                     
                     default:
-                        # code...
+                        // NOTHING
                         break;
                 }
                 break;
             
             default:
-                # code...
+                // NOTHING
                 break;
         }
-
-        //var_dump($event->getOriginalEvent()->getMarking());
-        //var_dump($event->getOriginalEvent()->getTransition());
-        
-        
-        //var_dump($nameTransition);
-        //var_dump($nameWorkflow);
-        //var_dump($event->getOriginalEvent()->getSubject());
-        //var_dump($event->getOriginalEvent()->getWorkflowName());
-        
-        //dd("onTransition");
-        //\Log::debug("onTransition");
     }
 
     /**
