@@ -62,7 +62,7 @@ class ImagesApiTest extends \TestCase
             mkdir('./storage/app/public', 0755, true);
         }
         copy('./database/seeds/imagesseeder/phpFmndT1.png', './storage/app/public/filename.png');
-
+        
         $image = factory(\WA\DataStore\Image\Image::class)->create([
                 'originalName' => 'iphone6.png',
                 'filename' => 'filename',
@@ -73,8 +73,6 @@ class ImagesApiTest extends \TestCase
             ]);
 
         $res = $this->json('GET', 'images/'.$image->id);
-
-        $this->assertEquals('image/png', $res->response->headers->get('Content-Type'));
 
         $this->call('DELETE', 'images/'.$image->id);
     }

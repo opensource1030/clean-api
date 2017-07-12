@@ -39,18 +39,6 @@ $app->configureMonologUsing(function($monolog) {
 
 $app->withEloquent();
 
-config([
-    "filesystems" => [
-        'default' => 'local',
-        'disks' => [
-            'local' => [
-                'driver' => 'local',
-                'root' => storage_path('app/public'),
-            ],
-        ],
-    ],
-]);
-
 /*
 |--------------------------------------------------------------------------
 | Register Container Bindings
@@ -117,6 +105,7 @@ $app->configure('mail');
 $app->configure('saml2_settings');
 $app->configure('entrust');
 $app->configure('workflow');
+$app->configure('filesytems');
 
 /*
 |--------------------------------------------------------------------------
