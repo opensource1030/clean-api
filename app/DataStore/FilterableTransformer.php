@@ -76,7 +76,7 @@ abstract class FilterableTransformer extends TransformerAbstract
 
     }
 
-    protected function createTransformer($finder)
+    protected function createTransformer($var)
     {
         if($var === 'categoryapps') { return "\\WA\\DataStore\\Category\\CategoryAppTransformer"; }
         if($var === 'devicetypes') { return "\\WA\\DataStore\\DeviceType\\DeviceTypeTransformer"; }

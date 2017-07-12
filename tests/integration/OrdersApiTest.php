@@ -694,7 +694,7 @@ class OrdersApiTest extends \TestCase
             ->seeJson([
                 'type' => 'orders',
                 'id' => "$order1->id",
-                'status' => $order1->status, // The Status will not be updated directly.
+                'status' => $order2->status, // The Status will not be updated directly.
                 'orderType' => $order2->orderType,
                 'serviceImei' => $order2->serviceImei,
                 'servicePhoneNo' => $order2->servicePhoneNo,

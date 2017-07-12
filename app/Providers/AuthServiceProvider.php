@@ -34,7 +34,7 @@ class AuthServiceProvider extends PassportServiceProvider
             new BearerTokenResponse()
         );
 
-        $server->setEncryptionKey(env('APP_KEY'));
+        //$server->setEncryptionKey(env('APP_KEY'));
 
         return $server;
     }
