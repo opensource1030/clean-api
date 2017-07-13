@@ -76,6 +76,7 @@ abstract class BaseHandler
             $attributes['package']['name'] = $package->name;
         }
 
+        dd($order);
         // SERVICE ATTRIBUTES
         if(isset($service->title)) {
             $attributes['service']['title'] = $service->title;
@@ -110,12 +111,22 @@ abstract class BaseHandler
 
         // DEVICEVARIATION ATTRIBUTES
         if (count($devicevariations) > 0) {
+            $attributes['device']['accessories'] = '';
             foreach ($devicevariations as $dv) {
                 if(isset($dv->devices)) {
                     if (isset($dv->devices->devicetypes)) {
-                        $attributes['device']['deviceInfo'] = 'The user\'s own device';
                         if ($dv->devices->devicetypes->name == 'Smartphone') {
-                            $attributes['device']['deviceInfo'] = $dv->devices->name . ' : ' . $dv->devices->defaultPrice . ' ' . $dv->devices->currency;
+                            $attributes['device']['smartphone']['make'] = $dv->devices->make;
+                            $attributes['device']['smartphone']['model'] = $dv->devices->model;
+                            $attributes['device']['smartphone']['carrier'] = $dv->carriers->presentation;
+                        }
+
+                        if ($dv->devices->devicetypes->name == 'Accessory') {
+                            if ($attributes['device']['accessories'] == '') {
+                                $attributes['device']['accessories'] = $dv->devices->name;
+                            } else {
+                                $attributes['device']['accessories'] = $attributes['device']['accessories'] . ', ' . $dv->devices->name;
+                            }
                         }
                     }
                 }

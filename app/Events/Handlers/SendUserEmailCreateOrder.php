@@ -37,9 +37,10 @@ class SendUserEmailCreateOrder extends \WA\Events\Handlers\BaseHandler
         
         try {
             $userOrder = \WA\DataStore\User\User::find($event->order->userId);
+            $email = if(isset(env('MAIL_USERNAME'))) : env('MAIL_USERNAME') ? $userOrder->email;
             $attributes = $this->retrieveTheAttributes($event->order);
 
-            $values['view_name'] = 'emails.notifications.create_order_user';
+            $values['view_name'] = 'emails.notifications.order.order_create_send_user';
             $values['data'] = [
                 'username' => $userOrder->username,
                 'userEmail' => isset($attributes['user']['email'])
@@ -85,10 +86,25 @@ class SendUserEmailCreateOrder extends \WA\Events\Handlers\BaseHandler
 
                 'internationalmessage' => isset($attributes['service']['internationalmess'])
                     ? $attributes['service']['internationalmess'] : '',
+
+                'devicePhoneNo' => '[Mobile Number]',
+                
+                'deviceCarrier' => isset($attributes['device']['smartphone']['carrier'])
+                    ? $attributes['device']['smartphone']['carrier'] : '',
+                
+                'deviceMake' => isset($attributes['device']['smartphone']['make'])
+                    ? $attributes['device']['smartphone']['make'] : '',
+                
+                'deviceModel' => isset($attributes['device']['smartphone']['model'])
+                    ? $attributes['device']['smartphone']['model'] : '',
+
+                'deviceAccessories' => isset($attributes['device']['accessories'])
+                    ? $attributes['device']['accessories'] : '',
             ];
-            $values['subject'] = 'New Order Created.';
+
+            $values['subject'] = 'Order Created.';
             $values['from'] = env('MAIL_FROM_ADDRESS');
-            $values['to'] = /*env('MAIL_USERNAME'); //*/$userOrder->email;
+            $values['to'] = $email;
 
             $emailQueue = new \WA\Jobs\EmailQueue($values);
             dispatch($emailQueue);

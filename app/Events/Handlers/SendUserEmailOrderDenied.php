@@ -43,21 +43,17 @@ class SendUserEmailOrderDenied extends \WA\Events\Handlers\BaseHandler
         
         try {
             $userOrder = \WA\DataStore\User\User::find($event->order->userId);
+            $email = if(isset(env('MAIL_USERNAME'))) : env('MAIL_USERNAME') ? $userOrder->email;
 
-            /*
-            $resUser = \Illuminate\Support\Facades\Mail::send(
-                'emails.notifications.create_order_user', // VIEW NAME
-                [
-                    'username' => $userOrder->username,
+            $values['view_name'] = 'emails.notifications.order.order_deny_send_user';
+            $values['data'] = [];
+            $values['subject'] = 'Order Denied.';
+            $values['from'] = env('MAIL_FROM_ADDRESS');
+            $values['to'] = $email;
 
-                ], // PARAMETERS PASSED TO THE VIEW
-                function ($message) use ($userOrder) {
-                    $message->subject('New Order Created.');
-                    $message->from(env('MAIL_FROM_ADDRESS'), 'Wireless Analytics');
-                    $message->to(env('MAIL_USERNAME'));//$userOrder->email);
-                } // CALLBACK
-            );
-            */
+            $emailQueue = new \WA\Jobs\EmailQueue($values);
+            dispatch($emailQueue);
+
             \Log::debug("SendUserEmailOrderDenied@sendConfirmationEmail - User Order Denied Email has been sent.");
         } catch (\Exception $e) {
             \Log::debug("SendUserEmailOrderDenied@sendConfirmationEmail - e: " . print_r($e->getMessage(), true));

@@ -45,7 +45,7 @@ class SendAdminEmailCreateOrder extends \WA\Events\Handlers\BaseHandler
 
                 if ($adminRetrieved->companyId == $userOrder->companyId) {
 
-                    $values['view_name'] = 'emails.notifications.create_order_admin';
+                    $values['view_name'] = 'emails.notifications.order.order_create_send_admin';
                     $values['data'] = [
                         'username' => $userOrder->username,
                         'redirectPath' => 'urlderedireccion'
