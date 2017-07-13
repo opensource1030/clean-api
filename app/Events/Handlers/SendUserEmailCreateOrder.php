@@ -37,7 +37,7 @@ class SendUserEmailCreateOrder extends \WA\Events\Handlers\BaseHandler
         
         try {
             $userOrder = \WA\DataStore\User\User::find($event->order->userId);
-            $email = if(isset(env('MAIL_USERNAME'))) : env('MAIL_USERNAME') ? $userOrder->email;
+            $email = $this->retrieveEmail($userOrder->email);
             $attributes = $this->retrieveTheAttributes($event->order);
 
             $values['view_name'] = 'emails.notifications.order.order_create_send_user';

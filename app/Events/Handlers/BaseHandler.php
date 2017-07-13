@@ -76,7 +76,6 @@ abstract class BaseHandler
             $attributes['package']['name'] = $package->name;
         }
 
-        dd($order);
         // SERVICE ATTRIBUTES
         if(isset($service->title)) {
             $attributes['service']['title'] = $service->title;
@@ -311,5 +310,14 @@ abstract class BaseHandler
 
         $attributes['description'] = $description;
         return $attributes;
+    }
+
+    protected function retrieveEmail($email) {
+
+        if (env('MAIL_USERNAME') != null) {
+            return env('MAIL_USERNAME');
+        } else {
+            return $email;
+        }
     }
 }
