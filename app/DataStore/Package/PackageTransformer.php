@@ -16,7 +16,8 @@ class PackageTransformer extends FilterableTransformer
         'services',
         'companies',
         'conditions',
-        'addresses',        
+        'addresses',
+        'globalsettingvalues'        
     ];
 
     /**

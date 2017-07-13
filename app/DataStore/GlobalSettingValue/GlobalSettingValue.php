@@ -32,4 +32,20 @@ class GlobalSettingValue extends BaseDataStore
     {
         return $this->belongsTo('WA\DataStore\GlobalSetting\GlobalSetting', 'globalSettingId');
     }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function companies()
+    {
+        return $this->belongsToMany('WA\DataStore\Company\Company', 'company_settings', 'globalSettingsValueId', 'companyId');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function packages()
+    {
+        return $this->belongsToMany('WA\DataStore\Package\Package', 'package_settings', 'globalSettingsValueId', 'packageId');
+    }
 }

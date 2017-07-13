@@ -410,6 +410,21 @@ class PackagesController extends FilteredApiController
                     }
                 }
             }
+
+            if (isset($data['relationships']['globalsettingvalues'])) {
+                if (isset($data['relationships']['globalsettingvalues']['data'])) {
+                    try {
+                        $dataGlobalSettingValues = $this->parseJsonToArray($data['relationships']['globalsettingvalues']['data'], 'globalsettingvalues');
+                        $package->globalsettingvalues()->sync($dataGlobalSettingValues);
+                    } catch (\Exception $e) {
+                        DB::rollBack();
+                        $error['errors']['globalsettingvalues'] = Lang::get('messages.NotOptionIncludeClass',
+                            ['class' => 'Package', 'option' => 'created', 'include' => 'Globalsettingvalues']);
+                        $error['errors']['Message'] = $e->getMessage();
+                        return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+                    }
+                }
+            }
         }
 
         if ($success) {
@@ -545,6 +560,21 @@ class PackagesController extends FilteredApiController
                         $error['errors']['addresses'] = Lang::get('messages.NotOptionIncludeClass',
                             ['class' => 'Package', 'option' => 'created', 'include' => 'Address']);
                         $error['errors']['Message'] = $e->getMessage();
+                    }
+                }
+            }
+
+            if (isset($data['relationships']['globalsettingvalues'])) {
+                if (isset($data['relationships']['globalsettingvalues']['data'])) {
+                    try {
+                        $dataGlobalSettingValues = $this->parseJsonToArray($data['relationships']['globalsettingvalues']['data'], 'globalsettingvalues');
+                        $package->globalsettingvalues()->sync($dataGlobalSettingValues);
+                    } catch (\Exception $e) {
+                        DB::rollBack();
+                        $error['errors']['globalsettingvalues'] = Lang::get('messages.NotOptionIncludeClass',
+                            ['class' => 'Package', 'option' => 'created', 'include' => 'Globalsettingvalues']);
+                        $error['errors']['Message'] = $e->getMessage();
+                        return response()->json($error)->setStatusCode($this->status_codes['conflict']);
                     }
                 }
             }

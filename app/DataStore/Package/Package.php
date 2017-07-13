@@ -93,4 +93,12 @@ class Package extends BaseDataStore
     {
         return $this->belongsToMany('WA\DataStore\Address\Address', 'package_address', 'packageId', 'addressId');
     }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function globalsettingvalues()
+    {
+        return $this->belongsToMany('WA\DataStore\GlobalSettingValue\GlobalSettingValue', 'package_settings', 'packageId', 'globalSettingsValueId');
+    }
 }

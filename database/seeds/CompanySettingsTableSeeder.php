@@ -17,10 +17,10 @@ class CompanySettingsTableSeeder extends BaseTableSeeder
         $this->deleteTable();
 
         $i = 1;
-        while ($i < 5) {
+        while ($i < 20) {
             $dataS1 = [
                 [
-                    'globalSettingsValueId' => rand(1,3),
+                    'globalSettingsValueId' => rand(1,2),
                     'companyId' => $i // ADMIN
                 ]
             ];
@@ -29,12 +29,21 @@ class CompanySettingsTableSeeder extends BaseTableSeeder
 
             $dataS2 = [
                 [
-                    'globalSettingsValueId' => rand(4,6),
+                    'globalSettingsValueId' => rand(3,4),
                     'companyId' => $i // ADMIN
                 ]
             ];
 
             $this->loadTable($dataS2);
+
+            $dataS6 = [
+                [
+                    'globalSettingsValueId' => rand(11,12),
+                    'companyId' => $i // ADMIN
+                ]
+            ];
+
+            $this->loadTable($dataS6);
 
             $i++;
         }

@@ -28,11 +28,6 @@ class GlobalSettingsValuesTableSeeder extends BaseTableSeeder
                 'globalSettingId' => 1,
             ],
             [
-                'name' => 'protected',
-                'label' => 'Protected',
-                'globalSettingId' => 1,
-            ],
-            [
                 'name' => 'enable',
                 'label' => 'Enable',
                 'globalSettingId' => 2,
@@ -43,11 +38,6 @@ class GlobalSettingsValuesTableSeeder extends BaseTableSeeder
                 'globalSettingId' => 2,
             ],
             [
-                'name' => 'protected',
-                'label' => 'Protected',
-                'globalSettingId' => 2,
-            ],
-            [
                 'name' => 'enable',
                 'label' => 'Enable',
                 'globalSettingId' => 3,
@@ -55,11 +45,6 @@ class GlobalSettingsValuesTableSeeder extends BaseTableSeeder
             [
                 'name' => 'disable',
                 'label' => 'Disable',
-                'globalSettingId' => 3,
-            ],
-            [
-                'name' => 'protected',
-                'label' => 'Protected',
                 'globalSettingId' => 3,
             ],
             [
@@ -70,11 +55,6 @@ class GlobalSettingsValuesTableSeeder extends BaseTableSeeder
             [
                 'name' => 'disable',
                 'label' => 'Disable',
-                'globalSettingId' => 4,
-            ],
-            [
-                'name' => 'protected',
-                'label' => 'Protected',
                 'globalSettingId' => 4,
             ],
             [
@@ -83,13 +63,18 @@ class GlobalSettingsValuesTableSeeder extends BaseTableSeeder
                 'globalSettingId' => 5,
             ],
             [
+                'name' => 'disable',
+                'label' => 'Disable',
+                'globalSettingId' => 5,
+            ],
+            [
                 'name' => 'enable',
                 'label' => 'Enable',
                 'globalSettingId' => 6,
             ],
             [
-                'name' => 'disabled',
-                'label' => 'Disabled',
+                'name' => 'disable',
+                'label' => 'Disable',
                 'globalSettingId' => 6,
             ]
         ];
