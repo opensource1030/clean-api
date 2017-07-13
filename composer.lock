@@ -1746,12 +1746,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/database.git",
-                "reference": "b06a0a407ee979552cd5b8d2c37e1163d6f5a818"
+                "reference": "a5b181436e6ca847165438829d0d735b71ea4918"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/database/zipball/b06a0a407ee979552cd5b8d2c37e1163d6f5a818",
-                "reference": "b06a0a407ee979552cd5b8d2c37e1163d6f5a818",
+                "url": "https://api.github.com/repos/illuminate/database/zipball/a5b181436e6ca847165438829d0d735b71ea4918",
+                "reference": "a5b181436e6ca847165438829d0d735b71ea4918",
                 "shasum": ""
             },
             "require": {
@@ -1798,7 +1798,7 @@
                 "orm",
                 "sql"
             ],
-            "time": "2017-07-06 13:41:51"
+            "time": "2017-07-13 13:22:26"
         },
         {
             "name": "illuminate/encryption",
@@ -2179,12 +2179,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/queue.git",
-                "reference": "41b74f4f9026e3d36adc8be6becfdd0b3720bb7b"
+                "reference": "3e096058992fa762df752bf9eb6082421fc324fc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/queue/zipball/41b74f4f9026e3d36adc8be6becfdd0b3720bb7b",
-                "reference": "41b74f4f9026e3d36adc8be6becfdd0b3720bb7b",
+                "url": "https://api.github.com/repos/illuminate/queue/zipball/3e096058992fa762df752bf9eb6082421fc324fc",
+                "reference": "3e096058992fa762df752bf9eb6082421fc324fc",
                 "shasum": ""
             },
             "require": {
@@ -2227,7 +2227,7 @@
             ],
             "description": "The Illuminate Queue package.",
             "homepage": "https://laravel.com",
-            "time": "2017-07-10 14:00:42"
+            "time": "2017-07-13 13:10:21"
         },
         {
             "name": "illuminate/routing",
