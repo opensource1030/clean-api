@@ -115,16 +115,17 @@ class CompaniesController extends FilteredApiController {
 		/*
 			         * Check if Json has relationships to continue or if not and commit + return.
 		*/
+
 		if (isset($data['relationships']) && $success) {
 			if (isset($data['relationships']['addresses'])) {
 				if (isset($data['relationships']['addresses']['data'])) {
 
 					$addressInterface = app()->make('WA\Repositories\Address\AddressInterface');
-					$data = $data['relationships']['addresses']['data'];
+					$dataAddresses = $data['relationships']['addresses']['data'];
 
 					$addressIdArray = [];
 
-					foreach ($data as $item) {
+					foreach ($dataAddresses as $item) {
 						try {
 							if ($item['id'] > 0) {
 								array_push($addressIdArray, $item);
@@ -239,11 +240,11 @@ class CompaniesController extends FilteredApiController {
 				if (isset($data['relationships']['addresses']['data'])) {
 
 					$addressInterface = app()->make('WA\Repositories\Address\AddressInterface');
-					$data = $data['relationships']['addresses']['data'];
+					$dataAddresses = $data['relationships']['addresses']['data'];
 
 					$addressIdArray = [];
 
-					foreach ($data as $item) {
+					foreach ($dataAddresses as $item) {
 						try {
 							//\Log::debug("item: " . print_r($item, true));
 							if ($item['id'] > 0) {
