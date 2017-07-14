@@ -46,7 +46,9 @@ class SendUserEmailOrderDelivered extends \WA\Events\Handlers\BaseHandler
             $email = $this->retrieveEmail($userOrder->email);
 
             $values['view_name'] = 'emails.notifications.order.order_process_send_user';
-            $values['data'] = [];
+            $values['data'] = [
+                'urlGif' => \URL::asset('assets/img/animat-rocket-color.gif')
+            ];
             $values['subject'] = 'Order Delivered.';
             $values['from'] = env('MAIL_FROM_ADDRESS');
             $values['to'] = $email;

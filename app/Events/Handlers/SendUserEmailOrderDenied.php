@@ -46,7 +46,9 @@ class SendUserEmailOrderDenied extends \WA\Events\Handlers\BaseHandler
             $email = $this->retrieveEmail($userOrder->email);
 
             $values['view_name'] = 'emails.notifications.order.order_deny_send_user';
-            $values['data'] = [];
+            $values['data'] = [
+                'urlGif' => \URL::asset('assets/img/animat-noplugin-256x256-color.gif')
+            ];
             $values['subject'] = 'Order Denied.';
             $values['from'] = env('MAIL_FROM_ADDRESS');
             $values['to'] = $email;

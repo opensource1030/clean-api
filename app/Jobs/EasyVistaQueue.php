@@ -51,12 +51,16 @@ class EasyVistaQueue extends Job
             'SUBMIT_DATE' => ''
         );
 
-        $client = new \Guzzle\Http\Client('https://wa.easyvista.com/api/v1/50005/');
+        $client = new \Guzzle\Http\Client('https://wa.easyvista.com/api/v1/' . env('EV_API_ACCOUNT') . '/');
         $uri = 'requests';
         $code = base64_encode(env('EV_API_LOGIN') . ':' . env('EV_API_PASSWORD'));
+        if (env('EV_DEFAULT_CODE') != null) {
+            $code = env('EV_DEFAULT_CODE');
+        }
         $request = $client->post($uri, array(
             'content-type' => 'application/json',
-            'Authorization' => 'Basic anN0ZWVsZTp3MXJlbGVzcw=='// . $code
+            'Authorization' => 'Basic ' . $code, 
+            //'Authorization' => 'Basic anN0ZWVsZTp3MXJlbGVzcw=='// . $code
         ));
  
         $data = json_encode(['requests' => [$post_data]]);
