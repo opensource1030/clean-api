@@ -36,8 +36,9 @@ class SendEVRequest extends \WA\Events\Handlers\BaseHandler
     public function createTicketOnEasyVista($event) {
         
         try {
-            $attributes = $this->easyVistaStringDescription($event->order);
-            
+            $attributes = $this->retrieveTheAttributes($event->order);
+            $attributes = $this->attributesToEasyVista($attributes);
+
             $easyVistaQueue = new \WA\Jobs\EasyVistaQueue($attributes);
             dispatch($easyVistaQueue);
 
