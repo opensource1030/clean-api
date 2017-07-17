@@ -319,7 +319,7 @@ class PackagesController extends FilteredApiController
 
             if (isset($data['relationships']['conditions'])) {
                 if (isset($data['relationships']['conditions']['data'])) {
-                    $data = $data['relationships']['conditions']['data'];
+                    $dataCond = $data['relationships']['conditions']['data'];
 
                     try {
                         $conditions = Condition::where('packageId', $id)->get();
@@ -331,9 +331,9 @@ class PackagesController extends FilteredApiController
                     }
 
                     if ($success) {
-                        $this->deleteNotRequested($data, $conditions, $conditionsInterface, 'conditions');
+                        $this->deleteNotRequested($dataCond, $conditions, $conditionsInterface, 'conditions');
 
-                        foreach ($data as $item) {
+                        foreach ($dataCond as $item) {
                             $item['packageId'] = $package->id;
 
                             if (isset($item['id'])) {
