@@ -56,13 +56,6 @@ class ImagesApiTest extends \TestCase
 
     public function testGetImageById()
     {
-        $this->markTestSkipped("Need Information");
-        
-        if(!is_dir('./storage/app/public')){
-            mkdir('./storage/app/public', 0755, true);
-        }
-        copy('./database/seeds/imagesseeder/phpFmndT1.png', './storage/app/public/filename.png');
-        
         $image = factory(\WA\DataStore\Image\Image::class)->create([
                 'originalName' => 'iphone6.png',
                 'filename' => 'filename',
@@ -95,13 +88,6 @@ class ImagesApiTest extends \TestCase
 
     public function testCreateImage()
     {
-        $this->markTestSkipped("Need Information");
-
-        if(!is_dir('./storage/app/public')){
-            mkdir('./storage/app/public', 0755, true);
-        }
-        copy('./database/seeds/imagesseeder/phpFmndT1.png', './storage/app/public/filename.png');
-
         $image = factory(\WA\DataStore\Image\Image::class)->create([
                 'originalName' => 'iphone6.png',
                 'filename' => 'filename',
@@ -137,8 +123,6 @@ class ImagesApiTest extends \TestCase
 
     public function testDeleteImageIfExists()
     {
-        $this->markTestSkipped("testDeleteImageIfExists");
-
         $image = factory(\WA\DataStore\Image\Image::class)->create();
         $responseDel = $this->call('DELETE', 'images/'.$image->id);
         $this->assertEquals(200, $responseDel->status());
