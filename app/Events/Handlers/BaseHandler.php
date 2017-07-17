@@ -3,6 +3,7 @@
 namespace WA\Events\Handlers;
 
 use Illuminate\Events\Dispatcher;
+use Illuminate\Support\Facades\View;
 
 /**
  * Class BaseHandler.
@@ -19,7 +20,26 @@ abstract class BaseHandler
 
     protected function retrieveTheAttributes($order)
     {
+        $attributes = [];
         $user = \WA\DataStore\User\User::find($order->userId);
+        $company = \WA\DataStore\Company\Company::find($user->companyId);
+
+        $attributes['company']['name'] = $company->name;
+        $attributes['order']['orderType'] = $order->orderType;
+
+        foreach ($user->udlValues as $value) {
+            if ($value->udlName == 'Department') {
+                $attributes['company']['udl']['department'] = $value->udlValue;
+            }
+
+            if ($value->udlName == 'Cost Center') {
+                $attributes['company']['udl']['costcenter'] = $value->udlValue;
+            }
+        }
+
+        $attributes['activeuser']['name'] = \Auth::user()->username;
+        $attributes['device']['mobilenumber'] = $order->servicePhoneNo;
+
         $address = $service = $package = $devicevariations = null;
 
         if (isset($order->addressId)) {
@@ -37,8 +57,6 @@ abstract class BaseHandler
         if (isset($order->devicevariations)) {
             $devicevariations = $order->devicevariations;
         }
-
-        $attributes = [];
 
         // USER ATTRIBUTES
         if (isset($user->username)) {
@@ -135,180 +153,70 @@ abstract class BaseHandler
         return $attributes;
     }
 
-    protected function easyVistaStringDescription($order)
-    {
-        $user = \WA\DataStore\User\User::find($order->userId);
-        $attributes['email'] = $user->email;
+    protected function attributesToEasyVista($attributes) {
 
-        $address = \WA\DataStore\Address\Address::find($order->addressId);
-
-        $service = \WA\DataStore\Service\Service::find($order->serviceId);
-
-        $package = \WA\DataStore\Package\Package::find($order->packageId);
         $attributes['packageAC'] = isset($package->approvalCode) ? $package->approvalCode : env('EV_DEFAULT_APPROVAL_CODE');
 
-        $devicevariations = $order->devicevariations;
+        $attributes['email'] = isset($attributes['user']['email']) ? $attributes['user']['email'] : '';
 
-        $company = \WA\DataStore\Company\Company::find($user->companyId);
+        $attributes['description']  = View::make('emails.notifications.order.order_create_send_easyvista',
+                [
+                    'companyName' => isset($attributes['company']['name'])
+                        ? $attributes['company']['name'] : '',
+                    'orderType' => isset($attributes['order']['orderType'])
+                        ? $attributes['order']['orderType'] : '',
+                    'username' => isset($attributes['user']['username'])
+                        ? $attributes['user']['username'] : '',
+                    'packageName' => isset($attributes['package']['name'])
+                        ? $attributes['package']['name'] : '',
 
-        $description = '';
+                    'userEmail' => isset($attributes['user']['email'])
+                        ? $attributes['user']['email'] : '',
+                    'supervisorEmail' => isset($attributes['user']['supervisorEmail'])
+                        ? $attributes['user']['supervisorEmail'] : '',
+                    'udlDepartment' => isset($attributes['company']['udl']['department'])
+                        ? $attributes['company']['udl']['department'] : '',
+                    'udlCostCenter' => isset($attributes['company']['udl']['costcenter'])
+                        ? $attributes['company']['udl']['costcenter'] : '',
+                    'activeUser' => isset($attributes['activeuser']['name'])
+                        ? $attributes['activeuser']['name'] : '',
 
-        // Company.
-        $description = $description .
-            '<h2><strong>' . $company->name .
-            ' - ' . $order->orderType .
-            ' - ' . $user->username .
-            '</strong></h2>';
+                    'mobileNumber' => isset($attributes['device']['mobilenumber'])
+                        ? $attributes['device']['mobilenumber'] : '',
+                    'deviceCarrier' => isset($attributes['device']['smartphone']['carrier'])
+                        ? $attributes['device']['smartphone']['carrier'] : '',
+                    'deviceMake' => isset($attributes['device']['smartphone']['make'])
+                        ? $attributes['device']['smartphone']['make'] : '',
+                    'deviceModel' => isset($attributes['device']['smartphone']['model'])
+                        ? $attributes['device']['smartphone']['model'] : '',
+                    'deviceAccessories' => isset($attributes['device']['accessories'])
+                        ? $attributes['device']['accessories'] : '',
 
-        $packageName = isset($package->name) ? $package->name : '';
+                    'domesticvoice' => isset($attributes['service']['domesticvoice'])
+                        ? $attributes['service']['domesticvoice'] : '',
+                    'domesticdata' => isset($attributes['service']['domesticdata'])
+                        ? $attributes['service']['domesticdata'] : '',
+                    'domesticmessage' => isset($attributes['service']['domesticmess'])
+                        ? $attributes['service']['domesticmess'] : '',
+                    'internationalvoice' => isset($attributes['service']['internationalvoice'])
+                        ? $attributes['service']['internationalvoice'] : '',
+                    'internationaldata' => isset($attributes['service']['internationaldata'])
+                        ? $attributes['service']['internationaldata'] : '',
+                    'internationalmessage' => isset($attributes['service']['internationalmess'])
+                        ? $attributes['service']['internationalmess'] : '',
 
-        // Package.
-        $description = $description .
-            '<h3><strong>Package Name: </strong>' . $packageName .
-            '</h3>';
+                    'addressAddress' => isset($attributes['address']['address'])
+                        ? $attributes['address']['address'] : '',
+                    'addressCity' => isset($attributes['address']['city'])
+                        ? $attributes['address']['city'] : '',
+                    'addressState' => isset($attributes['address']['state'])
+                        ? $attributes['address']['state'] : '',
+                    'addressPostalCode' => isset($attributes['address']['postalCode'])
+                        ? $attributes['address']['postalCode'] : '',
 
-        $description = $description .
-            '<hr />';
+                ]
+            )->render();
 
-        // User
-        $departmentUdl = '';
-        $costCenterUdl = '';
-        $udlValues = $user->udlvalues;
-        foreach ($udlValues as $udlValue) {
-            $udl = \WA\DataStore\Udl\Udl::find($udlValue->udlId);
-            if ($udl->name == 'Department') {
-                $departmentUdl = $udlValue->name;
-            }
-
-            if ($udl->name == 'Cost Center') {
-                $costCenterUdl = $udlValue->name;
-            }
-        }
-
-        $activeLogin = \Auth::user();
-        $description = $description .
-        '<h3 class="heading2">User Info:</h3>' .
-        '<p>' .
-            '<strong>Username:</strong>&nbsp;' . $user->username .
-            '<br /><strong>Email:</strong>&nbsp;' . $user->email .
-            '<br /><strong>Supervisor Email:</strong> ' . $user->supervisorEmail .
-            '<br /><strong>Department:</strong> ' . $departmentUdl .
-            '<br /><strong>Cost Center:</strong> ' . $costCenterUdl .
-        '</p>' .
-        '<p>' .
-            '<strong>Entered by:</strong>&nbsp;' . $activeLogin->username .
-        '</p>';
-
-        $description = $description .
-            '<hr />';
-
-        $smartphone = '';
-        $accessories = '';
-        if ($devicevariations == null) {
-            foreach ($devicevariations as $dv) {
-                if ($dv->devices->devicetypes->name == 'Smartphone') {
-                    $smartphone = $dv;
-                }
-
-                if ($dv->devices->devicetypes->name == 'Accessory') {
-                    if ($accessories == '') {
-                        $accessories = $accessories . ', ';
-                    }
-                    $accessories = $accessories . $dv->name;
-                }
-            }
-        }
-
-        if ($smartphone == '') {
-            $make = '';
-            $model = '';
-        } else {
-            $make = $smartphone->devices->make;
-            $model = $smartphone->devices->model;
-        }
-
-        $domVo = $domDa = $domMe = $intVo = $intDa = $intMe = '';
-        if ($service == null) {
-            $CarrierName = $order->deviceCarrier;
-        } else {
-            $CarrierName = $service->carriers->name;
-
-            foreach ($service->serviceitems as $si) {
-                if ($si->domain == 'domestic') {
-                    if ($si->category == 'voice') {
-                        $domVo = $si->value . ' ' . $si->unit;
-                    } else if ($si->category == 'data') {
-                        $domDa = $si->value . ' ' . $si->unit;
-                    } else if ($si->category == 'messages') {
-                        $domMe = $si->value . ' ' . $si->unit;
-                    } else {
-                        // NOTHING.
-                    }
-                } else if ($si->domain == 'international') {
-                    if ($si->category == 'voice') {
-                        $intVo = $si->value . ' ' . $si->unit;
-                    } else if ($si->category == 'data') {
-                        $intDa = $si->value . ' ' . $si->unit;
-                    } else if ($si->category == 'messages') {
-                        $intMe = $si->value . ' ' . $si->unit;
-                    } else {
-                        // NOTHING.
-                    }
-                }
-            }
-        }
-
-        //
-        $description = $description .
-            '<h3 class="heading2">Device&nbsp;Info:</h3>' .
-            '<p>' .
-                '<strong>Mobile Number:</strong> ' . $order->servicePhoneNo .
-                '<br />' .
-                '<strong>Carrier:</strong> ' . $CarrierName .
-                '<br />' .
-                '<strong>Make/Model:</strong> ' . $make . ' ' . $model .
-                '<br />' .
-                '<strong>Accessories:</strong> ' . $accessories .
-            '</p>';
-
-        $description = $description .
-            '<hr />';
-
-        $description = $description .
-            '<h3 class="heading2">Mobile Service Info:</h3>' .
-            '<p>' .
-                '<strong>Domestic Voice:</strong>' . $domVo .
-                '<br />' .
-                '<strong>Domestic Data:</strong>' . $domDa .
-                '<br />' .
-                '<strong>Domestic Messaging:</strong>' . $domMe .
-                '<br />' .
-                '<strong>International Voice:</strong>' . $intVo .
-                '<br />' .
-                '<strong>International Data:</strong>' . $intDa .
-                '<br />' .
-                '<strong>International Messaging:</strong>' . $intMe .
-            '</p>';
-
-        $description = $description .
-            '<hr />';
-
-        $description = $description .
-            '<h3 class="heading2">Shipping Info:</h3>' .
-            '<p>' . $company->name .
-                '<br />' . $address->name .
-                '<br />' . $address->city . ', ' . $address->state . ', ' . $address->postalCode .
-                '<br />Attn.&nbsp;' . $user->username .
-            '</p>';
-/*
-        $description = $description .
-            '<hr />';
-
-        $description = $description .
-            '<h3 class="heading2">Comments:</h3><p>Open comments field.</p>';
-*/
-
-        $attributes['description'] = $description;
         return $attributes;
     }
 
