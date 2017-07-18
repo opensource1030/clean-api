@@ -15,12 +15,15 @@ class CompanyUserImportJob extends BaseDataStore
     protected $table = 'company_user_import_jobs';
 
     protected $fillable = [
+        'jobType',
         'companyId',
         'filepath',
         'filename',
         'totalUsers',
         'createdUsers',
+        'creatableUsers',
         'updatedUsers',
+        'updatableUsers',
         'failedUsers',
         'fields',
         'sampleUser',

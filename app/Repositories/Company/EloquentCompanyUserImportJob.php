@@ -37,13 +37,16 @@ class EloquentCompanyUserImportJob extends AbstractRepository implements Company
         }
         
         $companyUserImportJobData = [
+            "jobType" =>isset($data['jobType']) ? $data['jobType'] : '',
             "companyId" => $data['companyId'],
             "filepath" =>isset($data['filepath']) ? $data['filepath'] : '',
             "filename" =>isset($data['filename']) ? $data['filename'] : '',
-            "totalUsers" =>isset($data['totalUsers']) ? $data['totalUsers'] : '',
-            "createdUsers" =>isset($data['createdUsers']) ? $data['createdUsers'] : '',
-            "updatedUsers" =>isset($data['updatedUsers']) ? $data['updatedUsers'] : '',
-            "failedUsers" =>isset($data['failedUsers']) ? $data['failedUsers'] : '',
+            "totalUsers" =>isset($data['totalUsers']) ? $data['totalUsers'] : 0,
+            "createdUsers" =>isset($data['createdUsers']) ? $data['createdUsers'] : 0,
+            "creatableUsers" =>isset($data['createdUsers']) ? $data['createdUsers'] : 0,
+            "updatedUsers" =>isset($data['updatedUsers']) ? $data['updatedUsers'] : 0,
+            "updatableUsers" =>isset($data['updatedUsers']) ? $data['updatedUsers'] : 0,
+            "failedUsers" =>isset($data['failedUsers']) ? $data['failedUsers'] : 0,
             "fields" =>isset($data['fields']) ? serialize($data['fields']) : '',
             "sampleUser" =>isset($data['sampleUser']) ? serialize($data['sampleUser']) : '',
             "mappings" => isset($data['mappings']) ? serialize($data['mappings']) : '',
@@ -98,7 +101,9 @@ class EloquentCompanyUserImportJob extends AbstractRepository implements Company
             return false;
         }
 
-        //@TODO4Carlos: poner adecuadamente los valores también
+        if (isset($data['jobType'])) {
+            $companyUserImportJob->jobType = $data['jobType'];
+        }
 
         if (isset($data['companyId'])) {
             $companyUserImportJob->companyId = $data['companyId'];
@@ -120,7 +125,15 @@ class EloquentCompanyUserImportJob extends AbstractRepository implements Company
             $companyUserImportJob->createdUsers = $data['createdUsers'];
         }
 
+        if (isset($data['creatableUsers'])) {
+            $companyUserImportJob->createdUsers = $data['createdUsers'];
+        }
+
         if (isset($data['updatedUsers'])) {
+            $companyUserImportJob->updatedUsers = $data['updatedUsers'];
+        }
+
+        if (isset($data['updatableUsers'])) {
             $companyUserImportJob->updatedUsers = $data['updatedUsers'];
         }
 

@@ -27,23 +27,26 @@ class CompanyUserImportJobTransformer extends FilterableTransformer
     public function transform(CompanyUserImportJob $companyUserImportJob)
     {
         return [
-            "id"            => (int)$companyUserImportJob->id,
-            "companyId"     => (int)$companyUserImportJob->companyId,
-            "path"          => $companyUserImportJob->filepath,
-            "file"          => $companyUserImportJob->filename,
-            "totalUsers"    => (int)$companyUserImportJob->totalUsers,
-            "createdUsers"  => (int)$companyUserImportJob->createdUsers,
-            "updatedUsers"  => (int)$companyUserImportJob->updatedUsers,
-            "failedUsers"   => (int)$companyUserImportJob->failedUsers,
-            "CSVfields"     => unserialize($companyUserImportJob->fields),
-            "DBfields"      => $companyUserImportJob->dbfields,
-            "sampleUser"    => unserialize($companyUserImportJob->sampleUser),
-            "mappings"      => unserialize($companyUserImportJob->mappings),
-            "status"        => $this->getStatusText($companyUserImportJob->status),
-            "created_by_id" => (int)$companyUserImportJob->created_by_id,
-            "updated_by_id" => (int)$companyUserImportJob->updated_by_id,
-            "created_at"    => $companyUserImportJob->created_at,
-            "updated_at"    => $companyUserImportJob->updated_at
+            "id"                => (int)$companyUserImportJob->id,
+            "jobType"           => $companyUserImportJob->jobType,
+            "companyId"         => (int)$companyUserImportJob->companyId,
+            "path"              => $companyUserImportJob->filepath,
+            "file"              => $companyUserImportJob->filename,
+            "totalUsers"        => (int)$companyUserImportJob->totalUsers,
+            "createdUsers"      => (int)$companyUserImportJob->createdUsers,
+            "creatableUsers"    => (int)$companyUserImportJob->creatableUsers,
+            "updatedUsers"      => (int)$companyUserImportJob->updatedUsers,
+            "updatableUsers"    => (int)$companyUserImportJob->updatableUsers,
+            "failedUsers"       => (int)$companyUserImportJob->failedUsers,
+            "CSVfields"         => unserialize($companyUserImportJob->fields),
+            "DBfields"          => $companyUserImportJob->dbfields,
+            "sampleUser"        => unserialize($companyUserImportJob->sampleUser),
+            "mappings"          => unserialize($companyUserImportJob->mappings),
+            "status"            => $this->getStatusText($companyUserImportJob->status),
+            "created_by_id"     => (int)$companyUserImportJob->created_by_id,
+            "updated_by_id"     => (int)$companyUserImportJob->updated_by_id,
+            "created_at"        => $companyUserImportJob->created_at,
+            "updated_at"        => $companyUserImportJob->updated_at
         ];
     }
 
