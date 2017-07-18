@@ -20,7 +20,7 @@ class PermissionRolesTableSeeder extends BaseTableSeeder
 
         $i = 1;
 
-        while ($i < 119) {
+        while ($i < 123) {
             $data = [
                 [
                     'permission_id' => $i,
@@ -36,22 +36,22 @@ class PermissionRolesTableSeeder extends BaseTableSeeder
         // note: I've commented categoryapps, conditionfields and conditionoperators from routes.
 
         $j = 1;
-        while ($j < 119) {
+        while ($j < 123) {
             // NOT assign the permissions listed below.
             if(    $j != 22 // create_company
                 && $j != 24 // delete_company
-                && $j != 29 // delete_condition
-                && $j != 50 // get_images
-                && $j != 54 // delete_image
-                && $j != 100 // create_permission
-                && $j != 101 // update_permission
-                && $j != 102 // delete_permission
-                && $j != 103 // get_scopes
-                && $j != 104 // get_scope
-                && $j != 105 // create_scope
-                && $j != 106 // update_scope
-                && $j != 107 // delete_scope
-                && $j != 118 // manage_companies
+                && $j != 33 // delete_condition
+                && $j != 54 // get_images
+                && $j != 58 // delete_image
+                && $j != 104 // create_permission
+                && $j != 105 // update_permission
+                && $j != 106 // delete_permission
+                && $j != 107 // get_scopes
+                && $j != 108 // get_scope
+                && $j != 109 // create_scope
+                && $j != 110 // update_scope
+                && $j != 111 // delete_scope
+                && $j != 122 // manage_companies
             ) {
                 $data = [
                     [
@@ -78,59 +78,59 @@ class PermissionRolesTableSeeder extends BaseTableSeeder
                 'role_id' => 3,
             ],
             [
-                'permission_id' => 45, // get_devicevariations
+                'permission_id' => 49, // get_devicevariations
                 'role_id' => 3,
             ],
             [
-                'permission_id' => 46, // get_devicevariations
+                'permission_id' => 50, // get_devicevariations
                 'role_id' => 3,
             ],
             [
-                'permission_id' => 51, // get_image
+                'permission_id' => 55, // get_image
                 'role_id' => 3,
             ],
             [
-                'permission_id' => 52, // get_image_info
+                'permission_id' => 56, // get_image_info
                 'role_id' => 3,
             ],
             [
-                'permission_id' => 60, // get_orders
+                'permission_id' => 64, // get_orders
                 'role_id' => 3,
             ],
             [
-                'permission_id' => 61, // get_order
+                'permission_id' => 65, // get_order
                 'role_id' => 3,
             ],
             [
-                'permission_id' => 62, // create_order
+                'permission_id' => 66, // create_order
                 'role_id' => 3,
             ],
             [
-                'permission_id' => 63, // update_order
+                'permission_id' => 67, // update_order
                 'role_id' => 3,
             ],
             [
-                'permission_id' => 66, // get_packages_foruser
+                'permission_id' => 70, // get_packages_foruser
                 'role_id' => 3,
             ],
             [
-                'permission_id' => 67, // get_package
+                'permission_id' => 71, // get_package
                 'role_id' => 3,
             ],
             [
-                'permission_id' => 81, // get_services
+                'permission_id' => 85, // get_services
                 'role_id' => 3,
             ],
             [
-                'permission_id' => 82, // get_service
+                'permission_id' => 86, // get_service
                 'role_id' => 3,
             ],
             [
-                'permission_id' => 88, // get_user_me
+                'permission_id' => 92, // get_user_me
                 'role_id' => 3,
             ],
             [
-                'permission_id' => 91, // update_user
+                'permission_id' => 95, // update_user
                 'role_id' => 3,
             ]
         ];

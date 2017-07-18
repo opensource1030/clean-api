@@ -16,7 +16,7 @@ class ScopePermissionsTableSeeder extends BaseTableSeeder
     {
         $this->deleteTable();
 
-        // Scopes = 113. Permissions = 119.
+        // Scopes = 117. Permissions = 123.
         /*
          *  ADDRESS (1-5)
          *  ALLOCATIONS (6-7)
@@ -24,29 +24,30 @@ class ScopePermissionsTableSeeder extends BaseTableSeeder
          *  ASSETS (13-14)
          *  CARRIERS (15-19)
          *  COMPANIES (20-24)
-         *  CONDITIONS (25-29)
-         *  CONTENTS (30-34)
-         *  DEVICES (35-39)
-         *  DEVICETYPES (40-44)
-         *  DEVICEVARIATIONS (45-49)
-         *  IMAGES (50-54)
-         *  MODIFICATIONS (55-59)
-         *  ORDERS (60-64)
-         *  PACKAGES (65-70)
-         *  PRESET (71-75)
-         *  REQUEST (76-80)
-         *  SERVICES (81-85)
-         *  USERS (86-92)
-         *  JOBS (93)
-         *  ROLES (94-98)
-         *  PERMISSIONS (99-103)
-         *  SCOPES (104-108)
-         *  GLOBALSETTINGS (109-113)
-         *  SPECIAL CASES. (114:manage_devices, 115:manage_presets, 116:manage_services, 117:manage_employees, 118:manage_companies, 119:manage_own_company)
+         *  COMPANYJOBS (25-28)
+         *  CONDITIONS (29-33)
+         *  CONTENTS (34-38)
+         *  DEVICES (39-43)
+         *  DEVICETYPES (44-48)
+         *  DEVICEVARIATIONS (49-53)
+         *  IMAGES (54-58)
+         *  MODIFICATIONS (59-63)
+         *  ORDERS (64-68)
+         *  PACKAGES (69-74)
+         *  PRESET (75-79)
+         *  REQUEST (80-84)
+         *  SERVICES (85-89)
+         *  USERS (90-96)
+         *  JOBS (97)
+         *  ROLES (98-102)
+         *  PERMISSIONS (103-107)
+         *  SCOPES (108-112)
+         *  GLOBALSETTINGS (113-117)
+         *  SPECIAL CASES. (118:manage_devices, 119:manage_presets, 120:manage_services, 121:manage_employees, 122:manage_companies, 123:manage_own_company)
          */
 
         $i = 1;
-        while ($i < 113) {
+        while ($i < 117) {
 
             $data = [
                 [
@@ -60,225 +61,225 @@ class ScopePermissionsTableSeeder extends BaseTableSeeder
         }
 
         // SPECIAL CASES.
-        // MANAGE DEVICES -> 114
+        // MANAGE DEVICES -> 118
         $dataManageDevices = [
             [
-                'scope_id' => 35,
-                'permission_id' => 114
-            ],
-            [
-                'scope_id' => 37,
-                'permission_id' => 114
-            ],
-            [
-                'scope_id' => 38,
-                'permission_id' => 114
-            ],
-            [
                 'scope_id' => 39,
-                'permission_id' => 114
+                'permission_id' => 118
+            ],
+            [
+                'scope_id' => 41,
+                'permission_id' => 118
+            ],
+            [
+                'scope_id' => 42,
+                'permission_id' => 118
+            ],
+            [
+                'scope_id' => 43,
+                'permission_id' => 118
             ],
             [
                 'scope_id' => 15,
-                'permission_id' => 114
+                'permission_id' => 118
             ],
             [
                 'scope_id' => 20,
-                'permission_id' => 114
+                'permission_id' => 118
             ],
             [
-                'scope_id' => 55,
-                'permission_id' => 114
+                'scope_id' => 59,
+                'permission_id' => 118
             ],
             [
-                'scope_id' => 57,
-                'permission_id' => 114
+                'scope_id' => 61,
+                'permission_id' => 118
             ]
         ];
 
         $this->loadTable($dataManageDevices);
 
-        // MANAGE PRESETS -> 115
+        // MANAGE PRESETS -> 119
         $dataManagePresets = [
             [
-                'scope_id' => 71,
-                'permission_id' => 115
-            ],
-            [
-                'scope_id' => 73,
-                'permission_id' => 115
-            ],
-            [
-                'scope_id' => 74,
-                'permission_id' => 115
-            ],
-            [
                 'scope_id' => 75,
-                'permission_id' => 115
+                'permission_id' => 119
             ],
             [
-                'scope_id' => 35,
-                'permission_id' => 115
+                'scope_id' => 77,
+                'permission_id' => 119
+            ],
+            [
+                'scope_id' => 78,
+                'permission_id' => 119
+            ],
+            [
+                'scope_id' => 79,
+                'permission_id' => 119
+            ],
+            [
+                'scope_id' => 39,
+                'permission_id' => 119
             ],
             [
                 'scope_id' => 15,
-                'permission_id' => 115
+                'permission_id' => 119
             ],
             [
                 'scope_id' => 20,
-                'permission_id' => 115
+                'permission_id' => 119
             ],
             [
-                'scope_id' => 55,
-                'permission_id' => 115
+                'scope_id' => 59,
+                'permission_id' => 119
             ]
         ];
 
         $this->loadTable($dataManagePresets);
 
-        // MANAGE SERVICES -> 116
+        // MANAGE SERVICES -> 120
         $dataManageServices = [
             [
-                'scope_id' => 81,
-                'permission_id' => 116
-            ],
-            [
-                'scope_id' => 83,
-                'permission_id' => 116
-            ],
-            [
-                'scope_id' => 84,
-                'permission_id' => 116
-            ],
-            [
                 'scope_id' => 85,
-                'permission_id' => 116
+                'permission_id' => 120
             ],
             [
-                'scope_id' => 35,
-                'permission_id' => 116
+                'scope_id' => 87,
+                'permission_id' => 120
+            ],
+            [
+                'scope_id' => 88,
+                'permission_id' => 120
+            ],
+            [
+                'scope_id' => 89,
+                'permission_id' => 120
+            ],
+            [
+                'scope_id' => 39,
+                'permission_id' => 120
             ],
             [
                 'scope_id' => 15,
-                'permission_id' => 116
+                'permission_id' => 120
             ],
             [
                 'scope_id' => 20,
-                'permission_id' => 116
+                'permission_id' => 120
             ],
             [
-                'scope_id' => 55,
-                'permission_id' => 116
+                'scope_id' => 59,
+                'permission_id' => 120
             ]
         ];
 
         $this->loadTable($dataManageServices);
 
-        // MANAGE EMPLOYEES -> 117
+        // MANAGE EMPLOYEES -> 121
         $dataManageEmployees = [
             [
-                'scope_id' => 86,
-                'permission_id' => 117
-            ],
-            [
                 'scope_id' => 90,
-                'permission_id' => 117
+                'permission_id' => 121
             ],
             [
-                'scope_id' => 91,
-                'permission_id' => 117
+                'scope_id' => 94,
+                'permission_id' => 121
             ],
             [
-                'scope_id' => 92,
-                'permission_id' => 117
+                'scope_id' => 95,
+                'permission_id' => 121
+            ],
+            [
+                'scope_id' => 96,
+                'permission_id' => 121
             ],
             [
                 'scope_id' => 20,
-                'permission_id' => 117
+                'permission_id' => 121
             ],
             [
                 'scope_id' => 1,
-                'permission_id' => 117
+                'permission_id' => 121
             ],
             [
                 'scope_id' => 3,
-                'permission_id' => 117
+                'permission_id' => 121
             ],
             [
                 'scope_id' => 4,
-                'permission_id' => 117
+                'permission_id' => 121
             ],
             [
                 'scope_id' => 5,
-                'permission_id' => 117
+                'permission_id' => 121
             ]
         ];
 
         $this->loadTable($dataManageEmployees);
 
-        // MANAGE COMPANIES -> 118
+        // MANAGE COMPANIES -> 122
         $dataManageCompanies = [
             [
                 'scope_id' => 20,
-                'permission_id' => 118
+                'permission_id' => 122
             ],
             [
                 'scope_id' => 22,
-                'permission_id' => 118
+                'permission_id' => 122
             ],
             [
                 'scope_id' => 23,
-                'permission_id' => 118
+                'permission_id' => 122
             ],
             [
                 'scope_id' => 24,
-                'permission_id' => 118
+                'permission_id' => 122
             ],
             [
                 'scope_id' => 1,
-                'permission_id' => 118
+                'permission_id' => 122
             ],
             [
                 'scope_id' => 3,
-                'permission_id' => 118
+                'permission_id' => 122
             ],
             [
                 'scope_id' => 4,
-                'permission_id' => 118
+                'permission_id' => 122
             ],
             [
                 'scope_id' => 5,
-                'permission_id' => 118
+                'permission_id' => 122
             ]
         ];
 
         $this->loadTable($dataManageCompanies);
 
-        // MANAGE OWN COMPANY -> 119 (Can't Create or Delete a Company.)
+        // MANAGE OWN COMPANY -> 123 (Can't Create or Delete a Company.)
         $dataManageOwnCompanies = [
             [
                 'scope_id' => 20,
-                'permission_id' => 119
+                'permission_id' => 123
             ],
             [
                 'scope_id' => 23,
-                'permission_id' => 119
+                'permission_id' => 123
             ],
             [
                 'scope_id' => 1,
-                'permission_id' => 119
+                'permission_id' => 123
             ],
             [
                 'scope_id' => 3,
-                'permission_id' => 119
+                'permission_id' => 123
             ],
             [
                 'scope_id' => 4,
-                'permission_id' => 119
+                'permission_id' => 123
             ],
             [
                 'scope_id' => 5,
-                'permission_id' => 119
+                'permission_id' => 123
             ]
         ];
 

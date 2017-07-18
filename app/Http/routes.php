@@ -281,6 +281,11 @@ $api->version('v1', function ($api) {
             'middleware' => [$scopeMiddleware.':create_company_job'],
             'uses' => $companiesController . '@createJob'
         ]);
+
+        $api->get('companies/{companyId}/jobs', [
+            'middleware' => [$scopeMiddleware.':get_jobs_company'],
+            'uses' => $companiesController . '@showJobs'
+        ]);
         
         $api->get('companies/{companyId}/jobs/{jobId}', [
             'middleware' => [$scopeMiddleware.':get_company_job'],

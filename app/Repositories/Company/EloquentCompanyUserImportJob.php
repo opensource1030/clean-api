@@ -155,4 +155,17 @@ class EloquentCompanyUserImportJob extends AbstractRepository implements Company
 
     }
 
+    /**
+     * @param $companyId
+     *
+     * @return object Object of employee information
+     */
+    public function byCompanyId($companyId)
+    {
+        // manually run the queries
+        $response = CompanyUserImportJob::where('companyId', $companyId)->get();
+
+        return $response;
+    }
+
 }

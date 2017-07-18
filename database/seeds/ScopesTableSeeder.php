@@ -196,6 +196,11 @@ class ScopesTableSeeder extends BaseTableSeeder
                 'description' => 'View a company job',
             ],
             [
+                'name' => 'get_jobs_company',
+                'display_name' => 'View all jobs of a company',
+                'description' => 'View all jobs of a company',
+            ],
+            [
                 'name' => 'create_company_job',
                 'display_name' => 'Create a company job',
                 'description' => 'Create a company job',

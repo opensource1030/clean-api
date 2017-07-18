@@ -503,6 +503,31 @@ class CompaniesController extends FilteredApiController {
 		
 	}
 
+	/**
+	 * Retrieve the information related to the job.
+	 *
+	 * @param $companyId
+	 * @param $jobId
+	 * @return mixed
+	 */
+	public function showJobs($companyId, Request $request) {
+		$criteria = $this->getRequestCriteria();
+        $this->companyUserImportJob->setCriteria($criteria);
+
+        $resource = $this->companyUserImportJob->byCompanyId($companyId);
+
+        $transformer = $this->companyUserImportJob->getTransformer();
+
+        if (!$this->includesAreCorrect($request, $transformer)) {
+            $error['errors']['getincludes'] = Lang::get('messages.NotExistInclude');
+            return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
+        }
+
+        $response = $this->response->collection($resource, $transformer, ['key' => 'companyuserimportjobs']);
+        $response = $this->applyMeta($response);
+
+        return $response;
+    }
 
 	/**
 	 * Retrieve the information related to the job.
