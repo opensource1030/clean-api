@@ -23,14 +23,6 @@ class SendEVRequest extends \WA\Events\Handlers\BaseHandler
     }
 
     /**
-     * @param Dispatcher $events
-     */
-    public function handle(Dispatcher $events)
-    {
-        $events->listen('createTicketOnEasyVista', 'WA\Events\Handlers\SendEVRequest@createTicketOnEasyVista');
-    }
-
-    /**
      *  @param: $event
      */
     public function createTicketOnEasyVista($event) {

@@ -23,18 +23,10 @@ class SendUserEmailCreateOrder extends \WA\Events\Handlers\BaseHandler
     }
 
     /**
-     * @param Dispatcher $events
-     */
-    public function handle(Dispatcher $events)
-    {
-        $events->listen('sendOrderConfirmationEmail', 'WA\Events\Handlers\SendUserEmailCreateOrder@sendOrderConfirmationEmail');
-    }
-
-    /**
      *  @param: $event
      */
     public function sendOrderConfirmationEmail($event) {
-        
+
         try {
             $userOrder = \WA\DataStore\User\User::find($event->order->userId);
             $email = $this->retrieveEmail($userOrder->email);

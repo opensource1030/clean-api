@@ -19,7 +19,7 @@ class EasyVistaQueue extends Job
      */
     public function handle()
     {
-        \Log::debug("EasyVistaQueue@handle - values: " .print_r($this->values, true));
+        //\Log::debug("EasyVistaQueue@handle - values: " .print_r($this->values, true));
 
         $post_data = array(
             'Catalog_GUID' => '',

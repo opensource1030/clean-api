@@ -29,14 +29,6 @@ class SendUserEmailOrderAccepted extends \WA\Events\Handlers\BaseHandler
     }
 
     /**
-     * @param Dispatcher $events
-     */
-    public function handle(Dispatcher $events)
-    {
-        $events->listen('sendOrderConfirmationEmail', 'WA\Events\Handlers\SendUserEmailOrderAccepted@sendOrderConfirmationEmail');
-    }
-
-    /**
      *  @param: $userId = The Id of the User that has set the Order.
      */
     public function sendOrderConfirmationEmail($event) {

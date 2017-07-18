@@ -29,14 +29,6 @@ class SendUserEmailOrderDenied extends \WA\Events\Handlers\BaseHandler
     }
 
     /**
-     * @param Dispatcher $events
-     */
-    public function handle(Dispatcher $events)
-    {
-        $events->listen('sendOrderConfirmationEmail', 'WA\Events\Handlers\SendUserEmailOrderDenied@sendOrderConfirmationEmail');
-    }
-
-    /**
      *  @param: $userId = The Id of the User that has set the Order.
      */
     public function sendOrderConfirmationEmail($event) {

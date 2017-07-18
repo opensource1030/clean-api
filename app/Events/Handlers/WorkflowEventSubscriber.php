@@ -50,15 +50,15 @@ class WorkflowEventSubscriber
                         break;
                     case 'accept':
                         \Log::debug("WorkflowEventSubscriber@onTransition - accept");
-                        event(new \WA\Events\Handlers\SendUserEmailOrderAccepted($order));
+                        event(new \WA\Events\OrderAcceptedTransition($order));
                         break;
                     case 'deny':
                         \Log::debug("WorkflowEventSubscriber@onTransition - deny");
-                        event(new \WA\Events\Handlers\SendUserEmailOrderDenied($order));
+                        event(new \WA\Events\OrderDeniedTransition($order));
                         break;
                     case 'send':
                         \Log::debug("WorkflowEventSubscriber@onTransition - send");
-                        event(new \WA\Events\Handlers\SendUserEmailOrderDelivered($order));
+                        event(new \WA\Events\OrderDeliveredTransition($order));
                         break;
                     
                     default:

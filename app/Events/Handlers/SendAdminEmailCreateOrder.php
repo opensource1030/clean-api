@@ -23,14 +23,6 @@ class SendAdminEmailCreateOrder extends \WA\Events\Handlers\BaseHandler
     }
 
     /**
-     * @param Dispatcher $events
-     */
-    public function handle(Dispatcher $events)
-    {
-        $events->listen('sendOrderConfirmationEmail', 'WA\Events\Handlers\SendAdminEmailCreateOrder@sendOrderConfirmationEmail');
-    }
-
-    /**
      *  @param: $event
      */
     public function sendOrderConfirmationEmail($event) {

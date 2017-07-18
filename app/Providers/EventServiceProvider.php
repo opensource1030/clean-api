@@ -13,9 +13,6 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
-        'WA\Events\SomeEvent' => [
-            'WA\Listeners\EventListener',
-        ],
         'Aacotroneo\Saml2\Events\Saml2LoginEvent' => [
             'WA\Events\Handlers\Saml2\MainHandler@saml2LoginUser',
         ],
@@ -31,31 +28,19 @@ class EventServiceProvider extends ServiceProvider
         'Brexis\LaravelWorkflow\Events\EnterEvent' => [
             'WA\Events\Handlers\WorkflowEventSubscriber@onEnter'
         ],
-        'WA\Events\Handlers\SendUsersEmail' => [
-            'WA\Events\Handlers\SendUsersEmail@sendOrderConfirmationEmail'
-        ],
-        'WA\Events\Handlers\SendEVRequest' => [
-            'WA\Events\Handlers\SendEVRequest@createTicketOnEasyVista'
-        ],
-        'WA\Events\Handlers\SendUserEmailOrderAccepted' => [
-            'WA\Events\Handlers\SendUserEmailOrderAccepted@sendOrderConfirmationEmail'
-        ],
-        'WA\Events\Handlers\SendUserEmailOrderDenied' => [
-            'WA\Events\Handlers\SendUserEmailOrderDenied@sendOrderConfirmationEmail'
-        ],
-        'WA\Events\Handlers\SendUserEmailOrderDelivered' => [
-            'WA\Events\Handlers\SendUserEmailOrderDelivered@sendOrderConfirmationEmail'
-        ],
         'WA\Events\OrderCreateTransition' => [
             'WA\Events\Handlers\SendEVRequest@createTicketOnEasyVista',
             'WA\Events\Handlers\SendUserEmailCreateOrder@sendOrderConfirmationEmail',
             //'WA\Events\Handlers\SendAdminEmailCreateOrder@sendOrderConfirmationEmail'
+        ],
+        'WA\Events\OrderAcceptedTransition' => [
+            'WA\Events\Handlers\SendUserEmailOrderAccepted@sendOrderConfirmationEmail'
+        ],
+        'WA\Events\OrderDeniedTransition' => [
+            'WA\Events\Handlers\SendUserEmailOrderDenied@sendOrderConfirmationEmail'
+        ],
+        'WA\Events\OrderDeliveredTransition' => [
+            'WA\Events\Handlers\SendUserEmailOrderDelivered@sendOrderConfirmationEmail'
         ]
     ];
-
-/*
-    public function register(){
-        Event::subscribe('WA\Events\Handlers\Saml2\MainHandler');
-    }
-*/
 }
