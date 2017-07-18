@@ -43,9 +43,9 @@ class EloquentCompanyUserImportJob extends AbstractRepository implements Company
             "filename" =>isset($data['filename']) ? $data['filename'] : '',
             "totalUsers" =>isset($data['totalUsers']) ? $data['totalUsers'] : 0,
             "createdUsers" =>isset($data['createdUsers']) ? $data['createdUsers'] : 0,
-            "creatableUsers" =>isset($data['createdUsers']) ? $data['createdUsers'] : 0,
+            "creatableUsers" =>isset($data['creatableUsers']) ? $data['creatableUsers'] : 0,
             "updatedUsers" =>isset($data['updatedUsers']) ? $data['updatedUsers'] : 0,
-            "updatableUsers" =>isset($data['updatedUsers']) ? $data['updatedUsers'] : 0,
+            "updatableUsers" =>isset($data['updatableUsers']) ? $data['updatableUsers'] : 0,
             "failedUsers" =>isset($data['failedUsers']) ? $data['failedUsers'] : 0,
             "fields" =>isset($data['fields']) ? serialize($data['fields']) : '',
             "sampleUser" =>isset($data['sampleUser']) ? serialize($data['sampleUser']) : '',
@@ -126,7 +126,7 @@ class EloquentCompanyUserImportJob extends AbstractRepository implements Company
         }
 
         if (isset($data['creatableUsers'])) {
-            $companyUserImportJob->createdUsers = $data['createdUsers'];
+            $companyUserImportJob->creatableUsers = $data['creatableUsers'];
         }
 
         if (isset($data['updatedUsers'])) {
@@ -134,7 +134,7 @@ class EloquentCompanyUserImportJob extends AbstractRepository implements Company
         }
 
         if (isset($data['updatableUsers'])) {
-            $companyUserImportJob->updatedUsers = $data['updatedUsers'];
+            $companyUserImportJob->updatableUsers = $data['updatableUsers'];
         }
 
         if (isset($data['failedUsers'])) {
@@ -171,14 +171,31 @@ class EloquentCompanyUserImportJob extends AbstractRepository implements Company
     /**
      * @param $companyId
      *
-     * @return object Object of employee information
+     * @return List of CompanyUserImportJob related to companyId
      */
     public function byCompanyId($companyId)
     {
-        // manually run the queries
         $response = CompanyUserImportJob::where('companyId', $companyId)->get();
 
         return $response;
+    }
+
+    /**
+     * @param $companyId
+     *
+     * @return Mappings of the CompanyUserImportJob related to companyId
+     */
+    public function getMappingsByCompanyId($companyId)
+    {
+        $response = CompanyUserImportJob::where('companyId', $companyId)->orderBy('created_at', 'desc')->get();
+
+        foreach ($response as $key => $value) {
+            if($value->mappings != '') {
+                return $value->mappings;
+            }
+        }
+
+        return new \StdClass;
     }
 
 }

@@ -2869,24 +2869,23 @@ class CompaniesTest extends \TestCase
             $responseContents['data']['attributes']['CSVfields']
         );
 
-        $fieldsInDBFields = array_diff([
-                'uuid',
-                'identification',
-                'email',
-                'alternateEmail',
-                'username',
-                'firstName',
-                'lastName',
-                'alternateFirstName',
-                'isSupervisor',
-                'isValidator',
-                'isActive',
-                'hierarchy',
-                'defaultLang',
-                'notes',
-                'level',
-                // And the UDLs already injected from the factories and then, appearing in the CSV:
-                'udl-for-tests'
+        $fieldsInDBFields = array_diff(
+            [
+                'email' => "Main Email",
+                'alternateEmail' => "Alternate Email",
+                'username' => "Username",
+                'firstName' => "First Name",
+                'lastName' => "Last Name",
+                'supervisorEmail' => "Supervisor Email",
+                'companyUserIdentifier' => "Company User Identifier",
+                'isSupervisor' => "Is Supervisor?",
+                'isValidator' => "Is Validator?",
+                'isActive' => "Is Active?",
+                'hierarchy' => "Hierarchy",
+                'defaultLang' => "Default Language",
+                'notes' => "Notes",
+                'level' => "Level",
+                'udl-for-tests' => "udl-for-tests",
             ],
             $responseContents['data']['attributes']['DBfields']
         );
@@ -3129,13 +3128,6 @@ class CompaniesTest extends \TestCase
         );
 
         $job = json_decode($postUsers->getContent())->data;
-
-        $usersCount2 = User::where('companyId', $company->id)->count();
-        $jobsCount2 = CompanyUserImportJob::where('companyId', $company->id)->count();
-
-        // There is 1 user because if there is none, the controller creates one.
-        $this->assertEquals(1, $usersCount2);
-        $this->assertEquals(1, $jobsCount2);
 
         $patchJob = $this->call('PATCH', "companies/{$company->id}/jobs/{$job->id}", [
             'data' => [

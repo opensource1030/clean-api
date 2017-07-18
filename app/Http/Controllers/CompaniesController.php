@@ -367,14 +367,12 @@ class CompaniesController extends FilteredApiController {
 			return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
 		}
 
-
 		// check if file extension is csv
 		$originalFileName = $file->getClientOriginalName();
 		$fileName = pathinfo($originalFileName, PATHINFO_FILENAME) . ($request->has('test') ? '' : time());
 		$fileExtension = pathinfo($originalFileName, PATHINFO_EXTENSION);
 		if ($fileExtension !== 'csv') {
 			$error['errors']['file'] = Lang::get('messages.NotRightFile', ['class' => 'csv']);
-
 			return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
 		}
 
@@ -388,7 +386,6 @@ class CompaniesController extends FilteredApiController {
 			}
 		}
 
-
 		$filePath = $file->getRealPath();
 		$csvParser = new CSVParser($filePath);
 		$rows = $csvParser->getRows(true);
@@ -396,99 +393,32 @@ class CompaniesController extends FilteredApiController {
 		// check file is empty
 		if (count($rows) == 0) {
 			$error['errors']['file'] = Lang::get('messages.EmptyFile');
-
 			return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
 		}
 
-		$firstMeaningfulRow = "";
+		$numberOfUsers = $this->creatableOrUpdatable($rows);
 
-		for($a=1; $a<sizeof($rows); $a++) {
-			if(isset($rows[$a])) {
-				$firstMeaningfulRow = $rows[$a];
-				break;
-			}
-		}
-
-		$data = [
+        $data = [
+			"jobType" => "employeeimportjob",
 		    "companyId" => $companyId,
             "filepath" => $filePath,
             "filename" => $uploadedFileName,
             "totalUsers" => 0,
             "createdUsers" => 0,
+            "creatableUsers" => $numberOfUsers['creatableUsers'],
             "updatedUsers" => 0,
+            "updatableUsers" => $numberOfUsers['updatableUsers'],
             "failedUsers" => 0,
             "fields" => $rows[0],
-            "sampleUser" => array_combine($rows[0], $firstMeaningfulRow),
-            "mappings" => new \stdClass,
+            "sampleUser" => $this->getSampleUser($rows),
+            "mappings" => $this->getMappingsFromOtherJobs($companyId),
             "status" => 0,
             "created_by_id" => 1, // Auth::user()->id,
             "updated_by_id" => 1, // Auth::user()->id,
         ];
 
-        $dbFields = [];
-        //
-
-        // Step 1. Add the Database Fields of the table, just hardcoded:
-
-        $user = User::where('companyId', $companyId)->first();
-        if(!isset($user)) {
-	        $user = factory(\WA\DataStore\User\User::class)->create([
-	        	"companyId" => $companyId
-	        ]);
-        }
-        // commented fields exist in database, but are not relevant here:
-        $dbFields_1 = [
-            "uuid",
-            "identification",
-            "email",
-            "alternateEmail",
-            //"password",
-            "username",
-            //"confirmation_code",
-            //"remember_token",
-            //"confirmed",
-            "firstName",
-            "lastName",
-            "alternateFirstName",
-            //"supervisorEmail",
-            //"companyUserIdentifier",
-            "isSupervisor",
-            "isValidator",
-            "isActive",
-            //"rgt",
-            //"lft",
-            "hierarchy",
-            "defaultLang",
-            "notes",
-            "level",
-            //"notify",
-            //"companyId",
-            //"syncId",
-            //"supervisorId",
-            //"externalId",
-            //"approverId",
-            //"defaultLocationId",
-            //"deleted_at",
-            //"created_at",
-            //"updated_at",
-        ];
-
-        $dbFields = array_merge($dbFields, $dbFields_1);
-
-        // Step 2. Add all the UDLs from the company (from the model):
-
-        $dbFields_2 = [];
-        $company = Company::find($companyId);
+        $dbFields = $this->retrieveDBFields($companyId);
         
-        $udls = $company->udls;
-        $dbFields_2 = [];
-
-        foreach($udls as $val) {
-            array_push($dbFields_2, $val->name);
-        }
-
-        $dbFields = array_merge($dbFields, $dbFields_2);
-
 		// Create the job:
 		$companyUserImportJob = $this->companyUserImportJob->create($data);// --> ELOQUENT.
 		$companyUserImportJob->dbfields = $dbFields;
@@ -553,7 +483,7 @@ class CompaniesController extends FilteredApiController {
             return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
         }
 
-        $response = $this->response->item($resource, $transformer, ['key' => 'companyuserimpotjobs']);
+        $response = $this->response->item($resource, $transformer, ['key' => 'companyuserimportjobs']);
         $response = $this->applyMeta($response);
         return $response;
 
@@ -622,17 +552,90 @@ class CompaniesController extends FilteredApiController {
 		return $response;
 	}
 
-	private function getSampleImportRow($header, $row) {
-		$result = new \stdClass();
-		foreach ($header as $index => $field) {
-			if (isset($row[$index])) {
-				$result->$field = $row[$index];
+	private function getFormatRow($header, $row) {
+        $result = new \stdClass();
+        foreach($header as $index => $field) {
+            if(isset($row[$index])) {
+                $result->$field = $row[$index];
+            } else {
+                $result->$field = '';
+            }
+        }
+
+        return $result;
+    }
+
+    private function creatableOrUpdatable($rows) {
+		$aux['creatableUsers'] = 0;
+		$aux['updatableUsers'] = 0;
+		$userInterface = app()->make('WA\Repositories\User\UserInterface');
+
+        foreach($rows as $index => $row) {
+            if($index == 0) continue;
+            if(empty($row)) continue;
+            if(join('', $row) == '') continue;
+            $formattedRow = $this->getFormatRow($rows[0], $row);
+
+            if (isset($formattedRow->companyUserIdentifier)) {
+				$user = $userInterface->byCompanyIdentifier($formattedRow->companyUserIdentifier);
+
+				if ($user != null) {
+					$aux['updatableUsers']++;
+				} else {
+					$aux['creatableUsers']++;
+				}
+
+			} else if (isset($formattedRow->email)) {
+				$user = $userInterface->byEmail($formattedRow->email);
+				if ($user != null) {
+					$aux['updatableUsers']++;
+				} else {
+					$aux['creatableUsers']++;
+				}
+
 			} else {
-				$result->$field = '';
+				// NOTHING
 			}
-		}
+        }
 
-		return $result;
-	}
+        return $aux;
+    }
 
+    private function retrieveDBFields($companyId) {
+		$userInterface = app()->make('WA\Repositories\User\UserInterface');
+		$userFields = $userInterface->getMappableFields();
+
+		$companyInterface = app()->make('WA\Repositories\Company\CompanyInterface');
+		$udlFields = $companyInterface->getMappableFields($companyId);
+
+		return array_merge($userFields, $udlFields);
+    }
+
+    private function getMappingsFromOtherJobs($companyId) {
+		$companyUIJInterface = app()->make('WA\Repositories\Company\CompanyUserImportJobInterface');
+		$mappings = $companyUIJInterface->getMappingsByCompanyId($companyId);
+
+		return $mappings;
+    }
+
+    private function getSampleUser($rows) {
+    	$firstMeaningfulRow = "";
+
+    	$position = 0;
+    	foreach ($rows as $value) {
+    		if ($position != 0) {
+    			if(isset($value)) {
+					$firstMeaningfulRow = $value;
+					break;
+				}
+    		}
+
+    		$position++; 		
+    	}
+
+    	if ($firstMeaningfulRow == '') {
+    		return [];
+    	}
+		return array_combine($rows[0], $firstMeaningfulRow);
+    }
 }

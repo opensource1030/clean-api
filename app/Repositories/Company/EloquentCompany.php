@@ -709,4 +709,21 @@ class EloquentCompany extends AbstractRepository implements CompanyInterface
     public function checkModelAndRelationships($json, $companyId) {
         return false;
     }
+
+    /**
+     * @param $companyId
+     *
+     * @return List of UDLs related to companyId
+     */
+    public function getMappableFields($companyId) {
+        $company = $this->byId($companyId);
+        $udls = $company->udls;
+
+        $udlFields = [];
+        foreach ($udls as $value) {
+            $udlFields[$value->name] = $value->name;
+        }
+
+        return $udlFields;
+    }
 }
