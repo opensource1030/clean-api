@@ -256,8 +256,8 @@ class OrdersController extends FilteredApiController
 
     private function addOrderToTransition($order, $attributes) {
         \Log::debug("OrdersController@updateOrderEvent");
-        \Log::debug("OrdersController@updateOrderEvent - attributes.status: " . $attributes['status']);
-        \Log::debug("OrdersController@updateOrderEvent - order.status: " . $order->status);
+        //\Log::debug("OrdersController@updateOrderEvent - attributes.status: " . $attributes['status']);
+        //\Log::debug("OrdersController@updateOrderEvent - order.status: " . $order->status);
 
         $workflow = \Workflow::get($order);
 
