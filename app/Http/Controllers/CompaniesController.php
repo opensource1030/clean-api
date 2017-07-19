@@ -441,10 +441,13 @@ class CompaniesController extends FilteredApiController {
 	 * @return mixed
 	 */
 	public function showJobs($companyId, Request $request) {
-		$criteria = $this->getRequestCriteria();
+
+		$filter = $this->companyUserImportJob->addFilterToTheRequest($companyId);
+        $this->setExtraFilters($filter);
+        $criteria = $this->getRequestCriteria();
         $this->companyUserImportJob->setCriteria($criteria);
 
-        $resource = $this->companyUserImportJob->byCompanyId($companyId);
+        $resource = $this->companyUserImportJob->byPage();
 
         $transformer = $this->companyUserImportJob->getTransformer();
 
@@ -453,7 +456,7 @@ class CompaniesController extends FilteredApiController {
             return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
         }
 
-        $response = $this->response->collection($resource, $transformer, ['key' => 'companyuserimportjobs']);
+        $response = $this->response->paginator($resource, $transformer, ['key' => 'companyuserimportjobs']);
         $response = $this->applyMeta($response);
 
         return $response;

@@ -171,23 +171,11 @@ class EloquentCompanyUserImportJob extends AbstractRepository implements Company
     /**
      * @param $companyId
      *
-     * @return List of CompanyUserImportJob related to companyId
-     */
-    public function byCompanyId($companyId)
-    {
-        $response = CompanyUserImportJob::where('companyId', $companyId)->get();
-
-        return $response;
-    }
-
-    /**
-     * @param $companyId
-     *
      * @return Mappings of the CompanyUserImportJob related to companyId
      */
     public function getMappingsByCompanyId($companyId)
     {
-        $response = CompanyUserImportJob::where('companyId', $companyId)->orderBy('created_at', 'desc')->get();
+        $response = $this->model->where('companyId', $companyId)->orderBy('created_at', 'desc')->get();
 
         foreach ($response as $key => $value) {
             if($value->mappings != '') {
@@ -198,4 +186,15 @@ class EloquentCompanyUserImportJob extends AbstractRepository implements Company
         return new \StdClass;
     }
 
+    /**
+     * Retrieve the filters for the Model.
+     *
+     * @param int  $companyId
+     *
+     * @return Array
+     */
+    public function addFilterToTheRequest($companyId) {
+        $aux['companyId'] = (string) $companyId;
+        return $aux;
+    }
 }
