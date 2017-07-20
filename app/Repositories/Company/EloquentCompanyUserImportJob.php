@@ -146,7 +146,11 @@ class EloquentCompanyUserImportJob extends AbstractRepository implements Company
         }
 
         if (isset($data['mappings'])) {
-            $companyUserImportJob->mappings = serialize($data['mappings']);
+            if ($data['mappings'] == '') {
+                $companyUserImportJob->mappings = '';
+            } else {
+                $companyUserImportJob->mappings = serialize($data['mappings']);
+            }
         }
 
         if (isset($data['updated_by_id'])) {
@@ -179,7 +183,7 @@ class EloquentCompanyUserImportJob extends AbstractRepository implements Company
 
         foreach ($response as $key => $value) {
             if($value->mappings != '') {
-                return $value->mappings;
+                return unserialize($value->mappings);
             }
         }
 
