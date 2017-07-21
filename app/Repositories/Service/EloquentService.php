@@ -125,8 +125,8 @@ class EloquentService extends AbstractRepository implements ServiceInterface
      * @return Array
      */
     public function addFilterToTheRequest($companyId) {
-        $aux[]= '[carriers.devicevariations.companyId]= ' . (string) $companyId . '[or][packages.companyId]= ' . (string) $companyId;
-        return $aux;
+        //$aux[]= '[carriers.devicevariations.companyId]= ' . (string) $companyId . '[or][packages.companyId]= ' . (string) $companyId;
+        return '';//$aux;
     }
 
     /**
@@ -141,24 +141,35 @@ class EloquentService extends AbstractRepository implements ServiceInterface
         if(!isset($json->data->relationships)) {
             return false;
         } else {
-            $ok = true;
-            $attributes = $json->data->attributes;
-            
-            $carrier = \WA\DataStore\Carrier\Carrier::find($attributes->carrierId);
-            foreach ($carrier->devicevariations as $value) {
-                $ok = $ok && ($value->companyId == $companyId);
-            }
+            try {
+                $ok = true;
+                $attributes = $json->data->attributes;
 
-            foreach ($json->data->relationships->packages->data as $value) {
-                if ($value->type == 'packages') {
-                    $pack = \WA\DataStore\Package\Package::find($value->id);
-                    $ok = $ok && $pack->companyId == $companyId;
-                } else {
-                    $ok = false;
+                $carrier = \WA\DataStore\Carrier\Carrier::find($attributes->carrierId);
+                if (isset($carrier->devicevariations)) {
+                    foreach ($carrier->devicevariations as $value) {
+                        $ok = $ok && ($value->companyId == $companyId);
+                    }
                 }
+
+                if (isset($json->data->relationships->packages)) {
+                    foreach ($json->data->relationships->packages->data as $value) {
+                        if ($value->type == 'packages') {
+                            $pack = \WA\DataStore\Package\Package::find($value->id);
+                            $ok = $ok && $pack->companyId == $companyId;
+                        } else {
+                            $ok = false;
+                        }
+                    }
+                }
+
+                return $ok;
+            } catch (\Exception $e) {
+                $error['errors']['checkservicemodel'] = 'error';
+                $error['errors']['Message'] = $e->getMessage();
+                return response()->json($error)->setStatusCode(404);
             }
 
-            return $ok;
         }
     }
 }

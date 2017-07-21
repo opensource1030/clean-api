@@ -84,7 +84,7 @@ class ServicesController extends FilteredApiController
                 //$error['errors']['Message'] = $e->getMessage();
             }
         } catch (\Exception $e) {
-            $succes = false;
+            $success = false;
             $error['errors']['services'] = Lang::get('messages.NotOptionIncludeClass',
                 ['class' => 'Service', 'option' => 'updated', 'include' => '']);
             //$error['errors']['Message'] = $e->getMessage();
@@ -112,7 +112,7 @@ class ServicesController extends FilteredApiController
                         $serviceItems = ServiceItem::where('serviceId', $id)->get();
                         $serviceItemsInterface = app()->make('WA\Repositories\ServiceItem\ServiceItemInterface');
                     } catch (\Exception $e) {
-                        $succes = false;
+                        $success = false;
                         $error['errors']['serviceitems'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Service', 'option' => 'updated', 'include' => 'ServiceItems']);
                         //$error['errors']['Message'] = $e->getMessage();
                     }
