@@ -106,6 +106,7 @@ $app->configure('saml2_settings');
 $app->configure('entrust');
 $app->configure('workflow');
 $app->configure('filesytems');
+$app->configure('jwt');
 
 /*
 |--------------------------------------------------------------------------
@@ -135,6 +136,8 @@ $app->register(WA\Providers\AuthServiceProvider::class);
 $app->register(WA\Providers\PassportServiceProvider::class);
 $app->register(\WA\Providers\SSOGrantProvider::class);
 $app->register(Brexis\LaravelWorkflow\WorkflowServiceProvider::class);
+$app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
+$app->register(Irazasyed\Larasupport\Providers\ArtisanServiceProvider::class);
 app('Dingo\Api\Transformer\Factory')->setAdapter(function ($app) {
     $base_url = env('API_DOMAIN', 'api.wirelessanalytics.com');
     // $serializer = new \League\Fractal\Serializer\JsonApiSerializer($base_url);
@@ -197,6 +200,10 @@ if (!class_exists('Flysystem')) {
 
 if (!class_exists('Workflow')) {
     class_alias('Brexis\LaravelWorkflow\Facades\WorkflowFacade', 'Workflow');
+}
+
+if (!class_exists('JWTAuth')) {
+    class_alias('Tymon\JWTAuth\Facades\JWTAuth', 'JWTAuth');
 }
 
 

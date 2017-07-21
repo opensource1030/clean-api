@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Laravel\Passport\HasApiTokens;
 use WA\DataStore\BaseDataStore;
 use League\OAuth2\Server\Exception\OAuthServerException;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
 /**
  * Class User.
@@ -27,7 +28,7 @@ use League\OAuth2\Server\Exception\OAuthServerException;
  * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\Content\Content[] $contents
  * @mixin \Eloquent
  */
-class User extends BaseDataStore implements IlluminateCanResetPasswordContract, IllumincateAuthenticatableContract
+class User extends BaseDataStore implements IlluminateCanResetPasswordContract, IllumincateAuthenticatableContract, JWTSubject
 {
     //    use SoftDeletes;
 //    use RevisionableTrait;
@@ -128,6 +129,29 @@ class User extends BaseDataStore implements IlluminateCanResetPasswordContract, 
     protected $dates = ['deleted_at'];
 
     protected $morphClass = 'user';
+
+    /**
+     * Get the identifier that will be stored in the subject claim of the JWT.
+     *
+     * @return mixed
+     */
+    public function getJWTIdentifier() {
+        return $this->identification;
+    }
+
+    /**
+     * Return a key value array, containing any custom claims to be added to the JWT.
+     *
+     * @return array
+     */
+    public function getJWTCustomClaims() {
+        return [
+            'ID' => $this->id,
+            'email' => $this->email,
+            'first_name' => $this->firstName,
+            'last_name' => $this->lastName
+        ];
+    }
 
     /**
      * Get the transformer instance.

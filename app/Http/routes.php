@@ -686,6 +686,11 @@ $api->version('v1', function ($api) {
             'uses' => $usersController . '@getLoggedInUser'
         ]);
 
+        $api->post('users/jwt', [
+            //'middleware' => [$scopeMiddleware.':jwt_authenticate'],
+            'uses' => $usersController . '@getJwtUserToken'
+        ]);
+
         $api->get('users/{id}', [
             'middleware' => [$scopeMiddleware.':get_user'],
             'as' => 'api.users.show',

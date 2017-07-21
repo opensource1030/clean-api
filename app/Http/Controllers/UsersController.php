@@ -28,6 +28,8 @@ use DB;
 use Cache;
 use Log;
 
+use JWTAuth;
+
 /**
  * Users resource.
  *
@@ -116,7 +118,14 @@ class UsersController extends FilteredApiController
         return $response;
     }
 
-    public function store($id, Request $request) 
+    public function getJwtUserToken(Request $request)
+    {
+        $user = \Auth::user();
+        $token = JWTAuth::fromUser($user);
+        return array("jwttoken" => $token);
+    }
+
+    public function store($id, Request $request)
     {
         $success = true;
         $code = 'conflict';
