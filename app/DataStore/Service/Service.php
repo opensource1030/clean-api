@@ -22,6 +22,7 @@ class Service extends BaseDataStore
         'description',
         'currency',
         'carrierId',
+        'companyId',
         'updated_at'];
 
     /**
@@ -58,6 +59,14 @@ class Service extends BaseDataStore
     public function carriers()
     {
         return $this->belongsTo('WA\DataStore\Carrier\Carrier', 'carrierId');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function companies()
+    {
+        return $this->belongsTo('WA\DataStore\Company\Company', 'companyId');
     }
 
     /**
