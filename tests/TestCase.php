@@ -6,9 +6,9 @@ abstract class TestCase extends \Laravel\Lumen\Testing\TestCase
 
     protected $baseUrl;
 
-    protected $mainCompany, $mainUserSuperAdmin, $roleSuperAdmin, $mainUserAdmin, $roleAdmin, $mainUser, $roleUser;
+    protected $mainCompany, $mainUserAdmin, $roleAdmin, $mainUserWTA, $roleWTA, $mainUser, $roleUser;
 
-    /**
+    /*
      * Creates the application.
      *
      * @return \Laravel\Lumen\Application
@@ -47,7 +47,7 @@ abstract class TestCase extends \Laravel\Lumen\Testing\TestCase
          * Use one of the lines below to login using any of the users above.
          */
         $this->be($this->mainUserAdmin);
-        //$this->be($mainUserWTA);
-        //$this->be($mainUser);
+        //$this->be($this->mainUserWTA);
+        //$this->be($this->mainUser);
     }
 }

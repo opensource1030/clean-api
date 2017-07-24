@@ -128,4 +128,15 @@ class EloquentCondition extends AbstractRepository implements ConditionInterface
         $package = \WA\DataStore\Package\Package::find($attributes->packageId);
         return $package->companyId == $companyId;
     }
+
+    /**
+     * Add the attributes or the relationships needed.
+     *
+     * @param $data : The Data request.
+     *
+     * @return $data: The Data with the minimum relationship needed.
+     */
+    public function addRelationships($data) {
+        return $data;
+    }
 }

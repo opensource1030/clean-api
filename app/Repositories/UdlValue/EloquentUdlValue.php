@@ -165,4 +165,15 @@ class EloquentUdlValue extends AbstractRepository implements UdlValueInterface
     public function checkModelAndRelationships($json, $companyId) {
         return true;
     }
+
+    /**
+     * Add the attributes or the relationships needed.
+     *
+     * @param $data : The Data request.
+     *
+     * @return $data: The Data with the minimum relationship needed.
+     */
+    public function addRelationships($data) {
+        return $data;
+    }
 }

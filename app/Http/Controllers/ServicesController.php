@@ -114,7 +114,7 @@ class ServicesController extends FilteredApiController
                     } catch (\Exception $e) {
                         $success = false;
                         $error['errors']['serviceitems'] = Lang::get('messages.NotOptionIncludeClass', ['class' => 'Service', 'option' => 'updated', 'include' => 'ServiceItems']);
-                        //$error['errors']['Message'] = $e->getMessage();
+                        $error['errors']['Message'] = $e->getMessage();
                     }
 
                     if ($success) {
@@ -172,13 +172,15 @@ class ServicesController extends FilteredApiController
          */
         if ($this->isJsonCorrect($request, 'services')) {
 
-            if(!$this->addFilterToTheRequest("create", $request)) {
+            $data = $request->all()['data'];
+            $data = $this->addRelationships($data);
+
+            if(!$this->addFilterToTheRequest("create", $data)) {
                 $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
                 return response()->json($error)->setStatusCode($this->status_codes['notexists']);
             }
         
             try {
-                $data = $request->all()['data'];
                 $service = $this->service->create($data['attributes']);
             } catch (\Exception $e) {
                 DB::rollBack();

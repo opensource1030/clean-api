@@ -418,4 +418,15 @@ class EloquentDevice extends AbstractRepository implements DeviceInterface
             return $ok;
         }
     }
+
+    /**
+     * Add the attributes or the relationships needed.
+     *
+     * @param $data : The Data request.
+     *
+     * @return $data: The Data with the minimum relationship needed.
+     */
+    public function addRelationships($data) {
+        return $data;
+    }
 }

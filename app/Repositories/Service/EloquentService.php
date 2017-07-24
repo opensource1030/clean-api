@@ -80,6 +80,10 @@ class EloquentService extends AbstractRepository implements ServiceInterface
      */
     public function create(array $data)
     {
+        if (!isset($data['companyId'])) {
+            return false;
+        }
+
         $serviceData = [
             "status" =>  isset($data['status']) ? $data['status'] : null ,
             "title" =>  isset($data['title']) ? $data['title'] : null ,
@@ -129,7 +133,7 @@ class EloquentService extends AbstractRepository implements ServiceInterface
      * @return Array
      */
     public function addFilterToTheRequest($companyId) {
-        $aux['companies.id'] = (string) $companyId;
+        $aux['companyId'] = (string) $companyId;
         return $aux;
     }
 
@@ -142,6 +146,21 @@ class EloquentService extends AbstractRepository implements ServiceInterface
      * @return Boolean
      */
     public function checkModelAndRelationships($json, $companyId) {
-        return $json->data->attributes->companyId == $companyId;
+        return $json['attributes']['companyId'] == $companyId;
+    }
+
+    /**
+     * Add the attributes or the relationships needed.
+     *
+     * @param $data : The Data request.
+     *
+     * @return $data: The Data with the minimum relationship needed.
+     */
+    public function addRelationships($data) {
+        if (!isset($data->attributes->companyId)) {
+            $data['attributes']['companyId'] = \Auth::user()->companyId;    
+        }
+
+        return $data;
     }
 }

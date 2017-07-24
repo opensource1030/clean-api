@@ -10,7 +10,9 @@ class ServicesApiTest extends \TestCase
     {
         factory(\WA\DataStore\Service\Service::class, 40)->create();
 
-        $res = $this->json('GET', 'services')->seeJsonStructure([
+        $res = $this->json('GET', 'services');
+        \Log::debug("testGetServices: ".print_r($res->response->getContent(), true));
+        $res->seeJsonStructure([
             'data' => [
                 0 => [
                     'type',
@@ -23,6 +25,7 @@ class ServicesApiTest extends \TestCase
                         'description',
                         'currency',
                         'carrierId',
+                        'companyId',
                         'created_at' => [
                             'date',
                             'timezone_type',
@@ -51,7 +54,6 @@ class ServicesApiTest extends \TestCase
             'links' => [
                 'self',
                 'first',
-                'next',
                 'last',
             ],
         ]);
@@ -60,8 +62,8 @@ class ServicesApiTest extends \TestCase
     public function testGetServiceByIdandIncludes()
     {
         $carrier = factory(\WA\DataStore\Carrier\Carrier::class)->create();
-
-        $service = factory(\WA\DataStore\Service\Service::class)->create(['carrierId' => $carrier->id]);
+        
+        $service = factory(\WA\DataStore\Service\Service::class)->create(['carrierId' => $carrier->id, 'companyId' => $this->mainCompany]);
         
         $package = factory(\WA\DataStore\Package\Package::class)->create();
         $service->packages()->sync([$package->id]);
@@ -69,9 +71,9 @@ class ServicesApiTest extends \TestCase
         factory(\WA\DataStore\ServiceItem\ServiceItem::class)->create(['serviceId' => $service->id]);
         factory(\WA\DataStore\ServiceItem\ServiceItem::class)->create(['serviceId' => $service->id]);
 
-        $res = $this->json('GET', 'services/'.$service->id.'?include=serviceitems,carriers,packages')
-        //Log::debug("testGetServiceByIdandIncludes: ".print_r($res->response->getContent(), true));
-            ->seeJson([
+        $res = $this->json('GET', 'services/'.$service->id.'?include=serviceitems,carriers,packages,companies');
+        //\Log::debug("testGetServiceByIdandIncludes: ".print_r($res->response->getContent(), true));
+        $res->seeJson([
                 'status' => $service->status,
                 'title' => $service->title,
                 'planCode' => "$service->planCode",
@@ -79,6 +81,7 @@ class ServicesApiTest extends \TestCase
                 'description' => $service->description,
                 'currency' => $service->currency,
                 'carrierId' => $service->carrierId,
+                'companyId' => $service->companyId,
             ])
             ->seeJsonStructure([
                 'data' => [
@@ -92,6 +95,7 @@ class ServicesApiTest extends \TestCase
                         'description',
                         'currency',
                         'carrierId',
+                        'companyId',
                         'created_at' => [
                             'date',
                             'timezone_type',
@@ -150,7 +154,7 @@ class ServicesApiTest extends \TestCase
                     ],
                 ],
                 'included' => [
-                    0 => [
+                    0 => [ // CARRIER
                         'type',
                         'id',
                         'attributes' => [
@@ -164,7 +168,7 @@ class ServicesApiTest extends \TestCase
                             'self',
                         ],
                     ],
-                    1 => [
+                    1 => [ // PACKAGE
                         'type',
                         'id',
                         'attributes' => [
@@ -176,7 +180,7 @@ class ServicesApiTest extends \TestCase
                             'self',
                         ],
                     ],
-                    2 => [
+                    2 => [ // SERVICEITEM
                         'type',
                         'id',
                         'attributes' => [
@@ -192,7 +196,7 @@ class ServicesApiTest extends \TestCase
                             'self',
                         ],
                     ],
-                    3 => [
+                    3 => [ // SERVICEITEM
                         'type',
                         'id',
                         'attributes' => [
@@ -203,6 +207,25 @@ class ServicesApiTest extends \TestCase
                             'cost',
                             'domain',
                             'serviceId'
+                        ],
+                        'links' => [
+                            'self',
+                        ],
+                    ],
+                    4 => [ // COMPANY
+                        'type',
+                        'id',
+                        'attributes' => [
+                            'name',
+                            'label',
+                            'active',
+                            'udlpath',
+                            'isCensus',
+                            'udlPathRule',
+                            'assetPath',
+                            'shortName',
+                            'currentBillMonth',
+                            'defaultLocation'
                         ],
                         'links' => [
                             'self',
@@ -220,7 +243,7 @@ class ServicesApiTest extends \TestCase
         $serviceitem1 = factory(\WA\DataStore\ServiceItem\ServiceItem::class)->create();
         $serviceitem2 = factory(\WA\DataStore\ServiceItem\ServiceItem::class)->create();
 
-        $res = $this->json('POST', 'services?include=serviceitems,carriers,packages',
+        $res = $this->json('POST', 'services?include=serviceitems,carriers,packages,companies',
                 [
                     'data' => [
                         'type' => 'services',
@@ -232,6 +255,7 @@ class ServicesApiTest extends \TestCase
                             'description' => 'Test Service',
                             'currency' => 'USD',
                             'carrierId' => $carrier->id,
+                            'companyId' => $this->mainCompany,
                         ],
                         'relationships' => [
                             'packages' => [
@@ -262,16 +286,17 @@ class ServicesApiTest extends \TestCase
                         ]
                     ]
                 ]
-            )
-            //Log::debug("testCreateService: ".print_r($res->response->getContent(), true));
-            ->seeJson([
+            );
+            //\Log::debug("testCreateService: ".print_r($res->response->getContent(), true));
+            $res->seeJson([
                 'status' => 'Enabled',
                 'title' => 'Service Test',
                 'planCode' => '11111',
                 'cost' => '22',
                 'description' => 'Test Service',
                 'currency' => 'USD',
-                'carrierId' => 1,
+                'carrierId' => $carrier->id,
+                'companyId' => $this->mainCompany,
             ])
             ->seeJsonStructure([                
                 'data' => [
@@ -285,6 +310,7 @@ class ServicesApiTest extends \TestCase
                         'description',
                         'currency',
                         'carrierId',
+                        'companyId',
                         'created_at' => [
                             'date',
                             'timezone_type',
@@ -409,10 +435,10 @@ class ServicesApiTest extends \TestCase
     public function testUpdateService()
     {
         $service = factory(\WA\DataStore\Service\Service::class)->create(
-            ['status' => 'Enabled', 'title' => 'title1', 'planCode' => 11111, 'cost' => 30, 'description' => 'desc1', 'currency' => 'USD', 'carrierId' => 1]
+            ['status' => 'Enabled', 'title' => 'title1', 'planCode' => 11111, 'cost' => 30, 'description' => 'desc1', 'currency' => 'USD', 'carrierId' => 1, 'companyId' => 1]
         );
         $serviceAux = factory(\WA\DataStore\Service\Service::class)->create(
-            ['status' => 'Disabled', 'title' => 'title2', 'planCode' => 22222, 'cost' => 40, 'description' => 'desc2', 'currency' => 'EUR', 'carrierId' => 2]
+            ['status' => 'Disabled', 'title' => 'title2', 'planCode' => 22222, 'cost' => 40, 'description' => 'desc2', 'currency' => 'EUR', 'carrierId' => 2, 'companyId' => 2]
         );
 
         $this->assertNotEquals($service->status, $serviceAux->status);
@@ -436,6 +462,7 @@ class ServicesApiTest extends \TestCase
                         'description' => $service->description,
                         'currency' => $service->currency,
                         'carrierId' => $service->carrierId,
+                        'companyId' => $service->companyId,
                     ],
                 ],
             ])
@@ -446,7 +473,8 @@ class ServicesApiTest extends \TestCase
                 'cost' => "$service->cost",
                 'description' => $service->description,
                 'currency' => $service->currency,
-                'carrierId' => $service->carrierId
+                'carrierId' => $service->carrierId,
+                'companyId' => $service->companyId
             ]);
     }
 
@@ -541,6 +569,7 @@ class ServicesApiTest extends \TestCase
                     'description' => $service->description,
                     'currency' => $service->currency,
                     'carrierId' => $service->carrierId,
+                    'companyId' => $service->companyId,
                     'status' => $service->status
                 ])
             ->seeJsonStructure(
@@ -555,6 +584,7 @@ class ServicesApiTest extends \TestCase
                             'description',
                             'currency',
                             'carrierId',
+                            'companyId',
                             'status'
                         ],
                         'links' => [
@@ -676,6 +706,7 @@ class ServicesApiTest extends \TestCase
                         'description' => $service->description,
                         'currency' => $service->currency,
                         'carrierId' => $service->carrierId,
+                        'companyId' => $service->companyId,
                         'status' => $service->status
                     ],
                     'relationships' => [
@@ -699,6 +730,7 @@ class ServicesApiTest extends \TestCase
                     'description' => $service->description,
                     'currency' => $service->currency,
                     'carrierId' => $service->carrierId,
+                    'companyId' => $service->companyId,
                     'status' => $service->status
                 ])
             ->seeJsonStructure(
@@ -713,6 +745,7 @@ class ServicesApiTest extends \TestCase
                             'description',
                             'currency',
                             'carrierId',
+                            'companyId',
                             'status'
                         ],
                         'links' => [

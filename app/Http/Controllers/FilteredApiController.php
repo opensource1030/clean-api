@@ -273,7 +273,7 @@ abstract class FilteredApiController extends ApiController
      *  Case3: It user has another role: He/She can only get objects with a relationship with his/her own company.
      *
      */
-    public function addFilterToTheRequest($type, $request) {
+    public function addFilterToTheRequest($type, $data) {
         $user = \Auth::user();
         
         if (!isset($user)) {
@@ -289,13 +289,17 @@ abstract class FilteredApiController extends ApiController
 
         } else {
             if ($type == 'create') { //create
-                return $this->resource->checkModelAndRelationships(json_decode($request->getContent()), $companyId);
+                return $this->resource->checkModelAndRelationships($data, $companyId);
             } else {
                 $filter = $this->resource->addFilterToTheRequest($companyId);
                 $this->setExtraFilters($filter);
                 return true;
             }
         }
+    }
+
+    public function addRelationships($data) {
+        return $this->resource->addRelationships($data);
     }
 
     /**

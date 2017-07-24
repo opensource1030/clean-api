@@ -138,4 +138,15 @@ class EloquentPackage extends AbstractRepository implements PackageInterface
     public function checkModelAndRelationships($json, $companyId) {
         return $json->data->attributes->companyId == $companyId;
     }
+
+    /**
+     * Add the attributes or the relationships needed.
+     *
+     * @param $data : The Data request.
+     *
+     * @return $data: The Data with the minimum relationship needed.
+     */
+    public function addRelationships($data) {
+        return $data;
+    }
 }

@@ -56,7 +56,7 @@ class AddressApiTest extends TestCase
                 ],
             ]);
     }
-/*
+
     public function testGetAddressById()
     {
         $address = factory(\WA\DataStore\Address\Address::class)->create();
@@ -174,5 +174,5 @@ class AddressApiTest extends TestCase
     {
         $responseDel = $this->call('DELETE', 'addresses/1');
         $this->assertEquals(404, $responseDel->status());
-    }*/
+    }
 }

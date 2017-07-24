@@ -365,4 +365,15 @@ class EloquentAsset extends AbstractRepository implements AssetInterface
         $user = \WA\DataStore\User\User::find($attributes->userId);
         return $user->companyId == $companyId;
     }
+
+    /**
+     * Add the attributes or the relationships needed.
+     *
+     * @param $data : The Data request.
+     *
+     * @return $data: The Data with the minimum relationship needed.
+     */
+    public function addRelationships($data) {
+        return $data;
+    }
 }
