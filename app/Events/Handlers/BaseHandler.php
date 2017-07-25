@@ -38,7 +38,12 @@ abstract class BaseHandler
         }
 
         $attributes['activeuser']['name'] = \Auth::user()->username;
-        $attributes['device']['mobilenumber'] = $order->servicePhoneNo;
+        $attributes['device']['serviceImei'] = $order->serviceImei;
+        $attributes['device']['servicePhoneNo'] = $order->servicePhoneNo;
+        $attributes['device']['serviceSim'] = $order->serviceSim;
+        $attributes['device']['deviceImei'] = $order->deviceImei;
+        $attributes['device']['deviceCarrier'] = $order->deviceCarrier;
+        $attributes['device']['deviceSim'] = $order->deviceSim;
 
         $address = $service = $package = $devicevariations = null;
 

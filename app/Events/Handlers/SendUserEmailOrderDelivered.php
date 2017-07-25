@@ -32,14 +32,14 @@ class SendUserEmailOrderDelivered extends \WA\Events\Handlers\BaseHandler
      *  @param: $userId = The Id of the User that has set the Order.
      */
     public function sendOrderConfirmationEmail($event) {
-        
         try {
             $userOrder = \WA\DataStore\User\User::find($event->order->userId);
             $email = $this->retrieveEmail($userOrder->email);
 
             $values['view_name'] = 'emails.notifications.order.order_process_send_user';
             $values['data'] = [
-                'urlGif' => \URL::asset('assets/img/animat-rocket-color.gif')
+                'urlGif' => \URL::asset('assets/img/animat-rocket-color.gif'),
+                'redirectPath' => env('FRONTEND_DOMAIN', '*') . '/dashboard'
             ];
             $values['subject'] = 'Order Delivered.';
             $values['from'] = env('MAIL_FROM_ADDRESS');

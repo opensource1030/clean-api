@@ -39,7 +39,8 @@ class SendUserEmailOrderAccepted extends \WA\Events\Handlers\BaseHandler
 
             $values['view_name'] = 'emails.notifications.order.order_accept_send_user';
             $values['data'] = [
-                'urlGif' => \URL::asset('assets/img/animat-checkmark-color.gif')
+                'urlGif' => \URL::asset('assets/img/animat-checkmark-color.gif'),
+                'redirectPath' => env('FRONTEND_DOMAIN', '*') . '/dashboard'
             ];
             $values['subject'] = 'Order Accepted.';
             $values['from'] = env('MAIL_FROM_ADDRESS');

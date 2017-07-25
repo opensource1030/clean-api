@@ -31,7 +31,7 @@ class SendUserEmailCreateOrder extends \WA\Events\Handlers\BaseHandler
             $userOrder = \WA\DataStore\User\User::find($event->order->userId);
             $email = $this->retrieveEmail($userOrder->email);
             $attributes = $this->retrieveTheAttributes($event->order);
-
+            \Log::debug("ATTRIBUTES". print_r($attributes, true));
             $values['view_name'] = 'emails.notifications.order.order_create_send_user';
             $values['data'] = [
                 'username' => $userOrder->username,
@@ -79,10 +79,11 @@ class SendUserEmailCreateOrder extends \WA\Events\Handlers\BaseHandler
                 'internationalmessage' => isset($attributes['service']['internationalmess'])
                     ? $attributes['service']['internationalmess'] : '',
 
-                'devicePhoneNo' => '[Mobile Number]',
+                'devicePhoneNo' => isset($attributes['device']['servicePhoneNo'])
+                    ? $attributes['device']['servicePhoneNo'] : '',
                 
                 'deviceCarrier' => isset($attributes['device']['smartphone']['carrier'])
-                    ? $attributes['device']['smartphone']['carrier'] : '',
+                    ? $attributes['device']['smartphone']['carrier'] : $attributes['device']['deviceCarrier'],
                 
                 'deviceMake' => isset($attributes['device']['smartphone']['make'])
                     ? $attributes['device']['smartphone']['make'] : '',
