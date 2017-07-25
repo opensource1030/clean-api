@@ -160,17 +160,19 @@ class EloquentOrder extends AbstractRepository implements OrderInterface
      */
     public function checkModelAndRelationships($json, $companyId) {
         $ok = true;
-        $attributes = $json->data->attributes;
-
-        $user = \WA\DataStore\User\User::find($attributes->userId);
+        $user = \WA\DataStore\User\User::find($json['attributes']['userId']);
         $ok = $ok && ($user->companyId == $companyId);
 
-        $pack = \WA\DataStore\Package\Package::find($attributes->packageId);
-        $ok = $ok && ($pack->companyId == $companyId);
+        if ($json['attributes']['packageId'] > 1) {
+            $pack = \WA\DataStore\Package\Package::find($json['attributes']['packageId']);
+            $ok = $ok && ($pack->companyId == $companyId);
+        }
 
-        $service = \WA\DataStore\Service\Service::find($attributes->serviceId);
-        foreach ($service->packages as $value) {
-            $ok = $ok && ($value->companyId == $companyId);
+        if ($json['attributes']['serviceId'] > 1) {
+            $service = \WA\DataStore\Service\Service::find($json['attributes']['serviceId']);
+            foreach ($service->packages as $value) {
+                $ok = $ok && ($value->companyId == $companyId);
+            }
         }
 
         return $ok;

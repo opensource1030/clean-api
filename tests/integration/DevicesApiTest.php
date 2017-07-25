@@ -8,10 +8,13 @@ class DevicesApiTest extends \TestCase
 
     public function testGetDevices()
     {
-        factory(\WA\DataStore\Device\Device::class, 40)->create();
+        $devices = factory(\WA\DataStore\Device\Device::class, 40)->create();
+        foreach ($devices as $device) {
+            factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create(['companyId' => $this->mainCompany->id, 'deviceId' => $device->id]);
+        }
 
         $res = $this->json('GET', 'devices');
-
+        //\Log::debug("testGetDevices: ".print_r($res->response->getContent(), true));
         $res->seeJsonStructure([
             'data' => [
                 0 => [
@@ -61,6 +64,7 @@ class DevicesApiTest extends \TestCase
     public function testGetDeviceByIdIfExists()
     {
         $device = factory(\WA\DataStore\Device\Device::class)->create(['externalId' => 1]);
+        $devVar = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create(['companyId' => $this->mainCompany->id, 'deviceId' => $device->id]);
 
         $res = $this->json('GET', 'devices/'.$device->id)
             ->seeJson([
@@ -114,6 +118,7 @@ class DevicesApiTest extends \TestCase
     public function testGetDeviceByIdandIncludesImages()
     {
         $device = factory(\WA\DataStore\Device\Device::class)->create();
+        $devVar = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create(['companyId' => $this->mainCompany->id, 'deviceId' => $device->id]);
 
         $image1 = factory(\WA\DataStore\Image\Image::class)->create()->id;
         $image2 = factory(\WA\DataStore\Image\Image::class)->create()->id;

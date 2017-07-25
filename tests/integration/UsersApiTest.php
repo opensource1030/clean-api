@@ -2,18 +2,18 @@
 
 class UsersApiTest extends \TestCase
 {
-
     use Laravel\Lumen\Testing\DatabaseMigrations;
+
     /**
      * A basic functional test for user endpoints.
      */
-
     public function testGetUsers()
     {
-        $user = factory(\WA\DataStore\User\User::class, 20)->create();
-        $res = $this->json('GET', '/users')
-        //Log::debug("Users: ".print_r($res->response->getContent(), true));
-            ->seeJsonStructure([
+        $user = factory(\WA\DataStore\User\User::class, 20)->create(['companyId' => $this->mainCompany->id]);
+
+        $res = $this->json('GET', '/users');
+        //\Log::debug("Users: ".print_r($res->response->getContent(), true));
+        $res->seeJsonStructure([
                 'data' => [
                     0 => [
                         'type', 
@@ -70,7 +70,6 @@ class UsersApiTest extends \TestCase
                 'links' => [
                     'self',
                     'first',
-                    'next',
                     'last',
                 ],
             ]);
@@ -78,7 +77,8 @@ class UsersApiTest extends \TestCase
 
     public function testGetUserByIdIfExists()
     {
-        $user = factory(\WA\DataStore\User\User::class)->create();
+        $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $this->mainCompany->id]);
+
         $res = $this->get('/users/'.$user->id)
         //Log::debug("Users/id: ".print_r($res->response->getContent(), true));
             ->seeJson([
@@ -163,7 +163,7 @@ class UsersApiTest extends \TestCase
 
     public function testGetUserByIdIfNoExists()
     {
-        $userId = factory(\WA\DataStore\User\User::class)->create()->id;
+        $userId = factory(\WA\DataStore\User\User::class)->create(['companyId' => $this->mainCompany->id])->id;
         $userId = $userId + 10;
         $response = $this->call('GET', '/users/'.$userId);
         $this->assertEquals(404, $response->status());
@@ -174,6 +174,7 @@ class UsersApiTest extends \TestCase
         $grantType = 'password';
         $password = 'user';
         $user = factory(\WA\DataStore\User\User::class)->create([
+            'companyId' => $this->mainCompany->id,
             'email' => 'email@email.com',
             'password' => '$2y$10$oc9QZeaYYAd.8BPGmXGaFu9cAycKTcBu7LRzmT2J231F0BzKwpxj6'
         ]);
@@ -245,7 +246,7 @@ class UsersApiTest extends \TestCase
     
     public function testGetUserByIdandIncludesAssets()
     {
-        $user = factory(\WA\DataStore\User\User::class)->create();
+        $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $this->mainCompany->id]);
         $asset1 = factory(\WA\DataStore\Asset\Asset::class)->create(['userId' => $user->id])->id;
         $asset2 = factory(\WA\DataStore\Asset\Asset::class)->create(['userId' => $user->id])->id;
 
@@ -327,7 +328,7 @@ class UsersApiTest extends \TestCase
 
     public function testGetUserByIdandIncludesDeviceVariations()
     {
-        $user = factory(\WA\DataStore\User\User::class)->create();
+        $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $this->mainCompany->id]);
 
         $deviceVariation1 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create()->id;
         $deviceVariation2 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create()->id;
@@ -433,7 +434,7 @@ class UsersApiTest extends \TestCase
 
     public function testGetUserByIdandIncludesRoles()
     {
-        $user = factory(\WA\DataStore\User\User::class)->create();
+        $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $this->mainCompany->id]);
         $user->roles()->sync([$this->roleUser->id, $this->roleAdmin->id]);
         $res = $this->json('GET', 'users/'.$user->id.'?include=roles')
         //Log::debug("Users/id: ".print_r($res->response->getContent(), true));
@@ -522,15 +523,16 @@ class UsersApiTest extends \TestCase
     
     public function testGetUserByIdandIncludesUdlvalues()
     {
-        $user = factory(\WA\DataStore\User\User::class)->create();
-        $company1 = factory(\WA\DataStore\Company\Company::class)->create()->id;
-        $company2 = factory(\WA\DataStore\Company\Company::class)->create()->id;
-        $udl1 = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $company1])->id;
-        $udl2 = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $company2])->id;
+        $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $this->mainCompany->id]);
+
+        $udl1 = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $this->mainCompany->id])->id;
+        $udl2 = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $this->mainCompany->id])->id;
         $udlV1 = factory(\WA\DataStore\UdlValue\UdlValue::class)->create(['udlId' => $udl1])->id;
         $udlV2 = factory(\WA\DataStore\UdlValue\UdlValue::class)->create(['udlId' => $udl2])->id;
         $dataudls = array($udlV1, $udlV2);
+
         $user->udlValues()->sync($dataudls);
+
         $res = $this->json('GET', 'users/'.$user->id.'?include=udlvalues')
         //Log::debug("testGetUserByIdandIncludesUdlvalues: ".print_r($res->response->getContent(), true));
             ->seeJsonStructure([
@@ -605,8 +607,8 @@ class UsersApiTest extends \TestCase
     
     public function testGetUserByIdandIncludesCompanies()
     {
-        $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
-        $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId]);
+        $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $this->mainCompany->id]);
+
         $res = $this->json('GET', 'users/'.$user->id.'?include=companies')
         //Log::debug("Users/id: ".print_r($res->response->getContent(), true));
             ->seeJsonStructure([
@@ -684,7 +686,7 @@ class UsersApiTest extends \TestCase
     
     public function testGetUserByIdandIncludesAllocations()
     {
-        $user = factory(\WA\DataStore\User\User::class)->create();
+        $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $this->mainCompany->id]);
 
         $allocation1 = factory(\WA\DataStore\Allocation\Allocation::class)->create(['userId' => $user->id]);
         $carrier1 = factory(\WA\DataStore\Carrier\Carrier::class)->create();
@@ -779,9 +781,11 @@ class UsersApiTest extends \TestCase
     
     public function testGetUserByIdandIncludesContents()
     {
-        $user = factory(\WA\DataStore\User\User::class)->create();
+        $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $this->mainCompany->id]);
+
         $content1 = factory(\WA\DataStore\Content\Content::class)->create(['owner_id' => $user->id])->id;
         $content2 = factory(\WA\DataStore\Content\Content::class)->create(['owner_id' => $user->id])->id;
+
         $res = $this->json('GET', 'users/'.$user->id.'?include=contents')
         //Log::debug("Users/id: ".print_r($res->response->getContent(), true));
             ->seeJsonStructure([
@@ -858,10 +862,7 @@ class UsersApiTest extends \TestCase
 
     public function testCreateUserAll()
     {
-        $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
-        $companyDomain = factory(\WA\DataStore\Company\CompanyDomains::class)->create(['domain' => 'email.com', 'companyId' => $companyId]);
-        
-        $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId]);
+        $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $this->mainCompany->id]);
 
         $addressId = factory(\WA\DataStore\Address\Address::class)->create()->id;
 
@@ -871,8 +872,8 @@ class UsersApiTest extends \TestCase
         $devicevariation1 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create()->id;
         $devicevariation2 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create()->id;
         
-        $udl1 = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $companyId])->id;
-        $udl2 = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $companyId])->id;
+        $udl1 = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $this->mainCompany->id])->id;
+        $udl2 = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $this->mainCompany->id])->id;
         
         $udlV1 = factory(\WA\DataStore\UdlValue\UdlValue::class)->create(['udlId' => $udl1])->id;
         $udlV2 = factory(\WA\DataStore\UdlValue\UdlValue::class)->create(['udlId' => $udl2])->id;
@@ -1113,7 +1114,7 @@ class UsersApiTest extends \TestCase
                 ],
             ]
             );
-            //Log::debug("testCreateUser: ".print_r($res->response->getContent(), true));
+            //\Log::debug("testCreateUser: ".print_r($res->response->getContent(), true));
             $res->seeJson(
                 [
                     'uuid' => $user->uuid,
@@ -1563,10 +1564,7 @@ class UsersApiTest extends \TestCase
     
     public function testCreateUserReturnRelationshipNoExists()
     {
-        $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
-        $companyDomain = factory(\WA\DataStore\Company\CompanyDomains::class)->create(['domain' => 'email.com', 'companyId' => $companyId]);
-
-        $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId]);
+        $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $this->mainCompany->id]);
 
         $res = $this->json('POST', '/users?include=assets',
             [
@@ -1699,10 +1697,7 @@ class UsersApiTest extends \TestCase
 
     public function testCreateUserReturnRelationshipNoExistsInclude()
     {
-        $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
-        $companyDomain = factory(\WA\DataStore\Company\CompanyDomains::class)->create(['domain' => 'email.com', 'companyId' => $companyId]);
-
-        $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId]);
+        $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $this->mainCompany->id]);
 
         $res = $this->json('POST', '/users?include=assets',
             [
@@ -1835,10 +1830,7 @@ class UsersApiTest extends \TestCase
 
     public function testCreateUserReturnRelationshipNoData()
     {
-        $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
-        $companyDomain = factory(\WA\DataStore\Company\CompanyDomains::class)->create(['domain' => 'email.com', 'companyId' => $companyId]);
-
-        $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId]);
+        $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $this->mainCompany->id]);
 
         $res = $this->json('POST', '/users?include=assets',
             [
@@ -1971,10 +1963,7 @@ class UsersApiTest extends \TestCase
 
     public function testCreateUserReturnRelationshipNoCorrectType()
     {
-        $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
-        $companyDomain = factory(\WA\DataStore\Company\CompanyDomains::class)->create(['domain' => 'email.com', 'companyId' => $companyId]);
-
-        $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId]);
+        $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $this->mainCompany->id]);
 
         $res = $this->json('POST', '/users?include=assets',
             [
@@ -2107,10 +2096,7 @@ class UsersApiTest extends \TestCase
 
     public function testCreateUserReturnRelationshipNoIdExists()
     {
-        $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
-        $companyDomain = factory(\WA\DataStore\Company\CompanyDomains::class)->create(['domain' => 'email.com', 'companyId' => $companyId]);
-
-        $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId]);
+        $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $this->mainCompany->id]);
 
         $res = $this->json('POST', '/users?include=assets',
             [
@@ -2243,10 +2229,8 @@ class UsersApiTest extends \TestCase
 
     public function testUpdateUser()
     {
-        $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
-
-        $user1 = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId]);
-        $user2 = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId]);
+        $user1 = factory(\WA\DataStore\User\User::class)->create(['companyId' => $this->mainCompany->id]);
+        $user2 = factory(\WA\DataStore\User\User::class)->create(['companyId' => $this->mainCompany->id]);
         
         $res = $this->json('PATCH', '/users/'.$user2->id,
             [
@@ -2363,8 +2347,7 @@ class UsersApiTest extends \TestCase
 
     public function testUpdateUserIncludeAllDeleteRelationships()
     {
-        $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
-        $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId]);
+        $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $this->mainCompany->id]);
 
         // ADDRESS
         $addressId = factory(\WA\DataStore\Address\Address::class)->create()->id;
@@ -2448,8 +2431,8 @@ class UsersApiTest extends \TestCase
         $this->assertEquals($role2DB->description, $this->roleAdmin->description);
 
         // UDLVALUES
-        $udl1 = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $companyId]);
-        $udl2 = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $companyId]);
+        $udl1 = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $this->mainCompany->id]);
+        $udl2 = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $this->mainCompany->id]);
         $udlV1 = factory(\WA\DataStore\UdlValue\UdlValue::class)->create(['udlId' => $udl1->id]);
         $udlV2 = factory(\WA\DataStore\UdlValue\UdlValue::class)->create(['udlId' => $udl2->id]);
         $arrayU = array($udlV1->id, $udlV2->id);
@@ -2919,9 +2902,8 @@ class UsersApiTest extends \TestCase
 
     public function testUpdateUserIncludeAllAddRelationships()
     {
-        $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
-        $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId]);
-        $userOther = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId]);
+        $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $this->mainCompany->id]);
+        $userOther = factory(\WA\DataStore\User\User::class)->create(['companyId' => $this->mainCompany->id]);
 
         // ADDRESS
         $addressId = factory(\WA\DataStore\Address\Address::class)->create()->id;
@@ -2943,13 +2925,13 @@ class UsersApiTest extends \TestCase
         $user->roles()->sync([$this->roleUser->id, $this->roleAdmin->id]);
         
         // UDL VALUES
-        $udl1 = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $companyId])->id;
-        $udl2 = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $companyId])->id;
+        $udl1 = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $this->mainCompany->id])->id;
+        $udl2 = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $this->mainCompany->id])->id;
         $udlV1 = factory(\WA\DataStore\UdlValue\UdlValue::class)->create(['udlId' => $udl1])->id;
         $udlV2 = factory(\WA\DataStore\UdlValue\UdlValue::class)->create(['udlId' => $udl2])->id;
         $arrayU = array($udlV1, $udlV2);
         $user->udlValues()->sync($arrayU);
-        $udl3 = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $companyId])->id;
+        $udl3 = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $this->mainCompany->id])->id;
         $udlV3 = factory(\WA\DataStore\UdlValue\UdlValue::class)->create(['udlId' => $udl2])->id;
 
         // CARRIER
@@ -3783,7 +3765,7 @@ class UsersApiTest extends \TestCase
     public function testDeleteUserIfExists()
     {
         // CREATE & DELETE
-        $user = factory(\WA\DataStore\User\User::class)->create();
+        $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $this->mainCompany->id]);
         $responseDel = $this->call('DELETE', '/users/'.$user->id);
         $this->assertEquals(200, $responseDel->status());
         $responseGet = $this->call('GET', '/users/'.$user->id);
@@ -3800,9 +3782,7 @@ class UsersApiTest extends \TestCase
 
     public function testUserPackagesUdlString()
     {
-        // COMPANY
-        $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
-
+        $companyId = $this->mainCompany->id;
         // UDLS
         $udl1 = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $companyId, 'name' => 'Name1']);
         $udl2 = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $companyId, 'name' => 'Name2']);
@@ -3821,7 +3801,7 @@ class UsersApiTest extends \TestCase
             'name' => 'udl1Value3'
         ]);
 
-        $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId]);
+        $user = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId = $companyId]);
 
         $userUdlValue1 = factory(\WA\DataStore\User\UserUdlValue::class)->create([
             'userId' => $user->id,
@@ -3954,9 +3934,7 @@ class UsersApiTest extends \TestCase
 
     public function testUserPackagesUdlNumber()
     {
-        // COMPANY
-        $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
-
+        $companyId = $this->mainCompany->id;
         // UDLS
         $udl1 = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $companyId, 'name' => 'Name1']);
         $udl2 = factory(\WA\DataStore\Udl\Udl::class)->create(['companyId' => $companyId, 'name' => 'Name2']);
@@ -4206,8 +4184,7 @@ class UsersApiTest extends \TestCase
 
     public function testUserPackagesSupervisor()
     {
-        // COMPANY
-        $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
+        $companyId = $this->mainCompany->id;
 
         $user1 = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId, 'isSupervisor' => 0]);
 
@@ -4339,8 +4316,7 @@ class UsersApiTest extends \TestCase
 
     public function testUserPackagesAddress()
     {
-        // COMPANY
-        $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
+        $companyId = $this->mainCompany->id;
 
         $user1 = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId]);
         $user2 = factory(\WA\DataStore\User\User::class)->create(['companyId' => $companyId]);

@@ -127,7 +127,7 @@ class EloquentPreset extends AbstractRepository implements PresetInterface
      * @return Boolean
      */
     public function checkModelAndRelationships($json, $companyId) {
-        return $json->data->attributes->companyId == $companyId;
+        return $json['attributes']['companyId'] == $companyId;
     }
 
     /**

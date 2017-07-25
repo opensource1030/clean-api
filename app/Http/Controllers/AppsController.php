@@ -91,14 +91,16 @@ class AppsController extends FilteredApiController
          */
         if ($this->isJsonCorrect($request, 'apps')) {
 
-            if(!$this->addFilterToTheRequest("create", $request)) {
+            $data = $request->all()['data'];
+            $data = $this->addRelationships($data);
+
+            if(!$this->addFilterToTheRequest("create", $data)) {
                 $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
                 return response()->json($error)->setStatusCode($this->status_codes['notexists']);
             }
 
             try {
-                $data = $request->all()['data']['attributes'];
-                $app = $this->app->create($data);
+                $app = $this->app->create($data['attributes']);
 
                 return $this->response()->item($app, new AppTransformer(),
                     ['key' => 'apps'])->setStatusCode($this->status_codes['created']);

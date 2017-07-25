@@ -360,9 +360,7 @@ class EloquentAsset extends AbstractRepository implements AssetInterface
      * @return Boolean
      */
     public function checkModelAndRelationships($json, $companyId) {
-        $attributes = $json->data->attributes;
-
-        $user = \WA\DataStore\User\User::find($attributes->userId);
+        $user = \WA\DataStore\User\User::find($json['attributes']['userId']);
         return $user->companyId == $companyId;
     }
 

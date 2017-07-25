@@ -127,7 +127,7 @@ class EloquentAddress extends AbstractRepository implements AddressInterface
      * @return Array
      */
     public function addFilterToTheRequest($companyId) {
-        $aux[] = '[companies.id]=' . (string) $companyId . '[or][users.companyId]=' . (string) $companyId;
+        $aux['companies.id'] = (string) $companyId;
         return $aux;
     }
 
@@ -140,42 +140,21 @@ class EloquentAddress extends AbstractRepository implements AddressInterface
      * @return Boolean
      */
     public function checkModelAndRelationships($json, $companyId) {
-        if(!isset($json->data->relationships)) {
+        if(!isset($json['relationships'])) {
             return false;
         } else {
-            $relations = $json->data->relationships;
-            if (!isset($relations->companies) && !isset($relations->users)) {
+            $relations = $json['relationships'];
+            if (isset($relations['companies'])) {
+                foreach ($relations['companies']['data'] as $value) {
+                    if ($value['type'] == 'companies' && $value['id'] == $companyId) {
+                        return  true;
+                    }
+                }
+
+                return false;
+            } else {
                 return false;
             }
-
-            if (isset($relations->companies)) {
-                $companyOk = false;
-                foreach ($relations->companies->data as $value) {
-                    if ($value->type == 'companies' && $value->id == $companyId) {
-                        $companyOk = true;
-                    }
-                }
-                if (!$companyOk) {
-                    return false;
-                }
-            }
-            
-            if (isset($relations->users)) {
-                $userOk = false;
-                foreach ($relations->users->data as $value) {
-                    if ($value->type == 'users'){
-                        $user = \WA\DataStore\User\User::find($value->id);
-                        if ($user->companyId == $companyId) {
-                            $userOk = true;
-                        }
-                    }
-                }
-                if (!$userOk) {
-                    return false;
-                }
-            }
-
-            return true;
         }
     }
 
@@ -187,6 +166,17 @@ class EloquentAddress extends AbstractRepository implements AddressInterface
      * @return $data: The Data with the minimum relationship needed.
      */
     public function addRelationships($data) {
+        if(!isset($data['relationships']['companies'])) {
+            $aux = [
+                'type' => 'companies',
+                'id' => \Auth::user()->companyId
+            ];
+
+            $data['relationships']['companies']['data'] = [];
+
+            array_push($data['relationships']['companies']['data'], $aux);
+        }
+
         return $data;
     }
 }

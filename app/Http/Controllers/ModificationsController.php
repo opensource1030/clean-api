@@ -91,14 +91,16 @@ class ModificationsController extends FilteredApiController
          */
         if ($this->isJsonCorrect($request, 'modifications')) {
 
-            if(!$this->addFilterToTheRequest("create", $request)) {
+            $data = $request->all()['data'];
+            $data = $this->addRelationships($data);
+
+            if(!$this->addFilterToTheRequest("create", $data)) {
                 $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
                 return response()->json($error)->setStatusCode($this->status_codes['notexists']);
             }
         
             try {
-                $data = $request->all()['data']['attributes'];
-                $modification = $this->modification->create($data);
+                $modification = $this->modification->create($data['attributes']);
 
                 return $this->response()->item($modification, new ModificationTransformer(),
                     ['key' => 'modifications'])->setStatusCode($this->status_codes['created']);

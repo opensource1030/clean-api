@@ -1,7 +1,5 @@
 <?php
 
-
-
 class PackageApiTest extends \TestCase
 {
     use \Laravel\Lumen\Testing\DatabaseMigrations;
@@ -437,10 +435,6 @@ class PackageApiTest extends \TestCase
 
     public function testCreatePackage()
     {
-        $package = factory(\WA\DataStore\Package\Package::class)->create();
-
-        $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
-
         $service1 = factory(\WA\DataStore\Service\Service::class)->create()->id;
         $service2 = factory(\WA\DataStore\Service\Service::class)->create()->id;
 
@@ -454,14 +448,13 @@ class PackageApiTest extends \TestCase
         $address1 = factory(\WA\DataStore\Address\Address::class)->create()->id;
         $address2 = factory(\WA\DataStore\Address\Address::class)->create()->id;
 
-
         $this->json('POST', 'packages',
             [
                 "data" => [
                     "type" => "packages",
                     "attributes" => [
                         "name" => "namePackage",
-                        "companyId" => $companyId
+                        "companyId" => $this->mainCompany->id
                     ],
                     'relationships' => [
                         'conditions' => [
@@ -590,16 +583,13 @@ class PackageApiTest extends \TestCase
 
     public function testCreatePackageReturnRelationshipNoExists()
     {
-        $address = factory(WA\DataStore\Address\Address::class)->create()->id;
-        $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
-
         $package = $this->json('POST', 'packages',
         [
             'data' => [
                 'type' => 'packages',
                 'attributes' => [
                     'name' => 'namePackage',
-                    'companyId' => $companyId
+                    'companyId' => $this->mainCompany->id
                 ],
                 'relationships' => [
                     'IgnoreType' => [
@@ -620,16 +610,13 @@ class PackageApiTest extends \TestCase
 
     public function testCreatePackageReturnRelationshipNoExistsData()
     {
-        $address = factory(WA\DataStore\Address\Address::class)->create()->id;
-        $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
-
         $package = $this->json('POST', 'packages',
         [
             'data' => [
                 'type' => 'packages',
                 'attributes' => [
                     'name' => 'namePackage',    
-                    'companyId' => $companyId
+                    'companyId' => $this->mainCompany->id
                 ],
                 'relationships' => [
                     'apps' => [
@@ -650,16 +637,13 @@ class PackageApiTest extends \TestCase
 
     public function testCreatePackageReturnRelationshipNoAppsType()
     {
-        $address = factory(WA\DataStore\Address\Address::class)->create()->id;
-        $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
-
         $package = $this->json('POST', 'packages',
         [
             'data' => [
                 'type' => 'packages',
                 'attributes' => [
                     'name' => 'namePackage',    
-                    'companyId' => $companyId
+                    'companyId' => $this->mainCompany->id
                 ],
                 'relationships' => [
                     'apps' => [
@@ -680,16 +664,13 @@ class PackageApiTest extends \TestCase
 
     public function testCreatePackageReturnRelationshipNoIdExists()
     {
-        $address = factory(WA\DataStore\Address\Address::class)->create()->id;
-        $companyId = factory(\WA\DataStore\Company\Company::class)->create()->id;
-
         $package = $this->json('POST', 'packages',
         [
             'data' => [
                 'type' => 'packages',
                 'attributes' => [
                     'name' => 'namePackage',    
-                    'companyId' => $companyId
+                    'companyId' => $this->mainCompany->id
                 ],
                 'relationships' => [
                     'apps' => [

@@ -134,7 +134,10 @@ class PresetsController extends FilteredApiController
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
-        if(!$this->addFilterToTheRequest("create", $request)) {
+        $data = $request->all()['data'];
+        $data = $this->addRelationships($data);
+
+        if(!$this->addFilterToTheRequest("create", $data)) {
             $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }

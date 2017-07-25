@@ -6,9 +6,7 @@ $factory->define(WA\DataStore\Package\Package::class, function ($faker) {
         'name'=> $faker->sentence,
         'information'=> $faker->sentence,
         'approvalCode'=> $faker->sentence,
-        'companyId' => function () {
-            return factory(WA\DataStore\Company\Company::class)->create()->id;
-        },
+        'companyId' => 1,
         'created_at' => $faker->dateTime,
         'updated_at' => $faker->dateTime,
     ];

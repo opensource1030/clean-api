@@ -8,10 +8,10 @@ class ServicesApiTest extends \TestCase
 
     public function testGetServices()
     {
-        factory(\WA\DataStore\Service\Service::class, 40)->create();
+        factory(\WA\DataStore\Service\Service::class, 40)->create(['companyId' => $this->mainCompany->id]);
 
         $res = $this->json('GET', 'services');
-        \Log::debug("testGetServices: ".print_r($res->response->getContent(), true));
+        //\Log::debug("testGetServices: ".print_r($res->response->getContent(), true));
         $res->seeJsonStructure([
             'data' => [
                 0 => [
@@ -63,7 +63,7 @@ class ServicesApiTest extends \TestCase
     {
         $carrier = factory(\WA\DataStore\Carrier\Carrier::class)->create();
         
-        $service = factory(\WA\DataStore\Service\Service::class)->create(['carrierId' => $carrier->id, 'companyId' => $this->mainCompany]);
+        $service = factory(\WA\DataStore\Service\Service::class)->create(['carrierId' => $carrier->id, 'companyId' => $this->mainCompany->id]);
         
         $package = factory(\WA\DataStore\Package\Package::class)->create();
         $service->packages()->sync([$package->id]);
@@ -255,7 +255,7 @@ class ServicesApiTest extends \TestCase
                             'description' => 'Test Service',
                             'currency' => 'USD',
                             'carrierId' => $carrier->id,
-                            'companyId' => $this->mainCompany,
+                            'companyId' => $this->mainCompany->id,
                         ],
                         'relationships' => [
                             'packages' => [
@@ -296,7 +296,7 @@ class ServicesApiTest extends \TestCase
                 'description' => 'Test Service',
                 'currency' => 'USD',
                 'carrierId' => $carrier->id,
-                'companyId' => $this->mainCompany,
+                'companyId' => $this->mainCompany->id,
             ])
             ->seeJsonStructure([                
                 'data' => [

@@ -6,7 +6,7 @@ abstract class TestCase extends \Laravel\Lumen\Testing\TestCase
 
     protected $baseUrl;
 
-    protected $mainCompany, $mainUserAdmin, $roleAdmin, $mainUserWTA, $roleWTA, $mainUser, $roleUser;
+    protected $idLogged, $mainCompany, $mainUserAdmin, $roleAdmin, $mainUserWTA, $roleWTA, $mainUser, $roleUser, $configuration = 1;
 
     /*
      * Creates the application.
@@ -29,25 +29,50 @@ abstract class TestCase extends \Laravel\Lumen\Testing\TestCase
     public function setUp(){
         parent::setUp();
 
-        $this->mainCompany = factory(\WA\DataStore\Company\Company::class)->create()->id;
+        $this->mainCompany = factory(\WA\DataStore\Company\Company::class)->create();
         
-        $this->mainUserAdmin = factory(\WA\DataStore\User\User::class)->create(['companyId' => $this->mainCompany]);
+        $this->mainUserAdmin = factory(\WA\DataStore\User\User::class)->create(['companyId' => $this->mainCompany->id]);
         $this->roleAdmin = factory(\WA\DataStore\Role\Role::class)->create(['display_name' => 'admin', 'name' => 'admin']);
         $this->mainUserAdmin->roles()->sync([$this->roleAdmin->id]);
 
-        $this->mainUserWTA = factory(\WA\DataStore\User\User::class)->create(['companyId' => $this->mainCompany]);
+        $this->mainUserWTA = factory(\WA\DataStore\User\User::class)->create(['companyId' => $this->mainCompany->id]);
         $this->roleWTA = factory(\WA\DataStore\Role\Role::class)->create(['display_name' => 'wta', 'name' => 'wta']);
         $this->mainUserWTA->roles()->sync([$this->roleWTA->id]);
 
-        $this->mainUser = factory(\WA\DataStore\User\User::class)->create(['companyId' => $this->mainCompany]);
+        $this->mainUser = factory(\WA\DataStore\User\User::class)->create(['companyId' => $this->mainCompany->id]);
         $this->roleUser = factory(\WA\DataStore\Role\Role::class)->create(['display_name' => 'user', 'name' => 'user']);
         $this->mainUser->roles()->sync([$this->roleUser->id]);
 
         /*
          * Use one of the lines below to login using any of the users above.
          */
-        $this->be($this->mainUserAdmin);
-        //$this->be($this->mainUserWTA);
-        //$this->be($this->mainUser);
+
+        if($this->configuration == 1) {
+            $this->be($this->mainUserAdmin);
+            $this->idLogged = $this->mainUserAdmin->id;
+        } else if($this->configuration == 2) {
+            $this->be($this->mainUserWTA);
+            $this->idLogged = $this->mainUserWTA->id;
+        } else if($this->configuration == 3) {
+            $this->be($this->mainUser);
+            $this->idLogged = $this->mainUser->id;
+        } else {}
+    }
+
+    public function run(\PHPUnit_Framework_TestResult $result = NULL) {
+
+        if ($result === NULL) {
+            $result = $this->createResult();
+        }
+
+        // $this->configuration = 1 with SuperAdmin. Use CONSTANT.
+        $result->run($this);
+        $this->configuration++;
+
+        $result->run($this);
+        $this->configuration++;
+
+        $result->run($this);
+        //$this->configuration = 1;
     }
 }

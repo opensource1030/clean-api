@@ -30,7 +30,7 @@ class AssetsApiTest extends \TestCase
 
     public function testGetAssetById()
     {
-        $asset = factory(\WA\DataStore\Asset\Asset::class)->create();
+        $asset = factory(\WA\DataStore\Asset\Asset::class)->create(['userId' => $this->mainUser->id]);
 
         $this->json('GET', 'assets/'.$asset->id)
             ->seeJson([

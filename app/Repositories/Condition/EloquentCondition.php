@@ -123,10 +123,7 @@ class EloquentCondition extends AbstractRepository implements ConditionInterface
      * @return Boolean
      */
     public function checkModelAndRelationships($json, $companyId) {
-        $attributes = $json->data->attributes;
-
-        $package = \WA\DataStore\Package\Package::find($attributes->packageId);
-        return $package->companyId == $companyId;
+        return true;
     }
 
     /**

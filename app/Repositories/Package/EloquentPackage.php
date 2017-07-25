@@ -136,7 +136,7 @@ class EloquentPackage extends AbstractRepository implements PackageInterface
      * @return Boolean
      */
     public function checkModelAndRelationships($json, $companyId) {
-        return $json->data->attributes->companyId == $companyId;
+        return $json['attributes']['companyId'] == $companyId;
     }
 
     /**

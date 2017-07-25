@@ -90,14 +90,16 @@ class ConditionsController extends FilteredApiController
          */
         if ($this->isJsonCorrect($request, 'conditions')) {
 
-            if(!$this->addFilterToTheRequest("create", $request)) {
+            $data = $request->all()['data'];
+            $data = $this->addRelationships($data);
+
+            if(!$this->addFilterToTheRequest("create", $data)) {
                 $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
                 return response()->json($error)->setStatusCode($this->status_codes['notexists']);
             }
         
             try {
-                $data = $request->all()['data']['attributes'];
-                $condition = $this->condition->create($data);
+                $condition = $this->condition->create($data['attributes']);
 
                 return $this->response()->item($condition, new ConditionTransformer(),
                     ['key' => 'conditions'])->setStatusCode($this->status_codes['created']);

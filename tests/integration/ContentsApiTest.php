@@ -42,10 +42,15 @@ class ContentsApiTest extends \TestCase
     {
         $this->post('/contents',
             [
-                'content' => 'Test Content',
-                'active' => 1,
-                'owner_type' => 'company',
-                'owner_id' => 9,
+                'data' => [
+                    'type' => 'addresses',
+                    'attributes' => [
+                        'content' => 'Test Content',
+                        'active' => 1,
+                        'owner_type' => 'company',
+                        'owner_id' => 9
+                    ]
+                ]
             ])
             ->seeJson([
                 'type' => 'contents',
