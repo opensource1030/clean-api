@@ -83,18 +83,17 @@ class DeviceVariationApiTest extends \TestCase
         $device = factory(\WA\DataStore\Device\Device::class)->create();
         $modCap1 = factory(\WA\DataStore\Modification\Modification::class)->create()->id;
         $carrier = factory(\WA\DataStore\Carrier\Carrier::class)->create();
-        $company = factory(\WA\DataStore\Company\Company::class)->create();
         $image1 = factory(\WA\DataStore\Image\Image::class)->create()->id;
         $image2 = factory(\WA\DataStore\Image\Image::class)->create()->id;
 
-       $deviceVariation = $this->json('POST', '/devicevariations',
+        $res = $this->json('POST', '/devicevariations',
             [
                 'data' => [
                     'type' => 'devicevariations',
                     'attributes' => [
                         'deviceId' => $device->id,
                         'carrierId' => $carrier->id,
-                        'companyId' => $company->id,
+                        'companyId' => $this->mainCompany->id,
                         'priceRetail' => 300,
                         'price1' => 400,
                         'price2' => 500,
@@ -114,12 +113,13 @@ class DeviceVariationApiTest extends \TestCase
                         ],
                     ]
                 ]
-            ])
-            ->seeJson([
+            ]);
+        //\Log::debug("testCreateDeviceVariation: ".print_r($res->response->getContent(), true));
+        $res->seeJson([
                 'type' => 'devicevariations',
                 'deviceId' => $device->id,
                 'carrierId' => $carrier->id,
-                'companyId' => $company->id,
+                'companyId' => $this->mainCompany->id,
                 'priceRetail' => 300,
                 'price1' => 400,
                 'price2' => 500,
@@ -130,21 +130,20 @@ class DeviceVariationApiTest extends \TestCase
     public function testUpdateDeviceVariation()
     {  
         $deviceVariation = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create();
+
         $device1 = factory(\WA\DataStore\Device\Device::class)->create()->id;
         $modCap1 = factory(\WA\DataStore\Modification\Modification::class)->create()->id;
         
         $carrier1 = factory(\WA\DataStore\Carrier\Carrier::class)->create()->id;
-        $company1 = factory(\WA\DataStore\Company\Company::class)->create()->id;
-
-        $device2 = factory(\WA\DataStore\Device\Device::class)->create()->id;
         
+        $device2 = factory(\WA\DataStore\Device\Device::class)->create()->id;
         $carrier2 = factory(\WA\DataStore\Carrier\Carrier::class)->create()->id;
-        $company2 = factory(\WA\DataStore\Company\Company::class)->create()->id;
+
         $devVar = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create(
             [
                 'deviceId' => $device1,
                 'carrierId' => $carrier1,
-                'companyId' => $company1,
+                'companyId' => $this->mainCompany->id,
                 'priceRetail' => 300,
                 'price1' => 400,
                 'price2' => 500,
@@ -156,7 +155,7 @@ class DeviceVariationApiTest extends \TestCase
             [
                 'deviceId' => $device2,
                 'carrierId' => $carrier2,
-                'companyId' => $company2,
+                'companyId' => $this->mainCompany->id,
                 'priceRetail' => 350,
                 'price1' => 450,
                 'price2' => 550,
@@ -167,7 +166,6 @@ class DeviceVariationApiTest extends \TestCase
         $this->assertNotEquals($devVar->id, $devVarAux->id);
         $this->assertNotEquals($devVar->deviceId, $devVarAux->deviceId);
         $this->assertNotEquals($devVar->carrierId, $devVarAux->carrierId);
-        $this->assertNotEquals($devVar->companyId, $devVarAux->companyId);
         $this->assertNotEquals($devVar->priceRetail, $devVarAux->priceRetail);
         $this->assertNotEquals($devVar->price1, $devVarAux->price1);
         $this->assertNotEquals($devVar->price2, $devVarAux->price2);

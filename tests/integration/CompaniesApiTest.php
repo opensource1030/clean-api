@@ -41,26 +41,26 @@ class CompaniesTest extends \TestCase
 
     public function testGetByCompanyId()
     {
-        $company = factory(\WA\DataStore\Company\Company::class)->create();
+        $companyId = $this->mainCompany->id;
 
-        $response = $this->json('GET', 'companies/'.$company->id)
-            ->seeJson([
+        $res = $this->json('GET', 'companies/'.$companyId);
+        //\Log::debug("testGetByCompanyId: ".print_r($res->response->getContent(), true));
+        $res->seeJson([
                 'type' => 'companies',
-                'id' => "$company->id",
-                'name' => $company->name,
-                'label' => $company->label,
+                'id' => "$companyId",
+                'name' => $this->mainCompany->name,
+                'label' => $this->mainCompany->label,
             ]);
     }
 
     public function testGetCompanyByIdandIncludesCurrentBillMonths()
     {
-        $company = factory(\WA\DataStore\Company\Company::class)->create();
-
         $currentBillMonth1 = factory(\WA\DataStore\Company\CompanyCurrentBillMonth::class)->create();
+        $this->mainCompany->currentBillMonths()->save($currentBillMonth1);
 
-        $company->currentBillMonths()->save($currentBillMonth1);
+        $companyId = $this->mainCompany->id;
 
-        $this->get('/companies/'.$company->id.'?include=currentBillMonths')
+        $this->get('/companies/'.$companyId.'?include=currentBillMonths')
             ->seeJsonStructure([
                 'data' => [
                     'type',

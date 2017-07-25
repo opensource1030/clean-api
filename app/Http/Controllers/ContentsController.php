@@ -63,13 +63,15 @@ class ContentsController extends FilteredApiController
      */
     public function create(Request $request)
     {
-        if(!$this->addFilterToTheRequest("create", $request)) {
+        $data = $request->all()['data'];
+        $data = $this->addRelationships($data);
+
+        if(!$this->addFilterToTheRequest("create", $data)) {
             $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
             return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
         
-        $data = $request->all();
-        $content = $this->contents->create($data);
+        $content = $this->contents->create($data['attributes']);
         if (!$content) {
             $error['errors']['post'] = 'Content could not be created. Please check your data';
             return response()->json($error)->setStatusCode(403);

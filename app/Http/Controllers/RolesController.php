@@ -88,14 +88,16 @@ class RolesController extends FilteredApiController
     {
         if ($this->isJsonCorrect($request, 'roles')) {
 
-            if(!$this->addFilterToTheRequest("create", $request)) {
+            $data = $request->all()['data'];
+            $data = $this->addRelationships($data);
+
+            if(!$this->addFilterToTheRequest("create", $data)) {
                 $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
                 return response()->json($error)->setStatusCode($this->status_codes['notexists']);
             }
         
             try {
-                $data = $request->all()['data']['attributes'];
-                $role = $this->role->create($data);
+                $role = $this->role->create($data['attributes']);
 
                 return $this->response()->item($role, new roleTransformer(),
                     ['key' => 'roles'])->setStatusCode($this->status_codes['created']);

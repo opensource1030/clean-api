@@ -106,8 +106,7 @@ class EloquentApp extends AbstractRepository implements AppInterface
      * @return Array
      */
     public function addFilterToTheRequest($companyId) {
-        $aux[] = '[packages.companyId]=' . (string) $companyId . '[or][orders.companyId]=' . (string) $companyId;
-        return $aux;
+        return '';
     }
 
     /**
@@ -119,27 +118,7 @@ class EloquentApp extends AbstractRepository implements AppInterface
      * @return Boolean
      */
     public function checkModelAndRelationships($json, $companyId) {
-        if(!isset($json->data->relationships)) {
-            return false;
-        } else {
-            foreach ($json->data->relationships->packages->data as $value) {
-                if ($value->type == 'packages') {
-                    if ($value->companyId == $companyId) {
-                        return true;
-                    }
-                }
-            }
-
-            foreach ($json->data->relationships->orders->data as $value) {
-                if ($value->type == 'orders') {
-                    if ($value->companyId == $companyId) {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
-        }
+        return true;
     }
 
     /**

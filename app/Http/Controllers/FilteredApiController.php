@@ -299,6 +299,13 @@ abstract class FilteredApiController extends ApiController
     }
 
     public function addRelationships($data) {
+        $user = \Auth::user();
+
+        $role = $user->roles;
+        if($role[0]->name == 'admin') {
+            return $data;
+        }
+
         return $this->resource->addRelationships($data);
     }
 

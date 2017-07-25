@@ -7,12 +7,15 @@ class AddressApiTest extends TestCase
      */
     public function testGetAddress()
     {
-        factory(\WA\DataStore\Address\Address::class, 40)->create();
+        $addresses = factory(\WA\DataStore\Address\Address::class, 40)->create();
+
+        foreach ($addresses as $address) {
+            $address->companies()->sync([$this->mainCompany->id]);
+        }
 
         $res = $this->json('GET', 'addresses');
-        //PHPUnit::assertArrayHasKey($key, $responseData);
-
-        $this->seeJsonStructure([
+        //\Log::debug("testGetAddress: ".print_r($res->response->getContent(), true));
+        $res->seeJsonStructure([
                 'data' => [
                     0 => [
                         'type',
@@ -60,6 +63,7 @@ class AddressApiTest extends TestCase
     public function testGetAddressById()
     {
         $address = factory(\WA\DataStore\Address\Address::class)->create();
+        $address->companies()->sync([$this->mainCompany->id]);
 
         $res = $this->json('GET', 'addresses/'.$address->id)
             ->seeJson([
@@ -91,7 +95,17 @@ class AddressApiTest extends TestCase
                         'country' => 'addressCountry',
                         'postalCode' => 'addressPostalCode',
                     ],
-                ],
+                    "relationships" => [
+                        "companies" => [
+                            "data" => [
+                                [
+                                    "type" => "companies",
+                                    "id" => $this->mainCompany->id
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
             ])
             ->seeJson([
                 'type' => 'addresses',
@@ -109,7 +123,12 @@ class AddressApiTest extends TestCase
     public function testUpdateAddress()
     {
         $address1 = factory(\WA\DataStore\Address\Address::class)->create(['address' => 'address1', 'city' => 'city1', 'state' => 'state1', 'country' => 'country1', 'postalCode' => 'postalCode1']);
+
+        $address1->companies()->sync([$this->mainCompany->id]);
+
         $address2 = factory(\WA\DataStore\Address\Address::class)->create(['address' => 'address2', 'city' => 'city2', 'state' => 'state2', 'country' => 'country2', 'postalCode' => 'postalCode2']);
+
+        $address2->companies()->sync([$this->mainCompany->id]);
 
         $this->assertNotEquals($address1->id, $address2->id);
         $this->assertNotEquals($address1->address, $address2->address);

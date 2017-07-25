@@ -562,7 +562,7 @@ class UserCacheDecorator extends UserDecorator
      * @return Boolean
      */
     public function checkModelAndRelationships($json, $companyId) {
-        return false;
+        return $json['attributes']['companyId'] == $companyId;
     }
 
     /**

@@ -104,8 +104,7 @@ class EloquentCarrier extends AbstractRepository implements CarrierInterface
      * @return Array
      */
     public function addFilterToTheRequest($companyId) {
-        $aux[] = '[services.users.companyId]=' . (string) $companyId . '[or][devicevariations.companyId]=' . (string) $companyId;
-        return $aux;
+        return '';
     }
 
     /**
@@ -117,26 +116,7 @@ class EloquentCarrier extends AbstractRepository implements CarrierInterface
      * @return Boolean
      */
     public function checkModelAndRelationships($json, $companyId) {
-        if(!isset($json->data->relationships)) {
-            return false;
-        } else {
-            $ok = true;
-            foreach ($json->data->relationships->services->data as $value) {
-                if ($value->type == 'services') {
-                    $service = \WA\DataStore\Service\Service::find($value->id);
-                    foreach ($service->users as $val) {
-                        $ok = $ok && $val->companyId == $companyId;
-                    }
-                }
-            }
-            foreach ($json->data->relationships->devicevariations->data as $value) {
-                if ($value->type == 'devicevariations') {
-                    $ok = $ok && $value->companyId == $companyId;
-                }
-            }
-
-            return $ok;
-        }
+        return true;
     }
 
     /**

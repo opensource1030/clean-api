@@ -6,7 +6,6 @@ class ApiSortingTest extends \TestCase
 
     public function testCanIncludeSortInMeta()
     {
-
         $this->json('GET', '/devices?sort=-identification')
             ->seeJson(['sort' => '-identification']);
     }
@@ -30,9 +29,13 @@ class ApiSortingTest extends \TestCase
 
     public function testCanInvertSortResource()
     {
-        factory(\WA\DataStore\Device\Device::class, 10)->create();
+        $devices = factory(\WA\DataStore\Device\Device::class, 10)->create();
+        foreach ($devices as $device) {
+            factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create(['companyId' => $this->mainCompany->id, 'deviceId' => $device->id]);
+        }
 
         $response = $this->call('GET', '/devices?sort=-identification');
+
         $json = json_decode($response->getContent());
         $sorted = [];
         foreach ($json->data as $row) {

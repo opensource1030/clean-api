@@ -37,7 +37,7 @@ class OrdersApiTest extends \TestCase
 
     public function testGetOrderById()
     {
-        $order = factory(\WA\DataStore\Order\Order::class)->create();
+        $order = factory(\WA\DataStore\Order\Order::class)->create(['userId' => $this->mainUser->id]);
 
         $res = $this->json('GET', 'orders/'.$order->id)
             ->seeJson([
@@ -93,11 +93,10 @@ class OrdersApiTest extends \TestCase
 
     public function testGetOrderByIdIncludeAll()
     {
-        $user = factory(\WA\DataStore\User\User::class)->create();
         $package = factory(\WA\DataStore\Package\Package::class)->create();
         $service = factory(\WA\DataStore\Service\Service::class)->create();
         $address = factory(\WA\DataStore\Address\Address::class)->create();
-        $order = factory(\WA\DataStore\Order\Order::class)->create(['userId' => $user->id, 'packageId' => $package->id, 'serviceId' => $service->id, 'addressId' => $address->id]);
+        $order = factory(\WA\DataStore\Order\Order::class)->create(['userId' => $this->mainUser->id, 'packageId' => $package->id, 'serviceId' => $service->id, 'addressId' => $address->id]);
 
         $app1 = factory(\WA\DataStore\App\App::class)->create()->id;
         $app2 = factory(\WA\DataStore\App\App::class)->create()->id;
@@ -334,7 +333,7 @@ class OrdersApiTest extends \TestCase
             ]);
     }
 
-    public function testCreateOrder()
+    public function testCreateOrderWithPackageAndService()
     {
         $userId = factory(\WA\DataStore\User\User::class)->create(['companyId' => 1])->id;
 
@@ -389,7 +388,7 @@ class OrdersApiTest extends \TestCase
             //Log::debug("testCreateUser: ".print_r($res->response->getContent(), true));
             $res->seeJson(
                 [
-                    'status' => 'Enabled',
+                    'status' => 'Approval',
                     'orderType' => 'UpgradeDevice',
                     'serviceImei' => '222222222',
                     'servicePhoneNo' => '111111111',
@@ -607,6 +606,555 @@ class OrdersApiTest extends \TestCase
                             ]
                         ],
                         7 => [ // ADDRESS
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'name',
+                                'attn',
+                                'phone',
+                                'address',
+                                'city',
+                                'state',
+                                'country',
+                                'postalCode',
+                            ],
+                            'links' => [
+                                'self',
+                            ],
+                        ]
+                    ]
+                ]);
+    }
+
+    public function testCreateOrderWithoutPackage()
+    {
+        $userId = factory(\WA\DataStore\User\User::class)->create(['companyId' => 1])->id;
+
+        $userAdmin = factory(\WA\DataStore\User\User::class)->create(['companyId' => 1]);
+        $userAdmin->roles()->sync([$this->roleAdmin->id]);
+
+        $packageId = factory(\WA\DataStore\Package\Package::class)->create()->id;
+        $serviceId = factory(\WA\DataStore\Service\Service::class)->create()->id;
+        $addressId = factory(\WA\DataStore\Address\Address::class)->create()->id;
+
+        $app1 = factory(\WA\DataStore\App\App::class)->create()->id;
+        $app2 = factory(\WA\DataStore\App\App::class)->create()->id;
+
+        $deviceVariation1 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create()->id;
+        $deviceVariation2 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create()->id;
+
+        $res = $this->json('POST', '/orders?include=packages,services,users,devicevariations,devicevariations.carriers,devicevariations.devices,devicevariations.devices.devicetypes,addresses,apps',
+            [
+                'data' => [
+                    'type' => 'orders',
+                    'attributes' => [
+                        'status' => 'Enabled',
+                        'orderType' => 'UpgradeDevice',
+                        'serviceImei' => '222222222',
+                        'servicePhoneNo' => '111111111',
+                        'serviceSim' => '3333333333',
+                        'deviceImei' => '222222222',
+                        'deviceCarrier' => 'New Carrier',
+                        'deviceSim' => '3333333333',
+                        'userId' => $userId,
+                        'packageId' => null,
+                        'serviceId' => $serviceId,
+                        'addressId' => $addressId
+                    ],
+                    'relationships' => [
+                        'apps' => [
+                            'data' => [
+                                ['type' => 'apps', 'id' => $app1],
+                                ['type' => 'apps', 'id' => $app2],
+                            ],
+                        ],
+                        'devicevariations' => [
+                            'data' => [
+                                ['type' => 'devicevariations', 'id' => $deviceVariation1],
+                                ['type' => 'devicevariations', 'id' => $deviceVariation2],
+                            ],
+                        ]
+                    ]
+                ]
+            ]
+            );
+            //Log::debug("testCreateOrderWithoutPackage: ".print_r($res->response->getContent(), true));
+            $res->seeJson(
+                [
+                    'status' => 'Approval',
+                    'orderType' => 'UpgradeDevice',
+                    'serviceImei' => '222222222',
+                    'servicePhoneNo' => '111111111',
+                    'serviceSim' => '3333333333',
+                    'deviceImei' => '222222222',
+                    'deviceCarrier' => 'New Carrier',
+                    'deviceSim' => '3333333333',
+                    'userId' => $userId,
+                    'packageId' => null,
+                    'serviceId' => $serviceId,
+                    'addressId' => $addressId
+                ])
+            ->seeJsonStructure(
+                [
+                    'data' => [
+                        'type',
+                        'id',
+                        'attributes' => [
+                            'status',
+                            'orderType',
+                            'serviceImei',
+                            'servicePhoneNo',
+                            'serviceSim',
+                            'deviceImei',
+                            'deviceCarrier',
+                            'deviceSim',
+                            'userId',
+                            'packageId',
+                            'serviceId',
+                            'addressId'
+                        ],
+                        'links' => [
+                            'self'
+                        ],
+                        'relationships' => [
+                            'users' => [
+                                'links' => [
+                                    'self',
+                                    'related',
+                                ],
+                                'data' => [
+                                    0 => [
+                                        'type',
+                                        'id',
+                                    ],
+                                ],
+                            ],
+                            'packages' => [
+                                'links' => [
+                                    'self',
+                                    'related',
+                                ],
+                                'data' => [],
+                            ],
+                            'devicevariations' => [
+                                'links' => [
+                                    'self',
+                                    'related',
+                                ],
+                                'data' => [
+                                    0 => [
+                                        'type',
+                                        'id',
+                                    ],
+                                    1 => [
+                                        'type',
+                                        'id',
+                                    ],
+                                ],
+                            ],
+                            'services' => [
+                                'links' => [
+                                    'self',
+                                    'related',
+                                ],
+                                'data' => [
+                                    0 => [
+                                        'type',
+                                        'id',
+                                    ],
+                                ],
+                            ],
+                            'apps' => [
+                                'links' => [
+                                    'self',
+                                    'related',
+                                ],
+                                'data' => [
+                                    0 => [
+                                        'type',
+                                        'id',
+                                    ],
+                                    1 => [
+                                        'type',
+                                        'id',
+                                    ]
+                                ],
+                            ],
+                            'addresses' => [
+                                'links' => [
+                                    'self',
+                                    'related',
+                                ],
+                                'data' => [
+                                    0 => [
+                                        'type',
+                                        'id',
+                                    ]
+                                ],
+                            ]
+                        ]
+                    ],
+                    'included' => [
+                        0 => [ // USER
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'uuid',
+                                'identification',
+                                'email',
+                                'alternateEmail',
+                                'username',
+                                'syncId'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        1 => [ // SERVICE
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'status',
+                                'title',
+                                'planCode',
+                                'cost',
+                                'description',
+                                'carrierId'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        2 => [ // APP
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'type',
+                                'image',
+                                'description'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        3 => [ // APP
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'type',
+                                'image',
+                                'description'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        4 => [ // DEVICEVARIATIONS
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'priceRetail',
+                                'price1',
+                                'price2',
+                                'priceOwn',
+                                'deviceId',
+                                'carrierId',
+                                'companyId'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        5 => [ // DEVICEVARIATIONS
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'priceRetail',
+                                'price1',
+                                'price2',
+                                'priceOwn',
+                                'deviceId',
+                                'carrierId',
+                                'companyId'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        6 => [ // ADDRESS
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'name',
+                                'attn',
+                                'phone',
+                                'address',
+                                'city',
+                                'state',
+                                'country',
+                                'postalCode',
+                            ],
+                            'links' => [
+                                'self',
+                            ],
+                        ]
+                    ]
+                ]);
+    }
+
+    public function testCreateOrderWithoutService()
+    {
+        $userId = factory(\WA\DataStore\User\User::class)->create(['companyId' => 1])->id;
+
+        $userAdmin = factory(\WA\DataStore\User\User::class)->create(['companyId' => 1]);
+        $userAdmin->roles()->sync([$this->roleAdmin->id]);
+
+        $packageId = factory(\WA\DataStore\Package\Package::class)->create()->id;
+        $serviceId = factory(\WA\DataStore\Service\Service::class)->create()->id;
+        $addressId = factory(\WA\DataStore\Address\Address::class)->create()->id;
+
+        $app1 = factory(\WA\DataStore\App\App::class)->create()->id;
+        $app2 = factory(\WA\DataStore\App\App::class)->create()->id;
+
+        $deviceVariation1 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create()->id;
+        $deviceVariation2 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create()->id;
+
+        $res = $this->json('POST', '/orders?include=packages,services,users,devicevariations,devicevariations.carriers,devicevariations.devices,devicevariations.devices.devicetypes,addresses,apps',
+            [
+                'data' => [
+                    'type' => 'orders',
+                    'attributes' => [
+                        'status' => 'Enabled',
+                        'orderType' => 'UpgradeDevice',
+                        'serviceImei' => '222222222',
+                        'servicePhoneNo' => '111111111',
+                        'serviceSim' => '3333333333',
+                        'deviceImei' => '222222222',
+                        'deviceCarrier' => 'New Carrier',
+                        'deviceSim' => '3333333333',
+                        'userId' => $userId,
+                        'packageId' => $packageId,
+                        'serviceId' => null,
+                        'addressId' => $addressId
+                    ],
+                    'relationships' => [
+                        'apps' => [
+                            'data' => [
+                                ['type' => 'apps', 'id' => $app1],
+                                ['type' => 'apps', 'id' => $app2],
+                            ],
+                        ],
+                        'devicevariations' => [
+                            'data' => [
+                                ['type' => 'devicevariations', 'id' => $deviceVariation1],
+                                ['type' => 'devicevariations', 'id' => $deviceVariation2],
+                            ],
+                        ]
+                    ]
+                ]
+            ]
+            );
+            //Log::debug("testCreateUser: ".print_r($res->response->getContent(), true));
+            $res->seeJson(
+                [
+                    'status' => 'Approval',
+                    'orderType' => 'UpgradeDevice',
+                    'serviceImei' => '222222222',
+                    'servicePhoneNo' => '111111111',
+                    'serviceSim' => '3333333333',
+                    'deviceImei' => '222222222',
+                    'deviceCarrier' => 'New Carrier',
+                    'deviceSim' => '3333333333',
+                    'userId' => $userId,
+                    'packageId' => $packageId,
+                    'serviceId' => null,
+                    'addressId' => $addressId
+                ])
+            ->seeJsonStructure(
+                [
+                    'data' => [
+                        'type',
+                        'id',
+                        'attributes' => [
+                            'status',
+                            'orderType',
+                            'serviceImei',
+                            'servicePhoneNo',
+                            'serviceSim',
+                            'deviceImei',
+                            'deviceCarrier',
+                            'deviceSim',
+                            'userId',
+                            'packageId',
+                            'serviceId',
+                            'addressId'
+                        ],
+                        'links' => [
+                            'self'
+                        ],
+                        'relationships' => [
+                            'users' => [
+                                'links' => [
+                                    'self',
+                                    'related',
+                                ],
+                                'data' => [
+                                    0 => [
+                                        'type',
+                                        'id',
+                                    ],
+                                ],
+                            ],
+                            'packages' => [
+                                'links' => [
+                                    'self',
+                                    'related',
+                                ],
+                                'data' => [
+                                    0 => [
+                                        'type',
+                                        'id',
+                                    ],
+                                ],
+                            ],
+                            'devicevariations' => [
+                                'links' => [
+                                    'self',
+                                    'related',
+                                ],
+                                'data' => [
+                                    0 => [
+                                        'type',
+                                        'id',
+                                    ],
+                                    1 => [
+                                        'type',
+                                        'id',
+                                    ],
+                                ],
+                            ],
+                            'services' => [
+                                'links' => [
+                                    'self',
+                                    'related',
+                                ],
+                                'data' => [],
+                            ],
+                            'apps' => [
+                                'links' => [
+                                    'self',
+                                    'related',
+                                ],
+                                'data' => [
+                                    0 => [
+                                        'type',
+                                        'id',
+                                    ],
+                                    1 => [
+                                        'type',
+                                        'id',
+                                    ]
+                                ],
+                            ],
+                            'addresses' => [
+                                'links' => [
+                                    'self',
+                                    'related',
+                                ],
+                                'data' => [
+                                    0 => [
+                                        'type',
+                                        'id',
+                                    ]
+                                ],
+                            ]
+                        ]
+                    ],
+                    'included' => [
+                        0 => [ // USER
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'uuid',
+                                'identification',
+                                'email',
+                                'alternateEmail',
+                                'username',
+                                'syncId'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        1 => [ // PACKAGE
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'name',
+                                'information',
+                                'companyId'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        2 => [ // APP
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'type',
+                                'image',
+                                'description'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        3 => [ // APP
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'type',
+                                'image',
+                                'description'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        4 => [ // DEVICEVARIATIONS
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'priceRetail',
+                                'price1',
+                                'price2',
+                                'priceOwn',
+                                'deviceId',
+                                'carrierId',
+                                'companyId'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        5 => [ // DEVICEVARIATIONS
+                            'type',
+                            'id',
+                            'attributes' => [
+                                'priceRetail',
+                                'price1',
+                                'price2',
+                                'priceOwn',
+                                'deviceId',
+                                'carrierId',
+                                'companyId'
+                            ],
+                            'links' => [
+                                'self'
+                            ]
+                        ],
+                        6 => [ // ADDRESS
                             'type',
                             'id',
                             'attributes' => [
