@@ -3240,4 +3240,31 @@ class CompaniesTest extends \TestCase
 
     }
 
+    public function testCompanyDeleteImportJob() {
+        $job = factory(\WA\DataStore\Company\CompanyUserImportJob::class)->create([
+            'companyId' => $this->mainCompany->id
+        ]);
+
+        $responseDel = $this->call('DELETE', 'companies/'.$this->mainCompany->id.'/jobs/'.$job->id);
+        $this->assertEquals(200, $responseDel->status());
+    }
+
+    public function testCompanyDeleteImportJobStatusWorking() {
+        $job = factory(\WA\DataStore\Company\CompanyUserImportJob::class)->create([
+            'companyId' => $this->mainCompany->id,
+            'status' => 1
+        ]);
+
+        $responseDel = $this->call('DELETE', 'companies/'.$this->mainCompany->id.'/jobs/'.$job->id);
+
+        $this->assertEquals(409, $responseDel->status());
+    }
+
+    public function testCompanyDeleteImportJobIfNoExists()
+    {
+        // DELETE NO EXISTING.
+        $responseDel = $this->call('DELETE', 'companies/'.$this->mainCompany->id.'/jobs/1');
+        $this->assertEquals(404, $responseDel->status());
+    }
+
 }

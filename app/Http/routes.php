@@ -277,13 +277,8 @@ $api->version('v1', function ($api) {
         ]);
 
         // ==Company Jobs
-        $api->post('companies/{companyId}/jobs', [
-            'middleware' => [$scopeMiddleware.':create_company_job'],
-            'uses' => $companiesController . '@createJob'
-        ]);
-
         $api->get('companies/{companyId}/jobs', [
-            'middleware' => [$scopeMiddleware.':get_jobs_company'],
+            'middleware' => [$scopeMiddleware.':get_company_jobs'],
             'uses' => $companiesController . '@showJobs'
         ]);
         
@@ -292,9 +287,19 @@ $api->version('v1', function ($api) {
             'uses' => $companiesController . '@showJob'
         ]);
 
+        $api->post('companies/{companyId}/jobs', [
+            'middleware' => [$scopeMiddleware.':create_company_job'],
+            'uses' => $companiesController . '@createJob'
+        ]);
+
         $api->patch('companies/{companyId}/jobs/{jobId}', [
             'middleware' => [$scopeMiddleware.':update_company_job'],
             'uses' => $companiesController . '@storeJob'
+        ]);
+
+        $api->delete('companies/{companyId}/jobs/{jobId}', [
+            'middleware' => [$scopeMiddleware.':delete_company_job'],
+            'uses' => $companiesController . '@deleteJob'
         ]);
 
 
