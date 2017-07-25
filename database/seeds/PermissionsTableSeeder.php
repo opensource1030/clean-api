@@ -186,19 +186,19 @@ class PermissionsTableSeeder extends BaseTableSeeder
 
         /*
          *  COMPANY JOB
-         *  scope:get_company_job,scope:update_company_job,scope:create_company_job
+         *  scope:get_company_jobs,scope:get_company_job,scope:create_company_job,scope:update_company_job,scope:delete_company_job
          *
          */
         $dataCompanyJob = [
             [
+                'name' => 'get_company_jobs',
+                'display_name' => 'View all jobs of a company',
+                'description' => 'View all jobs of a company',
+            ],
+            [
                 'name' => 'get_company_job',
                 'display_name' => 'View a company job',
                 'description' => 'View a company job',
-            ],
-            [
-                'name' => 'get_jobs_company',
-                'display_name' => 'View all jobs of a company',
-                'description' => 'View all jobs of a company',
             ],
             [
                 'name' => 'create_company_job',
@@ -207,6 +207,11 @@ class PermissionsTableSeeder extends BaseTableSeeder
             ],
             [
                 'name' => 'update_company_job',
+                'display_name' => 'Update a company job',
+                'description' => 'Update a company job',
+            ],
+            [
+                'name' => 'delete_company_job',
                 'display_name' => 'Update a company job',
                 'description' => 'Update a company job',
             ]

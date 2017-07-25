@@ -340,6 +340,72 @@ class CompaniesController extends FilteredApiController {
 		}
 	}
 
+	/*
+	 * BULK EMPLOYEES JOBS
+	 */
+
+	/**
+	 * Update the information related to the job.
+	 *
+	 * @param $companyId
+	 * @param $jobId
+	 * @param Request $request
+	 * @return mixed
+	 */
+	public function storeJob($companyId, $jobId, Request $request) {
+
+		if (!$this->isJsonCorrect($request, 'jobs')) {
+			$error['errors']['json'] = Lang::get('messages.InvalidJson');
+			return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+		}
+
+		// check if company is exist
+		$company = Company::find($companyId);
+		if ($company == null) {
+			$error['errors']['company'] = Lang::get('messages.NotExistClass', ['class' => 'Company']);
+			return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+		}
+
+		// get job details
+		$criteria = $this->getRequestCriteria();
+        $this->companyUserImportJob->setCriteria($criteria);
+		$job = $this->companyUserImportJob->byId($jobId);
+
+		if ($job == null) {
+			$error['errors']['job'] = Lang::get('messages.NotExistClass', ['class' => 'Job']);
+			return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+		}
+
+		// request data
+		// check mapping is array and not empty
+		$data = $request->all()['data'];
+		if (!isset($data['attributes'])
+			|| !isset($data['attributes']['mappings'])
+			|| !is_array($data['attributes']['mappings'])
+			|| empty($data['attributes']['mappings'])) {
+			$error['errors']['job'] = Lang::get('messages.InvalidJson');
+			return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+		}
+
+		// Update the current status of the job:
+		$data['attributes']['id'] = $jobId;
+		$companyUserImportJob = $this->companyUserImportJob->update($data["attributes"]); //TODO: CARLOS
+		$jobForUsersImportation = new ImportBulkUsersJob($jobId, $companyUserImportJob);
+
+		// \Log::debug("Send to dispatch job");
+		// $enqueuedJobID = Queue::push($jobForUsersImportation);
+		$jobForUsersImportation->onQueue('default');
+		$jobId = dispatch($jobForUsersImportation);
+		// \Log::debug("Sent to dispatch job");
+
+		// tests:
+		$response = $this->response->item($job, $job->getTransformer(), ['key' => 'companyuserimportjob']);
+		$response = $this->applyMeta($response);
+		// \Log::debug($job);
+
+		return $response;
+	}
+
 	/**
 	 * Create a job and return the details.
 	 *
@@ -489,72 +555,42 @@ class CompaniesController extends FilteredApiController {
         $response = $this->response->item($resource, $transformer, ['key' => 'companyuserimportjobs']);
         $response = $this->applyMeta($response);
         return $response;
-
     }
 
-
-	/**
-	 * Update the information related to the job.
+    /**
+	 * Delete a job.
 	 *
-	 * @param $companyId
-	 * @param $jobId
-	 * @param Request $request
-	 * @return mixed
+	 * @param $id
+	 *
+	 * @return \Symfony\Component\HttpFoundation\Response
 	 */
-	public function storeJob($companyId, $jobId, Request $request) {
-
-		if (!$this->isJsonCorrect($request, 'jobs')) {
-			$error['errors']['json'] = Lang::get('messages.InvalidJson');
-			return response()->json($error)->setStatusCode($this->status_codes['conflict']);
-		}
-
-		// check if company is exist
-		$company = Company::find($companyId);
-		if ($company == null) {
-			$error['errors']['company'] = Lang::get('messages.NotExistClass', ['class' => 'Company']);
-			return response()->json($error)->setStatusCode($this->status_codes['notexists']);
-		}
-
-		// get job details
-		$criteria = $this->getRequestCriteria();
-        $this->companyUserImportJob->setCriteria($criteria);
+	public function deleteJob($companyId, $jobId) {
 		$job = $this->companyUserImportJob->byId($jobId);
 
 		if ($job == null) {
-			$error['errors']['job'] = Lang::get('messages.NotExistClass', ['class' => 'Job']);
+			$error['errors']['delete'] = Lang::get('messages.NotExistClass', ['class' => 'Job']);
 			return response()->json($error)->setStatusCode($this->status_codes['notexists']);
 		}
 
-		// request data
-		// check mapping is array and not empty
-		$data = $request->all()['data'];
-		if (!isset($data['attributes'])
-			|| !isset($data['attributes']['mappings'])
-			|| !is_array($data['attributes']['mappings'])
-			|| empty($data['attributes']['mappings'])) {
-			$error['errors']['job'] = Lang::get('messages.InvalidJson');
+		if ($job->status == 1) {
+			$error['errors']['delete'] = 'A queued Job can\'t be deleted';
 			return response()->json($error)->setStatusCode($this->status_codes['conflict']);
 		}
 
-		// Update the current status of the job:
-		$data['attributes']['id'] = $jobId;
-		$companyUserImportJob = $this->companyUserImportJob->update($data["attributes"]); //TODO: CARLOS
-		$jobForUsersImportation = new ImportBulkUsersJob($jobId, $companyUserImportJob);
+		$this->companyUserImportJob->deleteById($jobId);
 		
-		// \Log::debug("Send to dispatch job");
-		// $enqueuedJobID = Queue::push($jobForUsersImportation);
-		$jobForUsersImportation->onQueue('default');
-		$jobId = dispatch($jobForUsersImportation);
-		// \Log::debug("Sent to dispatch job");
-
-		// tests:
-		$response = $this->response->item($job, $job->getTransformer(), ['key' => 'companyuserimportjob']);
-		$response = $this->applyMeta($response);
-		// \Log::debug($job);
-
-		return $response;
+		$newJob = $this->companyUserImportJob->byId($jobId);
+		if ($newJob == null) {
+			return array("success" => true);
+		} else {
+			$error['errors']['delete'] = Lang::get('messages.NotDeletedClass', ['class' => 'Job']);
+			return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+		}
 	}
 
+	/*
+	 * PRIVATE FUNCTIONS
+	 */
 	private function getFormatRow($header, $row) {
         $result = new \stdClass();
         foreach($header as $index => $field) {
