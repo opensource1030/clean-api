@@ -68,17 +68,12 @@ $api->version('v1', function ($api) {
         }
     );
 
-    $api->get('/user/{id}', function ($id) {
-        return \WA\DataStore\User\User::find($id)->email;
-    });
-
     // PUBLIC - GET IMAGE
     $api->get('images/{id}', [
         //'middleware' => [$scopeMiddleware.':get_image'],
         'as' => 'api.image.show',
         'uses' => 'WA\Http\Controllers\ImagesController@show'
     ]);
-
 
     $api->get('/', function () {
         return response()->json([
