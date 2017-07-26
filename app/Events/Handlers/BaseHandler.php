@@ -21,89 +21,82 @@ abstract class BaseHandler
     protected function retrieveTheAttributes($order)
     {
         $attributes = [];
-        $user = \WA\DataStore\User\User::find($order->userId);
-        $company = \WA\DataStore\Company\Company::find($user->companyId);
 
-        $attributes['company']['name'] = $company->name;
+        $attributes['if']['showCurrentService'] = false;
+        $attributes['if']['showCurrentDevice'] = false;
+        $attributes['if']['showNewService'] = false;
+        $attributes['if']['showNewDevice'] = false;
+
+        // VARIABLES
+        // ORDER
         $attributes['order']['orderType'] = $order->orderType;
+
+        // USER
+        $attributes['user']['username'] = '';
+        $attributes['user']['userEmail'] = '';
+        $attributes['user']['supervisorEmail'] = '';
+        $attributes['user']['activeUser'] = \Auth::user()->username;
+        $attributes['user']['udlDepartment'] = '';
+        $attributes['user']['udlCostCenter'] = '';
+
+        $user = \WA\DataStore\User\User::find($order->userId);
+        $attributes['user']['username'] = $user->username;
+        $attributes['user']['userEmail'] = $user->email;
+        $attributes['user']['supervisorEmail'] = $user->supervisorEmail;
 
         foreach ($user->udlValues as $value) {
             if ($value->udlName == 'Department') {
-                $attributes['company']['udl']['department'] = $value->udlValue;
+                $attributes['company']['udlDepartment'] = $value->udlValue;
             }
-
             if ($value->udlName == 'Cost Center') {
-                $attributes['company']['udl']['costcenter'] = $value->udlValue;
+                $attributes['company']['udlCostCenter'] = $value->udlValue;
             }
         }
 
-        $attributes['activeuser']['name'] = \Auth::user()->username;
-        $attributes['device']['serviceImei'] = $order->serviceImei;
-        $attributes['device']['servicePhoneNo'] = $order->servicePhoneNo;
-        $attributes['device']['serviceSim'] = $order->serviceSim;
+        // PACKAGE
+        $attributes['package']['packageName'] = '';
+        $attributes['package']['approvalCode'] = '';
+
+        if ($order->packageId != null && $order->packageId > 0) {
+            $package = \WA\DataStore\Package\Package::find($order->packageId);
+
+            $attributes['package']['packageName'] = $package->packageName;
+            $attributes['package']['approvalCode'] = $package->approvalCode;
+        }
+
+        // CURRENT SERVICE
+        $attributes['service']['serviceImei'] = $order->serviceImei;
+        $attributes['service']['servicePhoneNo'] = $order->servicePhoneNo;
+        $attributes['service']['serviceSim'] = $order->serviceSim;
+
+        if ($attributes['service']['serviceImei'] != '' ||
+            $attributes['service']['servicePhoneNo'] != '' ||
+            $attributes['service']['serviceSim'] != '') {
+            $attributes['if']['showCurrentService'] = true;
+        }
+
+        // CURRENT DEVICE
         $attributes['device']['deviceImei'] = $order->deviceImei;
         $attributes['device']['deviceCarrier'] = $order->deviceCarrier;
         $attributes['device']['deviceSim'] = $order->deviceSim;
 
-        $address = $service = $package = $devicevariations = null;
-
-        if (isset($order->addressId)) {
-            $address = \WA\DataStore\Address\Address::find($order->addressId);
+        if ($attributes['device']['deviceImei'] != '' ||
+            $attributes['device']['deviceCarrier'] != '' ||
+            $attributes['device']['deviceSim'] != '') {
+            $attributes['if']['showCurrentDevice'] = true;
         }
 
-        if (isset($order->serviceId)) {
+        // SERVICE
+        $attributes['service']['domesticvoice'] = '';
+        $attributes['service']['domesticdata'] = '';
+        $attributes['service']['domesticmessage'] = '';
+        $attributes['service']['internationalvoice'] = '';
+        $attributes['service']['internationaldata'] = '';
+        $attributes['service']['internationalmessage'] = '';
+
+        if ($order->serviceId != null && $order->serviceId > 0) {
             $service = \WA\DataStore\Service\Service::find($order->serviceId);
-        }
 
-        if (isset($order->packageId)) {
-            $package = \WA\DataStore\Package\Package::find($order->packageId);
-        }
-
-        if (isset($order->devicevariations)) {
-            $devicevariations = $order->devicevariations;
-        }
-
-        // USER ATTRIBUTES
-        if (isset($user->username)) {
-            $attributes['user']['username'] = $user->username;
-        }
-        if (isset($user->email)) {
-            $attributes['user']['email'] = $user->email;
-        }
-        if (isset($user->supervisorEmail)) {
-            $attributes['user']['supervisorEmail'] = $user->supervisorEmail;
-        }
-
-        // ADDRESS ATTRIBUTES
-        if (isset($address->name)) {
-            $attributes['address']['name'] = $address->name;
-        }
-        if (isset($address->address)) {
-            $attributes['address']['address'] = $address->address;
-        }
-        if (isset($address->city)) {
-            $attributes['address']['city'] = $address->city;
-        }
-        if (isset($address->state)) {
-            $attributes['address']['state'] = $address->state;
-        }
-        if (isset($address->country)) {
-            $attributes['address']['country'] = $address->country;
-        }
-        if (isset($address->postalCode)) {
-            $attributes['address']['postalCode'] = $address->postalCode;
-        }
-
-        // PACKAGE ATTRIBUTES
-        if(isset($package->name)) {
-            $attributes['package']['name'] = $package->name;
-        }
-
-        // SERVICE ATTRIBUTES
-        if(isset($service->title)) {
-            $attributes['service']['title'] = $service->title;
-            $attributes['service']['description'] = $service->description;
-            $i = 0;
             foreach ($service->serviceitems as $si) {
                 if($si->domain == 'domestic' && $si->category == 'voice') {
                     $attributes['service']['domesticvoice'] = $si['value'] . ' ' . $si['unit'];
@@ -114,7 +107,7 @@ abstract class BaseHandler
                 }
 
                 if($si->domain == 'domestic' && $si->category == 'messaging') {
-                    $attributes['service']['domesticmess'] = $si['value'] . ' ' . $si['unit'];
+                    $attributes['service']['domesticmessage'] = $si['value'] . ' ' . $si['unit'];
                 }
 
                 if($si->domain == 'international' && $si->category == 'voice') {
@@ -126,28 +119,50 @@ abstract class BaseHandler
                 }
 
                 if($si->domain == 'international' && $si->category == 'messaging') {
-                    $attributes['service']['internationalmess'] = $si['value'] . ' ' . $si['unit'];
+                    $attributes['service']['internationalmessage'] = $si['value'] . ' ' . $si['unit'];
                 }
+            }
+
+            if ($attributes['service']['domesticvoice'] != '' ||
+                $attributes['service']['domesticdata'] != '' ||
+                $attributes['service']['domesticmessage'] != '' ||
+                $attributes['service']['internationalvoice'] != '' ||
+                $attributes['service']['internationaldata'] != '' ||
+                $attributes['service']['internationalmessage'] != '') {
+                $attributes['if']['showNewService'] = true;
             }
         }
 
-        // DEVICEVARIATION ATTRIBUTES
-        if (count($devicevariations) > 0) {
-            $attributes['device']['accessories'] = '';
-            foreach ($devicevariations as $dv) {
-                if(isset($dv->devices)) {
-                    if (isset($dv->devices->devicetypes)) {
-                        if ($dv->devices->devicetypes->name == 'Smartphone') {
-                            $attributes['device']['smartphone']['make'] = $dv->devices->make;
-                            $attributes['device']['smartphone']['model'] = $dv->devices->model;
-                            $attributes['device']['smartphone']['carrier'] = $dv->carriers->presentation;
-                        }
 
-                        if ($dv->devices->devicetypes->name == 'Accessory') {
-                            if ($attributes['device']['accessories'] == '') {
-                                $attributes['device']['accessories'] = $dv->devices->name;
-                            } else {
-                                $attributes['device']['accessories'] = $attributes['device']['accessories'] . ', ' . $dv->devices->name;
+        // DEVICE
+        $attributes['device']['devicePhoneNo'] = 'No Info Provided';
+        $attributes['device']['deviceMake'] = '';
+        $attributes['device']['deviceModel'] = '';
+        $attributes['device']['deviceAccessories'] = '';
+
+        if (isset($order->devicevariations)) {
+            $devicevariations = $order->devicevariations;
+
+            if (count($devicevariations) > 0) {
+                foreach ($devicevariations as $dv) {
+                    if(isset($dv->devices)) {
+                        if (isset($dv->devices->devicetypes)) {
+                            if ($dv->devices->devicetypes->name == 'Smartphone') {
+                                $attributes['device']['deviceMake'] = $dv->devices->make;
+                                $attributes['device']['deviceModel'] = $dv->devices->model;
+                            }
+
+                            if ($attributes['device']['deviceMake'] != '' ||
+                                $attributes['device']['deviceModel'] != '') {
+                                $attributes['if']['showNewDevice'] = true;
+                            }
+
+                            if ($dv->devices->devicetypes->name == 'Accessory') {
+                                if ($attributes['device']['deviceAccessories'] == '') {
+                                    $attributes['device']['deviceAccessories'] = $dv->devices->name;
+                                } else {
+                                    $attributes['device']['deviceAccessories'] = $attributes['device']['deviceAccessories'] . ', ' . $dv->devices->name;
+                                }
                             }
                         }
                     }
@@ -155,6 +170,31 @@ abstract class BaseHandler
             }
         }
 
+        // COMPANY
+        $attributes['company']['companyName'] = '';
+
+        if ($user->companyId != null && $user->companyId > 0) {
+            $company = \WA\DataStore\Company\Company::find($user->companyId);
+
+            $attributes['company']['companyName'] = $company->name;
+        }
+
+        // ADDRESS
+        $attributes['address']['addressAddress'] = '';
+        $attributes['address']['addressCity'] = '';
+        $attributes['address']['addressState'] = '';
+        $attributes['address']['addressPostalCode'] = '';
+
+        if ($order->addressId != null && $order->addressId > 0) {
+            $address = \WA\DataStore\Address\Address::find($order->addressId);
+
+            $attributes['address']['addressAddress'] = $address->address;
+            $attributes['address']['addressCity'] = $address->city;
+            $attributes['address']['addressState'] = $address->state;
+            $attributes['address']['addressPostalCode'] = $address->postalCode;
+        }
+
+        \Log::debug("BaseHandler@retrieveTheAttributes - attributes: " . print_r($attributes, true));
         return $attributes;
     }
 
@@ -166,58 +206,58 @@ abstract class BaseHandler
 
         $attributes['description']  = View::make('emails.notifications.order.order_create_send_easyvista',
                 [
-                    'companyName' => isset($attributes['company']['name'])
-                        ? $attributes['company']['name'] : '',
+                    'companyName' => isset($attributes['company']['companyName'])
+                        ? $attributes['company']['companyName'] : '',
                     'orderType' => isset($attributes['order']['orderType'])
                         ? $attributes['order']['orderType'] : '',
                     'username' => isset($attributes['user']['username'])
                         ? $attributes['user']['username'] : '',
-                    'packageName' => isset($attributes['package']['name'])
-                        ? $attributes['package']['name'] : '',
+                    'packageName' => isset($attributes['package']['packageName'])
+                        ? $attributes['package']['packageName'] : '',
 
-                    'userEmail' => isset($attributes['user']['email'])
-                        ? $attributes['user']['email'] : '',
+                    'userEmail' => isset($attributes['user']['userEmail'])
+                        ? $attributes['user']['userEmail'] : '',
                     'supervisorEmail' => isset($attributes['user']['supervisorEmail'])
                         ? $attributes['user']['supervisorEmail'] : '',
-                    'udlDepartment' => isset($attributes['company']['udl']['department'])
-                        ? $attributes['company']['udl']['department'] : '',
-                    'udlCostCenter' => isset($attributes['company']['udl']['costcenter'])
-                        ? $attributes['company']['udl']['costcenter'] : '',
-                    'activeUser' => isset($attributes['activeuser']['name'])
-                        ? $attributes['activeuser']['name'] : '',
+                    'udlDepartment' => isset($attributes['user']['udlDepartment'])
+                        ? $attributes['user']['udlDepartment'] : '',
+                    'udlCostCenter' => isset($attributes['user']['udlCostCenter'])
+                        ? $attributes['user']['udlCostCenter'] : '',
+                    'activeUser' => isset($attributes['user']['activeUser'])
+                        ? $attributes['user']['activeUser'] : '',
 
-                    'mobileNumber' => isset($attributes['device']['mobilenumber'])
-                        ? $attributes['device']['mobilenumber'] : '',
-                    'deviceCarrier' => isset($attributes['device']['smartphone']['carrier'])
-                        ? $attributes['device']['smartphone']['carrier'] : '',
-                    'deviceMake' => isset($attributes['device']['smartphone']['make'])
-                        ? $attributes['device']['smartphone']['make'] : '',
-                    'deviceModel' => isset($attributes['device']['smartphone']['model'])
-                        ? $attributes['device']['smartphone']['model'] : '',
-                    'deviceAccessories' => isset($attributes['device']['accessories'])
-                        ? $attributes['device']['accessories'] : '',
+                    'mobileNumber' => isset($attributes['device']['devicePhoneNo'])
+                        ? $attributes['device']['devicePhoneNo'] : '',
+                    'deviceCarrier' => isset($attributes['device']['smartphone']['deviceCarrier'])
+                        ? $attributes['device']['smartphone']['deviceCarrier'] : '',
+                    'deviceMake' => isset($attributes['device']['smartphone']['deviceMake'])
+                        ? $attributes['device']['smartphone']['deviceMake'] : '',
+                    'deviceModel' => isset($attributes['device']['smartphone']['deviceModel'])
+                        ? $attributes['device']['smartphone']['deviceModel'] : '',
+                    'deviceAccessories' => isset($attributes['device']['deviceAccessories'])
+                        ? $attributes['device']['deviceAccessories'] : '',
 
                     'domesticvoice' => isset($attributes['service']['domesticvoice'])
                         ? $attributes['service']['domesticvoice'] : '',
                     'domesticdata' => isset($attributes['service']['domesticdata'])
                         ? $attributes['service']['domesticdata'] : '',
-                    'domesticmessage' => isset($attributes['service']['domesticmess'])
-                        ? $attributes['service']['domesticmess'] : '',
+                    'domesticmessage' => isset($attributes['service']['domesticmessage'])
+                        ? $attributes['service']['domesticmessage'] : '',
                     'internationalvoice' => isset($attributes['service']['internationalvoice'])
                         ? $attributes['service']['internationalvoice'] : '',
                     'internationaldata' => isset($attributes['service']['internationaldata'])
                         ? $attributes['service']['internationaldata'] : '',
-                    'internationalmessage' => isset($attributes['service']['internationalmess'])
-                        ? $attributes['service']['internationalmess'] : '',
+                    'internationalmessage' => isset($attributes['service']['internationalmessage'])
+                        ? $attributes['service']['internationalmessage'] : '',
 
-                    'addressAddress' => isset($attributes['address']['address'])
-                        ? $attributes['address']['address'] : '',
-                    'addressCity' => isset($attributes['address']['city'])
-                        ? $attributes['address']['city'] : '',
-                    'addressState' => isset($attributes['address']['state'])
-                        ? $attributes['address']['state'] : '',
-                    'addressPostalCode' => isset($attributes['address']['postalCode'])
-                        ? $attributes['address']['postalCode'] : '',
+                    'addressAddress' => isset($attributes['address']['addressAddress'])
+                        ? $attributes['address']['addressAddress'] : '',
+                    'addressCity' => isset($attributes['address']['addressCity'])
+                        ? $attributes['address']['addressCity'] : '',
+                    'addressState' => isset($attributes['address']['addressState'])
+                        ? $attributes['address']['addressState'] : '',
+                    'addressPostalCode' => isset($attributes['address']['addressPostalCode'])
+                        ? $attributes['address']['addressPostalCode'] : '',
 
                 ]
             )->render();
