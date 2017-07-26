@@ -42,11 +42,6 @@ class ImagesController extends FilteredApiController
      */
     public function show($id, Request $request)
     {
-        if(!$this->addFilterToTheRequest("show", $request)) {
-            $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
-            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
-        }
-
         $criteria = $this->getRequestCriteria();
         $this->image->setCriteria($criteria);
         $image = Image::find($id);
