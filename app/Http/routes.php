@@ -72,6 +72,13 @@ $api->version('v1', function ($api) {
     return \WA\DataStore\User\User::find($id)->email; 
     });
 
+    // PUBLIC - GET IMAGE
+    $api->get('images/{id}', [
+        //'middleware' => [$scopeMiddleware.':get_image'],
+        'as' => 'api.image.show',
+        'uses' => 'WA\Http\Controllers\ImagesController@show'
+    ]);
+
     $api->get('/', function () {
         return response()->json([
             'app_name'    => env('API_NAME', 'clean'),
@@ -460,12 +467,6 @@ $api->version('v1', function ($api) {
             'middleware' => [$scopeMiddleware.':get_images'],
             'as' => 'api.image.index',
             'uses' => $imageController . '@index'
-        ]);
-
-        $api->get('images/{id}', [
-            'middleware' => [$scopeMiddleware.':get_image'],
-            'as' => 'api.image.show',
-            'uses' => $imageController . '@show'
         ]);
 
         $api->get('images/info/{id}', [
