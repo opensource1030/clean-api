@@ -25,7 +25,7 @@ class DeskproController extends FilteredApiController
      */
     public function __construct()
     {
-        $this->client = new DeskproClient('https://wanalytics.deskpro.com');
+        $this->client = new DeskproClient($_ENV['DESKPRO_URL']);
         $this->client->setAuthKey(1, $_ENV['DEKSPRO_AUTHKEY']);
     }
 
