@@ -20,7 +20,7 @@ class PermissionRolesTableSeeder extends BaseTableSeeder
 
         $i = 1;
 
-        while ($i < 124) {
+        while ($i < 125) {
             $data = [
                 [
                     'permission_id' => $i,
@@ -36,7 +36,7 @@ class PermissionRolesTableSeeder extends BaseTableSeeder
         // note: I've commented categoryapps, conditionfields and conditionoperators from routes.
 
         $j = 1;
-        while ($j < 124) {
+        while ($j < 125) {
             // NOT assign the permissions listed below.
             if(    $j != 22 // create_company
                 && $j != 24 // delete_company

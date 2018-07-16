@@ -952,5 +952,13 @@ $api->version('v1', function ($api) {
             'middleware' => [$scopeMiddleware.':delete_globalsetting'],
             'uses' => $globalSettingController . '@delete'
         ]);
+
+        // DESKPRO
+        $deskproController = 'WA\Http\Controllers\DeskproController';
+        $api->get('deskpro', [
+            'middleware' => [$scopeMiddleware.':search_deskpro'],
+            'as' => 'api.deskpro.search',
+            'uses' => $deskproController . '@search'
+        ]);
     });
 });

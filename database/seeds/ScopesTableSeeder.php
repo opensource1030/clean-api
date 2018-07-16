@@ -811,6 +811,19 @@ class ScopesTableSeeder extends BaseTableSeeder
             ],
         ];
 
+        /*
+         *  DESKPRO
+         *  scope:search_deskpro
+         *
+         */
+        $dataDeskpro = [
+            [
+                'name' => 'search_deskpro',
+                'display_name' => 'Search Deskpro Query',
+                'description' => 'Search Deskpro Query',
+            ]
+        ];
+
         $this->loadTable($dataAddress);
         $this->loadTable($dataAllocation);
         $this->loadTable($dataApp);
@@ -836,5 +849,6 @@ class ScopesTableSeeder extends BaseTableSeeder
         $this->loadTable($dataPermission);
         $this->loadTable($dataScope);
         $this->loadTable($dataGlobalSetting);
+        $this->loadTable($dataDeskpro);
     }
 }

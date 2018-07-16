@@ -16,7 +16,7 @@ class ScopePermissionsTableSeeder extends BaseTableSeeder
     {
         $this->deleteTable();
 
-        // Scopes = 118. Permissions = 124.
+        // Scopes = 119. Permissions = 125.
         /*
          *  ADDRESS (1-5)
          *  ALLOCATIONS (6-7)
@@ -44,6 +44,7 @@ class ScopePermissionsTableSeeder extends BaseTableSeeder
          *  SCOPES (109-113)
          *  GLOBALSETTINGS (114-118)
          *  SPECIAL CASES. (119:manage_devices, 120:manage_presets, 121:manage_services, 122:manage_employees, 123:manage_companies, 124:manage_own_company)
+         *  DESKPRO (125)
          */
 
         $i = 1;
@@ -284,5 +285,15 @@ class ScopePermissionsTableSeeder extends BaseTableSeeder
         ];
 
         $this->loadTable($dataManageOwnCompanies);
+
+        // DESKPRO -> 125
+        $dataDeskPro = [
+            [
+                'scope_id' => 119,
+                'permission_id' => 125
+            ]
+        ];
+
+        $this->loadTable($dataDeskPro);
     }
 }
