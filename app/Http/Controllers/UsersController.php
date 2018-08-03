@@ -29,6 +29,7 @@ use Cache;
 use Log;
 
 use JWTAuth;
+use Firebase\JWT\JWT;
 
 /**
  * Users resource.
@@ -112,6 +113,21 @@ class UsersController extends FilteredApiController
             $error['errors']['getIncludes'] = Lang::get('messages.NotExistInclude');
             return response()->json($error)->setStatusCode($this->status_codes['badrequest']);
         }
+
+        // Deskpro JWT
+        $now = time();
+        $exp = $now + (60) * $_ENV['TOKEN_EXPIRES_IN'];
+
+        $deskproToken = array(
+            "jti"   => md5($now . rand()),
+            "iat"   => $now,
+            "exp"   => $exp,
+            "id"    => $user['id'],
+            "email" => $user['email'],
+            "name"  => $user['firstName'] . ' ' . $user['lastName']
+        );
+
+        $user->deskproJwt = JWT::encode($deskproToken, $_ENV['DESKPRO_JWT_SECRET']);
 
         $response = $this->response->item($user, new UserTransformer(), ['key' => $this->modelPlural]);
         $response = $this->applyMeta($response);
