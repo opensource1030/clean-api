@@ -7,6 +7,18 @@ use WA\Repositories\AbstractRepository;
 class EloquentLocation extends AbstractRepository implements LocationInterface
 {
     /**
+     * Get an array of all the available Image.
+     *
+     * @return array of Image
+     */
+    public function getAllLocation()
+    {
+        $image = $this->model->all();
+
+        return $image;
+    }
+
+    /**
      * Get location details by name.
      *
      * @param $name

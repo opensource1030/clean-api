@@ -448,6 +448,7 @@ class UsersController extends FilteredApiController
             }
 
             $user = $this->userInterface->create($data['attributes']);
+
             if(!$user){
                 $error['errors']['users'] = 'The User has not been created, some data information is wrong, may be the Email.';
                 return response()->json($error)->setStatusCode(409);
@@ -468,6 +469,7 @@ class UsersController extends FilteredApiController
                 ['class' => 'User', 'option' => 'created', 'include' => '']);
             $error['errors']['Message'] = $e->getMessage();
         }
+
 
         /*
          * Check if Json has relationships to continue or if not and commit + return.
@@ -616,10 +618,10 @@ class UsersController extends FilteredApiController
                 'redirectPath' => $redirectPath,
             ];
 
-            $mail = Mail::send('emails.auth.register', $data, function ($m) use ($user) {
-                $m->from(env('MAIL_FROM_ADDRESS'), 'Wireless Analytics');
-                $m->to($user->email)->subject('New User '.$user->username.' !');
-            });
+//            $mail = Mail::send('emails.auth.register', $data, function ($m) use ($user) {
+//                $m->from(env('MAIL_FROM_ADDRESS'), 'Wireless Analytics');
+//                $m->to($user->email)->subject('New User '.$user->username.' !');
+//            });
 
             DB::commit();
             Cache::put('user_email_'.$code, $user->identification, 60);

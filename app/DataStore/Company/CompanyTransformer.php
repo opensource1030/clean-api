@@ -6,6 +6,7 @@ use League\Fractal\Resource\Collection as ResourceCollection;
 use WA\DataStore\Allocation\AllocationTransformer;
 use WA\DataStore\Content\ContentTransformer;
 use WA\DataStore\Company\CompanyCurrentBillMonthTransformer;
+use WA\DataStore\Company\CompanyDomainsTransformer;
 use WA\DataStore\FilterableTransformer;
 use WA\DataStore\Udl\UdlTransformer;
 
@@ -25,7 +26,8 @@ class CompanyTransformer extends FilterableTransformer
         'presets',
         'users',
         'addresses',
-        'globalsettingvalues'
+        'globalsettingvalues',
+        'domains'
     ];
 
     /**
@@ -105,4 +107,15 @@ class CompanyTransformer extends FilterableTransformer
     {
         return new ResourceCollection($company->udls, new UdlTransformer(), 'udls');
     }
+
+    /**
+     * @param Company $company
+     *
+     * @return ResourceCollection CompanyCurrentBillMonth
+     */
+    public function includeDomains(Company $company)
+    {
+        return new ResourceCollection($company->domains, new CompanyDomainsTransformer(), 'domains');
+    }
+
 }

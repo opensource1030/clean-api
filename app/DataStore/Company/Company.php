@@ -18,6 +18,7 @@ use WA\DataStore\BaseDataStore;
  * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\Allocation\Allocation[] $allocations
  * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\Content\Content[] $contents
  * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\Company\CompanyCurrentBillMonth[] $currentBillMonths
+ * @property-read \Illuminate\Database\Eloquent\Collection|\WA\DataStore\Company\CompanyDomains[] $domains
  * @property-read \WA\DataStore\User\User $usersCount
  * @property-read mixed $users_count
  * @mixin \Eloquent
@@ -134,6 +135,14 @@ class Company extends BaseDataStore
     public function currentBillMonths()    {
 
        return $this->hasMany('WA\DataStore\Company\CompanyCurrentBillMonth', 'companyId');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function domains()    {
+
+        return $this->hasMany('WA\DataStore\Company\CompanyDomains', 'companyId');
     }
 
     /**

@@ -485,6 +485,15 @@ $api->version('v1', function ($api) {
             'uses' => $imageController . '@delete'
         ]);
 
+        // LOCATIONS
+        $locationController = 'WA\Http\Controllers\LocationsController';
+
+        $api->get('locations', [
+            'middleware' => [$scopeMiddleware.':get_locations'],
+            'as' => 'api.location.index',
+            'uses' => $locationController . '@index'
+        ]);
+
         // MODIFICATIONS
         $modificationController = 'WA\Http\Controllers\ModificationsController';
 
