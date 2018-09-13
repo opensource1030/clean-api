@@ -434,8 +434,6 @@ class EloquentUser extends AbstractRepository implements UserInterface
 
         if(isset($data['departmentId']) && $data['departmentId'] !== ''){
             $userData['departmentId'] = $data['departmentId'];
-        } else {
-            $userData['departmentId'] = null;
         }
 
         $user = $this->model->create($userData);

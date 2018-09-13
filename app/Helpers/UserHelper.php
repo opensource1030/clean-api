@@ -41,7 +41,7 @@ class UserHelper extends AuthorizedController
             $userInterface = app()->make('WA\Repositories\User\UserInterface');
             $dup_id = $userInterface->byIdentification($id);
 
-            if (count($dup_id)) {
+            if (!is_null($dup_id) && count($dup_id)) {
                 $this->generateIds($companyId);
             }
 

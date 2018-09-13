@@ -874,6 +874,19 @@ class PermissionsTableSeeder extends BaseTableSeeder
             ]
         ];
 
+        /*
+         *  DESKPRO
+         *  scope:search_deskpro
+         *
+         */
+        $dataLocation = [
+            [
+                'name' => 'get_locations',
+                'display_name' => 'View all locations',
+                'description' => 'View all locations',
+            ]
+        ];
+
         $this->loadTable($dataAddress);
         $this->loadTable($dataAllocation);
         $this->loadTable($dataApp);
@@ -906,5 +919,6 @@ class PermissionsTableSeeder extends BaseTableSeeder
         $this->loadTable($dataManageCompanies);
         $this->loadTable($dataManageOwnCompanies);
         $this->loadTable($dataDeskpro);
+        $this->loadTable($dataLocation);
     }
 }

@@ -824,6 +824,20 @@ class ScopesTableSeeder extends BaseTableSeeder
             ]
         ];
 
+        /*
+         *  LOCATION
+         *  scope:get_locations
+         *
+         */
+        $dataLocation = [
+            [
+                'name' => 'get_locations',
+                'display_name' => 'View all locations',
+                'description' => 'View all locations',
+            ]
+        ];
+
+
         $this->loadTable($dataAddress);
         $this->loadTable($dataAllocation);
         $this->loadTable($dataApp);
@@ -850,5 +864,6 @@ class ScopesTableSeeder extends BaseTableSeeder
         $this->loadTable($dataScope);
         $this->loadTable($dataGlobalSetting);
         $this->loadTable($dataDeskpro);
+        $this->loadTable($dataLocation);
     }
 }

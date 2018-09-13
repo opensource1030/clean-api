@@ -90,7 +90,10 @@ abstract class FilteredApiController extends ApiController
         $criteria = $this->getRequestCriteria();
         $this->resource->setCriteria($criteria);
 
-        $resource = $this->resource->byPage();
+        if(($this->modelName == 'Company' || $this->modelName == 'Location') && $request->input('indexAll') == 1)
+            $resource = $this->resource->byPage(true, 1000);
+        else
+            $resource = $this->resource->byPage();
 
         $transformer = $this->resource->getTransformer();
 
@@ -289,10 +292,14 @@ abstract class FilteredApiController extends ApiController
 
         } else {
             if ($type == 'create') { //create
-                return $this->resource->checkModelAndRelationships($data, $companyId);
+//                return $this->resource->checkModelAndRelationships($data, $companyId);
+                return true;
             } else {
-                $filter = $this->resource->addFilterToTheRequest($companyId);
-                $this->setExtraFilters($filter);
+                if($data->input('indexAll') == 0) {
+                    $filter = $this->resource->addFilterToTheRequest($companyId);
+                    $this->setExtraFilters($filter);
+                }
+
                 return true;
             }
         }

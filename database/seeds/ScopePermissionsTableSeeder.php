@@ -295,5 +295,15 @@ class ScopePermissionsTableSeeder extends BaseTableSeeder
         ];
 
         $this->loadTable($dataDeskPro);
+
+        // GET ALL LOCATIONS -> 126
+        $dataLocation = [
+            [
+                'scope_id' => 120,
+                'permission_id' => 126
+            ]
+        ];
+
+        $this->loadTable($dataLocation);
     }
 }
