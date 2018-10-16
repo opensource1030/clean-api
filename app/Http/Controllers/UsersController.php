@@ -31,6 +31,8 @@ use Log;
 use JWTAuth;
 use Firebase\JWT\JWT;
 
+use WA\Events\UserCreatedEvent;
+
 /**
  * Users resource.
  *
@@ -449,7 +451,7 @@ class UsersController extends FilteredApiController
 
             $user = $this->userInterface->create($data['attributes']);
 
-            if(!$user){
+            if(!$user) {
                 $error['errors']['users'] = 'The User has not been created, some data information is wrong, may be the Email.';
                 return response()->json($error)->setStatusCode(409);
             }
@@ -463,6 +465,15 @@ class UsersController extends FilteredApiController
                     ['class' => 'User', 'option' => 'created', 'include' => 'Role']);
             }           
 
+        } catch (\Exception $e) {
+            $success = false;
+            $error['errors']['users'] = Lang::get('messages.NotOptionIncludeClass',
+                ['class' => 'User', 'option' => 'created', 'include' => '']);
+            $error['errors']['Message'] = $e->getMessage();
+        }
+
+        try {
+            event(new UserCreatedEvent($user));
         } catch (\Exception $e) {
             $success = false;
             $error['errors']['users'] = Lang::get('messages.NotOptionIncludeClass',
