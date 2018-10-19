@@ -10,6 +10,7 @@
     "venturecraft/revisionable": "1.*",
     "dingo/api": "1.0.0-beta8",
     "aacotroneo/laravel-saml2": "0.8.0",
+    "nategood/httpful": "*",
     "webpatser/laravel-uuid": "2.*",
     "nstapelbroek/culpa": "^2.0",
     "guzzlehttp/guzzle": "^6.3",
