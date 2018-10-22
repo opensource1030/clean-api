@@ -22,9 +22,10 @@ class NotifyEasyVistaUserCreation
         try {
             $payload = [
                 "employees" => [
-                    ["EMAIL" => $event->user->email,
+                    [
+                        "E_MAIL" => $event->user->email,
                         "IDENTIFICATION" => $event->user->identification,
-                        "LAST_NAME" => ${$event->user->firstName} . ', ' . ${$event->user->lastName},
+                        "LAST_NAME" => $event->user->firstName . ', ' . $event->user->lastName,
                         "DEPARTMENT_ID" => $event->user->companies()->first()->externalId,
                         "AVAILABLE_FIELD_1" => "Needs Update",
                         "COMMENT_EMPLOYEE" => $event->user->notes
@@ -40,12 +41,14 @@ class NotifyEasyVistaUserCreation
                 ->body(json_encode($payload))
                 ->send();
 
-            if (!$r->body == 201) {
+            if ($r->code == 201) {
                 Log::info("User added to Easyvista: " . $r->raw_body);
             } else {
                 Log::error("Failed adding user to Easyvista: " . $event->user->email);
             }
         } catch (\Exception $e) {
+            Log::error($e->getFile());
+            Log::error($e->getLine());
             Log::error($e->getMessage());
         }
 
