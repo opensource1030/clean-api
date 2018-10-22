@@ -31,6 +31,8 @@ use Log;
 use JWTAuth;
 use Firebase\JWT\JWT;
 
+use WA\Events\UserCreatedEvent;
+
 /**
  * Users resource.
  *
@@ -470,7 +472,6 @@ class UsersController extends FilteredApiController
             $error['errors']['Message'] = $e->getMessage();
         }
 
-
         /*
          * Check if Json has relationships to continue or if not and commit + return.
          */
@@ -618,16 +619,17 @@ class UsersController extends FilteredApiController
                 'redirectPath' => $redirectPath,
             ];
 
-            $mail = Mail::send('emails.auth.register', $data, function ($m) use ($user) {
-                $m->from(env('MAIL_FROM_ADDRESS'), 'Wireless Analytics');
-                $m->to($user->email)->subject('New User '.$user->username.' !');
-            });
+//            $mail = Mail::send('emails.auth.register', $data, function ($m) use ($user) {
+//                $m->from(env('MAIL_FROM_ADDRESS'), 'Wireless Analytics');
+//                $m->to($user->email)->subject('New User '.$user->username.' !');
+//            });
 
             DB::commit();
             Cache::put('user_email_'.$code, $user->identification, 60);
             Cache::put('user_code_'.$user->identification, $code, 60);
+
             return $this->response()->item($user, new UserTransformer(), ['key' => 'users'])
-                ->setStatusCode($this->status_codes['created']);    
+                ->setStatusCode($this->status_codes['created']);
         } else {
             DB::rollBack();
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);

@@ -41,6 +41,12 @@ class EventServiceProvider extends ServiceProvider
         ],
         'WA\Events\OrderDeliveredTransition' => [
             'WA\Events\Handlers\SendUserEmailOrderDelivered@sendOrderConfirmationEmail'
-        ]
+        ],
+//        'WA\Events\UserCreatedEvent' => [
+//            'WA\Listeners\UserCreatedEventListener'
+//        ],
+        'WA\Events\UserCreated' => [
+            'WA\Listeners\NotifyEasyVistaUserCreation'
+        ],
     ];
 }
