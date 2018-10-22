@@ -451,7 +451,7 @@ class UsersController extends FilteredApiController
 
             $user = $this->userInterface->create($data['attributes']);
 
-            if(!$user) {
+            if(!$user){
                 $error['errors']['users'] = 'The User has not been created, some data information is wrong, may be the Email.';
                 return response()->json($error)->setStatusCode(409);
             }
