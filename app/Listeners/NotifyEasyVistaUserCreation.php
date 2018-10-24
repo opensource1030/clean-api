@@ -25,26 +25,31 @@ class NotifyEasyVistaUserCreation
                     [
                         "E_MAIL" => $event->user->email,
                         "IDENTIFICATION" => $event->user->identification,
-                        "LAST_NAME" => $event->user->firstName . ', ' . $event->user->lastName,
-                        "DEPARTMENT_ID" => $event->user->companies()->first()->externalId,
+                        "LAST_NAME" => $event->user->lastName . ', ' . $event->user->firstName, #. .. , ...
+                        "DEPARTMENT_ID" => $event->user->companies()->first()->externalId, # 12
                         "AVAILABLE_FIELD_1" => "Needs Update",
-                        "COMMENT_EMPLOYEE" => $event->user->notes
+                        "COMMENT_EMPLOYEE" => $event->user->notes,
+                        "NOTIFICATION_TYPE_ID" => (string) str_ireplace("0","",$event->user->notify)
                     ]
                 ]
             ];
+
+            $json_load= json_encode($payload);
+
+            Log::info($json_load);
 
             $ev_uri = getenv('EV_API_URL') . "/" . getenv('EV_API_ACCOUNT') . '/employees';
 
             $r = Request::post($ev_uri)
                 ->sendsJson()
                 ->authenticateWithBasic(getenv('EV_API_LOGIN'), getenv('EV_API_PASSWORD'))
-                ->body(json_encode($payload))
+                ->body($json_load)
                 ->send();
 
             if ($r->code == 201) {
                 Log::info("User added to Easyvista: " . $r->raw_body);
             } else {
-                Log::error("Failed adding user to Easyvista: " . $event->user->email);
+                Log::error("Failed adding user to Easyvista: " . $json_load);
             }
         } catch (\Exception $e) {
             Log::error($e->getFile());

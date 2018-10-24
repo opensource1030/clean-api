@@ -24,7 +24,7 @@ class CompanyDomains extends BaseDataStore
     }
 
     /**
-     * @return CompanyCurrentBillMonthTransformer
+     * @return CompanyDomainsTransformer
      */
     public function getTransformer()
     {
