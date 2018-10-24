@@ -25,10 +25,11 @@ class NotifyEasyVistaUserCreation
                     [
                         "E_MAIL" => $event->user->email,
                         "IDENTIFICATION" => $event->user->identification,
-                        "LAST_NAME" => $event->user->firstName . ', ' . $event->user->lastName,
-                        "DEPARTMENT_ID" => $event->user->companies()->first()->externalId,
+                        "LAST_NAME" => $event->user->lastName . ', ' . $event->user->firstName, #. .. , ...
+                        "DEPARTMENT_ID" => $event->user->companies()->first()->externalId, # 12
                         "AVAILABLE_FIELD_1" => "Needs Update",
-                        "COMMENT_EMPLOYEE" => $event->user->notes
+                        "COMMENT_EMPLOYEE" => $event->user->notes,
+                        "NOTIFICATION_TYPE_ID" => (string) $event->user->notify
                     ]
                 ]
             ];
