@@ -271,7 +271,7 @@ abstract class FilteredApiController extends ApiController
      * This function add a company.id filter to each request based on the Model.
      *
      *  @return Boolean
-     *  Case1: If no Authenticated user: Error.
+     *  Case1: If no Authenticated user and type is not create: Error.
      *  Case2: If user has the "admin" role: All privileges.
      *  Case3: It user has another role: He/She can only get objects with a relationship with his/her own company.
      *
@@ -279,38 +279,47 @@ abstract class FilteredApiController extends ApiController
     public function addFilterToTheRequest($type, $data) {
         $user = \Auth::user();
         
-        if (!isset($user)) {
-            return false;
-        }
+//        if (!isset($user)) {
+//            return false;
+//        }
 
-        $role = $user->roles;
-        $companyId = $user->companyId;
+        if($user) {
+            $role = $user->roles;
+            $companyId = $user->companyId;
 
-        if($role[0]->name == 'admin') {
+            if($role[0]->name == 'admin') {
 
-            return true;
-
-        } else {
-            if ($type == 'create') { //create
-//                return $this->resource->checkModelAndRelationships($data, $companyId);
                 return true;
+
             } else {
-                if($data->input('indexAll') == 0) {
-                    $filter = $this->resource->addFilterToTheRequest($companyId);
-                    $this->setExtraFilters($filter);
-                }
+                if ($type == 'create') { //create
+//                return $this->resource->checkModelAndRelationships($data, $companyId);
+                    return true;
+                } else {
+                    if($data->input('indexAll') == 0) {
+                        $filter = $this->resource->addFilterToTheRequest($companyId);
+                        $this->setExtraFilters($filter);
+                    }
 
-                return true;
+                    return true;
+                }
             }
+        } else {
+            if ($type == 'create')
+                return true;
+
+            return false;
         }
     }
 
     public function addRelationships($data) {
         $user = \Auth::user();
 
-        $role = $user->roles;
-        if($role[0]->name == 'admin') {
-            return $data;
+        if($user) {
+            $role = $user->roles;
+            if($role[0]->name == 'admin') {
+                return $data;
+            }
         }
 
         return $this->resource->addRelationships($data);
