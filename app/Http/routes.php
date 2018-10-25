@@ -105,6 +105,8 @@ $api->version('v1', function ($api) {
     $api->get('resetPassword/{identification}/{code}', ['as' => 'reset.password.credentials', 'uses' => $auth . '@getPasswordFromEmail']);
     $api->get('acceptUser/{identification}/{code}', ['as' => 'activate.email.credentials', 'uses' => $auth . '@acceptUser']);
 
+    $api->post('users', [ 'uses' => 'WA\Http\Controllers\UsersController@create' ]);
+
     // Only for debugging purposes:
     $api->get('deskpro/debug', [
         'middleware' => [],
@@ -710,11 +712,6 @@ $api->version('v1', function ($api) {
             'middleware' => [$scopeMiddleware.':get_user'],
             'as' => 'api.users.show',
             'uses' => $usersController . '@show'
-        ]);
-
-        $api->post('users', [
-            'middleware' => [$scopeMiddleware.':create_user'],
-            'uses' => $usersController . '@create'
         ]);
 
         $api->patch('users/{id}', [
