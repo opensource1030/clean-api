@@ -20,6 +20,8 @@ class NotifyEasyVistaUserCreation
     public function handle(UserCreated $event)
     {
         try {
+            $notify = $event->user->notify ?: 1;
+
             $payload = [
                 "employees" => [
                     [
@@ -29,14 +31,13 @@ class NotifyEasyVistaUserCreation
                         "DEPARTMENT_ID" => $event->user->companies()->first()->externalId, # 12
                         "AVAILABLE_FIELD_1" => "Needs Update",
                         "COMMENT_EMPLOYEE" => $event->user->notes,
-                        "NOTIFICATION_TYPE_ID" => (string) str_ireplace("0","",$event->user->notify)
+                        "NOTIFICATION_TYPE_ID" => (string)str_ireplace("0", "", $notify)
                     ]
                 ]
             ];
 
-            $json_load= json_encode($payload);
+            $json_load = json_encode($payload);
 
-            Log::info($json_load);
 
             $ev_uri = getenv('EV_API_URL') . "/" . getenv('EV_API_ACCOUNT') . '/employees';
 
@@ -48,8 +49,10 @@ class NotifyEasyVistaUserCreation
 
             if ($r->code == 201) {
                 Log::info("User added to Easyvista: " . $r->raw_body);
+                Log::info($json_load);
             } else {
-                Log::error("Failed adding user to Easyvista: " . $json_load);
+                Log::error("Failed adding user to Easyvista: " . $event->user->email);
+                Log::info($json_load);
             }
         } catch (\Exception $e) {
             Log::error($e->getFile());

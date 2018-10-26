@@ -525,7 +525,7 @@ class EloquentUser extends AbstractRepository implements UserInterface
         }
 
         if (isset($data['email']) && $data['email'] !== '') {
-            $user->email = $data['email'];
+            $user->email = strtolower($data['email']);
         }
 
         if (isset($data['alternateEmail']) && $data['alternateEmail'] !== '') {
