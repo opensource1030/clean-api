@@ -54,7 +54,7 @@ class SSO extends ApiController
         // IF VALIDATOR EMAIL OK => EMAIL OK!
         if (!$validator->fails()) {
             // THIS EMAIL HAS COMPANY RELATED?
-            $idCompany = $this->company->getIdByUserEmail($email);
+            $idCompany = $this->company->getIdByUserEmail(strtolower($email));
             
             if ($idCompany > 0)   {
                 $company = $this->company->byId($idCompany);
