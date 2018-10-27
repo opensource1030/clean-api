@@ -1,4 +1,4 @@
-role :app, %w{54.91.140.104}
+role :app, %w{34.229.80.114}
 
 set :stage, :production
 set :deploy_to, '/home/forge/api.wirelessanalytics.com/'
@@ -6,8 +6,6 @@ set :branch, "env/prod"
 set :keep_releases, 4
 set :log_level, :debug
 
-#require custom config
-# require './config/myconfig.rb'
 set :ssh_options, {
   user: 'forge'
 }
@@ -28,12 +26,9 @@ namespace :composer do
 end
 
 namespace :deploy do
-
-  before "deploy:updated", "deploy:set_permissions:acl"
-  after :published, "ops:put_env"
-
-  after :published, "composer:install"
-  after :published, "laravel:permissions"
-  after :published, "laravel:migrate"
-  after :published, "ops:reset_app"
+    after :published, "ops:put_env"
+    after :published, "composer:install"
+    after :published, "laravel:permissions"
+    #after :published, "laravel:migrate"
+    after :published, "laravel:optimize"
 end
