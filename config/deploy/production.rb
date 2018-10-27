@@ -1,19 +1,16 @@
-role :app, %w{10.1.20.24}
+role :app, %w{34.229.80.114}
 
 set :stage, :production
-set :deploy_to, '/home/deploy/webapps/clean/api'
+set :deploy_to, '/home/forge/api.wirelessanalytics.com/'
 set :branch, "env/prod"
 set :keep_releases, 4
 set :log_level, :debug
 
-#require custom config
-# require './config/myconfig.rb'
-
 set :ssh_options, {
-  user: 'deploy'
+  user: 'forge'
 }
 
-set :tmp_dir, '/home/deploy/tmp'
+set :tmp_dir, '/home/forge/api.wirelessanalytics.com/tmp'
 
 namespace :composer do
 
@@ -29,13 +26,9 @@ namespace :composer do
 end
 
 namespace :deploy do
-
-  before "deploy:updated", "deploy:set_permissions:acl"
-  after :published, "ops:put_env"
-
-  after :published, "composer:install"
-  after :published, "laravel:permissions"
-  # after :published, "laravel:migrate"
-  
-  after :published, "ops:reset_app"
+    after :published, "ops:put_env"
+    after :published, "composer:install"
+    after :published, "laravel:permissions"
+    #after :published, "laravel:migrate"
+    after :published, "laravel:optimize"
 end
