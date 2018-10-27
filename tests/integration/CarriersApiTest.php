@@ -1,14 +1,11 @@
 <?php
 
-use Laravel\Lumen\Testing\DatabaseMigrations;
 
-class CarriersApiTest extends TestCase
+
+class CarriersApiTest extends \TestCase
 {
-    use DatabaseMigrations;
+    use \Laravel\Lumen\Testing\DatabaseMigrations;
 
-    /**
-     * A basic functional test for Carriers.
-     */
     public function testGetCarriers()
     {
         $carrier = factory(\WA\DataStore\Carrier\Carrier::class)->create();

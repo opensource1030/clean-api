@@ -3,6 +3,7 @@
 namespace WA\Repositories\Address;
 
 use WA\Repositories\AbstractRepository;
+use WA\DataStore\Address\Address;
 
 /**
  * Class EloquentAddress.
@@ -116,5 +117,66 @@ class EloquentAddress extends AbstractRepository implements AddressInterface
         }
 
         return $this->model->destroy($id);
+    }
+
+    /**
+     * Retrieve the filters for the Model.
+     *
+     * @param int  $companyId
+     *
+     * @return Array
+     */
+    public function addFilterToTheRequest($companyId) {
+        $aux['companies.id'] = (string) $companyId;
+        return $aux;
+    }
+
+    /**
+     * Check if the Model and/or its relationships are related to the Company of the User.
+     *
+     * @param JSON  $json : The Json request.
+     * @param int  $companyId
+     *
+     * @return Boolean
+     */
+    public function checkModelAndRelationships($json, $companyId) {
+        if(!isset($json['relationships'])) {
+            return false;
+        } else {
+            $relations = $json['relationships'];
+            if (isset($relations['companies'])) {
+                foreach ($relations['companies']['data'] as $value) {
+                    if ($value['type'] == 'companies' && $value['id'] == $companyId) {
+                        return  true;
+                    }
+                }
+
+                return false;
+            } else {
+                return false;
+            }
+        }
+    }
+
+    /**
+     * Add the attributes or the relationships needed.
+     *
+     * @param $data : The Data request.
+     *
+     * @return $data: The Data with the minimum relationship needed.
+     */
+    public function addRelationships($data) {
+        if(!isset($data['relationships']['companies'])) {
+            $aux = [
+                'type' => 'companies',
+                'id' => \Auth::user()->companyId
+            ];
+
+            $data['relationships']['companies']['data'] = [];
+
+            array_push($data['relationships']['companies']['data'], $aux);
+        }
+
+        return $data;
     }
 }

@@ -9,7 +9,7 @@
 $factory->define(WA\DataStore\User\User::class, function (Faker\Generator $faker) {
     return [
         'uuid' => $faker->uuid,
-        'identification' => uniqid('WA-'),
+        'identification' => uniqid(strtoupper(str_random(2)) . '-'),
         'email' => $email = $faker->safeEmail,
         'alternateEmail' => $faker->safeEmail,
         'password' => 'user',
@@ -32,7 +32,7 @@ $factory->define(WA\DataStore\User\User::class, function (Faker\Generator $faker
         'notes' => null,
         'level' => 0,
         'notify' => 0,
-        'companyId' => $faker->numberBetween(2, 5),
+        'companyId' => $faker->numberBetween(1, 5),
         'syncId' => null,
         'supervisorId' => $faker->numberBetween(1, 5),
         'externalId' => null,

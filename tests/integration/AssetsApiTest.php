@@ -1,14 +1,11 @@
 <?php
 
-use Laravel\Lumen\Testing\DatabaseMigrations;
 
-class AssetsApiTest extends TestCase
+
+class AssetsApiTest extends \TestCase
 {
-    use DatabaseMigrations;
+    use \Laravel\Lumen\Testing\DatabaseMigrations;
 
-    /**
-     * A basic functional test for Assets.
-     */
     public function testGetAssets()
     {
         factory(\WA\DataStore\Asset\Asset::class, 40)->create();
@@ -33,7 +30,7 @@ class AssetsApiTest extends TestCase
 
     public function testGetAssetById()
     {
-        $asset = factory(\WA\DataStore\Asset\Asset::class)->create();
+        $asset = factory(\WA\DataStore\Asset\Asset::class)->create(['userId' => $this->mainUser->id]);
 
         $this->json('GET', 'assets/'.$asset->id)
             ->seeJson([

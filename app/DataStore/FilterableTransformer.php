@@ -76,21 +76,17 @@ abstract class FilterableTransformer extends TransformerAbstract
 
     }
 
-    private function createTransformer($finder) 
+    protected function createTransformer($var)
     {
-        if($finder === 'devicevariations') {
-            return "\\WA\\DataStore\\DeviceVariation\\DeviceVariationTransformer";
-        }
+        if($var === 'categoryapps') { return "\\WA\\DataStore\\Category\\CategoryAppTransformer"; }
+        if($var === 'devicetypes') { return "\\WA\\DataStore\\DeviceType\\DeviceTypeTransformer"; }
+        if($var === 'devicevariations') { return "\\WA\\DataStore\\DeviceVariation\\DeviceVariationTransformer"; }
+        if($var === 'serviceitems') { return "\\WA\\DataStore\\ServiceItem\\ServiceItemTransformer"; }
+        if($var === 'udlvalues') { return "\\WA\\DataStore\\UdlValue\\UdlValueTransformer"; }
+        if($var === 'globalsettings') { return "\\WA\\DataStore\\GlobalSetting\\GlobalSettingTransformer"; }
+        if($var === 'globalsettingvalues') { return "\\WA\\DataStore\\GlobalSettingValue\\GlobalSettingValueTransformer"; }
 
-        if($finder === 'devicetypes') {
-            return "\\WA\\DataStore\\DeviceType\\DeviceTypeTransformer";
-        }
-
-        if($finder === 'udlvalues') {
-            return "\\WA\\DataStore\\UdlValue\\UdlValueTransformer";
-        }
-
-        $model = title_case(str_singular($finder));
+        $model = title_case(str_singular($var));
         return "\\WA\\DataStore\\${model}\\${model}Transformer";
     }
 }

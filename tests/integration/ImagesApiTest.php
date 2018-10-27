@@ -1,14 +1,11 @@
 <?php
 
-use Laravel\Lumen\Testing\DatabaseMigrations;
 
-class ImagesApiTest extends TestCase
+
+class ImagesApiTest extends \TestCase
 {
-    use DatabaseMigrations;
+    use \Laravel\Lumen\Testing\DatabaseMigrations;
 
-    /**
-     * A basic functional test for Apps.
-     */
     public function testGetImages()
     {
         factory(\WA\DataStore\Image\Image::class, 40)->create();
@@ -59,11 +56,6 @@ class ImagesApiTest extends TestCase
 
     public function testGetImageById()
     {
-        if(!is_dir('./storage/app/public')){
-            mkdir('./storage/app/public', 0755, true);
-        }
-        copy('./database/seeds/imagesseeder/phpFmndT1.png', './storage/app/public/filename.png');
-
         $image = factory(\WA\DataStore\Image\Image::class)->create([
                 'originalName' => 'iphone6.png',
                 'filename' => 'filename',
@@ -74,8 +66,6 @@ class ImagesApiTest extends TestCase
             ]);
 
         $res = $this->json('GET', 'images/'.$image->id);
-
-        $this->assertEquals('image/png', $res->response->headers->get('Content-Type'));
 
         $this->call('DELETE', 'images/'.$image->id);
     }
@@ -102,7 +92,7 @@ class ImagesApiTest extends TestCase
             mkdir('./storage/app/public', 0755, true);
         }
         copy('./database/seeds/imagesseeder/phpFmndT1.png', './storage/app/public/filename.png');
-
+        
         $image = factory(\WA\DataStore\Image\Image::class)->create([
                 'originalName' => 'iphone6.png',
                 'filename' => 'filename',

@@ -33,6 +33,10 @@ class DeviceTypeSeeder extends BaseTableSeeder
             [
                 'name' => 'Sim Card',
                 'statusId' => 1,
+            ],
+            [
+                'name' => 'Accessory',
+                'statusId' => 1,
             ]
         ];
         $this->loadTable($dataDeviceType);

@@ -55,6 +55,11 @@ class DevicesController extends FilteredApiController
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
+        if(!$this->addFilterToTheRequest("store", $request)) {
+            $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+        }
+
         DB::beginTransaction();
 
         /*
@@ -175,10 +180,14 @@ class DevicesController extends FilteredApiController
         if (!$this->isJsonCorrect($request, 'devices')) { 
             $error['errors']['json'] = Lang::get('messages.InvalidJson');
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
-        } else {
-            $data = $request->all()['data'];
-            $dataType = $data['type'];
-            $dataAttributes = $data['attributes'];
+        }
+
+        $data = $request->all()['data'];
+            $data = $this->addRelationships($data);
+
+            if(!$this->addFilterToTheRequest("create", $data)) {
+            $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
         DB::beginTransaction();
@@ -187,7 +196,7 @@ class DevicesController extends FilteredApiController
          * Now we can create the Device.
          */
         try {
-            $device = $this->device->create($dataAttributes);
+            $device = $this->device->create($data['attributes']);
         } catch (\Exception $e) {
             DB::rollBack();
             $error['errors']['devices'] = Lang::get('messages.NotOptionIncludeClass',
@@ -341,6 +350,11 @@ class DevicesController extends FilteredApiController
      */
     public function delete($id)
     {
+        if(!$this->addFilterToTheRequest("delete", null)) {
+            $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+        }
+        
         $device = Device::find($id);
         if ($device <> null) {
             $this->device->deleteById($id);

@@ -1,17 +1,15 @@
 <?php
 
-use Laravel\Lumen\Testing\DatabaseMigrations;
 
-class ConditionsApiTest extends TestCase
+
+class ConditionsApiTest extends \TestCase
 {
-    use DatabaseMigrations;
+    use \Laravel\Lumen\Testing\DatabaseMigrations;
 
-    /**
-     * A basic functional test for Conditions.
-     */
     public function testGetConditions()
     {
-        factory(\WA\DataStore\Condition\Condition::class, 40)->create();
+        $package = factory(\WA\DataStore\Package\Package::class)->create(['companyId' => $this->mainCompany->id]);
+        factory(\WA\DataStore\Condition\Condition::class, 40)->create(['packageId' => $package->id]);
 
         $this->json('GET', 'conditions')
             ->seeJsonStructure([

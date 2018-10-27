@@ -1,15 +1,11 @@
 <?php
 
-use Laravel\Lumen\Testing\DatabaseMigrations;
-use WA\DataStore\Modification\Modification;
 
-class ModificationsApiTest extends TestCase
+
+class ModificationsApiTest extends \TestCase
 {
-    use DatabaseMigrations;
+    use \Laravel\Lumen\Testing\DatabaseMigrations;
 
-    /**
-     * A basic functional test for modifications.
-     */
     public function testGetModifications()
     {
         $modification = factory(\WA\DataStore\Modification\Modification::class)->create();

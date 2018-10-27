@@ -2,6 +2,7 @@
 
 return [
 
+    'model' => 'WA\DataStore\User\User',
     /*
     |--------------------------------------------------------------------------
     | Authentication Defaults

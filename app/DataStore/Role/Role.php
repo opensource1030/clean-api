@@ -35,6 +35,17 @@ class Role extends BaseDataStore
         parent::__construct($attributes);
         $this->table = Config::get('entrust.roles_table');
     }
+
+    /**
+     * Get the transformer instance.
+     *
+     * @return mixed
+     */
+    public function findForName($name)
+    {
+        return Role::where('name', $name)->first();
+    }
+
     /**
      * Get the transformer instance.
      *
@@ -44,6 +55,7 @@ class Role extends BaseDataStore
     {
         return new RoleTransformer();
     }
+
     /**
      * @return array
      */

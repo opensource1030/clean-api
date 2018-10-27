@@ -1,11 +1,10 @@
 <?php
 
-use Laravel\Lumen\Testing\DatabaseMigrations;
-use WA\DataStore\Image\Image;
 
-class PresetsApiTest extends TestCase
+
+class PresetsApiTest extends \TestCase
 {
-    use DatabaseMigrations;
+    use \Laravel\Lumen\Testing\DatabaseMigrations;
 
     public function testGetPresets()
     {
@@ -241,15 +240,14 @@ class PresetsApiTest extends TestCase
 
         $device1 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create()->id;
         $device2 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create()->id;
-        $company = factory(\WA\DataStore\Company\Company::class)->create()->id;
-
+        
         $this->json('POST', 'presets',
             [
                 'data' => [
                     'type' => 'presets',
                     'attributes' => [
                         'name' => 'namePreset',
-                        'companyId' => $company,
+                        'companyId' => 1,
                     ],
                     'relationships' => [
                         'devicevariations' => [
@@ -257,12 +255,7 @@ class PresetsApiTest extends TestCase
                                 ['type' => 'devicevariations', 'id' => $device1],
                                 ['type' => 'devicevariations', 'id' => $device2],
                             ],
-                        ],
-                        'companies' => [
-                            'data' => [
-                                ['type' => 'companies', 'id' => $company],
-                            ],
-                        ],
+                        ]
                     ],
                 ],
             ]
@@ -270,7 +263,7 @@ class PresetsApiTest extends TestCase
             [
                 'type' => 'presets',
                 'name' => 'namePreset',
-                'companyId' => null,
+                'companyId' => 1,
             ]);
     }
 
@@ -360,7 +353,7 @@ class PresetsApiTest extends TestCase
         [
             'type' => 'presets',
             'name' => 'namePreset',
-            'companyId' => null,
+            'companyId' => 1,
         ]);
     }
 
@@ -388,7 +381,7 @@ class PresetsApiTest extends TestCase
         [
             'type' => 'presets',
             'name' => 'namePreset',
-            'companyId' => null,
+            'companyId' => 1,
         ]);
     }
 
@@ -416,7 +409,7 @@ class PresetsApiTest extends TestCase
         [
             'type' => 'presets',
             'name' => 'namePreset',
-            'companyId' => null,
+            'companyId' => 1,
         ]);
     }
 
@@ -444,7 +437,7 @@ class PresetsApiTest extends TestCase
         [
             'type' => 'presets',
             'name' => 'namePreset',
-            'companyId' => null,
+            'companyId' => 1,
         ]);
     }
 

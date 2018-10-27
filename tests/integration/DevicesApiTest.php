@@ -1,20 +1,20 @@
 <?php
 
-use Laravel\Lumen\Testing\DatabaseMigrations;
-use WA\DataStore\Device\Device;
-use WA\DataStore\Company\Company;
-use WA\DataStore\Carrier\Carrier;
 
-class DevicesApiTest extends TestCase
+
+class DevicesApiTest extends \TestCase
 {
-    use DatabaseMigrations;
+    use \Laravel\Lumen\Testing\DatabaseMigrations;
 
     public function testGetDevices()
     {
-        factory(\WA\DataStore\Device\Device::class, 40)->create();
+        $devices = factory(\WA\DataStore\Device\Device::class, 40)->create();
+        foreach ($devices as $device) {
+            factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create(['companyId' => $this->mainCompany->id, 'deviceId' => $device->id]);
+        }
 
         $res = $this->json('GET', 'devices');
-
+        //\Log::debug("testGetDevices: ".print_r($res->response->getContent(), true));
         $res->seeJsonStructure([
             'data' => [
                 0 => [
@@ -64,6 +64,7 @@ class DevicesApiTest extends TestCase
     public function testGetDeviceByIdIfExists()
     {
         $device = factory(\WA\DataStore\Device\Device::class)->create(['externalId' => 1]);
+        $devVar = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create(['companyId' => $this->mainCompany->id, 'deviceId' => $device->id]);
 
         $res = $this->json('GET', 'devices/'.$device->id)
             ->seeJson([
@@ -117,6 +118,7 @@ class DevicesApiTest extends TestCase
     public function testGetDeviceByIdandIncludesImages()
     {
         $device = factory(\WA\DataStore\Device\Device::class)->create();
+        $devVar = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create(['companyId' => $this->mainCompany->id, 'deviceId' => $device->id]);
 
         $image1 = factory(\WA\DataStore\Image\Image::class)->create()->id;
         $image2 = factory(\WA\DataStore\Image\Image::class)->create()->id;
@@ -450,6 +452,9 @@ class DevicesApiTest extends TestCase
 
     public function testUpdateDevice()
     {
+        $company1Id = factory(\WA\DataStore\Company\Company::class)->create();
+        $company2Id = factory(\WA\DataStore\Company\Company::class)->create();
+
         $device = factory(\WA\DataStore\Device\Device::class)->create(
             ['properties' => 'properties1', 'name' => 'Phone1']
         );
@@ -477,7 +482,7 @@ class DevicesApiTest extends TestCase
         $price1 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create(
             [
                 'carrierId' => 1,
-                'companyId' => 1,
+                'companyId' => $company1Id,
                 'priceRetail' => 100,
                 'price1' => 100,
                 'price2' => 100,
@@ -487,7 +492,7 @@ class DevicesApiTest extends TestCase
         $price2 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create(
             [
                 'carrierId' => 1,
-                'companyId' => 2,
+                'companyId' => $company2Id,
                 'priceRetail' => 200,
                 'price1' => 200,
                 'price2' => 200,
@@ -497,7 +502,7 @@ class DevicesApiTest extends TestCase
         $price3 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create(
             [
                 'carrierId' => 2,
-                'companyId' => 1,
+                'companyId' => $company1Id,
                 'priceRetail' => 300,
                 'price1' => 300,
                 'price2' => 300,
@@ -507,7 +512,7 @@ class DevicesApiTest extends TestCase
         $price4 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create(
             [
                 'carrierId' => 2,
-                'companyId' => 2,
+                'companyId' => $company2Id,
                 'priceRetail' => 400,
                 'price1' => 400,
                 'price2' => 400,
@@ -517,7 +522,7 @@ class DevicesApiTest extends TestCase
         $price5 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create(
             [
                 'carrierId' => 1,
-                'companyId' => 1,
+                'companyId' => $company1Id,
                 'priceRetail' => 500,
                 'price1' => 500,
                 'price2' => 500,
@@ -527,7 +532,7 @@ class DevicesApiTest extends TestCase
         $price6 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create(
             [
                 'carrierId' => 1,
-                'companyId' => 2,
+                'companyId' => $company2Id,
                 'priceRetail' => 600,
                 'price1' => 600,
                 'price2' => 600,
@@ -537,7 +542,7 @@ class DevicesApiTest extends TestCase
         $price7 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create(
             [
                 'carrierId' => 2,
-                'companyId' => 1,
+                'companyId' => $company1Id,
                 'priceRetail' => 700,
                 'price1' => 700,
                 'price2' => 700,
@@ -547,7 +552,7 @@ class DevicesApiTest extends TestCase
         $price8 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create(
             [
                 'carrierId' => 2,
-                'companyId' => 2,
+                'companyId' => $company2Id,
                 'priceRetail' => 800,
                 'price1' => 800,
                 'price2' => 800,
@@ -578,7 +583,7 @@ class DevicesApiTest extends TestCase
                                     'attributes' => [
                                         'carrierId' => 1,
                                         'deviceId'=> $device->id,
-                                        'companyId' => 1,
+                                        'companyId' => $company1Id,
                                         'priceRetail' => 1100,
                                         'price1' => 1100,
                                         'price2' => 1100,
@@ -591,7 +596,7 @@ class DevicesApiTest extends TestCase
                                     'attributes' => [
                                         'carrierId' => 1,
                                         'deviceId'=> $device->id,
-                                        'companyId' => 2,
+                                        'companyId' => $company2Id,
                                         'priceRetail' => 1200,
                                         'price1' => 1200,
                                         'price2' => 1200,
@@ -604,7 +609,7 @@ class DevicesApiTest extends TestCase
                                     'attributes' => [
                                         'carrierId' => 2,
                                         'deviceId'=> $device->id,
-                                        'companyId' => 1,
+                                        'companyId' => $company1Id,
                                         'priceRetail' => 1300,
                                         'price1' => 1300,
                                         'price2' => 1300,
@@ -617,7 +622,7 @@ class DevicesApiTest extends TestCase
                                     'attributes' => [
                                         'carrierId' => 2,
                                         'deviceId'=> $device->id,
-                                        'companyId' => 2,
+                                        'companyId' => $company2Id,
                                         'priceRetail' => 1400,
                                         'price1' => 1400,
                                         'price2' => 1400,
@@ -630,7 +635,7 @@ class DevicesApiTest extends TestCase
                                     'attributes' => [
                                         'carrierId' => 1,
                                         'deviceId'=> $device->id,
-                                        'companyId' => 1,
+                                        'companyId' => $company1Id,
                                         'priceRetail' => 1500,
                                         'price1' => 1500,
                                         'price2' => 1500,
@@ -643,7 +648,7 @@ class DevicesApiTest extends TestCase
                                     'attributes' => [
                                         'carrierId' => 1,
                                         'deviceId'=> $device->id,
-                                        'companyId' => 2,
+                                        'companyId' => $company2Id,
                                         'priceRetail' => 1600,
                                         'price1' => 1600,
                                         'price2' => 1600,
@@ -656,7 +661,7 @@ class DevicesApiTest extends TestCase
                                     'attributes' => [
                                         'carrierId' => 2,
                                         'deviceId'=> $device->id,
-                                        'companyId' => 1,
+                                        'companyId' => $company1Id,
                                         'priceRetail' => 1700,
                                         'price1' => 1700,
                                         'price2' => 1700,
@@ -669,7 +674,7 @@ class DevicesApiTest extends TestCase
                                     'attributes' => [
                                         'carrierId' => 2,
                                         'deviceId'=> $device->id,
-                                        'companyId' => 2,
+                                        'companyId' => $company2Id,
                                         'priceRetail' => 1800,
                                         'price1' => 1800,
                                         'price2' => 1800,
@@ -681,7 +686,7 @@ class DevicesApiTest extends TestCase
                     ],
                 ],
             ])
-            //Log::debug("testGetPackageByIdandIncludesDevices: ".print_r($res->response->getContent(), true));
+            //Log::debug("testUpdateDevice: ".print_r($res->response->getContent(), true));
             ->seeJson(
             [
                 'type' => 'devices',

@@ -1,22 +1,14 @@
 <?php
 
-namespace WA\Testing\Auth;
+//use WA\Auth\Login;
+//use TestCase;
+//use Cache;
+//use Log;
 
-use Laravel\Lumen\Testing\DatabaseMigrations;
-use WA\Auth\Login;
-use TestCase;
-use Cache;
-use Log;
-
-class Saml2ApiTest extends TestCase
+class Saml2ApiTest extends \TestCase
 {
-    use DatabaseMigrations;
+    use \Laravel\Lumen\Testing\DatabaseMigrations;
 
-    /*
-    return response()
-        ->json(['error' => 'Invalid Email', 'message' => 'Please, enter a valid Email Address.'])
-        ->setStatusCode($this->status_codes['conflict']);
-    */
     public function testApiDoSSOInvalidEmail()
     {
         // CREATE ARGUMENTS
@@ -29,11 +21,6 @@ class Saml2ApiTest extends TestCase
         ]);
     }
 
-    /*
-    return response()
-            ->json(['error' => 'Company Not Found', 'message' => 'Please, contact with the administrator of your company.'])
-            ->setStatusCode($this->status_codes['conflict']);
-    */
     public function testApiDoSSOCompanyNotExist() 
     {
         // CREATE ARGUMENTS
@@ -46,11 +33,6 @@ class Saml2ApiTest extends TestCase
         ]);
     }
 
-    /*
-    return response()
-        ->json(['error' => 'User Not Found, Register Required', 'message' => 'Please, register a new user.'])
-        ->setStatusCode($this->status_codes['conflict']);
-    */
     public function testApiDoSSOUserNotExist()
     {
         $emailUserNotExist = 'dev@testing.com';
@@ -67,11 +49,6 @@ class Saml2ApiTest extends TestCase
         ]);
     }
 
-    /*
-    return response()
-        ->json(['error' => 'User Found, Password Required', 'message' => 'Please, enter your password.'])
-        ->setStatusCode($this->status_codes['conflict']);
-    */
     public function testApiDoSSOEmailPassword()
     {
         $email = 'dev@withpassword.com';
@@ -89,12 +66,7 @@ class Saml2ApiTest extends TestCase
             'message' => 'Please, enter your password.',
         ]);
     }
-
-    /*
-    return response()
-        ->json(['error' => 'URL Not Found', 'message' => 'Url to redirect not found.'])
-        ->setStatusCode($this->status_codes['conflict']);
-    */
+    
     public function testApiDoSSOEmailMicrosoftFail()
     {
         // CREATE ARGUMENTS

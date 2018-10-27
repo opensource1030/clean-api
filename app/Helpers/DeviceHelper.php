@@ -37,7 +37,7 @@ class DeviceHelper extends AuthorizedController
                 $id = $this->randGenerator($devicetype->name);
             }
 
-            $device = app()->make('\WA\Repositories\Device\DeviceInterface');
+            $device = app()->make('WA\Repositories\Device\DeviceInterface');
             $dup_id = $device->byIdentification($id);
 
             if (count($dup_id)) {

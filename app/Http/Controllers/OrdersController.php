@@ -55,6 +55,11 @@ class OrdersController extends FilteredApiController
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
+        if(!$this->addFilterToTheRequest("store", $request)) {
+            $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+        }
+
         DB::beginTransaction();
 
         /*
@@ -105,20 +110,6 @@ class OrdersController extends FilteredApiController
                 }
             }
 
-            if (isset($dataRelationships['serviceitems']) && $success) {
-                if (isset($dataRelationships['serviceitems']['data'])) {
-                    $data_serviceitems = $this->parseJsonToArray($dataRelationships['serviceitems']['data'], 'serviceitems');
-                    try {
-                        $order->serviceitems()->sync($data_serviceitems);
-                    } catch (\Exception $e) {
-                        $success = false;
-                        $error['errors']['serviceitems'] = Lang::get('messages.NotOptionIncludeClass',
-                            ['class' => 'Order', 'option' => 'updated', 'include' => 'Service Items']);
-                        //$error['errors']['Message'] = $e->getMessage();
-                    }
-                }
-            }
-
             if (isset($dataRelationships['devicevariations']) && $success) {
                 if (isset($dataRelationships['devicevariations']['data'])) {
                     $data_devices = $this->parseJsonToArray($dataRelationships['devicevariations']['data'], 'devicevariations');
@@ -136,6 +127,7 @@ class OrdersController extends FilteredApiController
 
         if ($success) {
             DB::commit();
+            $this->addOrderToTransition($order, $data['attributes']);
             return $this->response()->item($order, new OrderTransformer(),
                 ['key' => 'orders'])->setStatusCode($this->status_codes['created']);
         } else {
@@ -152,7 +144,7 @@ class OrdersController extends FilteredApiController
     public function create(Request $request)
     {
         $success = true;
-        $data_apps = $data_serviceitems = $data_devices = array();
+        $data_apps = $data_devices = array();
 
         /*
          * Checks if Json has data, data-type & data-attributes.
@@ -162,13 +154,20 @@ class OrdersController extends FilteredApiController
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
+        $data = $request->all()['data'];
+        $data = $this->addRelationships($data);
+
+        if(!$this->addFilterToTheRequest("create", $data)) {
+            $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+        }
+
         DB::beginTransaction();
 
         /*
          * Now we can create the Order.
          */
         try {
-            $data = $request->all()['data'];
             $order = $this->order->create($data['attributes']);
 
             if(!$order){
@@ -202,20 +201,6 @@ class OrdersController extends FilteredApiController
                 }
             }
 
-            if (isset($dataRelationships['serviceitems'])) {
-                if (isset($dataRelationships['serviceitems']['data'])) {
-                    $data_serviceitems = $this->parseJsonToArray($dataRelationships['serviceitems']['data'], 'serviceitems');
-                    try {
-                        $order->serviceitems()->sync($data_serviceitems);
-                    } catch (\Exception $e) {
-                        $success = false;
-                        $error['errors']['serviceitems'] = Lang::get('messages.NotOptionIncludeClass',
-                            ['class' => 'Order', 'option' => 'created', 'include' => 'Service Items']);
-                        //$error['errors']['Message'] = $e->getMessage();
-                    }
-                }
-            }
-
             if (isset($dataRelationships['devicevariations']) && $success) {
                 if (isset($dataRelationships['devicevariations']['data'])) {
                     $data_devices = $this->parseJsonToArray($dataRelationships['devicevariations']['data'], 'devicevariations');
@@ -233,8 +218,7 @@ class OrdersController extends FilteredApiController
 
         if ($success) {
             DB::commit();
-
-            $res = $this->sendConfirmationEmail($data['attributes']['userId'], 'Order');
+            $this->addOrderToTransition($order, $data['attributes']);
             return $this->response()->item($order, new OrderTransformer(), ['key' => 'orders'])
                         ->setStatusCode($this->status_codes['created']);
         } else {
@@ -250,6 +234,11 @@ class OrdersController extends FilteredApiController
      */
     public function delete($id)
     {
+        if(!$this->addFilterToTheRequest("delete", null)) {
+            $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+        }
+        
         $order = Order::find($id);
         if ($order != null) {
             $this->order->deleteById($id);
@@ -264,6 +253,34 @@ class OrdersController extends FilteredApiController
         } else {
             $error['errors']['delete'] = Lang::get('messages.NotDeletedClass', ['class' => 'Order']);
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+        }
+    }
+
+    private function addOrderToTransition($order, $attributes) {
+        \Log::debug("OrdersController@updateOrderEvent");
+        //\Log::debug("OrdersController@updateOrderEvent - attributes.status: " . $attributes['status']);
+        //\Log::debug("OrdersController@updateOrderEvent - order.status: " . $order->status);
+
+        $workflow = \Workflow::get($order);
+
+        if ($order->status == 'New') {
+            \Log::debug('Transition - Create');
+            $workflow->apply($order, 'create');
+            $order->save();
+        } else if ($order->status == 'Approval' && $attributes['status'] == 'Deliver') {
+            \Log::debug('Transition - Accept');
+            $workflow->apply($order, 'accept');
+            $order->save();
+        } else if ($order->status == 'Approval' && $attributes['status'] == 'Denied') {
+            \Log::debug('Transition - Deny');
+            $workflow->apply($order, 'deny');
+            $order->save();
+        } else if ($order->status == 'Deliver' && $attributes['status'] == 'Delivered') {
+            \Log::debug('Transition - Send');
+            $workflow->apply($order, 'send');
+            $order->save();
+        } else {
+            \Log::debug('Transition - NONE');
         }
     }
 }

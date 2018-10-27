@@ -1,14 +1,8 @@
 <?php
 
-namespace WA\Testing\Auth;
-
-use Laravel\Lumen\Testing\DatabaseMigrations;
-use TestCase;
-use Cache;
-
-class AuthControllerTest extends TestCase
+class AuthControllerTest extends \TestCase
 {
-    use DatabaseMigrations;
+    use \Laravel\Lumen\Testing\DatabaseMigrations;
 
     public function testAccessToken()
     {

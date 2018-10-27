@@ -21,7 +21,7 @@ class UserTransformer extends FilterableTransformer
         'roles',
         'allocations',
         'contents',
-        'udls',
+        'udlvalues',
         'addresses'
     ];
 
@@ -66,7 +66,8 @@ class UserTransformer extends FilterableTransformer
             'defaultLocationId'     => $user->defaultLocationId,
             'deleted_at'            => $user->deleted_at,
             'created_at'            => $user->created_at,
-            'updated_at'            => $user->updated_at
+            'updated_at'            => $user->updated_at,
+            'deskproJwt'            => $user->deskproJwt
         ];
     }
 

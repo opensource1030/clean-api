@@ -1,11 +1,10 @@
 <?php
 
-use Laravel\Lumen\Testing\DatabaseMigrations;
 use WA\Http\Controllers\ApiController;
 
-class BaseApiTest extends TestCase
+class BaseApiTest extends \TestCase
 {
-    use DatabaseMigrations;
+    use \Laravel\Lumen\Testing\DatabaseMigrations;
 
     public function testCanCallHome()
     {

@@ -154,19 +154,15 @@ abstract class ApiController extends BaseController
         }
     }
 
-    private function createTransformer($var) 
+    protected function createTransformer($var)
     {
-        if($var === 'devicevariations') {
-            return "\\WA\\DataStore\\DeviceVariation\\DeviceVariationTransformer";
-        }
-
-        if($var === 'devicetypes') {
-            return "\\WA\\DataStore\\DeviceType\\DeviceTypeTransformer";
-        }
-
-        if($var === 'udlvalues') {
-            return "\\WA\\DataStore\\UdlValue\\UdlValueTransformer";
-        }
+        if($var === 'categoryapps') { return "\\WA\\DataStore\\Category\\CategoryAppTransformer"; }
+        if($var === 'devicetypes') { return "\\WA\\DataStore\\DeviceType\\DeviceTypeTransformer"; }
+        if($var === 'devicevariations') { return "\\WA\\DataStore\\DeviceVariation\\DeviceVariationTransformer"; }
+        if($var === 'serviceitems') { return "\\WA\\DataStore\\ServiceItem\\ServiceItemTransformer"; }
+        if($var === 'udlvalues') { return "\\WA\\DataStore\\UdlValue\\UdlValueTransformer"; }
+        if($var === 'globalsettings') { return "\\WA\\DataStore\\GlobalSetting\\GlobalSettingTransformer"; }
+        if($var === 'globalsettingvalues') { return "\\WA\\DataStore\\GlobalSettingValue\\GlobalSettingValueTransformer"; }
 
         $model = title_case(str_singular($var));
         return "\\WA\\DataStore\\${model}\\${model}Transformer";
@@ -206,25 +202,54 @@ abstract class ApiController extends BaseController
      *  @param: $type = Model Created.
      */
     public function sendConfirmationEmail($userId, $type) {
-
         try {
-            $res = \Illuminate\Support\Facades\Mail::send(
-                'emails.notifications.new_order_received', // VIEW NAME
-                [
-                    'userId' => $userId,
-                    'type' => $type
-                ], // PARAMETERS PASSED TO THE VIEW
-                function ($message) use ($type) {
-                    $message->subject('New '.$type.' Received');
-                    $message->from(env('MAIL_FROM_ADDRESS'));
-                    $message->to(env('MAIL_USERNAME_TO'));
-                    // @TODO: Send Mail To The Logged User who Made The Order.
-                } // CALLBACK
-            );
 
+            $userOrder = \WA\DataStore\User\User::find($userId);
+            if(!$userOrder) {
+                return false;
+            }
+
+            $adminRole = \WA\DataStore\Role\Role::where('name', 'admin')->first();
+            if(!$adminRole) {
+                return false;
+            }
+
+            $listOfAdmins = \WA\DataStore\User\UserRole::where('role_id', $adminRole->id)->get();
+            if (count($listOfAdmins) == 0) {
+                return false;
+            }
+
+            foreach ($listOfAdmins as $key => $admin) {
+                //dd($admin);
+                $adminRetrieved = \WA\DataStore\User\User::find($admin->user_id);
+                //\Log::debug($adminRetrieved->companyId);
+                //\Log::debug($userOrder->companyId);
+                if ($adminRetrieved->companyId == $userOrder->companyId) {
+
+                    //\Log::debug($userOrder->username);
+                    //\Log::debug(env('MAIL_FROM_ADDRESS'));
+                    //\Log::debug($type);
+
+                    $res = \Illuminate\Support\Facades\Mail::send(
+                        'emails.notifications.new_order_received', // VIEW NAME
+                        [
+                            'username' => $userOrder->username,
+                            'redirectPath' => 'urlderedireccion'
+                        ], // PARAMETERS PASSED TO THE VIEW
+                        function ($message) {
+                            $message->subject('New Order Received.');
+                            $message->from(env('MAIL_FROM_ADDRESS'), 'Wireless Analytics');
+                            $message->to('didac.pallares@siriondev.com');
+                        } // CALLBACK
+                    );
+                }
+            }
+
+            //dd("END");
         } catch (\Exception $e) {
+            //dd($e);
             return false;
         }
-        return true;        
+        return true;
     }
 }

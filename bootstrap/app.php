@@ -25,19 +25,19 @@ $app = new Laravel\Lumen\Application(
 
 $app->withFacades();
 
-$app->withEloquent();
+/**
+Set up Logging with Papertrail
+**/
+/*
+$app->configureMonologUsing(function($monolog) {
+    $syslog = new \Monolog\Handler\SyslogHandler('lumen');
+    $formatter = new \Monolog\Formatter\LineFormatter(null, null, false, true);
+    $syslog->setFormatter($formatter);
+    $monolog->pushHandler($syslog);
+    return $monolog;
+});*/
 
-config([
-    "filesystems" => [
-        'default' => 'local',
-        'disks' => [
-            'local' => [
-                'driver' => 'local',
-                'root' => storage_path('app/public'),
-            ],
-        ],
-    ],
-]);
+$app->withEloquent();
 
 /*
 |--------------------------------------------------------------------------
@@ -88,7 +88,8 @@ $app->routeMiddleware([
     'ability' => 'Zizaco\Entrust\Middleware\EntrustAbility',
     'oauth-user-instance' => \WA\Http\Middleware\OAuth2UserInstance::class,
     'scopes' => \Laravel\Passport\Http\Middleware\CheckScopes::class,
-    'scope' => \Laravel\Passport\Http\Middleware\CheckForAnyScope::class
+    'scope' => \Laravel\Passport\Http\Middleware\CheckForAnyScope::class,
+    'scopeTest' => \WA\Http\Middleware\ScopeTestMiddleware::class
 ]);
 
 /*
@@ -103,7 +104,9 @@ $app->configure('services');
 $app->configure('mail');
 $app->configure('saml2_settings');
 $app->configure('entrust');
-
+$app->configure('workflow');
+$app->configure('filesytems');
+$app->configure('jwt');
 
 /*
 |--------------------------------------------------------------------------
@@ -130,8 +133,11 @@ $app->register(\WA\Providers\Saml2ServiceProvider::class);
 $app->register(\WA\Providers\CatchAllOptionsRequestsProvider::class);
 $app->register(\GrahamCampbell\Flysystem\FlysystemServiceProvider::class);
 $app->register(WA\Providers\AuthServiceProvider::class);
-$app->register(Dusterio\LumenPassport\PassportServiceProvider::class);
+$app->register(WA\Providers\PassportServiceProvider::class);
 $app->register(\WA\Providers\SSOGrantProvider::class);
+$app->register(Brexis\LaravelWorkflow\WorkflowServiceProvider::class);
+$app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
+$app->register(Irazasyed\Larasupport\Providers\ArtisanServiceProvider::class);
 app('Dingo\Api\Transformer\Factory')->setAdapter(function ($app) {
     $base_url = env('API_DOMAIN', 'api.wirelessanalytics.com');
     // $serializer = new \League\Fractal\Serializer\JsonApiSerializer($base_url);
@@ -188,9 +194,16 @@ if (!class_exists('Request')) {
     class_alias('Illuminate\Support\Facades\Request', 'Request');
 }
 
-
 if (!class_exists('Flysystem')) {
     class_alias('\GrahamCampbell\Flysystem\Facades\Flysystem', 'Flysystem');
+}
+
+if (!class_exists('Workflow')) {
+    class_alias('Brexis\LaravelWorkflow\Facades\WorkflowFacade', 'Workflow');
+}
+
+if (!class_exists('JWTAuth')) {
+    class_alias('Tymon\JWTAuth\Facades\JWTAuth', 'JWTAuth');
 }
 
 

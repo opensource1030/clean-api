@@ -28,8 +28,8 @@ class DatabaseSeeder extends Seeder
         $this->call(CompanyAddressTableSeeder::class);
         $this->call(CompanyDomainsTableSeeder::class);
         $this->call(CompanySaml2TableSeeder::class);
-        $this->call(ConditionFieldsTableSeeder::class);
-        $this->call(ConditionOperatorsTableSeeder::class);
+        $this->call(CompanySettingsTableSeeder::class);
+        $this->call(CompanyUserImportJobTableSeeder::class);
         $this->call(ConditionsTableSeeder::class);
         //$this->call(DeviceCarriersTableSeeder::class);
         //$this->call(DeviceCompaniesTableSeeder::class);
@@ -41,10 +41,13 @@ class DatabaseSeeder extends Seeder
         $this->call(DeviceTypeSeeder::class);
         //$this->call(DeviceTypeSeeder::class);
         $this->call(ImagesTableSeeder::class);
+        $this->call(GlobalSettingsTableSeeder::class);
+        $this->call(GlobalSettingsValuesTableSeeder::class);
         $this->call(LocationsTableSeeder::class);
         $this->call(ModificationsTableSeeder::class);
         //$this->call(OAuthTableSeeder::class);
-        $this->call(OauthClientsTableSeeder::class);	
+        $this->call(OauthClientsTableSeeder::class);
+        $this->call(OauthPersonalAccessClientsTableSeeder::class);
         $this->call(OrderDeviceVariationsTableSeeder::class);
         $this->call(OrderAppsTableSeeder::class);
         $this->call(OrdersTableSeeder::class);
@@ -52,6 +55,7 @@ class DatabaseSeeder extends Seeder
         $this->call(PackageAppsTableSeeder::class);
         $this->call(PackageDevicesTableSeeder::class);
         $this->call(PackageServicesTableSeeder::class);
+        $this->call(PackageSettingsTableSeeder::class);
         $this->call(PackagesTableSeeder::class);
         $this->call(PermissionsTableSeeder::class);
         $this->call(PermissionRolesTableSeeder::class);
@@ -74,6 +78,7 @@ class DatabaseSeeder extends Seeder
         $this->call(PresetTableSeeder::class);
         $this->call(PresetDeviceVariationTableSeeder::class);
         $this->call(DeviceVariationImagesTableSeeder::class);
+        
         switch (DB::getDriverName()) {
             case 'mysql':
                 DB::statement('SET FOREIGN_KEY_CHECKS=1');

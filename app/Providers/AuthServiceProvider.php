@@ -25,7 +25,7 @@ class AuthServiceProvider extends PassportServiceProvider
      */
     public function makeAuthorizationServer()
     {
-        return new AuthorizationServer(
+        $server = new AuthorizationServer(
             $this->app->make(\Laravel\Passport\Bridge\ClientRepository::class),
             $this->app->make(\Laravel\Passport\Bridge\AccessTokenRepository::class),
             $this->app->make(\Laravel\Passport\Bridge\ScopeRepository::class),
@@ -33,6 +33,10 @@ class AuthServiceProvider extends PassportServiceProvider
             'file://'.\Laravel\Passport\Passport::keyPath('oauth-public.key'),
             new BearerTokenResponse()
         );
+
+        //$server->setEncryptionKey(env('APP_KEY'));
+
+        return $server;
     }
 
       public function boot()

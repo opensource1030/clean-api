@@ -35,6 +35,11 @@ class ContentsController extends FilteredApiController
      */
     public function store($id, Request $request)
     {
+        if(!$this->addFilterToTheRequest("store", $request)) {
+            $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+        }
+
         $content = Content::find($id);
         if (!isset($content)) {
             $error['errors']['put'] = 'Content selected does not exist';
@@ -58,8 +63,15 @@ class ContentsController extends FilteredApiController
      */
     public function create(Request $request)
     {
-        $data = $request->all();
-        $content = $this->contents->create($data);
+        $data = $request->all()['data'];
+        $data = $this->addRelationships($data);
+
+        if(!$this->addFilterToTheRequest("create", $data)) {
+            $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+        }
+        
+        $content = $this->contents->create($data['attributes']);
         if (!$content) {
             $error['errors']['post'] = 'Content could not be created. Please check your data';
             return response()->json($error)->setStatusCode(403);
@@ -77,6 +89,11 @@ class ContentsController extends FilteredApiController
      */
     public function deleteContent($id)
     {
+        if(!$this->addFilterToTheRequest("delete", null)) {
+            $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+        }
+        
         $content = Content::find($id);
         if (!isset($content)) {
             $error['errors']['delete'] = 'Content selected does not exist';

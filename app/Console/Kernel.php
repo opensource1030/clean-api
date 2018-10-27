@@ -13,7 +13,8 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        \JK\Dingo\Api\Console\Commands\RouteListCommand::class
+        \JK\Dingo\Api\Console\Commands\RouteListCommand::class,
+        \WA\Console\Commands\ClearBeanstalkdQueueCommand::class
     ];
 
     /**

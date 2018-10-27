@@ -24,8 +24,10 @@ return [
     ],
 
     'stripe' => [
-        'model'  => 'User',
-        'secret' => '',
+        'model'  => WA\DataStore\User\User::Class,
+        'secret_key' => 'sk_test_4aaF9EC7BvccVzCkRcpkma6g',
+        'public_key' => 'pk_test_4aaFaJSywZQzdiWTtv7ihQXx'
+
     ],
 
 ];

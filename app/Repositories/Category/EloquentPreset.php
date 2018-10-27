@@ -15,6 +15,10 @@ class EloquentPreset extends AbstractRepository implements PresetInterface
      */
     public function update(array $data)
     {
+        if(!isset($data['id'])) {
+            return 'notExist';
+        }
+
         $preset = $this->model->find($data['id']);
 
         if (!$preset) {
@@ -53,15 +57,30 @@ class EloquentPreset extends AbstractRepository implements PresetInterface
      */
     public function create(array $data)
     {
+        if (!isset($data['name']) || $data['name'] == '') {
+            return false; // return an error if the name doesn't exist or is empty.
+        }
+    
+        $user = \Auth::user();
+        if ($user === null) {
+            if (isset($data['companyId'])) {
+                $companyId = $data['companyId']; 
+            } else {
+                dd("?");
+                return false;
+            }            
+        } else {
+            $companyId = $user->companyId; // Retrieve the companyId from the user.        
+        }
+
         $presetData = [
-            "name" => isset($data['name']) ? $data['name'] : null,
+            'name' => $data['name'],
+            'companyId' => $companyId
         ];
 
-        $preset = $this->model->create($presetData);
 
-        if (!$preset) {
-            return false;
-        }
+
+        $preset = $this->model->create($presetData);
 
         return $preset;
     }
@@ -85,5 +104,40 @@ class EloquentPreset extends AbstractRepository implements PresetInterface
         }
 
         return $this->model->destroy($id);
+    }
+
+    /**
+     * Retrieve the filters for the Model.
+     *
+     * @param int  $companyId
+     *
+     * @return Array
+     */
+    public function addFilterToTheRequest($companyId) {
+        $aux['companyId'] = (string) $companyId;
+        return $aux;
+    }
+
+    /**
+     * Check if the Model and/or its relationships are related to the Company of the User.
+     *
+     * @param JSON  $json : The Json request.
+     * @param int  $companyId
+     *
+     * @return Boolean
+     */
+    public function checkModelAndRelationships($json, $companyId) {
+        return $json['attributes']['companyId'] == $companyId;
+    }
+
+    /**
+     * Add the attributes or the relationships needed.
+     *
+     * @param $data : The Data request.
+     *
+     * @return $data: The Data with the minimum relationship needed.
+     */
+    public function addRelationships($data) {
+        return $data;
     }
 }

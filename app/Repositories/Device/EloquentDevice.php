@@ -71,7 +71,7 @@ class EloquentDevice extends AbstractRepository implements DeviceInterface
         if(isset($data['properties']) && $data['properties'] !== ''){
             $deviceData['properties'] = $data['properties'];
         } else {
-            $deviceData['properties'] = null;
+            $deviceData['properties'] = '';
         }
         
         if(isset($data['deviceTypeId']) && $data['deviceTypeId'] !== ''){
@@ -380,5 +380,53 @@ class EloquentDevice extends AbstractRepository implements DeviceInterface
         }
 
         return $device;
+    }
+
+    /**
+     * Retrieve the filters for the Model.
+     *
+     * @param int  $companyId
+     *
+     * @return Array
+     */
+    public function addFilterToTheRequest($companyId) {
+        $aux['devicevariations.companyId'] = (string) $companyId;
+        return $aux;
+    }
+
+    /**
+     * Check if the Model and/or its relationships are related to the Company of the User.
+     *
+     * @param JSON  $json : The Json request.
+     * @param int  $companyId
+     *
+     * @return Boolean
+     */
+    public function checkModelAndRelationships($json, $companyId) {
+        if(!isset($json->data->relationships)) {
+            return true;
+        } else {
+            $ok = true;
+            foreach ($json->data->relationships->devicevariations->data as $value) {
+                if ($value->type == 'devicevariations') {
+                    $ok = $ok && $value->attributes->companyId == $companyId;
+                } else {
+                    return false;
+                }
+            }
+
+            return $ok;
+        }
+    }
+
+    /**
+     * Add the attributes or the relationships needed.
+     *
+     * @param $data : The Data request.
+     *
+     * @return $data: The Data with the minimum relationship needed.
+     */
+    public function addRelationships($data) {
+        return $data;
     }
 }

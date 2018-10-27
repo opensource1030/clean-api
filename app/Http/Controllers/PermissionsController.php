@@ -42,6 +42,12 @@ class PermissionsController extends FilteredApiController
     public function store($id, Request $request)
     {
         if ($this->isJsonCorrect($request, 'permissions')) {
+
+            if(!$this->addFilterToTheRequest("store", $request)) {
+                $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
+                return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+            }
+
             try {
                 $data = $request->all()['data']['attributes'];
                 $data['id'] = $id;
@@ -80,10 +86,21 @@ class PermissionsController extends FilteredApiController
      */
     public function create(Request $request)
     {
+        /*
+         * Checks if Json has data, data-type & data-attributes.
+         */
         if ($this->isJsonCorrect($request, 'permissions')) {
+
+            $data = $request->all()['data'];
+            $data = $this->addRelationships($data);
+
+            if(!$this->addFilterToTheRequest("create", $data)) {
+                $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
+                return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+            }
+        
             try {
-                $data = $request->all()['data']['attributes'];
-                $permission = $this->permission->create($data);
+                $permission = $this->permission->create($data['attributes']);
 
                 return $this->response()->item($permission, new permissionTransformer(),
                     ['key' => 'permissions'])->setStatusCode($this->status_codes['created']);
@@ -106,6 +123,11 @@ class PermissionsController extends FilteredApiController
      */
     public function delete($id)
     {
+        if(!$this->addFilterToTheRequest("delete", null)) {
+            $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+        }
+        
         $permission = Permission::find($id);
         if ($permission != null) {
             $this->permission->deleteById($id);

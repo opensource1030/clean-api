@@ -1,17 +1,11 @@
 <?php
 
-use Laravel\Lumen\Testing\DatabaseMigrations;
-use WA\DataStore\Allocation\Allocation;
 
-class AllocationsApiTest extends TestCase
+
+class AllocationsApiTest extends \TestCase
 {
-    use DatabaseMigrations;
+    use \Laravel\Lumen\Testing\DatabaseMigrations;
 
-    /**
-     * A basic functional test for Allocations.
-     *
-     * @AD: last_update field needs to be revised in table and Allocation.
-     */
     public function testGetAllocations()
     {
         $allocation = factory(\WA\DataStore\Allocation\Allocation::class)->create();
@@ -19,8 +13,10 @@ class AllocationsApiTest extends TestCase
         $allocation->carriers()->associate($carrier1);
         $allocation->save();
 
-        $this->json('GET', '/allocations/')
-            ->seeJsonStructure(
+        $res = $this->json('GET', '/allocations/');
+
+        //Log::debug("testGetAllocations: ".print_r($res->response->getContent(), true));
+        $res->seeJsonStructure(
             [
                 'data' => [
                     0 => [

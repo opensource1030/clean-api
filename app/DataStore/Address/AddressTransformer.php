@@ -9,6 +9,12 @@ use WA\DataStore\FilterableTransformer;
  */
 class AddressTransformer extends FilterableTransformer
 {
+    protected $availableIncludes = [
+        'companies',
+        'users',
+        'packages'
+    ];
+
     /**
      * @param Address $address
      *

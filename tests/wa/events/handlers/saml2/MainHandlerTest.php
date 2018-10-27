@@ -1,24 +1,9 @@
 <?php
 
-namespace WA\Testing\Auth;
+//use ReflectionClass;
+//use OneLogin_Saml2_Auth;
 
-use WA\Auth\Login;
-use TestCase;
-use DB;
-
-/**
- * MainHandler - Gets the event received by the Single Sign On.
- *
- * @author   Agustí Dosaiguas
- */
-
-namespace WA\Events\Handlers\Saml2;
-
-use TestCase;
-use ReflectionClass;
-use OneLogin_Saml2_Auth;
-
-class MainHandlerTest extends TestCase
+class MainHandlerTest extends \TestCase
 {
     public function testSaml2LoginUser()
     {

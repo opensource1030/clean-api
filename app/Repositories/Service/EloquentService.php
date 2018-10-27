@@ -47,6 +47,9 @@ class EloquentService extends AbstractRepository implements ServiceInterface
         if (isset($data['carrierId'])) {
             $service->carrierId = $data['carrierId'];
         }
+        if (isset($data['companyId'])) {
+            $service->companyId = $data['companyId'];
+        }
 
 
         if (!$service->save()) {
@@ -77,6 +80,10 @@ class EloquentService extends AbstractRepository implements ServiceInterface
      */
     public function create(array $data)
     {
+        if (!isset($data['companyId'])) {
+            return false;
+        }
+
         $serviceData = [
             "status" =>  isset($data['status']) ? $data['status'] : null ,
             "title" =>  isset($data['title']) ? $data['title'] : null ,
@@ -85,6 +92,7 @@ class EloquentService extends AbstractRepository implements ServiceInterface
             "description" => isset($data['description']) ? $data['description'] : '',
             "currency" => isset($data['currency']) ? $data['currency'] : 'USD',
             "carrierId" =>  isset($data['carrierId']) ? $data['carrierId'] : null ,
+            "companyId" =>  isset($data['companyId']) ? $data['companyId'] : null ,
         ];
 
         $service = $this->model->create($serviceData);
@@ -115,5 +123,44 @@ class EloquentService extends AbstractRepository implements ServiceInterface
         }
 
         return $this->model->destroy($id);
+    }
+
+    /**
+     * Retrieve the filters for the Model.
+     *
+     * @param int  $companyId
+     *
+     * @return Array
+     */
+    public function addFilterToTheRequest($companyId) {
+        $aux['companyId'] = (string) $companyId;
+        return $aux;
+    }
+
+    /**
+     * Check if the Model and/or its relationships are related to the Company of the User.
+     *
+     * @param JSON  $json : The Json request.
+     * @param int  $companyId
+     *
+     * @return Boolean
+     */
+    public function checkModelAndRelationships($json, $companyId) {
+        return $json['attributes']['companyId'] == $companyId;
+    }
+
+    /**
+     * Add the attributes or the relationships needed.
+     *
+     * @param $data : The Data request.
+     *
+     * @return $data: The Data with the minimum relationship needed.
+     */
+    public function addRelationships($data) {
+        if (!isset($data->attributes->companyId)) {
+            $data['attributes']['companyId'] = \Auth::user()->companyId;    
+        }
+
+        return $data;
     }
 }

@@ -1,11 +1,8 @@
 <?php
 
-namespace WA\Testing\Http\Requests\Parameters;
-
-use TestCase;
 use WA\Http\Requests\Parameters\Sorting;
 
-class SortingParameterTest extends TestCase
+class SortingParameterTest extends \TestCase
 {
     /**
      * @var Sorting

@@ -42,6 +42,12 @@ class DeviceTypesController extends FilteredApiController
     public function store($id, Request $request)
     {
         if ($this->isJsonCorrect($request, 'devicetypes')) {
+            
+            if(!$this->addFilterToTheRequest("store", $request)) {
+                $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
+                return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+            }
+
             try {
                 $data = $request->all()['data'];
                 $data['attributes']['id'] = $id;
@@ -80,10 +86,21 @@ class DeviceTypesController extends FilteredApiController
      */
     public function create(Request $request)
     {
+        /*
+         * Checks if Json has data, data-type & data-attributes.
+         */
         if ($this->isJsonCorrect($request, 'devicetypes')) {
+
+            $data = $request->all()['data'];
+            $data = $this->addRelationships($data);
+
+            if(!$this->addFilterToTheRequest("create", $data)) {
+                $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
+                return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+            }
+        
             try {
-                $data = $request->all()['data']['attributes'];
-                $devicetype = $this->deviceType->create($data);
+                $devicetype = $this->deviceType->create($data['attributes']);
 
                 return $this->response()->item($devicetype, new DeviceTypeTransformer(),
                     ['key' => 'devicetypes'])->setStatusCode($this->status_codes['created']);
@@ -106,6 +123,11 @@ class DeviceTypesController extends FilteredApiController
      */
     public function delete($id)
     {
+        if(!$this->addFilterToTheRequest("delete", null)) {
+            $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+        }
+
         $deviceType = DeviceType::find($id);
         if ($deviceType <> null) {
             $this->deviceType->deleteById($id);

@@ -50,6 +50,11 @@ class CarriersController extends FilteredApiController
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
+        if(!$this->addFilterToTheRequest("store", $request)) {
+            $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+        }
+
         DB::beginTransaction();
 
         try {
@@ -115,10 +120,17 @@ class CarriersController extends FilteredApiController
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
+        $data = $request->all()['data'];
+        $data = $this->addRelationships($data);
+
+        if(!$this->addFilterToTheRequest("create", $data)) {
+            $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+        }
+
         DB::beginTransaction();
 
         try {
-            $data = $request->all()['data'];
             $carrier = $this->carrier->create($data['attributes']);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -157,6 +169,11 @@ class CarriersController extends FilteredApiController
      */
     public function delete($id)
     {
+        if(!$this->addFilterToTheRequest("delete", null)) {
+            $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+        }
+        
         $carrier = Carrier::find($id);
         if ($carrier <> null) {
             $this->carrier->deleteById($id);

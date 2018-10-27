@@ -51,6 +51,11 @@ class CategoryAppsController extends FilteredApiController
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
+        if(!$this->addFilterToTheRequest("store", $request)) {
+            $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+        }
+
         DB::beginTransaction();
 
         try {
@@ -129,14 +134,20 @@ class CategoryAppsController extends FilteredApiController
          */
         if (!$this->isJsonCorrect($request, 'categoryapps')) {
             $error['errors']['json'] = Lang::get('messages.InvalidJson');
-
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+        }
+
+        $data = $request->all()['data'];
+        $data = $this->addRelationships($data);
+
+        if(!$this->addFilterToTheRequest("create", $data)) {
+            $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
         DB::beginTransaction();
 
         try {
-            $data = $request->all()['data'];
             $categoryApps = $this->categoryApps->create($data['attributes']);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -191,6 +202,11 @@ class CategoryAppsController extends FilteredApiController
      */
     public function delete($id)
     {
+        if(!$this->addFilterToTheRequest("delete", null)) {
+            $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+        }
+        
         $categoryApps = CategoryApp::find($id);
         if ($categoryApps <> null) {
             $this->categoryApps->deleteById($id);

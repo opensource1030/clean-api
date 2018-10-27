@@ -3,19 +3,30 @@
 namespace WA\DataStore\Order;
 
 use WA\DataStore\BaseDataStore;
+use Brexis\LaravelWorkflow\Traits\WorkflowTrait;
 
 /**
  * Class Order.
  */
 class Order extends BaseDataStore
 {
+    use WorkflowTrait;
+
     protected $table = 'orders';
 
     protected $fillable = [
             'status',
+            'orderType',
+            'serviceImei',
+            'servicePhoneNo',
+            'serviceSim',
+            'deviceImei',
+            'deviceCarrier',
+            'deviceSim',
             'userId',
             'packageId',
             'serviceId',
+            'addressId',
             'updated_at', ];
 
     /**
@@ -76,5 +87,13 @@ class Order extends BaseDataStore
     public function services()
     {
         return $this->belongsTo('WA\DataStore\Service\Service', 'serviceId');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function addresses()
+    {
+        return $this->belongsTo('WA\DataStore\Address\Address', 'addressId');
     }
 }

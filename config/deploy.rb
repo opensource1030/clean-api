@@ -4,8 +4,8 @@ set :repo_url, 'git@github.com:WirelessAnalytics/clean-api.git'
 set :rails_env, -> { fetch(:stage) }
 set :log_level, :debug
 set :linked_files, %w{.env}
-set :linked_dirs, %w{storage/logs}
-set :file_permissions_paths, ["storage/logs", "storage/framework"]
+set :linked_dirs, %w{storage/logs storage/app/public}
+set :file_permissions_paths, ["storage/logs", "storage/framework", "storage/app/public"]
 set :file_permissions_users, ["www-data","deploy"]
 
 
@@ -15,7 +15,7 @@ set :slackistrano, {
     team: "wirelessanalytics",
    webhook: "https://hooks.slack.com/services/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",
    token: "xoxp-2153660998-7383443462-7449051621-4e69f4",
-    channel:'#dev-systems'
+    channel:'#dev-ops'
 }
 
 
@@ -30,14 +30,6 @@ namespace :ops do
         end
     end
 
-    desc 'create documentations'
-    task :make_api_docs, :stoplight_arg do | m, args |
-        on roles(:app), in: :sequence, wait: 1 do
-            version = args[:stoplight_arg]
-            execute "wget -O /home/deploy/webapps/api_doc/dist/versions/oas.json https://api.stoplight.io/v1/versions/#{version}/export/oas.json"
-        end
-    end 
-    
     desc 'Copy ENV specific files to servers.'
     task :put_env  do
         on roles(:app), in: :sequence, wait: 1 do
@@ -72,7 +64,7 @@ namespace :laravel do
     desc "Run Laravel Artisan migrate task."
     task :migrate do
         on roles(:app), in: :sequence, wait: 5 do
-            # execute "cd #{release_path} && php artisan migrate --force"
+            execute "cd #{release_path} && php artisan migrate --force"
         end
     end
 

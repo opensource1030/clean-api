@@ -12,6 +12,7 @@ use WA\DataStore\Category\CategoryApp;
 use WA\DataStore\Preset\Preset;
 use WA\DataStore\Company\Company;
 use WA\DataStore\Company\CompanyCurrentBillMonth;
+use WA\DataStore\Company\CompanyUserImportJob;
 use WA\DataStore\Condition\Condition;
 use WA\DataStore\Condition\ConditionField;
 use WA\DataStore\Condition\ConditionOperator;
@@ -23,6 +24,8 @@ use WA\DataStore\Device\DeviceImage;
 use WA\DataStore\Device\DeviceModification;
 use WA\DataStore\DeviceType\DeviceType;
 use WA\DataStore\EmailNotifications;
+use WA\DataStore\GlobalSetting\GlobalSetting;
+use WA\DataStore\GlobalSettingValue\GlobalSettingValue;
 use WA\DataStore\Image\Image;
 use WA\DataStore\JobStatus;
 use WA\DataStore\Location\Location;
@@ -53,6 +56,7 @@ use WA\Repositories\Category\EloquentCategoryApps;
 use WA\Repositories\Category\EloquentPreset;
 use WA\Repositories\Company\EloquentCompany;
 use WA\Repositories\CompanyCurrentBillMonth\EloquentCompanyCurrentBillMonth;
+use WA\Repositories\Company\EloquentCompanyUserImportJob;
 use WA\Repositories\Condition\EloquentCondition;
 use WA\Repositories\Condition\EloquentConditionField;
 use WA\Repositories\Condition\EloquentConditionOperator;
@@ -64,6 +68,8 @@ use WA\Repositories\Device\EloquentDeviceImage;
 use WA\Repositories\Device\EloquentDeviceModification;
 use WA\Repositories\DeviceType\EloquentDeviceType;
 use WA\Repositories\EmailNotifications\EloquentEmailNotifications;
+use WA\Repositories\GlobalSetting\EloquentGlobalSetting;
+use WA\Repositories\GlobalSettingValue\EloquentGlobalSettingValue;
 use WA\Repositories\Image\EloquentImage;
 use WA\Repositories\JobStatus\EloquentJobStatus;
 use WA\Repositories\Location\EloquentLocation;
@@ -280,6 +286,23 @@ trait ServiceRegistration
         );
     }
 
+
+    /**
+     * @param
+     */
+    protected function registerCompanyUserImportJob()
+    {
+        app()->bind(
+            'WA\Repositories\Company\CompanyUserImportJobInterface',
+            function () {
+                return new EloquentCompanyUserImportJob(
+                    new CompanyUserImportJob()
+                );
+            }
+        );
+    }
+
+
     /**
      * @param
      */
@@ -293,7 +316,7 @@ trait ServiceRegistration
                     app()->make('WA\Repositories\UdlValue\UdlValueInterface'),
                     app()->make('WA\Repositories\Udl\UdlInterface')
                 );
-                //return $user
+                //return $user;
 
                 return new UserCacheDecorator(
                     $user,
@@ -577,5 +600,31 @@ trait ServiceRegistration
             function () {
                 return new EloquentCompanyCurrentBillMonth(new CompanyCurrentBillMonth());
             });
+    }
+
+    /**
+     * @param
+     */
+    public function registerGlobalSetting()
+    {
+        app()->bind(
+            'WA\Repositories\GlobalSetting\GlobalSettingInterface',
+            function () {
+                return new EloquentGlobalSetting(new GlobalSetting());
+            }
+        );
+    }
+
+    /**
+     * @param
+     */
+    public function registerGlobalSettingValue()
+    {
+        app()->bind(
+            'WA\Repositories\GlobalSettingValue\GlobalSettingValueInterface',
+            function () {
+                return new EloquentGlobalSettingValue(new GlobalSettingValue());
+            }
+        );
     }
 }

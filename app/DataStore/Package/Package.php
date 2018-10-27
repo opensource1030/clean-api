@@ -14,6 +14,7 @@ class Package extends BaseDataStore
     protected $fillable = [
             'name',
             'information',
+            'approvalCode',
             'companyId',
             'updated_at', ];
 
@@ -91,5 +92,13 @@ class Package extends BaseDataStore
     public function addresses()
     {
         return $this->belongsToMany('WA\DataStore\Address\Address', 'package_address', 'packageId', 'addressId');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function globalsettingvalues()
+    {
+        return $this->belongsToMany('WA\DataStore\GlobalSettingValue\GlobalSettingValue', 'package_settings', 'packageId', 'globalSettingsValueId');
     }
 }

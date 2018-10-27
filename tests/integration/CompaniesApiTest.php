@@ -2,16 +2,18 @@
 
 use Laravel\Lumen\Testing\DatabaseMigrations;
 use WA\DataStore\Company\Company;
+use WA\DataStore\Company\CompanyUserImportJob;
+use WA\DataStore\User\User;
 
-class CompaniesTest extends TestCase
+class CompaniesTest extends \TestCase
 {
-    use DatabaseMigrations;
+    use \Laravel\Lumen\Testing\DatabaseMigrations;
 
     public function testGetCompanies()
     {
         factory(\WA\DataStore\Company\Company::class, 40)->create();
 
-        $this->json('GET', 'companies')
+        $res = $this->json('GET', 'companies')
             ->seeJsonStructure([
                 'data' => [
                     0 => [
@@ -39,26 +41,26 @@ class CompaniesTest extends TestCase
 
     public function testGetByCompanyId()
     {
-        $company = factory(\WA\DataStore\Company\Company::class)->create();
+        $companyId = $this->mainCompany->id;
 
-        $this->json('GET', 'companies/'.$company->id)
-            ->seeJson([
+        $res = $this->json('GET', 'companies/'.$companyId);
+        //\Log::debug("testGetByCompanyId: ".print_r($res->response->getContent(), true));
+        $res->seeJson([
                 'type' => 'companies',
-                'id' => "$company->id",
-                'name' => $company->name,
-                'label' => $company->label,
+                'id' => "$companyId",
+                'name' => $this->mainCompany->name,
+                'label' => $this->mainCompany->label,
             ]);
     }
 
     public function testGetCompanyByIdandIncludesCurrentBillMonths()
     {
-        $company = factory(\WA\DataStore\Company\Company::class)->create();
-
         $currentBillMonth1 = factory(\WA\DataStore\Company\CompanyCurrentBillMonth::class)->create();
+        $this->mainCompany->currentBillMonths()->save($currentBillMonth1);
 
-        $company->currentBillMonths()->save($currentBillMonth1);
+        $companyId = $this->mainCompany->id;
 
-        $this->get('/companies/'.$company->id.'?include=currentBillMonths')
+        $this->get('/companies/'.$companyId.'?include=currentBillMonths')
             ->seeJsonStructure([
                 'data' => [
                     'type',
@@ -166,81 +168,81 @@ class CompaniesTest extends TestCase
                         'currentBillMonth' => $company->currentBillMonth,
                         'defaultLocation'  => $company->defaultLocation
                     ],
-                    "relationships" => [
-                        "udls" => [
-                            "data" => [
+                    'relationships' => [
+                        'udls' => [
+                            'data' => [
                                 [
-                                    "type" => "udls",
-                                    "id"  => 0,
-                                    "attributes" => [
-                                        "name" => "Udl Test 1",
-                                        "inputType" => "string"
+                                    'type' => 'udls',
+                                    'id'  => 0,
+                                    'attributes' => [
+                                        'name' => 'Udl Test 1',
+                                        'inputType' => 'string'
                                     ],
-                                    "relationships" => [
-                                        "udlvalues" => [
-                                            "data" => [
-                                                ["type" => "udlvalues", "id" => 0, "name" => "Udl1 Value1"],
-                                                ["type" => "udlvalues", "id" => 0, "name" => "Udl1 Value2"],
-                                                ["type" => "udlvalues", "id" => 0, "name" => "Udl1 Value3"],
-                                                ["type" => "udlvalues", "id" => 0, "name" => "Udl1 Value4"],
-                                                ["type" => "udlvalues", "id" => 0, "name" => "Udl1 Value5"]
+                                    'relationships' => [
+                                        'udlvalues' => [
+                                            'data' => [
+                                                ['type' => 'udlvalues', 'id' => 0, 'name' => 'Udl1 Value1'],
+                                                ['type' => 'udlvalues', 'id' => 0, 'name' => 'Udl1 Value2'],
+                                                ['type' => 'udlvalues', 'id' => 0, 'name' => 'Udl1 Value3'],
+                                                ['type' => 'udlvalues', 'id' => 0, 'name' => 'Udl1 Value4'],
+                                                ['type' => 'udlvalues', 'id' => 0, 'name' => 'Udl1 Value5']
                                             ]
                                         ]
                                     ]
                                 ],
                                 [
-                                    "type" => "udls",
-                                    "id"  => 0,
-                                    "attributes" => [
-                                        "name" => "Udl Test 2",
-                                        "inputType" => "string"
+                                    'type' => 'udls',
+                                    'id'  => 0,
+                                    'attributes' => [
+                                        'name' => 'Udl Test 2',
+                                        'inputType' => 'string'
                                     ],
-                                    "relationships" => [
-                                        "udlvalues" => [
-                                            "data" => [
-                                                ["type" => "udlvalues", "id" => 0, "name" => "Udl2 Value1"],
-                                                ["type" => "udlvalues", "id" => 0, "name" => "Udl2 Value2"],
-                                                ["type" => "udlvalues", "id" => 0, "name" => "Udl2 Value3"],
-                                                ["type" => "udlvalues", "id" => 0, "name" => "Udl2 Value4"],
-                                                ["type" => "udlvalues", "id" => 0, "name" => "Udl2 Value5"]
+                                    'relationships' => [
+                                        'udlvalues' => [
+                                            'data' => [
+                                                ['type' => 'udlvalues', 'id' => 0, 'name' => 'Udl2 Value1'],
+                                                ['type' => 'udlvalues', 'id' => 0, 'name' => 'Udl2 Value2'],
+                                                ['type' => 'udlvalues', 'id' => 0, 'name' => 'Udl2 Value3'],
+                                                ['type' => 'udlvalues', 'id' => 0, 'name' => 'Udl2 Value4'],
+                                                ['type' => 'udlvalues', 'id' => 0, 'name' => 'Udl2 Value5']
                                             ]
                                         ]
                                     ]
                                 ],
                                 [
-                                    "type" => "udls",
-                                    "id"  => 0,
-                                    "attributes" => [
-                                        "name" => "Udl Test 3",
-                                        "inputType" => "string"
+                                    'type' => 'udls',
+                                    'id'  => 0,
+                                    'attributes' => [
+                                        'name' => 'Udl Test 3',
+                                        'inputType' => 'string'
                                     ],
-                                    "relationships" => [
-                                        "udlvalues" => [
-                                            "data" => [
-                                                ["type" => "udlvalues", "id" => 0, "name" => "Udl3 Value1"],
-                                                ["type" => "udlvalues", "id" => 0, "name" => "Udl3 Value2"],
-                                                ["type" => "udlvalues", "id" => 0, "name" => "Udl3 Value3"],
-                                                ["type" => "udlvalues", "id" => 0, "name" => "Udl3 Value4"],
-                                                ["type" => "udlvalues", "id" => 0, "name" => "Udl3 Value5"]
+                                    'relationships' => [
+                                        'udlvalues' => [
+                                            'data' => [
+                                                ['type' => 'udlvalues', 'id' => 0, 'name' => 'Udl3 Value1'],
+                                                ['type' => 'udlvalues', 'id' => 0, 'name' => 'Udl3 Value2'],
+                                                ['type' => 'udlvalues', 'id' => 0, 'name' => 'Udl3 Value3'],
+                                                ['type' => 'udlvalues', 'id' => 0, 'name' => 'Udl3 Value4'],
+                                                ['type' => 'udlvalues', 'id' => 0, 'name' => 'Udl3 Value5']
                                             ]
                                         ]
                                     ]
                                 ],
                                 [
-                                    "type" => "udls",
-                                    "id"  => 0,
-                                    "attributes" => [
-                                        "name" => "Udl Test 4",
-                                        "inputType" => "string"
+                                    'type' => 'udls',
+                                    'id'  => 0,
+                                    'attributes' => [
+                                        'name' => 'Udl Test 4',
+                                        'inputType' => 'string'
                                     ],
-                                    "relationships" => [
-                                        "udlvalues" => [
-                                            "data" => [
-                                                ["type" => "udlvalues", "id" => 0, "name" => "Udl4 Value1"],
-                                                ["type" => "udlvalues", "id" => 0, "name" => "Udl4 Value2"],
-                                                ["type" => "udlvalues", "id" => 0, "name" => "Udl4 Value3"],
-                                                ["type" => "udlvalues", "id" => 0, "name" => "Udl4 Value4"],
-                                                ["type" => "udlvalues", "id" => 0, "name" => "Udl4 Value5"]
+                                    'relationships' => [
+                                        'udlvalues' => [
+                                            'data' => [
+                                                ['type' => 'udlvalues', 'id' => 0, 'name' => 'Udl4 Value1'],
+                                                ['type' => 'udlvalues', 'id' => 0, 'name' => 'Udl4 Value2'],
+                                                ['type' => 'udlvalues', 'id' => 0, 'name' => 'Udl4 Value3'],
+                                                ['type' => 'udlvalues', 'id' => 0, 'name' => 'Udl4 Value4'],
+                                                ['type' => 'udlvalues', 'id' => 0, 'name' => 'Udl4 Value5']
                                             ]
                                         ]
                                     ]
@@ -250,7 +252,7 @@ class CompaniesTest extends TestCase
                     ]
                 ]
             ]
-            //Log::debug("testCreateCompanyIncludeUdls: ".print_r($res->response->getContent(), true));
+            //Log::debug('testCreateCompanyIncludeUdls: '.print_r($res->response->getContent(), true));
             )->seeJson(
             [
                 'type'              => 'companies',
@@ -555,42 +557,10 @@ class CompaniesTest extends TestCase
                         'type',
                         'id',
                         'attributes' => [
-                            "companyId",
-                            "name",
-                            "inputType",
-                            "sections" => [
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ]
-                            ],
-                            "legacyUdlField"
+                            'companyId',
+                            'name',
+                            'inputType',
+                            'legacyUdlField'
                         ],
                         'links' => [
                             'self',
@@ -600,42 +570,10 @@ class CompaniesTest extends TestCase
                         'type',
                         'id',
                         'attributes' => [
-                            "companyId",
-                            "name",
-                            "inputType",
-                            "sections" => [
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ]
-                            ],
-                            "legacyUdlField"
+                            'companyId',
+                            'name',
+                            'inputType',
+                            'legacyUdlField'
                         ],
                         'links' => [
                             'self',
@@ -645,42 +583,10 @@ class CompaniesTest extends TestCase
                         'type',
                         'id',
                         'attributes' => [
-                            "companyId",
-                            "name",
-                            "inputType",
-                            "sections" => [
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ]
-                            ],
-                            "legacyUdlField"
+                            'companyId',
+                            'name',
+                            'inputType',
+                            'legacyUdlField'
                         ],
                         'links' => [
                             'self',
@@ -690,42 +596,10 @@ class CompaniesTest extends TestCase
                         'type',
                         'id',
                         'attributes' => [
-                            "companyId",
-                            "name",
-                            "inputType",
-                            "sections" => [
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ]
-                            ],
-                            "legacyUdlField"
+                            'companyId',
+                            'name',
+                            'inputType',
+                            'legacyUdlField'
                         ],
                         'links' => [
                             'self',
@@ -782,7 +656,7 @@ class CompaniesTest extends TestCase
                     ]
                 ]
             ]
-            //Log::debug("testCreateCompanyIncludeAddress: ".print_r($res->response->getContent(), true));
+            //Log::debug('testCreateCompanyIncludeAddress: '.print_r($res->response->getContent(), true));
             )->seeJson(
             [
                 'type'              => 'companies',
@@ -997,81 +871,81 @@ class CompaniesTest extends TestCase
                         'currentBillMonth' => $company->currentBillMonth,
                         'defaultLocation'  => $company->defaultLocation
                     ],
-                    "relationships" => [
-                        "udls" => [
-                            "data" => [
+                    'relationships' => [
+                        'udls' => [
+                            'data' => [
                                 [
-                                    "type" => "udls",
-                                    "id"  => 0,
-                                    "attributes" => [
-                                        "name" => "Udl Test 1",
-                                        "inputType" => "string"
+                                    'type' => 'udls',
+                                    'id'  => 0,
+                                    'attributes' => [
+                                        'name' => 'Udl Test 1',
+                                        'inputType' => 'string'
                                     ],
-                                    "relationships" => [
-                                        "udlvalues" => [
-                                            "data" => [
-                                                ["type" => "udlvalues", "id" => 0, "name" => "Udl1 Value1"],
-                                                ["type" => "udlvalues", "id" => 0, "name" => "Udl1 Value2"],
-                                                ["type" => "udlvalues", "id" => 0, "name" => "Udl1 Value3"],
-                                                ["type" => "udlvalues", "id" => 0, "name" => "Udl1 Value4"],
-                                                ["type" => "udlvalues", "id" => 0, "name" => "Udl1 Value5"]
+                                    'relationships' => [
+                                        'udlvalues' => [
+                                            'data' => [
+                                                ['type' => 'udlvalues', 'id' => 0, 'name' => 'Udl1 Value1'],
+                                                ['type' => 'udlvalues', 'id' => 0, 'name' => 'Udl1 Value2'],
+                                                ['type' => 'udlvalues', 'id' => 0, 'name' => 'Udl1 Value3'],
+                                                ['type' => 'udlvalues', 'id' => 0, 'name' => 'Udl1 Value4'],
+                                                ['type' => 'udlvalues', 'id' => 0, 'name' => 'Udl1 Value5']
                                             ]
                                         ]
                                     ]
                                 ],
                                 [
-                                    "type" => "udls",
-                                    "id"  => 0,
-                                    "attributes" => [
-                                        "name" => "Udl Test 2",
-                                        "inputType" => "string"
+                                    'type' => 'udls',
+                                    'id'  => 0,
+                                    'attributes' => [
+                                        'name' => 'Udl Test 2',
+                                        'inputType' => 'string'
                                     ],
-                                    "relationships" => [
-                                        "udlvalues" => [
-                                            "data" => [
-                                                ["type" => "udlvalues", "id" => 0, "name" => "Udl2 Value1"],
-                                                ["type" => "udlvalues", "id" => 0, "name" => "Udl2 Value2"],
-                                                ["type" => "udlvalues", "id" => 0, "name" => "Udl2 Value3"],
-                                                ["type" => "udlvalues", "id" => 0, "name" => "Udl2 Value4"],
-                                                ["type" => "udlvalues", "id" => 0, "name" => "Udl2 Value5"]
+                                    'relationships' => [
+                                        'udlvalues' => [
+                                            'data' => [
+                                                ['type' => 'udlvalues', 'id' => 0, 'name' => 'Udl2 Value1'],
+                                                ['type' => 'udlvalues', 'id' => 0, 'name' => 'Udl2 Value2'],
+                                                ['type' => 'udlvalues', 'id' => 0, 'name' => 'Udl2 Value3'],
+                                                ['type' => 'udlvalues', 'id' => 0, 'name' => 'Udl2 Value4'],
+                                                ['type' => 'udlvalues', 'id' => 0, 'name' => 'Udl2 Value5']
                                             ]
                                         ]
                                     ]
                                 ],
                                 [
-                                    "type" => "udls",
-                                    "id"  => 0,
-                                    "attributes" => [
-                                        "name" => "Udl Test 3",
-                                        "inputType" => "string"
+                                    'type' => 'udls',
+                                    'id'  => 0,
+                                    'attributes' => [
+                                        'name' => 'Udl Test 3',
+                                        'inputType' => 'string'
                                     ],
-                                    "relationships" => [
-                                        "udlvalues" => [
-                                            "data" => [
-                                                ["type" => "udlvalues", "id" => 0, "name" => "Udl3 Value1"],
-                                                ["type" => "udlvalues", "id" => 0, "name" => "Udl3 Value2"],
-                                                ["type" => "udlvalues", "id" => 0, "name" => "Udl3 Value3"],
-                                                ["type" => "udlvalues", "id" => 0, "name" => "Udl3 Value4"],
-                                                ["type" => "udlvalues", "id" => 0, "name" => "Udl3 Value5"]
+                                    'relationships' => [
+                                        'udlvalues' => [
+                                            'data' => [
+                                                ['type' => 'udlvalues', 'id' => 0, 'name' => 'Udl3 Value1'],
+                                                ['type' => 'udlvalues', 'id' => 0, 'name' => 'Udl3 Value2'],
+                                                ['type' => 'udlvalues', 'id' => 0, 'name' => 'Udl3 Value3'],
+                                                ['type' => 'udlvalues', 'id' => 0, 'name' => 'Udl3 Value4'],
+                                                ['type' => 'udlvalues', 'id' => 0, 'name' => 'Udl3 Value5']
                                             ]
                                         ]
                                     ]
                                 ],
                                 [
-                                    "type" => "udls",
-                                    "id"  => 0,
-                                    "attributes" => [
-                                        "name" => "Udl Test 4",
-                                        "inputType" => "string"
+                                    'type' => 'udls',
+                                    'id'  => 0,
+                                    'attributes' => [
+                                        'name' => 'Udl Test 4',
+                                        'inputType' => 'string'
                                     ],
-                                    "relationships" => [
-                                        "udlvalues" => [
-                                            "data" => [
-                                                ["type" => "udlvalues", "id" => 0, "name" => "Udl4 Value1"],
-                                                ["type" => "udlvalues", "id" => 0, "name" => "Udl4 Value2"],
-                                                ["type" => "udlvalues", "id" => 0, "name" => "Udl4 Value3"],
-                                                ["type" => "udlvalues", "id" => 0, "name" => "Udl4 Value4"],
-                                                ["type" => "udlvalues", "id" => 0, "name" => "Udl4 Value5"]
+                                    'relationships' => [
+                                        'udlvalues' => [
+                                            'data' => [
+                                                ['type' => 'udlvalues', 'id' => 0, 'name' => 'Udl4 Value1'],
+                                                ['type' => 'udlvalues', 'id' => 0, 'name' => 'Udl4 Value2'],
+                                                ['type' => 'udlvalues', 'id' => 0, 'name' => 'Udl4 Value3'],
+                                                ['type' => 'udlvalues', 'id' => 0, 'name' => 'Udl4 Value4'],
+                                                ['type' => 'udlvalues', 'id' => 0, 'name' => 'Udl4 Value5']
                                             ]
                                         ]
                                     ]
@@ -1081,7 +955,7 @@ class CompaniesTest extends TestCase
                     ]
                 ]
             ])
-            //Log::debug("testCreateCompanyIncludeUdls: ".print_r($res->response->getContent(), true));
+            //Log::debug('testCreateCompanyIncludeUdls: '.print_r($res->response->getContent(), true));
             ->seeJson(
             [
                 'type'              => 'companies',
@@ -1386,42 +1260,10 @@ class CompaniesTest extends TestCase
                         'type',
                         'id',
                         'attributes' => [
-                            "companyId",
-                            "name",
-                            "inputType",
-                            "sections" => [
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ]
-                            ],
-                            "legacyUdlField"
+                            'companyId',
+                            'name',
+                            'inputType',
+                            'legacyUdlField'
                         ],
                         'links' => [
                             'self',
@@ -1431,42 +1273,10 @@ class CompaniesTest extends TestCase
                         'type',
                         'id',
                         'attributes' => [
-                            "companyId",
-                            "name",
-                            "inputType",
-                            "sections" => [
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ]
-                            ],
-                            "legacyUdlField"
+                            'companyId',
+                            'name',
+                            'inputType',
+                            'legacyUdlField'
                         ],
                         'links' => [
                             'self',
@@ -1476,42 +1286,10 @@ class CompaniesTest extends TestCase
                         'type',
                         'id',
                         'attributes' => [
-                            "companyId",
-                            "name",
-                            "inputType",
-                            "sections" => [
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ]
-                            ],
-                            "legacyUdlField"
+                            'companyId',
+                            'name',
+                            'inputType',
+                            'legacyUdlField'
                         ],
                         'links' => [
                             'self',
@@ -1521,42 +1299,10 @@ class CompaniesTest extends TestCase
                         'type',
                         'id',
                         'attributes' => [
-                            "companyId",
-                            "name",
-                            "inputType",
-                            "sections" => [
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ]
-                            ],
-                            "legacyUdlField"
+                            'companyId',
+                            'name',
+                            'inputType',
+                            'legacyUdlField'
                         ],
                         'links' => [
                             'self',
@@ -1571,7 +1317,6 @@ class CompaniesTest extends TestCase
         $company = factory(\WA\DataStore\Company\Company::class)->create();
 
         $address1 = factory(\WA\DataStore\Address\Address::class)->create();
-        Log::debug("address1: ". print_r($address1, true));
         $company->addresses()->sync([$address1->id]);
 
         $address1DB = DB::table('company_address')->where('companyId', $company->id)->get();
@@ -1623,7 +1368,7 @@ class CompaniesTest extends TestCase
                     ]
                 ]
             ])
-            //Log::debug("testCreateCompanyIncludeAddress: ".print_r($res->response->getContent(), true));        
+            //Log::debug('testCreateCompanyIncludeAddress: '.print_r($res->response->getContent(), true));
             ->seeJsonStructure([
                 'data' => [
                     'type',
@@ -1743,39 +1488,39 @@ class CompaniesTest extends TestCase
                         'currentBillMonth' => $company->currentBillMonth,
                         'defaultLocation'  => $company->defaultLocation
                     ],
-                    "relationships" => [
-                        "udls" => [
-                            "data" => [
+                    'relationships' => [
+                        'udls' => [
+                            'data' => [
                                 [
-                                    "type" => "udls",
-                                    "id"  => $udl->id,
-                                    "attributes" => [
-                                        "name" => "Udl Test 1",
-                                        "inputType" => "string"
+                                    'type' => 'udls',
+                                    'id'  => $udl->id,
+                                    'attributes' => [
+                                        'name' => 'Udl Test 1',
+                                        'inputType' => 'string'
                                     ],
-                                    "relationships" => [
-                                        "udlvalues" => [
-                                            "data" => [
-                                                ["type" => "udlvalues", "id" => $udlvalue1->id, "name" => "Udl1 Value1"],
-                                                ["type" => "udlvalues", "id" => $udlvalue2->id, "name" => "Udl1 Value2"],
-                                                ["type" => "udlvalues", "id" => $udlvalue3->id, "name" => "Udl1 Value3"]
+                                    'relationships' => [
+                                        'udlvalues' => [
+                                            'data' => [
+                                                ['type' => 'udlvalues', 'id' => $udlvalue1->id, 'name' => 'Udl1 Value1'],
+                                                ['type' => 'udlvalues', 'id' => $udlvalue2->id, 'name' => 'Udl1 Value2'],
+                                                ['type' => 'udlvalues', 'id' => $udlvalue3->id, 'name' => 'Udl1 Value3']
                                             ]
                                         ]
                                     ]
                                 ],
                                 [
-                                    "type" => "udls",
-                                    "id"  => 0,
-                                    "attributes" => [
-                                        "name" => "Udl Create 1",
-                                        "inputType" => "string"
+                                    'type' => 'udls',
+                                    'id'  => 0,
+                                    'attributes' => [
+                                        'name' => 'Udl Create 1',
+                                        'inputType' => 'string'
                                     ],
-                                    "relationships" => [
-                                        "udlvalues" => [
-                                            "data" => [
-                                                ["type" => "udlvalues", "id" => 0, "name" => "UdlX Value1"],
-                                                ["type" => "udlvalues", "id" => 0, "name" => "UdlX Value2"],
-                                                ["type" => "udlvalues", "id" => 0, "name" => "UdlX Value3"]
+                                    'relationships' => [
+                                        'udlvalues' => [
+                                            'data' => [
+                                                ['type' => 'udlvalues', 'id' => 0, 'name' => 'UdlX Value1'],
+                                                ['type' => 'udlvalues', 'id' => 0, 'name' => 'UdlX Value2'],
+                                                ['type' => 'udlvalues', 'id' => 0, 'name' => 'UdlX Value3']
                                             ]
                                         ]
                                     ]
@@ -1785,7 +1530,7 @@ class CompaniesTest extends TestCase
                     ]
                 ]
             ])
-            //Log::debug("testUpdateCompanyIncludeUdlsAddOneUdl: ".print_r($res->response->getContent(), true));
+            //Log::debug('testUpdateCompanyIncludeUdlsAddOneUdl: '.print_r($res->response->getContent(), true));
             ->seeJson(
             [
                 'type'              => 'companies',
@@ -1914,30 +1659,10 @@ class CompaniesTest extends TestCase
                         'type',
                         'id',
                         'attributes' => [
-                            "companyId",
-                            "name",
-                            "inputType",
-                            "sections" => [
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ]
-                            ],
-                            "legacyUdlField"
+                            'companyId',
+                            'name',
+                            'inputType',
+                            'legacyUdlField'
                         ],
                         'links' => [
                             'self',
@@ -1947,30 +1672,10 @@ class CompaniesTest extends TestCase
                         'type',
                         'id',
                         'attributes' => [
-                            "companyId",
-                            "name",
-                            "inputType",
-                            "sections" => [
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ]
-                            ],
-                            "legacyUdlField"
+                            'companyId',
+                            'name',
+                            'inputType',
+                            'legacyUdlField'
                         ],
                         'links' => [
                             'self',
@@ -2041,39 +1746,39 @@ class CompaniesTest extends TestCase
                         'currentBillMonth' => $company->currentBillMonth,
                         'defaultLocation'  => $company->defaultLocation
                     ],
-                    "relationships" => [
-                        "udls" => [
-                            "data" => [
+                    'relationships' => [
+                        'udls' => [
+                            'data' => [
                                 [
-                                    "type" => "udls",
-                                    "id"  => $udl1->id,
-                                    "attributes" => [
-                                        "name" => "Udl Test 1",
-                                        "inputType" => "string"
+                                    'type' => 'udls',
+                                    'id'  => $udl1->id,
+                                    'attributes' => [
+                                        'name' => 'Udl Test 1',
+                                        'inputType' => 'string'
                                     ],
-                                    "relationships" => [
-                                        "udlvalues" => [
-                                            "data" => [
-                                                ["type" => "udlvalues", "id" => $udl1value1->id, "name" => "Udl1 Value1"],
-                                                ["type" => "udlvalues", "id" => $udl1value2->id, "name" => "Udl1 Value2"],
-                                                ["type" => "udlvalues", "id" => $udl1value3->id, "name" => "Udl1 Value3"]
+                                    'relationships' => [
+                                        'udlvalues' => [
+                                            'data' => [
+                                                ['type' => 'udlvalues', 'id' => $udl1value1->id, 'name' => 'Udl1 Value1'],
+                                                ['type' => 'udlvalues', 'id' => $udl1value2->id, 'name' => 'Udl1 Value2'],
+                                                ['type' => 'udlvalues', 'id' => $udl1value3->id, 'name' => 'Udl1 Value3']
                                             ]
                                         ]
                                     ]
                                 ],
                                 [
-                                    "type" => "udls",
-                                    "id"  => $udl2->id,
-                                    "attributes" => [
-                                        "name" => "Udl Test 2",
-                                        "inputType" => "string"
+                                    'type' => 'udls',
+                                    'id'  => $udl2->id,
+                                    'attributes' => [
+                                        'name' => 'Udl Test 2',
+                                        'inputType' => 'string'
                                     ],
-                                    "relationships" => [
-                                        "udlvalues" => [
-                                            "data" => [
-                                                ["type" => "udlvalues", "id" => $udl2value1->id, "name" => "Udl2 Value1"],
-                                                ["type" => "udlvalues", "id" => $udl2value2->id, "name" => "Udl2 Value2"],
-                                                ["type" => "udlvalues", "id" => $udl2value3->id, "name" => "Udl2 Value3"]
+                                    'relationships' => [
+                                        'udlvalues' => [
+                                            'data' => [
+                                                ['type' => 'udlvalues', 'id' => $udl2value1->id, 'name' => 'Udl2 Value1'],
+                                                ['type' => 'udlvalues', 'id' => $udl2value2->id, 'name' => 'Udl2 Value2'],
+                                                ['type' => 'udlvalues', 'id' => $udl2value3->id, 'name' => 'Udl2 Value3']
                                             ]
                                         ]
                                     ]
@@ -2083,7 +1788,7 @@ class CompaniesTest extends TestCase
                     ]
                 ]
             ])
-            //Log::debug("testUpdateCompanyIncludeUdlsDeleteOneUdl: ".print_r($res->response->getContent(), true));
+            //Log::debug('testUpdateCompanyIncludeUdlsDeleteOneUdl: '.print_r($res->response->getContent(), true));
             ->seeJson(
             [
                 'type'              => 'companies',
@@ -2212,30 +1917,10 @@ class CompaniesTest extends TestCase
                         'type',
                         'id',
                         'attributes' => [
-                            "companyId",
-                            "name",
-                            "inputType",
-                            "sections" => [
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ]
-                            ],
-                            "legacyUdlField"
+                            'companyId',
+                            'name',
+                            'inputType',
+                            'legacyUdlField'
                         ],
                         'links' => [
                             'self',
@@ -2245,30 +1930,10 @@ class CompaniesTest extends TestCase
                         'type',
                         'id',
                         'attributes' => [
-                            "companyId",
-                            "name",
-                            "inputType",
-                            "sections" => [
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ]
-                            ],
-                            "legacyUdlField"
+                            'companyId',
+                            'name',
+                            'inputType',
+                            'legacyUdlField'
                         ],
                         'links' => [
                             'self',
@@ -2311,21 +1976,21 @@ class CompaniesTest extends TestCase
                         'currentBillMonth' => $company->currentBillMonth,
                         'defaultLocation'  => $company->defaultLocation
                     ],
-                    "relationships" => [
-                        "udls" => [
-                            "data" => [
+                    'relationships' => [
+                        'udls' => [
+                            'data' => [
                                 [
-                                    "type" => "udls",
-                                    "id"  => $udl->id,
-                                    "attributes" => [
-                                        "name" => "Udl Test 1",
-                                        "inputType" => "string"
+                                    'type' => 'udls',
+                                    'id'  => $udl->id,
+                                    'attributes' => [
+                                        'name' => 'Udl Test 1',
+                                        'inputType' => 'string'
                                     ],
-                                    "relationships" => [
-                                        "udlvalues" => [
-                                            "data" => [
-                                                ["type" => "udlvalues", "id" => $udlvalue->id, "name" => "Udl1 Value1"],
-                                                ["type" => "udlvalues", "id" => 0, "name" => "Create Value2"]
+                                    'relationships' => [
+                                        'udlvalues' => [
+                                            'data' => [
+                                                ['type' => 'udlvalues', 'id' => $udlvalue->id, 'name' => 'Udl1 Value1'],
+                                                ['type' => 'udlvalues', 'id' => 0, 'name' => 'Create Value2']
                                             ]
                                         ]
                                     ]
@@ -2335,7 +2000,7 @@ class CompaniesTest extends TestCase
                     ]
                 ]
             ])
-            //Log::debug("testUpdateCompanyIncludeUdlsAddUdlValue: ".print_r($res->response->getContent(), true));
+            //Log::debug('testUpdateCompanyIncludeUdlsAddUdlValue: '.print_r($res->response->getContent(), true));
             ->seeJson(
             [
                 'type'              => 'companies',
@@ -2412,24 +2077,10 @@ class CompaniesTest extends TestCase
                         'type',
                         'id',
                         'attributes' => [
-                            "companyId",
-                            "name",
-                            "inputType",
-                            "sections" => [
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ],
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ]
-                            ],
-                            "legacyUdlField"
+                            'companyId',
+                            'name',
+                            'inputType',
+                            'legacyUdlField'
                         ],
                         'links' => [
                             'self',
@@ -2474,20 +2125,20 @@ class CompaniesTest extends TestCase
                         'currentBillMonth' => $company->currentBillMonth,
                         'defaultLocation'  => $company->defaultLocation
                     ],
-                    "relationships" => [
-                        "udls" => [
-                            "data" => [
+                    'relationships' => [
+                        'udls' => [
+                            'data' => [
                                 [
-                                    "type" => "udls",
-                                    "id"  => $udl->id,
-                                    "attributes" => [
-                                        "name" => "Udl Test 1",
-                                        "inputType" => "string"
+                                    'type' => 'udls',
+                                    'id'  => $udl->id,
+                                    'attributes' => [
+                                        'name' => 'Udl Test 1',
+                                        'inputType' => 'string'
                                     ],
-                                    "relationships" => [
-                                        "udlvalues" => [
-                                            "data" => [
-                                                ["type" => "udlvalues", "id" => $udlvalue1->id, "name" => "Udl1 Value1"]
+                                    'relationships' => [
+                                        'udlvalues' => [
+                                            'data' => [
+                                                ['type' => 'udlvalues', 'id' => $udlvalue1->id, 'name' => 'Udl1 Value1']
                                             ]
                                         ]
                                     ]
@@ -2497,7 +2148,7 @@ class CompaniesTest extends TestCase
                     ]
                 ]
             ])
-            //Log::debug("testUpdateCompanyIncludeUdlsDeleteUdlValue: ".print_r($res->response->getContent(), true));
+            //Log::debug('testUpdateCompanyIncludeUdlsDeleteUdlValue: '.print_r($res->response->getContent(), true));
             ->seeJson(
             [
                 'type'              => 'companies',
@@ -2562,18 +2213,10 @@ class CompaniesTest extends TestCase
                         'type',
                         'id',
                         'attributes' => [
-                            "companyId",
-                            "name",
-                            "inputType",
-                            "sections" => [
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ]
-                            ],
-                            "legacyUdlField"
+                            'companyId',
+                            'name',
+                            'inputType',
+                            'legacyUdlField'
                         ],
                         'links' => [
                             'self',
@@ -2617,20 +2260,20 @@ class CompaniesTest extends TestCase
                         'currentBillMonth' => $company->currentBillMonth,
                         'defaultLocation'  => $company->defaultLocation
                     ],
-                    "relationships" => [
-                        "udls" => [
-                            "data" => [
+                    'relationships' => [
+                        'udls' => [
+                            'data' => [
                                 [
-                                    "type" => "udls",
-                                    "id"  => $udl->id,
-                                    "attributes" => [
-                                        "name" => "Updated Name UDL",
-                                        "inputType" => "string"
+                                    'type' => 'udls',
+                                    'id'  => $udl->id,
+                                    'attributes' => [
+                                        'name' => 'Updated Name UDL',
+                                        'inputType' => 'string'
                                     ],
-                                    "relationships" => [
-                                        "udlvalues" => [
-                                            "data" => [
-                                                ["type" => "udlvalues", "id" => $udlvalue1->id, "name" => "Updated Name UDLVALUE"]
+                                    'relationships' => [
+                                        'udlvalues' => [
+                                            'data' => [
+                                                ['type' => 'udlvalues', 'id' => $udlvalue1->id, 'name' => 'Updated Name UDLVALUE']
                                             ]
                                         ]
                                     ]
@@ -2640,7 +2283,7 @@ class CompaniesTest extends TestCase
                     ]
                 ]
             ])
-            //Log::debug("testUpdateCompanyIncludeUpdateUdlsUpdateUdlValue: ".print_r($res->response->getContent(), true));
+            //Log::debug('testUpdateCompanyIncludeUpdateUdlsUpdateUdlValue: '.print_r($res->response->getContent(), true));
             ->seeJson(
             [
                 'type'              => 'companies',
@@ -2705,18 +2348,10 @@ class CompaniesTest extends TestCase
                         'type',
                         'id',
                         'attributes' => [
-                            "companyId",
-                            "name",
-                            "inputType",
-                            "sections" => [
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ]
-                            ],
-                            "legacyUdlField"
+                            'companyId',
+                            'name',
+                            'inputType',
+                            'legacyUdlField'
                         ],
                         'links' => [
                             'self',
@@ -2728,12 +2363,12 @@ class CompaniesTest extends TestCase
             $udlsFinal = DB::table('udls')->where('companyId', $company->id)->get();
             $this->assertCount(1, $udls);
             $this->assertEquals($udlsFinal[0]->id, $udl->id);
-            $this->assertEquals($udlsFinal[0]->name, "Updated Name UDL");
+            $this->assertEquals($udlsFinal[0]->name, 'Updated Name UDL');
 
             $udlvaluesFinal = DB::table('udl_values')->where('udlId', $udl->id)->orderBy('id')->get();
             $this->assertCount(1, $udlvaluesFinal);
             $this->assertEquals($udlvaluesFinal[0]->id, $udlvalue1->id);
-            $this->assertEquals($udlvaluesFinal[0]->name, "Updated Name UDLVALUE");
+            $this->assertEquals($udlvaluesFinal[0]->name, 'Updated Name UDLVALUE');
     }
 
     public function testUpdateCompanyIncludeUpdateUdlsUpdateUdlValueNoJsonUdl()
@@ -2770,20 +2405,20 @@ class CompaniesTest extends TestCase
                         'currentBillMonth' => $company->currentBillMonth,
                         'defaultLocation'  => $company->defaultLocation
                     ],
-                    "relationships" => [
-                        "udls" => [
-                            "data" => [
+                    'relationships' => [
+                        'udls' => [
+                            'data' => [
                                 [
-                                    "type" => "no valid",
-                                    "id"  => $udl->id,
-                                    "attributes" => [
-                                        "name" => "Updated Name UDL",
-                                        "inputType" => "string"
+                                    'type' => 'no valid',
+                                    'id'  => $udl->id,
+                                    'attributes' => [
+                                        'name' => 'Updated Name UDL',
+                                        'inputType' => 'string'
                                     ],
-                                    "relationships" => [
-                                        "udlvalues" => [
-                                            "data" => [
-                                                ["type" => "udlvalues", "id" => $udlvalue1->id, "name" => "Updated Name UDLVALUE"]
+                                    'relationships' => [
+                                        'udlvalues' => [
+                                            'data' => [
+                                                ['type' => 'udlvalues', 'id' => $udlvalue1->id, 'name' => 'Updated Name UDLVALUE']
                                             ]
                                         ]
                                     ]
@@ -2793,7 +2428,7 @@ class CompaniesTest extends TestCase
                     ]
                 ]
             ])
-            //Log::debug("testUpdateCompanyIncludeUpdateUdlsUpdateUdlValue: ".print_r($res->response->getContent(), true));
+            //Log::debug('testUpdateCompanyIncludeUpdateUdlsUpdateUdlValue: '.print_r($res->response->getContent(), true));
             ->seeJson(
             [
                 'udls'      => 'the Udl  has not been updated'
@@ -2806,13 +2441,13 @@ class CompaniesTest extends TestCase
             ]);
 
             $udlsFinal = DB::table('udls')->where('companyId', $company->id)->get();
-            //Log::debug("2531-udlsFinal: ".print_r($udlsFinal, true));
+            //Log::debug('2531-udlsFinal: '.print_r($udlsFinal, true));
             $this->assertCount(1, $udls);
             $this->assertEquals($udlsFinal[0]->id, $udl->id);
             $this->assertEquals($udlsFinal[0]->name, $udl->name);
 
             $udlvaluesFinal = DB::table('udl_values')->where('udlId', $udl->id)->orderBy('id')->get();
-            //Log::debug("2537-udlvaluesFinal: ".print_r($udlvaluesFinal, true));
+            //Log::debug('2537-udlvaluesFinal: '.print_r($udlvaluesFinal, true));
             $this->assertCount(1, $udlvaluesFinal);
             $this->assertEquals($udlvaluesFinal[0]->id, $udlvalue1->id);
             $this->assertEquals($udlvaluesFinal[0]->name, $udlvalue1->name);
@@ -2852,20 +2487,20 @@ class CompaniesTest extends TestCase
                         'currentBillMonth' => $company->currentBillMonth,
                         'defaultLocation'  => $company->defaultLocation
                     ],
-                    "relationships" => [
-                        "udls" => [
-                            "data" => [
+                    'relationships' => [
+                        'udls' => [
+                            'data' => [
                                 [
-                                    "type" => "udls",
-                                    "id"  => $udl->id,
-                                    "attributes" => [
-                                        "name" => "Updated Name UDL",
-                                        "inputType" => "string"
+                                    'type' => 'udls',
+                                    'id'  => $udl->id,
+                                    'attributes' => [
+                                        'name' => 'Updated Name UDL',
+                                        'inputType' => 'string'
                                     ],
-                                    "relationships" => [
-                                        "no valid" => [
-                                            "data" => [
-                                                ["type" => "udlvalues", "id" => $udlvalue1->id, "name" => "Updated Name UDLVALUE"]
+                                    'relationships' => [
+                                        'no valid' => [
+                                            'data' => [
+                                                ['type' => 'udlvalues', 'id' => $udlvalue1->id, 'name' => 'Updated Name UDLVALUE']
                                             ]
                                         ]
                                     ]
@@ -2875,7 +2510,7 @@ class CompaniesTest extends TestCase
                     ]
                 ]
             ])
-            //Log::debug("testUpdateCompanyIncludeUpdateUdlsUpdateUdlValue: ".print_r($res->response->getContent(), true));
+            //Log::debug('testUpdateCompanyIncludeUpdateUdlsUpdateUdlValue: '.print_r($res->response->getContent(), true));
             ->seeJsonStructure(
             [
                 'data' => [
@@ -2928,18 +2563,10 @@ class CompaniesTest extends TestCase
                         'type',
                         'id',
                         'attributes' => [
-                            "companyId",
-                            "name",
-                            "inputType",
-                            "sections" => [
-                              [
-                                "id",
-                                "name",
-                                "udlId",
-                                "externalId",
-                              ]
-                            ],
-                            "legacyUdlField"
+                            'companyId',
+                            'name',
+                            'inputType',
+                            'legacyUdlField'
                         ],
                         'links' => [
                             'self',
@@ -3007,20 +2634,20 @@ class CompaniesTest extends TestCase
                         'currentBillMonth' => $company->currentBillMonth,
                         'defaultLocation'  => $company->defaultLocation
                     ],
-                    "relationships" => [
-                        "udls" => [
-                            "data" => [
+                    'relationships' => [
+                        'udls' => [
+                            'data' => [
                                 [
-                                    "type" => "udls",
-                                    "id"  => $udl->id,
-                                    "attributes" => [
-                                        "name" => "Updated Name UDL",
-                                        "inputType" => "string"
+                                    'type' => 'udls',
+                                    'id'  => $udl->id,
+                                    'attributes' => [
+                                        'name' => 'Updated Name UDL',
+                                        'inputType' => 'string'
                                     ],
-                                    "relationships" => [
-                                        "udlvalues" => [
-                                            "data" => [
-                                                ["type" => "no valid", "id" => $udlvalue->id, "name" => "Updated Name UDLVALUE"]
+                                    'relationships' => [
+                                        'udlvalues' => [
+                                            'data' => [
+                                                ['type' => 'no valid', 'id' => $udlvalue->id, 'name' => 'Updated Name UDLVALUE']
                                             ]
                                         ]
                                     ]
@@ -3030,7 +2657,7 @@ class CompaniesTest extends TestCase
                     ]
                 ]
             ])
-            //Log::debug("testUpdateCompanyIncludeUpdateUdlsUpdateUdlValueNoJsonUdlValueType: ".print_r($res->response->getContent(), true));
+            //Log::debug('testUpdateCompanyIncludeUpdateUdlsUpdateUdlValueNoJsonUdlValueType: '.print_r($res->response->getContent(), true));
             ->seeJson(
             [
                 'udls'      => 'the Udl  has not been updated'
@@ -3043,13 +2670,13 @@ class CompaniesTest extends TestCase
             ]);
 
             $udlsFinal = DB::table('udls')->where('companyId', $company->id)->get();
-            //Log::debug("udlsFinal: ".print_r($udlsFinal, true));
+            //Log::debug('udlsFinal: '.print_r($udlsFinal, true));
             $this->assertCount(1, $udlsFinal);
             $this->assertEquals($udlsFinal[0]->id, $udl->id);
             $this->assertEquals($udlsFinal[0]->name, $udl->name);
 
             $udlvaluesFinal = DB::table('udl_values')->where('udlId', $udl->id)->orderBy('id')->get();
-            //Log::debug("udlvaluesFinal: ".print_r($udlvaluesFinal, true));
+            //Log::debug('udlvaluesFinal: '.print_r($udlvaluesFinal, true));
             $this->assertCount(1, $udlvaluesFinal);
             $this->assertEquals($udlvaluesFinal[0]->id, $udlvalue->id);
             $this->assertEquals($udlvaluesFinal[0]->name, $udlvalue->name);
@@ -3068,7 +2695,576 @@ class CompaniesTest extends TestCase
     public function testDeletecompanyIfNoExists()
     {
         // DELETE NO EXISTING.
-        $responseDel = $this->call('DELETE', 'companies/1');
+        $responseDel = $this->call('DELETE', 'companies/10');
         $this->assertEquals(404, $responseDel->status());
     }
+
+    public function testCreateImportUserJobWithWrongRequest()
+    {
+        // check company is exist
+        $companyId = 'random';
+        $uri = "companies/$companyId/jobs";
+        $response = $this->call('POST', $uri);
+        $this->assertEquals(404, $response->status());
+
+        // check attach file
+        $company = factory(\WA\DataStore\Company\Company::class)->create(['name' => 'random-company']);
+        $companyId = $company->id;
+        $uri = "companies/$companyId/jobs";
+        $response = $this->call('POST', $uri);
+        $this->assertEquals(400, $response->status());
+
+        // check attach file is csv
+        $targetPath = "./storage/clients/{$company->name}";
+        $targetFile = "$targetPath/filename.png";
+        if(!is_dir($targetPath)){
+            mkdir($targetPath, 0755, true);
+        }
+        copy('./database/seeds/imagesseeder/phpFmndT1.png', $targetFile);
+
+        $uploadedFile = new Symfony\Component\HttpFoundation\File\UploadedFile(
+            $targetFile,
+            'iphone6.png',
+            'image/png',
+            235417,
+            null,
+            true
+        );
+        $response = $this->call('POST', $uri, [], [], ['csv' => $uploadedFile]);
+        $this->assertEquals(400, $response->status());
+
+        @unlink($targetFile);
+    }
+
+    /**
+     *
+     * @group CompaniesControllerTest
+     */
+    public function testCompanyCreateJobSuccessfully()
+    {
+        $company = factory(\WA\DataStore\Company\Company::class)->create(['name' => 'random-company']);
+        
+        $udl1 = factory(\WA\DataStore\Udl\Udl::class)->create([
+            'companyId'         => $company->id,
+            'name'              => 'udl-for-tests',
+            'legacyUdlField'    => null,
+            'inputType'         => 'string'
+        ]);
+
+        $udl1Value1 = factory(\WA\DataStore\UdlValue\UdlValue::class)->create([
+            'udlId' => $udl1->id,
+            'name' => 'udl-value-1'
+        ]);
+        $udl1Value2 = factory(\WA\DataStore\UdlValue\UdlValue::class)->create([
+            'udlId' => $udl1->id,
+            'name' => 'udl-value-2'
+        ]);
+        $udl1Value3 = factory(\WA\DataStore\UdlValue\UdlValue::class)->create([
+            'udlId' => $udl1->id,
+            'name' => 'udl-value-3'
+        ]);
+    
+        $uploadedFile = new Symfony\Component\HttpFoundation\File\UploadedFile(
+            './database/seeds/import/employee--test.csv',
+            'employee--test.csv',
+            null,null,null,true
+        );
+
+        $response = $this->call('POST', "companies/{$company->id}/jobs", ['test' => '1'], [], ['csv' => $uploadedFile]);
+        $responseContents = json_decode($response->getContent(), true);
+
+        //\Log::debug('JSON FOR GET OF CompanyUsersImportJob:');
+        //\Log::debug(json_encode($responseContents, JSON_PRETTY_PRINT));
+
+        $this->seeJsonStructure([
+            'data' => [
+                'type',
+                'id',
+                'attributes' => [
+                    'jobType',
+                    'companyId',
+                    'path',
+                    'file',
+                    'totalUsers',
+                    'createdUsers',
+                    'creatableUsers',
+                    'updatedUsers',
+                    'updatableUsers',
+                    'failedUsers',
+                    'CSVfields',
+                    'DBfields',
+                    'sampleUser' => [
+                        /*
+                        'email',
+                        'alternateEmail',
+                        'password',
+                        'username',
+                        'confirmation_code',
+                        'confirmed',
+                        'firstName',
+                        'lastName',
+                        'alternateFirstName',
+                        'supervisorEmail',
+                        'companyUserIdentifier',
+                        'isSupervisor',
+                        'isValidator',
+                        'isActive',
+                        'defaultLang',
+                        'level',
+                        'notify',
+                        'companyId',
+                        'supervisorId',
+                        'externalId',
+                        'approverId',
+                        'defaultLocationId',
+                        //*/
+                    ],
+                    'mappings' => [],
+                    'status',
+                    // 'errors',
+                    'created_by_id',
+                    'updated_by_id',
+                    'created_at' => [
+                        'date',
+                        'timezone_type',
+                        'timezone',
+                    ],
+                    'updated_at' => [
+                        'date',
+                        'timezone_type',
+                        'timezone',
+                    ]
+                ],
+                'links' => [
+                    'self',
+                ]
+            ]
+        ]);
+
+        $fieldsInCSVFields = array_diff([
+                'email',
+                'alternateEmail',
+                'password',
+                'username',
+                'confirmation_code',
+                'confirmed',
+                'firstName',
+                'lastName',
+                'alternateFirstName',
+                'supervisorEmail',
+                'companyUserIdentifier',
+                'isSupervisor',
+                'isValidator',
+                'isActive',
+                'defaultLang',
+                'level',
+                'notify',
+                'companyId',
+                'supervisorId',
+                'externalId',
+                'approverId',
+                'defaultLocationId',
+                'udl-for-tests',
+            ],
+            $responseContents['data']['attributes']['CSVfields']
+        );
+
+        $fieldsInDBFields = array_diff(
+            [
+                'email' => "Main Email",
+                'alternateEmail' => "Alternate Email",
+                'username' => "Username",
+                'firstName' => "First Name",
+                'lastName' => "Last Name",
+                'supervisorEmail' => "Supervisor Email",
+                'companyUserIdentifier' => "Company User Identifier",
+                'isSupervisor' => "Is Supervisor?",
+                'isValidator' => "Is Validator?",
+                'isActive' => "Is Active?",
+                'hierarchy' => "Hierarchy",
+                'defaultLang' => "Default Language",
+                'notes' => "Notes",
+                'level' => "Level",
+                'udl-for-tests' => "udl-for-tests",
+            ],
+            $responseContents['data']['attributes']['DBfields']
+        );
+
+        $this->assertEmpty($fieldsInCSVFields);
+        $this->assertEmpty($fieldsInDBFields);
+
+        // // \Log::debug(json_encode($fieldsInCSVFields, JSON_PRETTY_PRINT));
+        // // \Log::debug(json_encode($fieldsInDBFields, JSON_PRETTY_PRINT));
+        return $responseContents['data']['id'];
+
+    }
+
+    /**
+     *
+     * @group CompaniesControllerTest
+     */
+    public function testCompanyGetJob()
+    {
+        $job = factory(\WA\DataStore\Company\CompanyUserImportJob::class)->create();
+
+        $response = $this->json('GET', "companies/{$job->companyId}/jobs/{$job->id}");
+        //\Log::debug(json_encode(json_decode($response->response->getContent()), JSON_PRETTY_PRINT));
+        $response->seeJsonStructure([
+            'data' => [
+                'id',
+                'type',
+                'attributes' => [
+                    'jobType',
+                    'status',
+                    'companyId',
+                    'path',
+                    'file',
+                    'totalUsers',
+                    'createdUsers',
+                    'creatableUsers',
+                    'updatedUsers',
+                    'updatableUsers',
+                    'sampleUser',
+                    'CSVfields',
+                    'DBfields',
+                    'mappings'
+                ]
+            ]
+        ]);
+    }
+
+    /**
+     *
+     * @group CompaniesControllerTest
+     */
+    public function testBORRAR()
+    {
+        $job = factory(\WA\DataStore\Company\CompanyUserImportJob::class)->create(['companyId' => 1]);
+
+        $response = $this->json('GET', 'companies/1');
+        //\Log::debug(json_encode(json_decode($response->response->getContent()), JSON_PRETTY_PRINT));
+        $response->seeJsonStructure([
+                'data' => [
+                    'id',
+                    'type',
+                    'attributes' => [
+
+                        
+                    ]
+                ]
+            ]);
+    }
+
+    /**
+     *
+     * @group CompaniesControllerTest
+     */
+    public function testCompanyPatchJob()
+    {
+
+        $job = factory(\WA\DataStore\Company\CompanyUserImportJob::class)->create([
+            'filepath' => base_path() . '/storage/clients/random-company/employee.csv',
+            'companyId' => 1
+        ]);
+        $this->withoutJobs();
+        $response = $this->call('PATCH', "companies/1/jobs/{$job->id}",
+            [
+                'data' => [
+                    'id' => $job->id,
+                    'type' => 'jobs',
+                    'attributes' => [
+                        'status' => 'Pending',
+                        'totalUsers' => $job->total,
+                        'createdUsers' => 0,
+                        'updatedUsers' => 0,
+                        'errors' => 0,
+                        'sampleUser' => [
+                            'email' => 'douglas.rolfson@example.org1',
+                            'alternateEmail' => 'pagac.ashlee@example.org',
+                            'password' => 'user',
+                            'username' => 'douglas.rolfson',
+                            'confirmation_code' => 'b95c05f09018e7d91c5a67c8d66b68f4',
+                            'confirmed' => '1',
+                            'firstName' => 'Britney',
+                            'lastName' => 'Prosacco',
+                            'alternateFirstName' => 'Larissa',
+                            'supervisorEmail' => 'leon62@example.org',
+                            'companyUserIdentifier' => '2',
+                            'isSupervisor' => '0',
+                            'isValidator' => '0',
+                            'isActive' => '1',
+                            'defaultLang' => 'en',
+                            'level' => '0',
+                            'notify' => '0',
+                            'companyId' => '3',
+                            'supervisorId' => '3',
+                            'externalId' => '',
+                            'approverId' => '1',
+                            'defaultLocationId' => '52'
+                        ],
+                        'CSVfields' => [
+                            'email',
+                            'alternateEmail',
+                            'password',
+                            'username',
+                            'confirmation_code',
+                            'confirmed',
+                            'firstName',
+                            'lastName',
+                            'alternateFirstName',
+                            'supervisorEmail',
+                            'companyUserIdentifier',
+                            'isSupervisor',
+                            'isValidator',
+                            'isActive',
+                            'defaultLang',
+                            'level',
+                            'notify',
+                            'companyId',
+                            'supervisorId',
+                            'externalId',
+                            'approverId',
+                            'defaultLocationId'
+                        ],
+                        'DBfields' => [
+                            'email',
+                            'alternateEmail',
+                            'password',
+                            'username',
+                            'confirmation_code',
+                            'confirmed',
+                            'firstName',
+                            'lastName',
+                            'alternateFirstName',
+                            'supervisorEmail',
+                            'companyUserIdentifier',
+                            'isSupervisor',
+                            'isValidator',
+                            'isActive',
+                            'defaultLang',
+                            'notes',
+                            'level',
+                            'notify',
+                            'Cost Center',
+                            'Position',
+                            'Sector',
+                            'Vehicle'
+                        ],
+                        'mappings' => [
+                            ['csvField' =>'email','dbField' =>'email'],
+                            ['csvField' =>'companyId','dbField' =>'companyId']
+                        ]
+                    ]
+                ]
+            ]);
+        //\Log::debug($response->getcontent());
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->seeJsonStructure([
+            'data' => [
+                'id',
+                'type',
+                'attributes' => [
+                    'status',
+                    'totalUsers',
+                    'createdUsers',
+                    'updatedUsers',
+                    // 'errors',
+                    'sampleUser',
+                    'CSVfields',
+                    'DBfields',
+                    'mappings'
+                ]
+            ]
+        ]);
+    }
+
+
+    /**
+     * 
+     * @group CompaniesControllerTest
+     */
+    public function testCompanyUsersImportationProcessAll_2 () {
+
+        $company = factory(\WA\DataStore\Company\Company::class)->create([
+            'name' => 'random-company'
+        ]);
+
+        $udl1 = factory(\WA\DataStore\Udl\Udl::class)->create([
+            'companyId'         => $company->id,
+            'name'              => 'udl-for-tests',
+            'legacyUdlField'    => null,
+            'inputType'         => 'string'
+        ]);
+
+        $udl1Value1 = factory(\WA\DataStore\UdlValue\UdlValue::class)->create([
+            'udlId' => $udl1->id,
+            'name' => 'udl-value-1'
+        ]);
+        $udl1Value2 = factory(\WA\DataStore\UdlValue\UdlValue::class)->create([
+            'udlId' => $udl1->id,
+            'name' => 'udl-value-2'
+        ]);
+        $udl1Value3 = factory(\WA\DataStore\UdlValue\UdlValue::class)->create([
+            'udlId' => $udl1->id,
+            'name' => 'udl-value-3'
+        ]);
+    
+        $uploadedFile = new Symfony\Component\HttpFoundation\File\UploadedFile(
+            './database/seeds/import/employee--test.csv',
+            'employee--test.csv',
+            null,null,null,true
+        );
+
+        $usersCount1 = User::where('companyId', $company->id)->count();
+        $jobsCount1 = CompanyUserImportJob::where('companyId', $company->id)->count();
+        //\Log::debug('testCompanyUsersImportationProcessAll_2 - usersCount1: '.print_r($usersCount1, true));
+        $this->assertEquals(0, $jobsCount1);
+        $this->assertEquals(0, $usersCount1);
+
+        $postUsers = $this->call('POST', "companies/{$company->id}/jobs/", 
+            ['test' => 1],
+            [],
+            ['csv' => $uploadedFile]
+        );
+
+        $job = json_decode($postUsers->getContent())->data;
+
+        $patchJob = $this->call('PATCH', "companies/{$company->id}/jobs/{$job->id}", [
+            'data' => [
+                'type' => 'jobs',
+                'id' => $job->id,
+                'attributes' => [
+                    'companyId' => '1',
+                    'filepath' => '/var/www/html/wirelessanalytics/clean-api/storage/clients/ward-steuber-and-mayert/employee1497367323.csv',
+                    'filename' => 'employee1497367323.csv',
+                    'totalUsers' => 0,
+                    'createdUsers' => 0,
+                    'updatedUsers' => 0,
+                    'failedUsers' => 0,
+                    'CSVfields' => [
+                        'email',
+                        'alternateEmail',
+                        'password',
+                        'username',
+                        'confirmation_code',
+                        'confirmed',
+                        'firstName',
+                        'lastName',
+                        'alternateFirstName',
+                        'supervisorEmail',
+                        'companyUserIdentifier',
+                        'isSupervisor',
+                        'isValidator',
+                        'isActive',
+                        'defaultLang',
+                        'level',
+                        'notify',
+                        'companyId',
+                        'supervisorId',
+                        'externalId',
+                        'approverId',
+                        'defaultLocationId'
+                    ],
+                    'DBfields' => [
+                        'uuid',
+                        'identification',
+                        'email',
+                        'alternateEmail',
+                        'username',
+                        'firstName',
+                        'lastName',
+                        'alternateFirstName',
+                        'isSupervisor',
+                        'isValidator',
+                        'isActive',
+                        'hierarchy',
+                        'defaultLang',
+                        'notes',
+                        'level',
+                        'Cost Center',
+                        'Division',
+                        'Position'
+                    ],
+                    'sampleUser' => [
+                        'email' => 'douglas.rolfson@example.org',
+                        'alternateEmail' => 'pagac.ashlee@example.org',
+                        'password' => 'user',
+                        'username' => 'douglas.rolfson',
+                        'confirmation_code' => 'b95c05f09018e7d91c5a67c8d66b68f4',
+                        'confirmed' => '1',
+                        'firstName' => 'Britney',
+                        'lastName' => 'Prosacco',
+                        'alternateFirstName' => 'Larissa',
+                        'supervisorEmail' => 'leon62@example.org',
+                        'companyUserIdentifier' => '2',
+                        'isSupervisor' => '0',
+                        'isValidator' => '0',
+                        'isActive' => '1',
+                        'defaultLang' => 'en',
+                        'level' => '0',
+                        'notify' => '0',
+                        'companyId' => '3',
+                        'supervisorId' => '3',
+                        'externalId' => '\\N',
+                        'approverId' => '1',
+                        'defaultLocationId' => '52'
+                    ],
+                    'mappings' => [
+                        ['csvField' =>'email','dbField' =>'email'],
+                        ['csvField' =>'companyId','dbField' =>'companyId']
+                    ],
+                    'status' => 'Pending',
+                    'errors' => [],
+                    'created_by_id' => 1,
+                    'updated_by_id' => 1,
+                    'created_at' => [
+                        'date' => '2017-06-13 15:22:03.000000',
+                        'timezone_type' => 3,
+                        'timezone' => 'UTC'
+                    ],
+                    'updated_at' => [
+                        'date' => '2017-06-13 15:22:03.000000',
+                        'timezone_type' => 3,
+                        'timezone' => 'UTC'
+                    ]
+                ],
+                'links' => [
+                    'self' => 'clean.api/companyuserimportjobs/5'
+                ]
+            ]
+        ]);
+
+        $usersCount3 = User::where('companyId', $company->id)->get();
+
+        $this->assertEquals(200, $patchJob->getStatusCode());
+
+    }
+
+    public function testCompanyDeleteImportJob() {
+        $job = factory(\WA\DataStore\Company\CompanyUserImportJob::class)->create([
+            'companyId' => $this->mainCompany->id
+        ]);
+
+        $responseDel = $this->call('DELETE', 'companies/'.$this->mainCompany->id.'/jobs/'.$job->id);
+        $this->assertEquals(200, $responseDel->status());
+    }
+
+    public function testCompanyDeleteImportJobStatusWorking() {
+        $job = factory(\WA\DataStore\Company\CompanyUserImportJob::class)->create([
+            'companyId' => $this->mainCompany->id,
+            'status' => 1
+        ]);
+
+        $responseDel = $this->call('DELETE', 'companies/'.$this->mainCompany->id.'/jobs/'.$job->id);
+
+        $this->assertEquals(409, $responseDel->status());
+    }
+
+    public function testCompanyDeleteImportJobIfNoExists()
+    {
+        // DELETE NO EXISTING.
+        $responseDel = $this->call('DELETE', 'companies/'.$this->mainCompany->id.'/jobs/1');
+        $this->assertEquals(404, $responseDel->status());
+    }
+
 }

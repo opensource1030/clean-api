@@ -16,34 +16,19 @@ class DeviceImagesTableSeeder extends BaseTableSeeder
     {
         $this->deleteTable();
 
-        $data = [
+        $imagesIds = [1,2,3,4,5,9,10];
 
-            [
-                'deviceId' => 1,
-                'imageId' => 1,
-            ],
-            [
-                'deviceId' => 1,
-                'imageId' => 2,
-            ],
-            [
-                'deviceId' => 2,
-                'imageId' => 1,
-            ],
-            [
-                'deviceId' => 2,
-                'imageId' => 4,
-            ],
-            [
-                'deviceId' => 3,
-                'imageId' => 1,
-            ],
-            [
-                'deviceId' => 3,
-                'imageId' => 5,
-            ],
-        ];
+        $i = 1;
+        while ($i < 22) {
+            $data = [
+                [
+                    'deviceId' => $i,
+                    'imageId' => $imagesIds[array_rand($imagesIds)]
+                ]
+            ];
 
-        $this->loadTable($data);
+            $this->loadTable($data);
+            $i++;
+        }
     }
 }

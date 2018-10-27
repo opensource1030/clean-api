@@ -1,11 +1,8 @@
 <?php
 
-namespace WA\Testing\Http\Requests\Parameters;
-
-use TestCase;
 use WA\Http\Requests\Parameters\Filters;
 
-class FilterParameterTest extends TestCase
+class FilterParameterTest extends \TestCase
 {
     /**
      * @var Filters

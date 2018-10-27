@@ -24,7 +24,6 @@ use WA\Events\PodcastWasPurchased;
 use Auth;
 use Cache;
 use Carbon\Carbon;
-use Log;
 
 /**
  * Class MainHandler.
@@ -40,15 +39,15 @@ class MainHandler extends BaseHandler
     {
         // Get the User Data Info from the Saml2 User.
         $userData = $this->getUserDataFromSaml2User($event);
-        Log::debug("MainHandler@saml2LoginUser - userData: " . print_r(json_encode($userData), true));
+        //\Log::debug("MainHandler@saml2LoginUser - userData: " . print_r(json_encode($userData), true));
 
         // Get the information of the company from company_saml2 table using the entityId.
         $companySaml = $this->getCompanySamlFromRequest();
-        Log::debug("MainHandler@saml2LoginUser - companySaml: " . print_r($companySaml, true));
+        //\Log::debug("MainHandler@saml2LoginUser - companySaml: " . print_r($companySaml, true));
 
         // Request the information of the user using the requested data from the event and the attributes retrieved from the company_saml2 table.
         $infoUser = $this->parseRequestedInfoFromIdp($userData, $companySaml);
-        Log::debug("MainHandler@saml2LoginUser - infoUser: " . print_r($infoUser, true));
+        //\Log::debug("MainHandler@saml2LoginUser - infoUser: " . print_r($infoUser, true));
 
         // Get IDP user Email from User Data Info
         if ($infoUser['email'] != '') {

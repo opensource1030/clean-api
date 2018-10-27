@@ -32,4 +32,14 @@ class Location extends BaseDataStore
     {
         return $this->hasMany('WA\DataStore\Carrier\Carrier', 'locationId');
     }
+
+    /**
+     * Get the transformer instance.
+     *
+     * @return LocationTransformer
+     */
+    public function getTransformer()
+    {
+        return new LocationTransformer();
+    }
 }

@@ -44,6 +44,7 @@ trait Criteria
      * @var Filters
      */
     protected $filters = null;
+    protected $extraFilter = null;
 
     /**
      * @var Sorting
@@ -160,9 +161,17 @@ trait Criteria
         if ($filterCriteria !== null) {
             $this->filterCriteria = $filterCriteria;
         }
-
+        
         return $this;
     }
+
+    public function setExtraFilters($filterCriteria) {
+        if ($filterCriteria !== null) {
+            $this->extraFilter = $filterCriteria;
+        }
+        
+        return $this;
+    } 
 
     /**
      * Set fields criteria.
@@ -229,81 +238,166 @@ trait Criteria
         $criteriaModelColumns = $this->criteriaModelColumns;
 
         foreach ($this->filterCriteria->filtering() as $filterKey => $filterVal) {
-            if (strpos($filterKey, '.')) {
-                $relKey = substr($filterKey, 0, strpos($filterKey, '.'));
-                $relColumn = substr($filterKey, strpos($filterKey, '.') + 1);
-
-                if (is_array($this->modelMap) && isset($this->modelMap[$relKey])) {
-                    $relKey = $this->modelMap[$relKey];
-                }
-
-                if ($relKey !== $criteriaModelName) {
-                    if ($returnEmptyResults === false) {
-                        $op = strtolower(key($filterVal));
-                        $val = current($filterVal);
-
-                        $model = $this->returnTheCriteriaModel($criteriaModelName);
-                        $transformer = $this->createTransformer($model);
-                        $newTransformer = new $transformer();
-
-                        if ($this->includesAreCorrectInf($relKey, $newTransformer)) {
-                            $this->criteriaQuery->whereHas($relKey,
-                                function ($query) use ($relKey, $relColumn, $op, $val) {
-                                    return $query = $this->executeCriteria($query, $this->changeTableName($relKey) . "." . $relColumn, $op, $val, 'AND');
-                            });
-                        }
-                    }
-                    continue;
-                }
-
-                $filterKey = $relColumn;
-            } else if (is_int($filterKey)) {
+            if(is_int($filterKey)) {
+                // CASO OR
                 if(isset($filterVal['eq'])) {
-                    $parts = explode("[or]" , $filterVal['eq']);
+                    if(strpos($filterVal['eq'], "[or]")) {
+                        $parts = explode("[or]" , $filterVal['eq']);
+                        $type = 'AND';
 
-                    $arrayFilters = $this->retrieveInformationInAnArray($parts);
+                        $arrayFilters = $this->retrieveInformationInAnArray($parts);
+                        $needIncludes = $this->arrayNeedsIncludes($arrayFilters);
+                        
+                        if($needIncludes) {
+                            $model = $this->returnTheCriteriaModel($criteriaModelName);
+                            $transformer = $this->createTransformer($model);
+                            $newTransformer = new $transformer();
 
-                    $model = $this->returnTheCriteriaModel($criteriaModelName);
-                    $transformer = $this->createTransformer($model);
-                    $newTransformer = new $transformer();
+                            $ok = true;
+                            foreach ($arrayFilters as $key => $value) {
+                                $ok = $this->includesAreCorrectInf($value['relKey'], $newTransformer);
+                            }
 
-                    $ok = true;
-                    foreach ($arrayFilters as $key => $value) {
-                        $ok = $this->includesAreCorrectInf($value['relKey'], $newTransformer);
-                    }
-
-                    if ($ok) {
-                        $this->criteriaQuery->whereHas($arrayFilters[0]['relKey'],
-                            function ($query) use ($arrayFilters) {
-                                $type = 'AND';
+                            if ($ok) {
                                 foreach ($arrayFilters as $key => $value) {
-                                    $query = $this->executeCriteria($query, $this->changeTableName($value['relKey']) . "." . $value['relColumn'], $value['operation'], $value['value'], $type);
-                                    $type = 'OR';
+                                    $this->criteriaQuery->orWhereHas($value['relKey'],
+                                        function ($query) use ($value, $type) {
+                                            $parts = explode('.', $value['relKey']);
+                                            $relKey = $parts[count($parts) - 1];
+                                            $query = $this->executeCriteria($query, $this->changeTableName($relKey) . "." . $value['relColumn'], $value['operation'], $value['value'], $type);
+                                            $type = 'OR';
+                                            return $query;
+                                    });
                                 }
-                            return $query;
-                        });
+                                
+
+                                /*
+                                $this->criteriaQuery->whereHas($arrayFilters[0]['relKey'],
+                                    function ($query) use ($arrayFilters, $type) {
+                                        foreach ($arrayFilters as $key => $value) {
+                                            $parts = explode('.', $value['relKey']);
+                                            $relKey = $parts[count($parts) - 1];
+                                            $query = $this->executeCriteria($query, $this->changeTableName($relKey) . "." . $value['relColumn'], $value['operation'], $value['value'], $type);
+                                            $type = 'OR';
+                                        }
+                                        
+                                    return $query;
+                                });
+                                */
+                            }
+                        } else {
+                            foreach ($arrayFilters as $key => $value) {
+                                $this->criteriaQuery = $this->executeCriteria($this->criteriaQuery, $value['relColumn'], $value['operation'], $value['value'], $type);
+                                $type = 'OR';
+                            }
+                        }
+                    } else if (strpos($filterVal['eq'], "[and]")) {
+                        $parts = explode("[and]" , $filterVal['eq']);
+
+                        $arrayFilters = $this->retrieveInformationInAnArray($parts);
+                        $needIncludes = $this->arrayNeedsIncludes($arrayFilters);
+
+                        if($needIncludes) {
+                            $model = $this->returnTheCriteriaModel($criteriaModelName);
+                            $transformer = $this->createTransformer($model);
+                            $newTransformer = new $transformer();
+
+                            $ok = true;
+                            foreach ($arrayFilters as $key => $value) {
+                                $ok = $this->includesAreCorrectInf($value['relKey'], $newTransformer);
+                            }
+
+                            if ($ok) {
+                                foreach ($arrayFilters as $key => $value) {
+                                    $this->criteriaQuery->whereHas($value['relKey'],
+                                        function ($query) use ($value) {
+                                            $parts = explode('.', $value['relKey']);
+                                            $relKey = $parts[count($parts) - 1];
+                                            $query = $this->executeCriteria($query, $this->changeTableName($relKey) . "." . $value['relColumn'], $value['operation'], $value['value'], 'AND');
+                                            return $query;
+                                    });
+                                }
+                                /*
+                                $this->criteriaQuery->whereHas($arrayFilters[0]['relKey'],
+                                    function ($query) use ($arrayFilters) {
+                                        foreach ($arrayFilters as $key => $value) {
+                                            $query = $this->executeCriteria($query, $this->changeTableName($value['relKey']) . "." . $value['relColumn'], $value['operation'], $value['value'], 'AND');
+                                        }
+                                    return $query;
+                                });*/
+                            }
+                        } else {
+                            foreach ($arrayFilters as $key => $value) {
+                                $this->criteriaQuery = $this->executeCriteria($this->criteriaQuery, $value['relColumn'], $value['operation'], $value['value'], 'AND');
+                            }
+                        }
+                    } else {
+                        throw new BadCriteriaException('Invalid filter criteria, malformed OR filter');
                     }
                 }
-            } elseif ($this->isInclude) {
-                continue;
-            }
+            } else {
+                // CASO AND
+                if (strpos($filterKey, '.')) {
+                    $parts = explode('.', $filterKey);
+                    $relColumn = $parts[count($parts) - 1];
+                    $relKey = '';
+                    $parts = array_slice($parts, 0, count($parts) - 1);
+                    
+                    foreach ($parts as $part) {
+                        if ($relKey == '') {
+                            $relKey = $part;   
+                        } else {
+                            $relKey = $relKey . '.' . $part;
+                        }                        
+                    }
 
-            if (!is_int($filterKey)) {
-                if (in_array($filterKey, $criteriaModelColumns)) {
-                    if (is_array($filterVal)) {
-                        foreach ($filterVal as $op => $val) {
+                    if (is_array($this->modelMap) && isset($this->modelMap[$relKey])) {
+                        $relKey = $this->modelMap[$relKey];
+                    }
+
+                    if ($relKey !== $criteriaModelName) {
+                        if ($returnEmptyResults === false) {
+                            $op = strtolower(key($filterVal));
+                            $val = current($filterVal);
+
+                            $model = $this->returnTheCriteriaModel($criteriaModelName);
+                            $transformer = $this->createTransformer($model);
+                            $newTransformer = new $transformer();
+
+                            if ($this->includesAreCorrectInf($relKey, $newTransformer)) {
+                                $this->criteriaQuery->whereHas($relKey,
+                                    function ($query) use ($relKey, $relColumn, $op, $val) {
+                                        $parts = explode('.', $relKey);
+                                        $relKey = $parts[count($parts) - 1];
+                                        return $query = $this->executeCriteria($query, $this->changeTableName($relKey) . "." . $relColumn, $op, $val, 'AND');
+                                });
+                            }
+                        }
+                        continue;
+                    }
+
+                    $filterKey = $relColumn;
+                } else {
+
+                    if (in_array($filterKey, $criteriaModelColumns)) {
+                        if (is_array($filterVal)) {
+                            foreach ($filterVal as $op => $val) {
+                                $this->criteriaQuery = $this->executeCriteria($this->criteriaQuery, $this->changeTableName($filterKey), $op, $val, 'AND');
+                            }
+                        } else {
+                            $op = strtolower(key($filterVal));
+                            $val = current($filterVal);
                             $this->criteriaQuery = $this->executeCriteria($this->criteriaQuery, $this->changeTableName($filterKey), $op, $val, 'AND');
                         }
                     } else {
-                        $op = strtolower(key($filterVal));
-                        $val = current($filterVal);
-                        $this->criteriaQuery = $this->executeCriteria($this->criteriaQuery, $this->changeTableName($filterKey), $op, $val, 'AND');
+                        throw new BadCriteriaException('Invalid filter criteria');
                     }
-                } else {
-                    throw new BadCriteriaException('Invalid filter criteria');
                 }
             }
         }
+
+        //dd($this->criteriaQuery->toSql());
+        //\Log::debug("Criteria@filter - this->criteriaQuery->toSql(): " . print_r($this->criteriaQuery->toSql(), true));
 
         return $this;
     }
@@ -316,13 +410,15 @@ trait Criteria
         return $model;
     }
 
-    private function createTransformer($var)
+    protected function createTransformer($var)
     {
         if($var === 'categoryapps') { return "\\WA\\DataStore\\Category\\CategoryAppTransformer"; }
         if($var === 'devicetypes') { return "\\WA\\DataStore\\DeviceType\\DeviceTypeTransformer"; }
         if($var === 'devicevariations') { return "\\WA\\DataStore\\DeviceVariation\\DeviceVariationTransformer"; }
         if($var === 'serviceitems') { return "\\WA\\DataStore\\ServiceItem\\ServiceItemTransformer"; }
         if($var === 'udlvalues') { return "\\WA\\DataStore\\UdlValue\\UdlValueTransformer"; }
+        if($var === 'globalsettings') { return "\\WA\\DataStore\\GlobalSetting\\GlobalSettingTransformer"; }
+        if($var === 'globalsettingvalues') { return "\\WA\\DataStore\\GlobalSettingValue\\GlobalSettingValueTransformer"; }
 
         $model = title_case(str_singular($var));
         return "\\WA\\DataStore\\${model}\\${model}Transformer";
@@ -332,9 +428,20 @@ trait Criteria
     {
         $includesAvailable = $class->getAvailableIncludes();
 
-        foreach ($includesAvailable as $aic) {
-            if ($aic == $include) {
-                return true;
+        if (strpos($include, '.')) {
+            $auxClass = substr($include, 0, strpos($include, '.'));
+            $auxInclude = substr($include, strpos($include, '.') + 1);
+
+            $model = $this->returnTheCriteriaModel($auxClass);
+            $transformer = $this->createTransformer($model);
+            $newTransformer = new $transformer();
+
+            return $this->includesAreCorrectInf($auxInclude, $newTransformer);
+        } else {
+            foreach ($includesAvailable as $aic) {
+                if ($aic == $include) {
+                    return true;
+                }
             }
         }
     }
@@ -363,6 +470,8 @@ trait Criteria
         if($var === 'devicevariations_modifications') { return "device_variations_modifications"; }
         if($var === 'emailnotifications') { return "email_notifications"; }
         if($var === 'employeeassets') { return "employee_assets"; }
+        if($var === 'globalsettings') { return "global_settings"; }
+        if($var === 'globalsettingvalues') { return "global_settings_values"; }
         if($var === 'jobstatuses') { return "job_statuses"; }
         if($var === 'notificationgroups') { return "notification_groups"; }
         if($var === 'notificationscategoriesingroup') { return "notifications_categories_in_group"; }
@@ -409,18 +518,61 @@ trait Criteria
                     $relation = substr($relationship, 1, strpos($relationship, '][')-1);
                     $aux['operation'] = substr($relationship, strpos($relationship, '][') + 2 , -1);
                     if (strpos($relation, '.')) {
-                        $aux['relKey'] = substr($relation, 0, strpos($relation, '.'));
-                        $aux['relColumn'] = substr($relation, strpos($relation, '.') + 1);
-                    } else {}
+
+                        $parts = explode('.', $relation);
+                        $aux['relColumn'] = $parts[count($parts) - 1];
+                        $relKey = '';
+                        $parts = array_slice($parts, 0, count($parts) - 1);
+                        
+                        foreach ($parts as $part) {
+                            if ($relKey == '') {
+                                $relKey = $part;   
+                            } else {
+                                $relKey = $relKey . '.' . $part;
+                            }                        
+                        }
+
+                        $aux['relKey'] = $relKey;
+                    } else {
+                        $aux['relKey'] = '';
+                        $aux['relColumn'] = $relation;
+                    }
                 } else if (strpos($relationship, '.')) {
-                    $aux['operation'] = 'eq';
-                    $aux['relKey'] = substr($relationship, 1, strpos($relationship, '.')-1);
-                    $aux['relColumn'] = substr($relationship, strpos($relationship, '.') + 1 , -1);
+                    $relationship = substr($relationship, 1, -1);
+
+                    $aux['operation'] = 'eq';$parts = explode('.', $relationship);
+                    $aux['relColumn'] = $parts[count($parts) - 1];
+                    $relKey = '';
+                    $parts = array_slice($parts, 0, count($parts) - 1);
+                    
+                    foreach ($parts as $part) {
+                        if ($relKey == '') {
+                            $relKey = $part;   
+                        } else {
+                            $relKey = $relKey . '.' . $part;
+                        }                        
+                    }
+
+                    $aux['relKey'] = $relKey;
                 } else {}
             } else {}
             array_push($arrayAux, $aux);
         }
+
         return $arrayAux;
+    }
+
+    private function arrayNeedsIncludes($array) {
+        $ok = true;
+        foreach ($array as $value) {
+            if($value['relKey'] != '') {
+                $ok = true;
+            } else {
+                $ok = false;
+            }
+        }
+
+        return $ok;
     }
 
     /**
@@ -440,6 +592,7 @@ trait Criteria
                 } else {
                     $query->where($filterKey, '>', $val);
                 }
+
                 break;
             case 'lt':
                 if ($type == 'OR') {
@@ -447,6 +600,7 @@ trait Criteria
                 } else {
                     $query->where($filterKey, '<', $val);
                 }
+
                 break;
             case 'ge':
             case 'gte':
@@ -455,6 +609,7 @@ trait Criteria
                 } else {
                     $query->where($filterKey, '>=', $val);
                 }
+
                 break;
             case 'lte':
             case 'le':
@@ -463,6 +618,7 @@ trait Criteria
                 } else {
                     $query->where($filterKey, '<=', $val);
                 }
+
                 break;
             case 'ne':
                 // Handle delimited lists
@@ -490,6 +646,7 @@ trait Criteria
                 } else {
                     $query->whereIn($filterKey, $vals);
                 }
+
                 break;
             case 'like':
                 // Handle delimited lists
@@ -499,7 +656,7 @@ trait Criteria
                     continue;
                 }
 
-                $query->where(function ($query) use ($vals, $filterKey) {
+                $queryFunction = function ($query) use ($vals, $filterKey) {
                     foreach ($vals as $v) {
                         $v = str_replace('*', '%', $v);
                         if (strpos($v, '%') === false) {
@@ -507,7 +664,15 @@ trait Criteria
                         }
                         $query->orWhere($filterKey, 'LIKE', $v);
                     }
-                });
+                };
+
+                if ($type == 'OR') {
+                    $query->orWhere($queryFunction);
+
+                } else {
+                    $query->where($queryFunction);
+
+                }
 
                 break;
             default:
@@ -591,11 +756,16 @@ trait Criteria
      * @return Filters
      */
     public function getFilters()
-    {
-        $filters = new Filters((array)\Request::get('filter', null));
+    {   
+        $req = (array)\Request::get('filter', null);
+        if ($this->extraFilter != '') {
+            foreach ($this->extraFilter as $key => $value) {
+                $req[$key] = $value;
+            }
+        }
+        $filters = new Filters($req);
         return $filters;
     }
-
 
     /**
      * @return Fields

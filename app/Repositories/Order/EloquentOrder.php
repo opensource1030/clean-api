@@ -24,8 +24,32 @@ class EloquentOrder extends AbstractRepository implements OrderInterface
             return 'notExist';
         }
 
+        /* The Status will not be updated directly.
+         * We will use the WorkflowEventSubscriber to do that.
+         *
         if (isset($data['status'])) {
             $order->status = $data['status'];
+        }*/
+        if (isset($data['orderType'])) {
+            $order->orderType = $data['orderType'];
+        }
+        if (isset($data['serviceImei'])) {
+            $order->serviceImei = $data['serviceImei'];
+        }
+        if (isset($data['servicePhoneNo'])) {
+            $order->servicePhoneNo = $data['servicePhoneNo'];
+        }
+        if (isset($data['serviceSim'])) {
+            $order->serviceSim = $data['serviceSim'];
+        }
+        if (isset($data['deviceImei'])) {
+            $order->deviceImei = $data['deviceImei'];
+        }
+        if (isset($data['deviceCarrier'])) {
+            $order->deviceCarrier = $data['deviceCarrier'];
+        }
+        if (isset($data['deviceSim'])) {
+            $order->deviceSim = $data['deviceSim'];
         }
         if (isset($data['userId'])) {
             $order->userId = $data['userId'];
@@ -39,8 +63,8 @@ class EloquentOrder extends AbstractRepository implements OrderInterface
         if (isset($data['serviceId'])) {
             $order->serviceId = $data['serviceId'];
         }
-        if (isset($data['carrierId'])) {
-            $order->carrierId = $data['carrierId'];
+        if (isset($data['addressId'])) {
+            $order->addressId = $data['addressId'];
         }
 
         if (!$order->save()) {
@@ -71,13 +95,24 @@ class EloquentOrder extends AbstractRepository implements OrderInterface
      */
     public function create(array $data)
     {
+        if (!isset($data['userId'])) {
+            return false;
+        }
+
         $orderData = [
-            'status'        => isset($data['status'])       ? $data['status']       : null,
-            'userId'        => isset($data['userId'])       ? $data['userId']       : null,
-            'packageId'     => isset($data['packageId'])    ? $data['packageId']    : null,
-            'deviceId'      => isset($data['deviceId'])     ? $data['deviceId']     : null,
-            'serviceId'     => isset($data['serviceId'])    ? $data['serviceId']    : null,
-            'carrierId'     => isset($data['carrierId'])    ? $data['carrierId']    : null,
+            'status'            => 'New',
+            'orderType'         => isset($data['orderType'])        ? $data['orderType']        : null,
+            'serviceImei'       => isset($data['serviceImei'])      ? $data['serviceImei']      : '',
+            'servicePhoneNo'    => isset($data['servicePhoneNo'])   ? $data['servicePhoneNo']   : '',
+            'serviceSim'        => isset($data['serviceSim'])       ? $data['serviceSim']       : '',
+            'deviceImei'        => isset($data['deviceImei'])       ? $data['deviceImei']       : '',
+            'deviceCarrier'     => isset($data['deviceCarrier'])    ? $data['deviceCarrier']    : '',
+            'deviceSim'         => isset($data['deviceSim'])        ? $data['deviceSim']        : '',
+            'userId'            => isset($data['userId'])           ? $data['userId']           : null,
+            'packageId'         => isset($data['packageId'])        ? $data['packageId']        : null,
+            'deviceId'          => isset($data['deviceId'])         ? $data['deviceId']         : null,
+            'serviceId'         => isset($data['serviceId'])        ? $data['serviceId']        : null,
+            'addressId'         => isset($data['addressId'])        ? $data['addressId']        : null,
         ];
 
         $order = $this->model->create($orderData);
@@ -108,5 +143,49 @@ class EloquentOrder extends AbstractRepository implements OrderInterface
         }
 
         return $this->model->destroy($id);
+    }
+
+    public function addFilterToTheRequest($companyId) {
+        $aux['users.companyId'] = (string) $companyId;
+        return $aux;
+    }
+
+    /**
+     * Check if the Model and/or its relationships are related to the Company of the User.
+     *
+     * @param JSON  $json : The Json request.
+     * @param int  $companyId
+     *
+     * @return Boolean
+     */
+    public function checkModelAndRelationships($json, $companyId) {
+        $ok = true;
+        $user = \WA\DataStore\User\User::find($json['attributes']['userId']);
+        $ok = $ok && ($user->companyId == $companyId);
+
+        if ($json['attributes']['packageId'] > 1) {
+            $pack = \WA\DataStore\Package\Package::find($json['attributes']['packageId']);
+            $ok = $ok && ($pack->companyId == $companyId);
+        }
+
+        if ($json['attributes']['serviceId'] > 1) {
+            $service = \WA\DataStore\Service\Service::find($json['attributes']['serviceId']);
+            foreach ($service->packages as $value) {
+                $ok = $ok && ($value->companyId == $companyId);
+            }
+        }
+
+        return $ok;
+    }
+
+    /**
+     * Add the attributes or the relationships needed.
+     *
+     * @param $data : The Data request.
+     *
+     * @return $data: The Data with the minimum relationship needed.
+     */
+    public function addRelationships($data) {
+        return $data;
     }
 }

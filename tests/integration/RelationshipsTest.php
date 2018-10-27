@@ -1,10 +1,10 @@
 <?php
 
-use Laravel\Lumen\Testing\DatabaseMigrations;
 
-class RelationshipsTest extends TestCase
+
+class RelationshipsTest extends \TestCase
 {
-    use DatabaseMigrations;
+    use \Laravel\Lumen\Testing\DatabaseMigrations;
 
     public function testIncludeRelationships()
     {
@@ -14,8 +14,10 @@ class RelationshipsTest extends TestCase
 
         $devicevariation2 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create(['deviceId' => $device->id])->id;
 
-        $this->json('GET', 'devices/'.$device->id.'/relationships/devicevariations')
-            ->seeJsonStructure([
+        $res = $this->json('GET', 'devices/'.$device->id.'/relationships/devicevariations');
+        //Log::debug("testGetPackageByIdandIncludesDevices: ".print_r($res->response->getContent(), true));
+
+        $res->seeJsonStructure([
                 'data' => [
                     0 => [
                         'type',
@@ -27,9 +29,6 @@ class RelationshipsTest extends TestCase
                     ],
                 ],
                 'meta' => [
-                    'sort',
-                    'filter',
-                    'fields',
                     'pagination' => [
                         'total',
                         'count',
@@ -101,8 +100,9 @@ class RelationshipsTest extends TestCase
 
         $devicevariation2 = factory(\WA\DataStore\DeviceVariation\DeviceVariation::class)->create(['deviceId' => $device->id])->id;
 
-        $this->json('GET', 'devices/'.$device->id.'/devicevariations')
-            ->seeJsonStructure(
+        $res = $this->json('GET', 'devices/'.$device->id.'/devicevariations');
+        //Log::debug("testGetPackageByIdandIncludesDevices: ".print_r($res->response->getContent(), true));
+        $res->seeJsonStructure(
             [
                 'data' => [
                     0 => [
@@ -133,9 +133,6 @@ class RelationshipsTest extends TestCase
                     ],
                 ],
                 'meta' => [
-                    'sort',
-                    'filter',
-                    'fields',
                     'pagination' => [
                         'total',
                         'count',

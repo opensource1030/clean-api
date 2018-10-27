@@ -44,15 +44,19 @@ class DeviceVariationsController extends FilteredApiController
     public function store($id, Request $request)
     {
         $success = true;
-         $dataModifications = $dataPresets =array();
-
-
+        $dataModifications = $dataPresets =array();
+        
         /*
          * Checks if Json has data, data-type & data-attributes.
          */
         if (!$this->isJsonCorrect($request, 'devicevariations')) {
             $error['errors']['json'] = Lang::get('messages.InvalidJson');
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+        }
+
+        if(!$this->addFilterToTheRequest("store", $request)) {
+            $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
         }
 
         DB::beginTransaction();
@@ -83,7 +87,7 @@ class DeviceVariationsController extends FilteredApiController
             $success = false;
             $error['errors']['deviceVariations'] = Lang::get('messages.NotOptionIncludeClass',
                 ['class' => 'DeviceVariation', 'option' => 'updated', 'include' => '']);
-            //$error['errors']['Message'] = $e->getMessage();
+            $error['errors']['Message'] = $e->getMessage();
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
@@ -147,13 +151,20 @@ class DeviceVariationsController extends FilteredApiController
             return response()->json($error)->setStatusCode($this->status_codes['conflict']);
         }
 
+        $data = $request->all()['data'];
+        $data = $this->addRelationships($data);
+
+        if(!$this->addFilterToTheRequest("create", $data)) {
+            $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+        }
+
         DB::beginTransaction();
 
         /*
          * Now we can create the DeviceVariation.
          */
         try {
-            $data = $request->all()['data'];
             $deviceVariation = $this->deviceVariation->create($data['attributes']);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -212,6 +223,11 @@ class DeviceVariationsController extends FilteredApiController
      */
     public function delete($id)
     {
+        if(!$this->addFilterToTheRequest("delete", null)) {
+            $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
+            return response()->json($error)->setStatusCode($this->status_codes['notexists']);
+        }
+        
         $deviceVariation = DeviceVariation::find($id);
         if ($deviceVariation != null) {
             $this->deviceVariation->deleteById($id);

@@ -13,17 +13,40 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
-        'WA\Events\SomeEvent' => [
-            'WA\Listeners\EventListener',
-        ],
         'Aacotroneo\Saml2\Events\Saml2LoginEvent' => [
             'WA\Events\Handlers\Saml2\MainHandler@saml2LoginUser',
         ],
+        'Brexis\LaravelWorkflow\Events\GuardEvent' => [
+            'WA\Events\Handlers\WorkflowEventSubscriber@onGuard'
+        ],
+        'Brexis\LaravelWorkflow\Events\LeaveEvent' => [
+            'WA\Events\Handlers\WorkflowEventSubscriber@onLeave'
+        ],
+        'Brexis\LaravelWorkflow\Events\TransitionEvent' => [
+            'WA\Events\Handlers\WorkflowEventSubscriber@onTransition'
+        ],
+        'Brexis\LaravelWorkflow\Events\EnterEvent' => [
+            'WA\Events\Handlers\WorkflowEventSubscriber@onEnter'
+        ],
+        'WA\Events\OrderCreateTransition' => [
+            'WA\Events\Handlers\SendEVRequest@createTicketOnEasyVista',
+            'WA\Events\Handlers\SendUserEmailCreateOrder@sendOrderConfirmationEmail',
+            //'WA\Events\Handlers\SendAdminEmailCreateOrder@sendOrderConfirmationEmail'
+        ],
+        'WA\Events\OrderAcceptedTransition' => [
+            'WA\Events\Handlers\SendUserEmailOrderAccepted@sendOrderConfirmationEmail'
+        ],
+        'WA\Events\OrderDeniedTransition' => [
+            'WA\Events\Handlers\SendUserEmailOrderDenied@sendOrderConfirmationEmail'
+        ],
+        'WA\Events\OrderDeliveredTransition' => [
+            'WA\Events\Handlers\SendUserEmailOrderDelivered@sendOrderConfirmationEmail'
+        ],
+//        'WA\Events\UserCreatedEvent' => [
+//            'WA\Listeners\UserCreatedEventListener'
+//        ],
+        'WA\Events\UserCreated' => [
+            'WA\Listeners\NotifyEasyVistaUserCreation'
+        ],
     ];
-
-/*
-    public function register(){
-        Event::subscribe('WA\Events\Handlers\Saml2\MainHandler');
-    }
-*/
 }

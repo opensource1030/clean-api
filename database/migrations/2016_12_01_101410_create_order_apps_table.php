@@ -1,15 +1,11 @@
 <?php
-
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
-
 class CreateOrderAppsTable extends Migration
 {
     use \WA\Database\Command\TablesRelationsAndIndexes;
-
     protected $tableName = 'order_apps';
-
     /**
      * Run the migrations.
      *
@@ -18,18 +14,15 @@ class CreateOrderAppsTable extends Migration
     public function up()
     {
         Schema::dropIfExists($this->tableName);
-
         Schema::create(
             $this->tableName,
             function ($table) {
                 $table->increments('id');
                 $table->integer('orderId')->unsigned();
                 $table->integer('appId')->unsigned();
-
                 $table->nullableTimestamps();
             }
         );
-
         Schema::table(
             $this->tableName,
             function ($table) {
@@ -38,7 +31,6 @@ class CreateOrderAppsTable extends Migration
             }
         );
     }
-
     /**
      * Reverse the migrations.
      *
