@@ -25,7 +25,7 @@ namespace :ops do
     desc 'reset PHP FPM'
     task :reset_app do
         on roles(:app), in: :sequence, wait: 1 do
-            execute "sudo service php7-fpm restart"
+            execute "sudo service php7.1-fpm restart"
             execute "sudo service nginx restart"
         end
     end
@@ -58,6 +58,8 @@ namespace :laravel do
         on roles(:app), in: :sequence, wait: 5 do
             execute :chmod, "u+x #{release_path}/artisan"
             execute :chmod, "-R 777 #{release_path}/storage"
+            execute :chown www-data:www-data storage/oauth-*.key
+            execute :chmod 600 storage/oauth-*.key
         end
     end
 
