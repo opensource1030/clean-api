@@ -4,8 +4,9 @@ namespace WA\Repositories\UdlValue;
 
 use Illuminate\Database\Eloquent\Model;
 use WA\Repositories\AbstractRepository;
+use WA\Repositories\GlobalSetting\GlobalSettingInterface;
 
-class EloquentUdlValue extends AbstractRepository implements UdlValueInterface
+class EloquentGlobalSettingValue extends AbstractRepository implements GlobalSettingInterface
 {
     /**
      * @var \Illuminate\Database\Eloquent\Model
@@ -26,14 +27,14 @@ class EloquentUdlValue extends AbstractRepository implements UdlValueInterface
      */
     public function create(array $data)
     {
-        return
-            $this->model->firstOrCreate(
-                [
-                    'name' => $data['name'],
-                    'udlId' => $data['udlId'],
-                    'externalId' => isset($data['externalId']) ? $data['externalId'] : null,
-                ]
-            );
+//        return
+//            $this->model->firstOrCreate(
+//                [
+//                    'name' => $data['name'],
+//                    'udlId' => $data['udlId'],
+//                    'externalId' => isset($data['externalId']) ? $data['externalId'] : null,
+//                ]
+//            );
     }
 
     public function update(array $data)

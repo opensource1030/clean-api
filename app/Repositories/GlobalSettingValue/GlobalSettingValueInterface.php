@@ -7,7 +7,7 @@ use WA\Repositories\RepositoryInterface;
 /**
  * Interface UdlValueInterface.
  */
-interface UdlValueInterface extends RepositoryInterface
+interface GlobalSettingValueInterface extends RepositoryInterface
 {
     /**
      * Creates a new UDL value.

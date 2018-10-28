@@ -11,13 +11,9 @@ set :file_permissions_users, ["www-data","deploy"]
 
 # Slack Notifications
 set :slackistrano, {
-    klass: Slackistrano::CustomMessaging,
-    team: "wirelessanalytics",
-   webhook: "https://hooks.slack.com/services/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",
-   token: "xoxp-2153660998-7383443462-7449051621-4e69f4",
-    channel:'#dev-ops'
+  channel: '#dev-ops',
+  webhook: 'https://hooks.slack.com/services/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'
 }
-
 
 # Devops commands
 namespace :ops do
@@ -58,15 +54,15 @@ namespace :laravel do
         on roles(:app), in: :sequence, wait: 5 do
             execute :chmod, "u+x #{release_path}/artisan"
             execute :chmod, "-R 777 #{release_path}/storage"
-            execute :chown www-data:www-data storage/oauth-*.key
-            execute :chmod 600 storage/oauth-*.key
+            #execute :chown, "www-data:www-data #{release_path}/storage/oauth-*.key"
+            execute :chmod, "600 #{release_path}/storage/oauth-private.key"
         end
     end
 
     desc "Run Laravel Artisan migrate task."
     task :migrate do
         on roles(:app), in: :sequence, wait: 5 do
-            execute "cd #{release_path} && php artisan migrate --force"
+            execute "cd #{relhttps://hooks.slack.com/services/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ease_path} && php artisan migrate --force"
         end
     end
 
