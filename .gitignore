@@ -6,4 +6,5 @@
 /.phpstorm.meta.php
 .DS_Store
 log
+storage
 /storage/clients

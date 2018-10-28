@@ -28,7 +28,8 @@ class NotifyEasyVistaUserCreation
                         "E_MAIL" => $event->user->email,
                         "IDENTIFICATION" => $event->user->identification,
                         "LAST_NAME" => $event->user->lastName . ', ' . $event->user->firstName, #. .. , ...
-                        "DEPARTMENT_ID" => $event->user->companies()->first()->externalId, # 12
+                        "DEPARTMENT_ID" => $event->user->companies()->first()->externalId, # DE
+                        "DEFAULT_DOMAIN_ID" => $event->user->companies()->first()->externalId2, # 12
                         "AVAILABLE_FIELD_1" => "Needs Update",
                         "COMMENT_EMPLOYEE" => $event->user->notes,
                         "NOTIFICATION_TYPE_ID" => (string)str_ireplace("0", "", $notify)

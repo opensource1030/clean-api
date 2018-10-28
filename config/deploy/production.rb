@@ -32,3 +32,6 @@ namespace :deploy do
     #after :published, "laravel:migrate"
     after :published, "laravel:optimize"
 end
+
+## sudo chown www-data:www-data storage/oauth-*.key
+## sudo chmod 600 storage/oauth-*.key
