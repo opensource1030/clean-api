@@ -698,7 +698,7 @@ $api->version('v1', function ($api) {
         ]);
 
         $api->get('users/me', [
-            'middleware' => [$scopeMiddleware.':get_user_me'],
+//            'middleware' => [$scopeMiddleware.':get_user_me'],
             'as' => 'api.users.logged',
             'uses' => $usersController . '@getLoggedInUser'
         ]);
