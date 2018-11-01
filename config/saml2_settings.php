@@ -33,7 +33,7 @@ return $settings = array(
      */
     'loginRoute' => '/dashboard',
 
-    /**
+    /**.
      * Where to redirect after login if no other option was provided
      */
     'errorRoute' => '/ssoError',
