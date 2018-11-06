@@ -17,6 +17,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use WA\DataStore\CarrierDestinationMap;
 use WA\DataStore\Company\CompanySaml2;
 use WA\DataStore\User\User;
+use WA\DataStore\Role\Role;
 
 use WA\Events\Handlers\BaseHandler;
 use WA\Events\PodcastWasPurchased;
