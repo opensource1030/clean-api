@@ -625,8 +625,6 @@ class UsersController extends FilteredApiController
             });
 
             DB::commit();
-            Log::debug("Cache::put - ". 'user_email_'.$code . ' - ' . $user->identification);
-            Log::debug("Cache::put - ". 'user_code_'.$user->identification . ' - ' . $code);
             Cache::put('user_email_'.$code, $user->identification, 60);
             Cache::put('user_code_'.$user->identification, $code, 60);
 
