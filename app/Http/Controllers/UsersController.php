@@ -619,12 +619,14 @@ class UsersController extends FilteredApiController
                 'redirectPath' => $redirectPath,
             ];
 
-//            $mail = Mail::send('emails.auth.register', $data, function ($m) use ($user) {
-//                $m->from(env('MAIL_FROM_ADDRESS'), 'Wireless Analytics');
-//                $m->to($user->email)->subject('New User '.$user->username.' !');
-//            });
+            $mail = Mail::send('emails.auth.register', $data, function ($m) use ($user) {
+                $m->from(env('MAIL_FROM_ADDRESS'), 'Wireless Analytics');
+                $m->to($user->email)->subject('New User '.$user->username.' !');
+            });
 
             DB::commit();
+            Log::debug("Cache::put - ". 'user_email_'.$code . ' - ' . $user->identification);
+            Log::debug("Cache::put - ". 'user_code_'.$user->identification . ' - ' . $code);
             Cache::put('user_email_'.$code, $user->identification, 60);
             Cache::put('user_code_'.$user->identification, $code, 60);
 
