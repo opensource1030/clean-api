@@ -64,6 +64,10 @@ class MainHandler extends BaseHandler
                         'companyId' => $companySaml['companyId']
                         )
                     );
+                $userRole = Role::where('name', 'user')->first();
+                if (isset($userRole)) {
+                    $laravelUser->roles()->sync([$userRole->id]);
+                }
             }
 
             // Get the UUID from url.

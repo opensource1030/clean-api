@@ -126,7 +126,7 @@ class PermissionRolesTableSeeder extends BaseTableSeeder
                 'role_id' => 3,
             ],
             [
-                'permission_id' => 92, // get_user_me
+                'permission_id' => 93, // get_user_me
                 'role_id' => 3,
             ],
             [
