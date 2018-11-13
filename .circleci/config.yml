@@ -49,10 +49,11 @@ jobs:
     #    command: 'echo ''America/New_York'' | sudo tee -a /etc/timezone; sudo dpkg-reconfigure
     #      -f noninteractive tzdata; sudo service mysql restart; sudo service postgresql
     #      restart; '
-    - run: sudo apt install -y libsqlite3-dev zlib1g-dev
+    - run: sudo apt install -y libsqlite3-dev zlib1g-dev libmcrypt-dev ruby
     - run: sudo docker-php-ext-install zip
     - run: sudo docker-php-ext-install mcrypt
     - run: sudo composer self-update
+    - run: sudo gem install bundler
     # Dependencies
     #   This would typically go in either a build or a build-and-test job when using workflows
     # Restore the dependency cache
@@ -87,6 +88,7 @@ jobs:
     # Test
     #   This would typically be a build job when using workflows, possibly combined with build
     # This is based on your 1.0 configuration file or project settings
+    - run: chmod 600 ~/WirelessAnalytics/clean-api/storage/oauth-private.key
     - run: cp .env.test .env
     - run: php vendor/bin/phpunit -c phpunit.xml --exclude-group need-review --coverage-clover build/logs/clover.xml -d memory_limit=2048M
     # This is based on your 1.0 configuration file or project settings
