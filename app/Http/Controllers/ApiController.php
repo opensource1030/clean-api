@@ -49,7 +49,8 @@ abstract class ApiController extends BaseController
      */
     public function isJsonCorrect($request, $type)
     {
-        if (!isset($request['data'])) {
+        if ((is_array($request) && !isset($request['data'])) ||
+            (!is_array($request) && !$request->has('data'))) {
             return false;
         } else {
             $data = $request['data'];

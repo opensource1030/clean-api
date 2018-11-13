@@ -2,12 +2,12 @@
 
 namespace WA\Services\Form\Company;
 
-use WA\Services\Validation\AbstractLaravelValidator;
+//use WA\Services\Validation\AbstractLaravelValidator;
 
 /**
  * Class BulkUserFormValidator.
  */
-class CensusFormValidator extends AbstractLaravelValidator
+class CensusFormValidator //extends AbstractLaravelValidator
 {
     /**
      * Validation rules.

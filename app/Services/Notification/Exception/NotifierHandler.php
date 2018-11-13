@@ -2,14 +2,14 @@
 
 namespace WA\Services\Notification\Exception;
 
-use WA\Exceptions\HandlerInterface;
+//use WA\Exceptions\HandlerInterface;
 use WA\Exceptions\WAException;
 use WA\Services\Notification\NotifierInterface;
 
 /**
  * Class NotifierHandler.
  */
-class NotifierHandler implements HandlerInterface
+class NotifierHandler //implements HandlerInterface
 {
     /**
      * @var NotifierInterface

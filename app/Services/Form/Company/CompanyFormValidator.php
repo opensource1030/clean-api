@@ -2,12 +2,12 @@
 
 namespace WA\Services\Form\Company;
 
-use WA\Services\Validation\AbstractLaravelValidator;
+//use WA\Services\Validation\AbstractLaravelValidator;
 
 /**
  * Class CompanyFormValidator.
  */
-class CompanyFormValidator extends AbstractLaravelValidator
+class CompanyFormValidator //extends AbstractLaravelValidator
 {
     /**
      * Validation rules.

@@ -69,6 +69,6 @@ class OauthApiTest extends \TestCase
         $this->assertEquals($array['user_id'], $user->id);
         $this->assertEquals($array['token_type'], 'Bearer');
         $this->assertEquals(strlen($array['access_token']),1078);
-        $this->assertEquals(strlen($array['refresh_token']), 712);
+        $this->assertEquals(strlen($array['refresh_token']), 716);
     }
 }

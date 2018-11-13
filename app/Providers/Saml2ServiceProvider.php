@@ -28,7 +28,7 @@ class Saml2ServiceProvider extends Saml2SP
     public function boot()
     {
         if (config('saml2_settings.useRoutes', false) == true) {
-            $this->app->group(
+            $this->app->router->group(
                 [
                     'prefix' => config('saml2_settings.routesPrefix'),
                     'middleware' => config('saml2_settings.routesMiddleware'),

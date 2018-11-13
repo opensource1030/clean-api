@@ -121,23 +121,23 @@ $app->configure('jwt');
 
 // $app->register(WA\Providers\AppServiceProvider::class);
 // $app->register(WA\Providers\EventServiceProvider::class);
-$app->register(\Culpa\CulpaServiceProvider::class);
 $app->register(\Dingo\Api\Provider\LumenServiceProvider::class);
+$app->register(\Culpa\CulpaServiceProvider::class);
 $app->register(\WA\Providers\RepositoriesServiceProviders::class);
 $app->register(\WA\Providers\AppServiceProvider::class);
 $app->register(\Illuminate\Auth\Passwords\PasswordResetServiceProvider::class);
 $app->register(\Illuminate\Mail\MailServiceProvider::class);
 $app->register(\WA\Providers\EventServiceProvider::class);
-$app->register(Dingo\Api\Provider\LumenServiceProvider::class);
+$app->register(\Dingo\Api\Provider\LumenServiceProvider::class);
 $app->register(\WA\Providers\Saml2ServiceProvider::class);
 $app->register(\WA\Providers\CatchAllOptionsRequestsProvider::class);
 $app->register(\GrahamCampbell\Flysystem\FlysystemServiceProvider::class);
-$app->register(WA\Providers\AuthServiceProvider::class);
-$app->register(WA\Providers\PassportServiceProvider::class);
+$app->register(\WA\Providers\AuthServiceProvider::class);
+$app->register(\WA\Providers\PassportServiceProvider::class);
 $app->register(\WA\Providers\SSOGrantProvider::class);
-$app->register(Brexis\LaravelWorkflow\WorkflowServiceProvider::class);
-$app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
-$app->register(Irazasyed\Larasupport\Providers\ArtisanServiceProvider::class);
+$app->register(\Brexis\LaravelWorkflow\WorkflowServiceProvider::class);
+$app->register(\Tymon\JWTAuth\Providers\LumenServiceProvider::class);
+$app->register(\Irazasyed\Larasupport\Providers\ArtisanServiceProvider::class);
 app('Dingo\Api\Transformer\Factory')->setAdapter(function ($app) {
     $base_url = env('API_DOMAIN', 'api.wirelessanalytics.com');
     // $serializer = new \League\Fractal\Serializer\JsonApiSerializer($base_url);
@@ -158,8 +158,9 @@ app('Dingo\Api\Transformer\Factory')->setAdapter(function ($app) {
 |
 */
 
-
-$app->group(['namespace' => 'WA\Http\Controllers'], function ($app) {
+$app->router->group([
+    'namespace' => 'WA\Http\Controllers',
+], function ($router) {
     require __DIR__ . '/../app/Http/routes.php';
 });
 

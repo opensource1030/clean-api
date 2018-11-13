@@ -59,20 +59,26 @@ abstract class TestCase extends \Laravel\Lumen\Testing\TestCase
         } else {}
     }
 
-    public function run(\PHPUnit_Framework_TestResult $result = NULL) {
+    public function run(\PHPUnit\Framework\TestResult $result = NULL): \PHPUnit\Framework\TestResult {
 
+/*
         if ($result === NULL) {
             $result = $this->createResult();
         }
-
+*/
         // $this->configuration = 1 with SuperAdmin. Use CONSTANT.
-        $result->run($this);
+        // $result->run($this);
+        $result = parent::run($result);
         $this->configuration++;
 
-        $result->run($this);
+        //$result->run($this);
+        $result = parent::run($result);
         $this->configuration++;
 
-        $result->run($this);
+        //$result->run($this);
+        $result = parent::run($result);
         //$this->configuration = 1;
+
+        return $result;
     }
 }

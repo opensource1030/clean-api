@@ -72,8 +72,9 @@ class PaymentsController extends FilteredApiController
 
             $pay = $payment->create($attributes);
             if(!$pay) {
-                $error['errors']['payments'] = "The payment has not been completed due a creation error.",
-                    ['class' => 'Address', 'option' => 'created', 'include' => '']);
+                $error['errors']['payments'] = "The payment has not been completed due a creation error.";
+                // @TODO: Put under Lang
+                //,['class' => 'Address', 'option' => 'created', 'include' => '']);
                 return response()->json($error)->setStatusCode($this->status_codes['conflict']);
             }
 

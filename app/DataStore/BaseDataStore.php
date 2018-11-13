@@ -53,12 +53,12 @@ class BaseDataStore extends BaseModel
      *
      * @return \Illuminate\Database\Eloquent\Relations\MorphToMany|WAMorphToMany
      */
-    public function morphToMany($related, $name, $table = null, $foreignKey = null, $otherKey = null, $inverse = false)
+    public function morphToMany($related, $name, $table = NULL, $foreignPivotKey = NULL, $relatedPivotKey = NULL, $parentKey = NULL, $relatedKey = NULL, $inverse = false)
     {
         $caller = $this->getBelongsToManyCaller();
-        $foreignKey = $foreignKey ?: $name.'_id';
+        $foreignKey = $foreignPivotKey ?: $name.'_id';
         $instance = new $related();
-        $otherKey = $otherKey ?: $instance->getForeignKey();
+        $otherKey = $relatedPivotKey ?: $instance->getForeignKey();
         $query = $instance->newQuery();
         $table = $table ?: str_plural($name);
 
