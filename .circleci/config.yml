@@ -28,8 +28,7 @@ jobs:
     # To see the list of pre-built images that CircleCI provides for most common languages see
     # https://circleci.com/docs/2.0/circleci-images/
     docker:
-    - image: circleci/build-image:ubuntu-14.04-XXL-upstart-1189-5614f37
-      command: /sbin/init
+        - image: circleci/php:7.1-node-browsers
     steps:
     # Machine Setup
     #   If you break your build into multiple jobs with workflows, you will probably want to do the parts of this that are relevant in each
@@ -50,6 +49,9 @@ jobs:
         command: 'echo ''America/New_York'' | sudo tee -a /etc/timezone; sudo dpkg-reconfigure
           -f noninteractive tzdata; sudo service mysql restart; sudo service postgresql
           restart; '
+    - run: sudo apt install -y libsqlite3-dev zlib1g-dev
+    - run: sudo docker-php-ext-install zip
+    - run: sudo composer self-update
     # Dependencies
     #   This would typically go in either a build or a build-and-test job when using workflows
     # Restore the dependency cache
