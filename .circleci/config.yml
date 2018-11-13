@@ -40,10 +40,11 @@ jobs:
     # 'See docs on artifact collection here https://circleci.com/docs/2.0/artifacts/'
     - run: mkdir -p $CIRCLE_ARTIFACTS $CIRCLE_TEST_REPORTS
     # This is based on your 1.0 configuration file or project settings
-    - run:
-        working_directory: ~/WirelessAnalytics/clean-api
-        command: |-
-          phpenv global 7.1.9 2>/dev/null
+    #- run:
+    #    working_directory: ~/WirelessAnalytics/clean-api
+    #    command: |-
+    #      ln -fs << $HOME/.phpenv/versions/7.1.9/libexec/apache2/libphp5.so/usr/lib/apache2/modules/libphp5.so;
+    #      phpenv global 7.1.9 2>/dev/null
     - run:
         working_directory: ~/WirelessAnalytics/clean-api
         command: 'echo ''America/New_York'' | sudo tee -a /etc/timezone; sudo dpkg-reconfigure
