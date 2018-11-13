@@ -51,6 +51,7 @@ jobs:
     #      restart; '
     - run: sudo apt install -y libsqlite3-dev zlib1g-dev
     - run: sudo docker-php-ext-install zip
+    - run: sudo docker-php-ext-install mcrypt
     - run: sudo composer self-update
     # Dependencies
     #   This would typically go in either a build or a build-and-test job when using workflows
