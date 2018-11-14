@@ -26,10 +26,9 @@ namespace :composer do
 end
 
 namespace :deploy do
-  after :published, "ops:put_env"
-  after :published, "composer:install"
-  after :published, "laravel:permissions"
-  after :published, "laravel:migrate"
-  after :published, "laravel:optimize"
-  # after :published, "ops:reset_app"
+    after :published, "ops:put_env"
+    after :published, "composer:install"
+    after :published, "laravel:permissions"
+    #after :published, "laravel:migrate"
+    after :published, "laravel:optimize"
 end
