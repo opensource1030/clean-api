@@ -93,7 +93,7 @@ jobs:
     - run: php vendor/bin/phpunit -c phpunit.xml --exclude-group need-review --coverage-clover build/logs/clover.xml -d memory_limit=2048M
     # This is based on your 1.0 configuration file or project settings
     - run: cp -r build/logs/clover.xml $CIRCLE_ARTIFACTS
-    - run: php vendor/bin/coveralls -v
+    - run: php vendor/bin/php-coveralls -v
     # Deployment
     # Your existing circle.yml file contains deployment steps.
     # The config translation tool does not support translating deployment steps
