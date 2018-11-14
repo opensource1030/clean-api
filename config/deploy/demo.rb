@@ -2,7 +2,7 @@ role :app, %w{54.87.193.65}
 
 set :stage, :demo
 set :deploy_to, '/home/forge/demo.api.wirelessanalytics.com/'
-set :branch, 'master'
+set :branch, 'env/demo'
 set :keep_releases, 2
 set :log_level, :debug
 
