@@ -2,15 +2,11 @@ version: 2
 jobs:
   build:
     working_directory: ~/WirelessAnalytics/clean-api
-    environment:
-      CIRCLE_ARTIFACTS: /tmp/circleci-artifacts
-      CIRCLE_TEST_REPORTS: /tmp/circleci-test-results
-      CIRCLE_ENV: test
     docker:
         - image: circleci/php:7.1-node-browsers
     steps:
     - checkout
-    - run: mkdir -p $CIRCLE_ARTIFACTS $CIRCLE_TEST_REPORTS
+    - run: mkdir -p /tmp/circleci-artifacts
     - run: sudo apt install -y libsqlite3-dev zlib1g-dev libmcrypt-dev ruby
     - run: sudo docker-php-ext-install zip
     - run: sudo docker-php-ext-install mcrypt
@@ -25,179 +21,133 @@ jobs:
         key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
         paths:
         - ~/WirelessAnalytics/clean-api
-        - $CIRCLE_ARTIFACTS
-        - $CIRCLE_TEST_REPORTS
+        - /tmp/circleci-artifacts
   test_integration_admin:
     working_directory: ~/WirelessAnalytics/clean-api
-    environment:
-      CIRCLE_ARTIFACTS: /tmp/circleci-artifacts
-      CIRCLE_TEST_REPORTS: /tmp/circleci-test-results
-      CIRCLE_ENV: test
     docker:
         - image: circleci/php:7.1-node-browsers
     steps:
     - restore_cache:
         key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
     - run: CLEAN_TEST_USER=1 php vendor/bin/phpunit -c phpunit.xml --testsuite "Integration Tests" --exclude-group need-review --coverage-clover build/logs/clover-integration-admin.xml -d memory_limit=2048M
-    - run: cp -r build/logs/clover-integration-admin.xml $CIRCLE_ARTIFACTS
+    - run: cp -r build/logs/clover-integration-admin.xml /tmp/circleci-artifacts
     - save_cache:
         key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
         paths:
         - ~/WirelessAnalytics/clean-api
-        - $CIRCLE_ARTIFACTS
-        - $CIRCLE_TEST_REPORTS
+        - /tmp/circleci-artifacts
   test_integration_wta:
     working_directory: ~/WirelessAnalytics/clean-api
-    environment:
-      CIRCLE_ARTIFACTS: /tmp/circleci-artifacts
-      CIRCLE_TEST_REPORTS: /tmp/circleci-test-results
-      CIRCLE_ENV: test
     docker:
         - image: circleci/php:7.1-node-browsers
     steps:
     - restore_cache:
         key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
     - run: CLEAN_TEST_USER=2 php vendor/bin/phpunit -c phpunit.xml --testsuite "Integration Tests" --exclude-group need-review --coverage-clover build/logs/clover-integration-wta.xml -d memory_limit=2048M
-    - run: cp -r build/logs/clover-integration-wta.xml $CIRCLE_ARTIFACTS
+    - run: cp -r build/logs/clover-integration-wta.xml /tmp/circleci-artifacts
     - save_cache:
         key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
         paths:
         - ~/WirelessAnalytics/clean-api
-        - $CIRCLE_ARTIFACTS
-        - $CIRCLE_TEST_REPORTS
+        - /tmp/circleci-artifacts
   test_integration_user:
     working_directory: ~/WirelessAnalytics/clean-api
-    environment:
-      CIRCLE_ARTIFACTS: /tmp/circleci-artifacts
-      CIRCLE_TEST_REPORTS: /tmp/circleci-test-results
-      CIRCLE_ENV: test
     docker:
         - image: circleci/php:7.1-node-browsers
     steps:
     - restore_cache:
         key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
     - run: CLEAN_TEST_USER=3 php vendor/bin/phpunit -c phpunit.xml --testsuite "Integration Tests" --exclude-group need-review --coverage-clover build/logs/clover-integration-user.xml -d memory_limit=2048M
-    - run: cp -r build/logs/clover-integration-user.xml $CIRCLE_ARTIFACTS
+    - run: cp -r build/logs/clover-integration-user.xml /tmp/circleci-artifacts
     - save_cache:
         key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
         paths:
         - ~/WirelessAnalytics/clean-api
-        - $CIRCLE_ARTIFACTS
-        - $CIRCLE_TEST_REPORTS
+        - /tmp/circleci-artifacts
   test_unit_admin:
     working_directory: ~/WirelessAnalytics/clean-api
-    environment:
-      CIRCLE_ARTIFACTS: /tmp/circleci-artifacts
-      CIRCLE_TEST_REPORTS: /tmp/circleci-test-results
-      CIRCLE_ENV: test
     docker:
         - image: circleci/php:7.1-node-browsers
     steps:
     - restore_cache:
         key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
     - run: CLEAN_TEST_USER=1 php vendor/bin/phpunit -c phpunit.xml --testsuite "Unit Tests" --exclude-group need-review --coverage-clover build/logs/clover-unit-admin.xml -d memory_limit=2048M
-    - run: cp -r build/logs/clover-unit-admin.xml $CIRCLE_ARTIFACTS
+    - run: cp -r build/logs/clover-unit-admin.xml /tmp/circleci-artifacts
     - save_cache:
         key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
         paths:
         - ~/WirelessAnalytics/clean-api
-        - $CIRCLE_ARTIFACTS
-        - $CIRCLE_TEST_REPORTS
+        - /tmp/circleci-artifacts
   test_unit_wta:
     working_directory: ~/WirelessAnalytics/clean-api
-    environment:
-      CIRCLE_ARTIFACTS: /tmp/circleci-artifacts
-      CIRCLE_TEST_REPORTS: /tmp/circleci-test-results
-      CIRCLE_ENV: test
     docker:
         - image: circleci/php:7.1-node-browsers
     steps:
     - restore_cache:
         key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
     - run: CLEAN_TEST_USER=2 php vendor/bin/phpunit -c phpunit.xml --testsuite "Unit Tests" --exclude-group need-review --coverage-clover build/logs/clover-unit-wta.xml -d memory_limit=2048M
-    - run: cp -r build/logs/clover-unit-wta.xml $CIRCLE_ARTIFACTS
+    - run: cp -r build/logs/clover-unit-wta.xml /tmp/circleci-artifacts
     - save_cache:
         key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
         paths:
         - ~/WirelessAnalytics/clean-api
-        - $CIRCLE_ARTIFACTS
-        - $CIRCLE_TEST_REPORTS
+        - /tmp/circleci-artifacts
   test_unit_user:
     working_directory: ~/WirelessAnalytics/clean-api
-    environment:
-      CIRCLE_ARTIFACTS: /tmp/circleci-artifacts
-      CIRCLE_TEST_REPORTS: /tmp/circleci-test-results
-      CIRCLE_ENV: test
     docker:
         - image: circleci/php:7.1-node-browsers
     steps:
     - restore_cache:
         key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
     - run: CLEAN_TEST_USER=3 php vendor/bin/phpunit -c phpunit.xml --testsuite "Unit Tests" --exclude-group need-review --coverage-clover build/logs/clover-unit-user.xml -d memory_limit=2048M
-    - run: cp -r build/logs/clover-unit-user.xml $CIRCLE_ARTIFACTS
+    - run: cp -r build/logs/clover-unit-user.xml /tmp/circleci-artifacts
     - save_cache:
         key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
         paths:
         - ~/WirelessAnalytics/clean-api
-        - $CIRCLE_ARTIFACTS
-        - $CIRCLE_TEST_REPORTS
+        - /tmp/circleci-artifacts
   test_other_admin:
     working_directory: ~/WirelessAnalytics/clean-api
-    environment:
-      CIRCLE_ARTIFACTS: /tmp/circleci-artifacts
-      CIRCLE_TEST_REPORTS: /tmp/circleci-test-results
-      CIRCLE_ENV: test
     docker:
         - image: circleci/php:7.1-node-browsers
     steps:
     - restore_cache:
         key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
     - run: CLEAN_TEST_USER=1 php vendor/bin/phpunit -c phpunit.xml --testsuite "Unit Tests" --exclude-group need-review --coverage-clover build/logs/clover-other-admin.xml -d memory_limit=2048M
-    - run: cp -r build/logs/clover-other-admin.xml $CIRCLE_ARTIFACTS
+    - run: cp -r build/logs/clover-other-admin.xml /tmp/circleci-artifacts
     - save_cache:
         key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
         paths:
         - ~/WirelessAnalytics/clean-api
-        - $CIRCLE_ARTIFACTS
-        - $CIRCLE_TEST_REPORTS
+        - /tmp/circleci-artifacts
   test_other_wta:
     working_directory: ~/WirelessAnalytics/clean-api
-    environment:
-      CIRCLE_ARTIFACTS: /tmp/circleci-artifacts
-      CIRCLE_TEST_REPORTS: /tmp/circleci-test-results
-      CIRCLE_ENV: test
     docker:
         - image: circleci/php:7.1-node-browsers
     steps:
     - restore_cache:
         key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
     - run: CLEAN_TEST_USER=2 php vendor/bin/phpunit -c phpunit.xml --testsuite "Unit Tests" --exclude-group need-review --coverage-clover build/logs/clover-other-wta.xml -d memory_limit=2048M
-    - run: cp -r build/logs/clover-other-wta.xml $CIRCLE_ARTIFACTS
+    - run: cp -r build/logs/clover-other-wta.xml /tmp/circleci-artifacts
     - save_cache:
         key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
         paths:
         - ~/WirelessAnalytics/clean-api
-        - $CIRCLE_ARTIFACTS
-        - $CIRCLE_TEST_REPORTS
+        - /tmp/circleci-artifacts
   test_other_user:
     working_directory: ~/WirelessAnalytics/clean-api
-    environment:
-      CIRCLE_ARTIFACTS: /tmp/circleci-artifacts
-      CIRCLE_TEST_REPORTS: /tmp/circleci-test-results
-      CIRCLE_ENV: test
     docker:
         - image: circleci/php:7.1-node-browsers
     steps:
     - restore_cache:
         key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
     - run: CLEAN_TEST_USER=3 php vendor/bin/phpunit -c phpunit.xml --testsuite "Unit Tests" --exclude-group need-review --coverage-clover build/logs/clover-other-user.xml -d memory_limit=2048M
-    - run: cp -r build/logs/clover-other-user.xml $CIRCLE_ARTIFACTS
+    - run: cp -r build/logs/clover-other-user.xml /tmp/circleci-artifacts
     - save_cache:
         key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
         paths:
         - ~/WirelessAnalytics/clean-api
-        - $CIRCLE_ARTIFACTS
-        - $CIRCLE_TEST_REPORTS
+        - /tmp/circleci-artifacts
   coveralls:
     working_directory: ~/WirelessAnalytics/clean-api
     docker:
@@ -206,25 +156,21 @@ jobs:
     - restore_cache:
         key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
     - run: php vendor/bin/php-coveralls -v
+    - save_cache:
+        key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
+        paths:
+        - ~/WirelessAnalytics/clean-api
+        - /tmp/circleci-artifacts
   deployment:
     working_directory: ~/WirelessAnalytics/clean-api
-    environment:
-      CIRCLE_ARTIFACTS: /tmp/circleci-artifacts
-      CIRCLE_TEST_REPORTS: /tmp/circleci-test-results
-      CIRCLE_ENV: test
     docker:
         - image: circleci/php:7.1-node-browsers
     steps:
     - restore_cache:
         key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
-    # Save test results
-    - store_test_results:
-        path: /tmp/circleci-test-results
-    # Save artifacts
+    - run: bundle exec cap develop deploy
     - store_artifacts:
         path: /tmp/circleci-artifacts
-    - store_artifacts:
-        path: /tmp/circleci-test-results
 workflows:
   version: 2
   build_test_deploy:
@@ -271,3 +217,6 @@ workflows:
       - deployment:
           requires:
             - coveralls
+          filters:
+            branches:
+              only: master
