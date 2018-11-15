@@ -88,7 +88,14 @@ class Saml2ApiTest extends \TestCase
     }
 
     /**
+    * @runInSeparateProcess
+    * @preserveGlobalState disabled
     * @group need-review
+    *
+    * The problem is that when not run in a separate process it throws a
+    * headers already sent exception but, when run in a separate process,
+    * disabling preserve global state, you get an unserialize error.
+    * We might need to just assert the headers already sent exception.
     */
     public function testApiDoSSOEmailMicrosoftSaml2()
     {      
@@ -104,8 +111,6 @@ class Saml2ApiTest extends \TestCase
         // CALL THE API ROUTE + ASSERTS
         $returnMicrosoft = $this->call('GET', 'doSSO/'.$emailMicrosoft.'?redirectToUrl='.$redirectToUrl, array(), array(), array(), array(), array());
         $returnMicrosoftArray = json_decode($returnMicrosoft->content(), true);
-        Log::debug("I cannot replicate the issue related to the phpunit test fail.");
-        Log::debug("Return Microsoft Array : ".print_r($returnMicrosoftArray, true));
         $this->assertArrayHasKey('data', $returnMicrosoftArray);
         $this->assertArrayHasKey('redirectUrl', $returnMicrosoftArray['data']);
         $this->assertStringStartsWith('https://login.microsoftonline.com', $returnMicrosoftArray['data']['redirectUrl']);
