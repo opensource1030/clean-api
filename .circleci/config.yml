@@ -1,61 +1,23 @@
-# This configuration was automatically generated from a CircleCI 1.0 config.
-# It should include any build commands you had along with commands that CircleCI
-# inferred from your project structure. We strongly recommend you read all the
-# comments in this file to understand the structure of CircleCI 2.0, as the idiom
-# for configuration has changed substantially in 2.0 to allow arbitrary jobs rather
-# than the prescribed lifecycle of 1.0. In general, we recommend using this generated
-# configuration as a reference rather than using it in production, though in most
-# cases it should duplicate the execution of your original 1.0 config.
 version: 2
 jobs:
   build:
     working_directory: ~/WirelessAnalytics/clean-api
     parallelism: 1
     shell: /bin/bash --login
-    # CircleCI 2.0 does not support environment variables that refer to each other the same way as 1.0 did.
-    # If any of these refer to each other, rewrite them so that they don't or see https://circleci.com/docs/2.0/env-vars/#interpolating-environment-variables-to-set-other-environment-variables .
     environment:
       CIRCLE_ARTIFACTS: /tmp/circleci-artifacts
       CIRCLE_TEST_REPORTS: /tmp/circleci-test-results
       CIRCLE_ENV: test
-    # In CircleCI 1.0 we used a pre-configured image with a large number of languages and other packages.
-    # In CircleCI 2.0 you can now specify your own image, or use one of our pre-configured images.
-    # The following configuration line tells CircleCI to use the specified docker image as the runtime environment for you job.
-    # We have selected a pre-built image that mirrors the build environment we use on
-    # the 1.0 platform, but we recommend you choose an image more tailored to the needs
-    # of each job. For more information on choosing an image (or alternatively using a
-    # VM instead of a container) see https://circleci.com/docs/2.0/executor-types/
-    # To see the list of pre-built images that CircleCI provides for most common languages see
-    # https://circleci.com/docs/2.0/circleci-images/
     docker:
         - image: circleci/php:7.1-node-browsers
     steps:
-    # Machine Setup
-    #   If you break your build into multiple jobs with workflows, you will probably want to do the parts of this that are relevant in each
-    # The following `checkout` command checks out your code to your working directory. In 1.0 we did this implicitly. In 2.0 you can choose where in the course of a job your code should be checked out.
     - checkout
-    # Prepare for artifact and test results  collection equivalent to how it was done on 1.0.
-    # In many cases you can simplify this from what is generated here.
-    # 'See docs on artifact collection here https://circleci.com/docs/2.0/artifacts/'
     - run: mkdir -p $CIRCLE_ARTIFACTS $CIRCLE_TEST_REPORTS
-    # This is based on your 1.0 configuration file or project settings
-    #- run:
-    #    working_directory: ~/WirelessAnalytics/clean-api
-    #    command: |-
-    #      ln -fs << $HOME/.phpenv/versions/7.1.9/libexec/apache2/libphp5.so/usr/lib/apache2/modules/libphp5.so;
-    #      phpenv global 7.1.9 2>/dev/null
-    #- run:
-    #    working_directory: ~/WirelessAnalytics/clean-api
-    #    command: 'echo ''America/New_York'' | sudo tee -a /etc/timezone; sudo dpkg-reconfigure
-    #      -f noninteractive tzdata; sudo service mysql restart; sudo service postgresql
-    #      restart; '
     - run: sudo apt install -y libsqlite3-dev zlib1g-dev libmcrypt-dev ruby
     - run: sudo docker-php-ext-install zip
     - run: sudo docker-php-ext-install mcrypt
     - run: sudo composer self-update
     - run: sudo gem install bundler
-    # Dependencies
-    #   This would typically go in either a build or a build-and-test job when using workflows
     # Restore the dependency cache
     - restore_cache:
         keys:
@@ -65,12 +27,11 @@ jobs:
         - v1-dep-master-
         # Any branch if there are none on the default branch - this should be unnecessary if you have your default branch configured correctly
         - v1-dep-
-    # This is based on your 1.0 configuration file or project settings
-    #- run: sed -i 's/^;//' ~/.phpenv/versions/$(phpenv global)/etc/conf.d/xdebug.ini
     - run: mkdir -p build/logs/coverage_html
-    # This is based on your 1.0 configuration file or project settings
     - run: composer install --prefer-source --no-interaction
     - run: bundle install
+    - run: chmod 600 ~/WirelessAnalytics/clean-api/storage/oauth-private.key
+    - run: cp .env.test .env
     # Save dependency cache
     - save_cache:
         key: v1-dep-{{ .Branch }}-{{ epoch }}
@@ -85,22 +46,155 @@ jobs:
         - ~/.go_workspace
         - ~/.gradle
         - ~/.cache/bower
-    # Test
-    #   This would typically be a build job when using workflows, possibly combined with build
+  test_integration_admin:
+    working_directory: ~/WirelessAnalytics/clean-api
+    parallelism: 1
+    shell: /bin/bash --login
+    environment:
+      CIRCLE_ARTIFACTS: /tmp/circleci-artifacts
+      CIRCLE_TEST_REPORTS: /tmp/circleci-test-results
+      CIRCLE_ENV: test
+    docker:
+        - image: circleci/php:7.1-node-browsers
+    steps:
+    - run: CLEAN_TEST_USER=1 php vendor/bin/phpunit -c phpunit.xml --testsuite "Integration Tests" --exclude-group need-review --coverage-clover build/logs/clover-integration-admin.xml -d memory_limit=2048M
     # This is based on your 1.0 configuration file or project settings
-    - run: chmod 600 ~/WirelessAnalytics/clean-api/storage/oauth-private.key
-    - run: cp .env.test .env
-    - run: php vendor/bin/phpunit -c phpunit.xml --exclude-group need-review --coverage-clover build/logs/clover.xml -d memory_limit=2048M
+    - run: cp -r build/logs/clover-integration-admin.xml $CIRCLE_ARTIFACTS
+  test_integration_wta:
+    working_directory: ~/WirelessAnalytics/clean-api
+    parallelism: 1
+    shell: /bin/bash --login
+    environment:
+      CIRCLE_ARTIFACTS: /tmp/circleci-artifacts
+      CIRCLE_TEST_REPORTS: /tmp/circleci-test-results
+      CIRCLE_ENV: test
+    docker:
+        - image: circleci/php:7.1-node-browsers
+    steps:
+    - run: CLEAN_TEST_USER=2 php vendor/bin/phpunit -c phpunit.xml --testsuite "Integration Tests" --exclude-group need-review --coverage-clover build/logs/clover-integration-wta.xml -d memory_limit=2048M
     # This is based on your 1.0 configuration file or project settings
-    - run: cp -r build/logs/clover.xml $CIRCLE_ARTIFACTS
+    - run: cp -r build/logs/clover-integration-wta.xml $CIRCLE_ARTIFACTS
+  test_integration_user:
+    working_directory: ~/WirelessAnalytics/clean-api
+    parallelism: 1
+    shell: /bin/bash --login
+    environment:
+      CIRCLE_ARTIFACTS: /tmp/circleci-artifacts
+      CIRCLE_TEST_REPORTS: /tmp/circleci-test-results
+      CIRCLE_ENV: test
+    docker:
+        - image: circleci/php:7.1-node-browsers
+    steps:
+    - run: CLEAN_TEST_USER=3 php vendor/bin/phpunit -c phpunit.xml --testsuite "Integration Tests" --exclude-group need-review --coverage-clover build/logs/clover-integration-user.xml -d memory_limit=2048M
+    # This is based on your 1.0 configuration file or project settings
+    - run: cp -r build/logs/clover-integration-user.xml $CIRCLE_ARTIFACTS
+  test_unit_admin:
+    working_directory: ~/WirelessAnalytics/clean-api
+    parallelism: 1
+    shell: /bin/bash --login
+    environment:
+      CIRCLE_ARTIFACTS: /tmp/circleci-artifacts
+      CIRCLE_TEST_REPORTS: /tmp/circleci-test-results
+      CIRCLE_ENV: test
+    docker:
+        - image: circleci/php:7.1-node-browsers
+    steps:
+    - run: CLEAN_TEST_USER=1 php vendor/bin/phpunit -c phpunit.xml --testsuite "Unit Tests" --exclude-group need-review --coverage-clover build/logs/clover-unit-admin.xml -d memory_limit=2048M
+    # This is based on your 1.0 configuration file or project settings
+    - run: cp -r build/logs/clover-unit-admin.xml $CIRCLE_ARTIFACTS
+  test_unit_wta:
+    working_directory: ~/WirelessAnalytics/clean-api
+    parallelism: 1
+    shell: /bin/bash --login
+    environment:
+      CIRCLE_ARTIFACTS: /tmp/circleci-artifacts
+      CIRCLE_TEST_REPORTS: /tmp/circleci-test-results
+      CIRCLE_ENV: test
+    docker:
+        - image: circleci/php:7.1-node-browsers
+    steps:
+    - run: CLEAN_TEST_USER=2 php vendor/bin/phpunit -c phpunit.xml --testsuite "Unit Tests" --exclude-group need-review --coverage-clover build/logs/clover-unit-wta.xml -d memory_limit=2048M
+    # This is based on your 1.0 configuration file or project settings
+    - run: cp -r build/logs/clover-unit-wta.xml $CIRCLE_ARTIFACTS
+  test_unit_user:
+    working_directory: ~/WirelessAnalytics/clean-api
+    parallelism: 1
+    shell: /bin/bash --login
+    environment:
+      CIRCLE_ARTIFACTS: /tmp/circleci-artifacts
+      CIRCLE_TEST_REPORTS: /tmp/circleci-test-results
+      CIRCLE_ENV: test
+    docker:
+        - image: circleci/php:7.1-node-browsers
+    steps:
+    - run: CLEAN_TEST_USER=3 php vendor/bin/phpunit -c phpunit.xml --testsuite "Unit Tests" --exclude-group need-review --coverage-clover build/logs/clover-unit-user.xml -d memory_limit=2048M
+    # This is based on your 1.0 configuration file or project settings
+    - run: cp -r build/logs/clover-unit-user.xml $CIRCLE_ARTIFACTS
+  test_other_admin:
+    working_directory: ~/WirelessAnalytics/clean-api
+    parallelism: 1
+    shell: /bin/bash --login
+    environment:
+      CIRCLE_ARTIFACTS: /tmp/circleci-artifacts
+      CIRCLE_TEST_REPORTS: /tmp/circleci-test-results
+      CIRCLE_ENV: test
+    docker:
+        - image: circleci/php:7.1-node-browsers
+    steps:
+    - run: CLEAN_TEST_USER=1 php vendor/bin/phpunit -c phpunit.xml --testsuite "Unit Tests" --exclude-group need-review --coverage-clover build/logs/clover-other-admin.xml -d memory_limit=2048M
+    # This is based on your 1.0 configuration file or project settings
+    - run: cp -r build/logs/clover-other-admin.xml $CIRCLE_ARTIFACTS
+  test_other_wta:
+    working_directory: ~/WirelessAnalytics/clean-api
+    parallelism: 1
+    shell: /bin/bash --login
+    environment:
+      CIRCLE_ARTIFACTS: /tmp/circleci-artifacts
+      CIRCLE_TEST_REPORTS: /tmp/circleci-test-results
+      CIRCLE_ENV: test
+    docker:
+        - image: circleci/php:7.1-node-browsers
+    steps:
+    - run: CLEAN_TEST_USER=2 php vendor/bin/phpunit -c phpunit.xml --testsuite "Unit Tests" --exclude-group need-review --coverage-clover build/logs/clover-other-wta.xml -d memory_limit=2048M
+    # This is based on your 1.0 configuration file or project settings
+    - run: cp -r build/logs/clover-other-wta.xml $CIRCLE_ARTIFACTS
+  test_other_user:
+    working_directory: ~/WirelessAnalytics/clean-api
+    parallelism: 1
+    shell: /bin/bash --login
+    environment:
+      CIRCLE_ARTIFACTS: /tmp/circleci-artifacts
+      CIRCLE_TEST_REPORTS: /tmp/circleci-test-results
+      CIRCLE_ENV: test
+    docker:
+        - image: circleci/php:7.1-node-browsers
+    steps:
+    - run: CLEAN_TEST_USER=3 php vendor/bin/phpunit -c phpunit.xml --testsuite "Unit Tests" --exclude-group need-review --coverage-clover build/logs/clover-other-user.xml -d memory_limit=2048M
+    # This is based on your 1.0 configuration file or project settings
+    - run: cp -r build/logs/clover-other-user.xml $CIRCLE_ARTIFACTS
+  coveralls:
+    working_directory: ~/WirelessAnalytics/clean-api
+    parallelism: 1
+    shell: /bin/bash --login
+    environment:
+      CIRCLE_ARTIFACTS: /tmp/circleci-artifacts
+      CIRCLE_TEST_REPORTS: /tmp/circleci-test-results
+      CIRCLE_ENV: test
+    docker:
+        - image: circleci/php:7.1-node-browsers
+    steps:
     - run: php vendor/bin/php-coveralls -v
-    # Deployment
-    # Your existing circle.yml file contains deployment steps.
-    # The config translation tool does not support translating deployment steps
-    # since deployment in CircleCI 2.0 are better handled through workflows.
-    # See the documentation for more information https://circleci.com/docs/2.0/workflows/
-    # Teardown
-    #   If you break your build into multiple jobs with workflows, you will probably want to do the parts of this that are relevant in each
+  deployment:
+    working_directory: ~/WirelessAnalytics/clean-api
+    parallelism: 1
+    shell: /bin/bash --login
+    environment:
+      CIRCLE_ARTIFACTS: /tmp/circleci-artifacts
+      CIRCLE_TEST_REPORTS: /tmp/circleci-test-results
+      CIRCLE_ENV: test
+    docker:
+        - image: circleci/php:7.1-node-browsers
+    steps:
     # Save test results
     - store_test_results:
         path: /tmp/circleci-test-results
@@ -109,3 +203,49 @@ jobs:
         path: /tmp/circleci-artifacts
     - store_artifacts:
         path: /tmp/circleci-test-results
+workflows:
+  version: 2
+  build_test_deploy:
+    jobs:
+      - build
+      - test_integration_admin:
+          requires:
+            - build
+      - test_integration_wta:
+          requires:
+            - build
+      - test_integration_user:
+          requires:
+            - build
+      - test_unit_admin:
+          requires:
+            - build
+      - test_unit_wta:
+          requires:
+            - build
+      - test_unit_user:
+          requires:
+            - build
+      - test_other_admin:
+          requires:
+            - build
+      - test_other_wta:
+          requires:
+            - build
+      - test_other_user:
+          requires:
+            - build
+      - coveralls:
+          requires:
+            - test_integration_admin
+            - test_integration_wta
+            - test_integration_user
+            - test_unit_admin
+            - test_unit_wta
+            - test_unit_user
+            - test_other_admin
+            - test_other_wta
+            - test_other_user
+      - deployment:
+          requires:
+            - coveralls
