@@ -1,15 +1,17 @@
-version: 2
-jobs:
-  build:
-    working_directory: ~/WirelessAnalytics/clean-api
-    parallelism: 1
+version: 2.1
+executors:
+  my-executor:
     shell: /bin/bash --login
     environment:
       CIRCLE_ARTIFACTS: /tmp/circleci-artifacts
       CIRCLE_TEST_REPORTS: /tmp/circleci-test-results
       CIRCLE_ENV: test
     docker:
-        - image: circleci/php:7.1-node-browsers
+      - image: circleci/php:7.1-node-browsers
+    working_directory: ~/WirelessAnalytics/clean-api
+jobs:
+  build:
+    executor: my-executor
     steps:
     - checkout
     - run: mkdir -p $CIRCLE_ARTIFACTS $CIRCLE_TEST_REPORTS
@@ -47,153 +49,65 @@ jobs:
         - ~/.gradle
         - ~/.cache/bower
   test_integration_admin:
-    working_directory: ~/WirelessAnalytics/clean-api
-    parallelism: 1
-    shell: /bin/bash --login
-    environment:
-      CIRCLE_ARTIFACTS: /tmp/circleci-artifacts
-      CIRCLE_TEST_REPORTS: /tmp/circleci-test-results
-      CIRCLE_ENV: test
-    docker:
-        - image: circleci/php:7.1-node-browsers
+    executor: my-executor
     steps:
     - run: CLEAN_TEST_USER=1 php vendor/bin/phpunit -c phpunit.xml --testsuite "Integration Tests" --exclude-group need-review --coverage-clover build/logs/clover-integration-admin.xml -d memory_limit=2048M
     # This is based on your 1.0 configuration file or project settings
     - run: cp -r build/logs/clover-integration-admin.xml $CIRCLE_ARTIFACTS
   test_integration_wta:
-    working_directory: ~/WirelessAnalytics/clean-api
-    parallelism: 1
-    shell: /bin/bash --login
-    environment:
-      CIRCLE_ARTIFACTS: /tmp/circleci-artifacts
-      CIRCLE_TEST_REPORTS: /tmp/circleci-test-results
-      CIRCLE_ENV: test
-    docker:
-        - image: circleci/php:7.1-node-browsers
+    executor: my-executor
     steps:
     - run: CLEAN_TEST_USER=2 php vendor/bin/phpunit -c phpunit.xml --testsuite "Integration Tests" --exclude-group need-review --coverage-clover build/logs/clover-integration-wta.xml -d memory_limit=2048M
     # This is based on your 1.0 configuration file or project settings
     - run: cp -r build/logs/clover-integration-wta.xml $CIRCLE_ARTIFACTS
   test_integration_user:
-    working_directory: ~/WirelessAnalytics/clean-api
-    parallelism: 1
-    shell: /bin/bash --login
-    environment:
-      CIRCLE_ARTIFACTS: /tmp/circleci-artifacts
-      CIRCLE_TEST_REPORTS: /tmp/circleci-test-results
-      CIRCLE_ENV: test
-    docker:
-        - image: circleci/php:7.1-node-browsers
+    executor: my-executor
     steps:
     - run: CLEAN_TEST_USER=3 php vendor/bin/phpunit -c phpunit.xml --testsuite "Integration Tests" --exclude-group need-review --coverage-clover build/logs/clover-integration-user.xml -d memory_limit=2048M
     # This is based on your 1.0 configuration file or project settings
     - run: cp -r build/logs/clover-integration-user.xml $CIRCLE_ARTIFACTS
   test_unit_admin:
-    working_directory: ~/WirelessAnalytics/clean-api
-    parallelism: 1
-    shell: /bin/bash --login
-    environment:
-      CIRCLE_ARTIFACTS: /tmp/circleci-artifacts
-      CIRCLE_TEST_REPORTS: /tmp/circleci-test-results
-      CIRCLE_ENV: test
-    docker:
-        - image: circleci/php:7.1-node-browsers
+    executor: my-executor
     steps:
     - run: CLEAN_TEST_USER=1 php vendor/bin/phpunit -c phpunit.xml --testsuite "Unit Tests" --exclude-group need-review --coverage-clover build/logs/clover-unit-admin.xml -d memory_limit=2048M
     # This is based on your 1.0 configuration file or project settings
     - run: cp -r build/logs/clover-unit-admin.xml $CIRCLE_ARTIFACTS
   test_unit_wta:
-    working_directory: ~/WirelessAnalytics/clean-api
-    parallelism: 1
-    shell: /bin/bash --login
-    environment:
-      CIRCLE_ARTIFACTS: /tmp/circleci-artifacts
-      CIRCLE_TEST_REPORTS: /tmp/circleci-test-results
-      CIRCLE_ENV: test
-    docker:
-        - image: circleci/php:7.1-node-browsers
+    executor: my-executor
     steps:
     - run: CLEAN_TEST_USER=2 php vendor/bin/phpunit -c phpunit.xml --testsuite "Unit Tests" --exclude-group need-review --coverage-clover build/logs/clover-unit-wta.xml -d memory_limit=2048M
     # This is based on your 1.0 configuration file or project settings
     - run: cp -r build/logs/clover-unit-wta.xml $CIRCLE_ARTIFACTS
   test_unit_user:
-    working_directory: ~/WirelessAnalytics/clean-api
-    parallelism: 1
-    shell: /bin/bash --login
-    environment:
-      CIRCLE_ARTIFACTS: /tmp/circleci-artifacts
-      CIRCLE_TEST_REPORTS: /tmp/circleci-test-results
-      CIRCLE_ENV: test
-    docker:
-        - image: circleci/php:7.1-node-browsers
+    executor: my-executor
     steps:
     - run: CLEAN_TEST_USER=3 php vendor/bin/phpunit -c phpunit.xml --testsuite "Unit Tests" --exclude-group need-review --coverage-clover build/logs/clover-unit-user.xml -d memory_limit=2048M
     # This is based on your 1.0 configuration file or project settings
     - run: cp -r build/logs/clover-unit-user.xml $CIRCLE_ARTIFACTS
   test_other_admin:
-    working_directory: ~/WirelessAnalytics/clean-api
-    parallelism: 1
-    shell: /bin/bash --login
-    environment:
-      CIRCLE_ARTIFACTS: /tmp/circleci-artifacts
-      CIRCLE_TEST_REPORTS: /tmp/circleci-test-results
-      CIRCLE_ENV: test
-    docker:
-        - image: circleci/php:7.1-node-browsers
+    executor: my-executor
     steps:
     - run: CLEAN_TEST_USER=1 php vendor/bin/phpunit -c phpunit.xml --testsuite "Unit Tests" --exclude-group need-review --coverage-clover build/logs/clover-other-admin.xml -d memory_limit=2048M
     # This is based on your 1.0 configuration file or project settings
     - run: cp -r build/logs/clover-other-admin.xml $CIRCLE_ARTIFACTS
   test_other_wta:
-    working_directory: ~/WirelessAnalytics/clean-api
-    parallelism: 1
-    shell: /bin/bash --login
-    environment:
-      CIRCLE_ARTIFACTS: /tmp/circleci-artifacts
-      CIRCLE_TEST_REPORTS: /tmp/circleci-test-results
-      CIRCLE_ENV: test
-    docker:
-        - image: circleci/php:7.1-node-browsers
+    executor: my-executor
     steps:
     - run: CLEAN_TEST_USER=2 php vendor/bin/phpunit -c phpunit.xml --testsuite "Unit Tests" --exclude-group need-review --coverage-clover build/logs/clover-other-wta.xml -d memory_limit=2048M
     # This is based on your 1.0 configuration file or project settings
     - run: cp -r build/logs/clover-other-wta.xml $CIRCLE_ARTIFACTS
   test_other_user:
-    working_directory: ~/WirelessAnalytics/clean-api
-    parallelism: 1
-    shell: /bin/bash --login
-    environment:
-      CIRCLE_ARTIFACTS: /tmp/circleci-artifacts
-      CIRCLE_TEST_REPORTS: /tmp/circleci-test-results
-      CIRCLE_ENV: test
-    docker:
-        - image: circleci/php:7.1-node-browsers
+    executor: my-executor
     steps:
     - run: CLEAN_TEST_USER=3 php vendor/bin/phpunit -c phpunit.xml --testsuite "Unit Tests" --exclude-group need-review --coverage-clover build/logs/clover-other-user.xml -d memory_limit=2048M
     # This is based on your 1.0 configuration file or project settings
     - run: cp -r build/logs/clover-other-user.xml $CIRCLE_ARTIFACTS
   coveralls:
-    working_directory: ~/WirelessAnalytics/clean-api
-    parallelism: 1
-    shell: /bin/bash --login
-    environment:
-      CIRCLE_ARTIFACTS: /tmp/circleci-artifacts
-      CIRCLE_TEST_REPORTS: /tmp/circleci-test-results
-      CIRCLE_ENV: test
-    docker:
-        - image: circleci/php:7.1-node-browsers
+    executor: my-executor
     steps:
     - run: php vendor/bin/php-coveralls -v
   deployment:
-    working_directory: ~/WirelessAnalytics/clean-api
-    parallelism: 1
-    shell: /bin/bash --login
-    environment:
-      CIRCLE_ARTIFACTS: /tmp/circleci-artifacts
-      CIRCLE_TEST_REPORTS: /tmp/circleci-test-results
-      CIRCLE_ENV: test
-    docker:
-        - image: circleci/php:7.1-node-browsers
+    executor: my-executor
     steps:
     # Save test results
     - store_test_results:
@@ -204,7 +118,7 @@ jobs:
     - store_artifacts:
         path: /tmp/circleci-test-results
 workflows:
-  version: 2
+  version: 2.1
   build_test_deploy:
     jobs:
       - build
