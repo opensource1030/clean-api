@@ -9,6 +9,7 @@ jobs:
     executor: clean
     steps:
     - checkout
+    - run: mkdir -p /tmp/circleci-artifacts
     - run: sudo apt install -y libsqlite3-dev zlib1g-dev libmcrypt-dev ruby
     - run: sudo docker-php-ext-install zip
     - run: sudo docker-php-ext-install mcrypt
@@ -19,75 +20,147 @@ jobs:
     - run: bundle install
     - run: chmod 600 ~/WirelessAnalytics/clean-api/storage/oauth-private.key
     - run: cp .env.test .env
-    - persist_to_workspace:
-        root: build
+    - run: touch /tmp/circleci-artifacts/.clover
+    - save_cache:
+        key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
         paths:
-            - logs
+        - ~/WirelessAnalytics/clean-api
+    - persist_to_workspace:
+        root: /tmp/circleci-artifacts
+        paths:
+            - .clover
   test_integration_admin:
     executor: clean
     steps:
     - attach_workspace:
-        at: build
+        at: /tmp/circleci-artifacts
+    - restore_cache:
+        key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
     - run: CLEAN_TEST_USER=1 php vendor/bin/phpunit -c phpunit.xml --testsuite "Integration Tests" --exclude-group need-review --coverage-clover build/logs/clover-integration-admin.xml -d memory_limit=2048M
+    - run: cp -r build/logs/clover-integration-admin.xml /tmp/circleci-artifacts
+    - persist_to_workspace:
+        root: /tmp/circleci-artifacts
+        paths:
+            - clover-integration-admin.xml
   test_integration_wta:
     executor: clean
     steps:
     - attach_workspace:
-        at: build
+        at: /tmp/circleci-artifacts
+    - restore_cache:
+        key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
     - run: CLEAN_TEST_USER=2 php vendor/bin/phpunit -c phpunit.xml --testsuite "Integration Tests" --exclude-group need-review --coverage-clover build/logs/clover-integration-wta.xml -d memory_limit=2048M
+    - run: cp -r build/logs/clover-integration-wta.xml /tmp/circleci-artifacts
+    - persist_to_workspace:
+        root: /tmp/circleci-artifacts
+        paths:
+            - clover-integration-wta.xml
   test_integration_user:
     executor: clean
     steps:
     - attach_workspace:
-        at: build
+        at: /tmp/circleci-artifacts
+    - restore_cache:
+        key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
     - run: CLEAN_TEST_USER=3 php vendor/bin/phpunit -c phpunit.xml --testsuite "Integration Tests" --exclude-group need-review --coverage-clover build/logs/clover-integration-user.xml -d memory_limit=2048M
+    - run: cp -r build/logs/clover-integration-user.xml /tmp/circleci-artifacts
+    - persist_to_workspace:
+        root: /tmp/circleci-artifacts
+        paths:
+            - clover-integration-user.xml
   test_unit_admin:
     executor: clean
     steps:
     - attach_workspace:
-        at: build
+        at: /tmp/circleci-artifacts
+    - restore_cache:
+        key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
     - run: CLEAN_TEST_USER=1 php vendor/bin/phpunit -c phpunit.xml --testsuite "Unit Tests" --exclude-group need-review --coverage-clover build/logs/clover-unit-admin.xml -d memory_limit=2048M
+    - run: cp -r build/logs/clover-unit-admin.xml /tmp/circleci-artifacts
+    - persist_to_workspace:
+        root: /tmp/circleci-artifacts
+        paths:
+            - clover-unit-admin.xml
   test_unit_wta:
     executor: clean
     steps:
     - attach_workspace:
-        at: build
+        at: /tmp/circleci-artifacts
+    - restore_cache:
+        key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
     - run: CLEAN_TEST_USER=2 php vendor/bin/phpunit -c phpunit.xml --testsuite "Unit Tests" --exclude-group need-review --coverage-clover build/logs/clover-unit-wta.xml -d memory_limit=2048M
+    - run: cp -r build/logs/clover-unit-wta.xml /tmp/circleci-artifacts
+    - persist_to_workspace:
+        root: /tmp/circleci-artifacts
+        paths:
+            - clover-unit-wta.xml
   test_unit_user:
     executor: clean
     steps:
     - attach_workspace:
-        at: build
+        at: /tmp/circleci-artifacts
+    - restore_cache:
+        key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
     - run: CLEAN_TEST_USER=3 php vendor/bin/phpunit -c phpunit.xml --testsuite "Unit Tests" --exclude-group need-review --coverage-clover build/logs/clover-unit-user.xml -d memory_limit=2048M
+    - run: cp -r build/logs/clover-unit-user.xml /tmp/circleci-artifacts
+    - persist_to_workspace:
+        root: /tmp/circleci-artifacts
+        paths:
+            - clover-unit-user.xml
   test_other_admin:
     executor: clean
     steps:
     - attach_workspace:
-        at: build
+        at: /tmp/circleci-artifacts
+    - restore_cache:
+        key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
     - run: CLEAN_TEST_USER=1 php vendor/bin/phpunit -c phpunit.xml --testsuite "Unit Tests" --exclude-group need-review --coverage-clover build/logs/clover-other-admin.xml -d memory_limit=2048M
+    - run: cp -r build/logs/clover-other-admin.xml /tmp/circleci-artifacts
+    - persist_to_workspace:
+        root: /tmp/circleci-artifacts
+        paths:
+            - clover-other-admin.xml
   test_other_wta:
     executor: clean
     steps:
     - attach_workspace:
-        at: build
+        at: /tmp/circleci-artifacts
+    - restore_cache:
+        key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
     - run: CLEAN_TEST_USER=2 php vendor/bin/phpunit -c phpunit.xml --testsuite "Unit Tests" --exclude-group need-review --coverage-clover build/logs/clover-other-wta.xml -d memory_limit=2048M
+    - run: cp -r build/logs/clover-other-wta.xml /tmp/circleci-artifacts
+    - persist_to_workspace:
+        root: /tmp/circleci-artifacts
+        paths:
+            - clover-other-wta.xml
   test_other_user:
     executor: clean
     steps:
     - attach_workspace:
-        at: build
+        at: /tmp/circleci-artifacts
+    - restore_cache:
+        key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
     - run: CLEAN_TEST_USER=3 php vendor/bin/phpunit -c phpunit.xml --testsuite "Unit Tests" --exclude-group need-review --coverage-clover build/logs/clover-other-user.xml -d memory_limit=2048M
+    - run: cp -r build/logs/clover-other-user.xml /tmp/circleci-artifacts
+    - persist_to_workspace:
+        root: /tmp/circleci-artifacts
+        paths:
+            - clover-other-user.xml
   coveralls:
     executor: clean
     steps:
     - attach_workspace:
-        at: build
+        at: /tmp/circleci-artifacts
+    - restore_cache:
+        key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
     - run: php vendor/bin/php-coveralls -v
+    - store_artifacts:
+        path: /tmp/circleci-artifacts
   deployment:
     executor: clean
     steps:
-    - attach_workspace:
-        at: build
+    - restore_cache:
+        key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
     - run: bundle exec cap develop deploy
 workflows:
   version: 2
