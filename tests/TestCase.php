@@ -6,7 +6,7 @@ abstract class TestCase extends \Laravel\Lumen\Testing\TestCase
 
     protected $baseUrl;
 
-    protected $idLogged, $mainCompany, $mainUserAdmin, $roleAdmin, $mainUserWTA, $roleWTA, $mainUser, $roleUser, $configuration = 1;
+    protected $idLogged, $mainCompany, $mainUserAdmin, $roleAdmin, $mainUserWTA, $roleWTA, $mainUser, $roleUser, $configuration;
 
     /*
      * Creates the application.
@@ -27,6 +27,8 @@ abstract class TestCase extends \Laravel\Lumen\Testing\TestCase
     }
 
     public function setUp(){
+        $this->configuration = getenv('CLEAN_TEST_USER') ?: 1;
+
         parent::setUp();
 
         $this->mainCompany = factory(\WA\DataStore\Company\Company::class)->create();
@@ -46,7 +48,6 @@ abstract class TestCase extends \Laravel\Lumen\Testing\TestCase
         /*
          * Use one of the lines below to login using any of the users above.
          */
-
         if($this->configuration == 1) {
             $this->be($this->mainUserAdmin);
             $this->idLogged = $this->mainUserAdmin->id;
@@ -57,22 +58,5 @@ abstract class TestCase extends \Laravel\Lumen\Testing\TestCase
             $this->be($this->mainUser);
             $this->idLogged = $this->mainUser->id;
         } else {}
-    }
-
-    public function run(\PHPUnit_Framework_TestResult $result = NULL) {
-
-        if ($result === NULL) {
-            $result = $this->createResult();
-        }
-
-        // $this->configuration = 1 with SuperAdmin. Use CONSTANT.
-        $result->run($this);
-        $this->configuration++;
-
-        $result->run($this);
-        $this->configuration++;
-
-        $result->run($this);
-        //$this->configuration = 1;
     }
 }

@@ -7,7 +7,7 @@ use WA\Repositories\AbstractRepository;
 /**
  * Class EloquentPayment.
  */
-class EloquentPayment extends AbstractRepository implements PaymentInterface
+class EloquentPayment extends AbstractRepository
 {
     /**
      * Update Payment.

@@ -9,12 +9,14 @@ use League\OAuth2\Server\Grant\PasswordGrant as PassGrant;
 class PasswordGrantTest extends \TestCase
 {
     use \Laravel\Lumen\Testing\DatabaseMigrations;
+
     /**
-     * 
-     */
+    * @doesNotPerformAssertions
+    */
     public function testRespondToAccessTokenRequest() {
         //if (!$this->invokeMethod($scopes,'testIfthisUserHasTheCorrectScope', $user->getIdentifier())) {
     }
+
     public function testThisUserHasTheCorrectScope(){
          
         $user = factory(\WA\DataStore\User\User::class)->create();

@@ -38,7 +38,7 @@ class EloquentBilling extends AbstractRepository implements BillingInterface
      *
      * @return mixed
      */
-    public function getTransformer($type)
+    public function getTransformerByType($type)
     {
         $type = ucfirst($type).'BillingTransformer';
         $class = '\WA\\DataStore\\Billing\\'.$type;

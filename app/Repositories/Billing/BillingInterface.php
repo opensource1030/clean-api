@@ -34,5 +34,5 @@ interface BillingInterface extends RepositoryInterface
      *
      * @return mixed
      */
-    public function getTransformer($type);
+    public function getTransformerByType($type);
 }

@@ -28,7 +28,7 @@ class Saml2ServiceProvider extends Saml2SP
     public function boot()
     {
         if (config('saml2_settings.useRoutes', false) == true) {
-            $this->app->group(
+            $this->app->router->group(
                 [
                     'prefix' => config('saml2_settings.routesPrefix'),
                     'middleware' => config('saml2_settings.routesMiddleware'),
@@ -114,12 +114,12 @@ class Saml2ServiceProvider extends Saml2SP
             $config['sp']['singleLogoutService']['url'] = URL::route('saml_sls');
 
             // Saml2_Settings Information.
-            $config['idp']['entityId'] = $saml2Settings['attributes']['entityId'];
-            $config['idp']['singleSignOnService']['url'] = $saml2Settings['attributes']['singleSignOnServiceUrl'];
-            $config['idp']['singleSignOnService']['binding'] = $saml2Settings['attributes']['singleSignOnServiceBinding'];
-            $config['idp']['singleLogoutService']['url'] = $saml2Settings['attributes']['singleLogoutServiceUrl'];
-            $config['idp']['singleLogoutService']['binding'] = $saml2Settings['attributes']['singleLogoutServiceBinding'];
-            $config['idp']['x509cert'] = $saml2Settings['attributes']['x509cert'];
+            $config['idp']['entityId'] = $saml2Settings->entityId;
+            $config['idp']['singleSignOnService']['url'] = $saml2Settings->singleSignOnServiceUrl;
+            $config['idp']['singleSignOnService']['binding'] = $saml2Settings->singleSignOnServiceBinding;
+            $config['idp']['singleLogoutService']['url'] = $saml2Settings->singleLogoutServiceUrl;
+            $config['idp']['singleLogoutService']['binding'] = $saml2Settings->singleLogoutServiceBinding;
+            $config['idp']['x509cert'] = $saml2Settings->x509cert;
 
             $auth = new OneLogin_Saml2_Auth($config);
 

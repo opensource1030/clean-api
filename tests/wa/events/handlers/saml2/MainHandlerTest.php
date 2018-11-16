@@ -5,6 +5,10 @@
 
 class MainHandlerTest extends \TestCase
 {
+
+    /**
+    * @doesNotPerformAssertions
+    */
     public function testSaml2LoginUser()
     {
         // @TODOSAML2 : TEST API.
@@ -38,11 +42,17 @@ class MainHandlerTest extends \TestCase
         $this->assertInternalType('string', $return['lastName']);
     }
 
+    /**
+    * @doesNotPerformAssertions
+    */
     public function testCreateUserSSO()
     {
         // @TODOSAML2 : TEST IF WORKS.
     }
 
+    /**
+    * @doesNotPerformAssertions
+    */
     public function testGetUuidFromRequestRelayState()
     {
         // @TODOSAML2 : NEED REQUEST
@@ -90,7 +100,7 @@ class MainHandlerTest extends \TestCase
         $OneLogin_Saml2_Auth = new OneLogin_Saml2_Auth($config);
         $saml2Auth = new \Aacotroneo\Saml2\Saml2Auth($OneLogin_Saml2_Auth);
         $user = $saml2Auth->getSaml2User();
-        $event = new \Aacotroneo\Saml2\Events\Saml2LoginEvent($user);
+        $event = new \Aacotroneo\Saml2\Events\Saml2LoginEvent($user, $saml2Auth);
 
         // CALL THE FUNCTION
         $return = $method->invokeArgs($handler, array($event));

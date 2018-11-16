@@ -54,6 +54,9 @@ class ImagesApiTest extends \TestCase
             ]);
     }
 
+    /**
+    * @doesNotPerformAssertions
+    */
     public function testGetImageById()
     {
         $image = factory(\WA\DataStore\Image\Image::class)->create([

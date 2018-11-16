@@ -4,6 +4,9 @@ class AuthControllerTest extends \TestCase
 {
     use \Laravel\Lumen\Testing\DatabaseMigrations;
 
+    /**
+    * @doesNotPerformAssertions
+    */
     public function testAccessToken()
     {
     }

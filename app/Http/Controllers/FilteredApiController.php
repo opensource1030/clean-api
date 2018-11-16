@@ -296,7 +296,7 @@ abstract class FilteredApiController extends ApiController
 //                return $this->resource->checkModelAndRelationships($data, $companyId);
                     return true;
                 } else {
-                    if($data->input('indexAll') == 0) {
+                    if($data != null && $data->input('indexAll') == 0) {
                         $filter = $this->resource->addFilterToTheRequest($companyId);
                         $this->setExtraFilters($filter);
                     }

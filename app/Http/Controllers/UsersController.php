@@ -611,7 +611,7 @@ class UsersController extends FilteredApiController
 
         if ($success) {
             $code = bin2hex(random_bytes(64));
-            $url = $this->request['url'];
+            $url = $this->request->input('url');
             $redirectPath = $url.'/acceptUser/'.$user->identification.'/'.$code;
 
             $data = [
