@@ -165,7 +165,7 @@
                                                       <p style="margin: 0;font-size: 14px;line-height: 17px;text-align: center">
                                                         <strong>
                                                           <span style="font-size: 28px; line-height: 33px;" mce-data-marked="1">
-                                                            Wireless Analytics CLEAN Platform
+                                                            Wireless Analytics CLEAN
                                                           </span>
                                                         </strong>
                                                       </p>
@@ -276,7 +276,7 @@
                                                           <span style="font-size: 14px; line-height: 21px;">
                                                           </span>
                                                           <span style="font-size: 14px; line-height: 21px;">
-                                                            You have received this e-mail because you have created a new user.
+                                                            You have received this e-mail because you have created a new account.
                                                           </span>
                                                         </p>
                                                       </div>
@@ -299,7 +299,7 @@
                                                               <a style="display: inline-block;text-decoration: none;-webkit-text-size-adjust: none;text-align: center;background-color: #C7702E;color: #ffffff" href="{{ $redirectPath }}" target="_blank">
                                                                 <span style="font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:16px;line-height:32px;">
                                                                   <span style="font-size: 14px; line-height: 28px;" data-mce-style="font-size: 14px;" mce-data-marked="1">
-                                                                    Click here to activate the user
+                                                                    Click here to activate the account
                                                                   </span>
                                                                 </span>
                                                               </a>
@@ -393,7 +393,7 @@
                                                                     <tbody><tr style="vertical-align: top">
                                                                         <td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;padding-top: 15px;padding-right: 10px;padding-bottom: 10px;padding-left: 10px">
                                                                             <div style="color:#959595;line-height:150%;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;">
-                                                                                <div style="font-size:14px;line-height:21px;text-align:center;color:#959595;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;"><p style="margin: 0;font-size: 14px;line-height: 21px;text-align: center"><br></p></div><div style="font-size:14px;line-height:21px;text-align:center;color:#959595;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;"><p style="margin: 0;font-size: 14px;line-height: 21px;text-align: center"> <a style="color:#C7702E" href="http://www.wirelessanalytics.com" target="_blank">Wireless Analytics, LLC </a>(c) 2016</p></div>
+                                                                                <div style="font-size:14px;line-height:21px;text-align:center;color:#959595;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;"><p style="margin: 0;font-size: 14px;line-height: 21px;text-align: center"><br></p></div><div style="font-size:14px;line-height:21px;text-align:center;color:#959595;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;"><p style="margin: 0;font-size: 14px;line-height: 21px;text-align: center"> <a style="color:#C7702E" href="http://www.wirelessanalytics.com" target="_blank">Wireless Analytics, LLC </a>(c) {{ $currentYear }}</p></div>
                                                                             </div>
                                                                         </td>
                                                                     </tr>
