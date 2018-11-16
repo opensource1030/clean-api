@@ -34,65 +34,40 @@ class SendUserEmailCreateOrder extends \WA\Events\Handlers\BaseHandler
             \Log::debug("ATTRIBUTES". print_r($attributes, true));
             $values['view_name'] = 'emails.notifications.order.order_create_send_user';
             $values['data'] = [
-                'username' => $userOrder->username,
-                'userEmail' => isset($attributes['user']['email'])
-                    ? $attributes['user']['email'] : '',
-
-                'supervisorEmail' => isset($attributes['user']['supervisorEmail'])
-                    ? $attributes['user']['supervisorEmail'] : '',
-
-                'orderId' => $event->order->id,
-
-                'addressName' => isset($attributes['address']['name'])
-                    ? $attributes['address']['name'] : '',
-
-                'addressAddress' => isset($attributes['address']['address'])
-                    ? $attributes['address']['address'] : '',
-
-                'addressCity' => isset($attributes['address']['city'])
-                    ? $attributes['address']['city'] : '',
-
-                'addressCountry' => isset($attributes['address']['country'])
-                    ? $attributes['address']['country'] : '',
-
-                'addressPostalCode' => isset($attributes['address']['postalCode'])
-                    ? $attributes['address']['postalCode'] : '',
-
-                'serviceDescription' => isset($attributes['service']['description'])
-                    ? $attributes['service']['description'] : '',
-
-                'domesticvoice' => isset($attributes['service']['domesticvoice'])
-                    ? $attributes['service']['domesticvoice'] : '',
-
-                'domesticdata' => isset($attributes['service']['domesticdata'])
-                    ? $attributes['service']['domesticdata'] : '',
-
-                'domesticmessage' => isset($attributes['service']['domesticmess'])
-                    ? $attributes['service']['domesticmess'] : '',
-
-                'internationalvoice' => isset($attributes['service']['internationalvoice'])
-                    ? $attributes['service']['internationalvoice'] : '',
-
-                'internationaldata' => isset($attributes['service']['internationaldata'])
-                    ? $attributes['service']['internationaldata'] : '',
-
-                'internationalmessage' => isset($attributes['service']['internationalmess'])
-                    ? $attributes['service']['internationalmess'] : '',
-
-                'devicePhoneNo' => isset($attributes['device']['servicePhoneNo'])
-                    ? $attributes['device']['servicePhoneNo'] : '',
-                
-                'deviceCarrier' => isset($attributes['device']['smartphone']['carrier'])
-                    ? $attributes['device']['smartphone']['carrier'] : $attributes['device']['deviceCarrier'],
-                
-                'deviceMake' => isset($attributes['device']['smartphone']['make'])
-                    ? $attributes['device']['smartphone']['make'] : '',
-                
-                'deviceModel' => isset($attributes['device']['smartphone']['model'])
-                    ? $attributes['device']['smartphone']['model'] : '',
-
-                'deviceAccessories' => isset($attributes['device']['accessories'])
-                    ? $attributes['device']['accessories'] : '',
+                'orderType' => $attributes['order']['orderType'],
+                'username' => $attributes['user']['username'],
+                'userEmail' => $attributes['user']['userEmail'],
+                'supervisorEmail' => $attributes['user']['supervisorEmail'],
+                'activeUser' => $attributes['user']['activeUser'],
+                'udlDepartment' => $attributes['user']['udlDepartment'],
+                'udlCostCenter' => $attributes['user']['udlCostCenter'],
+                'packageName' => $attributes['package']['packageName'],
+                'approvalCode' => $attributes['package']['approvalCode'],
+                'serviceImei' => $attributes['service']['serviceImei'],
+                'servicePhoneNo' => $attributes['service']['servicePhoneNo'],
+                'serviceSim' => $attributes['service']['serviceSim'],
+                'deviceImei' => $attributes['device']['deviceImei'],
+                'deviceCarrier' => $attributes['device']['deviceCarrier'],
+                'deviceSim' => $attributes['device']['deviceSim'],
+                'domesticvoice' => $attributes['service']['domesticvoice'],
+                'domesticdata' => $attributes['service']['domesticdata'],
+                'domesticmessage' => $attributes['service']['domesticmessage'],
+                'internationalvoice' => $attributes['service']['internationalvoice'],
+                'internationaldata' => $attributes['service']['internationaldata'],
+                'internationalmessage' => $attributes['service']['internationalmessage'],
+                'devicePhoneNo' => $attributes['device']['devicePhoneNo'],
+                'deviceMake' => $attributes['device']['deviceMake'],
+                'deviceModel' => $attributes['device']['deviceModel'],
+                'deviceAccessories' => $attributes['device']['deviceAccessories'],
+                'companyName' => $attributes['company']['companyName'],
+                'addressAddress' => $attributes['address']['addressAddress'],
+                'addressCity' => $attributes['address']['addressCity'],
+                'addressState' => $attributes['address']['addressState'],
+                'addressPostalCode' => $attributes['address']['addressPostalCode'],
+                'showCurrentService' => $attributes['if']['showCurrentService'],
+                'showCurrentDevice' => $attributes['if']['showCurrentDevice'],
+                'showNewService' => $attributes['if']['showNewService'],
+                'showNewDevice' => $attributes['if']['showNewDevice'],
             ];
 
             $values['subject'] = 'Order Created.';
