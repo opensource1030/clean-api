@@ -112,7 +112,7 @@ class SSO extends ApiController
                     Cache::put('saml2_idcompany_'.$email, $idCompany, 15);
                     $uuid = Uuid::generate();
 
-                    $redirectUrl = Saml2::login($urlArray['url'].'/'.$uuid);
+                    $redirectUrl = Saml2::login($urlArray['url'].'/'.$uuid, array(), false, false, true);
                     $arrRU = array('redirectUrl' => $redirectUrl);
                     $arrD = array('data' => $arrRU);
 
