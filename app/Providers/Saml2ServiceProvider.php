@@ -33,30 +33,30 @@ class Saml2ServiceProvider extends Saml2SP
                     'prefix' => config('saml2_settings.routesPrefix'),
                     'middleware' => config('saml2_settings.routesMiddleware'),
                 ],
-                function ($app) {
+                function ($router) {
                     $routeSaml2Controller = 'WA\Http\Controllers\Auth\Saml2Controller';
-                    $app->get('logout', ['as' => 'saml_logout', function () use ($routeSaml2Controller, $app) {
-                        $controller = $app->make($routeSaml2Controller);
+                    $router->get('logout', ['as' => 'saml_logout', function () use ($routeSaml2Controller, $router) {
+                        $controller = $router->app->make($routeSaml2Controller);
                         return $controller->logout();
                     }]);
 
-                    $app->get('login', ['as' => 'saml_login', function () use ($routeSaml2Controller, $app) {
-                        $controller = $app->make($routeSaml2Controller);
+                    $router->get('login', ['as' => 'saml_login', function () use ($routeSaml2Controller, $router) {
+                        $controller = $router->app->make($routeSaml2Controller);
                         return $controller->login();
                     }]);
 
-                    $app->get('metadata', ['as' => 'saml_metadata', function () use ($routeSaml2Controller, $app) {
-                        $controller = $app->make($routeSaml2Controller);
+                    $router->get('metadata', ['as' => 'saml_metadata', function () use ($routeSaml2Controller, $router) {
+                        $controller = $router->app->make($routeSaml2Controller);
                         return $controller->metadata();
                     }]);
 
-                    $app->post('acs', ['as' => 'saml_acs', function () use ($routeSaml2Controller, $app) {
-                        $controller = $app->make($routeSaml2Controller);
+                    $router->post('acs', ['as' => 'saml_acs', function () use ($routeSaml2Controller, $router) {
+                        $controller = $router->app->make($routeSaml2Controller);
                         return $controller->acs();
                     }]);
 
-                    $app->get('sls', ['as' => 'saml_sls', function () use ($routeSaml2Controller, $app) {
-                        $controller = $app->make($routeSaml2Controller);
+                    $router->get('sls', ['as' => 'saml_sls', function () use ($routeSaml2Controller, $router) {
+                        $controller = $router->app->make($routeSaml2Controller);
                         return $controller->sls();
                     }]);
                 }
