@@ -33,7 +33,7 @@ class Saml2Controller extends Saml2C
         }
 
         $user = $this->saml2Auth->getSaml2User();
-        event(new Saml2LoginEvent($user));
+        event(new Saml2LoginEvent($user, $this->saml2Auth));
 
         $relayState = app('request')->input('RelayState');
         $url = app('Illuminate\Routing\UrlGenerator');
