@@ -31,7 +31,7 @@ return $settings = array(
     /**
      * Where to redirect after login if no other option was provided
      */
-    'loginRoute' => '/dashboard',
+    'loginRoute' => env('FRONTEND_DOMAIN', 'https://beta.wirelessanalytics.com').'/sso',
 
     /**.
      * Where to redirect after login if no other option was provided
