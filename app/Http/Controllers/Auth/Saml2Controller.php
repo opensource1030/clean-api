@@ -8,6 +8,7 @@
 
 namespace WA\Http\Controllers\Auth;
 
+use Webpatser\Uuid\Uuid;
 use Aacotroneo\Saml2\Http\Controllers\Saml2Controller as Saml2C;
 use Aacotroneo\Saml2\Events\Saml2LoginEvent;
 use WA\Auth\Saml2\Saml2Auth;
@@ -33,9 +34,14 @@ class Saml2Controller extends Saml2C
         }
 
         $user = $this->saml2Auth->getSaml2User();
+        $relayState = app('request')->input('RelayState');
+        if(is_null($relayState)) {
+            $uuid = Uuid::generate();
+            $relayState = config('saml2_settings.loginRoute').'/'.$uuid;
+            app('request')->merge(['RelayState' => $relayState]);
+        }
         event(new Saml2LoginEvent($user, $this->saml2Auth));
 
-        $relayState = app('request')->input('RelayState');
         $url = app('Illuminate\Routing\UrlGenerator');
         if ($relayState && $url->full() != $relayState) {
             return redirect($relayState);
