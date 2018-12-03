@@ -109,12 +109,22 @@ class SSO extends ApiController
                         ->json(['error' => 'URL Not Found', 'message' => 'Url to redirect not found.'])
                         ->setStatusCode($this->status_codes['conflict']);
                 } else {
-                    Cache::put('saml2_idcompany_'.$email, $idCompany, 15);
-                    $uuid = Uuid::generate();
+                    $temp_email = explode("@", $email);
+                    $domains = ['thermofisher.com', 'affymetrix.com', 'patheon.com', 'fei.com'];
+                    $identifications = ['TFS-WEMPJPWHOE', 'TFS-OVKWDZZOL2'];
+                    $user = $this->user->byEmail($email);
 
-                    $redirectUrl = Saml2::login($urlArray['url'].'/'.$uuid, array(), false, false, true);
-                    $arrRU = array('redirectUrl' => $redirectUrl);
-                    $arrD = array('data' => $arrRU);
+                    if(in_array($temp_email[1], $domains) && !in_array($user->identification, $identifications)) {
+                        $arrRU = array('redirectUrl' => 'https://legacy.wirelessanalytics.com/app?email=' . $email);
+                        $arrD = array('data' => $arrRU);
+                    } else {
+                        Cache::put('saml2_idcompany_'.$email, $idCompany, 15);
+                        $uuid = Uuid::generate();
+
+                        $redirectUrl = Saml2::login($urlArray['url'].'/'.$uuid, array(), false, false, true);
+                        $arrRU = array('redirectUrl' => $redirectUrl);
+                        $arrD = array('data' => $arrRU);
+                    }
 
                     return response()->json($arrD);
                 }
