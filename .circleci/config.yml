@@ -161,7 +161,11 @@ jobs:
     steps:
     - restore_cache:
         key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
-    - run: bundle exec cap develop deploy
+    - run: sudo apt install -y libsqlite3-dev zlib1g-dev libmcrypt-dev ruby
+    - run: sudo gem install bundler
+    - run: bundle install
+    - add_ssh_keys
+    - run: eval `ssh-agent` && ssh-add ~/.ssh/id_rsa* && bundle exec cap develop deploy
 workflows:
   version: 2
   build_test_deploy:
