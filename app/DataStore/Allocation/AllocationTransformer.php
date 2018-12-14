@@ -24,7 +24,7 @@ class AllocationTransformer extends FilterableTransformer
             'messaging_charge' => (float)$allocations->textMessagingCharge,
             'taxes_charge' => (float)$allocations->taxesCharge,
             'equipment_charge' => (float)$allocations->equipmentCharge,
-            'device_type' => (float)$allocations->deviceType,
+            'device_type' => $allocations->deviceType,
             'domestic_usage_charge' => (float)$allocations->domesticUsageCharge,
             'domestic_data_usage' => (int)$allocations->domesticDataUsage,
             'domestic_voice_usage' => (int)$allocations->domesticVoiceUsage,

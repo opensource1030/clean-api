@@ -108,6 +108,8 @@ abstract class ApiController extends BaseController
 
         // Look at if the include parameter exists
         if ($req->has('include')) {
+            $include_param = $req->input('include');
+            if (empty($include_param)) return true;
             // Explode the includes.
             $includes = explode(',', $req->input('include'));
         } else {
