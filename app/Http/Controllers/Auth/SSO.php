@@ -69,7 +69,7 @@ class SSO extends ApiController
             $identifications = ['TFS-WEMPJPWHOE', 'TFS-OVKWDZZOL2'];
             $user = $this->user->byEmail($email);
 
-            if(in_array($temp_email[1], $domains) && !in_array($user->identification, $identifications)) {
+            if(in_array($temp_email[1], $domains) && $user && !in_array($user->identification, $identifications)) {
                 $arrRU = array('redirectUrl' => 'https://legacy.wirelessanalytics.com/app?email=' . $email);
                 $arrD = array('data' => $arrRU);
 
