@@ -14,7 +14,9 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         \JK\Dingo\Api\Console\Commands\RouteListCommand::class,
-        \WA\Console\Commands\ClearBeanstalkdQueueCommand::class
+        \WA\Console\Commands\ClearBeanstalkdQueueCommand::class,
+        \WA\Console\Commands\CheckUserCommand::class,
+        \WA\Console\Commands\FixUserCommand::class
     ];
 
     /**
