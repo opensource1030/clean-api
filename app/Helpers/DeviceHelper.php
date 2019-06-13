@@ -40,7 +40,7 @@ class DeviceHelper extends AuthorizedController
             $device = app()->make('WA\Repositories\Device\DeviceInterface');
             $dup_id = $device->byIdentification($id);
 
-            if (count($dup_id)) {
+            if (!is_null($dup_id) && count($dup_id)) {
                 $this->generateIds($deviceTypeId);
             }
 
