@@ -8,6 +8,7 @@ use WA\DataStore\ServiceItem\ServiceItem;
 use WA\DataStore\Service\Service;
 use WA\DataStore\Service\ServiceTransformer;
 use WA\Repositories\Service\ServiceInterface;
+use Illuminate\Support\Facades\Auth;
 
 use DB;
 use Log;
@@ -175,8 +176,19 @@ class ServicesController extends FilteredApiController
             $data = $request->all()['data'];
             $data = $this->addRelationships($data);
 
-            $data = $request->all()['data'];
-            $data = $this->addRelationships($data);
+            if( !Auth::user()->hasRole('admin') )
+            {
+                $data['attributes']['companyId'] = Auth::user()->companyId;
+            }
+            else
+            {
+                if( !isset( $data['attributes']['companyId'] ) )
+                {
+                    $error['errors']['services'] = Lang::get('messages.NotOptionIncludeClass',
+                        ['class' => 'Service', 'option' => 'created', 'include' => '']);
+                    return response()->json($error)->setStatusCode($this->status_codes['conflict']);
+                }
+            }
 
             if(!$this->addFilterToTheRequest("create", $data)) {
                 $error['errors']['autofilter'] = Lang::get('messages.FilterErrorNotUser');
