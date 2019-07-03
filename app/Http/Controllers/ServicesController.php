@@ -8,6 +8,7 @@ use WA\DataStore\ServiceItem\ServiceItem;
 use WA\DataStore\Service\Service;
 use WA\DataStore\Service\ServiceTransformer;
 use WA\Repositories\Service\ServiceInterface;
+use Illuminate\Support\Facades\Auth;
 
 use DB;
 use Log;
