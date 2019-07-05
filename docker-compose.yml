@@ -1,0 +1,47 @@
+version: "3"
+services:
+    web:
+        image: hitalos/laravel:latest
+        ports:
+            - 1080:80
+        volumes:
+            - ./:/var/www
+        command: php -S 0.0.0.0:80 -t public public/index.php
+        links:
+            - db
+            - memcached
+        environment:
+            DB_HOST: db
+            DB_DATABASE: dbname
+            DB_USERNAME: username
+            DB_PASSWORD: password
+            DB_CONNECTION: mysql
+            API_DOMAIN: localhost
+            CACHE_DRIVER: memcached
+            MEMCACHED_HOST: memcached
+            MEMCACHED_PORT: 11211
+            MEMCACHED_USERNAME: username
+            MEMCACHED_PASSWORD: password
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        ports:
+            - 1081:80
+        links:
+            - db
+    db:
+        image: mysql:5.7
+        ports:
+            - 13306:3306
+        environment:
+            MYSQL_DATABASE: dbname
+            MYSQL_USER: username
+            MYSQL_PASSWORD: password
+            MYSQL_ROOT_PASSWORD: password
+    memcached:
+        image: bitnami/memcached:latest
+        ports:
+            - 1082:11211
+        environment:
+            MEMCACHED_USERNAME: username
+            MEMCACHED_PASSWORD: password
+

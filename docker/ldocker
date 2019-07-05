@@ -1,0 +1,24 @@
+#!/bin/bash
+
+case "$1" in
+"start")
+    docker-compose up -d
+    ;;
+"stop")
+    docker-compose stop
+    ;;
+"install-memcached")
+    docker-compose exec web apk add libmemcached-dev
+    docker-compose exec web pecl install memcached
+    docker-compose exec web docker-php-ext-enable memcached
+    ;;
+"install-docker")
+    sudo apt install curl -y
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+    sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable edge"
+    sudo apt install docker-ce -y
+    sudo curl -L "https://github.com/docker/compose/releases/download/1.22.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+    sudo chmod +x /usr/local/bin/docker-compose
+    sudo usermod -a -G docker $USER
+esac
+
