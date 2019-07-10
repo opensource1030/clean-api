@@ -11,11 +11,6 @@ services:
             - db
             - memcached
         environment:
-            DB_HOST: db
-            DB_DATABASE: dbname
-            DB_USERNAME: username
-            DB_PASSWORD: password
-            DB_CONNECTION: mysql
             API_DOMAIN: localhost
             CACHE_DRIVER: memcached
             MEMCACHED_HOST: memcached

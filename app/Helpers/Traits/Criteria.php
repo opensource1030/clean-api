@@ -625,7 +625,7 @@ trait Criteria
                 $vals = explode(',', $val);
                 $vals = $this->extractAdvancedCriteria($vals);
                 if (count($vals) === 0) {
-                    continue;
+                    break;
                 }
                 if ($type == 'OR') {
                     $query->orWhereNotIn($filterKey, $vals);
@@ -639,7 +639,7 @@ trait Criteria
                 $vals = explode(',', $val);
                 $vals = $this->extractAdvancedCriteria($vals);
                 if (count($vals) === 0) {
-                    continue;
+                    break;
                 }
                 if ($type == 'OR') {
                     $query->orWhereIn($filterKey, $vals);
@@ -653,7 +653,7 @@ trait Criteria
                 $vals = explode(',', $val);
                 $vals = $this->extractAdvancedCriteria($vals);
                 if (count($vals) === 0) {
-                    continue;
+                    break;
                 }
 
                 $queryFunction = function ($query) use ($vals, $filterKey) {
