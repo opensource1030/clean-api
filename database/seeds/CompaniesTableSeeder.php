@@ -1,27 +1,36 @@
 <?php
 
-class CompaniesTableSeeder extends BaseTableSeeder {
+use Illuminate\Support\Facades\Config;
+use GuzzleHttp\Client;
+
+class CompaniesTableSeeder extends BaseTableSeeder
+{
 	protected $table = 'companies';
 
-	public function run() {
+	public function run()
+	{
 		$this->deleteTable();
-		factory(\WA\DataStore\Company\Company::class, 19)->create();
 
-		$bill_months = ['2016-05-01', '2016-06-01', '2016-07-01', '2016-08-01'];
+		$client = new Client;
 
-		$dataCompany = [
-            'name' => 'Testing Company',
-	        'label' => 'testing_company',
-	        'active' => 1,
-	        'isCensus'=> 0,
-	        'assetPath' => 'asset_path',
-	        'created_at' => null,
-	        'updated_at' => null,
-	        'currentBillMonth' => $bill_months[array_rand($bill_months)],
-	        'shortName' => 'test',
-	        'defaultLocation' => 1,
-        ];
+        try
+        {
+            $address = $client->get( Config::get('seeders.mockaroo_url') . '/' . Config::get('seeders.mockaroo_codes.companies.code'), 
+                [ 'headers' => [ 'Content-Type' => 'application/json' ], 'query' => [ 'count' => Config::get('seeders.mockaroo_codes.companies.numitems'), 'key' => Config::get('seeders.mockaroo_key') ] ]
+            );
 
-        $this->loadTable($dataCompany);
+            $rows = json_decode( $address->getBody()->getContents(), true );
+
+            foreach( array_chunk( $rows , Config::get('seeders.mockaroo_codes.companies.itemsPerPage') ) as $key => $values )
+            {
+                $this->loadTable( $values );
+            }
+        }
+        catch( ClientErrorResponseException $exception )
+        {
+            $responseBody = $exception->getResponse()->getBody( TRUE );
+
+            Log::debug('ERROR CompaniesTableSeeder: '. print_r( $responseBody, true ));
+        }
 	}
 }

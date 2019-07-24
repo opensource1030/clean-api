@@ -1,5 +1,8 @@
 <?php
 
+use Illuminate\Support\Facades\Config;
+use GuzzleHttp\Client;
+
 /**
  * CarrierImagesTableSeeder - Insert info into database.
  *
@@ -15,17 +18,27 @@ class CarrierImagesTableSeeder extends BaseTableSeeder
     public function run()
     {
         $this->deleteTable();
-        $i = 1;
-        while ($i < 31) {
-            $data = [
-                [
-                    'carrierId' => $i,
-                    'imageId' => rand(5,8)
-                ]
-            ];
+        
+        $client = new Client;
 
-            $this->loadTable($data);
-            $i++;
+        try
+        {
+            $address = $client->get( Config::get('seeders.mockaroo_url') . '/' . Config::get('seeders.mockaroo_codes.carrier_images.code'), 
+                [ 'headers' => [ 'Content-Type' => 'application/json' ], 'query' => [ 'count' => Config::get('seeders.mockaroo_codes.carrier_images.numitems'), 'key' => Config::get('seeders.mockaroo_key') ] ]
+            );
+
+            $rows = json_decode( $address->getBody()->getContents(), true );
+
+            foreach( array_chunk( $rows , Config::get('seeders.mockaroo_codes.carrier_images.itemsPerPage') ) as $key => $values )
+            {
+                $this->loadTable( $values );
+            }
+        }
+        catch( ClientErrorResponseException $exception )
+        {
+            $responseBody = $exception->getResponse()->getBody( TRUE );
+
+            Log::debug('ERROR CarriersTableSeeder: '. print_r( $responseBody, true ));
         }
     }
 }
