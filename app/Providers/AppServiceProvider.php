@@ -5,6 +5,7 @@ namespace WA\Providers;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use WA\DataStore\Company\Company;
+use Illuminate\Support\Facades\Schema;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -20,5 +21,7 @@ class AppServiceProvider extends ServiceProvider
         Relation::morphMap([
             'company' => Company::class,
         ]);
+
+        Schema::defaultStringLength(191);
     }
 }
