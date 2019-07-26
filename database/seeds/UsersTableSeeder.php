@@ -1,5 +1,8 @@
 <?php
 
+use Illuminate\Support\Facades\Config;
+use GuzzleHttp\Client;
+
 class UsersTableSeeder extends BaseTableSeeder
 {
     protected $table = 'users';
@@ -8,174 +11,26 @@ class UsersTableSeeder extends BaseTableSeeder
     {
         $this->deleteTable();
 
-        $dataUserUdl1 = [
-            'identification' => uniqid('WA-'),
-            'uuid' => '123456789123',
-            'email' => 'data1@wirelessanalytics.com',
-            'supervisorEmail' => 'admin@siriondev.com',
-            'password' => bcrypt('i1need4the3most4poweful7password8'),
-            'confirmation_code' => md5(uniqid(mt_rand(), true)),
-            'confirmed' => 1,
-            'firstName' => 'Sirion',
-            'lastName' => 'Developers',
-            'username' => 'sirion',
-            'defaultLang' => 'en',
-            'supervisorId' => null,
-            'notify' => 0,
-            'approverId' => 3,
-            'defaultLocationId' => 'location',
-            'companyId' => 1,
-        ];
+        $client = new Client;
 
-        $this->loadTable($dataUserUdl1);
+        try
+        {
+            $address = $client->get( Config::get('seeders.mockaroo_url') . '/' . Config::get('seeders.mockaroo_codes.users.code'), 
+                [ 'headers' => [ 'Content-Type' => 'application/json' ], 'query' => [ 'count' => Config::get('seeders.mockaroo_codes.users.numitems'), 'key' => Config::get('seeders.mockaroo_key') ] ]
+            );
 
-        $dataUserUdl2 = [
-            'identification' => uniqid('WA-'),
-            'uuid' => '123456789456',
-            'email' => 'data2@wirelessanalytics.com',
-            'supervisorEmail' => 'admin@siriondev.com',
-            'password' => bcrypt('user'),
-            'confirmation_code' => md5(uniqid(mt_rand(), true)),
-            'confirmed' => 1,
-            'firstName' => 'FirstName2',
-            'lastName' => 'LastName2',
-            'username' => 'Username2',
-            'defaultLang' => 'en',
-            'supervisorId' => 1,
-            'notify' => 0,
-            'approverId' => 3,
-            'defaultLocationId' => 'location',
-            'companyId' => 2,
-        ];
+            $rows = json_decode( $address->getBody()->getContents(), true );
 
-        $this->loadTable($dataUserUdl2);
+            foreach( array_chunk( $rows , Config::get('seeders.mockaroo_codes.users.itemsPerPage') ) as $key => $values )
+            {
+                $this->loadTable( $values );
+            }
+        }
+        catch( ClientErrorResponseException $exception )
+        {
+            $responseBody = $exception->getResponse()->getBody( TRUE );
 
-        $dataUserUdl3 = [
-            'identification' => uniqid('WA-'),
-            'uuid' => '123456789789',
-            'email' => 'data3@wirelessanalytics.com',
-            'supervisorEmail' => 'admin@siriondev.com',
-            'password' => bcrypt('user'),
-            'confirmation_code' => md5(uniqid(mt_rand(), true)),
-            'confirmed' => 1,
-            'firstName' => 'FirstName3',
-            'lastName' => 'LastName3',
-            'username' => 'Username3',
-            'defaultLang' => 'en',
-            'supervisorId' => 1,
-            'notify' => 0,
-            'approverId' => 3,
-            'defaultLocationId' => 'location',
-            'companyId' => 3,
-        ];
-
-        $this->loadTable($dataUserUdl3);
-
-        $dataUserLogin = [
-            'identification' => uniqid('WA-'),
-            'uuid' => '123456789',
-            'email' => 'dev@wirelessanalytics.com',
-            'supervisorEmail' => 'admin@siriondev.com',
-            'password' => bcrypt('user'),
-            'confirmation_code' => md5(uniqid(mt_rand(), true)),
-            'confirmed' => 1,
-            'firstName' => 'Sirion',
-            'lastName' => 'Developers',
-            'username' => 'sirion',
-            'defaultLang' => 'en',
-            'supervisorId' => 1,
-            'notify' => 0,
-            'approverId' => 3,
-            'defaultLocationId' => 'location',
-            'companyId' => 5,
-        ];
-
-        $this->loadTable($dataUserLogin);
-
-        $dataUserLogin = [
-            'identification' => uniqid('Test-'),
-            'uuid' => 'testinguuid',
-            'email' => 'email@testing.com',
-            'supervisorEmail' => null,
-            'password' => bcrypt('user'),
-            'confirmation_code' => md5(uniqid(mt_rand(), true)),
-            'confirmed' => 1,
-            'firstName' => 'Testing',
-            'lastName' => 'Developers',
-            'username' => 'testing',
-            'defaultLang' => 'en',
-            'supervisorId' => 1,
-            'notify' => 0,
-            'approverId' => 3,
-            'defaultLocationId' => 'location',
-            'companyId' => 20,
-        ];
-
-        $this->loadTable($dataUserLogin);
-
-        $dataUserLogin = [
-            'identification' => uniqid('A1-'),
-            'uuid' => 'administratorofthecompany1',
-            'email' => 'admin1@testing.com',
-            'supervisorEmail' => null,
-            'password' => bcrypt('admin1'),
-            'confirmation_code' => md5(uniqid(mt_rand(), true)),
-            'confirmed' => 1,
-            'firstName' => 'Testing',
-            'lastName' => 'Developers',
-            'username' => 'testing',
-            'defaultLang' => 'en',
-            'supervisorId' => 1,
-            'notify' => 0,
-            'approverId' => 3,
-            'defaultLocationId' => 'location',
-            'companyId' => 1,
-        ];
-
-        $this->loadTable($dataUserLogin);
-
-        $dataUserLogin = [
-            'identification' => uniqid('U1-'),
-            'uuid' => 'user1ofthecompany1',
-            'email' => 'user11@testing.com',
-            'supervisorEmail' => null,
-            'password' => bcrypt('user'),
-            'confirmation_code' => md5(uniqid(mt_rand(), true)),
-            'confirmed' => 1,
-            'firstName' => 'Testing',
-            'lastName' => 'Developers',
-            'username' => 'testing',
-            'defaultLang' => 'en',
-            'supervisorId' => 1,
-            'notify' => 0,
-            'approverId' => 3,
-            'defaultLocationId' => 'location',
-            'companyId' => 1,
-        ];
-
-        $this->loadTable($dataUserLogin);
-
-        $dataUserLogin = [
-            'identification' => uniqid('U1-'),
-            'uuid' => 'user2ofthecompany1',
-            'email' => 'user12@testing.com',
-            'supervisorEmail' => null,
-            'password' => bcrypt('user'),
-            'confirmation_code' => md5(uniqid(mt_rand(), true)),
-            'confirmed' => 1,
-            'firstName' => 'Testing',
-            'lastName' => 'Developers',
-            'username' => 'testing',
-            'defaultLang' => 'en',
-            'supervisorId' => 1,
-            'notify' => 0,
-            'approverId' => 3,
-            'defaultLocationId' => 'location',
-            'companyId' => 1,
-        ];
-
-        $this->loadTable($dataUserLogin);
-
-        factory(\WA\DataStore\User\User::class, 20)->create();
+            Log::debug('ERROR UsersTableSeeder: '. print_r( $responseBody, true ));
+        }
     }
 }

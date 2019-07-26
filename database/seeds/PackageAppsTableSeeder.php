@@ -1,5 +1,8 @@
 <?php
 
+use Illuminate\Support\Facades\Config;
+use GuzzleHttp\Client;
+
 /**
  * PackageAppsTableSeeder - Insert info into database.
  *
@@ -16,26 +19,26 @@ class PackageAppsTableSeeder extends BaseTableSeeder
     {
         $this->deleteTable();
 
-        $data = [
+        $client = new Client;
 
-            [
-                'packageId' => 1,
-                'appId' => 1,
-            ],
-            [
-                'packageId' => 1,
-                'appId' => 2,
-            ],
-            [
-                'packageId' => 1,
-                'appId' => 3,
-            ],
-            [
-                'packageId' => 1,
-                'appId' => 4,
-            ],
-        ];
+        try
+        {
+            $address = $client->get( Config::get('seeders.mockaroo_url') . '/' . Config::get('seeders.mockaroo_codes.package_apps.code'), 
+                [ 'headers' => [ 'Content-Type' => 'application/json' ], 'query' => [ 'count' => Config::get('seeders.mockaroo_codes.package_apps.numitems'), 'key' => Config::get('seeders.mockaroo_key') ] ]
+            );
 
-        $this->loadTable($data);
+            $rows = json_decode( $address->getBody()->getContents(), true );
+
+            foreach( array_chunk( $rows , Config::get('seeders.mockaroo_codes.package_apps.itemsPerPage') ) as $key => $values )
+            {
+                $this->loadTable( $values );
+            }
+        }
+        catch( ClientErrorResponseException $exception )
+        {
+            $responseBody = $exception->getResponse()->getBody( TRUE );
+
+            Log::debug('ERROR packagesTableSeeder: '. print_r( $responseBody, true ));
+        }
     }
 }

@@ -1,5 +1,8 @@
 <?php
 
+use Illuminate\Support\Facades\Config;
+use GuzzleHttp\Client;
+
 /**
  * CompanySettingsTableSeeder - Insert info into database.
  *
@@ -15,37 +18,27 @@ class PackageSettingsTableSeeder extends BaseTableSeeder
     public function run()
     {
         $this->deleteTable();
+        
+        $client = new Client;
 
-        $i = 1;
-        while ($i < 41) {
-            $dataS3 = [
-                [
-                    'globalSettingsValueId' => rand(5,6),
-                    'packageId' => $i // ADMIN
-                ]
-            ];
+        try
+        {
+            $address = $client->get( Config::get('seeders.mockaroo_url') . '/' . Config::get('seeders.mockaroo_codes.package_settings.code'), 
+                [ 'headers' => [ 'Content-Type' => 'application/json' ], 'query' => [ 'count' => Config::get('seeders.mockaroo_codes.package_settings.numitems'), 'key' => Config::get('seeders.mockaroo_key') ] ]
+            );
 
-            $this->loadTable($dataS3);
+            $rows = json_decode( $address->getBody()->getContents(), true );
 
-            $dataS4 = [
-                [
-                    'globalSettingsValueId' => rand(7,8),
-                    'packageId' => $i // ADMIN
-                ]
-            ];
+            foreach( array_chunk( $rows , Config::get('seeders.mockaroo_codes.package_settings.itemsPerPage') ) as $key => $values )
+            {
+                $this->loadTable( $values );
+            }
+        }
+        catch( ClientErrorResponseException $exception )
+        {
+            $responseBody = $exception->getResponse()->getBody( TRUE );
 
-            $this->loadTable($dataS4);
-
-            $dataS5 = [
-                [
-                    'globalSettingsValueId' => rand(9,10),
-                    'packageId' => $i // ADMIN
-                ]
-            ];
-
-            $this->loadTable($dataS5);
-
-            $i++;
+            Log::debug('ERROR PackageSettingsTableSeeder: '. print_r( $responseBody, true ));
         }
     }
 }
