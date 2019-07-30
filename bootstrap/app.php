@@ -107,6 +107,7 @@ $app->configure('entrust');
 $app->configure('workflow');
 $app->configure('filesytems');
 $app->configure('jwt');
+$app->configure('seeders');
 
 /*
 |--------------------------------------------------------------------------
